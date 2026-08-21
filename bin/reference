@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""reference — one entry point for the Wisent reference corpus.
+
+Every subcommand delegates to the underlying tool unchanged, so flags are
+exactly the flags of that tool (`reference verify --help` is
+`verify-reference-evidence.py --help`). The dispatcher only fixes the two
+things every tool expects: the working directory is the repository root and
+the exit code is the tool's exit code.
+
+Usage:
+  reference capture               capture own-product references (installed binaries)
+  reference audit-accessibility   accessibility audit of captured references
+  reference collect-images        attributable official imagery with provenance
+  reference analyze-structures    deterministic panel/layout analysis
+  reference sync-readmes          refresh verbatim upstream README snapshots
+  reference analyze-readmes       structural analysis of the README corpus
+  reference verify                measure stored evidence and rewrite records
+  reference catalogs              regenerate the index; refuses disagreement
+  reference drift                 report upstream README/URL drift
+"""
+
+from __future__ import annotations
+
+import importlib.util
+import runpy
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+COMMANDS = {
+    "capture": "capture-wisent-references.py",
+    "audit-accessibility": "audit-reference-accessibility.py",
+    "collect-images": "collect-example-images.py",
+    "analyze-structures": "analyze-example-structures.py",
+    "sync-readmes": "sync-readme-examples.py",
+    "analyze-readmes": "analyze-readme-examples.py",
+    "verify": "verify-reference-evidence.py",
+    "catalogs": "generate-example-catalogs.py",
+    "drift": "check-upstream-drift.py",
+}
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+def usage() -> str:
+
+    lines = ["usage: reference <command> [tool flags]", "", "Commands:"]
+    width = max(len(name) for name in COMMANDS)
+    for name in sorted(COMMANDS):
+        lines.append(f"  {name.ljust(width)}  {COMMENTS[name]}")
+    lines += [
+        "",
+        "Each command passes its flags straight through to the underlying tool;",
+        "`reference <command> --help` shows that tool's own options.",
+    ]
+    return "\n".join(lines)
+
+
+COMMENTS = {
+    "capture": "capture own-product references from installed binaries",
+    "audit-accessibility": "audit captured references for accessibility evidence",
+    "collect-images": "collect attributable official imagery",
+    "analyze-structures": "derive panel and layout analysis",
+    "sync-readmes": "refresh verbatim upstream README snapshots",
+    "analyze-readmes": "analyze the README corpus structure",
+    "verify": "measure stored evidence and rewrite records",
+    "catalogs": "regenerate the catalog index from records",
+    "drift": "report upstream README and URL drift",
+}
+
+
+def main(argv: list[str]) -> int:
+    if not argv or argv[0] in ("-h", "--help", "help"):
+        print(usage())
+        return 0 if argv else 2
+
+    command, rest = argv[0], argv[1:]
+    script = COMMANDS.get(command)
+    if script is None:
+        print(f"reference: unknown command {command!r}\n\n{usage()}", file=sys.stderr)
+        return 2
+
+    path = ROOT / script
+    if not path.is_file():
+        print(f"reference: missing tool script {script}", file=sys.stderr)
+        return 1
+
+    sys.argv = [str(path), *rest]
+    spec = importlib.util.spec_from_file_location(f"reference_tools_{command}", path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    try:
+        spec.loader.exec_module(module)
+    except SystemExit as exit_request:
+        return int(exit_request.code or 0)
+
+    main_function = getattr(module, "main", None)
+    if main_function is None:
+        print(f"reference: {script} exposes no main()", file=sys.stderr)
+        return 1
+    result = main_function()
+    return int(result) if isinstance(result, int) else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))
