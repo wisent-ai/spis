@@ -1,0 +1,276 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Beekeeper Studio",
+  "product_url": "https://www.beekeeperstudio.io/",
+  "evidence_status": "partial",
+  "upstream_owner": "Beekeeper Studio",
+  "captured_at": "2026-08-17T00:26:07.476527Z",
+  "motion": [
+    {
+      "local_path": "media/motion.webm",
+      "source_url": "https://www.youtube.com/watch?v=mUsIu1JFV-0",
+      "media_kind": "video-webm",
+      "width": 1280,
+      "height": 720,
+      "duration_seconds": 8.0,
+      "frame_count": 480,
+      "bytes": 283224,
+      "sha256": "3c32dee95089d67fa2bd50d73d9f0ac470f903ca184561976cdd8fba4f3b1389",
+      "capture_method": "Official Beekeeper Studio walkthrough downloaded directly from the cited source; product-only interval 00:36–00:44 clipped and transcoded without synthesized frames",
+      "source_title": "Beekeeper Studio Walkthrough (SQL Editor & DB Manager)",
+      "declared_media_kind": "video-webm",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "connection selection ready",
+      "local_path": "media/state-1.png",
+      "source_motion_path": "frame of media/motion.webm at 0s (mean abs diff 0.1406/255)",
+      "width": 1280,
+      "height": 720,
+      "bytes": 272386,
+      "sha256": "bb5511407db940f700a83545446da3cae86ad66ff164c2f619d8a300d07b5745",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.0,
+        "mean_abs_diff": 0.1406,
+        "sampled_frames": 16
+      }
+    },
+    {
+      "name": "connection transition in progress",
+      "local_path": "media/state-2.png",
+      "source_motion_path": "frame of media/motion.webm at 4s (mean abs diff 0.0938/255)",
+      "width": 1280,
+      "height": 720,
+      "bytes": 276650,
+      "sha256": "cedf3cc1716bd1d283e552446829fbe872ef78e20cedd4e4b0aec40d9a04b5b9",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.0,
+        "mean_abs_diff": 0.0938,
+        "sampled_frames": 16
+      }
+    },
+    {
+      "name": "connected database result",
+      "local_path": "media/state-3.png",
+      "source_motion_path": "frame of media/motion.webm at 7s (mean abs diff 0.1641/255)",
+      "width": 1280,
+      "height": 720,
+      "bytes": 426948,
+      "sha256": "70860b0ed27eee1f225b080dbd017d865eae0b7e91e1352986185a2705b5e362",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 7.0,
+        "mean_abs_diff": 0.1641,
+        "sampled_frames": 16
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "launch/open",
+      "trigger": "launch to connection selection",
+      "response": "The product exposes its initial task context.",
+      "feedback": "The main window and available next action become visible.",
+      "cancellation": "Closing or backing out returns to the prior operating-system context without completing the task.",
+      "failure": "The start surface or prerequisite is unavailable.",
+      "recovery": "Relaunch and restore the prerequisite, then return to the start surface.",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "primary input",
+      "trigger": "confirm connection",
+      "response": "The central editor, composer, canvas, address field, or selection control accepts input.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "connection or query fails",
+      "recovery": "correct connection details or query text and run again",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "focus/selection",
+      "trigger": "choose or enter a connection",
+      "response": "The chosen workspace, item, or tool receives a visible selected state.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "connection or query fails",
+      "recovery": "correct connection details or query text and run again",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "navigation",
+      "trigger": "choose or enter a connection",
+      "response": "The adjacent content region updates while persistent navigation remains available.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "connection or query fails",
+      "recovery": "correct connection details or query text and run again",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "run a query or browse command",
+      "response": "The requested operation advances to a processing or completed state.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "connection or query fails",
+      "recovery": "correct connection details or query text and run again",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "cancellation/backtracking",
+      "trigger": "invoke the visible back, close, cancel, or prior-selection route before confirmation",
+      "response": "The transient surface closes and the last stable state returns.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "connection or query fails",
+      "recovery": "correct connection details or query text and run again",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "failure feedback",
+      "trigger": "submit the connection form with credentials the database rejects",
+      "response": "The connection form remains visible and a persistent inline error card appears below Test and Connect.",
+      "feedback": "The card combines an error icon, the heading There was a problem, and the exact database error message.",
+      "cancellation": "The card can be dismissed without clearing host, port, user, password, or the rest of the form.",
+      "failure": "Access denied for user 'testuser'@'localhost' (using password: YES)",
+      "recovery": "correct the connection data and invoke Test or Connect again",
+      "evidence": "media/error-state.png; real user report https://github.com/beekeeper-studio/beekeeper-studio/issues/2446"
+    },
+    {
+      "name": "recovery",
+      "trigger": "correct the connection data and invoke Test or Connect again",
+      "response": "The same connection action can be repeated; successful connection replaces the form with persistent database navigation and returned rows.",
+      "feedback": "media/state-3.png retains the connected database, selected table, and visible result rows.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "connection or query fails",
+      "recovery": "correct connection details or query text and run again",
+      "evidence": "media/error-state.png, media/motion.webm, and media/state-3.png"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time desktop user with access to the prerequisite local files, service, device, or workspace shown in the recording.",
+    "goal": "connect and run a first query",
+    "prerequisites": [
+      "The desktop application is installed or its authentic product recording is available.",
+      "Any local file, workspace, service, engine, device, or account required by the shown path is available."
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "launch to connection selection",
+        "system_response": "The product window establishes the available task context.",
+        "state": "start surface",
+        "evidence": "media/motion.webm and media/state-1.png"
+      },
+      {
+        "index": 2,
+        "user_action": "choose or enter a connection",
+        "system_response": "The selected target becomes persistent and its content is exposed.",
+        "state": "workspace or source selected",
+        "evidence": "media/motion.webm and media/state-1.png"
+      },
+      {
+        "index": 3,
+        "user_action": "confirm connection",
+        "system_response": "The primary control accepts focus and exposes editable or actionable state.",
+        "state": "primary input focused",
+        "evidence": "media/motion.webm and media/state-2.png"
+      },
+      {
+        "index": 4,
+        "user_action": "select a database or table",
+        "system_response": "The task-specific input is visible and ready for commitment.",
+        "state": "action ready for confirmation",
+        "evidence": "media/motion.webm and media/state-2.png"
+      },
+      {
+        "index": 5,
+        "user_action": "run a query or browse command",
+        "system_response": "The product acknowledges the command and transitions without a detached interstitial.",
+        "state": "operation in progress",
+        "evidence": "media/motion.webm and media/state-2.png"
+      },
+      {
+        "index": 6,
+        "user_action": "observe returned rows or documents",
+        "system_response": "The resulting content, status, playback, transfer, document, or response is visibly present.",
+        "state": "first meaningful result",
+        "evidence": "media/motion.webm and media/state-3.png"
+      }
+    ],
+    "failure_route": [
+      "Submit the connection form with credentials the database rejects.",
+      "Observe the retained form and inline There was a problem card with the exact Access denied message in media/error-state.png."
+    ],
+    "recovery_route": [
+      "Correct the connection target or credentials without rebuilding the form.",
+      "Invoke Test or Connect again and compare the connected database result with media/state-3.png."
+    ],
+    "completion_evidence": "The final portion of media/motion.webm and media/state-3.png retain the visible first meaningful result for connect and run a first query."
+  },
+  "accessibility": {
+    "observations": [
+      "Selection and completion are represented by persistent spatial or content changes in the retained frames, not described solely by color.",
+      "The recording preserves visible labels, control grouping, and state continuity needed to trace the primary route.",
+      "The observed connection error uses an icon, heading, and exact text message rather than color alone."
+    ],
+    "unknowns": [
+      "Screen-reader names, role announcements, and live-region output were not exposed by the visual recording.",
+      "Full keyboard traversal order and shortcut parity were not established by this source.",
+      "Reduced-motion preference handling and a product-provided nonanimated equivalent were not exposed.",
+      "Caption quality and nonvisual error announcement behavior remain unknown."
+    ]
+  },
+  "motion_analysis": {
+    "trigger": "run a query or browse command",
+    "start_state": "focused, task-ready state retained in media/state-2.png",
+    "end_state": "first meaningful result retained in media/state-3.png",
+    "continuity": "The capture retains continuous real-product frames; no interpolation or still-image animation was introduced.",
+    "timing_class": "one-to-three-seconds",
+    "feedback": "Selection persistence, content replacement, status change, transport progress, or result appearance carries completion feedback.",
+    "reduced_motion_equivalent": "Unknown; use the retained end-state frame as the documented nonanimated reference, not as evidence that the product supplies one.",
+    "interruption_or_reversal": "The visible back, cancel, close, or prior selection returns to the last stable task state; mid-transition interruption semantics beyond the capture remain unknown.",
+    "timing_description": "direct-manipulation feedback followed by a short product transition"
+  },
+  "provenance_notes": {
+    "catalog_source_page": "https://www.beekeeperstudio.io/",
+    "source_recording_owner": "Beekeeper Studio",
+    "capture_host": "local source acquisition",
+    "capture_system": "yt-dlp source download and ffmpeg temporal clipping",
+    "transformation": "Product-only interval 00:36–00:44 was clipped and transcoded; retained states were decoded directly from that clip; no generated or interpolated content."
+  },
+  "error_reporting_evidence": {
+    "local_path": "media/error-state.png",
+    "source_url": "https://github.com/beekeeper-studio/beekeeper-studio/issues/2446",
+    "image_source_url": "https://github.com/user-attachments/assets/48eb79df-b5aa-4aa7-9760-92fa0e62cb3b",
+    "source_kind": "real user-reported Beekeeper Studio connection failure screenshot",
+    "width": 702,
+    "height": 902,
+    "bytes": 55847,
+    "sha256": "46c7a555f41d1f07e2b31b2f7b9336abfa282e33cb1c2f597a0049988e9245ce",
+    "observations": [
+      "The connection form and entered host, port, user, and password remain visible after failure.",
+      "A persistent inline error card appears directly below Test and Connect.",
+      "The card uses an error icon, the heading There was a problem, and the exact database error message.",
+      "The error can be dismissed without clearing the connection form.",
+      "Test and Connect remain available so the user can correct the data and repeat the same action."
+    ],
+    "scope": "This screenshot proves the visible failure presentation; the successful connection motion separately proves recovery to a connected database result."
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

@@ -1,0 +1,503 @@
+{
+  "name": "Stripe Documentation",
+  "source_url": "https://docs.stripe.com/",
+  "category": "Payments API documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 4661,
+  "landing_nav": [
+    {
+      "text": "The Stripe Docs logo",
+      "path": "/"
+    },
+    {
+      "text": "Get started",
+      "path": "/get-started"
+    },
+    {
+      "text": "Payments",
+      "path": "/payments"
+    },
+    {
+      "text": "Revenue",
+      "path": "/revenue"
+    },
+    {
+      "text": "Platforms and marketplaces",
+      "path": "/connect"
+    },
+    {
+      "text": "Money management",
+      "path": "/money-management"
+    },
+    {
+      "text": "Developer resources",
+      "path": "/development"
+    },
+    {
+      "text": "Get started with Stripe",
+      "path": "/get-started/use-cases"
+    },
+    {
+      "text": "Accept payments online",
+      "path": "/get-started/use-cases/startup"
+    },
+    {
+      "text": "Collect payments with invoices",
+      "path": "/get-started/use-cases/invoices"
+    },
+    {
+      "text": "Accept payments in-person",
+      "path": "/get-started/use-cases/in-person-payments"
+    },
+    {
+      "text": "Sell subscriptions",
+      "path": "/get-started/use-cases/saas-subscriptions"
+    },
+    {
+      "text": "Offer usage-based pricing",
+      "path": "/billing/how-metronome-works-with-stripe"
+    },
+    {
+      "text": "Set up the customer portal",
+      "path": "/no-code/customer-portal"
+    },
+    {
+      "text": "Set up your development environment",
+      "path": "/get-started/development-environment"
+    },
+    {
+      "text": "Build on Stripe with AI",
+      "path": "/agents"
+    },
+    {
+      "text": "Integration quickstarts",
+      "path": "/quickstarts"
+    },
+    {
+      "text": "Learn more about Payment Intents",
+      "path": "/payments/payment-intents"
+    },
+    {
+      "text": "PaymentsOnline payments",
+      "path": "/payments"
+    },
+    {
+      "text": "Managed PaymentsStripe merchant of record solution",
+      "path": "/payments/managed-payments"
+    },
+    {
+      "text": "TerminalIn-person and omnichannel payments",
+      "path": "/terminal"
+    },
+    {
+      "text": "RadarFraud and risk management",
+      "path": "/radar"
+    },
+    {
+      "text": "ClimateCarbon removal",
+      "path": "/climate"
+    },
+    {
+      "text": "IdentityOnline identity verification",
+      "path": "/identity"
+    },
+    {
+      "text": "Financial ConnectionsConnect users' financial accounts",
+      "path": "/financial-connections"
+    },
+    {
+      "text": "CryptoAccept, onramp, or pay out in crypto",
+      "path": "/crypto"
+    },
+    {
+      "text": "BillingSubscriptions and recurring payments",
+      "path": "/billing"
+    },
+    {
+      "text": "TaxSales tax and VAT automation",
+      "path": "/tax"
+    },
+    {
+      "text": "Revenue RecognitionAccounting automation",
+      "path": "/billing/revenue-recognition"
+    },
+    {
+      "text": "SigmaCustom reports",
+      "path": "/data/sigma"
+    },
+    {
+      "text": "Data PipelineData warehouse sync",
+      "path": "/data/access-data-in-warehouse"
+    },
+    {
+      "text": "AtlasStartup incorporation",
+      "path": "/atlas"
+    },
+    {
+      "text": "ConnectEmbedded finance for platforms",
+      "path": "/connect"
+    },
+    {
+      "text": "Account onboardingOnboard and verify connected accounts",
+      "path": "/connect/onboarding"
+    },
+    {
+      "text": "Platform paymentsProcess payments for connected accounts",
+      "path": "/connect/charges"
+    },
+    {
+      "text": "Platform payoutsSend funds to connected accounts",
+      "path": "/connect/payouts-connected-accounts"
+    },
+    {
+      "text": "Platform managementMonitor and manage your platform",
+      "path": "/connect/dashboard/understand-your-connect-business"
+    },
+    {
+      "text": "Tax formsTax reporting and filing",
+      "path": "/connect/tax-reporting"
+    },
+    {
+      "text": "IssuingCard creation",
+      "path": "/issuing"
+    },
+    {
+      "text": "TreasuryBuilding blocks for financial services",
+      "path": "/treasury"
+    },
+    {
+      "text": "CapitalBusiness financing",
+      "path": "/capital/how-stripe-capital-works"
+    },
+    {
+      "text": "Payment LinksNo-code payments",
+      "path": "/payments/payment-links"
+    },
+    {
+      "text": "CheckoutPrebuilt, Stripe-hosted checkout page",
+      "path": "/payments/checkout"
+    },
+    {
+      "text": "ElementsSecure frontend UI components",
+      "path": "/payments/elements"
+    },
+    {
+      "text": "changelog",
+      "path": "/changelog"
+    },
+    {
+      "text": "Read llms.txt",
+      "path": "/llms.txt"
+    }
+  ],
+  "url_sections": {
+    "api": 951,
+    "changelog": 875,
+    "payments": 484,
+    "connect": 218,
+    "billing": 156,
+    "use-stripe-apps": 127,
+    "stripe-apps": 124,
+    "cli": 123,
+    "custom_checkout": 111,
+    "react_stripe_js": 101,
+    "terminal": 99,
+    "issuing": 98,
+    "payment_intents": 91,
+    "treasury": 77,
+    "tax": 74,
+    "elements_object": 59,
+    "element": 59,
+    "revenue-recognition": 50,
+    "get-started": 49,
+    "invoicing": 46,
+    "setup_intents": 39,
+    "data": 37,
+    "radar": 33,
+    "crypto": 29,
+    "disputes": 28,
+    "deprecated": 26,
+    "appendix": 24,
+    "financial-connections": 23,
+    "payment_request": 23,
+    "capital": 20,
+    "reports": 20,
+    "agentic-commerce": 17,
+    "atlas": 14,
+    "identity": 14,
+    "elements": 13,
+    "sdks": 13,
+    "sources": 13,
+    "payouts": 11,
+    "global-payouts": 10,
+    "extensions": 9
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "learn more about payment intents"
+    ],
+    "getting started / quickstart": [
+      "get started",
+      "get-started",
+      "/get-started",
+      "/quickstarts"
+    ],
+    "api reference": [
+      "api"
+    ],
+    "changelog / release notes": [
+      "changelog",
+      "/changelog"
+    ],
+    "cli reference": [
+      "cli"
+    ],
+    "sdk / client libraries": [
+      "sdks"
+    ],
+    "integrations": [
+      "integration quickstarts"
+    ],
+    "pricing / limits": [
+      "offer usage-based pricing"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://docs.stripe.com/get-started",
+      "h1": "Get started",
+      "h2": [
+        "Create an account and learn how to build on Stripe.",
+        "Start building",
+        "Common use cases",
+        "More resources"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/payments",
+      "h1": "Payments",
+      "h2": [
+        "Use Stripe to start accepting payments.",
+        "Payment options",
+        "Payment methods",
+        "Beyond payments",
+        "Platforms and marketplaces",
+        "More guides"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/revenue",
+      "h1": "Revenue",
+      "h2": [
+        "Use Stripe to manage the revenue lifecycle of your business.",
+        "Billing",
+        "Tax",
+        "Reporting",
+        "Data"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/connect",
+      "h1": "Platforms and marketplaces with Stripe Connect",
+      "h2": [
+        "Build a SaaS platform or marketplace with Connect.",
+        "Build a SaaS platform or marketplace",
+        "Manage your connected accounts",
+        "Process payments",
+        "Platform administration",
+        "More resources"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/money-management",
+      "h1": "Money management",
+      "h2": [
+        "Manage and move money for your business or your platform's users.",
+        "Use directly for your business",
+        "Embed within your platform"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/development",
+      "h1": "Developer resources",
+      "h2": [
+        "Set up your development environment and learn about the Stripe platform.",
+        "Essentials",
+        "Versioning",
+        "Tools",
+        "Features",
+        "Security and privacy",
+        "Extend Stripe",
+        "Partners",
+        "Developer community"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/agents",
+      "h1": "Agents and AI on Stripe",
+      "h2": [
+        "Build with agent-first developer tools, and sell agent-enabled products and serv",
+        "Get started",
+        "Agent developer tools",
+        "Agentic commerce",
+        "Standards and protocols"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/quickstarts",
+      "h1": "Quickstart guides",
+      "h2": [
+        "Review a list of all Stripe integration quickstart guides.",
+        "Payments",
+        "Platforms and marketplaces",
+        "Developer resources"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/terminal",
+      "h1": "Terminal",
+      "h2": [
+        "Use Stripe Terminal to accept in-person payments.",
+        "Learn about Terminal",
+        "Integration options",
+        "Platforms with in-person payments",
+        "In-person fundamentals",
+        "SDK references",
+        "Features"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/radar",
+      "h1": "Radar",
+      "h2": [
+        "Use Stripe Radar to protect your business against fraud.",
+        "Understand Radar",
+        "Transaction risk prevention",
+        "Customer abuse prevention",
+        "Account fraud prevention",
+        "Rules engine and analytics"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/climate",
+      "h1": "Stripe Climate",
+      "h2": [
+        "Remove carbon as you grow your business."
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/identity",
+      "h1": "Identity",
+      "h2": [
+        "Verify government-issued IDs, match documents to selfies, and validate SSNs to p",
+        "Get started",
+        "More verification checks",
+        "Clone a sample project",
+        "Pricing"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/financial-connections",
+      "h1": "Stripe Financial Connections",
+      "h2": [
+        "Access permissioned data from your users' financial accounts.",
+        "Availability",
+        "Use cases",
+        "Supported data types",
+        "Learn more"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/crypto",
+      "h1": "Stripe Crypto",
+      "h2": [
+        "Integrate one of the Stripe crypto products.",
+        "Stablecoins",
+        "Stablecoins for platforms and marketplaces",
+        "Fiat-to-crypto onramp",
+        "Partners"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/billing",
+      "h1": "Billing",
+      "h2": [
+        "Create and manage subscriptions, track usage, and issue invoices.",
+        "No code options",
+        "Get started with subscriptions",
+        "Usage-based billing",
+        "Get started with invoicing",
+        "Get started with quotes",
+        "Clone a sample billing project",
+        "Features"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/tax",
+      "h1": "Stripe Tax",
+      "h2": [
+        "Automate sales tax, VAT, and GST compliance on all your transactions.",
+        "How it works",
+        "Get started",
+        "Enable Stripe Tax",
+        "Features"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/atlas",
+      "h1": "Stripe Atlas",
+      "h2": [
+        "Start a US company from anywhere in the world.",
+        "Form your company",
+        "Post-formation resources",
+        "Features"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/issuing",
+      "h1": "Issuing",
+      "h2": [
+        "Use the Stripe Issuing API to create, manage, and distribute payment cards for y",
+        "Get started",
+        "Virtual and physical cards",
+        "Manage cards",
+        "Manage purchases",
+        "Features",
+        "Additional resources"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/treasury",
+      "h1": "TreasuryPublic preview",
+      "h2": [
+        "Learn how to securely manage money with a financial account.",
+        "Availability",
+        "FDIC insurance eligibility US only",
+        "Roles and permissions",
+        "Request access to preview features"
+      ]
+    },
+    {
+      "url": "https://docs.stripe.com/changelog",
+      "h1": "Changelog",
+      "h2": [
+        "Keep track of changes and upgrades to the Stripe API.",
+        "Dahlia",
+        "2024",
+        "2023",
+        "2022",
+        "2020",
+        "2019",
+        "2018",
+        "2017",
+        "2016",
+        "2015",
+        "2014",
+        "2013",
+        "2012",
+        "2011"
+      ]
+    }
+  ]
+}

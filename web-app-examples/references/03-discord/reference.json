@@ -1,0 +1,253 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Discord",
+  "product_url": "https://discord.com/app",
+  "evidence_status": "partial",
+  "upstream_owner": "Discord",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=TJ13BA3-NR4",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 90.042,
+      "frame_count": 2161,
+      "bytes": 2312736,
+      "sha256": "0d0848edf30047725712f590a88410cfb5c195de25924e88603739f7fc1d04cd",
+      "capture_method": "Static-source acquisition from the upstream owner's official YouTube tutorial; downloaded with yt-dlp and clipped without synthesizing frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "Entry surface",
+      "local_path": "media/state-01-entry.jpg",
+      "source_motion_path": "frame of media/motion.mp4 at 14.5s (mean abs diff 1.9023/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 20053,
+      "sha256": "78b199d812f6968eaec3bab510da451a3eec17517d0a3633943017312d74dc4b",
+      "timestamp_seconds": 14.407,
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 14.5,
+        "mean_abs_diff": 1.9023,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "Configured in-progress state",
+      "local_path": "media/state-02-progress.jpg",
+      "source_motion_path": "frame of media/motion.mp4 at 45s (mean abs diff 1.8438/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 25015,
+      "sha256": "751e67de6198bcfe89bf6d665c779429f2139d91d8bb52ce7d6afc16e0ac77a6",
+      "timestamp_seconds": 45.021,
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 45.0,
+        "mean_abs_diff": 1.8438,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "First meaningful result",
+      "local_path": "media/state-03-result.jpg",
+      "source_motion_path": "frame of media/motion.mp4 at 75.5s (mean abs diff 3.9492/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 21259,
+      "sha256": "fafa1daf98504cdf0e1823c67e1ad9ca4f6d39a307989fd7a9d3ef0528369490",
+      "timestamp_seconds": 75.635,
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 75.5,
+        "mean_abs_diff": 3.9492,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Pointer activation of the demonstrated primary control",
+      "response": "The product advances from the entry surface into the task",
+      "feedback": "The active surface changes immediately",
+      "cancellation": "Move away without activating the control",
+      "failure": "No activation leaves the entry state unchanged",
+      "recovery": "Return to the visible control and activate it",
+      "evidence": "media/motion.mp4 14.4-28.8s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Select the demonstrated item, field, or workspace target",
+      "response": "The target becomes the active context",
+      "feedback": "Selection styling or an active detail surface is visible",
+      "cancellation": "Select a different visible target",
+      "failure": "An unselected target does not advance the workflow",
+      "recovery": "Restore the intended selection",
+      "evidence": "media/motion.mp4 28.8-45.0s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Use the demonstrated navigation control",
+      "response": "The central product surface changes while application context remains",
+      "feedback": "Destination content replaces the prior surface",
+      "cancellation": "Use the visible prior destination",
+      "failure": "A wrong destination shows content unrelated to the goal",
+      "recovery": "Navigate back to the demonstrated destination",
+      "evidence": "media/motion.mp4 28.8-45.0s"
+    },
+    {
+      "name": "Configuration",
+      "trigger": "Enter or choose the demonstrated task parameters",
+      "response": "The product reflects the configured values",
+      "feedback": "The in-progress state exposes the chosen configuration",
+      "cancellation": "Remove or replace the current choice",
+      "failure": "An incomplete configuration cannot produce the shown result",
+      "recovery": "Supply the missing demonstrated choice",
+      "evidence": "media/motion.mp4 45.0-59.4s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Activate the demonstrated commit, create, run, send, or save action",
+      "response": "The product starts the operation",
+      "feedback": "The surface transitions toward the result",
+      "cancellation": "Back out before the commit action",
+      "failure": "Committing with the task incomplete leaves a no-result state",
+      "recovery": "Complete the required context and confirm again",
+      "evidence": "media/motion.mp4 59.4-75.6s"
+    },
+    {
+      "name": "Backtracking",
+      "trigger": "Return from the current detail or configuration surface",
+      "response": "The previous product context is restored",
+      "feedback": "Prior navigation and content reappear",
+      "cancellation": "Remain on the current surface",
+      "failure": "Leaving too early abandons the pending result",
+      "recovery": "Re-enter the demonstrated task from the restored context",
+      "evidence": "media/motion.mp4 45.0-59.4s"
+    },
+    {
+      "name": "System feedback",
+      "trigger": "Wait after the demonstrated committed action",
+      "response": "The first meaningful result becomes visible",
+      "feedback": "Result content replaces or augments the in-progress state",
+      "cancellation": "No cancellation is shown after completion",
+      "failure": "Stopping before feedback provides no completion evidence",
+      "recovery": "Wait for the visible result state",
+      "evidence": "media/motion.mp4 75.6-90.0s"
+    },
+    {
+      "name": "Failure and recovery",
+      "trigger": "Attempt to proceed without the demonstrated selection or context",
+      "response": "The workflow remains incomplete rather than reaching the result",
+      "feedback": "The expected result state is absent",
+      "cancellation": "Return to the preceding stable surface",
+      "failure": "Required context is missing",
+      "recovery": "Restore the demonstrated context and repeat the confirmed action",
+      "evidence": "Contrast media/motion.mp4 28.8-45.0s with media/motion.mp4 75.6-90.0s"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time Discord user following the upstream owner's official walkthrough",
+    "goal": "Reach the first meaningful Discord result demonstrated in the official walkthrough",
+    "prerequisites": [
+      "A supported browser",
+      "Network access",
+      "Any account, workspace, or source material shown by the official tutorial"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the product surface used by the official tutorial",
+        "system_response": "The product presents the initial application context",
+        "state": "Entry surface",
+        "evidence": "media/motion.mp4 0.0-14.4s"
+      },
+      {
+        "index": 2,
+        "user_action": "Invoke the tutorial's demonstrated primary control",
+        "system_response": "The product opens the task-specific surface",
+        "state": "Task opened",
+        "evidence": "media/motion.mp4 14.4-28.8s"
+      },
+      {
+        "index": 3,
+        "user_action": "Choose the demonstrated item, destination, or workspace context",
+        "system_response": "The selected target becomes active",
+        "state": "Target selected",
+        "evidence": "media/motion.mp4 28.8-45.0s"
+      },
+      {
+        "index": 4,
+        "user_action": "Provide or adjust the demonstrated configuration",
+        "system_response": "The interface reflects the in-progress configuration",
+        "state": "Configured in-progress state",
+        "evidence": "media/motion.mp4 45.0-59.4s"
+      },
+      {
+        "index": 5,
+        "user_action": "Confirm, create, run, send, or save as demonstrated",
+        "system_response": "The product executes the requested operation",
+        "state": "Operation committed",
+        "evidence": "media/motion.mp4 59.4-75.6s"
+      },
+      {
+        "index": 6,
+        "user_action": "Observe the operation feedback",
+        "system_response": "The official recording shows the first meaningful result",
+        "state": "First meaningful result",
+        "evidence": "media/motion.mp4 75.6-90.0s"
+      }
+    ],
+    "failure_route": [
+      "Without the demonstrated context or selection, the workflow remains before the result state.",
+      "Leaving before the commit or feedback interval provides no completion evidence."
+    ],
+    "recovery_route": [
+      "Return to the stable task surface shown before confirmation.",
+      "Restore the demonstrated selection or configuration, repeat the commit action, and wait for the result feedback."
+    ],
+    "completion_evidence": "media/motion.mp4 75.6-90.0s"
+  },
+  "motion_analysis": {
+    "trigger": "The demonstrated pointer or keyboard action in the official walkthrough",
+    "start_state": "Entry or configured product surface",
+    "end_state": "Visible first meaningful result",
+    "continuity": "Continuous authentic screen recording; no still-image interpolation",
+    "timing_class": "one-to-three-seconds",
+    "feedback": "Selection, surface change, progress, and result visibility in the local motion asset",
+    "interruption_or_reversal": "Backtracking is possible before commit; post-commit reversal is not established by this evidence",
+    "reduced_motion_equivalent": "Not established by the official recording; retained as an accessibility unknown",
+    "timing_description": "Immediate control feedback followed by task-dependent result feedback"
+  },
+  "accessibility": {
+    "observations": [
+      "The recorded interface uses visible text labels and persistent spatial grouping for the demonstrated path.",
+      "Active context, selection, or result changes are conveyed visually in the retained motion and state frames."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, and live-region announcements were not exposed by the static-source recording.",
+      "Complete keyboard traversal and focus order were not established by the recording.",
+      "Reduced-motion preference handling and a nonanimated equivalent were not demonstrated."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "fewer than three accessibility observations",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

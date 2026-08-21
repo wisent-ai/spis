@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921623,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Terraform CLI authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Terraform CLI\r\n"]
+[0.55,"o","cli-ref$ terraform version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","Terraform v1.15.8\r\non darwin_arm64\r\n"]
+[2.2,"o","cli-ref$ terraform --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage: terraform [global options] <subcommand> [args]\r\n\r\nThe available commands for execution are listed below.\r\nThe primary workflow commands are given first, followed by\r\nless common or more advanced commands.\r\n\r\nMain commands:\r\n  init          Prepare your working directory for other commands\r\n  validate      Check whether the configuration is valid\r\n  plan          Show changes required by the current configuration\r\n  apply         Create or update infrastructure\r\n  destroy       Destroy previously-created infrastructure\r\n\r\nAll other commands:\r\n"]
+[5.1,"o","cli-ref$ terraform --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Usage: terraform [global options] <subcommand> [args]\r\n\r\nThe available commands for execution are listed below.\r\nThe primary workflow commands are given first, followed by\r\nless common or more advanced commands.\r\n\r\nMain commands:\r\n  init          Prepare your working directory for other commands\r\n  validate      Check whether the configuration is valid\r\n  plan          Show changes required by the current configuration\r\n  apply         Create or update infrastructure\r\n  destroy       Destroy previously-created infrastructure\r\n\r\nAll other commands:\r\n[exit status 127]\r\n"]
+[7.1,"o","cli-ref$ terraform --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ terraform --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage: terraform [global options] <subcommand> [args]\r\n\r\nThe available commands for execution are listed below.\r\nThe primary workflow commands are given first, followed by\r\n"]

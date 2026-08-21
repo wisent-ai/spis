@@ -1,0 +1,361 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "macos-app-examples",
+  "generated_at": "2026-08-16",
+  "reference_count": 50,
+  "complete_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "Bartender",
+      "path": "references/01-bartender/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 2,
+      "name": "Ice",
+      "path": "references/02-ice/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 3,
+      "name": "Maccy",
+      "path": "references/03-maccy/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 4,
+      "name": "Stats",
+      "path": "references/04-stats/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 5,
+      "name": "Rectangle",
+      "path": "references/05-rectangle/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 6,
+      "name": "Raycast",
+      "path": "references/06-raycast/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 7,
+      "name": "Alfred",
+      "path": "references/07-alfred/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 8,
+      "name": "Keyboard Maestro",
+      "path": "references/08-keyboard-maestro/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 9,
+      "name": "Pages",
+      "path": "references/09-pages/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 10,
+      "name": "Ulysses",
+      "path": "references/10-ulysses/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 11,
+      "name": "Bear",
+      "path": "references/11-bear/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 12,
+      "name": "iA Writer",
+      "path": "references/12-ia-writer/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 13,
+      "name": "Craft",
+      "path": "references/13-craft/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 14,
+      "name": "DEVONthink",
+      "path": "references/14-devonthink/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 15,
+      "name": "Scrivener",
+      "path": "references/15-scrivener/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 16,
+      "name": "Obsidian",
+      "path": "references/16-obsidian/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 17,
+      "name": "Xcode",
+      "path": "references/17-xcode/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 18,
+      "name": "Nova",
+      "path": "references/18-nova/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 19,
+      "name": "BBEdit",
+      "path": "references/19-bbedit/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 20,
+      "name": "Tower",
+      "path": "references/20-tower/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 21,
+      "name": "Fork",
+      "path": "references/21-fork/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 22,
+      "name": "Kaleidoscope",
+      "path": "references/22-kaleidoscope/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 23,
+      "name": "Dash",
+      "path": "references/23-dash/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 24,
+      "name": "Proxyman",
+      "path": "references/24-proxyman/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 25,
+      "name": "Zed",
+      "path": "references/25-zed/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 26,
+      "name": "Sketch",
+      "path": "references/26-sketch/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 27,
+      "name": "Pixelmator Pro",
+      "path": "references/27-pixelmator-pro/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 28,
+      "name": "Affinity Designer",
+      "path": "references/28-affinity-designer/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 29,
+      "name": "Final Cut Pro",
+      "path": "references/29-final-cut-pro/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 30,
+      "name": "Logic Pro",
+      "path": "references/30-logic-pro/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 31,
+      "name": "ScreenFlow",
+      "path": "references/31-screenflow/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 32,
+      "name": "Acorn",
+      "path": "references/32-acorn/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 33,
+      "name": "Mimestream",
+      "path": "references/33-mimestream/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 34,
+      "name": "Spark",
+      "path": "references/34-spark/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 35,
+      "name": "Slack",
+      "path": "references/35-slack/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 36,
+      "name": "Telegram for macOS",
+      "path": "references/36-telegram-for-macos/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 37,
+      "name": "TablePlus",
+      "path": "references/37-tableplus/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 38,
+      "name": "Postico 2",
+      "path": "references/38-postico-2/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 39,
+      "name": "Sequel Ace",
+      "path": "references/39-sequel-ace/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 40,
+      "name": "SQLPro Studio",
+      "path": "references/40-sqlpro-studio/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 41,
+      "name": "Base",
+      "path": "references/41-base/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 42,
+      "name": "Transmit",
+      "path": "references/42-transmit/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 43,
+      "name": "ForkLift",
+      "path": "references/43-forklift/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 44,
+      "name": "Cyberduck",
+      "path": "references/44-cyberduck/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 45,
+      "name": "Little Snitch",
+      "path": "references/45-little-snitch/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 46,
+      "name": "iTerm2",
+      "path": "references/46-iterm2/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 47,
+      "name": "Things",
+      "path": "references/47-things/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 48,
+      "name": "OmniFocus",
+      "path": "references/48-omnifocus/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 49,
+      "name": "Fantastical",
+      "path": "references/49-fantastical/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 50,
+      "name": "MindNode",
+      "path": "references/50-mindnode/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    }
+  ],
+  "measured_at": "2026-08-19",
+  "partial_count": 50
+}

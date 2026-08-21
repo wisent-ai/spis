@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921627,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"rsync authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: rsync\r\n"]
+[0.55,"o","cli-ref$ rsync --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","rsync  version 3.2.7  protocol version 31\r\nCopyright (C) 1996-2022 by Andrew Tridgell, Wayne Davison, and others.\r\nWeb site: https://rsync.samba.org/\r\nCapabilities:\r\n    64-bit files, 64-bit inums, 64-bit timestamps, 64-bit long ints,\r\n    socketpairs, symlinks, symtimes, hardlinks, hardlink-specials,\r\n    hardlink-symlinks, IPv6, atimes, batchfiles, inplace, append, ACLs,\r\n    xattrs, optional secluded-args, iconv, prealloc, stop-at, no crtimes\r\nOptimizations:\r\n    no SIMD-roll, no asm-roll, openssl-crypto, no asm-MD5\r\nChecksum list:\r\n    xxh128 xxh3 xxh64 (xxhash) md5 md4 sha1 none\r\nCompress list:\r\n    zstd lz4 zlibx zlib none\r\n"]
+[2.2,"o","cli-ref$ rsync --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","rsync  version 3.2.7  protocol version 31\r\nCopyright (C) 1996-2022 by Andrew Tridgell, Wayne Davison, and others.\r\nWeb site: https://rsync.samba.org/\r\nCapabilities:\r\n    64-bit files, 64-bit inums, 64-bit timestamps, 64-bit long ints,\r\n    socketpairs, symlinks, symtimes, hardlinks, hardlink-specials,\r\n    hardlink-symlinks, IPv6, atimes, batchfiles, inplace, append, ACLs,\r\n    xattrs, optional secluded-args, iconv, prealloc, stop-at, no crtimes\r\nOptimizations:\r\n    no SIMD-roll, no asm-roll, openssl-crypto, no asm-MD5\r\nChecksum list:\r\n    xxh128 xxh3 xxh64 (xxhash) md5 md4 sha1 none\r\nCompress list:\r\n    zstd lz4 zlibx zlib none\r\n"]
+[5.1,"o","cli-ref$ rsync --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","rsync: --definitely-invalid-option: unknown option\r\nrsync error: syntax or usage error (code 1) at main.c(1817) [client=3.2.7]\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ rsync --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ rsync --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","rsync  version 3.2.7  protocol version 31\r\nCopyright (C) 1996-2022 by Andrew Tridgell, Wayne Davison, and others.\r\nWeb site: https://rsync.samba.org/\r\nCapabilities:\r\n"]

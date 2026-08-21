@@ -1,0 +1,238 @@
+{
+  "name": "Nuxt Documentation",
+  "source_url": "https://nuxt.com/docs/getting-started/introduction",
+  "category": "Web framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 332,
+  "landing_nav": [],
+  "url_sections": {
+    "docs": 281,
+    "blog": 51
+  },
+  "content_kinds": {},
+  "page_anatomy": [
+    {
+      "url": "https://nuxt.com/blog/.navigation",
+      "h1": "Navigation",
+      "h2": []
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/directory-structure",
+      "h1": "Nuxt Directory Structure",
+      "h2": [
+        "Root Directory",
+        "App Directory",
+        "Public Directory",
+        "Server Directory",
+        "Shared Directory",
+        "Test Directory",
+        "Content Directory",
+        "Modules Directory",
+        "Layers Directory",
+        "Nuxt Files"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/introduction",
+      "h1": "Introduction",
+      "h2": [
+        "Automation and Conventions",
+        "Server-Side Rendering"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/installation",
+      "h1": "Installation",
+      "h2": [
+        "Play Online",
+        "New Project",
+        "Next Steps"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/configuration",
+      "h1": "Configuration",
+      "h2": [
+        "Nuxt Configuration",
+        "App Configuration",
+        "runtimeConfig vs. app.config",
+        "External Configuration Files",
+        "Vue Configuration"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/views",
+      "h1": "Views",
+      "h2": [
+        "app.vue",
+        "Components",
+        "Pages",
+        "Layouts",
+        "Advanced: Extending the HTML Template"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/assets",
+      "h1": "Assets",
+      "h2": [
+        "Public Directory",
+        "Assets Directory"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/styling",
+      "h1": "Styling",
+      "h2": [
+        "Local Stylesheets",
+        "External Stylesheets",
+        "Using Preprocessors",
+        "Single File Components (SFC) Styling",
+        "Using PostCSS",
+        "Leveraging Layouts For Multiple Styles",
+        "Third Party Libraries And Modules",
+        "Advanced"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing",
+      "h1": "Routing",
+      "h2": [
+        "Pages",
+        "Navigation",
+        "Route Parameters",
+        "Route Middleware",
+        "Route Validation"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/seo-meta",
+      "h1": "SEO and Meta",
+      "h2": [
+        "Nuxt Config",
+        "useHead",
+        "useSeoMeta",
+        "Components",
+        "Types",
+        "Features",
+        "Example"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/transitions",
+      "h1": "Transitions",
+      "h2": [
+        "Page Transitions",
+        "Layout Transitions",
+        "Global Settings",
+        "Disable Transitions",
+        "JavaScript Hooks",
+        "Dynamic Transitions",
+        "Transition with NuxtPage",
+        "View Transitions API (Experimental)"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/data-fetching",
+      "h1": "Data Fetching",
+      "h2": [
+        "The Need for useFetch and useAsyncData",
+        "$fetch",
+        "useFetch",
+        "useAsyncData",
+        "Return Values",
+        "Options",
+        "Passing Headers and Cookies",
+        "Options API Support",
+        "Serializing Data From Server to Client",
+        "Serializing Data From API Routes",
+        "Recipes"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/state-management",
+      "h1": "State Management",
+      "h2": [
+        "Best Practices",
+        "Example",
+        "Advanced Usage",
+        "Shared State",
+        "Using Third-Party Libraries"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/error-handling",
+      "h1": "Error Handling",
+      "h2": [
+        "Vue Errors",
+        "Startup Errors",
+        "Nitro Server Errors",
+        "Errors with JS Chunks",
+        "Error Page",
+        "Error Utils",
+        "Render Error in Component"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/server",
+      "h1": "Server",
+      "h2": [
+        "Powered by Nitro",
+        "Server Endpoints & Middleware",
+        "Universal Deployment",
+        "Hybrid Rendering"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/layers",
+      "h1": "Layers",
+      "h2": [
+        "Use Cases",
+        "Usage",
+        "Layer Priority",
+        "Example"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/prerendering",
+      "h1": "Prerendering",
+      "h2": [
+        "Crawl-based Pre-rendering",
+        "Payload Extraction",
+        "Runtime Prerender Configuration"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/deployment",
+      "h1": "Deployment",
+      "h2": [
+        "Node.js Server",
+        "Static Hosting",
+        "Hosting Providers",
+        "Presets",
+        "CDN Proxy"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/testing",
+      "h1": "Testing",
+      "h2": [
+        "Installation",
+        "Unit Testing",
+        "End-To-End Testing"
+      ]
+    },
+    {
+      "url": "https://nuxt.com/docs/4.x/getting-started/upgrade",
+      "h1": "Upgrade Guide",
+      "h2": [
+        "Upgrading Nuxt",
+        "Testing Nuxt 5",
+        "Migrating to Nuxt 4",
+        "Nuxt 2 vs. Nuxt 3+",
+        "Nuxt 2 to Nuxt 3+",
+        "Nuxt 2 to Nuxt Bridge"
+      ]
+    }
+  ]
+}

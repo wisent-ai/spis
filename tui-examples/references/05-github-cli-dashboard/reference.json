@@ -1,0 +1,251 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "GitHub CLI Dashboard",
+  "product_url": "https://github.com/dlvhdr/gh-dash",
+  "evidence_status": "partial",
+  "upstream_owner": "dlvhdr",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/product-motion.gif",
+      "source_url": "https://raw.githubusercontent.com/dlvhdr/gh-dash/HEAD/docs/src/assets/overview.gif",
+      "media_kind": "animated-gif",
+      "width": 1600,
+      "height": 800,
+      "duration_seconds": 12.28,
+      "frame_count": 307,
+      "bytes": 2447752,
+      "sha256": "13752e8926e7d77ea1e291f524a058733d451174960505bdb5dbd7780d391f91",
+      "capture_method": "Official upstream product/documentation recording downloaded locally without visual alteration",
+      "declared_media_kind": "animated-gif",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "first stable surface",
+      "local_path": "media/state-1.png",
+      "source_motion_path": "frame of media/product-motion.gif at 0.5s (mean abs diff 0/255)",
+      "width": 1600,
+      "height": 800,
+      "bytes": 331072,
+      "sha256": "68449cac5d53f69b830acfaae8529c12771891a34bce6d8a820e7a4cad56edbe",
+      "source_match": {
+        "motion_path": "media/product-motion.gif",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.5,
+        "mean_abs_diff": 0.0,
+        "sampled_frames": 25
+      }
+    },
+    {
+      "name": "selection or detail transition",
+      "local_path": "media/state-2.png",
+      "source_motion_path": "frame of media/product-motion.gif at 6s (mean abs diff 0/255)",
+      "width": 1600,
+      "height": 800,
+      "bytes": 356581,
+      "sha256": "ac2fa3b7ac903bec44792669ddb41f3fb3da610fef2ae799ac137c9fad639a5a",
+      "source_match": {
+        "motion_path": "media/product-motion.gif",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 6.0,
+        "mean_abs_diff": 0.0,
+        "sampled_frames": 25
+      }
+    },
+    {
+      "name": "help, recovery, or completion",
+      "local_path": "media/state-3.png",
+      "source_motion_path": "frame of media/product-motion.gif at 10.5s (mean abs diff 0/255)",
+      "width": 1600,
+      "height": 800,
+      "bytes": 122270,
+      "sha256": "f52c5fb2174f9284fc8a790131797b343ee6a9816304ccd9005242132a47c206",
+      "source_match": {
+        "motion_path": "media/product-motion.gif",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 10.5,
+        "mean_abs_diff": 0.0,
+        "sampled_frames": 25
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "launch",
+      "trigger": "Invoke the product in the isolated fixture",
+      "response": "The terminal enters the product surface or its first-run gate",
+      "feedback": "Full-screen redraw or explicit startup status",
+      "cancellation": "Quit key or terminal interrupt",
+      "failure": "Missing service, account, device, or configuration is surfaced in-terminal",
+      "recovery": "Open help, supply the prerequisite, and relaunch",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "move selection",
+      "trigger": "j or Down",
+      "response": "Selection advances by one visible item",
+      "feedback": "Highlight/cursor relocates without leaving the view",
+      "cancellation": "k or Up reverses the move",
+      "failure": "At a boundary the selection remains in place",
+      "recovery": "Reverse direction or change region",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "change focus",
+      "trigger": "Tab or the product panel key",
+      "response": "Keyboard focus moves to another region",
+      "feedback": "Active border, title, cursor, or highlight changes",
+      "cancellation": "Shift-Tab, Tab cycle, or Escape",
+      "failure": "Unavailable regions do not accept focus",
+      "recovery": "Return to the populated primary region",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "confirm or inspect",
+      "trigger": "Enter",
+      "response": "The selected item opens, expands, or becomes the active detail",
+      "feedback": "A detail, child view, dialog, or status repaint appears",
+      "cancellation": "Escape, h, or the parent-navigation key",
+      "failure": "An empty or unavailable selection produces no destructive action",
+      "recovery": "Choose an available item and confirm again",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "open help",
+      "trigger": "? or the product help key",
+      "response": "Shortcut discovery appears or help is requested",
+      "feedback": "Help overlay, footer expansion, or help text",
+      "cancellation": "Escape or the same help key",
+      "failure": "Context may not bind ?",
+      "recovery": "Use the persistent footer/function-key map",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "cancel/backtrack",
+      "trigger": "Escape, h, or Back",
+      "response": "The transient layer closes or parent context returns",
+      "feedback": "Previous selection and primary surface reappear",
+      "cancellation": "Not applicable; this is the cancellation path",
+      "failure": "Root view cannot backtrack further",
+      "recovery": "Resume navigation from the retained selection",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "recover from prerequisite failure",
+      "trigger": "Read the visible error/empty/loading state and invoke help or relaunch after supplying the prerequisite",
+      "response": "The product exposes its supported next action rather than silently proceeding",
+      "feedback": "Explicit status text followed by a stable interactive surface",
+      "cancellation": "Quit leaves the external system unchanged",
+      "failure": "Account, daemon, cluster, device, or data remains unavailable",
+      "recovery": "Restore that named prerequisite and repeat launch",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "quit",
+      "trigger": "q, F10, or the product quit command",
+      "response": "The full-screen surface closes",
+      "feedback": "Terminal control and cursor are restored",
+      "cancellation": "Remain in the surface by not confirming a quit dialog",
+      "failure": "A modal may consume the first quit key",
+      "recovery": "Dismiss the modal, then use the documented quit command",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    }
+  ],
+  "journey": {
+    "actor": "Keyboard user evaluating the real terminal application",
+    "goal": "Reach the first inspectable git and developer workflows result in GitHub CLI Dashboard, discover controls, and recover from a blocked or transient state",
+    "prerequisites": [
+      "https://github.com/dlvhdr/gh-dash",
+      "A terminal with keyboard input",
+      "The product-specific local data, account, daemon, device, or service shown in the recording"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Launch GitHub CLI Dashboard with the recorded prerequisite/fixture",
+        "system_response": "The application claims the terminal and begins its first render",
+        "state": "launch transition",
+        "evidence": "official upstream motion at the opening segment"
+      },
+      {
+        "index": 2,
+        "user_action": "Wait for the first stable product surface",
+        "system_response": "Primary content, an onboarding gate, or an explicit prerequisite state becomes readable",
+        "state": "first stable surface",
+        "evidence": "official upstream motion at the first retained key state"
+      },
+      {
+        "index": 3,
+        "user_action": "Move the active selection within the primary list or table",
+        "system_response": "The highlight/cursor moves and selection-coupled content repaints",
+        "state": "navigated selection",
+        "evidence": "official upstream motion in the early-to-middle segment"
+      },
+      {
+        "index": 4,
+        "user_action": "Change panel/context or inspect the selected item",
+        "system_response": "A secondary region, detail, child view, or contextual status becomes active",
+        "state": "context/detail transition",
+        "evidence": "official upstream motion around the midpoint key state"
+      },
+      {
+        "index": 5,
+        "user_action": "Read the persistent key map or invoke the recorded help/discovery control",
+        "system_response": "The visible footer, function-key map, prompt, or help layer exposes the next supported controls",
+        "state": "help/discovery",
+        "evidence": "official upstream motion in the middle-to-late segment"
+      },
+      {
+        "index": 6,
+        "user_action": "Cancel/backtrack from the transient or nested state",
+        "system_response": "The prior stable context returns with selection continuity where supported",
+        "state": "recovered primary surface",
+        "evidence": "official upstream motion before the final key state"
+      },
+      {
+        "index": 7,
+        "user_action": "Finish the first inspection and leave or settle on the meaningful result",
+        "system_response": "The result remains inspectable or terminal control is cleanly restored",
+        "state": "first-success completion",
+        "evidence": "official upstream motion at the final retained state"
+      }
+    ],
+    "failure_route": [
+      "Launch without a required product-specific prerequisite or reach an unavailable/empty selection.",
+      "Observe the explicit terminal error, empty state, disabled action, or unchanged boundary selection.",
+      "Do not substitute a marketing claim for that recorded failure state."
+    ],
+    "recovery_route": [
+      "Use the recorded help/footer/discovery affordance to identify the supported action.",
+      "Restore the named account, daemon, cluster, device, file, database, or selection prerequisite.",
+      "Relaunch or backtrack and repeat the successful navigation shown in the motion evidence."
+    ],
+    "completion_evidence": "product-motion.gif is local and playable, contains 307 recorded frames/events over 12.280 seconds, and is tied to three retained key states."
+  },
+  "accessibility": {
+    "observations": [
+      "The observed flow is operable from the keyboard.",
+      "Selection/focus is communicated by a cursor, highlight, active border, title, or position change in the retained states.",
+      "Status and errors are rendered as terminal text rather than motion alone.",
+      "The terminal cast/recording can be paused and replayed independently of the live product."
+    ],
+    "unknowns": [
+      "Screen-reader behavior was not exposed by the upstream recording or terminal capture.",
+      "Contrast ratios and color-only distinctions were not instrumentally measured.",
+      "Behavior under user-defined reduced-motion settings is not documented in the observed evidence.",
+      "Mouse parity, switch-control mappings, and nonvisual ordering remain unverified unless visible in the source recording."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

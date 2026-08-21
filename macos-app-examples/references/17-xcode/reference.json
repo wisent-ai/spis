@@ -1,0 +1,277 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Xcode",
+  "product_url": "https://developer.apple.com/xcode/",
+  "evidence_status": "partial",
+  "upstream_owner": "Apple Developer",
+  "captured_at": "2026-08-16T23:27:18Z",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=XapwQYZwmic",
+      "media_kind": "video-mp4",
+      "width": 960,
+      "height": 540,
+      "duration_seconds": 18.0,
+      "frame_count": 270,
+      "bytes": 116522,
+      "sha256": "c06b10237ea861b343fde979ad2fd4c7278b1eaacf514fbee339b44e7d19c127",
+      "capture_method": "Downloaded from the product publisher’s official video channel with yt-dlp, then excerpted and transcoded to H.264 without synthesized frames.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "Assets catalog open on the 'Ember' color set: 'Ember' selected under Colors, editor shows the 'Any Appearance' and 'Dark' wells under 'Universal', inspector Appearances popup reads 'Any, Dark'",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 1.7969/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 60739,
+      "sha256": "15d277c63e07f0b26a3d38f53926182ebca992069ba1734c4d8dc8e3adaa4c88",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 1.0,
+        "mean_abs_diff": 1.7969,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Presenter cutaway, no product UI on screen: a person at a desk beside an Apple Studio Display against a brick wall (the clip leaves Xcode between 2.40s and 7.13s)",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 5s (mean abs diff 1.957/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 458318,
+      "sha256": "4d649b468df819aecc6d494321fec8209b0b23abb9ba0f3d7f627ba62feed307",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.0,
+        "mean_abs_diff": 1.957,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Back in the same 'Ember' color set, unchanged from state 1 except that the pointer has moved into the inspector column (0.456/255 mean abs diff against the state-1 PNG)",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 9.5s (mean abs diff 1.7461/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 61012,
+      "sha256": "e537ec3171000c6048623f642f601a736a55a82e674df25b53239b9407695333",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 9.5,
+        "mean_abs_diff": 1.7461,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Pointer resting on the inspector's Appearances popup, which still reads 'Any, Dark'; both wells still in the editor (0.123/255 mean abs diff from the state-3 PNG)",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/motion.mp4 at 12s (mean abs diff 1.7344/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 61363,
+      "sha256": "2fc813e1b9066a6381f3e43bbaa8acd14763223e98225402c266e1670da541c3",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 12.0,
+        "mean_abs_diff": 1.7344,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Appearances committed to 'None': the 'Dark' well and both well captions are gone and one unlabelled well remains under 'Universal'",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/motion.mp4 at 17.5s (mean abs diff 1.7383/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 61837,
+      "sha256": "63c3041716690a65685f81bcf744645809f0b4291a073870857b4aba1faf1c9d",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 17.5,
+        "mean_abs_diff": 1.7383,
+        "sampled_frames": 36
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Start from the app-development entry point",
+      "response": "Xcode exposes the entry surface visible in the retained motion.",
+      "feedback": "The first state establishes the active surface before manipulation.",
+      "cancellation": "Stopping here leaves the product unchanged.",
+      "failure": "The goal is not yet complete in the entry state.",
+      "recovery": "Choose the setup path.",
+      "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Choose the setup path",
+      "response": "A target control, item, document, or workspace becomes the active context.",
+      "feedback": "The next retained state visibly differs and identifies the active path.",
+      "cancellation": "Focus can remain on the previous context without committing.",
+      "failure": "An unintended target would leave the desired result unavailable.",
+      "recovery": "Move focus to the intended visible target and continue.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Move into the development stage",
+      "response": "The recording advances into the product’s intermediate working state.",
+      "feedback": "Content, controls, or selection context changes in place.",
+      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+      "failure": "Stopping at this state produces no completion evidence.",
+      "recovery": "Select the build or modeling step.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Select the build or modeling step",
+      "response": "The selected operation crosses from preparation into a committed transition.",
+      "feedback": "The fourth state records the immediate product response.",
+      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+      "failure": "Without confirmation, the fifth-state result does not appear.",
+      "recovery": "Repeat the intended selection and confirm it.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+    },
+    {
+      "name": "Completion feedback",
+      "trigger": "Observe the path toward a runnable app",
+      "response": "The recording reaches the first meaningful result for “Move from an app idea to an Xcode development path”.",
+      "feedback": "The fifth local frame is the offline completion evidence.",
+      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+      "failure": "Absence of the fifth state means the journey is incomplete.",
+      "recovery": "Replay the recorded sequence from the entry state.",
+      "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Cancellation and backtracking",
+      "trigger": "Leave the path before the committed transition.",
+      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+      "failure": "Exiting early does not produce completion evidence.",
+      "recovery": "Re-enter through state 2 and continue to state 4.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s; media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Failure boundary",
+      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+      "feedback": "No fifth-state visual is present before commitment.",
+      "cancellation": "The actor may abandon the incomplete path without claiming success.",
+      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s; contrasted with media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Recovery",
+      "trigger": "Resume from the last valid intermediate state.",
+      "response": "The same visible action sequence advances to the retained result.",
+      "feedback": "State 5 supplies positive completion feedback after state 4.",
+      "cancellation": "The actor can still stop before replaying confirmation.",
+      "failure": "A replay that never reaches state 5 remains incomplete.",
+      "recovery": "Replay state 4 and verify state 5.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s; media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning Xcode user",
+    "goal": "Move from an app idea to an Xcode development path",
+    "prerequisites": [
+      "Xcode available on macOS or the official recording environment",
+      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Start from the app-development entry point",
+        "system_response": "Xcode advances to the entry state retained in state 1.",
+        "state": "Entry state: Start from the app-development entry point",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose the setup path",
+        "system_response": "Xcode advances to the invocation state retained in state 2.",
+        "state": "Invocation state: Choose the setup path",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+      },
+      {
+        "index": 3,
+        "user_action": "Move into the development stage",
+        "system_response": "Xcode advances to the focused intermediate state retained in state 3.",
+        "state": "Focused intermediate state: Move into the development stage",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+      },
+      {
+        "index": 4,
+        "user_action": "Select the build or modeling step",
+        "system_response": "Xcode advances to the committed transition retained in state 4.",
+        "state": "Committed transition: Select the build or modeling step",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+      },
+      {
+        "index": 5,
+        "user_action": "Observe the path toward a runnable app",
+        "system_response": "Xcode advances to the first-success result retained in state 5.",
+        "state": "First-success result: Observe the path toward a runnable app",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    ],
+    "failure_route": [
+      "Stop at the third retained state before confirmation; the meaningful result is absent.",
+      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+    ],
+    "recovery_route": [
+      "Return to the second retained state and restore the intended focus or selection.",
+      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+    ],
+    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+  },
+  "accessibility": {
+    "observations": [
+      "Every control in the inspector carries a text label - 'Name', 'Devices', 'Appearances', 'Gamut', 'Localization', the 'High Contrast' checkbox and the device list 'Universal / iPhone / iPad (and Mac Catalyst) / Mac Catalyst Scaled / CarPlay / Mac / Apple Vision / Apple Watch / Apple TV' - while every icon in the left toolbar strip and in the editor's toolbar row is unlabelled in all 270 frames.",
+      "Contrast measured from media/state-01.png: in a 40x10 px crop at x=196,y=75 the selected 'Ember' row of the asset list is #0B61DF and its label glyphs quantize to #E9ECF2, a WCAG contrast ratio of 6.09:1 by the sRGB relative-luminance formula.",
+      "The disabled qualifier '(and Mac Catalyst)' next to 'iPad' is separated from the enabled labels by lightness alone: in a 46x8 px crop at x=896,y=88 of media/state-01.png its darkest pixel is #D7D7D7 against the #FBFBFB inspector background, a WCAG ratio of 1.39:1, and no icon, badge or other marker distinguishes it.",
+      "The appearance setting is readable from a single still in two independent places - the inspector text ('Any, Dark' in states 1, 3 and 4 against 'None' in state 5) and the editor's well count (two captioned wells against one uncaptioned well) - so the committed change does not depend on watching the popup animate.",
+      "No focus ring, tooltip or printed keyboard shortcut appears in any frame; the open Appearances menu marks its current value with a check mark and the pointed row with a blue fill, and the pointer arrow is the only indication of where input is aimed."
+    ],
+    "unknowns": [
+      "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
+      "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
+      "The product’s Reduce Motion behavior and contrast preferences are not demonstrated.",
+      "The inspector's 'High Contrast' checkbox is present but stays unchecked in every frame, so what it changes is not shown.",
+      "The retained frames are a 960x540 downscale of a Retina capture, so glyph pixels are antialiased and the sampled text colors are lighter than the product's design values."
+    ]
+  },
+  "motion_analysis": {
+    "trigger": "In state 4 the pointer is already on the inspector's Appearances popup; at 12.67s the popup menu opens over it showing 'None', a checked 'Any, Dark' and 'Any, Light, Dark', at 13.13s the blue highlight moves up from 'Any, Dark' to 'None', and by 13.93s the menu is gone and the Appearances row reads 'None'. No pressed state or click indicator is drawn, so the mouse-down itself cannot be read off the clip.",
+    "start_state": "Xcode with the 'GratefulMoments' project open on its Assets catalog, the 'Ember' color set selected under Colors, two wells captioned 'Any Appearance' and 'Dark' under 'Universal' in the editor, and the inspector reading Name 'Ember', Devices 'Universal', Appearances 'Any, Dark', Gamut 'Any'. The toolbar reads 'GratefulMoments | iPhone 17 Pro' and the status field 'GratefulMoments: Ready | Today at 1:57 PM'.",
+    "end_state": "The same window with Appearances reading 'None': the 'Dark' well and both well captions are gone and a single unlabelled well sits under 'Universal'. Nothing else changed, and from 14.07s to the 18.0s end no frame differs from its predecessor by more than 0.05/255.",
+    "continuity": "Not one continuous take. At 15fps the clip cuts from the Xcode screen recording to a presenter shot at 2.40s (per-frame change 150.91/255) and cuts back to the same Xcode window at 7.13s (151.18/255); the intervening 4.7s show a person talking at a desk, not the product. Within each Xcode segment the frame never cuts and 214 of 269 frame pairs change by less than 0.2/255.",
+    "timing_class": "one-to-three-seconds",
+    "interruption_or_reversal": "No interruption or reversal of the product change is shown: the popup opens once, the highlight moves once, and the committed 'None' value stays for the remaining 4.1s of the clip. The only thing that returns is the camera - the presenter cutaway at 2.40s ends at 7.13s on the same Xcode window, with the pointer in the same place.",
+    "feedback": "The feedback is the menu itself: a check mark on the current value, a blue fill on the pointed row, and afterwards the editor silently dropping the second well. Mean per-frame change over the clip is 1.266/255, but that figure is dominated by the two cuts; the popup frames measure 0.299/255 at 12.67s, 0.442/255 at 13.13s and 0.217/255 at 13.73s. No progress indicator, badge, toast, undo affordance or confirmation text accompanies the change.",
+    "reduced_motion_equivalent": "Both steps are single-frame hard changes - the menu appears in one frame at 12.67s and the value commits within the 13.73s-13.93s pair, with no fade, slide or easing frames measurable above 0.05/255 in between - so a still of state 4 and a still of state 5 carry the same information as the clip. Xcode's own Reduce Motion behaviour is not shown."
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

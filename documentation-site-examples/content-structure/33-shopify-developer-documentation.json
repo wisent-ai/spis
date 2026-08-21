@@ -1,0 +1,129 @@
+{
+  "name": "Shopify Developer Documentation",
+  "source_url": "https://shopify.dev/docs",
+  "category": "Commerce platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 8685,
+  "landing_nav": [
+    {
+      "text": "Apps",
+      "path": "/docs/apps/build"
+    },
+    {
+      "text": "Storefronts",
+      "path": "/docs/storefronts"
+    },
+    {
+      "text": "Agents",
+      "path": "/docs/agents"
+    },
+    {
+      "text": "Changelog",
+      "path": "/changelog"
+    },
+    {
+      "text": "Help",
+      "path": "/support"
+    },
+    {
+      "text": "Build your first app",
+      "path": "/docs/apps/build"
+    },
+    {
+      "text": "Build a storefront",
+      "path": "/docs/storefronts"
+    },
+    {
+      "text": "Build agents with UCP",
+      "path": "/docs/agents"
+    },
+    {
+      "text": "apps",
+      "path": "/docs/api/shopify-cli/app"
+    },
+    {
+      "text": "themes",
+      "path": "/docs/api/shopify-cli/theme"
+    },
+    {
+      "text": "headless storefronts",
+      "path": "/docs/api/shopify-cli/hydrogen"
+    },
+    {
+      "text": "App Store requirements",
+      "path": "/docs/apps/store/requirements"
+    },
+    {
+      "text": "Theme Store requirements",
+      "path": "/docs/themes/store/requirements"
+    },
+    {
+      "text": "Developer ChangelogThe latest Shopify ecosystem updates",
+      "path": "/changelog"
+    },
+    {
+      "text": "Developer changelog",
+      "path": "/changelog"
+    }
+  ],
+  "url_sections": {
+    "docs": 8684,
+    "changelog": 1
+  },
+  "content_kinds": {
+    "api reference": [
+      "/docs/api/shopify-cli/app",
+      "/docs/api/shopify-cli/theme",
+      "/docs/api/shopify-cli/hydrogen"
+    ],
+    "changelog / release notes": [
+      "changelog",
+      "/changelog",
+      "developer changelog",
+      "developer changelogthe latest shopify ecosystem updates"
+    ],
+    "cli reference": [
+      "/docs/api/shopify-cli/app",
+      "/docs/api/shopify-cli/theme",
+      "/docs/api/shopify-cli/hydrogen"
+    ],
+    "community / support": [
+      "/support"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://shopify.dev/changelog",
+      "h1": "",
+      "h2": [
+        "Full-stack capabilities to power app analytics",
+        "August 2026",
+        "July 2026",
+        "June 2026",
+        "May 2026"
+      ]
+    },
+    {
+      "url": "https://shopify.dev/support",
+      "h1": "Get answers from Dev Community",
+      "h2": [
+        "Anchor to Additional supportAdditional support",
+        "Anchor to General queriesGeneral queries"
+      ]
+    },
+    {
+      "url": "https://shopify.dev/docs/storefronts",
+      "h1": "Build and customize storefronts",
+      "h2": [
+        "Anchor to Complete customization, on Shopify's fully managed platformComplete cu",
+        "Anchor to A flexible theming system that works for your whole teamA flexible the",
+        "Anchor to Integrate seamlessly into merchant workflowsIntegrate seamlessly into ",
+        "Anchor to Full-stack control with the world's most advanced commerce APIsFull-st",
+        "Anchor to Build faster with headless dev toolsBuild faster with headless dev too",
+        "Anchor to Sell anywhere with mobile commerceSell anywhere with mobile commerce",
+        "Anchor to Extend every part of the platformExtend every part of the platform"
+      ]
+    }
+  ]
+}

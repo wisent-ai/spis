@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921622,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"npm CLI authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: npm CLI\r\n"]
+[0.55,"o","cli-ref$ npm --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","10.2.4\r\n"]
+[2.2,"o","cli-ref$ npm help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","npm <command>\r\n\r\nUsage:\r\n\r\nnpm install        install all the dependencies in your project\r\nnpm install <foo>  add the <foo> dependency to your project\r\nnpm test           run this project's tests\r\nnpm run <foo>      run the script named <foo>\r\nnpm <command> -h   quick help on <command>\r\nnpm -l             display usage info for all commands\r\nnpm help <term>    search for help on <term>\r\nnpm help npm       more involved overview\r\n\r\nAll commands:\r\n"]
+[5.1,"o","cli-ref$ npm --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","npm <command>\r\n\r\nUsage:\r\n\r\nnpm install        install all the dependencies in your project\r\nnpm install <foo>  add the <foo> dependency to your project\r\nnpm test           run this project's tests\r\nnpm run <foo>      run the script named <foo>\r\nnpm <command> -h   quick help on <command>\r\nnpm -l             display usage info for all commands\r\nnpm help <term>    search for help on <term>\r\nnpm help npm       more involved overview\r\n\r\nAll commands:\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ npm --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ npm help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","npm <command>\r\n\r\nUsage:\r\n\r\n"]

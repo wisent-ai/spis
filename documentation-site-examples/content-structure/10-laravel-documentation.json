@@ -1,0 +1,731 @@
+{
+  "name": "Laravel Documentation",
+  "source_url": "https://laravel.com/docs",
+  "category": "Backend framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 866,
+  "landing_nav": [
+    {
+      "text": "Home",
+      "path": "/"
+    },
+    {
+      "text": "Release Notes",
+      "path": "/framework/docs/releases"
+    },
+    {
+      "text": "Upgrade Guide",
+      "path": "/framework/docs/upgrade"
+    },
+    {
+      "text": "Contribution Guide",
+      "path": "/framework/docs/contributions"
+    },
+    {
+      "text": "Installation",
+      "path": "/framework/docs/installation"
+    },
+    {
+      "text": "Configuration",
+      "path": "/framework/docs/configuration"
+    },
+    {
+      "text": "Agentic Development",
+      "path": "/framework/docs/ai"
+    },
+    {
+      "text": "Directory Structure",
+      "path": "/framework/docs/structure"
+    },
+    {
+      "text": "Frontend",
+      "path": "/framework/docs/frontend"
+    },
+    {
+      "text": "Starter Kits",
+      "path": "/framework/docs/starter-kits"
+    },
+    {
+      "text": "Deployment",
+      "path": "/framework/docs/deployment"
+    },
+    {
+      "text": "Request Lifecycle",
+      "path": "/framework/docs/lifecycle"
+    },
+    {
+      "text": "Service Container",
+      "path": "/framework/docs/container"
+    },
+    {
+      "text": "Service Providers",
+      "path": "/framework/docs/providers"
+    },
+    {
+      "text": "Facades",
+      "path": "/framework/docs/facades"
+    },
+    {
+      "text": "Routing",
+      "path": "/framework/docs/routing"
+    },
+    {
+      "text": "Middleware",
+      "path": "/framework/docs/middleware"
+    },
+    {
+      "text": "CSRF Protection",
+      "path": "/framework/docs/csrf"
+    },
+    {
+      "text": "Controllers",
+      "path": "/framework/docs/controllers"
+    },
+    {
+      "text": "Requests",
+      "path": "/framework/docs/requests"
+    },
+    {
+      "text": "Responses",
+      "path": "/framework/docs/responses"
+    },
+    {
+      "text": "Views",
+      "path": "/framework/docs/views"
+    },
+    {
+      "text": "Blade Templates",
+      "path": "/framework/docs/blade"
+    },
+    {
+      "text": "Asset Bundling",
+      "path": "/framework/docs/vite"
+    },
+    {
+      "text": "URL Generation",
+      "path": "/framework/docs/urls"
+    },
+    {
+      "text": "Session",
+      "path": "/framework/docs/session"
+    },
+    {
+      "text": "Validation",
+      "path": "/framework/docs/validation"
+    },
+    {
+      "text": "Error Handling",
+      "path": "/framework/docs/errors"
+    },
+    {
+      "text": "Logging",
+      "path": "/framework/docs/logging"
+    },
+    {
+      "text": "Artisan Console",
+      "path": "/framework/docs/artisan"
+    },
+    {
+      "text": "Broadcasting",
+      "path": "/framework/docs/broadcasting"
+    },
+    {
+      "text": "Cache",
+      "path": "/framework/docs/cache"
+    },
+    {
+      "text": "Collections",
+      "path": "/framework/docs/collections"
+    },
+    {
+      "text": "Concurrency",
+      "path": "/framework/docs/concurrency"
+    },
+    {
+      "text": "Context",
+      "path": "/framework/docs/context"
+    },
+    {
+      "text": "Contracts",
+      "path": "/framework/docs/contracts"
+    },
+    {
+      "text": "Events",
+      "path": "/framework/docs/events"
+    },
+    {
+      "text": "File Storage",
+      "path": "/framework/docs/filesystem"
+    },
+    {
+      "text": "Helpers",
+      "path": "/framework/docs/helpers"
+    },
+    {
+      "text": "HTTP Client",
+      "path": "/framework/docs/http-client"
+    },
+    {
+      "text": "Images",
+      "path": "/framework/docs/images"
+    },
+    {
+      "text": "Localization",
+      "path": "/framework/docs/localization"
+    },
+    {
+      "text": "Mail",
+      "path": "/framework/docs/mail"
+    },
+    {
+      "text": "Notifications",
+      "path": "/framework/docs/notifications"
+    },
+    {
+      "text": "Package Development",
+      "path": "/framework/docs/packages"
+    },
+    {
+      "text": "Processes",
+      "path": "/framework/docs/processes"
+    },
+    {
+      "text": "Queues",
+      "path": "/framework/docs/queues"
+    },
+    {
+      "text": "Rate Limiting",
+      "path": "/framework/docs/rate-limiting"
+    },
+    {
+      "text": "Search",
+      "path": "/framework/docs/search"
+    },
+    {
+      "text": "Strings",
+      "path": "/framework/docs/strings"
+    },
+    {
+      "text": "Task Scheduling",
+      "path": "/framework/docs/scheduling"
+    },
+    {
+      "text": "Authentication",
+      "path": "/framework/docs/authentication"
+    },
+    {
+      "text": "Authorization",
+      "path": "/framework/docs/authorization"
+    },
+    {
+      "text": "Email Verification",
+      "path": "/framework/docs/verification"
+    },
+    {
+      "text": "Encryption",
+      "path": "/framework/docs/encryption"
+    },
+    {
+      "text": "Hashing",
+      "path": "/framework/docs/hashing"
+    },
+    {
+      "text": "Password Reset",
+      "path": "/framework/docs/passwords"
+    },
+    {
+      "text": "Getting Started",
+      "path": "/framework/docs/database"
+    },
+    {
+      "text": "Query Builder",
+      "path": "/framework/docs/queries"
+    },
+    {
+      "text": "Pagination",
+      "path": "/framework/docs/pagination"
+    },
+    {
+      "text": "Migrations",
+      "path": "/framework/docs/migrations"
+    },
+    {
+      "text": "Seeding",
+      "path": "/framework/docs/seeding"
+    },
+    {
+      "text": "Redis",
+      "path": "/framework/docs/redis"
+    },
+    {
+      "text": "MongoDB",
+      "path": "/framework/docs/mongodb"
+    },
+    {
+      "text": "Getting Started",
+      "path": "/framework/docs/eloquent"
+    },
+    {
+      "text": "Relationships",
+      "path": "/framework/docs/eloquent-relationships"
+    },
+    {
+      "text": "Collections",
+      "path": "/framework/docs/eloquent-collections"
+    },
+    {
+      "text": "Mutators / Casts",
+      "path": "/framework/docs/eloquent-mutators"
+    },
+    {
+      "text": "API Resources",
+      "path": "/framework/docs/eloquent-resources"
+    },
+    {
+      "text": "Serialization",
+      "path": "/framework/docs/eloquent-serialization"
+    },
+    {
+      "text": "Factories",
+      "path": "/framework/docs/eloquent-factories"
+    },
+    {
+      "text": "AI SDK",
+      "path": "/framework/docs/ai-sdk"
+    },
+    {
+      "text": "MCP",
+      "path": "/framework/docs/mcp"
+    },
+    {
+      "text": "Boost",
+      "path": "/framework/docs/boost"
+    },
+    {
+      "text": "Getting Started",
+      "path": "/framework/docs/testing"
+    },
+    {
+      "text": "HTTP Tests",
+      "path": "/framework/docs/http-tests"
+    },
+    {
+      "text": "Console Tests",
+      "path": "/framework/docs/console-tests"
+    },
+    {
+      "text": "Browser Tests",
+      "path": "/framework/docs/dusk"
+    },
+    {
+      "text": "Database",
+      "path": "/framework/docs/database-testing"
+    },
+    {
+      "text": "Mocking",
+      "path": "/framework/docs/mocking"
+    },
+    {
+      "text": "Cashier (Stripe)",
+      "path": "/framework/docs/billing"
+    },
+    {
+      "text": "Cashier (Paddle)",
+      "path": "/framework/docs/cashier-paddle"
+    },
+    {
+      "text": "Dusk",
+      "path": "/framework/docs/dusk"
+    },
+    {
+      "text": "Envoy",
+      "path": "/framework/docs/envoy"
+    },
+    {
+      "text": "Fortify",
+      "path": "/framework/docs/fortify"
+    },
+    {
+      "text": "Folio",
+      "path": "/framework/docs/folio"
+    },
+    {
+      "text": "Head",
+      "path": "/framework/docs/head"
+    },
+    {
+      "text": "Homestead",
+      "path": "/framework/docs/homestead"
+    },
+    {
+      "text": "Horizon",
+      "path": "/framework/docs/horizon"
+    },
+    {
+      "text": "Mix",
+      "path": "/framework/docs/mix"
+    },
+    {
+      "text": "Octane",
+      "path": "/framework/docs/octane"
+    },
+    {
+      "text": "Passport",
+      "path": "/framework/docs/passport"
+    },
+    {
+      "text": "Pennant",
+      "path": "/framework/docs/pennant"
+    },
+    {
+      "text": "Pint",
+      "path": "/framework/docs/pint"
+    },
+    {
+      "text": "Precognition",
+      "path": "/framework/docs/precognition"
+    },
+    {
+      "text": "Prompts",
+      "path": "/framework/docs/prompts"
+    },
+    {
+      "text": "Pulse",
+      "path": "/framework/docs/pulse"
+    },
+    {
+      "text": "Reverb",
+      "path": "/framework/docs/reverb"
+    },
+    {
+      "text": "Sail",
+      "path": "/framework/docs/sail"
+    },
+    {
+      "text": "Sanctum",
+      "path": "/framework/docs/sanctum"
+    },
+    {
+      "text": "Scout",
+      "path": "/framework/docs/scout"
+    },
+    {
+      "text": "Socialite",
+      "path": "/framework/docs/socialite"
+    },
+    {
+      "text": "Telescope",
+      "path": "/framework/docs/telescope"
+    },
+    {
+      "text": "Valet",
+      "path": "/framework/docs/valet"
+    },
+    {
+      "text": "Changelog",
+      "path": "/framework/docs/changelog"
+    },
+    {
+      "text": "dependency injection",
+      "path": "/framework/docs/container"
+    },
+    {
+      "text": "unit testing",
+      "path": "/framework/docs/testing"
+    },
+    {
+      "text": "real-time events",
+      "path": "/framework/docs/broadcasting"
+    },
+    {
+      "text": "AI assisted development",
+      "path": "/framework/docs/ai"
+    },
+    {
+      "text": "database migrations",
+      "path": "/framework/docs/migrations"
+    },
+    {
+      "text": "frontend development",
+      "path": "/framework/docs/frontend"
+    },
+    {
+      "text": "Eloquent ORM",
+      "path": "/framework/docs/eloquent"
+    },
+    {
+      "text": "Vite",
+      "path": "/framework/docs/vite"
+    },
+    {
+      "text": "application starter kits",
+      "path": "/framework/docs/starter-kits"
+    },
+    {
+      "text": "authentication",
+      "path": "/framework/docs/sanctum"
+    },
+    {
+      "text": "Laravel Sanctum",
+      "path": "/framework/docs/sanctum"
+    },
+    {
+      "text": "terms",
+      "path": "/legal"
+    },
+    {
+      "text": "Legal",
+      "path": "/legal"
+    },
+    {
+      "text": "Cloud",
+      "path": "/cloud"
+    },
+    {
+      "text": "Cashier",
+      "path": "/framework/docs/billing"
+    },
+    {
+      "text": "Echo",
+      "path": "/framework/docs/broadcasting"
+    },
+    {
+      "text": "Documentation",
+      "path": "/framework/docs"
+    },
+    {
+      "text": "Starter Kits",
+      "path": "/starter-kits"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog"
+    },
+    {
+      "text": "Community",
+      "path": "/community"
+    },
+    {
+      "text": "Learn",
+      "path": "/learn"
+    },
+    {
+      "text": "Careers",
+      "path": "/careers"
+    },
+    {
+      "text": "Jump24",
+      "path": "/partners/jump24"
+    },
+    {
+      "text": "CACI Limited",
+      "path": "/partners/caci-limited"
+    },
+    {
+      "text": "Threadable",
+      "path": "/partners/threadable"
+    },
+    {
+      "text": "Curotec",
+      "path": "/partners/curotec"
+    },
+    {
+      "text": "Pixel",
+      "path": "/partners/pixel"
+    },
+    {
+      "text": "UCodeSoft",
+      "path": "/partners/ucodesoft"
+    },
+    {
+      "text": "Steadfast Collective",
+      "path": "/partners/steadfast-collective"
+    },
+    {
+      "text": "Tighten",
+      "path": "/partners/tighten"
+    },
+    {
+      "text": "Vehikl",
+      "path": "/partners/vehikl"
+    },
+    {
+      "text": "64 Robots",
+      "path": "/partners/64-robots"
+    },
+    {
+      "text": "See All",
+      "path": "/partners"
+    }
+  ],
+  "url_sections": {
+    "blog": 433,
+    "cloud": 201,
+    "framework": 104,
+    "forge": 63,
+    "learn": 26,
+    "partners": 16,
+    "legal": 11,
+    "nightwatch": 5,
+    "community": 1,
+    "careers": 1,
+    "starter-kits": 1,
+    "boost": 1,
+    "mcp": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "learn",
+      "/learn"
+    ],
+    "getting started / quickstart": [
+      "getting started"
+    ],
+    "guides / how-to": [
+      "upgrade guide",
+      "contribution guide"
+    ],
+    "api reference": [
+      "api resources"
+    ],
+    "changelog / release notes": [
+      "changelog",
+      "release notes",
+      "/framework/docs/releases",
+      "/framework/docs/changelog"
+    ],
+    "troubleshooting / errors": [
+      "error handling",
+      "/framework/docs/errors"
+    ],
+    "migration / upgrade": [
+      "migrations",
+      "upgrade guide",
+      "database migrations",
+      "/framework/docs/upgrade"
+    ],
+    "sdk / client libraries": [
+      "ai sdk",
+      "/framework/docs/ai-sdk"
+    ],
+    "configuration / settings": [
+      "configuration",
+      "/framework/docs/configuration"
+    ],
+    "community / support": [
+      "community",
+      "/community"
+    ],
+    "deployment / production": [
+      "deployment",
+      "/framework/docs/deployment"
+    ],
+    "contributing": [
+      "contribution guide",
+      "/framework/docs/contributions"
+    ],
+    "pricing / limits": [
+      "rate limiting",
+      "/framework/docs/rate-limiting"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://laravel.com/legal",
+      "h1": "Legal documents and policies",
+      "h2": []
+    },
+    {
+      "url": "https://laravel.com/cloud",
+      "h1": "The fastest way to deploy and scale Laravel applications",
+      "h2": [
+        "Speed, simplicity, and scalability without the headaches",
+        "New application",
+        "Everything you need, included",
+        "Security and speed, automatically configured",
+        "Trusted by developers, startups, and enterprises",
+        "Frequently asked questions",
+        "Ready to ship?"
+      ]
+    },
+    {
+      "url": "https://laravel.com/starter-kits",
+      "h1": "The fastest way to start your next application",
+      "h2": [
+        "All new official Starter Kits",
+        "An authenticated application out of the box",
+        "Configurable responsive layouts",
+        "Customize everything",
+        "Ready to build?"
+      ]
+    },
+    {
+      "url": "https://laravel.com/blog",
+      "h1": "Laravel Blog",
+      "h2": [
+        "Customer stories",
+        "Stay connected with Laravel and receive news in your inbox."
+      ]
+    },
+    {
+      "url": "https://laravel.com/community",
+      "h1": "Find an event near you",
+      "h2": [
+        "Laracons",
+        "Organizer resources",
+        "Stay updated on Laravel events"
+      ]
+    },
+    {
+      "url": "https://laravel.com/learn",
+      "h1": "Kickstart your journey with two mini video courses",
+      "h2": []
+    },
+    {
+      "url": "https://laravel.com/careers",
+      "h1": "Make the web.Better. Together.",
+      "h2": [
+        "Benefits",
+        "Open positions"
+      ]
+    },
+    {
+      "url": "https://laravel.com/partners",
+      "h1": "Laravel Partners",
+      "h2": [
+        "How Laravel Partners can help",
+        "Find Your Partner",
+        "Ready to start your project?",
+        "Frequently asked questions",
+        "Grow your business with Laravel"
+      ]
+    },
+    {
+      "url": "https://laravel.com/framework/docs",
+      "h1": "Installation\\n\\nMeet Laravel\\n\\nWhy Laravel?\\n\\n\\nCreating a Laravel Application",
+      "h2": [
+        "Meet Laravel\\nLaravel is a web application framework with expressive, elegant sy",
+        "Getting Started",
+        "Architecture Concepts",
+        "The Basics",
+        "Digging Deeper",
+        "Security",
+        "Database",
+        "Eloquent ORM",
+        "AI",
+        "Testing",
+        "Packages",
+        "API Documentation",
+        "Changelog",
+        "Meet Laravel",
+        "Creating a Laravel Application",
+        "Initial Configuration",
+        "Installation Using Herd",
+        "IDE Support",
+        "Laravel and AI",
+        "Next Steps"
+      ]
+    }
+  ]
+}

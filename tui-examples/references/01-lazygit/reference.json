@@ -1,0 +1,262 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "lazygit",
+  "product_url": "https://github.com/jesseduffield/lazygit",
+  "evidence_status": "partial",
+  "upstream_owner": "jesseduffield",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/product-motion.gif",
+      "source_url": "https://raw.githubusercontent.com/jesseduffield/lazygit/assets/demo/commit_and_push-compressed.gif",
+      "media_kind": "animated-gif",
+      "width": 1140,
+      "height": 828,
+      "duration_seconds": 14.15,
+      "frame_count": 67,
+      "bytes": 472611,
+      "sha256": "59b44d2dc9327f674603f53f5eda892b6f82defa070807a45dfa2c41a85a13c6",
+      "capture_method": "Official upstream product/documentation recording downloaded locally without visual alteration",
+      "declared_media_kind": "animated-gif",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "Files panel focused, '?? my-file.txt' selected on a blue bar with its untracked diff in the right 'Unstaged changes' pane; footer reads 'Stage a file'",
+      "local_path": "media/state-1.png",
+      "source_motion_path": "frame of media/product-motion.gif at 0.5s (mean abs diff 0.0391/255)",
+      "width": 1140,
+      "height": 828,
+      "bytes": 40193,
+      "sha256": "ec6eb2ed1d669c4685c65b024a7023aef49af9834e3de7d625ecfc7cb3c640c4",
+      "source_match": {
+        "motion_path": "media/product-motion.gif",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.5,
+        "mean_abs_diff": 0.0391,
+        "sampled_frames": 28
+      }
+    },
+    {
+      "name": "commit editor open over the panels: 'Commit summary' holds 'my commit summary', 'Commit description' is being typed, and the Command log already shows 'git add -- my-file.txt'",
+      "local_path": "media/state-2.png",
+      "source_motion_path": "frame of media/product-motion.gif at 6.5s (mean abs diff 0.043/255)",
+      "width": 1140,
+      "height": 828,
+      "bytes": 42008,
+      "sha256": "5ea40de9630b441648eb9796c0f879d1c91a35b087ccb354ea9bad67e3d0231c",
+      "source_match": {
+        "motion_path": "media/product-motion.gif",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 6.5,
+        "mean_abs_diff": 0.043,
+        "sampled_frames": 28
+      }
+    },
+    {
+      "name": "'Pushing... /' progress panel over the branch panel after P, with '↑1' in Status, 'feature/demo ↑1' in Local branches and the new commit 0853c88f at the top of Commits",
+      "local_path": "media/state-3.png",
+      "source_motion_path": "frame of media/product-motion.gif at 9s (mean abs diff 0.0078/255)",
+      "width": 1140,
+      "height": 828,
+      "bytes": 39677,
+      "sha256": "33b83423ef88abc4330ea5756181649188ca89748790166b357d1feb604ab7a6",
+      "source_match": {
+        "motion_path": "media/product-motion.gif",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 9.0,
+        "mean_abs_diff": 0.0078,
+        "sampled_frames": 28
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "launch",
+      "trigger": "Invoke the product in the isolated fixture",
+      "response": "The terminal enters the product surface or its first-run gate",
+      "feedback": "Full-screen redraw or explicit startup status",
+      "cancellation": "Quit key or terminal interrupt",
+      "failure": "Missing service, account, device, or configuration is surfaced in-terminal",
+      "recovery": "Open help, supply the prerequisite, and relaunch",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "move selection",
+      "trigger": "j or Down",
+      "response": "Selection advances by one visible item",
+      "feedback": "Highlight/cursor relocates without leaving the view",
+      "cancellation": "k or Up reverses the move",
+      "failure": "At a boundary the selection remains in place",
+      "recovery": "Reverse direction or change region",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "change focus",
+      "trigger": "Tab or the product panel key",
+      "response": "Keyboard focus moves to another region",
+      "feedback": "Active border, title, cursor, or highlight changes",
+      "cancellation": "Shift-Tab, Tab cycle, or Escape",
+      "failure": "Unavailable regions do not accept focus",
+      "recovery": "Return to the populated primary region",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "confirm or inspect",
+      "trigger": "Enter",
+      "response": "The selected item opens, expands, or becomes the active detail",
+      "feedback": "A detail, child view, dialog, or status repaint appears",
+      "cancellation": "Escape, h, or the parent-navigation key",
+      "failure": "An empty or unavailable selection produces no destructive action",
+      "recovery": "Choose an available item and confirm again",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "open help",
+      "trigger": "? or the product help key",
+      "response": "Shortcut discovery appears or help is requested",
+      "feedback": "Help overlay, footer expansion, or help text",
+      "cancellation": "Escape or the same help key",
+      "failure": "Context may not bind ?",
+      "recovery": "Use the persistent footer/function-key map",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "cancel/backtrack",
+      "trigger": "Escape, h, or Back",
+      "response": "The transient layer closes or parent context returns",
+      "feedback": "Previous selection and primary surface reappear",
+      "cancellation": "Not applicable; this is the cancellation path",
+      "failure": "Root view cannot backtrack further",
+      "recovery": "Resume navigation from the retained selection",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "recover from prerequisite failure",
+      "trigger": "Read the visible error/empty/loading state and invoke help or relaunch after supplying the prerequisite",
+      "response": "The product exposes its supported next action rather than silently proceeding",
+      "feedback": "Explicit status text followed by a stable interactive surface",
+      "cancellation": "Quit leaves the external system unchanged",
+      "failure": "Account, daemon, cluster, device, or data remains unavailable",
+      "recovery": "Restore that named prerequisite and repeat launch",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "quit",
+      "trigger": "q, F10, or the product quit command",
+      "response": "The full-screen surface closes",
+      "feedback": "Terminal control and cursor are restored",
+      "cancellation": "Remain in the surface by not confirming a quit dialog",
+      "failure": "A modal may consume the first quit key",
+      "recovery": "Dismiss the modal, then use the documented quit command",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    }
+  ],
+  "journey": {
+    "actor": "Keyboard user evaluating the real terminal application",
+    "goal": "Reach the first inspectable git and developer workflows result in lazygit, discover controls, and recover from a blocked or transient state",
+    "prerequisites": [
+      "https://github.com/jesseduffield/lazygit",
+      "A terminal with keyboard input",
+      "The product-specific local data, account, daemon, device, or service shown in the recording"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Launch lazygit with the recorded prerequisite/fixture",
+        "system_response": "The application claims the terminal and begins its first render",
+        "state": "launch transition",
+        "evidence": "official upstream motion at the opening segment"
+      },
+      {
+        "index": 2,
+        "user_action": "Wait for the first stable product surface",
+        "system_response": "Primary content, an onboarding gate, or an explicit prerequisite state becomes readable",
+        "state": "first stable surface",
+        "evidence": "official upstream motion at the first retained key state"
+      },
+      {
+        "index": 3,
+        "user_action": "Move the active selection within the primary list or table",
+        "system_response": "The highlight/cursor moves and selection-coupled content repaints",
+        "state": "navigated selection",
+        "evidence": "official upstream motion in the early-to-middle segment"
+      },
+      {
+        "index": 4,
+        "user_action": "Change panel/context or inspect the selected item",
+        "system_response": "A secondary region, detail, child view, or contextual status becomes active",
+        "state": "context/detail transition",
+        "evidence": "official upstream motion around the midpoint key state"
+      },
+      {
+        "index": 5,
+        "user_action": "Read the persistent key map or invoke the recorded help/discovery control",
+        "system_response": "The visible footer, function-key map, prompt, or help layer exposes the next supported controls",
+        "state": "help/discovery",
+        "evidence": "official upstream motion in the middle-to-late segment"
+      },
+      {
+        "index": 6,
+        "user_action": "Cancel/backtrack from the transient or nested state",
+        "system_response": "The prior stable context returns with selection continuity where supported",
+        "state": "recovered primary surface",
+        "evidence": "official upstream motion before the final key state"
+      },
+      {
+        "index": 7,
+        "user_action": "Finish the first inspection and leave or settle on the meaningful result",
+        "system_response": "The result remains inspectable or terminal control is cleanly restored",
+        "state": "first-success completion",
+        "evidence": "official upstream motion at the final retained state"
+      }
+    ],
+    "failure_route": [
+      "Launch without a required product-specific prerequisite or reach an unavailable/empty selection.",
+      "Observe the explicit terminal error, empty state, disabled action, or unchanged boundary selection.",
+      "Do not substitute a marketing claim for that recorded failure state."
+    ],
+    "recovery_route": [
+      "Use the recorded help/footer/discovery affordance to identify the supported action.",
+      "Restore the named account, daemon, cluster, device, file, database, or selection prerequisite.",
+      "Relaunch or backtrack and repeat the successful navigation shown in the motion evidence."
+    ],
+    "completion_evidence": "product-motion.gif is local and playable, contains 67 recorded frames over 14.150 seconds, and is tied to three retained key states matched into it at 0.5s, 6.5s and 9.0s (mean abs diff 0.0391, 0.043 and 0.0078/255)."
+  },
+  "accessibility": {
+    "observations": [
+      "Every region carries its name as text in the border - 'Status', 'Files - Worktrees - Submodules', 'Local branches - Remotes - Tags', 'Commits - Reflog', 'Stash', 'Unstaged changes'/'Staged changes', 'Command log' - so a region is identifiable without colour.",
+      "The footer line names the action of the focused context in words and echoes the key that was pressed: 'Stage a file' at 0.5s, 'Commit our changes  Pressing <tab>' at 4s, 'Push to the remote  Pressing P' at 9s.",
+      "File state is a letter code beside the filename ('A' for added, '??' for untracked) and list position is printed as text in the panel border ('1 of 2', '1 of 30', '1 of 31'), so neither depends on colour alone.",
+      "Measured on state-1.png: the selected row's text rgb(255,153,153) on its blue selection bar rgb(0,51,153) is 5.3:1 and the footer's white rgb(255,255,255) on black is 21:1; the diff pane's cyan rgb(153,255,255) on black is 18.1:1.",
+      "Long-running work is reported as text plus a spinning character in a bordered panel ('Pushing... -', 'Pushing... /'), and the Command log keeps the git command that produced each change ('git add -- my-file.txt', 'create mode 100644 my-file.txt', 'bed3ebc..0853c88  feature/demo -> feature/demo')."
+    ],
+    "unknowns": [
+      "Screen-reader behavior was not exposed by the upstream recording.",
+      "The colours measured above are those of the upstream recording's terminal theme, not of an arbitrary user terminal.",
+      "No product-level reduced-motion setting appears anywhere in the recording.",
+      "Mouse parity, switch-control mappings, and nonvisual ordering are not visible in the GIF."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis missing interruption_or_reversal",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19",
+  "motion_analysis": {
+    "trigger": "A keyboard sequence over the running lazygit surface, readable from the footer's key echo: space to stage the selected file, 'c' to open the commit editor, <tab> to move from summary to description, Enter to commit, then 'P' to push.",
+    "start_state": "At 0.5s the Files panel is focused with '?? my-file.txt' selected and its diff shown in the 'Unstaged changes' pane; Commits reads '1 of 30' and Status has no ahead marker.",
+    "end_state": "At 11s the file is committed and pushed: Commits reads '1 of 31' with '0853c88f my commit summary' on top, Status shows the clean check mark again, the Command log's last line is 'bed3ebc..0853c88  feature/demo -> feature/demo', and by 12s the surface has been quit and the terminal is empty.",
+    "continuity": "Panels never move or resize; each step repaints in place. Staging flips the file's marker from '??' to 'A' and retitles the right pane 'Unstaged changes' -> 'Staged changes' while its diff text stays identical, and the commit editor opens as two bordered boxes over the middle of the layout without disturbing the panels around it.",
+    "timing_class": "sub-second",
+    "interruption_or_reversal": null,
+    "feedback": "Blue selection bar, yellow-green active border on the focused panel and on the commit editor, the footer's action name plus echoed key, the '↑1' ahead marker in Status and beside the branch, the 'Pushing... -' / 'Pushing... /' spinner panel, and the Command log line appended per git command.",
+    "reduced_motion_equivalent": "The only animation in the recording is the one-character push spinner; every other change is an instant text repaint that persists, and the push is also reported non-animatedly by the '↑1' marker and the Command log line. No reduced-motion preference is shown in the product."
+  }
+}

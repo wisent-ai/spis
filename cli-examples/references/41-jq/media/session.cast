@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921626,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"jq authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: jq\r\n"]
+[0.55,"o","cli-ref$ jq --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","jq-1.7\r\n"]
+[2.2,"o","cli-ref$ jq --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","jq - commandline JSON processor [version 1.7]\r\n\r\nUsage:\tjq [options] <jq filter> [file...]\r\n\tjq [options] --args <jq filter> [strings...]\r\n\tjq [options] --jsonargs <jq filter> [JSON_TEXTS...]\r\n\r\njq is a tool for processing JSON inputs, applying the given filter to\r\nits JSON text inputs and producing the filter's results as JSON on\r\nstandard output.\r\n\r\nThe simplest filter is ., which copies jq's input to its output\r\nunmodified except for formatting. For more advanced filters see\r\nthe jq(1) manpage (\"man jq\") and/or https://jqlang.github.io/jq/.\r\n"]
+[5.1,"o","cli-ref$ jq --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","jq: Unknown option --definitely-invalid-option\r\nUse jq --help for help with command-line options,\r\nor see the jq manpage, or online docs  at https://jqlang.github.io/jq\r\n[exit status 2]\r\n"]
+[7.1,"o","cli-ref$ jq --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ jq --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","jq - commandline JSON processor [version 1.7]\r\n\r\nUsage:\tjq [options] <jq filter> [file...]\r\n\tjq [options] --args <jq filter> [strings...]\r\n"]

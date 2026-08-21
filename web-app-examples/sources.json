@@ -1,0 +1,5288 @@
+{
+  "schema": "wisent.example-catalog.v2",
+  "catalog": "web-app-examples",
+  "title": "Web app examples",
+  "description": "Browser-based products with application-grade workflows.",
+  "curated_at": "2026-08-16",
+  "count": 50,
+  "examples": [
+    {
+      "name": "Slack",
+      "source_url": "https://app.slack.com/client",
+      "category": "Communication and collaboration",
+      "selection_note": "Study the three-pane workspace, channel switching, unread markers, threaded replies, composer states, and responsive collapse behavior.",
+      "visual": {
+        "source_page_url": "https://app.slack.com/client",
+        "source_image_url": "https://a.slack-edge.com/80588/img/emoji_2017_12_06/sheet_apple_64_indexed_256.png",
+        "local_path": "images/01-slack.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1000,
+        "height": 1000,
+        "original_width": 3328,
+        "original_height": 3328,
+        "bytes": 431578,
+        "sha256": "251335c90efa23015f2f4ad4676cd5d56921cf23a3b533efd078f8da0d782e64",
+        "source_hint": "embedded image URL"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "251335c90efa23015f2f4ad4676cd5d56921cf23a3b533efd078f8da0d782e64",
+        "orientation": "square",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.073
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.784,
+              "width": 1.0,
+              "height": 0.216
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.073,
+              "width": 0.389,
+              "height": 0.711
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.618,
+              "y": 0.073,
+              "width": 0.382,
+              "height": 0.711
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.389,
+              "y": 0.073,
+              "width": 0.229,
+              "height": 0.711
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.096,
+              "strength": 0.908
+            },
+            {
+              "position": 0.218,
+              "strength": 0.877
+            },
+            {
+              "position": 0.389,
+              "strength": 1.0
+            },
+            {
+              "position": 0.618,
+              "strength": 0.888
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.073,
+              "strength": 1.0
+            },
+            {
+              "position": 0.534,
+              "strength": 0.969
+            },
+            {
+              "position": 0.708,
+              "strength": 0.995
+            },
+            {
+              "position": 0.784,
+              "strength": 0.984
+            }
+          ]
+        },
+        "visual_density": "high",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Microsoft Teams",
+      "source_url": "https://teams.microsoft.com/",
+      "category": "Communication and collaboration",
+      "selection_note": "Study the app rail, team and channel hierarchy, meeting workflows, activity badges, and dense workspace navigation.",
+      "visual": {
+        "source_page_url": "https://teams.microsoft.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://teams.microsoft.com/",
+        "local_path": "images/02-microsoft-teams.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 3960,
+        "sha256": "8096aa9cf3f0ca13d0ee56022435124d2c969b27076b85e82f30f2eafedbbe32",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "8096aa9cf3f0ca13d0ee56022435124d2c969b27076b85e82f30f2eafedbbe32",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.26,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.26,
+              "y": 0.12,
+              "width": 0.74,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.436,
+              "strength": 0.737
+            },
+            {
+              "position": 0.512,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.586,
+              "strength": 0.598
+            },
+            {
+              "position": 0.677,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Discord",
+      "source_url": "https://discord.com/app",
+      "category": "Communication and collaboration",
+      "selection_note": "Study the server rail, channel tree, presence indicators, voice-session state, and compact member-list information architecture.",
+      "visual": {
+        "source_page_url": "https://discord.com/app",
+        "source_image_url": "https://cdn.discordapp.com/assets/og_img_discord_home.png",
+        "local_path": "images/03-discord.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 49906,
+        "sha256": "c63ae79835a4680d1bc8a8f8aaf633c7aa1ecc8013b276f33ccdc8d53c64e3b2",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c63ae79835a4680d1bc8a8f8aaf633c7aa1ecc8013b276f33ccdc8d53c64e3b2",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.791,
+              "width": 1.0,
+              "height": 0.209
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.331,
+              "height": 0.671
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.857,
+              "y": 0.12,
+              "width": 0.143,
+              "height": 0.671
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.331,
+              "y": 0.12,
+              "width": 0.526,
+              "height": 0.671
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.331,
+              "strength": 0.766
+            },
+            {
+              "position": 0.472,
+              "strength": 0.899
+            },
+            {
+              "position": 0.561,
+              "strength": 0.924
+            },
+            {
+              "position": 0.857,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.463,
+              "strength": 1.0
+            },
+            {
+              "position": 0.681,
+              "strength": 0.609
+            },
+            {
+              "position": 0.791,
+              "strength": 0.76
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Miro",
+      "source_url": "https://miro.com/app/dashboard/",
+      "category": "Visual collaboration",
+      "selection_note": "Study the dashboard-to-canvas transition, infinite-board controls, collaborator cursors, zoom states, and contextual creation toolbar.",
+      "visual": {
+        "source_page_url": "https://miro.com/app/dashboard/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://miro.com/app/dashboard/",
+        "local_path": "images/04-miro.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 32604,
+        "sha256": "f3c414ea95062665643ebb83bc14d068887c7427a476e05e41293684b125ad77",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "f3c414ea95062665643ebb83bc14d068887c7427a476e05e41293684b125ad77",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.087
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.834,
+              "width": 1.0,
+              "height": 0.166
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.087,
+              "width": 0.262,
+              "height": 0.747
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.75,
+              "y": 0.087,
+              "width": 0.25,
+              "height": 0.747
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.262,
+              "y": 0.087,
+              "width": 0.488,
+              "height": 0.747
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.262,
+              "strength": 0.954
+            },
+            {
+              "position": 0.39,
+              "strength": 0.307
+            },
+            {
+              "position": 0.483,
+              "strength": 0.274
+            },
+            {
+              "position": 0.75,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.087,
+              "strength": 1.0
+            },
+            {
+              "position": 0.351,
+              "strength": 0.585
+            },
+            {
+              "position": 0.75,
+              "strength": 0.53
+            },
+            {
+              "position": 0.834,
+              "strength": 0.441
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Notion",
+      "source_url": "https://www.notion.so/",
+      "category": "Knowledge and productivity",
+      "selection_note": "Study the nested page sidebar, block insertion mechanics, slash-command workflow, breadcrumbs, and database view switching.",
+      "visual": {
+        "source_page_url": "https://www.notion.so/",
+        "source_image_url": "https://www.notion.com/_next/image?url=https%3A%2F%2Fimages.ctfassets.net%2Fspoqsaf9291f%2F3pCHbRV7f5UjIssdK3CDpy%2F7b48cf81bad50d66e31caa5a3b80d5b5%2Ffaire.png&w=1200&q=75",
+        "local_path": "images/05-notion.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 800,
+        "height": 1000,
+        "original_width": 1200,
+        "original_height": 1500,
+        "bytes": 43656,
+        "sha256": "d9b2e4d91a74e2c58f0a26b60a1dd328b65318465c1f9b4a8a4bc91691b7918e",
+        "source_hint": "Renee Solorzano, Sr. Director of Product Design at Faire  next-image socialProofV2_portrait__DHrDX"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d9b2e4d91a74e2c58f0a26b60a1dd328b65318465c1f9b4a8a4bc91691b7918e",
+        "orientation": "portrait",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.133
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.133,
+              "width": 0.29,
+              "height": 0.867
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.643,
+              "y": 0.133,
+              "width": 0.357,
+              "height": 0.867
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.29,
+              "y": 0.133,
+              "width": 0.353,
+              "height": 0.867
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.29,
+              "strength": 0.789
+            },
+            {
+              "position": 0.643,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.133,
+              "strength": 1.0
+            },
+            {
+              "position": 0.269,
+              "strength": 0.524
+            },
+            {
+              "position": 0.594,
+              "strength": 0.612
+            },
+            {
+              "position": 0.709,
+              "strength": 0.508
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Asana",
+      "source_url": "https://app.asana.com/",
+      "source_url_state": "guarded",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "Authenticated application surface; a non-session request is refused.",
+      "category": "Work management",
+      "selection_note": "Study project list, board, and timeline views, task-detail drawers, assignee state, filters, and empty-project guidance.",
+      "visual": {
+        "source_page_url": "https://app.asana.com/",
+        "source_page_url_state": "guarded",
+        "source_page_url_checked_at": "2026-08-19",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://app.asana.com/",
+        "local_path": "images/06-asana.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 13782,
+        "sha256": "cb830b92e9eb5ed72e0162339f4b7be8ccc7eed6817110a393b491a4e5c2b837",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "cb830b92e9eb5ed72e0162339f4b7be8ccc7eed6817110a393b491a4e5c2b837",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.929,
+              "width": 1.0,
+              "height": 0.071
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.339,
+              "height": 0.809
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.598,
+              "y": 0.12,
+              "width": 0.402,
+              "height": 0.809
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.339,
+              "y": 0.12,
+              "width": 0.259,
+              "height": 0.809
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.339,
+              "strength": 0.608
+            },
+            {
+              "position": 0.437,
+              "strength": 0.775
+            },
+            {
+              "position": 0.518,
+              "strength": 0.651
+            },
+            {
+              "position": 0.598,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.372,
+              "strength": 0.325
+            },
+            {
+              "position": 0.466,
+              "strength": 0.15
+            },
+            {
+              "position": 0.658,
+              "strength": 0.33
+            },
+            {
+              "position": 0.929,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Trello",
+      "source_url": "https://trello.com/",
+      "category": "Work management",
+      "selection_note": "Study horizontal board navigation, drag-and-drop cards, inline card creation, list overflow, labels, and activity state.",
+      "visual": {
+        "source_page_url": "https://trello.com/",
+        "source_image_url": "https://images.ctfassets.net/rz1oowkt5gyp/7lpUSxVqNRggpqzCNcnfo1/04cf35d0a0ef60e18c6575eb9a0374e4/inbox-slider.png?w=2184&fm=webp",
+        "local_path": "images/07-trello.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 940,
+        "original_width": 2184,
+        "original_height": 1466,
+        "bytes": 52478,
+        "sha256": "85de45d3d0bd7386a4d80bed69f6065281f66a4dd9a8ba855bf840ef5e921e27",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "85de45d3d0bd7386a4d80bed69f6065281f66a4dd9a8ba855bf840ef5e921e27",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.164
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.808,
+              "width": 1.0,
+              "height": 0.192
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.164,
+              "width": 0.194,
+              "height": 0.644
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.194,
+              "y": 0.164,
+              "width": 0.806,
+              "height": 0.644
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.098,
+              "strength": 0.7
+            },
+            {
+              "position": 0.194,
+              "strength": 0.594
+            },
+            {
+              "position": 0.5,
+              "strength": 1.0
+            },
+            {
+              "position": 0.906,
+              "strength": 0.916
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.164,
+              "strength": 1.0
+            },
+            {
+              "position": 0.301,
+              "strength": 0.654
+            },
+            {
+              "position": 0.667,
+              "strength": 0.576
+            },
+            {
+              "position": 0.808,
+              "strength": 0.478
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Linear",
+      "source_url": "https://linear.app/",
+      "category": "Product development",
+      "selection_note": "Study keyboard-first issue creation, command menus, list-to-detail transitions, status grouping, and optimistic interaction feedback.",
+      "visual": {
+        "source_page_url": "https://linear.app/",
+        "source_image_url": "https://linear.app/static/og/homepage.jpg",
+        "local_path": "images/08-linear.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 5736,
+        "sha256": "ef521b47601a56bc244a258d6cb1daafcd99cda0852f57ab46dc84dbf361831a",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "ef521b47601a56bc244a258d6cb1daafcd99cda0852f57ab46dc84dbf361831a",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.351,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.637,
+              "y": 0.12,
+              "width": 0.363,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.351,
+              "y": 0.12,
+              "width": 0.286,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.351,
+              "strength": 0.87
+            },
+            {
+              "position": 0.457,
+              "strength": 1.0
+            },
+            {
+              "position": 0.547,
+              "strength": 0.68
+            },
+            {
+              "position": 0.637,
+              "strength": 0.768
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.55,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "ClickUp",
+      "source_url": "https://app.clickup.com/",
+      "category": "Work management",
+      "selection_note": "Study hierarchical workspace navigation, configurable task views, custom fields, loading placeholders, and detail-panel workflows.",
+      "visual": {
+        "source_page_url": "https://app.clickup.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://app.clickup.com/",
+        "local_path": "images/09-clickup.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 5208,
+        "sha256": "4909af7c59a16c5aac5074091f6f9743dccf990cec8c8fab0d4ead67cebd0eeb",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "4909af7c59a16c5aac5074091f6f9743dccf990cec8c8fab0d4ead67cebd0eeb",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.108
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.108,
+              "width": 0.26,
+              "height": 0.892
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.26,
+              "y": 0.108,
+              "width": 0.74,
+              "height": 0.892
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.49,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.108,
+              "strength": 0.398
+            },
+            {
+              "position": 0.188,
+              "strength": 0.319
+            },
+            {
+              "position": 0.621,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Figma",
+      "source_url": "https://www.figma.com/files/",
+      "source_url_state": "guarded",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "Authenticated application surface; a non-session request is refused.",
+      "category": "Design and creation",
+      "selection_note": "Study the file browser and editor shell, multiplayer presence, layer navigation, contextual properties, and canvas loading states.",
+      "visual": {
+        "source_page_url": "https://www.figma.com/files/",
+        "source_page_url_state": "guarded",
+        "source_page_url_checked_at": "2026-08-19",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://www.figma.com/files/",
+        "local_path": "images/10-figma.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 10754,
+        "sha256": "d1e8aab20e53abd99f5a65ad5d23c37088e769cfda37083d4e10de37f5581542",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d1e8aab20e53abd99f5a65ad5d23c37088e769cfda37083d4e10de37f5581542",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.358,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.653,
+              "y": 0.12,
+              "width": 0.347,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.358,
+              "y": 0.12,
+              "width": 0.295,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.358,
+              "strength": 0.986
+            },
+            {
+              "position": 0.502,
+              "strength": 1.0
+            },
+            {
+              "position": 0.653,
+              "strength": 0.985
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.379,
+              "strength": 1.0
+            },
+            {
+              "position": 0.674,
+              "strength": 0.934
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Canva",
+      "source_url": "https://www.canva.com/",
+      "category": "Design and creation",
+      "selection_note": "Study template discovery, recent-design organization, editor-side panels, drag-and-drop creation, and export progress feedback.",
+      "visual": {
+        "source_page_url": "https://www.canva.com/",
+        "source_image_url": "https://static.canva.com/static/images/fb_cover-1.jpg",
+        "local_path": "images/11-canva.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 48778,
+        "sha256": "f803dc43b3cc97a72c68d5c9f65bf01313c192ff266198ca6d8cc44c06aca737",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "f803dc43b3cc97a72c68d5c9f65bf01313c192ff266198ca6d8cc44c06aca737",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.11
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.11,
+              "width": 0.152,
+              "height": 0.89
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.602,
+              "y": 0.11,
+              "width": 0.398,
+              "height": 0.89
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.152,
+              "y": 0.11,
+              "width": 0.45,
+              "height": 0.89
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.152,
+              "strength": 0.893
+            },
+            {
+              "position": 0.498,
+              "strength": 0.693
+            },
+            {
+              "position": 0.602,
+              "strength": 0.662
+            },
+            {
+              "position": 0.936,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.11,
+              "strength": 0.946
+            },
+            {
+              "position": 0.218,
+              "strength": 0.941
+            },
+            {
+              "position": 0.634,
+              "strength": 0.99
+            },
+            {
+              "position": 0.732,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Webflow",
+      "source_url": "https://webflow.com/dashboard",
+      "category": "Web creation",
+      "selection_note": "Study site dashboard organization, visual editor panels, breakpoint controls, publishing workflow, and configuration error handling.",
+      "visual": {
+        "source_page_url": "https://webflow.com/dashboard",
+        "source_image_url": "https://d3e54v103j8qbb.cloudfront.net/assets-dashboard/onboarding/AppMarketplace_1.webp",
+        "local_path": "images/12-webflow.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1104,
+        "height": 636,
+        "original_width": 1104,
+        "original_height": 636,
+        "bytes": 17708,
+        "sha256": "28794c75db9071b76ae4ae0346a9f0e028acef9ae1ee0103a1956f307d7e83e3",
+        "source_hint": "embedded image URL"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "28794c75db9071b76ae4ae0346a9f0e028acef9ae1ee0103a1956f307d7e83e3",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.786,
+              "width": 1.0,
+              "height": 0.214
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.273,
+              "height": 0.666
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.762,
+              "y": 0.12,
+              "width": 0.238,
+              "height": 0.666
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.273,
+              "y": 0.12,
+              "width": 0.489,
+              "height": 0.666
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.273,
+              "strength": 0.66
+            },
+            {
+              "position": 0.564,
+              "strength": 0.737
+            },
+            {
+              "position": 0.65,
+              "strength": 0.817
+            },
+            {
+              "position": 0.762,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.502,
+              "strength": 0.774
+            },
+            {
+              "position": 0.589,
+              "strength": 0.544
+            },
+            {
+              "position": 0.695,
+              "strength": 1.0
+            },
+            {
+              "position": 0.786,
+              "strength": 0.575
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Framer",
+      "source_url": "https://framer.com/projects/",
+      "category": "Web creation",
+      "selection_note": "Study project browsing, canvas-to-properties workflow, responsive breakpoint editing, preview state, and publish-status communication.",
+      "visual": {
+        "source_page_url": "https://framer.com/projects/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://framer.com/projects/",
+        "local_path": "images/13-framer.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 7432,
+        "sha256": "bc62328353c2b940da8bf048da53cf36c94346ebd23bf51a185e4a90d96c1a82",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "bc62328353c2b940da8bf048da53cf36c94346ebd23bf51a185e4a90d96c1a82",
+        "orientation": "landscape",
+        "layout_model": "content-inspector",
+        "panel_summary": "Dominant content area with a trailing detail or property inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.76,
+              "y": 0.12,
+              "width": 0.24,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.76,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.427,
+              "strength": 0.561
+            },
+            {
+              "position": 0.511,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.598,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Adobe Express",
+      "source_url": "https://express.adobe.com/",
+      "category": "Content creation",
+      "selection_note": "Study task-oriented creation entry points, template filtering, editor tool grouping, asset upload states, and export workflow.",
+      "visual": {
+        "source_page_url": "https://express.adobe.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://express.adobe.com/",
+        "local_path": "images/14-adobe-express.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 28528,
+        "sha256": "5992d90a9880db591e4e49919023d74780271570429a48ee20e468ca4e599fa0",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5992d90a9880db591e4e49919023d74780271570429a48ee20e468ca4e599fa0",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.908,
+              "width": 1.0,
+              "height": 0.092
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.292,
+              "height": 0.788
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.72,
+              "y": 0.12,
+              "width": 0.28,
+              "height": 0.788
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.292,
+              "y": 0.12,
+              "width": 0.428,
+              "height": 0.788
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.292,
+              "strength": 0.97
+            },
+            {
+              "position": 0.72,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.059,
+              "strength": 1.0
+            },
+            {
+              "position": 0.242,
+              "strength": 0.853
+            },
+            {
+              "position": 0.486,
+              "strength": 0.533
+            },
+            {
+              "position": 0.908,
+              "strength": 0.377
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Descript",
+      "source_url": "https://web.descript.com/",
+      "category": "Audio and video creation",
+      "selection_note": "Study project navigation, transcript-based editing, synchronized media state, processing feedback, and publishing or export controls.",
+      "visual": {
+        "source_page_url": "https://web.descript.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://web.descript.com/",
+        "local_path": "images/15-descript.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 11834,
+        "sha256": "e53ae041f993b599846eda65082ddf5898ad4d46848195878becceca7e8c5227",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "e53ae041f993b599846eda65082ddf5898ad4d46848195878becceca7e8c5227",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.379,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.632,
+              "y": 0.12,
+              "width": 0.368,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.379,
+              "y": 0.12,
+              "width": 0.253,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.379,
+              "strength": 0.791
+            },
+            {
+              "position": 0.473,
+              "strength": 0.964
+            },
+            {
+              "position": 0.557,
+              "strength": 1.0
+            },
+            {
+              "position": 0.632,
+              "strength": 0.833
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.43,
+              "strength": 0.561
+            },
+            {
+              "position": 0.589,
+              "strength": 0.582
+            },
+            {
+              "position": 0.69,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "GitHub",
+      "source_url": "https://github.com/",
+      "category": "Developer tools",
+      "selection_note": "Study repository navigation, pull-request review threads, diff states, action-run status, permissions, and empty repository onboarding.",
+      "visual": {
+        "source_page_url": "https://github.com/",
+        "source_image_url": "https://images.ctfassets.net/8aevphvgewt8/3ip0mnsbUMonRTsbnnIkOh/a940b7a975a801c8829c113d9799873d/hero-961322485af6.webp",
+        "local_path": "images/16-github.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 792,
+        "original_width": 2064,
+        "original_height": 1168,
+        "bytes": 44190,
+        "sha256": "eb2869811b642e9bf1557632c10add8f1c9f7e7250e433e54e0e01783b19520c",
+        "source_hint": "A project management dashboard showing tasks for the ‘OctoArcade Invaders’ project, with tasks grouped under project phase categories like ‘Prototype,’ ‘Beta,’ and ‘Launch’ in a table layout. One of the columns displays sub-issue progress bars with percentages for each issue.  Primer_Brand__Image-module__Image___JSzlx lp-SectionHero-visual-media lp-SectionHero-visual-media--current"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "eb2869811b642e9bf1557632c10add8f1c9f7e7250e433e54e0e01783b19520c",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.187
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.187,
+              "width": 0.26,
+              "height": 0.813
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.646,
+              "y": 0.187,
+              "width": 0.354,
+              "height": 0.813
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.26,
+              "y": 0.187,
+              "width": 0.386,
+              "height": 0.813
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.068,
+              "strength": 1.0
+            },
+            {
+              "position": 0.646,
+              "strength": 0.879
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.187,
+              "strength": 0.914
+            },
+            {
+              "position": 0.279,
+              "strength": 0.961
+            },
+            {
+              "position": 0.572,
+              "strength": 1.0
+            },
+            {
+              "position": 0.678,
+              "strength": 0.88
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "GitLab",
+      "source_url": "https://gitlab.com/dashboard/projects",
+      "category": "Developer tools",
+      "selection_note": "Study project hierarchy, merge-request workflows, pipeline status visualization, issue boards, and role-aware navigation patterns.",
+      "visual": {
+        "source_page_url": "https://gitlab.com/dashboard/projects",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://gitlab.com/dashboard/projects",
+        "local_path": "images/17-gitlab.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 15304,
+        "sha256": "6109d0107beb05e692ccb70ea29382184a8fca3b2f7e9dd533a54b8035bc36ea",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "6109d0107beb05e692ccb70ea29382184a8fca3b2f7e9dd533a54b8035bc36ea",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.147
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.147,
+              "width": 0.196,
+              "height": 0.853
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.196,
+              "y": 0.147,
+              "width": 0.804,
+              "height": 0.853
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.196,
+              "strength": 1.0
+            },
+            {
+              "position": 0.336,
+              "strength": 0.75
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.147,
+              "strength": 0.307
+            },
+            {
+              "position": 0.234,
+              "strength": 1.0
+            },
+            {
+              "position": 0.338,
+              "strength": 0.241
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Vercel",
+      "source_url": "https://vercel.com/dashboard",
+      "category": "Developer infrastructure",
+      "selection_note": "Study project dashboards, deployment timelines, build-log states, environment configuration, domain status, and failure recovery paths.",
+      "visual": {
+        "source_page_url": "https://vercel.com/dashboard",
+        "source_image_url": "https://vercel.com/api/product-og?product=dashboard",
+        "local_path": "images/18-vercel.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 5480,
+        "sha256": "5dbe3cbf89819547a9a978b9b43498edd124dde03b22a013d0dcb88d9410f6ec",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5dbe3cbf89819547a9a978b9b43498edd124dde03b22a013d0dcb88d9410f6ec",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.812,
+              "width": 1.0,
+              "height": 0.188
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.184,
+              "height": 0.692
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.184,
+              "y": 0.12,
+              "width": 0.816,
+              "height": 0.692
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.067,
+              "strength": 0.688
+            },
+            {
+              "position": 0.184,
+              "strength": 1.0
+            },
+            {
+              "position": 0.313,
+              "strength": 0.573
+            },
+            {
+              "position": 0.421,
+              "strength": 0.846
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.609,
+              "strength": 0.344
+            },
+            {
+              "position": 0.689,
+              "strength": 0.47
+            },
+            {
+              "position": 0.812,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Netlify",
+      "source_url": "https://app.netlify.com/",
+      "category": "Developer infrastructure",
+      "selection_note": "Study team and site switching, deploy history, build progress, configuration forms, and actionable failed-deployment states.",
+      "visual": {
+        "source_page_url": "https://app.netlify.com/",
+        "source_image_url": "https://app.netlify.com/og-image-default-app.png",
+        "local_path": "images/19-netlify.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 14172,
+        "sha256": "20db1add480cd2165868b45a14e8d7e46326fae55231b85a118f0cbc392edab3",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "20db1add480cd2165868b45a14e8d7e46326fae55231b85a118f0cbc392edab3",
+        "orientation": "landscape",
+        "layout_model": "single-surface",
+        "panel_summary": "One dominant content surface without a stable secondary panel detected.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.129
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.129,
+              "width": 1.0,
+              "height": 0.871
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.428,
+              "strength": 0.727
+            },
+            {
+              "position": 0.516,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.129,
+              "strength": 0.617
+            },
+            {
+              "position": 0.412,
+              "strength": 0.416
+            },
+            {
+              "position": 0.683,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "low"
+      }
+    },
+    {
+      "name": "Sentry",
+      "source_url": "https://sentry.io/",
+      "category": "Developer observability",
+      "selection_note": "Study issue triage, stack-trace disclosure, event filtering, severity state, loading charts, and resolution workflow design.",
+      "visual": {
+        "source_page_url": "https://sentry.io/",
+        "source_image_url": "https://sentry.io/_astro/home-hero-meta.DJDejDMD.webp",
+        "local_path": "images/20-sentry.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 37756,
+        "sha256": "95972872be6f5212012cbfa6fa258f5e5ae3c7679bd38da2ce49cb04f6ecdce2",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "95972872be6f5212012cbfa6fa258f5e5ae3c7679bd38da2ce49cb04f6ecdce2",
+        "orientation": "landscape",
+        "layout_model": "content-inspector",
+        "panel_summary": "Dominant content area with a trailing detail or property inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.789,
+              "y": 0.12,
+              "width": 0.211,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.789,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.532,
+              "strength": 1.0
+            },
+            {
+              "position": 0.617,
+              "strength": 0.735
+            },
+            {
+              "position": 0.789,
+              "strength": 0.828
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.26,
+              "strength": 0.844
+            },
+            {
+              "position": 0.404,
+              "strength": 0.62
+            },
+            {
+              "position": 0.617,
+              "strength": 1.0
+            },
+            {
+              "position": 0.729,
+              "strength": 0.825
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Postman",
+      "source_url": "https://web.postman.co/",
+      "category": "API development",
+      "selection_note": "Study workspace and collection navigation, request composition, tab persistence, response states, and environment-variable controls.",
+      "visual": {
+        "source_page_url": "https://web.postman.co/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://web.postman.co/",
+        "local_path": "images/21-postman.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 12802,
+        "sha256": "137c5d9ff4ec5f89dee61aa1969431904bb8b80af0a54fdd31235e2ac0ac94f2",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "137c5d9ff4ec5f89dee61aa1969431904bb8b80af0a54fdd31235e2ac0ac94f2",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.202
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.202,
+              "width": 0.383,
+              "height": 0.798
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.629,
+              "y": 0.202,
+              "width": 0.371,
+              "height": 0.798
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.383,
+              "y": 0.202,
+              "width": 0.246,
+              "height": 0.798
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.383,
+              "strength": 1.0
+            },
+            {
+              "position": 0.464,
+              "strength": 0.89
+            },
+            {
+              "position": 0.543,
+              "strength": 0.749
+            },
+            {
+              "position": 0.629,
+              "strength": 0.725
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.202,
+              "strength": 1.0
+            },
+            {
+              "position": 0.302,
+              "strength": 0.61
+            },
+            {
+              "position": 0.397,
+              "strength": 0.686
+            },
+            {
+              "position": 0.503,
+              "strength": 0.753
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Replit",
+      "source_url": "https://replit.com/",
+      "category": "Cloud development",
+      "selection_note": "Study project creation, browser IDE layout, run and console feedback, multiplayer presence, and constrained responsive panels.",
+      "visual": {
+        "source_page_url": "https://replit.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://replit.com/",
+        "local_path": "images/22-replit.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 19700,
+        "sha256": "7bcc04a7440aded3d9bd98ee4b8e1ddd0f269176dc52892ebaa7ddc762585a87",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "7bcc04a7440aded3d9bd98ee4b8e1ddd0f269176dc52892ebaa7ddc762585a87",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.784,
+              "width": 1.0,
+              "height": 0.216
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.41,
+              "height": 0.664
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.41,
+              "y": 0.12,
+              "width": 0.59,
+              "height": 0.664
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.41,
+              "strength": 0.874
+            },
+            {
+              "position": 0.509,
+              "strength": 1.0
+            },
+            {
+              "position": 0.59,
+              "strength": 0.849
+            },
+            {
+              "position": 0.681,
+              "strength": 0.832
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.463,
+              "strength": 0.772
+            },
+            {
+              "position": 0.546,
+              "strength": 0.337
+            },
+            {
+              "position": 0.633,
+              "strength": 0.485
+            },
+            {
+              "position": 0.784,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Supabase",
+      "source_url": "https://supabase.com/dashboard",
+      "category": "Backend development",
+      "selection_note": "Study organization-to-project navigation, table editing, SQL execution, authentication management, logs, and destructive-action confirmation.",
+      "visual": {
+        "source_page_url": "https://supabase.com/dashboard",
+        "source_image_url": "https://supabase.com/dashboard/img/supabase-og.png",
+        "local_path": "images/23-supabase.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 13326,
+        "sha256": "fec2d2c7d60c4534dba1ccc737a2438ea2aee4f8c37570dcb51a654d7ea7b839",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "fec2d2c7d60c4534dba1ccc737a2438ea2aee4f8c37570dcb51a654d7ea7b839",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.346,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.658,
+              "y": 0.12,
+              "width": 0.342,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.346,
+              "y": 0.12,
+              "width": 0.312,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.346,
+              "strength": 0.809
+            },
+            {
+              "position": 0.52,
+              "strength": 1.0
+            },
+            {
+              "position": 0.658,
+              "strength": 0.822
+            },
+            {
+              "position": 0.797,
+              "strength": 0.696
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.267,
+              "strength": 0.385
+            },
+            {
+              "position": 0.502,
+              "strength": 1.0
+            },
+            {
+              "position": 0.651,
+              "strength": 0.452
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Cloudflare Dashboard",
+      "source_url": "https://dash.cloudflare.com/",
+      "category": "Web infrastructure and operations",
+      "selection_note": "Study account and domain switching, service navigation, analytics loading states, DNS editing, and configuration validation feedback.",
+      "visual": {
+        "source_page_url": "https://dash.cloudflare.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://dash.cloudflare.com/",
+        "local_path": "images/24-cloudflare-dashboard.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 14958,
+        "sha256": "cc7f20f6b6aef4d97defc14568c1071fcfbf70d0b83140d66eb2e3ab8272d475",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "cc7f20f6b6aef4d97defc14568c1071fcfbf70d0b83140d66eb2e3ab8272d475",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.147
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.147,
+              "width": 0.196,
+              "height": 0.853
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.196,
+              "y": 0.147,
+              "width": 0.804,
+              "height": 0.853
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.196,
+              "strength": 1.0
+            },
+            {
+              "position": 0.288,
+              "strength": 0.803
+            },
+            {
+              "position": 0.372,
+              "strength": 0.983
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.147,
+              "strength": 0.547
+            },
+            {
+              "position": 0.234,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Stripe Dashboard",
+      "source_url": "https://dashboard.stripe.com/",
+      "category": "Finance and payments",
+      "selection_note": "Study global test-mode state, transaction tables, payment detail timelines, filtering, dispute workflows, and empty analytics panels.",
+      "visual": {
+        "source_page_url": "https://dashboard.stripe.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://dashboard.stripe.com/",
+        "local_path": "images/25-stripe-dashboard.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 21774,
+        "sha256": "50745d4940dbd0bdeab66339b8f029ec68d52e4f1a46d6e050d683a343499281",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "50745d4940dbd0bdeab66339b8f029ec68d52e4f1a46d6e050d683a343499281",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.844,
+              "width": 1.0,
+              "height": 0.156
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.334,
+              "height": 0.724
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.732,
+              "y": 0.12,
+              "width": 0.268,
+              "height": 0.724
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.334,
+              "y": 0.12,
+              "width": 0.398,
+              "height": 0.724
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.334,
+              "strength": 0.624
+            },
+            {
+              "position": 0.494,
+              "strength": 0.661
+            },
+            {
+              "position": 0.732,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.256,
+              "strength": 0.967
+            },
+            {
+              "position": 0.406,
+              "strength": 0.715
+            },
+            {
+              "position": 0.498,
+              "strength": 1.0
+            },
+            {
+              "position": 0.844,
+              "strength": 0.633
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "QuickBooks Online",
+      "source_url": "https://qbo.intuit.com/",
+      "category": "Finance and accounting",
+      "selection_note": "Study accounting navigation, transaction categorization, reconciliation workflows, dashboard summaries, and form-level validation states.",
+      "visual": {
+        "source_page_url": "https://qbo.intuit.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://qbo.intuit.com/",
+        "local_path": "images/26-quickbooks-online.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 13714,
+        "sha256": "414d169fd2391f56a472996e2851c4a0c4de28da0636310eb7b1e3e9633eb956",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "414d169fd2391f56a472996e2851c4a0c4de28da0636310eb7b1e3e9633eb956",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.366,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.664,
+              "y": 0.12,
+              "width": 0.336,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.366,
+              "y": 0.12,
+              "width": 0.298,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.366,
+              "strength": 0.779
+            },
+            {
+              "position": 0.472,
+              "strength": 1.0
+            },
+            {
+              "position": 0.664,
+              "strength": 0.733
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.227,
+              "strength": 0.853
+            },
+            {
+              "position": 0.307,
+              "strength": 0.474
+            },
+            {
+              "position": 0.411,
+              "strength": 1.0
+            },
+            {
+              "position": 0.565,
+              "strength": 0.498
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Xero",
+      "source_url": "https://go.xero.com/",
+      "category": "Finance and accounting",
+      "selection_note": "Study organization switching, bank reconciliation, invoice status, financial summaries, and exception handling in transaction workflows.",
+      "visual": {
+        "source_page_url": "https://go.xero.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://go.xero.com/",
+        "local_path": "images/27-xero.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 7480,
+        "sha256": "5eb0107ed1ff12dbabdc731992c149b0b1bc0538f46fcc2952c685d360bfb65e",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5eb0107ed1ff12dbabdc731992c149b0b1bc0538f46fcc2952c685d360bfb65e",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.333,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.666,
+              "y": 0.12,
+              "width": 0.334,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.333,
+              "y": 0.12,
+              "width": 0.333,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.333,
+              "strength": 0.918
+            },
+            {
+              "position": 0.482,
+              "strength": 0.997
+            },
+            {
+              "position": 0.666,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.306,
+              "strength": 0.606
+            },
+            {
+              "position": 0.406,
+              "strength": 1.0
+            },
+            {
+              "position": 0.486,
+              "strength": 0.307
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Wise",
+      "source_url": "https://wise.com/",
+      "category": "Finance and international payments",
+      "selection_note": "Study multi-currency account presentation, recipient setup, transfer progress, fee disclosure, verification, and error-prevention patterns.",
+      "visual": {
+        "source_page_url": "https://wise.com/",
+        "source_image_url": "https://wise.com/public-resources/assets/spend/card-asset/large/v2/personal_green_wise_2023_flag_only%403x.png",
+        "local_path": "images/28-wise.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 894,
+        "height": 564,
+        "original_width": 894,
+        "original_height": 564,
+        "bytes": 7258,
+        "sha256": "cea19d6e940da78a7eb806b038aa2acb5809978e1f69732e8396604c6d72c6e2",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "cea19d6e940da78a7eb806b038aa2acb5809978e1f69732e8396604c6d72c6e2",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.106
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.106,
+              "width": 0.204,
+              "height": 0.894
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.204,
+              "y": 0.106,
+              "width": 0.796,
+              "height": 0.894
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.092,
+              "strength": 0.879
+            },
+            {
+              "position": 0.204,
+              "strength": 1.0
+            },
+            {
+              "position": 0.891,
+              "strength": 0.262
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.106,
+              "strength": 0.521
+            },
+            {
+              "position": 0.215,
+              "strength": 0.284
+            },
+            {
+              "position": 0.342,
+              "strength": 1.0
+            },
+            {
+              "position": 0.431,
+              "strength": 0.978
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Ramp",
+      "source_url": "https://app.ramp.com/",
+      "category": "Finance and spend operations",
+      "selection_note": "Study spend-control navigation, card and reimbursement workflows, approval queues, receipt-missing states, and policy exception messaging.",
+      "visual": {
+        "source_page_url": "https://app.ramp.com/",
+        "source_image_url": "https://assets.ramp.com/webflow/ramp-og-all-pages.jpg",
+        "local_path": "images/29-ramp.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 735,
+        "original_width": 2400,
+        "original_height": 1260,
+        "bytes": 38904,
+        "sha256": "1d59bf30ae236a023ff55a4fbb6edc21973acc459afbbb1e1a1375983365a285",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1d59bf30ae236a023ff55a4fbb6edc21973acc459afbbb1e1a1375983365a285",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.146
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.146,
+              "width": 0.354,
+              "height": 0.854
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.694,
+              "y": 0.146,
+              "width": 0.306,
+              "height": 0.854
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.354,
+              "y": 0.146,
+              "width": 0.34,
+              "height": 0.854
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.354,
+              "strength": 0.916
+            },
+            {
+              "position": 0.694,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.146,
+              "strength": 0.932
+            },
+            {
+              "position": 0.29,
+              "strength": 0.45
+            },
+            {
+              "position": 0.554,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Mercury",
+      "source_url": "https://app.mercury.com/",
+      "category": "Business banking",
+      "selection_note": "Study account balances, transaction detail, payment creation, approval state, recipient management, and sensitive-action confirmation.",
+      "visual": {
+        "source_page_url": "https://app.mercury.com/",
+        "source_image_url": "https://app.mercury.com/icons/meta/general.jpg",
+        "local_path": "images/30-mercury.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 735,
+        "original_width": 2400,
+        "original_height": 1260,
+        "bytes": 22082,
+        "sha256": "f534f5a06e9ca5479f9dbe2d27f46e832105a689d2fda62b32f92d4cd6e074f3",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "f534f5a06e9ca5479f9dbe2d27f46e832105a689d2fda62b32f92d4cd6e074f3",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.19
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.19,
+              "width": 0.317,
+              "height": 0.81
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.678,
+              "y": 0.19,
+              "width": 0.322,
+              "height": 0.81
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.317,
+              "y": 0.19,
+              "width": 0.361,
+              "height": 0.81
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.11,
+              "strength": 1.0
+            },
+            {
+              "position": 0.317,
+              "strength": 0.697
+            },
+            {
+              "position": 0.678,
+              "strength": 0.556
+            },
+            {
+              "position": 0.889,
+              "strength": 0.941
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.19,
+              "strength": 1.0
+            },
+            {
+              "position": 0.414,
+              "strength": 0.623
+            },
+            {
+              "position": 0.507,
+              "strength": 0.477
+            },
+            {
+              "position": 0.584,
+              "strength": 0.507
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Zendesk",
+      "source_url": "https://www.zendesk.com/login/",
+      "category": "Customer support operations",
+      "selection_note": "Study agent workspace routing, ticket status and assignment, conversation chronology, macros, and queue-oriented information density.",
+      "visual": {
+        "source_page_url": "https://www.zendesk.com/login/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://www.zendesk.com/login/",
+        "local_path": "images/31-zendesk.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 16316,
+        "sha256": "818dd44962cf137618b4ae3e89e6801394991c9386cba9107093d6bf6cf8dd6f",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "818dd44962cf137618b4ae3e89e6801394991c9386cba9107093d6bf6cf8dd6f",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.147
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.147,
+              "width": 0.197,
+              "height": 0.853
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.197,
+              "y": 0.147,
+              "width": 0.803,
+              "height": 0.853
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.197,
+              "strength": 1.0
+            },
+            {
+              "position": 0.341,
+              "strength": 0.961
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.147,
+              "strength": 0.49
+            },
+            {
+              "position": 0.234,
+              "strength": 1.0
+            },
+            {
+              "position": 0.338,
+              "strength": 0.24
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Intercom",
+      "source_url": "https://app.intercom.com/",
+      "category": "Customer communication operations",
+      "selection_note": "Study shared inbox navigation, assignment state, conversation context, automation handoffs, and empty queue or search states.",
+      "visual": {
+        "source_page_url": "https://app.intercom.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://app.intercom.com/",
+        "local_path": "images/32-intercom.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 15926,
+        "sha256": "7a7c5574761b88dbf5bb208074e939bfa70148ee557483ae9eae1f45df6cb967",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "7a7c5574761b88dbf5bb208074e939bfa70148ee557483ae9eae1f45df6cb967",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.134
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.134,
+              "width": 0.391,
+              "height": 0.866
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.391,
+              "y": 0.134,
+              "width": 0.609,
+              "height": 0.866
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.391,
+              "strength": 1.0
+            },
+            {
+              "position": 0.494,
+              "strength": 0.819
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.134,
+              "strength": 0.501
+            },
+            {
+              "position": 0.226,
+              "strength": 1.0
+            },
+            {
+              "position": 0.409,
+              "strength": 0.282
+            },
+            {
+              "position": 0.525,
+              "strength": 0.402
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Freshdesk",
+      "source_url": "https://freshdesk.com/login",
+      "category": "Customer support operations",
+      "selection_note": "Study ticket list filtering, priority and SLA indicators, agent assignment, response composition, and status-transition workflows.",
+      "visual": {
+        "source_page_url": "https://freshdesk.com/login",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://freshdesk.com/login",
+        "local_path": "images/33-freshdesk.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 13838,
+        "sha256": "5fe6624e9fe7eb7225a06030587058d891b3aaff94dcedc406e8813084acaa27",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5fe6624e9fe7eb7225a06030587058d891b3aaff94dcedc406e8813084acaa27",
+        "orientation": "landscape",
+        "layout_model": "table-or-list",
+        "panel_summary": "Single dominant table or list with controls around its perimeter.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.128
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.128,
+              "width": 1.0,
+              "height": 0.872
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.504,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.128,
+              "strength": 1.0
+            },
+            {
+              "position": 0.286,
+              "strength": 0.702
+            },
+            {
+              "position": 0.402,
+              "strength": 0.406
+            },
+            {
+              "position": 0.525,
+              "strength": 0.644
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Jira",
+      "source_url": "https://start.atlassian.com/",
+      "category": "Product and engineering operations",
+      "selection_note": "Study project switching, issue creation, backlog-to-board movement, workflow status, filters, and permission-aware screen states.",
+      "visual": {
+        "source_page_url": "https://start.atlassian.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://start.atlassian.com/",
+        "local_path": "images/34-jira.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 2240,
+        "sha256": "84f62a61fb28d2e9f501754f3eb6d053adcf33f4413a36c15e718071ab3db921",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "84f62a61fb28d2e9f501754f3eb6d053adcf33f4413a36c15e718071ab3db921",
+        "orientation": "landscape",
+        "layout_model": "single-surface",
+        "panel_summary": "One dominant content surface without a stable secondary panel detected.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [],
+          "horizontal": []
+        },
+        "visual_density": "low",
+        "confidence": "low"
+      }
+    },
+    {
+      "name": "Airtable",
+      "source_url": "https://airtable.com/",
+      "category": "Data work and operations",
+      "selection_note": "Study base and workspace navigation, spreadsheet-database interaction, field configuration, view switching, and collaborative record detail.",
+      "visual": {
+        "source_page_url": "https://airtable.com/",
+        "source_image_url": "https://cdn.sanity.io/images/hlcyrtq5/production/00c20d5108d1335f5a243ddcd70ea4a2d6d9a844-1200x630.webp",
+        "local_path": "images/35-airtable.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 6892,
+        "sha256": "b85c3bdd605994e1fb4eefd0737e2e7241d1f37bc4e46b1831a0825f71066115",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b85c3bdd605994e1fb4eefd0737e2e7241d1f37bc4e46b1831a0825f71066115",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.362,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.637,
+              "y": 0.12,
+              "width": 0.363,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.362,
+              "y": 0.12,
+              "width": 0.275,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.362,
+              "strength": 0.803
+            },
+            {
+              "position": 0.482,
+              "strength": 0.765
+            },
+            {
+              "position": 0.637,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.48,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Shopify Admin",
+      "source_url": "https://admin.shopify.com/",
+      "category": "Commerce operations",
+      "selection_note": "Study admin navigation, product editing, order lifecycle status, bulk actions, analytics summaries, and responsive operational tables.",
+      "visual": {
+        "source_page_url": "https://admin.shopify.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://admin.shopify.com/",
+        "local_path": "images/36-shopify-admin.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 5800,
+        "sha256": "8447058e1327b898314ef93625624db38d4964fcc0a643e9a08b5912fff877fb",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "8447058e1327b898314ef93625624db38d4964fcc0a643e9a08b5912fff877fb",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.085
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.085,
+              "width": 0.377,
+              "height": 0.915
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.728,
+              "y": 0.085,
+              "width": 0.272,
+              "height": 0.915
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.377,
+              "y": 0.085,
+              "width": 0.351,
+              "height": 0.915
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.377,
+              "strength": 0.971
+            },
+            {
+              "position": 0.527,
+              "strength": 1.0
+            },
+            {
+              "position": 0.611,
+              "strength": 0.808
+            },
+            {
+              "position": 0.728,
+              "strength": 0.876
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.085,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Square Dashboard",
+      "source_url": "https://squareup.com/dashboard",
+      "category": "Commerce and payments",
+      "selection_note": "Study location switching, sales summaries, item and inventory management, transaction detail, and onboarding checklist states.",
+      "visual": {
+        "source_page_url": "https://squareup.com/dashboard",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://squareup.com/dashboard",
+        "local_path": "images/37-square-dashboard.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 12684,
+        "sha256": "d5d28c5d2f34db2d26680593e4a8f28e22f3ee95216337e1575490f4952c001f",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d5d28c5d2f34db2d26680593e4a8f28e22f3ee95216337e1575490f4952c001f",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.147
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.147,
+              "width": 0.224,
+              "height": 0.853
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.224,
+              "y": 0.147,
+              "width": 0.776,
+              "height": 0.853
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.134,
+              "strength": 1.0
+            },
+            {
+              "position": 0.224,
+              "strength": 0.65
+            },
+            {
+              "position": 0.378,
+              "strength": 0.565
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.147,
+              "strength": 0.521
+            },
+            {
+              "position": 0.234,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "BigCommerce",
+      "source_url": "https://login.bigcommerce.com/",
+      "category": "Commerce operations",
+      "selection_note": "Study store switching, catalog management, order states, channel configuration, and validation across complex product forms.",
+      "visual": {
+        "source_page_url": "https://login.bigcommerce.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://login.bigcommerce.com/",
+        "local_path": "images/38-bigcommerce.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 16182,
+        "sha256": "cbd24c8b7a3cbb4dc041412de78c2fc6cf69113d04689f1ef8b10dfec8b27b36",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "cbd24c8b7a3cbb4dc041412de78c2fc6cf69113d04689f1ef8b10dfec8b27b36",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.812,
+              "width": 1.0,
+              "height": 0.188
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.364,
+              "height": 0.692
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.646,
+              "y": 0.12,
+              "width": 0.354,
+              "height": 0.692
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.364,
+              "y": 0.12,
+              "width": 0.282,
+              "height": 0.692
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.364,
+              "strength": 0.946
+            },
+            {
+              "position": 0.507,
+              "strength": 0.786
+            },
+            {
+              "position": 0.646,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.339,
+              "strength": 0.555
+            },
+            {
+              "position": 0.467,
+              "strength": 0.993
+            },
+            {
+              "position": 0.581,
+              "strength": 1.0
+            },
+            {
+              "position": 0.812,
+              "strength": 0.664
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Klaviyo",
+      "source_url": "https://www.klaviyo.com/login",
+      "category": "Commerce marketing operations",
+      "selection_note": "Study campaign and flow navigation, audience segmentation, message-building steps, performance reporting, and send-readiness checks.",
+      "visual": {
+        "source_page_url": "https://www.klaviyo.com/login",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://www.klaviyo.com/login",
+        "local_path": "images/39-klaviyo.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 39194,
+        "sha256": "cf3119b6023fb8c211dcd56ac63781a2d3d4754610d8f81a57a152651a2107c3",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "cf3119b6023fb8c211dcd56ac63781a2d3d4754610d8f81a57a152651a2107c3",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.893,
+              "width": 1.0,
+              "height": 0.107
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.233,
+              "height": 0.773
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.736,
+              "y": 0.12,
+              "width": 0.264,
+              "height": 0.773
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.233,
+              "y": 0.12,
+              "width": 0.503,
+              "height": 0.773
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.233,
+              "strength": 0.922
+            },
+            {
+              "position": 0.614,
+              "strength": 0.976
+            },
+            {
+              "position": 0.736,
+              "strength": 1.0
+            },
+            {
+              "position": 0.836,
+              "strength": 0.856
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.258,
+              "strength": 0.689
+            },
+            {
+              "position": 0.393,
+              "strength": 1.0
+            },
+            {
+              "position": 0.71,
+              "strength": 0.721
+            },
+            {
+              "position": 0.893,
+              "strength": 0.666
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Google Drive",
+      "source_url": "https://drive.google.com/",
+      "category": "Productivity and file management",
+      "selection_note": "Study file hierarchy, list and grid views, selection actions, upload progress, sharing permissions, and empty-folder states.",
+      "visual": {
+        "source_page_url": "https://drive.google.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://drive.google.com/",
+        "local_path": "images/40-google-drive.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 45372,
+        "sha256": "339f7a383be3c0672e3397daff4cd730f7e5a7a0364f45daaafcc865cbea4a6b",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "339f7a383be3c0672e3397daff4cd730f7e5a7a0364f45daaafcc865cbea4a6b",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.22
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.849,
+              "width": 1.0,
+              "height": 0.151
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.22,
+              "width": 0.23,
+              "height": 0.629
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.23,
+              "y": 0.22,
+              "width": 0.77,
+              "height": 0.629
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.139,
+              "strength": 0.993
+            },
+            {
+              "position": 0.23,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.22,
+              "strength": 0.975
+            },
+            {
+              "position": 0.352,
+              "strength": 1.0
+            },
+            {
+              "position": 0.628,
+              "strength": 0.997
+            },
+            {
+              "position": 0.849,
+              "strength": 0.886
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Dropbox",
+      "source_url": "https://www.dropbox.com/home",
+      "category": "Productivity and file management",
+      "selection_note": "Study file browsing, breadcrumb navigation, sync and sharing status, preview workflows, bulk actions, and responsive table behavior.",
+      "visual": {
+        "source_page_url": "https://www.dropbox.com/home",
+        "source_image_url": "https://cfl.dropboxstatic.com/static/metaserver/static/images/logo_catalog/dropbox_opengraph_image%402x.png",
+        "local_path": "images/41-dropbox.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 628,
+        "original_width": 1200,
+        "original_height": 628,
+        "bytes": 9680,
+        "sha256": "0159e562df8c2ea4ccba8147dea82570a8b0f47c1b3770e4fc6722e6ef23d0a6",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "0159e562df8c2ea4ccba8147dea82570a8b0f47c1b3770e4fc6722e6ef23d0a6",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.26,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.26,
+              "y": 0.12,
+              "width": 0.74,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.454,
+              "strength": 1.0
+            },
+            {
+              "position": 0.557,
+              "strength": 0.995
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.584,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Todoist",
+      "source_url": "https://app.todoist.com/",
+      "category": "Personal productivity",
+      "selection_note": "Study quick task capture, project navigation, natural-language scheduling, completion feedback, filters, and empty-list encouragement.",
+      "visual": {
+        "source_page_url": "https://app.todoist.com/",
+        "source_image_url": "https://todoist.b-cdn.net/assets/images/5811d27cc3a2767f.jpg",
+        "local_path": "images/42-todoist.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1024,
+        "height": 500,
+        "original_width": 1024,
+        "original_height": 500,
+        "bytes": 11402,
+        "sha256": "97aaeafb4f2958af5d6c9fdec52879e20a464339dba71e42b7c62ba65f7f92ca",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "97aaeafb4f2958af5d6c9fdec52879e20a464339dba71e42b7c62ba65f7f92ca",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.367,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.583,
+              "y": 0.12,
+              "width": 0.417,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.367,
+              "y": 0.12,
+              "width": 0.216,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.231,
+              "strength": 0.843
+            },
+            {
+              "position": 0.367,
+              "strength": 1.0
+            },
+            {
+              "position": 0.583,
+              "strength": 0.673
+            },
+            {
+              "position": 0.677,
+              "strength": 0.576
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.346,
+              "strength": 0.649
+            },
+            {
+              "position": 0.456,
+              "strength": 0.923
+            },
+            {
+              "position": 0.572,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Calendly",
+      "source_url": "https://calendly.com/",
+      "category": "Scheduling productivity",
+      "selection_note": "Study event-type management, availability configuration, booking flow preview, integration status, and no-appointment empty states.",
+      "visual": {
+        "source_page_url": "https://calendly.com/",
+        "source_image_url": "https://images.ctfassets.net/k0lk9kiuza3o/6sN1GkuaBoQ67Nhkqa8Hgn/bcefc60aa064f94237bac2524bad875c/homepage.png",
+        "local_path": "images/43-calendly.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 732,
+        "original_width": 2400,
+        "original_height": 1254,
+        "bytes": 95518,
+        "sha256": "03a0f2a825c75adf0923d9aa4685a5a08e6b8c1c1276221aa2cb70dc87c3e292",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "03a0f2a825c75adf0923d9aa4685a5a08e6b8c1c1276221aa2cb70dc87c3e292",
+        "orientation": "landscape",
+        "layout_model": "content-inspector",
+        "panel_summary": "Dominant content area with a trailing detail or property inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.191
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.668,
+              "y": 0.191,
+              "width": 0.332,
+              "height": 0.809
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.191,
+              "width": 0.668,
+              "height": 0.809
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.083,
+              "strength": 0.763
+            },
+            {
+              "position": 0.668,
+              "strength": 1.0
+            },
+            {
+              "position": 0.773,
+              "strength": 0.849
+            },
+            {
+              "position": 0.889,
+              "strength": 0.856
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.191,
+              "strength": 0.611
+            },
+            {
+              "position": 0.514,
+              "strength": 1.0
+            },
+            {
+              "position": 0.603,
+              "strength": 0.668
+            },
+            {
+              "position": 0.756,
+              "strength": 0.55
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Front",
+      "source_url": "https://app.frontapp.com/",
+      "category": "Team communication operations",
+      "selection_note": "Study shared-inbox structure, conversation assignment, internal comments, collision awareness, snoozing, and queue state transitions.",
+      "visual": {
+        "source_page_url": "https://app.frontapp.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://app.frontapp.com/",
+        "local_path": "images/44-front.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 8780,
+        "sha256": "0c3165369f6bab8a9aafb48c07171cc2814271d78adb2d8b7a3442f7cec29c96",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "0c3165369f6bab8a9aafb48c07171cc2814271d78adb2d8b7a3442f7cec29c96",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.776,
+              "width": 1.0,
+              "height": 0.224
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.408,
+              "height": 0.656
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.603,
+              "y": 0.12,
+              "width": 0.397,
+              "height": 0.656
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.408,
+              "y": 0.12,
+              "width": 0.195,
+              "height": 0.656
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.408,
+              "strength": 0.703
+            },
+            {
+              "position": 0.498,
+              "strength": 1.0
+            },
+            {
+              "position": 0.603,
+              "strength": 0.707
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.379,
+              "strength": 1.0
+            },
+            {
+              "position": 0.481,
+              "strength": 0.576
+            },
+            {
+              "position": 0.575,
+              "strength": 0.535
+            },
+            {
+              "position": 0.776,
+              "strength": 0.336
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Snowflake Snowsight",
+      "source_url": "https://app.snowflake.com/",
+      "category": "Data platform",
+      "selection_note": "Study account and role context, worksheet tabs, query execution states, results exploration, warehouse status, and error messaging.",
+      "visual": {
+        "source_page_url": "https://app.snowflake.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://app.snowflake.com/",
+        "local_path": "images/45-snowflake-snowsight.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 11552,
+        "sha256": "8138b3944e084ba01ccc4f0cbeef9ae424c27d03a537151d31683de9a40d9cd6",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "8138b3944e084ba01ccc4f0cbeef9ae424c27d03a537151d31683de9a40d9cd6",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.381,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.63,
+              "y": 0.12,
+              "width": 0.37,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.381,
+              "y": 0.12,
+              "width": 0.249,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.381,
+              "strength": 0.837
+            },
+            {
+              "position": 0.506,
+              "strength": 1.0
+            },
+            {
+              "position": 0.63,
+              "strength": 0.632
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.461,
+              "strength": 0.311
+            },
+            {
+              "position": 0.574,
+              "strength": 1.0
+            },
+            {
+              "position": 0.677,
+              "strength": 0.614
+            },
+            {
+              "position": 0.758,
+              "strength": 0.692
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Tableau Cloud",
+      "source_url": "https://online.tableau.com/",
+      "category": "Business intelligence",
+      "selection_note": "Study content hierarchy, workbook navigation, dashboard filters, loading visualizations, sharing permissions, and responsive report layouts.",
+      "visual": {
+        "source_page_url": "https://online.tableau.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://online.tableau.com/",
+        "local_path": "images/46-tableau-cloud.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 16244,
+        "sha256": "a2b1bfc30d1dcbbe56653a31b3fefc679392c1e846ed78910d9ed3a6a6599008",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "a2b1bfc30d1dcbbe56653a31b3fefc679392c1e846ed78910d9ed3a6a6599008",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.126
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.126,
+              "width": 0.384,
+              "height": 0.874
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.627,
+              "y": 0.126,
+              "width": 0.373,
+              "height": 0.874
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.384,
+              "y": 0.126,
+              "width": 0.243,
+              "height": 0.874
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.384,
+              "strength": 1.0
+            },
+            {
+              "position": 0.521,
+              "strength": 0.902
+            },
+            {
+              "position": 0.627,
+              "strength": 0.724
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.126,
+              "strength": 0.5
+            },
+            {
+              "position": 0.228,
+              "strength": 0.984
+            },
+            {
+              "position": 0.359,
+              "strength": 0.9
+            },
+            {
+              "position": 0.478,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Microsoft Power BI",
+      "source_url": "https://app.powerbi.com/",
+      "category": "Business intelligence",
+      "selection_note": "Study workspace navigation, report and dataset relationships, filter panes, refresh status, permissions, and visualization loading states.",
+      "visual": {
+        "source_page_url": "https://app.powerbi.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://app.powerbi.com/",
+        "local_path": "images/47-microsoft-power-bi.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 16798,
+        "sha256": "5f09aa9cde96c8ccc2d002e95b61a1869f74af01aba6cb148a1a187f48fc1e74",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5f09aa9cde96c8ccc2d002e95b61a1869f74af01aba6cb148a1a187f48fc1e74",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.838,
+              "width": 1.0,
+              "height": 0.162
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.313,
+              "height": 0.718
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.313,
+              "y": 0.12,
+              "width": 0.687,
+              "height": 0.718
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.087,
+              "strength": 1.0
+            },
+            {
+              "position": 0.313,
+              "strength": 0.419
+            },
+            {
+              "position": 0.922,
+              "strength": 0.772
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.358,
+              "strength": 0.404
+            },
+            {
+              "position": 0.483,
+              "strength": 0.723
+            },
+            {
+              "position": 0.611,
+              "strength": 0.534
+            },
+            {
+              "position": 0.838,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Looker Studio",
+      "source_url": "https://lookerstudio.google.com/",
+      "category": "Data visualization",
+      "selection_note": "Study report browsing, edit-versus-view modes, chart configuration, data-source connection states, and responsive canvas controls.",
+      "visual": {
+        "source_page_url": "https://lookerstudio.google.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://lookerstudio.google.com/",
+        "local_path": "images/48-looker-studio.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 57578,
+        "sha256": "76d6b0b8ba45009ae01ecb7238972d49b0db5de8a6ca16ec62a2c9e4a4b6b605",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "76d6b0b8ba45009ae01ecb7238972d49b0db5de8a6ca16ec62a2c9e4a4b6b605",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.1
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.1,
+              "width": 0.379,
+              "height": 0.9
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.379,
+              "y": 0.1,
+              "width": 0.621,
+              "height": 0.9
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.082,
+              "strength": 1.0
+            },
+            {
+              "position": 0.179,
+              "strength": 0.734
+            },
+            {
+              "position": 0.379,
+              "strength": 0.767
+            },
+            {
+              "position": 0.47,
+              "strength": 0.717
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.1,
+              "strength": 0.747
+            },
+            {
+              "position": 0.362,
+              "strength": 0.31
+            },
+            {
+              "position": 0.438,
+              "strength": 0.554
+            },
+            {
+              "position": 0.698,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "dbt Cloud",
+      "source_url": "https://cloud.getdbt.com/",
+      "category": "Analytics engineering",
+      "selection_note": "Study project and environment navigation, job-run timelines, model lineage, IDE feedback, documentation, and failed-build diagnostics.",
+      "visual": {
+        "source_page_url": "https://cloud.getdbt.com/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://cloud.getdbt.com/",
+        "local_path": "images/49-dbt-cloud.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 25424,
+        "sha256": "11793802d096a38bd3a3ea71fe68f4a7b8d900d356e426ced071746d0ce8067c",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "11793802d096a38bd3a3ea71fe68f4a7b8d900d356e426ced071746d0ce8067c",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.154
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.154,
+              "width": 0.293,
+              "height": 0.846
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.719,
+              "y": 0.154,
+              "width": 0.281,
+              "height": 0.846
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.293,
+              "y": 0.154,
+              "width": 0.426,
+              "height": 0.846
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.293,
+              "strength": 1.0
+            },
+            {
+              "position": 0.391,
+              "strength": 0.303
+            },
+            {
+              "position": 0.496,
+              "strength": 0.293
+            },
+            {
+              "position": 0.719,
+              "strength": 0.932
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.154,
+              "strength": 1.0
+            },
+            {
+              "position": 0.36,
+              "strength": 0.886
+            },
+            {
+              "position": 0.473,
+              "strength": 0.945
+            },
+            {
+              "position": 0.614,
+              "strength": 0.987
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Hex",
+      "source_url": "https://app.hex.tech/",
+      "category": "Collaborative data work",
+      "selection_note": "Study project browsing, notebook cell execution, parameterized apps, collaborative comments, compute state, and published-result transitions.",
+      "visual": {
+        "source_page_url": "https://app.hex.tech/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://app.hex.tech/",
+        "local_path": "images/50-hex.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 25666,
+        "sha256": "d9dcd10adf4043d11c45c7f144199203bb883fcdce0c41535e3e395219c2e058",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d9dcd10adf4043d11c45c7f144199203bb883fcdce0c41535e3e395219c2e058",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.83,
+              "width": 1.0,
+              "height": 0.17
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.263,
+              "height": 0.71
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.747,
+              "y": 0.12,
+              "width": 0.253,
+              "height": 0.71
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.263,
+              "y": 0.12,
+              "width": 0.484,
+              "height": 0.71
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.263,
+              "strength": 0.71
+            },
+            {
+              "position": 0.504,
+              "strength": 1.0
+            },
+            {
+              "position": 0.643,
+              "strength": 0.531
+            },
+            {
+              "position": 0.747,
+              "strength": 0.546
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.379,
+              "strength": 0.419
+            },
+            {
+              "position": 0.457,
+              "strength": 0.336
+            },
+            {
+              "position": 0.541,
+              "strength": 0.466
+            },
+            {
+              "position": 0.83,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    }
+  ],
+  "visual_count": 50,
+  "structure_count": 50
+}

@@ -1,0 +1,259 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "PayPal",
+  "product_url": "https://www.paypal.com/us/digital-wallet",
+  "evidence_status": "partial",
+  "upstream_owner": "PayPal product owner; recording published by PayPal",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=Bq0AQHnQO0w",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 30.0,
+      "frame_count": 450,
+      "bytes": 722644,
+      "sha256": "a35d0bb49313d68ce1dc3e0b2e80e603d381543d455b0c0e6ff600396e2d1fc9",
+      "capture_method": "official publisher YouTube stream downloaded from the product/vendor channel and transcoded to H.264 MP4; no frames synthesized",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "entry / orientation",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 4.5s (mean abs diff 9.793/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 248732,
+      "sha256": "6d98c8c010e9b7feafa6b10d56c8427926dec5c3520faa059ccfea166627be39",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 9.793,
+        "sampled_frames": 60
+      }
+    },
+    {
+      "name": "action in progress",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 15s (mean abs diff 1.8164/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 172948,
+      "sha256": "ea540f2a88b510b6b39bca0148c93a4255db46adca6ef372fe0d4e07475fd9dd",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 15.0,
+        "mean_abs_diff": 1.8164,
+        "sampled_frames": 60
+      }
+    },
+    {
+      "name": "result / established state",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 25.5s (mean abs diff 1.707/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 54586,
+      "sha256": "50edd4f51f942304bd3587e6310ef5c590e6302f9ad0c32e4062bf0af64eab43",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 25.5,
+        "mean_abs_diff": 1.707,
+        "sampled_frames": 60
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "enter the sale amount",
+      "response": "The primary task surface opens.",
+      "feedback": "Selection highlight and surface transition make the response visible.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm payment to the visible result.",
+      "evidence": "media/motion.mp4 00:03.6–00:08.4"
+    },
+    {
+      "name": "focus / selection",
+      "trigger": "present the contactless payment screen",
+      "response": "The chosen field, row, item, or canvas becomes the active target.",
+      "feedback": "The target changes emphasis or reveals contextual controls.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm payment to the visible result.",
+      "evidence": "media/motion.mp4 00:07.8–00:13.2"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Open PayPal Tap to Pay",
+      "response": "The app moves from entry context to the task destination.",
+      "feedback": "Header, content, or navigation state changes.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm payment to the visible result.",
+      "evidence": "media/motion.mp4 00:01.2–00:07.2"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "confirm payment",
+      "response": "The pending action commits and the result transition begins.",
+      "feedback": "A changed state, progress response, or completed item acknowledges the commit.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm payment to the visible result.",
+      "evidence": "media/motion.mp4 00:17.4–00:22.8"
+    },
+    {
+      "name": "cancellation / backtracking",
+      "trigger": "Withhold or reverse the visible commit while the recorded pre-confirmation state is on screen.",
+      "response": "The task remains in its pre-result state; the success artifact is absent.",
+      "feedback": "The unchanged/incomplete state distinguishes cancellation from completion.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm payment to the visible result.",
+      "evidence": "media/motion.mp4 00:11.4–00:17.4"
+    },
+    {
+      "name": "feedback",
+      "trigger": "Complete a visible selection or commit.",
+      "response": "The interface updates immediately or after a bounded progress transition.",
+      "feedback": "Motion, highlight, changed content, or result placement communicates status.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm payment to the visible result.",
+      "evidence": "media/motion.mp4 00:18.6–00:26.4"
+    },
+    {
+      "name": "failure",
+      "trigger": "Reach the recorded pre-confirmation state without issuing the final commit.",
+      "response": "The intended result is not yet present, so the goal remains incomplete.",
+      "feedback": "The pre-result surface remains visibly distinct from state-03.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm payment to the visible result.",
+      "evidence": "media/motion.mp4 00:09.6–00:16.5"
+    },
+    {
+      "name": "recovery",
+      "trigger": "Continue from the incomplete state and confirm payment.",
+      "response": "The product resumes the path and produces the visible result.",
+      "feedback": "The final state replaces the incomplete state.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm payment to the visible result.",
+      "evidence": "media/motion.mp4 00:15.6–00:27.6"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning iPhone user with the minimum product account/device prerequisites",
+    "goal": "Accept an in-person PayPal payment",
+    "prerequisites": [
+      "Compatible iPhone and current iOS version",
+      "Product installed or product-native flow available",
+      "Network/account/permission access only where the observed flow requests it"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open PayPal Tap to Pay",
+        "system_response": "The product exposes its initial context and available next action.",
+        "state": "entry",
+        "evidence": "media/motion.mp4 at 00:01.5"
+      },
+      {
+        "index": 2,
+        "user_action": "enter the sale amount",
+        "system_response": "The selected destination or task surface replaces or overlays the prior state.",
+        "state": "selection",
+        "evidence": "media/motion.mp4 at 00:07.5"
+      },
+      {
+        "index": 3,
+        "user_action": "present the contactless payment screen",
+        "system_response": "The product reflects the entered choice or manipulation and exposes the next control.",
+        "state": "configuration",
+        "evidence": "media/motion.mp4 at 00:13.5"
+      },
+      {
+        "index": 4,
+        "user_action": "confirm payment",
+        "system_response": "The product acknowledges the commit and transitions toward the result.",
+        "state": "confirmation",
+        "evidence": "media/motion.mp4 at 00:19.5"
+      },
+      {
+        "index": 5,
+        "user_action": "see successful payment feedback",
+        "system_response": "The completed result remains visible as durable evidence of first success.",
+        "state": "first success",
+        "evidence": "media/motion.mp4 at 00:25.5"
+      }
+    ],
+    "failure_route": [
+      {
+        "step": 1,
+        "user_action": "Stop at the recorded pre-confirmation state instead of committing.",
+        "system_response": "The intended result is absent at this point; the first-success goal remains incomplete.",
+        "evidence": "media/motion.mp4 00:09.6–00:17.4"
+      }
+    ],
+    "recovery_route": [
+      {
+        "step": 1,
+        "user_action": "Continue from the retained incomplete state and confirm payment.",
+        "system_response": "The confirmation transition resumes from the same observed flow.",
+        "evidence": "media/motion.mp4 00:15.0–00:21.6"
+      },
+      {
+        "step": 2,
+        "user_action": "see successful payment feedback",
+        "system_response": "The product shows the documented first-success result: see successful payment feedback.",
+        "evidence": "media/motion.mp4 00:20.4–00:28.2"
+      }
+    ],
+    "completion_evidence": "media/motion.mp4 at 00:25.5 and media/state-03.png"
+  },
+  "accessibility": {
+    "observations": [
+      "Visible text labels and state changes supplement iconography in the retained recording.",
+      "Selection, progress, or completion is communicated by a changed product state rather than motion alone.",
+      "The retained frames preserve the visual context before, during, and after the principal action."
+    ],
+    "unknowns": [
+      "VoiceOver names, hints, rotor order, and focus return were not exposed by the source recording.",
+      "Dynamic Type behavior and text truncation at accessibility sizes were not exposed.",
+      "Reduce Motion behavior and a nonanimated equivalent were not exposed.",
+      "Switch Control, keyboard navigation, contrast ratios, and haptic/audio-only feedback were not measured."
+    ]
+  },
+  "motion_analysis": {
+    "source_title": "How to Use Tap to Pay on iPhone",
+    "trigger": "enter the sale amount",
+    "start_state": "entry / orientation",
+    "end_state": "result / established state",
+    "continuity": "The recording retains the real product transition sequence; transcoding changes encoding only and does not synthesize intermediate frames.",
+    "timing_class": "one-to-three-seconds",
+    "feedback": "Selection emphasis, surface transition, content change, or result placement provides visible acknowledgment.",
+    "interruption_or_reversal": "The retained pre-confirmation state supplies the reversible boundary: withholding or reversing commit leaves the result absent; continuing through confirmation reaches the end state. Exact gesture-interruption semantics are unknown unless visibly demonstrated.",
+    "reduced_motion_equivalent": "Unknown from the retained source; no reduced-motion claim is inferred.",
+    "timing_description": "short guided sequence"
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

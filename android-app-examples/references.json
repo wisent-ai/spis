@@ -1,0 +1,361 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "android-app-examples",
+  "generated_at": "2026-08-16",
+  "reference_count": 50,
+  "complete_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "Google Keep",
+      "path": "references/01-google-keep/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 2,
+      "name": "Todoist",
+      "path": "references/02-todoist/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 3,
+      "name": "Notion",
+      "path": "references/03-notion/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 4,
+      "name": "Trello",
+      "path": "references/04-trello/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 5,
+      "name": "Microsoft 365 Copilot",
+      "path": "references/05-microsoft-365-copilot/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 6,
+      "name": "Google Calendar",
+      "path": "references/06-google-calendar/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 7,
+      "name": "TickTick",
+      "path": "references/07-ticktick/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 8,
+      "name": "Evernote",
+      "path": "references/08-evernote/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 9,
+      "name": "WhatsApp Messenger",
+      "path": "references/09-whatsapp-messenger/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 10,
+      "name": "Signal Private Messenger",
+      "path": "references/10-signal-private-messenger/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 11,
+      "name": "Telegram",
+      "path": "references/11-telegram/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 12,
+      "name": "Slack",
+      "path": "references/12-slack/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 13,
+      "name": "Discord",
+      "path": "references/13-discord/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 14,
+      "name": "Google Messages",
+      "path": "references/14-google-messages/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 15,
+      "name": "Zoom Workplace",
+      "path": "references/15-zoom-workplace/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 16,
+      "name": "Google Wallet",
+      "path": "references/16-google-wallet/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 17,
+      "name": "PayPal",
+      "path": "references/17-paypal/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 18,
+      "name": "Wise",
+      "path": "references/18-wise/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 19,
+      "name": "Revolut",
+      "path": "references/19-revolut/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 20,
+      "name": "Splitwise",
+      "path": "references/20-splitwise/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 21,
+      "name": "YNAB",
+      "path": "references/21-ynab/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 22,
+      "name": "Fitbit",
+      "path": "references/22-fitbit/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 23,
+      "name": "Google Fit",
+      "path": "references/23-google-fit/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 24,
+      "name": "Strava",
+      "path": "references/24-strava/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 25,
+      "name": "MyFitnessPal",
+      "path": "references/25-myfitnesspal/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 26,
+      "name": "Medisafe",
+      "path": "references/26-medisafe/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 27,
+      "name": "Calm",
+      "path": "references/27-calm/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 28,
+      "name": "Adobe Lightroom",
+      "path": "references/28-adobe-lightroom/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 29,
+      "name": "Canva",
+      "path": "references/29-canva/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 30,
+      "name": "Sketchbook",
+      "path": "references/30-sketchbook/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 31,
+      "name": "CapCut",
+      "path": "references/31-capcut/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 32,
+      "name": "BandLab",
+      "path": "references/32-bandlab/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 33,
+      "name": "Snapseed",
+      "path": "references/33-snapseed/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 34,
+      "name": "Files by Google",
+      "path": "references/34-files-by-google/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 35,
+      "name": "Bitwarden Password Manager",
+      "path": "references/35-bitwarden-password-manager/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 36,
+      "name": "1Password",
+      "path": "references/36-1password/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 37,
+      "name": "Google Translate",
+      "path": "references/37-google-translate/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 38,
+      "name": "AccuWeather",
+      "path": "references/38-accuweather/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 39,
+      "name": "Spotify",
+      "path": "references/39-spotify/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 40,
+      "name": "YouTube",
+      "path": "references/40-youtube/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 41,
+      "name": "YouTube Music",
+      "path": "references/41-youtube-music/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 42,
+      "name": "Pocket Casts",
+      "path": "references/42-pocket-casts/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 43,
+      "name": "VLC for Android",
+      "path": "references/43-vlc-for-android/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 44,
+      "name": "Netflix",
+      "path": "references/44-netflix/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 45,
+      "name": "Google Maps",
+      "path": "references/45-google-maps/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 46,
+      "name": "Waze Navigation & Live Traffic",
+      "path": "references/46-waze-navigation-live-traffic/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 47,
+      "name": "Citymapper",
+      "path": "references/47-citymapper/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 48,
+      "name": "komoot",
+      "path": "references/48-komoot/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 49,
+      "name": "GitHub",
+      "path": "references/49-github/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 50,
+      "name": "Termux",
+      "path": "references/50-termux/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    }
+  ],
+  "measured_at": "2026-08-19",
+  "partial_count": 50
+}

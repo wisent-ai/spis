@@ -1,0 +1,1012 @@
+{
+  "name": "Spring Boot Reference Documentation",
+  "source_url": "https://docs.spring.io/spring-boot/index.html",
+  "category": "Backend framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "landing-nav (the landing is the table of contents)",
+  "inventory_url_count": 200,
+  "landing_nav": [
+    {
+      "text": "Overview",
+      "path": "/spring-boot/index.html"
+    },
+    {
+      "text": "Documentation",
+      "path": "/spring-boot/documentation.html"
+    },
+    {
+      "text": "Community",
+      "path": "/spring-boot/community.html"
+    },
+    {
+      "text": "System Requirements",
+      "path": "/spring-boot/system-requirements.html"
+    },
+    {
+      "text": "Installing Spring Boot",
+      "path": "/spring-boot/installing.html"
+    },
+    {
+      "text": "Upgrading Spring Boot",
+      "path": "/spring-boot/upgrading.html"
+    },
+    {
+      "text": "Tutorials",
+      "path": "/spring-boot/tutorial/index.html"
+    },
+    {
+      "text": "Developing Your First Spring Boot Application",
+      "path": "/spring-boot/tutorial/first-application/index.html"
+    },
+    {
+      "text": "Reference",
+      "path": "/spring-boot/reference/index.html"
+    },
+    {
+      "text": "Developing with Spring Boot",
+      "path": "/spring-boot/reference/using/index.html"
+    },
+    {
+      "text": "Build Systems",
+      "path": "/spring-boot/reference/using/build-systems.html"
+    },
+    {
+      "text": "Structuring Your Code",
+      "path": "/spring-boot/reference/using/structuring-your-code.html"
+    },
+    {
+      "text": "Configuration Classes",
+      "path": "/spring-boot/reference/using/configuration-classes.html"
+    },
+    {
+      "text": "Auto-configuration",
+      "path": "/spring-boot/reference/using/auto-configuration.html"
+    },
+    {
+      "text": "Spring Beans and Dependency Injection",
+      "path": "/spring-boot/reference/using/spring-beans-and-dependency-injection.html"
+    },
+    {
+      "text": "Using the @SpringBootApplication Annotation",
+      "path": "/spring-boot/reference/using/using-the-springbootapplication-annotation.html"
+    },
+    {
+      "text": "Running Your Application",
+      "path": "/spring-boot/reference/using/running-your-application.html"
+    },
+    {
+      "text": "Developer Tools",
+      "path": "/spring-boot/reference/using/devtools.html"
+    },
+    {
+      "text": "Packaging Your Application for Production",
+      "path": "/spring-boot/reference/using/packaging-for-production.html"
+    },
+    {
+      "text": "Core Features",
+      "path": "/spring-boot/reference/features/index.html"
+    },
+    {
+      "text": "SpringApplication",
+      "path": "/spring-boot/reference/features/spring-application.html"
+    },
+    {
+      "text": "Externalized Configuration",
+      "path": "/spring-boot/reference/features/external-config.html"
+    },
+    {
+      "text": "Profiles",
+      "path": "/spring-boot/reference/features/profiles.html"
+    },
+    {
+      "text": "Logging",
+      "path": "/spring-boot/reference/features/logging.html"
+    },
+    {
+      "text": "Internationalization",
+      "path": "/spring-boot/reference/features/internationalization.html"
+    },
+    {
+      "text": "Aspect-Oriented Programming",
+      "path": "/spring-boot/reference/features/aop.html"
+    },
+    {
+      "text": "JSON",
+      "path": "/spring-boot/reference/features/json.html"
+    },
+    {
+      "text": "Task Execution and Scheduling",
+      "path": "/spring-boot/reference/features/task-execution-and-scheduling.html"
+    },
+    {
+      "text": "Development-time Services",
+      "path": "/spring-boot/reference/features/dev-services.html"
+    },
+    {
+      "text": "Creating Your Own Auto-configuration",
+      "path": "/spring-boot/reference/features/developing-auto-configuration.html"
+    },
+    {
+      "text": "Kotlin Support",
+      "path": "/spring-boot/reference/features/kotlin.html"
+    },
+    {
+      "text": "SSL",
+      "path": "/spring-boot/reference/features/ssl.html"
+    },
+    {
+      "text": "Web",
+      "path": "/spring-boot/reference/web/index.html"
+    },
+    {
+      "text": "Servlet Web Applications",
+      "path": "/spring-boot/reference/web/servlet.html"
+    },
+    {
+      "text": "Reactive Web Applications",
+      "path": "/spring-boot/reference/web/reactive.html"
+    },
+    {
+      "text": "Graceful Shutdown",
+      "path": "/spring-boot/reference/web/graceful-shutdown.html"
+    },
+    {
+      "text": "Spring Security",
+      "path": "/spring-boot/reference/web/spring-security.html"
+    },
+    {
+      "text": "Spring Session",
+      "path": "/spring-boot/reference/web/spring-session.html"
+    },
+    {
+      "text": "Spring for GraphQL",
+      "path": "/spring-boot/reference/web/spring-graphql.html"
+    },
+    {
+      "text": "Spring HATEOAS",
+      "path": "/spring-boot/reference/web/spring-hateoas.html"
+    },
+    {
+      "text": "Data",
+      "path": "/spring-boot/reference/data/index.html"
+    },
+    {
+      "text": "SQL Databases",
+      "path": "/spring-boot/reference/data/sql.html"
+    },
+    {
+      "text": "Working with NoSQL Technologies",
+      "path": "/spring-boot/reference/data/nosql.html"
+    },
+    {
+      "text": "IO",
+      "path": "/spring-boot/reference/io/index.html"
+    },
+    {
+      "text": "Caching",
+      "path": "/spring-boot/reference/io/caching.html"
+    },
+    {
+      "text": "Spring Batch",
+      "path": "/spring-boot/reference/io/spring-batch.html"
+    },
+    {
+      "text": "gRPC",
+      "path": "/spring-boot/reference/io/grpc.html"
+    },
+    {
+      "text": "Hazelcast",
+      "path": "/spring-boot/reference/io/hazelcast.html"
+    },
+    {
+      "text": "Quartz Scheduler",
+      "path": "/spring-boot/reference/io/quartz.html"
+    },
+    {
+      "text": "Sending Email",
+      "path": "/spring-boot/reference/io/email.html"
+    },
+    {
+      "text": "Validation",
+      "path": "/spring-boot/reference/io/validation.html"
+    },
+    {
+      "text": "Calling REST Services",
+      "path": "/spring-boot/reference/io/rest-client.html"
+    },
+    {
+      "text": "Web Services",
+      "path": "/spring-boot/reference/io/webservices.html"
+    },
+    {
+      "text": "Distributed Transactions With JTA",
+      "path": "/spring-boot/reference/io/jta.html"
+    },
+    {
+      "text": "Messaging",
+      "path": "/spring-boot/reference/messaging/index.html"
+    },
+    {
+      "text": "JMS",
+      "path": "/spring-boot/reference/messaging/jms.html"
+    },
+    {
+      "text": "AMQP",
+      "path": "/spring-boot/reference/messaging/amqp.html"
+    },
+    {
+      "text": "Apache Kafka Support",
+      "path": "/spring-boot/reference/messaging/kafka.html"
+    },
+    {
+      "text": "Apache Pulsar Support",
+      "path": "/spring-boot/reference/messaging/pulsar.html"
+    },
+    {
+      "text": "RSocket",
+      "path": "/spring-boot/reference/messaging/rsocket.html"
+    },
+    {
+      "text": "Spring Integration",
+      "path": "/spring-boot/reference/messaging/spring-integration.html"
+    },
+    {
+      "text": "WebSockets",
+      "path": "/spring-boot/reference/messaging/websockets.html"
+    },
+    {
+      "text": "Security",
+      "path": "/spring-boot/reference/security/index.html"
+    },
+    {
+      "text": "OAuth2",
+      "path": "/spring-boot/reference/security/oauth2.html"
+    },
+    {
+      "text": "SAML 2.0",
+      "path": "/spring-boot/reference/security/saml2.html"
+    },
+    {
+      "text": "Testing",
+      "path": "/spring-boot/reference/testing/index.html"
+    },
+    {
+      "text": "Test Modules",
+      "path": "/spring-boot/reference/testing/test-modules.html"
+    },
+    {
+      "text": "Test Scope Dependencies",
+      "path": "/spring-boot/reference/testing/test-scope-dependencies.html"
+    },
+    {
+      "text": "Testing Spring Applications",
+      "path": "/spring-boot/reference/testing/spring-applications.html"
+    },
+    {
+      "text": "Testing Spring Boot Applications",
+      "path": "/spring-boot/reference/testing/spring-boot-applications.html"
+    },
+    {
+      "text": "Testcontainers",
+      "path": "/spring-boot/reference/testing/testcontainers.html"
+    },
+    {
+      "text": "Test Utilities",
+      "path": "/spring-boot/reference/testing/test-utilities.html"
+    },
+    {
+      "text": "Packaging Spring Boot Applications",
+      "path": "/spring-boot/reference/packaging/index.html"
+    },
+    {
+      "text": "Efficient Deployments",
+      "path": "/spring-boot/reference/packaging/efficient.html"
+    },
+    {
+      "text": "AOT Cache",
+      "path": "/spring-boot/reference/packaging/aot-cache.html"
+    },
+    {
+      "text": "Ahead-of-Time Processing With the JVM",
+      "path": "/spring-boot/reference/packaging/aot.html"
+    },
+    {
+      "text": "GraalVM Native Images",
+      "path": "/spring-boot/reference/packaging/native-image/index.html"
+    },
+    {
+      "text": "Introducing GraalVM Native Images",
+      "path": "/spring-boot/reference/packaging/native-image/introducing-graalvm-native-images.html"
+    },
+    {
+      "text": "Advanced Native Images Topics",
+      "path": "/spring-boot/reference/packaging/native-image/advanced-topics.html"
+    },
+    {
+      "text": "Checkpoint and Restore With the JVM",
+      "path": "/spring-boot/reference/packaging/checkpoint-restore.html"
+    },
+    {
+      "text": "Container Images",
+      "path": "/spring-boot/reference/packaging/container-images/index.html"
+    },
+    {
+      "text": "Efficient Container Images",
+      "path": "/spring-boot/reference/packaging/container-images/efficient-images.html"
+    },
+    {
+      "text": "Dockerfiles",
+      "path": "/spring-boot/reference/packaging/container-images/dockerfiles.html"
+    },
+    {
+      "text": "Cloud Native Buildpacks",
+      "path": "/spring-boot/reference/packaging/container-images/cloud-native-buildpacks.html"
+    },
+    {
+      "text": "Production-ready Features",
+      "path": "/spring-boot/reference/actuator/index.html"
+    },
+    {
+      "text": "Enabling Production-ready Features",
+      "path": "/spring-boot/reference/actuator/enabling.html"
+    },
+    {
+      "text": "Endpoints",
+      "path": "/spring-boot/reference/actuator/endpoints.html"
+    },
+    {
+      "text": "Monitoring and Management Over HTTP",
+      "path": "/spring-boot/reference/actuator/monitoring.html"
+    },
+    {
+      "text": "Monitoring and Management over JMX",
+      "path": "/spring-boot/reference/actuator/jmx.html"
+    },
+    {
+      "text": "Observability",
+      "path": "/spring-boot/reference/actuator/observability.html"
+    },
+    {
+      "text": "Loggers",
+      "path": "/spring-boot/reference/actuator/loggers.html"
+    },
+    {
+      "text": "Metrics",
+      "path": "/spring-boot/reference/actuator/metrics.html"
+    },
+    {
+      "text": "Tracing",
+      "path": "/spring-boot/reference/actuator/tracing.html"
+    },
+    {
+      "text": "Auditing",
+      "path": "/spring-boot/reference/actuator/auditing.html"
+    },
+    {
+      "text": "Recording HTTP Exchanges",
+      "path": "/spring-boot/reference/actuator/http-exchanges.html"
+    },
+    {
+      "text": "Process Monitoring",
+      "path": "/spring-boot/reference/actuator/process-monitoring.html"
+    },
+    {
+      "text": "Cloud Foundry Support",
+      "path": "/spring-boot/reference/actuator/cloud-foundry.html"
+    },
+    {
+      "text": "How-to Guides",
+      "path": "/spring-boot/how-to/index.html"
+    },
+    {
+      "text": "Spring Boot Application",
+      "path": "/spring-boot/how-to/application.html"
+    },
+    {
+      "text": "Properties and Configuration",
+      "path": "/spring-boot/how-to/properties-and-configuration.html"
+    },
+    {
+      "text": "Embedded Web Servers",
+      "path": "/spring-boot/how-to/webserver.html"
+    },
+    {
+      "text": "Spring MVC",
+      "path": "/spring-boot/how-to/spring-mvc.html"
+    },
+    {
+      "text": "Jersey",
+      "path": "/spring-boot/how-to/jersey.html"
+    },
+    {
+      "text": "HTTP Clients",
+      "path": "/spring-boot/how-to/http-clients.html"
+    },
+    {
+      "text": "Logging",
+      "path": "/spring-boot/how-to/logging.html"
+    },
+    {
+      "text": "Data Access",
+      "path": "/spring-boot/how-to/data-access.html"
+    },
+    {
+      "text": "Database Initialization",
+      "path": "/spring-boot/how-to/data-initialization.html"
+    },
+    {
+      "text": "NoSQL",
+      "path": "/spring-boot/how-to/nosql.html"
+    },
+    {
+      "text": "Messaging",
+      "path": "/spring-boot/how-to/messaging.html"
+    },
+    {
+      "text": "Batch Applications",
+      "path": "/spring-boot/how-to/batch.html"
+    },
+    {
+      "text": "Actuator",
+      "path": "/spring-boot/how-to/actuator.html"
+    },
+    {
+      "text": "Security",
+      "path": "/spring-boot/how-to/security.html"
+    },
+    {
+      "text": "Hot Swapping",
+      "path": "/spring-boot/how-to/hotswapping.html"
+    },
+    {
+      "text": "Testing",
+      "path": "/spring-boot/how-to/testing.html"
+    },
+    {
+      "text": "Build",
+      "path": "/spring-boot/how-to/build.html"
+    },
+    {
+      "text": "Ahead-of-Time Processing",
+      "path": "/spring-boot/how-to/aot.html"
+    },
+    {
+      "text": "GraalVM Native Applications",
+      "path": "/spring-boot/how-to/native-image/index.html"
+    },
+    {
+      "text": "Developing Your First GraalVM Native Application",
+      "path": "/spring-boot/how-to/native-image/developing-your-first-application.html"
+    },
+    {
+      "text": "Testing GraalVM Native Images",
+      "path": "/spring-boot/how-to/native-image/testing-native-applications.html"
+    },
+    {
+      "text": "AOT Cache",
+      "path": "/spring-boot/how-to/aot-cache.html"
+    },
+    {
+      "text": "Deploying Spring Boot Applications",
+      "path": "/spring-boot/how-to/deployment/index.html"
+    },
+    {
+      "text": "Traditional Deployment",
+      "path": "/spring-boot/how-to/deployment/traditional-deployment.html"
+    },
+    {
+      "text": "Deploying to the Cloud",
+      "path": "/spring-boot/how-to/deployment/cloud.html"
+    },
+    {
+      "text": "Installing Spring Boot Applications",
+      "path": "/spring-boot/how-to/deployment/installing.html"
+    },
+    {
+      "text": "Docker Compose",
+      "path": "/spring-boot/how-to/docker-compose.html"
+    },
+    {
+      "text": "Build Tool Plugins",
+      "path": "/spring-boot/build-tool-plugin/index.html"
+    },
+    {
+      "text": "Maven Plugin",
+      "path": "/spring-boot/maven-plugin/index.html"
+    },
+    {
+      "text": "Getting Started",
+      "path": "/spring-boot/maven-plugin/getting-started.html"
+    },
+    {
+      "text": "Using the Plugin",
+      "path": "/spring-boot/maven-plugin/using.html"
+    },
+    {
+      "text": "Goals",
+      "path": "/spring-boot/maven-plugin/goals.html"
+    },
+    {
+      "text": "Packaging Executable Archives",
+      "path": "/spring-boot/maven-plugin/packaging.html"
+    },
+    {
+      "text": "Packaging OCI Images",
+      "path": "/spring-boot/maven-plugin/build-image.html"
+    },
+    {
+      "text": "Running your Application with Maven",
+      "path": "/spring-boot/maven-plugin/run.html"
+    },
+    {
+      "text": "Ahead-of-Time Processing",
+      "path": "/spring-boot/maven-plugin/aot.html"
+    },
+    {
+      "text": "Running Integration Tests",
+      "path": "/spring-boot/maven-plugin/integration-tests.html"
+    },
+    {
+      "text": "Integrating with Actuator",
+      "path": "/spring-boot/maven-plugin/build-info.html"
+    },
+    {
+      "text": "Help Information",
+      "path": "/spring-boot/maven-plugin/help.html"
+    },
+    {
+      "text": "Gradle Plugin",
+      "path": "/spring-boot/gradle-plugin/index.html"
+    },
+    {
+      "text": "Getting Started",
+      "path": "/spring-boot/gradle-plugin/getting-started.html"
+    },
+    {
+      "text": "Managing Dependencies",
+      "path": "/spring-boot/gradle-plugin/managing-dependencies.html"
+    },
+    {
+      "text": "Packaging Executable Archives",
+      "path": "/spring-boot/gradle-plugin/packaging.html"
+    },
+    {
+      "text": "Packaging OCI Images",
+      "path": "/spring-boot/gradle-plugin/packaging-oci-image.html"
+    },
+    {
+      "text": "Publishing your Application",
+      "path": "/spring-boot/gradle-plugin/publishing.html"
+    },
+    {
+      "text": "Running your Application with Gradle",
+      "path": "/spring-boot/gradle-plugin/running.html"
+    },
+    {
+      "text": "Ahead-of-Time Processing",
+      "path": "/spring-boot/gradle-plugin/aot.html"
+    },
+    {
+      "text": "Integrating with Actuator",
+      "path": "/spring-boot/gradle-plugin/integrating-with-actuator.html"
+    },
+    {
+      "text": "Reacting to Other Plugins",
+      "path": "/spring-boot/gradle-plugin/reacting.html"
+    },
+    {
+      "text": "Spring Boot AntLib Module",
+      "path": "/spring-boot/build-tool-plugin/antlib.html"
+    },
+    {
+      "text": "Supporting Other Build Systems",
+      "path": "/spring-boot/build-tool-plugin/other-build-systems.html"
+    },
+    {
+      "text": "Spring Boot CLI",
+      "path": "/spring-boot/cli/index.html"
+    },
+    {
+      "text": "Installing the CLI",
+      "path": "/spring-boot/cli/installation.html"
+    },
+    {
+      "text": "Using the CLI",
+      "path": "/spring-boot/cli/using-the-cli.html"
+    },
+    {
+      "text": "Actuator",
+      "path": "/spring-boot/api/rest/actuator/index.html"
+    },
+    {
+      "text": "Audit Events (auditevents)",
+      "path": "/spring-boot/api/rest/actuator/auditevents.html"
+    },
+    {
+      "text": "Beans (beans)",
+      "path": "/spring-boot/api/rest/actuator/beans.html"
+    },
+    {
+      "text": "Caches (caches)",
+      "path": "/spring-boot/api/rest/actuator/caches.html"
+    },
+    {
+      "text": "Conditions Evaluation Report (conditions)",
+      "path": "/spring-boot/api/rest/actuator/conditions.html"
+    },
+    {
+      "text": "Configuration Properties (configprops)",
+      "path": "/spring-boot/api/rest/actuator/configprops.html"
+    },
+    {
+      "text": "Environment (env)",
+      "path": "/spring-boot/api/rest/actuator/env.html"
+    },
+    {
+      "text": "Flyway (flyway)",
+      "path": "/spring-boot/api/rest/actuator/flyway.html"
+    },
+    {
+      "text": "Health (health)",
+      "path": "/spring-boot/api/rest/actuator/health.html"
+    },
+    {
+      "text": "Heap Dump (heapdump)",
+      "path": "/spring-boot/api/rest/actuator/heapdump.html"
+    },
+    {
+      "text": "HTTP Exchanges (httpexchanges)",
+      "path": "/spring-boot/api/rest/actuator/httpexchanges.html"
+    },
+    {
+      "text": "Info (info)",
+      "path": "/spring-boot/api/rest/actuator/info.html"
+    },
+    {
+      "text": "Spring Integration Graph (integrationgraph)",
+      "path": "/spring-boot/api/rest/actuator/integrationgraph.html"
+    },
+    {
+      "text": "Liquibase (liquibase)",
+      "path": "/spring-boot/api/rest/actuator/liquibase.html"
+    },
+    {
+      "text": "Log File (logfile)",
+      "path": "/spring-boot/api/rest/actuator/logfile.html"
+    },
+    {
+      "text": "Loggers (loggers)",
+      "path": "/spring-boot/api/rest/actuator/loggers.html"
+    },
+    {
+      "text": "Mappings (mappings)",
+      "path": "/spring-boot/api/rest/actuator/mappings.html"
+    },
+    {
+      "text": "Metrics (metrics)",
+      "path": "/spring-boot/api/rest/actuator/metrics.html"
+    },
+    {
+      "text": "Prometheus (prometheus)",
+      "path": "/spring-boot/api/rest/actuator/prometheus.html"
+    },
+    {
+      "text": "Quartz (quartz)",
+      "path": "/spring-boot/api/rest/actuator/quartz.html"
+    },
+    {
+      "text": "Software Bill of Materials (sbom)",
+      "path": "/spring-boot/api/rest/actuator/sbom.html"
+    },
+    {
+      "text": "Scheduled Tasks (scheduledtasks)",
+      "path": "/spring-boot/api/rest/actuator/scheduledtasks.html"
+    },
+    {
+      "text": "Sessions (sessions)",
+      "path": "/spring-boot/api/rest/actuator/sessions.html"
+    },
+    {
+      "text": "Shutdown (shutdown)",
+      "path": "/spring-boot/api/rest/actuator/shutdown.html"
+    },
+    {
+      "text": "Application Startup (startup)",
+      "path": "/spring-boot/api/rest/actuator/startup.html"
+    },
+    {
+      "text": "Thread Dump (threaddump)",
+      "path": "/spring-boot/api/rest/actuator/threaddump.html"
+    },
+    {
+      "text": "Spring Boot",
+      "path": "/spring-boot/api/java/index.html"
+    },
+    {
+      "text": "Gradle Plugin",
+      "path": "/spring-boot/gradle-plugin/api/java/index.html"
+    },
+    {
+      "text": "Maven Plugin",
+      "path": "/spring-boot/maven-plugin/api/java/index.html"
+    },
+    {
+      "text": "Spring Boot",
+      "path": "/spring-boot/api/kotlin/index.html"
+    },
+    {
+      "text": "Configuration Metadata",
+      "path": "/spring-boot/specification/configuration-metadata/index.html"
+    },
+    {
+      "text": "Metadata Format",
+      "path": "/spring-boot/specification/configuration-metadata/format.html"
+    },
+    {
+      "text": "Providing Manual Hints",
+      "path": "/spring-boot/specification/configuration-metadata/manual-hints.html"
+    },
+    {
+      "text": "Generating Your Own Metadata by Using the Annotation Processor",
+      "path": "/spring-boot/specification/configuration-metadata/annotation-processor.html"
+    },
+    {
+      "text": "The Executable Jar Format",
+      "path": "/spring-boot/specification/executable-jar/index.html"
+    },
+    {
+      "text": "Nested JARs",
+      "path": "/spring-boot/specification/executable-jar/nested-jars.html"
+    },
+    {
+      "text": "Spring Boot’s “NestedJarFile” Class",
+      "path": "/spring-boot/specification/executable-jar/jarfile-class.html"
+    },
+    {
+      "text": "Launching Executable Jars",
+      "path": "/spring-boot/specification/executable-jar/launching.html"
+    },
+    {
+      "text": "PropertiesLauncher Features",
+      "path": "/spring-boot/specification/executable-jar/property-launcher.html"
+    },
+    {
+      "text": "Executable Jar Restrictions",
+      "path": "/spring-boot/specification/executable-jar/restrictions.html"
+    },
+    {
+      "text": "Alternative Single Jar Solutions",
+      "path": "/spring-boot/specification/executable-jar/alternatives.html"
+    },
+    {
+      "text": "Common Application Properties",
+      "path": "/spring-boot/appendix/application-properties/index.html"
+    },
+    {
+      "text": "Deprecated Application Properties",
+      "path": "/spring-boot/appendix/deprecated-application-properties/index.html"
+    },
+    {
+      "text": "Auto-configuration Classes",
+      "path": "/spring-boot/appendix/auto-configuration-classes/index.html"
+    },
+    {
+      "text": "spring-boot-activemq",
+      "path": "/spring-boot/appendix/auto-configuration-classes/spring-boot-activemq.html"
+    },
+    {
+      "text": "spring-boot-actuator-autoconfigure",
+      "path": "/spring-boot/appendix/auto-configuration-classes/spring-boot-actuator-autoconfigure.html"
+    },
+    {
+      "text": "spring-boot-amqp",
+      "path": "/spring-boot/appendix/auto-configuration-classes/spring-boot-amqp.html"
+    },
+    {
+      "text": "spring-boot-artemis",
+      "path": "/spring-boot/appendix/auto-configuration-classes/spring-boot-artemis.html"
+    }
+  ],
+  "url_sections": {
+    "spring-boot": 200
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorials",
+      "/spring-boot/tutorial/index.html",
+      "/spring-boot/tutorial/first-application/index.html"
+    ],
+    "getting started / quickstart": [
+      "getting started",
+      "/spring-boot/maven-plugin/getting-started.html",
+      "/spring-boot/gradle-plugin/getting-started.html"
+    ],
+    "guides / how-to": [
+      "how-to guides",
+      "/spring-boot/how-to/aot.html",
+      "/spring-boot/how-to/nosql.html",
+      "/spring-boot/how-to/batch.html"
+    ],
+    "api reference": [
+      "reference",
+      "/spring-boot/api/java/index.html",
+      "/spring-boot/reference/index.html",
+      "/spring-boot/reference/io/jta.html"
+    ],
+    "migration / upgrade": [
+      "upgrading spring boot",
+      "/spring-boot/upgrading.html"
+    ],
+    "security": [
+      "security",
+      "spring security",
+      "/spring-boot/how-to/security.html",
+      "/spring-boot/reference/security/saml2.html"
+    ],
+    "cli reference": [
+      "using the cli",
+      "spring boot cli",
+      "installing the cli",
+      "/spring-boot/cli/index.html"
+    ],
+    "configuration / settings": [
+      "auto-configuration",
+      "configuration classes",
+      "configuration metadata",
+      "auto-configuration classes"
+    ],
+    "community / support": [
+      "community",
+      "kotlin support",
+      "apache kafka support",
+      "cloud foundry support"
+    ],
+    "integrations": [
+      "spring integration",
+      "running integration tests",
+      "integrating with actuator",
+      "spring integration graph (integrationgraph)"
+    ],
+    "deployment / production": [
+      "efficient deployments",
+      "traditional deployment",
+      "deploying to the cloud",
+      "production-ready features"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://docs.spring.io/spring-boot/index.html",
+      "h1": "Spring Boot",
+      "h2": []
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/documentation.html",
+      "h1": "Documentation Overview",
+      "h2": [
+        "First Steps",
+        "Upgrading From an Earlier Version",
+        "Developing With Spring Boot",
+        "Learning About Spring Boot Features",
+        "Web",
+        "Data",
+        "Messaging",
+        "IO",
+        "Container Images",
+        "Moving to Production",
+        "Optimizing for Production",
+        "Advanced Topics"
+      ]
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/community.html",
+      "h1": "Community",
+      "h2": []
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/system-requirements.html",
+      "h1": "System Requirements",
+      "h2": [
+        "Servlet Containers",
+        "GraalVM Native Images"
+      ]
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/installing.html",
+      "h1": "Installing Spring Boot",
+      "h2": [
+        "Installation Instructions for the Java Developer",
+        "Installing the Spring Boot CLI"
+      ]
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/tutorial/index.html",
+      "h1": "Tutorials",
+      "h2": []
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/tutorial/first-application/index.html",
+      "h1": "Developing Your First Spring Boot Application",
+      "h2": [
+        "Prerequisites",
+        "Setting Up the Project With Maven",
+        "Setting Up the Project With Gradle",
+        "Adding Classpath Dependencies",
+        "Writing the Code",
+        "Running the Example",
+        "Creating an Executable Jar"
+      ]
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/reference/index.html",
+      "h1": "Reference",
+      "h2": []
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/reference/using/build-systems.html",
+      "h1": "Build Systems",
+      "h2": [
+        "Dependency Management",
+        "Maven",
+        "Gradle",
+        "Ant",
+        "Starters"
+      ]
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/reference/using/configuration-classes.html",
+      "h1": "Configuration Classes",
+      "h2": [
+        "Importing Additional Configuration Classes",
+        "Importing XML Configuration"
+      ]
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/reference/using/auto-configuration.html",
+      "h1": "Auto-configuration",
+      "h2": [
+        "Gradually Replacing Auto-configuration",
+        "Disabling Specific Auto-configuration Classes",
+        "Auto-configuration Packages"
+      ]
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/reference/using/spring-beans-and-dependency-injection.html",
+      "h1": "Spring Beans and Dependency Injection",
+      "h2": []
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/reference/using/using-the-springbootapplication-annotation.html",
+      "h1": "Using the @SpringBootApplication Annotation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/reference/using/running-your-application.html",
+      "h1": "Running Your Application",
+      "h2": [
+        "Running From an IDE",
+        "Running as a Packaged Application",
+        "Using the Maven Plugin",
+        "Using the Gradle Plugin",
+        "Hot Swapping"
+      ]
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/reference/using/devtools.html",
+      "h1": "Developer Tools",
+      "h2": [
+        "Diagnosing Classloading Issues",
+        "Property Defaults",
+        "Automatic Restart",
+        "LiveReload",
+        "Global Settings",
+        "Remote Applications"
+      ]
+    },
+    {
+      "url": "https://docs.spring.io/spring-boot/reference/using/packaging-for-production.html",
+      "h1": "Packaging Your Application for Production",
+      "h2": []
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "name": "Vue.js Guide",
+  "source_url": "https://vuejs.org/guide/introduction.html",
+  "category": "Frontend framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 110,
+  "landing_nav": [
+    {
+      "text": "Vue.js",
+      "path": "/"
+    },
+    {
+      "text": "Tutorial",
+      "path": "/tutorial/"
+    },
+    {
+      "text": "Examples",
+      "path": "/examples/"
+    },
+    {
+      "text": "API",
+      "path": "/api/"
+    },
+    {
+      "text": "Glossary",
+      "path": "/glossary/"
+    },
+    {
+      "text": "Error Reference",
+      "path": "/error-reference/"
+    },
+    {
+      "text": "Sponsor",
+      "path": "/sponsor/"
+    },
+    {
+      "text": "Partners",
+      "path": "/partners/"
+    },
+    {
+      "text": "Sponsors",
+      "path": "/sponsor/"
+    },
+    {
+      "text": "Become a Sponsor",
+      "path": "/sponsor/"
+    },
+    {
+      "text": "Try the TutorialFor those who prefer learning things hands-on.",
+      "path": "/tutorial/"
+    },
+    {
+      "text": "Check out the ExamplesExplore examples of core features and common UI tasks.",
+      "path": "/examples/"
+    }
+  ],
+  "url_sections": {
+    "guide": 52,
+    "api": 29,
+    "partners": 9,
+    "about": 6,
+    "style-guide": 5,
+    "ecosystem": 2,
+    "error-reference": 1,
+    "examples": 1,
+    "glossary": 1,
+    "sponsor": 1,
+    "translations": 1,
+    "tutorial": 1
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "examples",
+      "/examples/",
+      "check out the examplesexplore examples of core features and common ui tasks."
+    ],
+    "tutorials / learn": [
+      "tutorial",
+      "/tutorial/",
+      "try the tutorialfor those who prefer learning things hands-on."
+    ],
+    "guides / how-to": [
+      "guide",
+      "style-guide"
+    ],
+    "api reference": [
+      "api",
+      "/api/",
+      "error-reference",
+      "error reference"
+    ],
+    "troubleshooting / errors": [
+      "error-reference",
+      "error reference",
+      "/error-reference/"
+    ],
+    "glossary / definitions": [
+      "glossary",
+      "/glossary/"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://vuejs.org/examples/",
+      "h1": "",
+      "h2": [
+        "Basic",
+        "Practical",
+        "7 GUIs"
+      ]
+    },
+    {
+      "url": "https://vuejs.org/api/",
+      "h1": "API Reference",
+      "h2": [
+        "Global API",
+        "Composition API",
+        "Options API",
+        "Built-ins",
+        "Single-File Component",
+        "Advanced APIs"
+      ]
+    },
+    {
+      "url": "https://vuejs.org/glossary/",
+      "h1": "Glossary ​",
+      "h2": [
+        "async component ​",
+        "compiler macro ​",
+        "component ​",
+        "composable ​",
+        "Composition API ​",
+        "custom element ​",
+        "directive ​",
+        "dynamic component ​",
+        "effect ​",
+        "event ​",
+        "fragment ​",
+        "functional component ​",
+        "hoisting ​",
+        "cache static ​",
+        "in-DOM template ​",
+        "inject ​",
+        "lifecycle hooks ​",
+        "macro ​",
+        "named slot ​",
+        "Options API ​"
+      ]
+    },
+    {
+      "url": "https://vuejs.org/error-reference/",
+      "h1": "Production Error Code Reference ​",
+      "h2": [
+        "Runtime Errors ​",
+        "Compiler Errors ​"
+      ]
+    },
+    {
+      "url": "https://vuejs.org/sponsor/",
+      "h1": "Become a Vue.js Sponsor ​",
+      "h2": [
+        "How to Sponsor ​",
+        "Sponsoring Vue as a Business ​",
+        "Sponsoring Vue as an Individual ​",
+        "Tier Benefits ​",
+        "Current Sponsors ​"
+      ]
+    },
+    {
+      "url": "https://vuejs.org/partners/",
+      "h1": "Vue Partners",
+      "h2": [
+        "Partner Spotlight",
+        "Featured Partners",
+        "Grow your business with Vue"
+      ]
+    }
+  ]
+}

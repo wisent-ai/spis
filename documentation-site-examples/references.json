@@ -1,0 +1,361 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "documentation-site-examples",
+  "generated_at": "2026-08-16",
+  "reference_count": 50,
+  "complete_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "MDN Web Docs",
+      "path": "references/01-mdn-web-docs/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 2,
+      "name": "React Documentation",
+      "path": "references/02-react-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 3,
+      "name": "Vue.js Guide",
+      "path": "references/03-vue-js-guide/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 4,
+      "name": "Angular Documentation",
+      "path": "references/04-angular-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 5,
+      "name": "Svelte Documentation",
+      "path": "references/05-svelte-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 6,
+      "name": "Next.js Documentation",
+      "path": "references/06-next-js-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 7,
+      "name": "Nuxt Documentation",
+      "path": "references/07-nuxt-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 8,
+      "name": "Django Documentation",
+      "path": "references/08-django-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 9,
+      "name": "Ruby on Rails Guides",
+      "path": "references/09-ruby-on-rails-guides/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 10,
+      "name": "Laravel Documentation",
+      "path": "references/10-laravel-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 11,
+      "name": "Spring Boot Reference Documentation",
+      "path": "references/11-spring-boot-reference-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 12,
+      "name": ".NET Documentation",
+      "path": "references/12-net-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 13,
+      "name": "The Rust Programming Language",
+      "path": "references/13-the-rust-programming-language/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 14,
+      "name": "Go Documentation",
+      "path": "references/14-go-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 15,
+      "name": "Python 3 Documentation",
+      "path": "references/15-python-3-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 16,
+      "name": "Kotlin Documentation",
+      "path": "references/16-kotlin-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 17,
+      "name": "Swift Documentation",
+      "path": "references/17-swift-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 18,
+      "name": "Android Developers Documentation",
+      "path": "references/18-android-developers-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 19,
+      "name": "Apple Developer Documentation",
+      "path": "references/19-apple-developer-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 20,
+      "name": "Amazon Web Services Documentation",
+      "path": "references/20-amazon-web-services-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 21,
+      "name": "Google Cloud Documentation",
+      "path": "references/21-google-cloud-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 22,
+      "name": "Microsoft Azure Documentation",
+      "path": "references/22-microsoft-azure-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 23,
+      "name": "Cloudflare Developer Documentation",
+      "path": "references/23-cloudflare-developer-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 24,
+      "name": "Vercel Documentation",
+      "path": "references/24-vercel-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 25,
+      "name": "Netlify Docs",
+      "path": "references/25-netlify-docs/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 26,
+      "name": "Kubernetes Documentation",
+      "path": "references/26-kubernetes-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 27,
+      "name": "Docker Docs",
+      "path": "references/27-docker-docs/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 28,
+      "name": "Terraform Documentation",
+      "path": "references/28-terraform-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 29,
+      "name": "GitHub Docs",
+      "path": "references/29-github-docs/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 30,
+      "name": "GitLab Docs",
+      "path": "references/30-gitlab-docs/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 31,
+      "name": "Stripe Documentation",
+      "path": "references/31-stripe-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 32,
+      "name": "Twilio Documentation",
+      "path": "references/32-twilio-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 33,
+      "name": "Shopify Developer Documentation",
+      "path": "references/33-shopify-developer-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 34,
+      "name": "Slack API Documentation",
+      "path": "references/34-slack-api-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 35,
+      "name": "OpenAI API Documentation",
+      "path": "references/35-openai-api-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 36,
+      "name": "Anthropic API Documentation",
+      "path": "references/36-anthropic-api-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 37,
+      "name": "Hugging Face Documentation",
+      "path": "references/37-hugging-face-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 38,
+      "name": "PostgreSQL Documentation",
+      "path": "references/38-postgresql-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 39,
+      "name": "MongoDB Documentation",
+      "path": "references/39-mongodb-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 40,
+      "name": "Redis Documentation",
+      "path": "references/40-redis-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 41,
+      "name": "Supabase Documentation",
+      "path": "references/41-supabase-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 42,
+      "name": "Firebase Documentation",
+      "path": "references/42-firebase-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 43,
+      "name": "Elastic Documentation",
+      "path": "references/43-elastic-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 44,
+      "name": "Grafana Documentation",
+      "path": "references/44-grafana-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 45,
+      "name": "Datadog Documentation",
+      "path": "references/45-datadog-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 46,
+      "name": "Material Design 3",
+      "path": "references/46-material-design-3/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 47,
+      "name": "Carbon Design System",
+      "path": "references/47-carbon-design-system/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 48,
+      "name": "Atlassian Design System",
+      "path": "references/48-atlassian-design-system/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 49,
+      "name": "Shopify Polaris",
+      "path": "references/49-shopify-polaris/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    },
+    {
+      "index": 50,
+      "name": "Storybook Documentation",
+      "path": "references/50-storybook-documentation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 3
+    }
+  ],
+  "measured_at": "2026-08-19",
+  "partial_count": 50
+}

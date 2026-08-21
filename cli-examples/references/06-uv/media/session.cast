@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921622,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"uv authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: uv\r\n"]
+[0.55,"o","cli-ref$ uv --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","uv 0.11.32 (Homebrew 2026-07-23 aarch64-apple-darwin)\r\n"]
+[2.2,"o","cli-ref$ uv help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","An extremely fast Python package manager.\r\n\r\nUsage: uv [OPTIONS] <COMMAND>\r\n\r\nCommands:\r\n  auth                       Manage authentication\r\n  run                        Run a command or script\r\n  init                       Create a new project\r\n  add                        Add dependencies to the project\r\n  remove                     Remove dependencies from the project\r\n  version                    Read or update the project's version\r\n  sync                       Update the project's environment\r\n  lock                       Update the project's lockfile\r\n  export                     Export the project's lockfile to an alternate format\r\n"]
+[5.1,"o","cli-ref$ uv --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","error: unexpected argument '--definitely-invalid-option' found\r\n\r\nUsage: uv [OPTIONS] <COMMAND>\r\n\r\nFor more information, try '--help'.\r\n[exit status 2]\r\n"]
+[7.1,"o","cli-ref$ uv --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ uv help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","An extremely fast Python package manager.\r\n\r\nUsage: uv [OPTIONS] <COMMAND>\r\n\r\n"]

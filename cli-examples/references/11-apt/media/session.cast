@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921623,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"APT authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: APT\r\n"]
+[0.55,"o","cli-ref$ apt --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","apt 2.8.3 (arm64)\r\n"]
+[2.2,"o","cli-ref$ apt --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","apt 2.8.3 (arm64)\r\nUsage: apt [options] command\r\n\r\napt is a commandline package manager and provides commands for\r\nsearching and managing as well as querying information about packages.\r\nIt provides the same functionality as the specialized APT tools,\r\nlike apt-get and apt-cache, but enables options more suitable for\r\ninteractive use by default.\r\n\r\nMost used commands:\r\n  list - list packages based on package names\r\n  search - search in package descriptions\r\n  show - show package details\r\n  install - install packages\r\n"]
+[5.1,"o","cli-ref$ apt --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","E: Command line option --definitely-invalid-option is not understood in combination with the other options\r\n[exit status 100]\r\n"]
+[7.1,"o","cli-ref$ apt --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ apt --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","apt 2.8.3 (arm64)\r\nUsage: apt [options] command\r\n\r\napt is a commandline package manager and provides commands for\r\n"]

@@ -1,0 +1,240 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Notion",
+  "product_url": "https://play.google.com/store/apps/details?id=notion.id",
+  "evidence_status": "partial",
+  "upstream_owner": "MoneyPro-Tips",
+  "captured_at": "2026-08-16T23:00:00Z",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=-kr8br1K3cg",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 50.8,
+      "frame_count": 1270,
+      "bytes": 110223,
+      "sha256": "92efaf9f5af0f47f6d16fb74c9c3cb050508089df00258755825f6599cb30f73",
+      "capture_method": "Real Android product screen recording published by MoneyPro-Tips, archived from its YouTube source with the Pytubefix MWEB/TV client; publisher device/account environment is not disclosed; no synthesized or interpolated motion.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "entry",
+      "local_path": "media/state-01-entry.jpg",
+      "source_motion_path": "frame of media/motion.mp4 at 6s (mean abs diff 0.0195/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 20963,
+      "sha256": "0efc4c3728da66821dce90fc71af40ea4136f192af236b6f17500e38dfd0bd54",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 6.0,
+        "mean_abs_diff": 0.0195,
+        "sampled_frames": 102
+      }
+    },
+    {
+      "name": "decision",
+      "local_path": "media/state-02-decision.jpg",
+      "source_motion_path": "frame of media/motion.mp4 at 50.5s (mean abs diff 0.1211/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 5815,
+      "sha256": "81ebe92fe55a2c50b235a26dfd7433c19bc24e1409fb38bbf6c920b7bfc61bb7",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 50.5,
+        "mean_abs_diff": 0.1211,
+        "sampled_frames": 102
+      }
+    },
+    {
+      "name": "success",
+      "local_path": "media/state-03-success.jpg",
+      "source_motion_path": "frame of media/motion.mp4 at 50.5s (mean abs diff 0.1211/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 5897,
+      "sha256": "7f5408a0c4d6c3cf49a12f86ebc9f075927a1b0306b99afd1a9400d4ca3452e8",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 50.5,
+        "mean_abs_diff": 0.1211,
+        "sampled_frames": 102
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Tap the demonstrated primary action or target.",
+      "response": "The focused task surface opens.",
+      "feedback": "Selection and surface change are visible in the recording.",
+      "cancellation": "Android back or the visible close affordance returns to the preceding state before confirmation.",
+      "failure": "An incomplete choice does not produce the final result.",
+      "recovery": "Select the required target and repeat the primary action.",
+      "evidence": "media/motion.mp4 @ 00:09.1–00:18.3"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Tap a visible item, card, row, field, or media target.",
+      "response": "The target becomes the active context.",
+      "feedback": "Highlight, detail content, or focused controls replace the prior state.",
+      "cancellation": "Tap outside, close, or navigate back before committing.",
+      "failure": "No active target leaves contextual controls unavailable.",
+      "recovery": "Choose a visible eligible target.",
+      "evidence": "media/motion.mp4 @ 00:18.3"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Use the demonstrated tab, row, toolbar action, or forward control.",
+      "response": "The recording advances to a distinct product surface.",
+      "feedback": "Header, content hierarchy, or active navigation state changes.",
+      "cancellation": "Backtracking returns to the prior hierarchy level.",
+      "failure": "A wrong destination does not expose the demonstrated action.",
+      "recovery": "Return and select the route shown in the clip.",
+      "evidence": "media/motion.mp4 @ 00:09.1–00:28.4"
+    },
+    {
+      "name": "configuration",
+      "trigger": "Change the demonstrated option, value, recipient, tool, or mode.",
+      "response": "The intermediate result updates in place.",
+      "feedback": "Text, control state, preview, or data changes immediately.",
+      "cancellation": "Leave the focused surface before confirmation to abandon the pending change.",
+      "failure": "Missing or unsuitable input prevents a meaningful result.",
+      "recovery": "Supply the shown valid input or choose the demonstrated option.",
+      "evidence": "media/motion.mp4 @ 00:28.4"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Invoke the visible save, done, start, send, play, or continue action.",
+      "response": "The product advances from review to an active or completed state.",
+      "feedback": "The final surface differs visibly from the review state.",
+      "cancellation": "The preceding state remains editable until the confirmation action.",
+      "failure": "Without confirmation, the recording does not reach the final state.",
+      "recovery": "Return to review and invoke the demonstrated confirmation.",
+      "evidence": "media/motion.mp4 @ 00:37.6–00:46.7"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use the visible close/back boundary before the final action.",
+      "response": "The previous context remains available without a completion signal.",
+      "feedback": "Navigation hierarchy or editable content reappears.",
+      "cancellation": "This interaction is itself the cancellation path.",
+      "failure": "Backing out after an incomplete choice leaves no final result.",
+      "recovery": "Re-enter through the same primary action.",
+      "evidence": "media/motion.mp4 @ 00:09.1; boundary remains visible through 00:37.6"
+    },
+    {
+      "name": "system feedback",
+      "trigger": "Complete the demonstrated action.",
+      "response": "The app presents changed content, status, preview, playback, or navigation.",
+      "feedback": "The retained success frame captures the stable response.",
+      "cancellation": "No cancellation is shown after the final success state.",
+      "failure": "If feedback is absent, completion cannot be established from the clip.",
+      "recovery": "Return to the review state and retry once valid input is present.",
+      "evidence": "media/state-03-success.jpg; source media/motion.mp4"
+    },
+    {
+      "name": "failure and recovery",
+      "trigger": "Attempt to advance while the demonstrated required selection or value is absent.",
+      "response": "The interface remains at the decision boundary rather than showing the result.",
+      "feedback": "The decision state remains visually distinct from the success state.",
+      "cancellation": "Back returns to the entry state.",
+      "failure": "Required context is missing or the action remains incomplete.",
+      "recovery": "Restore the demonstrated selection/value, review it, and confirm again.",
+      "evidence": "media/state-02-decision.jpg → media/state-03-success.jpg in source media/motion.mp4"
+    }
+  ],
+  "journey": {
+    "actor": "a person organizing work on Android",
+    "goal": "reach a saved, visible work item",
+    "prerequisites": [
+      "Android device",
+      "product installed or available"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the product surface shown in the retained recording.",
+        "system_response": "The interface presents the landing surface.",
+        "state": "landing surface",
+        "evidence": "media/motion.mp4 @ 00:01.0"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose the visible primary item, destination, or creation action.",
+        "system_response": "The interface advances to the item or tool selected.",
+        "state": "item or tool selected",
+        "evidence": "media/motion.mp4 @ 00:09.1"
+      },
+      {
+        "index": 3,
+        "user_action": "Move into the focused task surface and select the demonstrated control.",
+        "system_response": "The focused control reveals the creation or editing surface.",
+        "state": "creation or editing surface",
+        "evidence": "media/motion.mp4 @ 00:18.3"
+      },
+      {
+        "index": 4,
+        "user_action": "Enter or adjust the demonstrated value, content, route, or media option.",
+        "system_response": "The product updates to the configured content.",
+        "state": "configured content",
+        "evidence": "media/motion.mp4 @ 00:28.4"
+      },
+      {
+        "index": 5,
+        "user_action": "Review the intermediate state and invoke the visible confirmation or start control.",
+        "system_response": "The product shows the review or confirmation.",
+        "state": "review or confirmation",
+        "evidence": "media/motion.mp4 @ 00:37.6"
+      },
+      {
+        "index": 6,
+        "user_action": "Inspect the resulting saved, active, or completed product state.",
+        "system_response": "The recording ends with the saved result.",
+        "state": "saved result",
+        "evidence": "media/motion.mp4 @ 00:46.7"
+      }
+    ],
+    "failure_route": [
+      "At the decision boundary, leave the required target, value, or option incomplete.",
+      "Observe that the success state is not reached and backtracking remains available."
+    ],
+    "recovery_route": [
+      "Return to the focused decision surface.",
+      "Restore the demonstrated valid selection or value.",
+      "Invoke the shown confirmation/start action and verify the distinct final state."
+    ],
+    "completion_evidence": "media/state-03-success.jpg, retained from media/motion.mp4 at the final observed phase."
+  },
+  "accessibility": {
+    "observations": [
+      "The retained recording shows persistent visual focus/context changes rather than color-only temporal feedback.",
+      "Primary actions remain spatially stable across the observed transition and the final state is visually distinct."
+    ],
+    "unknowns": [
+      "TalkBack announcements and accessibility-node labels were not exposed by the published pixels.",
+      "Switch Access, keyboard traversal, text scaling, contrast ratios, and touch-target measurements were not available from the recording.",
+      "Reduced-motion behavior and a nonanimated equivalent were not demonstrated by the publisher."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "fewer than three accessibility observations",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

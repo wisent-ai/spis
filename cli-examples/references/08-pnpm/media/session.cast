@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921622,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"pnpm authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: pnpm\r\n"]
+[0.55,"o","cli-ref$ pnpm --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","10.23.0\r\n"]
+[2.2,"o","cli-ref$ pnpm help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Version 10.23.0 (compiled to binary; bundled Node.js v20.11.0)\r\nUsage: pnpm [command] [flags]\r\n       pnpm [ -h | --help | -v | --version ]\r\n\r\nThese are common pnpm commands used in various situations, use 'pnpm help -a' to list all commands\r\n\r\nManage your dependencies:\r\n      add                  Installs a package and any packages that it depends\r\n                           on. By default, any new package is installed as a\r\n                           prod dependency\r\n   i, install              Install all dependencies for a project\r\n  ln, link                 Connect the local project to another one\r\n  rm, remove               Removes packages from node_modules and from the\r\n                           project's package.json\r\n"]
+[5.1,"o","cli-ref$ pnpm --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","\u2009ERROR\u2009 Unknown option: 'definitely-invalid-option'\r\nFor help, run: pnpm help\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ pnpm --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ pnpm help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Version 10.23.0 (compiled to binary; bundled Node.js v20.11.0)\r\nUsage: pnpm [command] [flags]\r\n       pnpm [ -h | --help | -v | --version ]\r\n\r\n"]

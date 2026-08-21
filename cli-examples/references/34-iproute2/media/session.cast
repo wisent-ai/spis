@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921625,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"iproute2 authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: iproute2\r\n"]
+[0.55,"o","cli-ref$ ip -V 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","ip utility, iproute2-6.1.0, libbpf 1.3.0\r\n"]
+[2.2,"o","cli-ref$ ip help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage: ip [ OPTIONS ] OBJECT { COMMAND | help }\r\n       ip [ -force ] -batch filename\r\nwhere  OBJECT := { address | addrlabel | amt | fou | help | ila | ioam | l2tp |\r\n                   link | macsec | maddress | monitor | mptcp | mroute | mrule |\r\n                   neighbor | neighbour | netconf | netns | nexthop | ntable |\r\n                   ntbl | route | rule | sr | tap | tcpmetrics |\r\n                   token | tunnel | tuntap | vrf | xfrm }\r\n       OPTIONS := { -V[ersion] | -s[tatistics] | -d[etails] | -r[esolve] |\r\n                    -h[uman-readable] | -iec | -j[son] | -p[retty] |\r\n                    -f[amily] { inet | inet6 | mpls | bridge | link } |\r\n                    -4 | -6 | -M | -B | -0 |\r\n                    -l[oops] { maximum-addr-flush-attempts } | -br[ief] |\r\n                    -o[neline] | -t[imestamp] | -ts[hort] | -b[atch] [filename] |\r\n                    -rc[vbuf] [size] | -n[etns] name | -N[umeric] | -a[ll] |\r\n"]
+[5.1,"o","cli-ref$ ip --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Option \"-definitely-invalid-option\" is unknown, try \"ip -help\".\r\n[exit status 255]\r\n"]
+[7.1,"o","cli-ref$ ip --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ ip help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage: ip [ OPTIONS ] OBJECT { COMMAND | help }\r\n       ip [ -force ] -batch filename\r\nwhere  OBJECT := { address | addrlabel | amt | fou | help | ila | ioam | l2tp |\r\n                   link | macsec | maddress | monitor | mptcp | mroute | mrule |\r\n"]

@@ -1,0 +1,386 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "LinkedIn: Network & Job Finder (Apple App Store)",
+  "product_url": "https://apps.apple.com/us/app/id288429040",
+  "evidence_status": "partial",
+  "upstream_owner": "LinkedIn Corporation",
+  "captured_at": "2026-08-17T00:31:05Z",
+  "motion": [
+    {
+      "local_path": "media/listing-interaction.webm",
+      "source_url": "https://apps.apple.com/us/app/id288429040",
+      "media_kind": "video-webm",
+      "width": 1280,
+      "height": 720,
+      "duration_seconds": 13.68,
+      "frame_count": 342,
+      "bytes": 1384229,
+      "sha256": "6007ef738cf9dba75b757c93575b6298ae24f8c1499fb5e9f344f6b209173c4d",
+      "capture_method": "Real store listing recorded by Weles WSession 0.5.8 on the Stado-pinned charless-mac-mini dedicated host; Weles Chromium 147.0.7727.108-weles.1; direct canonical navigation, measured scrolls, humanized selection attempt, reversal, and Playwright WebM recording. No browser was launched on the operator computer.",
+      "declared_media_kind": "video-webm",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "local-browser-recording"
+    },
+    {
+      "local_path": "media/official-store-preview.mp4",
+      "source_url": "https://apptrailers.itunes.apple.com/itunes-assets/PurpleVideo211/v4/ca/f9/17/caf917e1-70eb-f380-1324-a910281bb20b/P1327498925_default.m3u8",
+      "media_kind": "video-mp4",
+      "width": 520,
+      "height": 1128,
+      "duration_seconds": 4.633,
+      "frame_count": 139,
+      "bytes": 1091955,
+      "sha256": "fa5cfcb934f4b3aad0061ef943bb34cff7d20a207e79f01d3ae72fd753df0b74",
+      "capture_method": "Downloaded without browser from the official Apple App Store apptrailers HLS asset linked by the canonical listing and losslessly remuxed to MP4.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "listing-open",
+      "local_path": "media/listing-state-01.png",
+      "source_motion_path": "frame of media/listing-interaction.webm at 2s (mean abs diff 8.4727/255)",
+      "width": 900,
+      "height": 506,
+      "bytes": 284930,
+      "sha256": "bb969cca6c0a7e17f55f56e9830acc137b4fbbb8f1c7486957b1625e97a2c874",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.0,
+        "mean_abs_diff": 8.4727,
+        "sampled_frames": 27
+      }
+    },
+    {
+      "name": "media-shelf",
+      "local_path": "media/listing-state-02.png",
+      "source_motion_path": "frame of media/listing-interaction.webm at 6s (mean abs diff 11.2461/255)",
+      "width": 900,
+      "height": 506,
+      "bytes": 250669,
+      "sha256": "94920896ef651866fed72ce49f8649a17eb15adc23e31d4c98255ea529759f83",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 6.0,
+        "mean_abs_diff": 11.2461,
+        "sampled_frames": 27
+      }
+    },
+    {
+      "name": "selection-unavailable",
+      "local_path": "media/listing-state-03.png",
+      "source_motion_path": "frame of media/listing-interaction.webm at 6s (mean abs diff 11.2461/255)",
+      "width": 900,
+      "height": 506,
+      "bytes": 250669,
+      "sha256": "94920896ef651866fed72ce49f8649a17eb15adc23e31d4c98255ea529759f83",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 6.0,
+        "mean_abs_diff": 11.2461,
+        "sampled_frames": 27
+      }
+    },
+    {
+      "name": "details-reached",
+      "local_path": "media/listing-state-04.png",
+      "source_motion_path": "media/listing-interaction.webm",
+      "width": 900,
+      "height": 506,
+      "bytes": 169529,
+      "sha256": "118fab2d78ba1da2c4fde9872e1881170069dfd53829864178524827a9e8b501",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 8.0,
+        "mean_abs_diff": 12.8047,
+        "sampled_frames": 27
+      }
+    },
+    {
+      "name": "target-overshot",
+      "local_path": "media/listing-state-05.png",
+      "source_motion_path": "frame of media/listing-interaction.webm at 8.5s (mean abs diff 11.1289/255)",
+      "width": 900,
+      "height": 506,
+      "bytes": 209969,
+      "sha256": "8f052f6beb4c55fd53cf0cbfd3e802e2c219340d8d622bc81d44f72f62c09d6b",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 8.5,
+        "mean_abs_diff": 11.1289,
+        "sampled_frames": 27
+      }
+    },
+    {
+      "name": "recovered-to-media",
+      "local_path": "media/listing-state-06.png",
+      "source_motion_path": "media/listing-interaction.webm",
+      "width": 900,
+      "height": 506,
+      "bytes": 232711,
+      "sha256": "22207a30356ef2599a6b3a169fb2bb26eaad2f6a8b5a21dcb033a960cb67cb35",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 6.0,
+        "mean_abs_diff": 30.0156,
+        "sampled_frames": 27
+      }
+    },
+    {
+      "name": "returned-to-header",
+      "local_path": "media/listing-state-07.png",
+      "source_motion_path": "frame of media/listing-interaction.webm at 2s (mean abs diff 8.4727/255)",
+      "width": 900,
+      "height": 506,
+      "bytes": 284923,
+      "sha256": "f3cfa1e7466688a038e5068a3112f7e50f44c00c74cb1d9a87576287ed1c70b5",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.0,
+        "mean_abs_diff": 8.4727,
+        "sampled_frames": 27
+      }
+    },
+    {
+      "name": "official-preview-key-state-1",
+      "local_path": "media/preview-state-01.png",
+      "source_motion_path": "media/official-store-preview.mp4",
+      "width": 520,
+      "height": 1128,
+      "bytes": 422020,
+      "sha256": "98a1d7ad20fb6b5758672b3f8bab89988725e2a833b43505dbd31f9902024fbd",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.0,
+        "mean_abs_diff": 70.7383,
+        "sampled_frames": 27
+      }
+    },
+    {
+      "name": "official-preview-key-state-2",
+      "local_path": "media/preview-state-02.png",
+      "source_motion_path": "media/official-store-preview.mp4",
+      "width": 520,
+      "height": 1128,
+      "bytes": 405352,
+      "sha256": "a64727636b7a71448e4facfef414c67a34c87adbc54b5f2eb0e9734f5b92cfd9",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.0,
+        "mean_abs_diff": 70.3047,
+        "sampled_frames": 27
+      }
+    },
+    {
+      "name": "official-preview-key-state-3",
+      "local_path": "media/preview-state-03.png",
+      "source_motion_path": "media/official-store-preview.mp4",
+      "width": 520,
+      "height": 1128,
+      "bytes": 396676,
+      "sha256": "3a417213bd37d0d47502407cabbd7c69230760fc730315e1156706f5262c4625",
+      "source_match": {
+        "motion_path": "media/listing-interaction.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 1.5,
+        "mean_abs_diff": 70.7656,
+        "sampled_frames": 27
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Open listing",
+      "trigger": "Navigate to the canonical store URL.",
+      "response": "The store renders the product header and acquisition context.",
+      "feedback": "The product name, icon, rating/context, and listing chrome become visible.",
+      "cancellation": "Leave or close the page before interacting.",
+      "failure": "A network or store response can prevent the header from rendering.",
+      "recovery": "Reload the canonical URL and wait for the header state.",
+      "evidence": "media/listing-interaction.webm and media/listing-state-01.png"
+    },
+    {
+      "name": "Confirm load",
+      "trigger": "Pause for two seconds after navigation.",
+      "response": "Deferred artwork and listing modules finish rendering.",
+      "feedback": "Stable header and media geometry confirm readiness.",
+      "cancellation": "Navigate away before the settle interval ends.",
+      "failure": "Unsettled or blank media remains visibly incomplete.",
+      "recovery": "Wait for the page to settle before continuing.",
+      "evidence": "media/listing-interaction.webm opening segment"
+    },
+    {
+      "name": "Scroll to media",
+      "trigger": "Scroll downward by 520 pixels.",
+      "response": "The viewport moves from the header toward the screenshot or preview shelf.",
+      "feedback": "The media region replaces part of the header in the viewport.",
+      "cancellation": "Reverse the scroll upward.",
+      "failure": "A scroll that is too short leaves the media target below the fold.",
+      "recovery": "Continue a measured downward scroll until the shelf is visible.",
+      "evidence": "media/listing-interaction.webm and media/listing-state-02.png"
+    },
+    {
+      "name": "Select preview",
+      "trigger": "Activate the visible target named Screenshot.",
+      "response": "No matching interactive Screenshot target is exposed at this observed viewport.",
+      "feedback": "no-target-found",
+      "cancellation": "Remain on the shelf, dismiss selected media, or reverse to the prior scroll position.",
+      "failure": "Weles returns no-target-found rather than activating unrelated content.",
+      "recovery": "Continue through the listing with scrolling; the listing remains inspectable.",
+      "evidence": "media/listing-interaction.webm and media/listing-state-03.png"
+    },
+    {
+      "name": "Continue to details",
+      "trigger": "Scroll downward by 760 pixels.",
+      "response": "Description, metadata, ratings, privacy, or data-safety content enters the viewport.",
+      "feedback": "The viewport changes continuously with the scroll.",
+      "cancellation": "Scroll upward to return to media.",
+      "failure": "The target detail can remain below the fold on a taller listing.",
+      "recovery": "Use another measured downward scroll.",
+      "evidence": "media/listing-interaction.webm and media/listing-state-04.png"
+    },
+    {
+      "name": "Overshoot target",
+      "trigger": "Scroll downward by 1800 pixels after reaching details.",
+      "response": "The viewport moves beyond the intended media/detail target.",
+      "feedback": "The target shelf is no longer visible and later listing sections appear.",
+      "cancellation": "Stop the gesture before its end.",
+      "failure": "The intended inspection target is overshot.",
+      "recovery": "Reverse direction with an upward scroll.",
+      "evidence": "media/listing-interaction.webm and media/listing-state-05.png"
+    },
+    {
+      "name": "Recover position",
+      "trigger": "Scroll upward by 2400 pixels after the overshoot.",
+      "response": "The viewport returns toward the media and detail region.",
+      "feedback": "Previously seen modules re-enter the viewport in reverse order.",
+      "cancellation": "Reverse downward again.",
+      "failure": "A partial reverse can stop short of the target.",
+      "recovery": "Continue upward until the recognizable shelf returns.",
+      "evidence": "media/listing-interaction.webm and media/listing-state-06.png"
+    },
+    {
+      "name": "Backtrack to header",
+      "trigger": "Scroll upward by a further 2400 pixels.",
+      "response": "The listing returns to its product header and acquisition context.",
+      "feedback": "The original product header is visible again.",
+      "cancellation": "Stop at any intermediate listing section.",
+      "failure": "Large pages may require another upward gesture.",
+      "recovery": "Repeat the upward gesture until the header is restored.",
+      "evidence": "media/listing-interaction.webm and media/listing-state-07.png"
+    }
+  ],
+  "journey": {
+    "actor": "Prospective mobile-app user evaluating a store listing before installation.",
+    "goal": "Discover LinkedIn: Network & Job Finder (Apple App Store), inspect its product media and listing details, recover from a navigation overshoot, and return to the product header ready for the next store decision.",
+    "prerequisites": [
+      "Network access to the canonical Apple App Store or Google Play listing.",
+      "A browser capable of rendering the listing, scrolling, and exposing store controls.",
+      "No authentication or purchase is required for this observed inspection path."
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the canonical store URL.",
+        "system_response": "The store resolves the product listing and renders its header.",
+        "state": "listing-open",
+        "evidence": "media/listing-state-01.png; opening of media/listing-interaction.webm"
+      },
+      {
+        "index": 2,
+        "user_action": "Wait for deferred artwork and modules to settle.",
+        "system_response": "The listing reaches a stable, inspectable header state.",
+        "state": "listing-settled",
+        "evidence": "opening segment of media/listing-interaction.webm"
+      },
+      {
+        "index": 3,
+        "user_action": "Scroll down 520 pixels.",
+        "system_response": "The product screenshot/preview region enters the viewport.",
+        "state": "media-shelf",
+        "evidence": "media/listing-state-02.png"
+      },
+      {
+        "index": 4,
+        "user_action": "Attempt to activate the target named Screenshot.",
+        "system_response": "Weles reports no-target-found; no unrelated content is activated.",
+        "state": "selection-unavailable",
+        "evidence": "media/listing-state-03.png and the selection segment of media/listing-interaction.webm"
+      },
+      {
+        "index": 5,
+        "user_action": "Continue downward by 760 pixels.",
+        "system_response": "The listing advances to descriptive and trust metadata.",
+        "state": "details-reached",
+        "evidence": "media/listing-state-04.png"
+      },
+      {
+        "index": 6,
+        "user_action": "Scroll down a further 1800 pixels.",
+        "system_response": "The intended media/detail target is overshot and later sections appear.",
+        "state": "target-overshot",
+        "evidence": "media/listing-state-05.png"
+      },
+      {
+        "index": 7,
+        "user_action": "Reverse upward by 2400 pixels.",
+        "system_response": "Earlier media/detail modules return in reverse order.",
+        "state": "recovered-to-media",
+        "evidence": "media/listing-state-06.png"
+      },
+      {
+        "index": 8,
+        "user_action": "Continue upward by 2400 pixels.",
+        "system_response": "The original product header returns, completing the discovery-to-open inspection loop.",
+        "state": "returned-to-header",
+        "evidence": "media/listing-state-07.png; ending of media/listing-interaction.webm"
+      }
+    ],
+    "failure_route": [
+      "At the media shelf, the attempted Screenshot target is not exposed and Weles returns no-target-found.",
+      "A subsequent large downward scroll intentionally overshoots the media/detail target and later listing sections replace it."
+    ],
+    "recovery_route": [
+      "Do not activate unrelated content after no-target-found; continue with the listing scroll.",
+      "Reverse direction by 2400 pixels to recover the media/detail region.",
+      "Continue upward by 2400 pixels to restore the original listing header."
+    ],
+    "completion_evidence": "media/listing-state-07.png and the final segment of media/listing-interaction.webm show the product header restored after the observed failure and recovery route."
+  },
+  "accessibility": {
+    "observations": [
+      "The product name and listing content are visibly rendered at the opening state.",
+      "Continuous scrolling preserves context and can be reversed without a modal trap.",
+      "The Screenshot selection attempt produced the explicit Weles result no-target-found, rather than silently activating another element.",
+      "The recording retains stable visual feedback after each navigation action."
+    ],
+    "unknowns": [
+      "Screen-reader announcements and accessible-name completeness were not audited with assistive technology.",
+      "Keyboard-only focus order and focus visibility were not exercised.",
+      "Caption availability for every upstream preview and autoplay policy are not established.",
+      "Reduced-motion preferences and nonanimated equivalents were not exercised."
+    ]
+  },
+  "motion_provenance": [
+    "local-browser-recording",
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

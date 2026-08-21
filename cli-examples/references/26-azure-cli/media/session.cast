@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921624,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Azure CLI authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Azure CLI\r\n"]
+[0.55,"o","cli-ref$ az version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","{\r\n  \"azure-cli\": \"2.86.0\",\r\n  \"azure-cli-core\": \"2.86.0\",\r\n  \"azure-cli-telemetry\": \"1.1.0\",\r\n  \"extensions\": {\r\n    \"account\": \"0.2.5\",\r\n    \"costmanagement\": \"1.0.0\",\r\n    \"support\": \"2.0.1\"\r\n  }\r\n}\r\n"]
+[2.2,"o","cli-ref$ az --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Group\r\n    az\r\n\r\nSubgroups:\r\n    account                 : Manage Azure subscription information.\r\n    acr                     : Manage private registries with Azure Container Registries.\r\n    ad                      : Manage Microsoft Entra ID (formerly known as Azure Active Directory,\r\n                              Azure AD, AAD) entities needed for Azure role-based access control\r\n                              (Azure RBAC) through Microsoft Graph API.\r\n    advisor                 : Manage Azure Advisor.\r\n    afd                     : Manage Azure Front Door Standard/Premium.\r\n    aks                     : Azure Kubernetes Service.\r\n    ams                     : Manage Azure Media Services resources.\r\n"]
+[5.1,"o","cli-ref$ az --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","ERROR: the following arguments are required: _command_package\r\n\r\nhttps://aka.ms/cli_ref\r\nRead more about the command in reference docs\r\n[exit status 2]\r\n"]
+[7.1,"o","cli-ref$ az --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ az --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Group\r\n    az\r\n\r\nSubgroups:\r\n"]

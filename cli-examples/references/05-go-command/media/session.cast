@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921622,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Go command authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Go command\r\n"]
+[0.55,"o","cli-ref$ go version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","go version go1.26.2 darwin/arm64\r\n"]
+[2.2,"o","cli-ref$ go help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Go is a tool for managing Go source code.\r\n\r\nUsage:\r\n\r\n\tgo <command> [arguments]\r\n\r\nThe commands are:\r\n\r\n\tbug         start a bug report\r\n\tbuild       compile packages and dependencies\r\n\tclean       remove object files and cached files\r\n\tdoc         show documentation for package or symbol\r\n\tenv         print Go environment information\r\n\tfix         apply fixes suggested by static checkers\r\n"]
+[5.1,"o","cli-ref$ go --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","flag provided but not defined: -definitely-invalid-option\r\nGo is a tool for managing Go source code.\r\n\r\nUsage:\r\n\r\n\tgo <command> [arguments]\r\n\r\nThe commands are:\r\n\r\n\tbug         start a bug report\r\n\tbuild       compile packages and dependencies\r\n\tclean       remove object files and cached files\r\n\tdoc         show documentation for package or symbol\r\n\tenv         print Go environment information\r\n[exit status 2]\r\n"]
+[7.1,"o","cli-ref$ go --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ go help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Go is a tool for managing Go source code.\r\n\r\nUsage:\r\n\r\n"]

@@ -1,0 +1,361 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "onboarding-auth-examples",
+  "generated_at": "2026-08-16",
+  "reference_count": 50,
+  "complete_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "Slack — workspace creation",
+      "path": "references/01-slack-workspace-creation/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 2,
+      "name": "Notion — create and switch workspaces",
+      "path": "references/02-notion-create-and-switch-workspaces/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 3,
+      "name": "Asana — account setup",
+      "path": "references/03-asana-account-setup/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 4,
+      "name": "Atlassian — invite users to a site",
+      "path": "references/04-atlassian-invite-users-to-a-site/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 5,
+      "name": "Miro — getting started",
+      "path": "references/05-miro-getting-started/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 6,
+      "name": "Figma — create a team",
+      "path": "references/06-figma-create-a-team/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 7,
+      "name": "Airtable — onboarding",
+      "path": "references/07-airtable-onboarding/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 8,
+      "name": "ClickUp — onboarding",
+      "path": "references/08-clickup-onboarding/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 9,
+      "name": "monday.com — getting started",
+      "path": "references/09-monday-com-getting-started/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 10,
+      "name": "Trello — create a Workspace",
+      "path": "references/10-trello-create-a-workspace/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 11,
+      "name": "Zoom — sign up and activate an account",
+      "path": "references/11-zoom-sign-up-and-activate-an-account/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 12,
+      "name": "Cisco Webex — get started",
+      "path": "references/12-cisco-webex-get-started/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 13,
+      "name": "Discord — getting started",
+      "path": "references/13-discord-getting-started/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 14,
+      "name": "Dropbox — import files and folders",
+      "path": "references/14-dropbox-import-files-and-folders/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 15,
+      "name": "Google Workspace — setup guide",
+      "path": "references/15-google-workspace-setup-guide/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 16,
+      "name": "Microsoft 365 — setup wizard",
+      "path": "references/16-microsoft-365-setup-wizard/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 17,
+      "name": "Canva — sign up or log in",
+      "path": "references/17-canva-sign-up-or-log-in/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 18,
+      "name": "Postman — create and manage workspaces",
+      "path": "references/18-postman-create-and-manage-workspaces/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 19,
+      "name": "GitHub — creating an account",
+      "path": "references/19-github-creating-an-account/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 20,
+      "name": "GitLab — user account",
+      "path": "references/20-gitlab-user-account/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 21,
+      "name": "Vercel — import a Git repository",
+      "path": "references/21-vercel-import-a-git-repository/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 22,
+      "name": "Netlify — import an existing project",
+      "path": "references/22-netlify-import-an-existing-project/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 23,
+      "name": "Render — deploy from a Git repository",
+      "path": "references/23-render-deploy-from-a-git-repository/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 24,
+      "name": "Heroku — deploying with Git",
+      "path": "references/24-heroku-deploying-with-git/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 25,
+      "name": "Docker Desktop — sign in",
+      "path": "references/25-docker-desktop-sign-in/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 26,
+      "name": "Sentry — guided onboarding",
+      "path": "references/26-sentry-guided-onboarding/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 27,
+      "name": "Datadog — getting started",
+      "path": "references/27-datadog-getting-started/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 28,
+      "name": "Twilio — account setup",
+      "path": "references/28-twilio-account-setup/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 29,
+      "name": "Auth0 — Universal Login",
+      "path": "references/29-auth0-universal-login/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 30,
+      "name": "Okta — device authorization flow",
+      "path": "references/30-okta-device-authorization-flow/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 31,
+      "name": "Microsoft identity platform — device authorization grant",
+      "path": "references/31-microsoft-identity-platform-device-authorization-grant/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 32,
+      "name": "AWS IAM Identity Center — device authorization",
+      "path": "references/32-aws-iam-identity-center-device-authorization/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 33,
+      "name": "Cloudflare Zero Trust — setup",
+      "path": "references/33-cloudflare-zero-trust-setup/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 34,
+      "name": "Tailscale — quickstart",
+      "path": "references/34-tailscale-quickstart/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 35,
+      "name": "1Password — get started",
+      "path": "references/35-1password-get-started/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 36,
+      "name": "Bitwarden — get started",
+      "path": "references/36-bitwarden-get-started/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 37,
+      "name": "Dashlane — get started",
+      "path": "references/37-dashlane-get-started/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 38,
+      "name": "Yubico — set up a security key",
+      "path": "references/38-yubico-set-up-a-security-key/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 39,
+      "name": "Duo Security — device enrollment",
+      "path": "references/39-duo-security-device-enrollment/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 40,
+      "name": "Proton — create an account",
+      "path": "references/40-proton-create-an-account/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 41,
+      "name": "Signal — register a phone number",
+      "path": "references/41-signal-register-a-phone-number/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 42,
+      "name": "Apple — set up an iPhone or iPad",
+      "path": "references/42-apple-set-up-an-iphone-or-ipad/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 43,
+      "name": "Android — set up a new device",
+      "path": "references/43-android-set-up-a-new-device/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 44,
+      "name": "Spotify — sign up",
+      "path": "references/44-spotify-sign-up/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 45,
+      "name": "Netflix — sign up",
+      "path": "references/45-netflix-sign-up/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 46,
+      "name": "Stripe Connect — embedded onboarding",
+      "path": "references/46-stripe-connect-embedded-onboarding/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 47,
+      "name": "Plaid Link — overview",
+      "path": "references/47-plaid-link-overview/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 48,
+      "name": "PayPal — create an account",
+      "path": "references/48-paypal-create-an-account/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 49,
+      "name": "Shopify — initial setup",
+      "path": "references/49-shopify-initial-setup/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 50,
+      "name": "Square — account setup guide",
+      "path": "references/50-square-account-setup-guide/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    }
+  ],
+  "measured_at": "2026-08-19",
+  "partial_count": 50
+}

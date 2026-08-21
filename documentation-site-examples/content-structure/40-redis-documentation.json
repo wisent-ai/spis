@@ -1,0 +1,449 @@
+{
+  "name": "Redis Documentation",
+  "source_url": "https://redis.io/docs/latest/",
+  "category": "Database documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 8447,
+  "landing_nav": [
+    {
+      "text": "AI agent builder",
+      "path": "/docs/latest/develop/ai/agent-builder/"
+    },
+    {
+      "text": "Redis install",
+      "path": "/docs/latest/operate/oss_and_stack/install/install-stack/"
+    },
+    {
+      "text": "Data types",
+      "path": "/docs/latest/develop/data-types/"
+    },
+    {
+      "text": "Tools",
+      "path": "/docs/latest/develop/tools/"
+    },
+    {
+      "text": "Community",
+      "path": "/docs/latest/operate/oss_and_stack/"
+    },
+    {
+      "text": "Docs",
+      "path": "/docs/"
+    },
+    {
+      "text": "Sign up",
+      "path": "/try-free/"
+    },
+    {
+      "text": "Develop with Redis Open Source",
+      "path": "/docs/latest/develop/"
+    },
+    {
+      "text": "Run Redis in production",
+      "path": "/docs/latest/operate/rc/"
+    },
+    {
+      "text": "RedisVL",
+      "path": "/docs/latest/develop/ai/redisvl/"
+    },
+    {
+      "text": "Vector database Get started with vector databases",
+      "path": "/docs/latest/develop/get-started/search-tutorial/vector-search/"
+    },
+    {
+      "text": "AI development Build AI applications with Redis",
+      "path": "/docs/latest/develop/ai/"
+    },
+    {
+      "text": "JSON Store and query JSON documents",
+      "path": "/docs/latest/develop/data-types/json/"
+    },
+    {
+      "text": "Streams Real-time data streaming and event processing",
+      "path": "/docs/latest/develop/data-types/streams/"
+    },
+    {
+      "text": "Real-time context engine Memory, retrieval, state, streaming",
+      "path": "/docs/latest/develop/ai/context-engine/"
+    },
+    {
+      "text": "→ Redis vector library",
+      "path": "/docs/latest/develop/ai/redisvl/"
+    },
+    {
+      "text": "→ Python",
+      "path": "/docs/latest/develop/clients/redis-py/"
+    },
+    {
+      "text": "→ Node.js",
+      "path": "/docs/latest/develop/clients/nodejs/"
+    },
+    {
+      "text": "→ Ruby",
+      "path": "/docs/latest/develop/clients/ruby/"
+    },
+    {
+      "text": "→ Java Jedis",
+      "path": "/docs/latest/develop/clients/jedis/"
+    },
+    {
+      "text": "→ Java Lettuce",
+      "path": "/docs/latest/develop/clients/lettuce/"
+    },
+    {
+      "text": "→ C#/.NET",
+      "path": "/docs/latest/develop/clients/dotnet/"
+    },
+    {
+      "text": "→ Go",
+      "path": "/docs/latest/develop/clients/go/"
+    },
+    {
+      "text": "→ Rust",
+      "path": "/docs/latest/develop/clients/rust/"
+    },
+    {
+      "text": "→ PHP",
+      "path": "/docs/latest/develop/clients/php/"
+    },
+    {
+      "text": "→ C",
+      "path": "/docs/latest/develop/clients/hiredis/"
+    },
+    {
+      "text": "→ Operate Redis",
+      "path": "/docs/latest/operate/"
+    },
+    {
+      "text": "→ Flex",
+      "path": "/docs/latest/operate/rc/databases/create-database/create-flex-database/"
+    },
+    {
+      "text": "→ LangCache",
+      "path": "/docs/latest/develop/ai/context-engine/langcache/"
+    },
+    {
+      "text": "→ LangChain",
+      "path": "/docs/latest/integrate/langchain-redis/"
+    },
+    {
+      "text": "→ Amazon Bedrock",
+      "path": "/docs/latest/integrate/amazon-bedrock/"
+    },
+    {
+      "text": "→ Spring Data",
+      "path": "/docs/latest/integrate/spring-framework-cache/"
+    },
+    {
+      "text": "→ Client tools",
+      "path": "/docs/latest/develop/tools/"
+    },
+    {
+      "text": "→ Redis CLI",
+      "path": "/docs/latest/develop/tools/cli/"
+    },
+    {
+      "text": "→ Redis Insight GUI",
+      "path": "/docs/latest/develop/tools/insight/"
+    },
+    {
+      "text": "→ Redis for VS Code",
+      "path": "/docs/latest/develop/tools/redis-for-vscode/"
+    },
+    {
+      "text": "→ Redis MCP",
+      "path": "/docs/latest/integrate/redis-mcp/"
+    },
+    {
+      "text": "→ Try Redis Sandbox",
+      "path": "/try/sandbox/"
+    },
+    {
+      "text": "RIOT Redis Input/Output Tools for data migration",
+      "path": "/docs/latest/integrate/riot/"
+    },
+    {
+      "text": "Redis Data Integration Ingest live data from databases to Redis",
+      "path": "/docs/latest/integrate/redis-data-integration/quick-start-guide/"
+    },
+    {
+      "text": "Prometheus & Grafana Collect and visualize Redis metrics",
+      "path": "/docs/latest/integrate/prometheus-with-redis-enterprise/"
+    },
+    {
+      "text": "Datadog Monitor Redis Cloud with Datadog",
+      "path": "/docs/latest/integrate/datadog-with-redis-cloud/"
+    },
+    {
+      "text": "Dynatrace Monitor Redis Cloud with Dynatrace",
+      "path": "/docs/latest/integrate/dynatrace-with-redis-cloud/"
+    },
+    {
+      "text": "New Relic Monitor Redis Cloud with New Relic",
+      "path": "/docs/latest/integrate/new-relic-with-redis-cloud/"
+    },
+    {
+      "text": "Tutorials Step-by-step guides and examples",
+      "path": "/tutorials/"
+    },
+    {
+      "text": "Blog Latest updates and insights",
+      "path": "/blog/"
+    },
+    {
+      "text": "Try the chatbot →",
+      "path": "/chat"
+    },
+    {
+      "text": "Explore resources →",
+      "path": "/docs/latest/ai-agent-resources/"
+    },
+    {
+      "text": "Privacy",
+      "path": "/legal/privacy-policy/"
+    },
+    {
+      "text": "Terms of use",
+      "path": "/legal/redis-website-terms-of-use/"
+    },
+    {
+      "text": "Legal notices",
+      "path": "/legal/"
+    },
+    {
+      "text": "Redis vs Elasticache",
+      "path": "/compare/elasticache/"
+    },
+    {
+      "text": "Redis vs Memcached",
+      "path": "/compare/memcached/"
+    },
+    {
+      "text": "Redis vs Memory Store",
+      "path": "/compare/memorystore/"
+    },
+    {
+      "text": "Redis vs. Open Source",
+      "path": "/compare/open-source"
+    },
+    {
+      "text": "Mission & values",
+      "path": "/company/"
+    },
+    {
+      "text": "Leadership",
+      "path": "/company/team/"
+    },
+    {
+      "text": "Careers",
+      "path": "/careers/"
+    },
+    {
+      "text": "Amazon Web Services",
+      "path": "/cloud-partners/aws/"
+    },
+    {
+      "text": "Google Cloud",
+      "path": "/cloud-partners/google/"
+    },
+    {
+      "text": "Microsoft Azure",
+      "path": "/cloud-partners/azure/"
+    },
+    {
+      "text": "All partners",
+      "path": "/partners/"
+    },
+    {
+      "text": "Professional services",
+      "path": "/services/professional-services/"
+    },
+    {
+      "text": "Support",
+      "path": "/support/"
+    }
+  ],
+  "url_sections": {
+    "docs": 5820,
+    "blog": 1387,
+    "resources": 260,
+    "press": 150,
+    "events": 143,
+    "tutorials": 123,
+    "customers": 58,
+    "glossary": 57,
+    "company": 50,
+    "legal": 37,
+    "compare": 27,
+    "redis-enterprise": 23,
+    "solutions": 21,
+    "partners": 17,
+    "losungen": 13,
+    "technology": 11,
+    "community": 9,
+    "try-free": 8,
+    "pricing": 8,
+    "meeting": 7,
+    "data-integration": 7,
+    "insight": 7,
+    "support": 7,
+    "software": 7,
+    "redis-for-ai": 7,
+    "cloud": 7,
+    "langcache": 7,
+    "open-source": 7,
+    "demo-center": 7,
+    "agent-memory": 7,
+    "iris": 7,
+    "downloads": 7,
+    "professional-services": 6,
+    "industries": 6,
+    "nosql": 6,
+    "redis-for-startups": 5,
+    "guides": 5,
+    "template": 3,
+    "deployment": 3,
+    "enterprise": 3
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "demo-center",
+      "tutorials step-by-step guides and examples"
+    ],
+    "tutorials / learn": [
+      "tutorials",
+      "/tutorials/",
+      "tutorials step-by-step guides and examples",
+      "/docs/latest/develop/get-started/search-tutorial/vector-search/"
+    ],
+    "getting started / quickstart": [
+      "vector database get started with vector databases",
+      "/docs/latest/develop/get-started/search-tutorial/vector-search/",
+      "/docs/latest/integrate/redis-data-integration/quick-start-guide/"
+    ],
+    "guides / how-to": [
+      "guides",
+      "tutorials step-by-step guides and examples",
+      "/docs/latest/integrate/redis-data-integration/quick-start-guide/"
+    ],
+    "changelog / release notes": [
+      "blog latest updates and insights"
+    ],
+    "migration / upgrade": [
+      "riot redis input/output tools for data migration"
+    ],
+    "glossary / definitions": [
+      "glossary"
+    ],
+    "cli reference": [
+      "→ redis cli",
+      "/docs/latest/develop/tools/cli/"
+    ],
+    "community / support": [
+      "support",
+      "community",
+      "/support/"
+    ],
+    "playground / sandbox": [
+      "/try/sandbox/",
+      "→ try redis sandbox"
+    ],
+    "integrations": [
+      "data-integration",
+      "/docs/latest/integrate/riot/",
+      "/docs/latest/integrate/redis-mcp/",
+      "/docs/latest/integrate/amazon-bedrock/"
+    ],
+    "deployment / production": [
+      "deployment",
+      "run redis in production"
+    ],
+    "pricing / limits": [
+      "pricing"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://redis.io/docs/",
+      "h1": "Welcome to Redis Docs",
+      "h2": [
+        "Develop in your language",
+        "Redis for AI and search",
+        "From open source to production scale",
+        "Choose your next step",
+        "Data integration & observability",
+        "Explore additional resources",
+        "Contribute"
+      ]
+    },
+    {
+      "url": "https://redis.io/tutorials/",
+      "h1": "",
+      "h2": [
+        "Filter"
+      ]
+    },
+    {
+      "url": "https://redis.io/blog/",
+      "h1": "ReAct agents explained: concepts & practical uses",
+      "h2": [
+        "Get started with Redis today"
+      ]
+    },
+    {
+      "url": "https://redis.io/legal/",
+      "h1": "Legal hub",
+      "h2": [
+        "Get started with Redis today"
+      ]
+    },
+    {
+      "url": "https://redis.io/company/",
+      "h1": "This is Redis",
+      "h2": [
+        "We’re the world’s fastest data platform.",
+        "Redis leadership team",
+        "Redis board",
+        "Where to find us",
+        "Get started"
+      ]
+    },
+    {
+      "url": "https://redis.io/partners/",
+      "h1": "Let’s build together.",
+      "h2": [
+        "Why partner with us",
+        "Explore our partner levels",
+        "Our Hyper partners",
+        "Ready to grow with us?"
+      ]
+    },
+    {
+      "url": "https://redis.io/support/",
+      "h1": "How can we help?",
+      "h2": [
+        "Get started with Redis today"
+      ]
+    },
+    {
+      "url": "https://redis.io/cloud-partners/aws/",
+      "h1": "Redis on AWS",
+      "h2": [
+        "Fully managed by Redis on AWS",
+        "Burn AWS commit and consolidate billing",
+        "On the cutting edge of AI",
+        "You’re in good company",
+        "Get started",
+        "Frequently asked questions"
+      ]
+    },
+    {
+      "url": "https://redis.io/services/professional-services/",
+      "h1": "Our experts are standing by",
+      "h2": [
+        "A closer look at our service packages",
+        "Get started with Redis today"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,298 @@
+{
+  "name": "Slack API Documentation",
+  "source_url": "https://api.slack.com/docs",
+  "category": "Collaboration API documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 22343,
+  "landing_nav": [],
+  "url_sections": {
+    "intl": 17905,
+    "marketplace": 2707,
+    "blog": 1134,
+    "customer-stories": 192,
+    "resources": 131,
+    "policy-archives": 51,
+    "templates": 47,
+    "solutions": 27,
+    "events": 26,
+    "features": 23,
+    "trust": 18,
+    "terms-of-service": 13,
+    "release-notes": 8,
+    "downloads": 5,
+    "pricing": 5,
+    "compare": 4,
+    "ai-agents": 3,
+    "slack-tips": 3,
+    "about": 2,
+    "integrations": 2,
+    "partners": 2,
+    "acceptable-use-policy": 1,
+    "accessibility": 1,
+    "accessibility-plan": 1,
+    "affiliates": 1,
+    "beta": 1,
+    "careers": 1,
+    "community": 1,
+    "connect": 1,
+    "contact-sales": 1,
+    "cookie-table": 1,
+    "customer-awards": 1,
+    "demo": 1,
+    "engage-users": 1,
+    "enterprise": 1,
+    "enterprise-key-management": 1,
+    "get-started": 1,
+    "kontakt-impressum": 1,
+    "legal": 1,
+    "enterprise-remote-work": 1
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "demo"
+    ],
+    "getting started / quickstart": [
+      "get-started"
+    ],
+    "changelog / release notes": [
+      "release-notes"
+    ],
+    "community / support": [
+      "community"
+    ],
+    "integrations": [
+      "integrations"
+    ],
+    "pricing / limits": [
+      "pricing"
+    ],
+    "accessibility": [
+      "accessibility",
+      "accessibility-plan"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://slack.com/about",
+      "h1": "Make work life simpler, more pleasant and more productive.",
+      "h2": [
+        "Building the digital-first ecosystem for work",
+        "Who we are and how to join us",
+        "Global offices",
+        "News from Slack"
+      ]
+    },
+    {
+      "url": "https://slack.com/acceptable-use-policy",
+      "h1": "Acceptable Use Policy",
+      "h2": [
+        "Legal navigation"
+      ]
+    },
+    {
+      "url": "https://slack.com/accessibility",
+      "h1": "Accessibility in Slack",
+      "h2": [
+        "A little tap can do a lot of things",
+        "Customize how GIFs and emoji animate in Slack",
+        "Choose your zoom level, contrast setting, and more.",
+        "Learn how we build and design for accessibility at Slack",
+        "Frequently asked questions"
+      ]
+    },
+    {
+      "url": "https://slack.com/accessibility-plan",
+      "h1": "Multi-year Accessibility Plan",
+      "h2": [
+        "Legal navigation",
+        "Accessibility for Ontarians with Disabilities",
+        "Completed Steps:",
+        "In Progress:"
+      ]
+    },
+    {
+      "url": "https://slack.com/affiliates",
+      "h1": "Slack Affiliates",
+      "h2": [
+        "Legal navigation",
+        "Slack Affiliates"
+      ]
+    },
+    {
+      "url": "https://slack.com/ai-agents",
+      "h1": "Agentic productivity for every employee in Slack.",
+      "h2": [
+        "Turn agents into teammates.",
+        "Get started quickly with Slack Agent Templates.",
+        "Unlock conversational context for every agent.",
+        "Automate Slack actions through Agentforce.",
+        "Generative AI will unlock massive potential for companies today.",
+        "Agents empower every employee, in every role.",
+        "Agents empower every employee, in every role.",
+        "All types of agents for achieving success.",
+        "Explore more about working in Slack.",
+        "Frequently asked questions"
+      ]
+    },
+    {
+      "url": "https://slack.com/blog",
+      "h1": "The Slack Blog",
+      "h2": []
+    },
+    {
+      "url": "https://slack.com/careers",
+      "h1": "Work with us",
+      "h2": [
+        "Slack is where the future works",
+        "Our core values",
+        "Working and thriving",
+        "Creating an inclusive environment",
+        "Filter job listings"
+      ]
+    },
+    {
+      "url": "https://slack.com/community",
+      "h1": "Find your place in the Slack Community",
+      "h2": [
+        "Be seen, be heard and make your impact",
+        "Meet your people",
+        "Share your enthusiasm: Lead a Slack Community chapter"
+      ]
+    },
+    {
+      "url": "https://slack.com/connect",
+      "h1": "A better way to work with people outside your company.",
+      "h2": [
+        "Get more done in Slack Connect.",
+        "Move quicker than email.",
+        "Connect securely with outside organizations.",
+        "Catch up on what matters with AI on your side.",
+        "How to get started",
+        "Built for roles of All Types",
+        "Join the 350,000+ organizations working in Slack Connect",
+        "Learn more about Slack Connect",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "url": "https://slack.com/contact-sales",
+      "h1": "Contact our sales team",
+      "h2": [
+        "Incredible companies use Slack"
+      ]
+    },
+    {
+      "url": "https://slack.com/cookie-table",
+      "h1": "Cookie Table",
+      "h2": [
+        "Legal navigation",
+        "Slack Cookie Tables"
+      ]
+    },
+    {
+      "url": "https://slack.com/customer-awards",
+      "h1": "Celebrating the companies and people moving work forward",
+      "h2": [
+        "Made for people, built for productivity",
+        "Celebrating excellence at work",
+        "Embracing a new way of work",
+        "Recognizing outstanding individuals",
+        "Moving businesses forward, from the UK to South Korea",
+        "About the Slack Spotlight Awards",
+        "Employee Experience Award",
+        "UK Public Sector award",
+        "UK award",
+        "France award",
+        "Australia award",
+        "Germany award",
+        "Japan award",
+        "Excellence in Automation award",
+        "Excellence in sales award",
+        "Excellence in customer service award",
+        "Education in Japan award",
+        "Education in US award",
+        "Visionary award",
+        "Employee culture award"
+      ]
+    },
+    {
+      "url": "https://slack.com/customer-stories",
+      "h1": "Inspiring stories, remarkable productivity",
+      "h2": [
+        "Browse even more stories",
+        "Filter stories",
+        "Investing in teamwork pays off"
+      ]
+    },
+    {
+      "url": "https://slack.com/demo",
+      "h1": "Watch a demo of Slack in action",
+      "h2": [
+        "Watch a demo of Slack",
+        "Tap into your organization's full potential",
+        "Keep customers at the center of your work.",
+        "The proof is in the productivity.",
+        "The proof is in the productivity."
+      ]
+    },
+    {
+      "url": "https://slack.com/engage-users",
+      "h1": "Teams that use Slack are 47% more productive",
+      "h2": [
+        "Let the numbers speak for themselves",
+        "Slack keeps everyone connected and productive",
+        "Learn more about working in Slack",
+        "Frequently asked questions"
+      ]
+    },
+    {
+      "url": "https://slack.com/enterprise",
+      "h1": "Reimagine work for your entire enterprise.",
+      "h2": [
+        "Smarter AI starts with context.",
+        "The best home for every agent.",
+        "Secure. Scaleable. Silo-free.",
+        "Search that knows where to look.",
+        "Make teamwork more productive.",
+        "The world’s most innovative enterprises work in Slack.",
+        "The proof is in the work (and the wins).",
+        "See how CRM, data, and agents from Salesforce come to life in Slack.",
+        "See why Microsoft Teams users love using Slack.",
+        "Take Slack for a spin."
+      ]
+    },
+    {
+      "url": "https://slack.com/enterprise-key-management",
+      "h1": "Keep data flowing while minimizing risk with EKM",
+      "h2": [
+        "What is Slack Enterprise Encryption Key Management?",
+        "Bring your own keys",
+        "Peace of mind for the security-conscious",
+        "Keep work flowing, securely",
+        "Secure enterprises collaborate on Slack"
+      ]
+    },
+    {
+      "url": "https://slack.com/events",
+      "h1": "Events",
+      "h2": [
+        "Slack Demos Live",
+        "Browse events and webinars"
+      ]
+    },
+    {
+      "url": "https://slack.com/features",
+      "h1": "One operating system for your entire workday.",
+      "h2": [
+        "Slack Features",
+        "Collaboration",
+        "Project Management",
+        "Integrations",
+        "Intelligence",
+        "Explore more about working in Slack",
+        "Frequently asked questions"
+      ]
+    }
+  ]
+}

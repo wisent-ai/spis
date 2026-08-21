@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "AWS IAM Identity Center — device authorization",
+  "product_url": "https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html",
+  "evidence_status": "partial",
+  "upstream_owner": "Amazon Web Services, Inc.",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=4yJp5-jGGNk",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 431104,
+      "sha256": "477b795d4343e8f69142f5a855ed3c94fbcb6467f04f7262d2bf91568d6e05df",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "device code issued",
+      "local_path": "media/state-01-device-code-issued.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 5.5s (mean abs diff 1.6719/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 101247,
+      "sha256": "19dc2b261f0971992a40cb5794152910b1e9d3a117dbaf6283c732771cebb164",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.5,
+        "mean_abs_diff": 1.6719,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "verification page",
+      "local_path": "media/state-02-verification-page.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 17s (mean abs diff 1.8281/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 85217,
+      "sha256": "533b5b79eb961e179227297c45b5113b8d095f69da894914f2dd5844edab7a98",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 17.0,
+        "mean_abs_diff": 1.8281,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "code accepted",
+      "local_path": "media/state-03-code-accepted.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 36s (mean abs diff 1.9648/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 56472,
+      "sha256": "b2fe73f34b29745ed075404ebbd9e5463512e6cc8f802ea5c42c9e7ef2ccb7e2",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 36.0,
+        "mean_abs_diff": 1.9648,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "identity verified",
+      "local_path": "media/state-04-identity-verified.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 47.5s (mean abs diff 1.7422/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 42752,
+      "sha256": "159438ea636269d8042f230db6f7ac956e373e9d84edf89cffff7815708589f5",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 47.5,
+        "mean_abs_diff": 1.7422,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "authorization approved",
+      "local_path": "media/state-05-authorization-approved.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 58.5s (mean abs diff 1.7383/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 113612,
+      "sha256": "8ba23e67770d944ec5abdbaf47f53ccc137520fbd3bc8974f65787cdfca40300",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 58.5,
+        "mean_abs_diff": 1.7383,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "client authorized",
+      "local_path": "media/state-06-client-authorized.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 80s (mean abs diff 1.9688/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 65240,
+      "sha256": "ba08d62967cac7c1e6cf07912654e042dc5949e88ded8ca0d138173fb1fdcd27",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 80.0,
+        "mean_abs_diff": 1.9688,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Start device authorization from the AWS client",
+      "response": "AWS returns the verification URI, user code, and expiry",
+      "feedback": "The retained device code issued state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-device-code-issued.png @ 4.50s; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Open the verification URI",
+      "response": "IAM Identity Center shows the code or sign-in state",
+      "feedback": "The recording advances to verification page and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-device-code-issued.png @ 4.50s; media/state-02-verification-page.png @ 19.79s; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Enter or confirm the user code",
+      "response": "AWS links the browser session to the client",
+      "feedback": "The navigation result is visible as code accepted.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-verification-page.png @ 19.79s; media/state-03-code-accepted.png @ 35.07s; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Authenticate with the configured identity source",
+      "response": "AWS verifies the user and assigned organization",
+      "feedback": "The official recording shows the confirmed identity verified state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-code-accepted.png @ 35.07s; media/state-04-identity-verified.png @ 50.36s; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-verification-page.png @ 19.79s; media/state-03-code-accepted.png @ 35.07s; media/state-04-identity-verified.png @ 50.36s; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Approve client access",
+      "response": "AWS confirms authorization",
+      "feedback": "Progress is observable as the distinct authorization approved state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-identity-verified.png @ 50.36s; media/state-05-authorization-approved.png @ 65.65s; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-code-accepted.png @ 35.07s; media/state-04-identity-verified.png @ 50.36s; media/state-05-authorization-approved.png @ 65.65s; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Return to the original client",
+      "response": "The client receives tokens and lists assigned access, proving success",
+      "feedback": "The retained client authorized state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-authorization-approved.png @ 65.65s; media/state-06-client-authorized.png @ 80.94s; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+    }
+  ],
+  "journey": {
+    "actor": "AWS IAM Identity Center user",
+    "goal": "authorize a device client for the assigned AWS access",
+    "prerequisites": [
+      "IAM Identity Center start URL and assignment",
+      "browser-capable companion device"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Start device authorization from the AWS client",
+        "system_response": "AWS returns the verification URI, user code, and expiry",
+        "state": "device code issued",
+        "evidence": "media/state-01-device-code-issued.png; media/official-recording.mp4#t=4.497; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+      },
+      {
+        "index": 2,
+        "user_action": "Open the verification URI",
+        "system_response": "IAM Identity Center shows the code or sign-in state",
+        "state": "verification page",
+        "evidence": "media/state-02-verification-page.png; media/official-recording.mp4#t=19.785; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+      },
+      {
+        "index": 3,
+        "user_action": "Enter or confirm the user code",
+        "system_response": "AWS links the browser session to the client",
+        "state": "code accepted",
+        "evidence": "media/state-03-code-accepted.png; media/official-recording.mp4#t=35.074; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+      },
+      {
+        "index": 4,
+        "user_action": "Authenticate with the configured identity source",
+        "system_response": "AWS verifies the user and assigned organization",
+        "state": "identity verified",
+        "evidence": "media/state-04-identity-verified.png; media/official-recording.mp4#t=50.362; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+      },
+      {
+        "index": 5,
+        "user_action": "Approve client access",
+        "system_response": "AWS confirms authorization",
+        "state": "authorization approved",
+        "evidence": "media/state-05-authorization-approved.png; media/official-recording.mp4#t=65.651; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+      },
+      {
+        "index": 6,
+        "user_action": "Return to the original client",
+        "system_response": "The client receives tokens and lists assigned access, proving success",
+        "state": "client authorized",
+        "evidence": "media/state-06-client-authorized.png; media/official-recording.mp4#t=80.940; https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+      }
+    ],
+    "failure_route": [
+      "At verification page or code accepted, invalid, expired, denied, or missing required input leaves the flow short of client authorized; evidence: media/state-02-verification-page.png, media/state-03-code-accepted.png, and https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-code-accepted.png through media/state-05-authorization-approved.png."
+    ],
+    "recovery_route": [
+      "Return to the retained verification page or code accepted requirement, correct or resend the blocking input, and resubmit; evidence: https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html.",
+      "Continue through the same terminal action until client authorized is visible in media/state-06-client-authorized.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "client authorized retained at media/state-06-client-authorized.png and media/official-recording.mp4#t=80.940; source https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-device-code-issued.png and media/state-02-verification-page.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-code-accepted.png and media/state-04-identity-verified.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

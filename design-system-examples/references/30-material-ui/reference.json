@@ -1,0 +1,243 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Material UI",
+  "product_url": "https://mui.com/material-ui/",
+  "evidence_status": "partial",
+  "upstream_owner": "MUI",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/motion.webm",
+      "source_url": "https://raw.githubusercontent.com/mui/material-ui/HEAD/docs/public/static/blog/2020-q1-update/skeleton.webm",
+      "media_kind": "video-webm",
+      "width": 670,
+      "height": 190,
+      "duration_seconds": 6.116,
+      "frame_count": 367,
+      "bytes": 23227,
+      "sha256": "814715314462565586429496a54bd7a5494512ed4d89316ca81c0e38bc056bbc",
+      "capture_method": "Direct download of the upstream-owned documentation motion asset; original encoded frames preserved.",
+      "declared_media_kind": "video-webm",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "Entry / initial state",
+      "local_path": "media/state-1.png",
+      "source_motion_path": "frame of media/motion.webm at 5.5s (mean abs diff 1.5508/255)",
+      "width": 670,
+      "height": 190,
+      "bytes": 3194,
+      "sha256": "c6bd0d4e9463af800c92cb80731328f14cb0e20235be77b58d0b10542ad714fa",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.5,
+        "mean_abs_diff": 1.5508,
+        "sampled_frames": 12
+      }
+    },
+    {
+      "name": "Active / intermediate state",
+      "local_path": "media/state-2.png",
+      "source_motion_path": "frame of media/motion.webm at 4.5s (mean abs diff 2.0508/255)",
+      "width": 670,
+      "height": 190,
+      "bytes": 3611,
+      "sha256": "9e5c7bc14e112f9a7bd20229315120321ec5bd0540ef5eee596c77a2ef8d8227",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 2.0508,
+        "sampled_frames": 12
+      }
+    },
+    {
+      "name": "Result / settled state",
+      "local_path": "media/state-3.png",
+      "source_motion_path": "frame of media/motion.webm at 0s (mean abs diff 1.6719/255)",
+      "width": 670,
+      "height": 190,
+      "bytes": 2331,
+      "sha256": "c9a61578967d339e5da345ef16b84d248a211f22a9ebcdf871b28dc2d27dc67c",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.0,
+        "mean_abs_diff": 1.6719,
+        "sampled_frames": 12
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Play the retained motion evidence and follow the demonstrated pointer, touch, keyboard, or presenter-directed action.",
+      "response": "The demonstrated surface enters its active state.",
+      "feedback": "Visible geometry, color, focus, or content changes in the motion.",
+      "cancellation": "Pause before the activation point.",
+      "failure": "The target remains in the entry state when the demonstrated trigger is not completed.",
+      "recovery": "Resume and repeat the demonstrated trigger.",
+      "evidence": "media/motion.webm at 1.53s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Move attention to the highlighted control or implementation detail.",
+      "response": "The recording distinguishes the active target from surrounding content.",
+      "feedback": "The intermediate frame retains the changed state.",
+      "cancellation": "Move away or pause before selection.",
+      "failure": "No active-state distinction is reached.",
+      "recovery": "Return to the indicated target.",
+      "evidence": "media/motion.webm at 2.45s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Advance from the introductory state to the component or pattern demonstration.",
+      "response": "The recording changes context while preserving task continuity.",
+      "feedback": "A new view, panel, slide, or component state appears.",
+      "cancellation": "Reverse or pause before the context change.",
+      "failure": "The implementation detail is not reached.",
+      "recovery": "Continue from the last visible orientation cue.",
+      "evidence": "media/motion.webm at 0.92s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Complete the shown activation or implementation step.",
+      "response": "The demonstrated pattern reaches its settled result.",
+      "feedback": "The result frame remains visible long enough to inspect.",
+      "cancellation": "Back out before the final activation when the recording demonstrates a reversible state.",
+      "failure": "The expected settled state does not appear.",
+      "recovery": "Repeat the final shown action from the intermediate state.",
+      "evidence": "media/motion.webm at 5.20s"
+    },
+    {
+      "name": "Cancellation and backtracking",
+      "trigger": "Stop or reverse before the settled state.",
+      "response": "The surface remains at, or returns toward, the preceding state.",
+      "feedback": "Continuity between the active and entry states is visible.",
+      "cancellation": "Resume forward progress.",
+      "failure": "Context is lost after leaving the active state.",
+      "recovery": "Restart from the retained entry frame.",
+      "evidence": "media/motion.webm at 3.06s"
+    },
+    {
+      "name": "System feedback",
+      "trigger": "Observe the immediate interval after activation.",
+      "response": "Motion communicates state transition rather than an unexplained jump.",
+      "feedback": "At least three distinct retained frames expose entry, active, and result states.",
+      "cancellation": "Pause to inspect a frame.",
+      "failure": "Feedback would be absent if frames remained identical; retained hashes are distinct.",
+      "recovery": "Replay the authentic motion asset.",
+      "evidence": "media/motion.webm; media/state-1.png; media/state-2.png; media/state-3.png"
+    },
+    {
+      "name": "Failure route",
+      "trigger": "Omit or interrupt the demonstrated activation.",
+      "response": "The expected result state is not reached within the observed sequence.",
+      "feedback": "The earlier state persists.",
+      "cancellation": "Leave the sequence before retry.",
+      "failure": "First success remains incomplete.",
+      "recovery": "Return to the entry state and replay the demonstrated path.",
+      "evidence": "media/motion.webm at 0.92s"
+    },
+    {
+      "name": "Recovery route",
+      "trigger": "Repeat the recorded path from the retained entry state.",
+      "response": "The sequence progresses through the intermediate state to the result.",
+      "feedback": "The result state matches the retained final frame.",
+      "cancellation": "Pause at any retained state without fabricating an outcome.",
+      "failure": "If the authentic asset cannot play, the claim is not recoverable from prose alone.",
+      "recovery": "Open the local motion file and replay it offline.",
+      "evidence": "media/motion.webm through media/state-3.png"
+    }
+  ],
+  "journey": {
+    "actor": "Developer or designer evaluating a system pattern for implementation",
+    "goal": "Find and understand the first implementable interaction demonstrated for Material UI.",
+    "prerequisites": [
+      "Local access to this reference directory",
+      "A media player capable of the retained authentic format",
+      "The product source URL for implementation follow-through"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the local authentic motion evidence.",
+        "system_response": "The real product or owner-published component demonstration appears in its entry state.",
+        "state": "entry",
+        "evidence": "media/motion.webm at 0.12s"
+      },
+      {
+        "index": 2,
+        "user_action": "Orient to the demonstrated component, page, or implementation context.",
+        "system_response": "The recording exposes the target and the context needed to interpret it.",
+        "state": "orientation",
+        "evidence": "media/motion.webm at 0.92s"
+      },
+      {
+        "index": 3,
+        "user_action": "Follow the shown primary activation or implementation action.",
+        "system_response": "The surface enters an active or transitional state.",
+        "state": "active",
+        "evidence": "media/motion.webm at 2.14s"
+      },
+      {
+        "index": 4,
+        "user_action": "Continue through the visible feedback rather than skipping to the end.",
+        "system_response": "Intermediate motion preserves continuity and communicates progress.",
+        "state": "feedback",
+        "evidence": "media/motion.webm at 3.67s"
+      },
+      {
+        "index": 5,
+        "user_action": "Inspect the settled result and map it back to the implementation guidance.",
+        "system_response": "A meaningful result state is visible and retained as the final key frame.",
+        "state": "first success",
+        "evidence": "media/motion.webm at 5.20s"
+      }
+    ],
+    "failure_route": [
+      "Interrupt or omit the demonstrated activation; the sequence remains before the meaningful result.",
+      "Treating a still frame or prose as motion evidence does not complete the journey."
+    ],
+    "recovery_route": [
+      "Return to the retained entry frame.",
+      "Replay the local authentic motion and repeat the demonstrated path through the final retained state."
+    ],
+    "completion_evidence": "Material UI reaches the distinct settled frame at media/motion.webm at 5.20s; all three state images are hashes of frames decoded from the same local motion asset."
+  },
+  "accessibility": {
+    "observations": [
+      "The local recording can be paused and inspected without network access.",
+      "Entry, active, and result states are visually distinguishable in three separately hashed frames.",
+      "The record identifies the motion source and a non-motion inspection path through retained states."
+    ],
+    "unknowns": [
+      "Screen-reader announcements were not captured by the visual recording.",
+      "Keyboard-only reachability is unknown unless explicitly visible in the source recording.",
+      "The product’s reduced-motion preference behavior is unknown unless explicitly shown."
+    ]
+  },
+  "motion_analysis": {
+    "trigger": "The primary action shown in the authentic recording.",
+    "start_state": "Entry / initial state.",
+    "end_state": "Result / settled state.",
+    "continuity": "Decoded intermediate frames connect the start and end states without synthesized interpolation.",
+    "timing_class": "sub-second",
+    "feedback": "Visible state progression is retained in the local motion and three extracted source frames.",
+    "reduced_motion_equivalent": "Use the three retained nonanimated key states; upstream reduced-motion behavior remains listed as unknown.",
+    "interruption_or_reversal": "Playback can be paused; product-level reversal is recorded only where visible and otherwise remains unknown.",
+    "timing_description": "brief component feedback"
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

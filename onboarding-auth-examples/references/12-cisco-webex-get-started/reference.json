@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Cisco Webex — get started",
+  "product_url": "https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App",
+  "evidence_status": "partial",
+  "upstream_owner": "Cisco Systems, Inc.",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=XAYamgS9zUw",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 686775,
+      "sha256": "e93486bed5507b71703b3b454a4a46786db9750f3645fc8a10da1e1dd05d3492",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "identity lookup",
+      "local_path": "media/state-01-identity-lookup.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 1.5s (mean abs diff 1.418/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 23613,
+      "sha256": "b86c5805b3bea49ca65ffba1fff0872e2f238c6fdd28b7ebf0cdf758a1beb000",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 1.5,
+        "mean_abs_diff": 1.418,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "signed in",
+      "local_path": "media/state-02-signed-in.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 14.5s (mean abs diff 1.5078/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 28773,
+      "sha256": "00ced9fcfb7ec22c9e61d3df579ad9b23912590509d5a91ee2d4221f8ad13ce3",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 14.5,
+        "mean_abs_diff": 1.5078,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "permissions decided",
+      "local_path": "media/state-03-permissions-decided.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 2.1719/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 71883,
+      "sha256": "bcc25e87088cdd12a4881e542a672f75537454e7c855d7b9f9cc148acf3c4108",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 35.0,
+        "mean_abs_diff": 2.1719,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "profile ready",
+      "local_path": "media/state-04-profile-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 37s (mean abs diff 1.2891/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 52061,
+      "sha256": "f6935afc4f2b1db119c504c91b73c85cf5f76254ab27d8cd426b5d2fb5a88044",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 37.0,
+        "mean_abs_diff": 1.2891,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "space open",
+      "local_path": "media/state-05-space-open.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65s (mean abs diff 0.9922/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 109429,
+      "sha256": "50d3b7b9670d974ff6e210086a804fa509588a99ea003d5da91f3fb17cd8ef19",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.0,
+        "mean_abs_diff": 0.9922,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "first message",
+      "local_path": "media/state-06-first-message.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 81s (mean abs diff 0.8633/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 89719,
+      "sha256": "9879d617d497d367c21d9c1f66c5c1338d5252acf5fd1a5941db8201688b627b",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 81.0,
+        "mean_abs_diff": 0.8633,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Launch Webex and enter the work email",
+      "response": "Webex resolves the account or organization sign-in route",
+      "feedback": "The retained identity lookup state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-identity-lookup.png @ 4.50s; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Complete password, SSO, or verification challenge",
+      "response": "Webex returns to the application as the authenticated user",
+      "feedback": "The recording advances to signed in and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-identity-lookup.png @ 4.50s; media/state-02-signed-in.png @ 19.79s; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Accept or decline requested notification and media permissions",
+      "response": "Webex records each permission decision without hiding the app",
+      "feedback": "The navigation result is visible as permissions decided.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-signed-in.png @ 19.79s; media/state-03-permissions-decided.png @ 35.07s; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Review or complete profile identity",
+      "response": "Webex displays the user in the navigation context",
+      "feedback": "The official recording shows the confirmed profile ready state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-permissions-decided.png @ 35.07s; media/state-04-profile-ready.png @ 50.36s; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-signed-in.png @ 19.79s; media/state-03-permissions-decided.png @ 35.07s; media/state-04-profile-ready.png @ 50.36s; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Create or open a space",
+      "response": "Webex opens the conversation surface",
+      "feedback": "Progress is observable as the distinct space open state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-profile-ready.png @ 50.36s; media/state-05-space-open.png @ 65.65s; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-permissions-decided.png @ 35.07s; media/state-04-profile-ready.png @ 50.36s; media/state-05-space-open.png @ 65.65s; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Send the first message",
+      "response": "The message appears in the space, proving first communication success",
+      "feedback": "The retained first message state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-space-open.png @ 65.65s; media/state-06-first-message.png @ 80.94s; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+    }
+  ],
+  "journey": {
+    "actor": "new Webex user",
+    "goal": "sign in and send the first message",
+    "prerequisites": [
+      "Webex account or organization invitation",
+      "camera and microphone decision"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Launch Webex and enter the work email",
+        "system_response": "Webex resolves the account or organization sign-in route",
+        "state": "identity lookup",
+        "evidence": "media/state-01-identity-lookup.png; media/official-recording.mp4#t=4.497; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+      },
+      {
+        "index": 2,
+        "user_action": "Complete password, SSO, or verification challenge",
+        "system_response": "Webex returns to the application as the authenticated user",
+        "state": "signed in",
+        "evidence": "media/state-02-signed-in.png; media/official-recording.mp4#t=19.785; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+      },
+      {
+        "index": 3,
+        "user_action": "Accept or decline requested notification and media permissions",
+        "system_response": "Webex records each permission decision without hiding the app",
+        "state": "permissions decided",
+        "evidence": "media/state-03-permissions-decided.png; media/official-recording.mp4#t=35.074; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+      },
+      {
+        "index": 4,
+        "user_action": "Review or complete profile identity",
+        "system_response": "Webex displays the user in the navigation context",
+        "state": "profile ready",
+        "evidence": "media/state-04-profile-ready.png; media/official-recording.mp4#t=50.362; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+      },
+      {
+        "index": 5,
+        "user_action": "Create or open a space",
+        "system_response": "Webex opens the conversation surface",
+        "state": "space open",
+        "evidence": "media/state-05-space-open.png; media/official-recording.mp4#t=65.651; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+      },
+      {
+        "index": 6,
+        "user_action": "Send the first message",
+        "system_response": "The message appears in the space, proving first communication success",
+        "state": "first message",
+        "evidence": "media/state-06-first-message.png; media/official-recording.mp4#t=80.940; https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+      }
+    ],
+    "failure_route": [
+      "At signed in or permissions decided, invalid, expired, denied, or missing required input leaves the flow short of first message; evidence: media/state-02-signed-in.png, media/state-03-permissions-decided.png, and https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-permissions-decided.png through media/state-05-space-open.png."
+    ],
+    "recovery_route": [
+      "Return to the retained signed in or permissions decided requirement, correct or resend the blocking input, and resubmit; evidence: https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App.",
+      "Continue through the same terminal action until first message is visible in media/state-06-first-message.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "first message retained at media/state-06-first-message.png and media/official-recording.mp4#t=80.940; source https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-identity-lookup.png and media/state-02-signed-in.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-permissions-decided.png and media/state-04-profile-ready.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

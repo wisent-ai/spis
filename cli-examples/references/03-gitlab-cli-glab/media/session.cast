@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921622,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"GitLab CLI (glab) authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: GitLab CLI (glab)\r\n"]
+[0.55,"o","cli-ref$ glab --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","glab 1.113.0 (d62881304)\r\n"]
+[2.2,"o","cli-ref$ glab help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","  GLab is an open source GitLab CLI tool that brings GitLab to your command line.                                       \r\n         \r\n  USAGE  \r\n         \r\n    glab <command> <subcommand> [command] [--flags]  \r\n            \r\n  COMMANDS  \r\n            \r\n    alias [command] [--flags]                         Create, list, and delete aliases.\r\n    api <endpoint> [--flags]                          Make an authenticated request to the GitLab API.\r\n    artifact-registry <command> [command]             Authenticate with GitLab Artifact Registry. (EXPERIMENTAL)\r\n    attestation <command> [command] [--flags]         Manage software attestations. (EXPERIMENTAL)\r\n    auth <command> [command]                          Manage authentication for glab.\r\n"]
+[5.1,"o","cli-ref$ glab --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","          \r\n   ERROR  \r\n          \r\n  Unknown flag: --definitely-invalid-option.                                                                          \r\n\r\n  Try --help for usage.\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ glab --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ glab help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","  GLab is an open source GitLab CLI tool that brings GitLab to your command line.                                       \r\n         \r\n  USAGE  \r\n         \r\n"]

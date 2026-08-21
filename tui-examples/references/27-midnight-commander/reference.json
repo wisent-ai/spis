@@ -1,0 +1,239 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Midnight Commander",
+  "product_url": "https://github.com/MidnightCommander/mc",
+  "evidence_status": "partial",
+  "upstream_owner": "MidnightCommander",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/product-motion.cast",
+      "source_url": "https://github.com/MidnightCommander/mc",
+      "media_kind": "terminal-cast",
+      "width": 100,
+      "height": 30,
+      "duration_seconds": 5.15,
+      "frame_count": 39,
+      "bytes": 22343,
+      "sha256": "78507e49c126694d2ee3acfa725eaba2a46c1cfa7d15b620946497c71c84b72e",
+      "capture_method": "Real installed product recorded through a pseudo-terminal on macOS 25.4.0 arm64 in an isolated temporary HOME/XDG environment with deterministic Git, filesystem, SQLite, Maildir, notmuch, or MPD fixtures as applicable; no still-image animation or generated product frames",
+      "declared_media_kind": "terminal-cast",
+      "measured": true,
+      "measurement_method": "asciinema-v2 header and event stream",
+      "provenance_class": "local-product-run"
+    }
+  ],
+  "states": [
+    {
+      "name": "empty dark terminal with only the block cursor in the top-left corner; mc's first output at 0.019s enters and leaves the alternate screen without painting anything",
+      "local_path": "media/state-1.png",
+      "source_motion_path": "rendering of media/product-motion.cast at 0.0s: the cast was re-rendered with agg 1.9.0 (default theme, font size 16) to a 983x694 GIF and this PNG matched the 0.0s frame with mean abs diff 0.000/255 over a 64x64 grayscale comparison",
+      "width": 983,
+      "height": 694,
+      "bytes": 3587,
+      "sha256": "35da35a71384c4b485f5c17b021addeeec4a4e33f731aae8b05cf40b275d2f35"
+    },
+    {
+      "name": "two-panel view of '...vate/tmp/wisent-tui-capture/fixture' with '/.git   448  Aug 16 16:09' selected on the active left panel, panel footers '/.git' and 'UP--DIR', and the key bar '1Help 2Menu 3View 4Edit 5Copy 6RenMov 7Mkdir 8Delete 9PullDn 10Quit'",
+      "local_path": "media/state-2.png",
+      "source_motion_path": "rendering of media/product-motion.cast at 2.2s: same agg re-render, matched with mean abs diff 0.005/255 over a 64x64 grayscale comparison",
+      "width": 983,
+      "height": 694,
+      "bytes": 52786,
+      "sha256": "47bf01c5edd5ece67081ae53d9f28af2cb9d24fbacefce4928b0b6cde8d1454a"
+    },
+    {
+      "name": "both panels back after Escape closed the Help dialog, '/.git' still selected, and 'OX' echoed on mc's command line '(base) lukaszbartoszcze@Lukaszs-MacBook-Pro-5485 fixture % OX'",
+      "local_path": "media/state-3.png",
+      "source_motion_path": "rendering of media/product-motion.cast at 4.4s: same agg re-render, matched with mean abs diff 0.005/255 over a 64x64 grayscale comparison",
+      "width": 983,
+      "height": 694,
+      "bytes": 53245,
+      "sha256": "c49aa8a6d88c186aca4811f3ccb9d2ed572e0afcba83d7df8bdc64f40fe847a0"
+    }
+  ],
+  "interactions": [
+    {
+      "name": "launch",
+      "trigger": "Invoke the product in the isolated fixture",
+      "response": "The terminal enters the product surface or its first-run gate",
+      "feedback": "Full-screen redraw or explicit startup status",
+      "cancellation": "Quit key or terminal interrupt",
+      "failure": "Missing service, account, device, or configuration is surfaced in-terminal",
+      "recovery": "Open help, supply the prerequisite, and relaunch",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "move selection",
+      "trigger": "j or Down",
+      "response": "Selection advances by one visible item",
+      "feedback": "Highlight/cursor relocates without leaving the view",
+      "cancellation": "k or Up reverses the move",
+      "failure": "At a boundary the selection remains in place",
+      "recovery": "Reverse direction or change region",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "change focus",
+      "trigger": "Tab or the product panel key",
+      "response": "Keyboard focus moves to another region",
+      "feedback": "Active border, title, cursor, or highlight changes",
+      "cancellation": "Shift-Tab, Tab cycle, or Escape",
+      "failure": "Unavailable regions do not accept focus",
+      "recovery": "Return to the populated primary region",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "confirm or inspect",
+      "trigger": "Enter",
+      "response": "The selected item opens, expands, or becomes the active detail",
+      "feedback": "A detail, child view, dialog, or status repaint appears",
+      "cancellation": "Escape, h, or the parent-navigation key",
+      "failure": "An empty or unavailable selection produces no destructive action",
+      "recovery": "Choose an available item and confirm again",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "open help",
+      "trigger": "? or the product help key",
+      "response": "Shortcut discovery appears or help is requested",
+      "feedback": "Help overlay, footer expansion, or help text",
+      "cancellation": "Escape or the same help key",
+      "failure": "Context may not bind ?",
+      "recovery": "Use the persistent footer/function-key map",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "cancel/backtrack",
+      "trigger": "Escape, h, or Back",
+      "response": "The transient layer closes or parent context returns",
+      "feedback": "Previous selection and primary surface reappear",
+      "cancellation": "Not applicable; this is the cancellation path",
+      "failure": "Root view cannot backtrack further",
+      "recovery": "Resume navigation from the retained selection",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "recover from prerequisite failure",
+      "trigger": "Read the visible error/empty/loading state and invoke help or relaunch after supplying the prerequisite",
+      "response": "The product exposes its supported next action rather than silently proceeding",
+      "feedback": "Explicit status text followed by a stable interactive surface",
+      "cancellation": "Quit leaves the external system unchanged",
+      "failure": "Account, daemon, cluster, device, or data remains unavailable",
+      "recovery": "Restore that named prerequisite and repeat launch",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "quit",
+      "trigger": "q, F10, or the product quit command",
+      "response": "The full-screen surface closes",
+      "feedback": "Terminal control and cursor are restored",
+      "cancellation": "Remain in the surface by not confirming a quit dialog",
+      "failure": "A modal may consume the first quit key",
+      "recovery": "Dismiss the modal, then use the documented quit command",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    }
+  ],
+  "journey": {
+    "actor": "Keyboard user evaluating the real terminal application",
+    "goal": "Reach the first inspectable file management result in Midnight Commander, discover controls, and recover from a blocked or transient state",
+    "prerequisites": [
+      "https://github.com/MidnightCommander/mc",
+      "A terminal with keyboard input",
+      "The product-specific local data, account, daemon, device, or service shown in the recording"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Launch Midnight Commander with the recorded prerequisite/fixture",
+        "system_response": "The application claims the terminal and begins its first render",
+        "state": "launch transition",
+        "evidence": "isolated real-program terminal cast at the opening segment"
+      },
+      {
+        "index": 2,
+        "user_action": "Wait for the first stable product surface",
+        "system_response": "Primary content, an onboarding gate, or an explicit prerequisite state becomes readable",
+        "state": "first stable surface",
+        "evidence": "isolated real-program terminal cast at the first retained key state"
+      },
+      {
+        "index": 3,
+        "user_action": "Move the active selection within the primary list or table",
+        "system_response": "The highlight/cursor moves and selection-coupled content repaints",
+        "state": "navigated selection",
+        "evidence": "isolated real-program terminal cast in the early-to-middle segment"
+      },
+      {
+        "index": 4,
+        "user_action": "Change panel/context or inspect the selected item",
+        "system_response": "A secondary region, detail, child view, or contextual status becomes active",
+        "state": "context/detail transition",
+        "evidence": "isolated real-program terminal cast around the midpoint key state"
+      },
+      {
+        "index": 5,
+        "user_action": "Read the persistent key map or invoke the recorded help/discovery control",
+        "system_response": "The visible footer, function-key map, prompt, or help layer exposes the next supported controls",
+        "state": "help/discovery",
+        "evidence": "isolated real-program terminal cast in the middle-to-late segment"
+      },
+      {
+        "index": 6,
+        "user_action": "Cancel/backtrack from the transient or nested state",
+        "system_response": "The prior stable context returns with selection continuity where supported",
+        "state": "recovered primary surface",
+        "evidence": "isolated real-program terminal cast before the final key state"
+      },
+      {
+        "index": 7,
+        "user_action": "Finish the first inspection and leave or settle on the meaningful result",
+        "system_response": "The result remains inspectable or terminal control is cleanly restored",
+        "state": "first-success completion",
+        "evidence": "isolated real-program terminal cast at the final retained state"
+      }
+    ],
+    "failure_route": [
+      "Launch without a required product-specific prerequisite or reach an unavailable/empty selection.",
+      "Observe the explicit terminal error, empty state, disabled action, or unchanged boundary selection.",
+      "Do not substitute a marketing claim for that recorded failure state."
+    ],
+    "recovery_route": [
+      "Use the recorded help/footer/discovery affordance to identify the supported action.",
+      "Restore the named account, daemon, cluster, device, file, database, or selection prerequisite.",
+      "Relaunch or backtrack and repeat the successful navigation shown in the motion evidence."
+    ],
+    "completion_evidence": "product-motion.cast is local and replayable, contains 39 recorded events over 5.150 seconds, and is tied to three retained key states re-rendered from it with agg at 0.0s, 2.2s and 4.4s (mean abs diff 0.000-0.005/255)."
+  },
+  "accessibility": {
+    "observations": [
+      "The function-key bar spells out every key's action in words next to its number ('1Help 2Menu 3View 4Edit 5Copy 6RenMov 7Mkdir 8Delete 9PullDn 10Quit'), and it relabels itself while the Help dialog is open ('1Help 2Index 3Prev', 4 to 9 blank, '10Quit'), so the commands available in each context are readable text.",
+      "Both panels label their columns as text ('.n  Name | Size | Modify time') and print a directory as the word 'UP--DIR' or a byte count rather than an icon; each panel repeats its current row in its footer ('/.git' on the left, 'UP--DIR' on the right) above the free-space line '41G / 1858G (2%)'.",
+      "The active panel is marked by more than colour - its path bar is drawn as a filled box around '...vate/tmp/wisent-tui-capture/fixture' while the inactive panel's path sits on the plain panel background - but the selected row itself carries no bracket, arrow or marker, so within a panel the cursor position is a colour-only cue.",
+      "Measured on state-2.png: the dark glyphs rgb(33,34,44) on the cyan menu bar, selection bar and key bar rgb(139,233,253) are 11.4:1, while the file names rgb(241,250,140) on the purple panel background rgb(189,147,249) are only 2.2:1; this palette is agg's default theme applied to mc's ANSI colours, not mc's own terminal colours."
+    ],
+    "unknowns": [
+      "Screen-reader behavior was not exposed by the terminal capture.",
+      "The colours measured above are agg's default theme; the palette mc would use in the operator's terminal is not recorded in the cast.",
+      "The cast never opens mc's Options menu, so whether mc exposes any colour or motion preference is not shown.",
+      "mc turns mouse tracking on at 2.222s ('ESC [ ?1002h', 'ESC [ ?1006h'), but no mouse event appears in the cast, and switch-control mappings and nonvisual ordering are not visible."
+    ]
+  },
+  "motion_provenance": [
+    "local-product-run"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "motion_analysis": {
+    "trigger": "The cast header records the command 'mc -x'; the recorded keystrokes are Down (ESC O B) at 1.239s, Tab at 1.980s, F1 (ESC O P) at 2.760s, Escape at 3.558s, ESC O X at 4.346s and Enter at 5.138s.",
+    "start_state": "At 0.019s the only output enters and immediately leaves the alternate screen, so the terminal is still empty apart from the block cursor in the top-left corner; the first full paint of mc's two panels arrives at 2.223s with '/.git' already selected one row below '/..'.",
+    "end_state": "At 5.150s the two panels are painted again after the typed 'OX' was run in mc's subshell ('zsh: command not found: OX' at 5.148s), with the full hint line 'Hint: Completion works on all input lines in all dialogs. Just press M-Tab.' and the shell prompt below the panels.",
+    "continuity": "Nothing moves or resizes: mc rewrites the cells it needs. F1 paints the Help dialog as a bordered box over the middle of both panels and repaints only the covered rows (3 to 27, from column 9), and the panels behind it keep their rows, their selection and their footers when it is dismissed.",
+    "timing_class": "instant",
+    "interruption_or_reversal": "Escape at 3.558s reverses the F1 help overlay: no output follows it until the repaint at 4.346s, in which the Help dialog is gone, both panels are whole again with '/.git' still selected, and the key bar has changed back from '1Help 2Index 3Prev ... 10Quit' to '1Help 2Menu 3View 4Edit 5Copy ...'.",
+    "feedback": "Cyan menu bar and numbered function-key bar, the filled path box on the active panel, the cyan selection bar on '/.git', each panel's footer echoing its current row, the free-space line '41G / 1858G (2%)', and the typed characters echoed on mc's command line.",
+    "reduced_motion_equivalent": "No animation is used - the four distinct rendered frames (0.0-2.1s empty, 2.2-2.7s panels, 2.8-4.3s help dialog, 4.4s onward panels again) are instant repaints that persist, so the three retained PNGs carry the same information as replaying the cast. No product-level reduced-motion setting appears in the recording."
+  },
+  "measured_at": "2026-08-19"
+}

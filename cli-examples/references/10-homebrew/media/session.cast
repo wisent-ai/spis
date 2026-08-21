@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921623,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Homebrew authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Homebrew\r\n"]
+[0.55,"o","cli-ref$ brew --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","Homebrew 6.0.17\r\n"]
+[2.2,"o","cli-ref$ brew help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Example usage:\r\n  brew search TEXT|/REGEX/\r\n  brew info [FORMULA|CASK...]\r\n  brew install FORMULA|CASK...\r\n  brew update\r\n  brew upgrade [FORMULA|CASK...]\r\n  brew uninstall FORMULA|CASK...\r\n  brew list [FORMULA|CASK...]\r\n\r\nTroubleshooting:\r\n  brew config\r\n  brew doctor\r\n  brew install --verbose --debug FORMULA|CASK\r\n"]
+[5.1,"o","cli-ref$ brew --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Example usage:\r\n  brew search TEXT|/REGEX/\r\n  brew info [FORMULA|CASK...]\r\n  brew install FORMULA|CASK...\r\n  brew update\r\n  brew upgrade [FORMULA|CASK...]\r\n  brew uninstall FORMULA|CASK...\r\n  brew list [FORMULA|CASK...]\r\n\r\nTroubleshooting:\r\n  brew config\r\n  brew doctor\r\n  brew install --verbose --debug FORMULA|CASK\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ brew --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ brew help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Example usage:\r\n  brew search TEXT|/REGEX/\r\n  brew info [FORMULA|CASK...]\r\n  brew install FORMULA|CASK...\r\n"]

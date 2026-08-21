@@ -1,0 +1,1209 @@
+{
+  "name": "Vercel Documentation",
+  "source_url": "https://vercel.com/docs",
+  "category": "Deployment platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 6319,
+  "landing_nav": [
+    {
+      "text": "Docs",
+      "path": "/docs"
+    },
+    {
+      "text": "AI Gateway",
+      "path": "/docs/ai-gateway"
+    },
+    {
+      "text": "AI SDK",
+      "path": "/docs/ai-sdk"
+    },
+    {
+      "text": "Sandbox",
+      "path": "/docs/sandbox"
+    },
+    {
+      "text": "Container Registry",
+      "path": "/docs/container-registry"
+    },
+    {
+      "text": "Workflow",
+      "path": "/docs/workflows"
+    },
+    {
+      "text": "Vercel Agent",
+      "path": "/docs/agent"
+    },
+    {
+      "text": "Vercel MCP",
+      "path": "/docs/mcp"
+    },
+    {
+      "text": "AI Integrations",
+      "path": "/docs/agent-resources/integrations-for-models"
+    },
+    {
+      "text": "Deployments",
+      "path": "/docs/deployments"
+    },
+    {
+      "text": "CLI",
+      "path": "/docs/cli"
+    },
+    {
+      "text": "Functions",
+      "path": "/docs/functions"
+    },
+    {
+      "text": "Delivery Network",
+      "path": "/docs/cdn"
+    },
+    {
+      "text": "Storage",
+      "path": "/docs/storage"
+    },
+    {
+      "text": "Integrations",
+      "path": "/docs/integrations"
+    },
+    {
+      "text": "Microfrontends",
+      "path": "/docs/microfrontends"
+    },
+    {
+      "text": "Domains",
+      "path": "/docs/domains"
+    },
+    {
+      "text": "Firewall",
+      "path": "/docs/vercel-firewall"
+    },
+    {
+      "text": "Observability",
+      "path": "/docs/observability"
+    },
+    {
+      "text": "Feature Flags",
+      "path": "/docs/flags"
+    },
+    {
+      "text": "Toolbar",
+      "path": "/docs/vercel-toolbar"
+    },
+    {
+      "text": "Bot Management",
+      "path": "/docs/bot-management"
+    },
+    {
+      "text": "BotID",
+      "path": "/docs/botid"
+    },
+    {
+      "text": "Deployment Protection",
+      "path": "/docs/deployment-protection"
+    },
+    {
+      "text": "Compliance",
+      "path": "/docs/security/compliance"
+    },
+    {
+      "text": "Changelog↗",
+      "path": "/changelog"
+    },
+    {
+      "text": "Blog↗",
+      "path": "/blog"
+    },
+    {
+      "text": "Knowledge Base",
+      "path": "/kb"
+    },
+    {
+      "text": "APIs & SDKs",
+      "path": "/docs/rest-api"
+    },
+    {
+      "text": "Templates",
+      "path": "/templates"
+    },
+    {
+      "text": "Getting Started",
+      "path": "/docs/getting-started-with-vercel"
+    },
+    {
+      "text": "Log In",
+      "path": "/login"
+    },
+    {
+      "text": "Sign Up",
+      "path": "/signup"
+    },
+    {
+      "text": "Fundamentals",
+      "path": "/docs/fundamentals"
+    },
+    {
+      "text": "Frameworks",
+      "path": "/docs/frameworks"
+    },
+    {
+      "text": "Incremental Migration",
+      "path": "/docs/incremental-migration"
+    },
+    {
+      "text": "Production Checklist",
+      "path": "/docs/production-checklist"
+    },
+    {
+      "text": "MCP",
+      "path": "/docs/mcp"
+    },
+    {
+      "text": "Vercel Connectbeta",
+      "path": "/docs/connect"
+    },
+    {
+      "text": "evebeta",
+      "path": "/docs/eve"
+    },
+    {
+      "text": "Agent Resources",
+      "path": "/docs/agent-resources"
+    },
+    {
+      "text": "Fluid Compute",
+      "path": "/docs/fluid-compute"
+    },
+    {
+      "text": "Routing Middleware",
+      "path": "/docs/routing-middleware"
+    },
+    {
+      "text": "Cron Jobs",
+      "path": "/docs/cron-jobs"
+    },
+    {
+      "text": "Queuesbeta",
+      "path": "/docs/queues"
+    },
+    {
+      "text": "Workflows",
+      "path": "/docs/workflows"
+    },
+    {
+      "text": "Container Registrybeta",
+      "path": "/docs/container-registry"
+    },
+    {
+      "text": "Projects",
+      "path": "/docs/projects"
+    },
+    {
+      "text": "Git",
+      "path": "/docs/git"
+    },
+    {
+      "text": "Dropnew",
+      "path": "/docs/drop"
+    },
+    {
+      "text": "Monorepos",
+      "path": "/docs/monorepos"
+    },
+    {
+      "text": "Builds",
+      "path": "/docs/builds"
+    },
+    {
+      "text": "Vercel for Platforms",
+      "path": "/docs/platforms"
+    },
+    {
+      "text": "Routing",
+      "path": "/docs/routing"
+    },
+    {
+      "text": "Servicesbeta",
+      "path": "/docs/services"
+    },
+    {
+      "text": "Vercel Toolbar",
+      "path": "/docs/vercel-toolbar"
+    },
+    {
+      "text": "Rolling Releases",
+      "path": "/docs/rolling-releases"
+    },
+    {
+      "text": "Instant Rollback",
+      "path": "/docs/instant-rollback"
+    },
+    {
+      "text": "Key Managementbeta",
+      "path": "/docs/kms"
+    },
+    {
+      "text": "Passportnew",
+      "path": "/docs/passport"
+    },
+    {
+      "text": "Identity & Access",
+      "path": "/docs/rbac"
+    },
+    {
+      "text": "Networking",
+      "path": "/docs/networking"
+    },
+    {
+      "text": "Security & Compliance",
+      "path": "/docs/security"
+    },
+    {
+      "text": "Pricing",
+      "path": "/docs/pricing"
+    },
+    {
+      "text": "Plans",
+      "path": "/docs/plans"
+    },
+    {
+      "text": "Spend Management",
+      "path": "/docs/spend-management"
+    },
+    {
+      "text": "Limits",
+      "path": "/docs/limits"
+    },
+    {
+      "text": "Notifications",
+      "path": "/docs/notifications"
+    },
+    {
+      "text": "Support Center",
+      "path": "/docs/support-center"
+    },
+    {
+      "text": "Project Configuration",
+      "path": "/docs/project-configuration"
+    },
+    {
+      "text": "REST API",
+      "path": "/docs/rest-api"
+    },
+    {
+      "text": "Vercel SDK",
+      "path": "/docs/rest-api/sdk"
+    },
+    {
+      "text": "Build Output API",
+      "path": "/docs/build-output-api"
+    },
+    {
+      "text": "Webhooks",
+      "path": "/docs/webhooks"
+    },
+    {
+      "text": "Marketplace APIs",
+      "path": "/docs/integrations/create-integration/marketplace-api/reference"
+    },
+    {
+      "text": "Checks",
+      "path": "/docs/checks"
+    },
+    {
+      "text": "Errors",
+      "path": "/docs/errors"
+    },
+    {
+      "text": "Glossary",
+      "path": "/docs/glossary"
+    },
+    {
+      "text": "Get started",
+      "path": "/docs/getting-started-with-vercel"
+    },
+    {
+      "text": "Get AI Gateway key",
+      "path": "/docs/ai-gateway/authentication-and-byok"
+    },
+    {
+      "text": "Use a skill",
+      "path": "/docs/agent-resources/skills"
+    },
+    {
+      "text": "Git repository",
+      "path": "/docs/git"
+    },
+    {
+      "text": "eveeve is a filesystem-first framework for building durable backend AI agents.",
+      "path": "/docs/eve"
+    },
+    {
+      "text": "AgentsBuild autonomous workflows and conversational interfaces with the AI SDK.",
+      "path": "/kb/guide/how-to-build-ai-agents-with-vercel-and-the-ai-sdk"
+    },
+    {
+      "text": "SandboxRun untrusted code in secure, ephemeral execution environments.",
+      "path": "/docs/sandbox"
+    },
+    {
+      "text": "Image OptimizationOptimize your images for the web.",
+      "path": "/docs/image-optimization"
+    },
+    {
+      "text": "Manage EnvironmentsLocal, preview, production, and custom environments.",
+      "path": "/docs/deployments/environments"
+    },
+    {
+      "text": "AI SDKIntegrate language models with streaming and tool calling.",
+      "path": "/docs/ai-sdk"
+    },
+    {
+      "text": "AI GatewayRoute to any AI provider with automatic failover.",
+      "path": "/docs/ai-gateway"
+    },
+    {
+      "text": "MCP ServersCreate tools for AI agents to interact with your systems.",
+      "path": "/docs/mcp"
+    },
+    {
+      "text": "Claim DeploymentsAllow AI agents to deploy a project and let a human take over.",
+      "path": "/docs/deployments/claim-deployments"
+    },
+    {
+      "text": "Deployment ProtectionProtect your applications from unauthorized access.",
+      "path": "/docs/deployment-protection"
+    },
+    {
+      "text": "RBACRole-based access control for your applications.",
+      "path": "/docs/rbac"
+    },
+    {
+      "text": "Bot ManagementProtect your applications from bots and automated traffic.",
+      "path": "/docs/bot-management"
+    },
+    {
+      "text": "Platform DDoS MitigationProtect your applications from DDoS attacks.",
+      "path": "/docs/security/ddos-mitigation"
+    },
+    {
+      "text": "Draft ModeView your unpublished headless CMS content on your site.",
+      "path": "/docs/draft-mode"
+    },
+    {
+      "text": "Vercel Delivery NetworkFast, globally distributed execution.",
+      "path": "/docs/cdn"
+    },
+    {
+      "text": "Rolling ReleasesRoll out new deployments in increments.",
+      "path": "/docs/rolling-releases"
+    },
+    {
+      "text": "Observability SuiteMonitor performance and debug your AI workflows and apps.",
+      "path": "/docs/observability"
+    },
+    {
+      "text": "Vercel Knowledge Base",
+      "path": "/kb"
+    },
+    {
+      "text": "BackendServer-side patterns, API routes, database connections, and compute.",
+      "path": "/kb/backend"
+    },
+    {
+      "text": "ServicesDeploy multiple frontends and backends within a single Vercel project.",
+      "path": "/kb/vercel-services"
+    },
+    {
+      "text": "DomainsManage domains and DNS records for your Vercel projects.",
+      "path": "/kb/domains"
+    },
+    {
+      "text": "CDNCache content globally, route requests, and run compute close to your data.",
+      "path": "/kb/cdn"
+    },
+    {
+      "text": "NextStart / Getting started",
+      "path": "/docs/getting-started-with-vercel"
+    },
+    {
+      "text": "AI SDK",
+      "path": "/ai-sdk"
+    },
+    {
+      "text": "AI Gateway",
+      "path": "/ai-gateway"
+    },
+    {
+      "text": "Sandbox",
+      "path": "/sandbox"
+    },
+    {
+      "text": "Workflows",
+      "path": "/workflows"
+    },
+    {
+      "text": "ConnectNew",
+      "path": "/connect"
+    },
+    {
+      "text": "PassportNew",
+      "path": "/passport"
+    },
+    {
+      "text": "eveNew",
+      "path": "/eve"
+    },
+    {
+      "text": "CI/CD",
+      "path": "/products/previews"
+    },
+    {
+      "text": "Content Delivery",
+      "path": "/cdn"
+    },
+    {
+      "text": "Fluid Compute",
+      "path": "/fluid"
+    },
+    {
+      "text": "Observability",
+      "path": "/products/observability"
+    },
+    {
+      "text": "Platform Security",
+      "path": "/security"
+    },
+    {
+      "text": "WAF",
+      "path": "/security/web-application-firewall"
+    },
+    {
+      "text": "Bot Management",
+      "path": "/security/bot-management"
+    },
+    {
+      "text": "Bot ID",
+      "path": "/botid"
+    },
+    {
+      "text": "Vercel DropNew",
+      "path": "/drop"
+    },
+    {
+      "text": "Vercel Agent",
+      "path": "/agent"
+    },
+    {
+      "text": "Vercel PluginNew",
+      "path": "/plugin"
+    },
+    {
+      "text": "Next.js",
+      "path": "/frameworks/nextjs"
+    },
+    {
+      "text": "Domains",
+      "path": "/domains"
+    },
+    {
+      "text": "Nuxt",
+      "path": "/docs/frameworks/full-stack/nuxt"
+    },
+    {
+      "text": "SvelteKit",
+      "path": "/docs/frameworks/full-stack/sveltekit"
+    },
+    {
+      "text": "Nitro",
+      "path": "/docs/frameworks/backend/nitro"
+    },
+    {
+      "text": "Turborepo",
+      "path": "/solutions/turborepo"
+    },
+    {
+      "text": "Tanstack Start",
+      "path": "/docs/frameworks/full-stack/tanstack-start"
+    },
+    {
+      "text": "FastAPI",
+      "path": "/docs/frameworks/backend/fastapi"
+    },
+    {
+      "text": "xmcp",
+      "path": "/docs/frameworks/backend/xmcp"
+    },
+    {
+      "text": "All frameworks",
+      "path": "/docs/frameworks"
+    },
+    {
+      "text": "Workflow SDKNew",
+      "path": "/workflows"
+    },
+    {
+      "text": "Flags SDK",
+      "path": "/docs/flags/flags-sdk-reference"
+    },
+    {
+      "text": "Chat SDKNew",
+      "path": "/chat"
+    },
+    {
+      "text": "Queues SDKNew",
+      "path": "/docs/queues/sdk"
+    },
+    {
+      "text": "AI Apps",
+      "path": "/solutions/ai-apps"
+    },
+    {
+      "text": "Web Apps",
+      "path": "/solutions/web-apps"
+    },
+    {
+      "text": "Marketing Sites",
+      "path": "/solutions/marketing-sites"
+    },
+    {
+      "text": "Platforms",
+      "path": "/solutions/multi-tenant-saas"
+    },
+    {
+      "text": "Commerce",
+      "path": "/solutions/composable-commerce"
+    },
+    {
+      "text": "Platform Engineers",
+      "path": "/solutions/platform-engineering"
+    },
+    {
+      "text": "Design Engineers",
+      "path": "/solutions/design-engineering"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog"
+    },
+    {
+      "text": "Changelog",
+      "path": "/changelog"
+    },
+    {
+      "text": "Academy",
+      "path": "/academy"
+    },
+    {
+      "text": "Articles",
+      "path": "/i"
+    },
+    {
+      "text": "Customers",
+      "path": "/customers"
+    },
+    {
+      "text": "Marketplace",
+      "path": "/marketplace"
+    },
+    {
+      "text": "Partner Finder",
+      "path": "/partners/solution-partners"
+    },
+    {
+      "text": "Vercel + AWS",
+      "path": "/partners/aws"
+    },
+    {
+      "text": "About",
+      "path": "/about"
+    },
+    {
+      "text": "Careers",
+      "path": "/careers"
+    },
+    {
+      "text": "Press",
+      "path": "/press"
+    },
+    {
+      "text": "Events",
+      "path": "/events"
+    },
+    {
+      "text": "Startups",
+      "path": "/startups"
+    },
+    {
+      "text": "Shipped on Vercel",
+      "path": "/shipped"
+    },
+    {
+      "text": "Open Source Program",
+      "path": "/open-source-program"
+    },
+    {
+      "text": "Enterprise",
+      "path": "/enterprise"
+    },
+    {
+      "text": "Pricing",
+      "path": "/pricing"
+    },
+    {
+      "text": "Help",
+      "path": "/help"
+    },
+    {
+      "text": "Privacy Policy",
+      "path": "/legal/privacy-policy"
+    },
+    {
+      "text": "Terms of Service",
+      "path": "/legal/terms"
+    },
+    {
+      "text": "Cookie Policy",
+      "path": "/legal/cookie-policy"
+    },
+    {
+      "text": "DPA",
+      "path": "/legal/dpa"
+    },
+    {
+      "text": "Acceptable Use Policy",
+      "path": "/legal/acceptable-use-policy"
+    },
+    {
+      "text": "Legal (all documents)",
+      "path": "/legal"
+    }
+  ],
+  "url_sections": {
+    "docs": 1859,
+    "changelog": 1264,
+    "templates": 558,
+    "guide": 544,
+    "blog": 500,
+    "ai-gateway": 452,
+    "academy": 258,
+    "marketplace": 161,
+    "i": 126,
+    "partners": 114,
+    "customers": 112,
+    "geist": 76,
+    "resources": 45,
+    "ship": 31,
+    "legal": 30,
+    "integrations": 23,
+    "careers": 22,
+    "shipped": 17,
+    "press": 17,
+    "solutions": 8,
+    "bulletin": 4,
+    "startups": 4,
+    "security": 3,
+    "products": 3,
+    "domains": 2,
+    "eve": 2,
+    "storage": 2,
+    "contact": 2,
+    "fastify": 1,
+    "sandbox": 1,
+    "about": 1,
+    "pricing": 1,
+    "backend": 1,
+    "firewall": 1,
+    "chat-sdk": 1,
+    "hono": 1,
+    "agent": 1,
+    "h3": 1,
+    "cdn": 1,
+    "nextjs": 1
+  },
+  "content_kinds": {
+    "getting started / quickstart": [
+      "get started",
+      "getting started",
+      "nextstart / getting started",
+      "/docs/getting-started-with-vercel"
+    ],
+    "guides / how-to": [
+      "guide",
+      "/kb/guide/how-to-build-ai-agents-with-vercel-and-the-ai-sdk"
+    ],
+    "api reference": [
+      "rest api",
+      "/docs/rest-api",
+      "build output api",
+      "/docs/rest-api/sdk"
+    ],
+    "changelog / release notes": [
+      "changelog",
+      "/changelog",
+      "changelog↗",
+      "rolling releases"
+    ],
+    "troubleshooting / errors": [
+      "errors",
+      "/docs/errors"
+    ],
+    "migration / upgrade": [
+      "incremental migration",
+      "/docs/incremental-migration"
+    ],
+    "security": [
+      "security",
+      "/security",
+      "/docs/security",
+      "platform security"
+    ],
+    "glossary / definitions": [
+      "glossary",
+      "/docs/glossary"
+    ],
+    "cli reference": [
+      "cli",
+      "/docs/cli"
+    ],
+    "sdk / client libraries": [
+      "ai sdk",
+      "/ai-sdk",
+      "chat-sdk",
+      "flags sdk"
+    ],
+    "configuration / settings": [
+      "project configuration",
+      "/docs/project-configuration"
+    ],
+    "community / support": [
+      "support center",
+      "/docs/support-center"
+    ],
+    "playground / sandbox": [
+      "sandbox",
+      "/sandbox",
+      "/docs/sandbox",
+      "sandboxrun untrusted code in secure, ephemeral execution environments."
+    ],
+    "integrations": [
+      "integrations",
+      "ai integrations",
+      "/docs/integrations",
+      "/docs/agent-resources/integrations-for-models"
+    ],
+    "deployment / production": [
+      "deployments",
+      "/docs/deployments",
+      "production checklist",
+      "deployment protection"
+    ],
+    "pricing / limits": [
+      "limits",
+      "pricing",
+      "/pricing",
+      "/docs/limits"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://vercel.com/docs",
+      "h1": "Ship anything with Vercel",
+      "h2": [
+        "Build with AI",
+        "Build your applications",
+        "Use Vercel's AI infrastructure",
+        "Secure your applications",
+        "Collaborate with your team",
+        "Deploy and scale",
+        "Guides and tutorials",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/changelog",
+      "h1": "Changelog",
+      "h2": [
+        "Algolia joins the Vercel Marketplace",
+        "Fish Audio models now available on Vercel AI Gateway for free",
+        "Vercel for Slack now in public beta",
+        "Vercel Connect now supports Microsoft",
+        "Chat SDK adds Instagram adapter",
+        "Vercel for Platforms can now deploy from your users' GitHub repositories",
+        "Cline is now available in the AI SDK harness layer",
+        "GLM 5.3 now available on AI Gateway",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/blog",
+      "h1": "Blog",
+      "h2": [
+        "Featured articles",
+        "$1 million hacker challenge for Vercel Sandbox",
+        "Building a software factory for AI SDK",
+        "DeepSeek overtakes Google on volume, cost per token falls 13.6%",
+        "Blog posts",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/kb",
+      "h1": "Knowledge Base",
+      "h2": [
+        "Featured Topics",
+        "Featured Guides",
+        "All Guides",
+        "All Topics",
+        "Ready to deploy?",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/templates",
+      "h1": "Find your Template",
+      "h2": [
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/login",
+      "h1": "Log in to Vercel",
+      "h2": []
+    },
+    {
+      "url": "https://vercel.com/signup",
+      "h1": "Your first deployis just a sign-up away.",
+      "h2": []
+    },
+    {
+      "url": "https://vercel.com/ai-sdk",
+      "h1": "The AI layer for building frameworks and agents on Vercel",
+      "h2": [
+        "The framework agnostic AI toolkit",
+        "AI SDK features",
+        "AI SDK code examples",
+        "Scale with confidence",
+        "Build with the AI SDK today",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/ai-gateway",
+      "h1": "The AI Gateway for developers",
+      "h2": [
+        "Optimize routing for availability, cost, or latency",
+        "Routing, billing, and observability in one place",
+        "Works with your existing AI stack",
+        "Recent ships",
+        "Security and compliance",
+        "Take control",
+        "Every modality you need",
+        "Works with the tools your team already uses",
+        "Get started",
+        "Frequently asked questions",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company"
+      ]
+    },
+    {
+      "url": "https://vercel.com/sandbox",
+      "h1": "The safest way to run code you didn’t write",
+      "h2": [
+        "Network Firewall with Credentials Brokering and Requests Proxying",
+        "Snapshots with Instant Environment Restore",
+        "Cost-efficient, scalable execution with Fluid compute",
+        "How much will it cost?",
+        "Get started",
+        "Frequently asked questions",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/workflows",
+      "h1": "\"use workflow\"for infinite compute durability",
+      "h2": [
+        "Powered by Workflow SDK",
+        "Inspect every run end‑to‑end",
+        "Deploy and scale",
+        "Get started",
+        "Build workflows",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/connect",
+      "h1": "Vercel Connect for AI apps and agents",
+      "h2": [
+        "Get started",
+        "Frequently asked questions",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/passport",
+      "h1": "Introducing Vercel Passport",
+      "h2": [
+        "Forge-proof verification",
+        "Authenticate once, control everything",
+        "Frequently asked questions",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/eve",
+      "h1": "The framework forbuilding agents",
+      "h2": [
+        "An agent is a directory",
+        "Leverages all Vercel AI primitives",
+        "Everything you need for production agents",
+        "Build your first agent",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/cdn",
+      "h1": "A self-driving delivery network",
+      "h2": [
+        "Deploy once, scale everywhere",
+        "Build with zero-config overhead",
+        "Built for every traffic pattern",
+        "Start deploying globally",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/fluid",
+      "h1": "The power of servers, in serverless form",
+      "h2": [
+        "Pay for compute, not idle time",
+        "Bridging servers and serverless",
+        "Fluid compute for dynamic web applications",
+        "Experience fluid",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/security",
+      "h1": "Security that scales with you.",
+      "h2": [
+        "Vercel Firewall",
+        "Web Application Firewall",
+        "Workspace Security",
+        "Global protection",
+        "DDoS mitigation",
+        "Challenge Mode",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/botid",
+      "h1": "The invisible bot detection engine.",
+      "h2": [
+        "Why BotID",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    },
+    {
+      "url": "https://vercel.com/drop",
+      "h1": "Drop It. It's Live.",
+      "h2": []
+    },
+    {
+      "url": "https://vercel.com/agent",
+      "h1": "The intelligence layer for shipping on Vercel",
+      "h2": [
+        "Production issues, resolved before you touch them",
+        "Confident approvals start with context",
+        "Vercel in your conversations",
+        "Know exactly what's driving your bill",
+        "Frequently asked questions",
+        "Agent Stack",
+        "Core Platform",
+        "Security",
+        "Tools",
+        "Frameworks",
+        "SDKs",
+        "Build",
+        "Learn",
+        "Explore",
+        "Company",
+        "Legal & Trust",
+        "Social"
+      ]
+    }
+  ]
+}

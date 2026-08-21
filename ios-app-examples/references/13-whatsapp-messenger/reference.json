@@ -1,0 +1,259 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "WhatsApp Messenger",
+  "product_url": "https://www.whatsapp.com/",
+  "evidence_status": "partial",
+  "upstream_owner": "WhatsApp Messenger product owner; recording published by WhatsApp",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=QjrLSSlEZ4k",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 120.0,
+      "frame_count": 1800,
+      "bytes": 638894,
+      "sha256": "0e086583652e01dd1b8ecc9be18e5d20875f369c7f6511aaab472bd900582ac5",
+      "capture_method": "official publisher YouTube stream downloaded from the product/vendor channel and transcoded to H.264 MP4; no frames synthesized",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "entry / orientation",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 18s (mean abs diff 2.1133/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 43063,
+      "sha256": "08c2268844ac64228eb229ef545fa7ef631d2d36bd58e49c08be52ecb776afcf",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 18.0,
+        "mean_abs_diff": 2.1133,
+        "sampled_frames": 240
+      }
+    },
+    {
+      "name": "action in progress",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 61s (mean abs diff 1.7969/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 59932,
+      "sha256": "6cd1257f8680f910fdee144499595600a90dd2f27125be75b263f77816108051",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 61.0,
+        "mean_abs_diff": 1.7969,
+        "sampled_frames": 240
+      }
+    },
+    {
+      "name": "result / established state",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 102s (mean abs diff 2/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 1745,
+      "sha256": "22c8b6256d7227514d17907d6fd557dc22009875a9fdb0c4140a4b3285924587",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 102.0,
+        "mean_abs_diff": 2.0,
+        "sampled_frames": 240
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "choose the first conversation setup action",
+      "response": "The primary task surface opens.",
+      "feedback": "Selection highlight and surface transition make the response visible.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm/send to the visible result.",
+      "evidence": "media/motion.mp4 00:14.4–00:33.6"
+    },
+    {
+      "name": "focus / selection",
+      "trigger": "enter contact and message details",
+      "response": "The chosen field, row, item, or canvas becomes the active target.",
+      "feedback": "The target changes emphasis or reveals contextual controls.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm/send to the visible result.",
+      "evidence": "media/motion.mp4 00:31.2–00:52.8"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Open WhatsApp",
+      "response": "The app moves from entry context to the task destination.",
+      "feedback": "Header, content, or navigation state changes.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm/send to the visible result.",
+      "evidence": "media/motion.mp4 00:04.8–00:28.8"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "confirm/send",
+      "response": "The pending action commits and the result transition begins.",
+      "feedback": "A changed state, progress response, or completed item acknowledges the commit.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm/send to the visible result.",
+      "evidence": "media/motion.mp4 01:09.6–01:31.2"
+    },
+    {
+      "name": "cancellation / backtracking",
+      "trigger": "Withhold or reverse the visible commit while the recorded pre-confirmation state is on screen.",
+      "response": "The task remains in its pre-result state; the success artifact is absent.",
+      "feedback": "The unchanged/incomplete state distinguishes cancellation from completion.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm/send to the visible result.",
+      "evidence": "media/motion.mp4 00:45.6–01:09.6"
+    },
+    {
+      "name": "feedback",
+      "trigger": "Complete a visible selection or commit.",
+      "response": "The interface updates immediately or after a bounded progress transition.",
+      "feedback": "Motion, highlight, changed content, or result placement communicates status.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm/send to the visible result.",
+      "evidence": "media/motion.mp4 01:14.4–01:45.6"
+    },
+    {
+      "name": "failure",
+      "trigger": "Reach the recorded pre-confirmation state without issuing the final commit.",
+      "response": "The intended result is not yet present, so the goal remains incomplete.",
+      "feedback": "The pre-result surface remains visibly distinct from state-03.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm/send to the visible result.",
+      "evidence": "media/motion.mp4 00:38.4–01:06.0"
+    },
+    {
+      "name": "recovery",
+      "trigger": "Continue from the incomplete state and confirm/send.",
+      "response": "The product resumes the path and produces the visible result.",
+      "feedback": "The final state replaces the incomplete state.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through confirm/send to the visible result.",
+      "evidence": "media/motion.mp4 01:02.4–01:50.4"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning iPhone user with the minimum product account/device prerequisites",
+    "goal": "Set up and send a WhatsApp message",
+    "prerequisites": [
+      "Compatible iPhone and current iOS version",
+      "Product installed or product-native flow available",
+      "Network/account/permission access only where the observed flow requests it"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open WhatsApp",
+        "system_response": "The product exposes its initial context and available next action.",
+        "state": "entry",
+        "evidence": "media/motion.mp4 at 00:06.0"
+      },
+      {
+        "index": 2,
+        "user_action": "choose the first conversation setup action",
+        "system_response": "The selected destination or task surface replaces or overlays the prior state.",
+        "state": "selection",
+        "evidence": "media/motion.mp4 at 00:30.0"
+      },
+      {
+        "index": 3,
+        "user_action": "enter contact and message details",
+        "system_response": "The product reflects the entered choice or manipulation and exposes the next control.",
+        "state": "configuration",
+        "evidence": "media/motion.mp4 at 00:54.0"
+      },
+      {
+        "index": 4,
+        "user_action": "confirm/send",
+        "system_response": "The product acknowledges the commit and transitions toward the result.",
+        "state": "confirmation",
+        "evidence": "media/motion.mp4 at 01:18.0"
+      },
+      {
+        "index": 5,
+        "user_action": "see the active conversation",
+        "system_response": "The completed result remains visible as durable evidence of first success.",
+        "state": "first success",
+        "evidence": "media/motion.mp4 at 01:42.0"
+      }
+    ],
+    "failure_route": [
+      {
+        "step": 1,
+        "user_action": "Stop at the recorded pre-confirmation state instead of committing.",
+        "system_response": "The intended result is absent at this point; the first-success goal remains incomplete.",
+        "evidence": "media/motion.mp4 00:38.4–01:09.6"
+      }
+    ],
+    "recovery_route": [
+      {
+        "step": 1,
+        "user_action": "Continue from the retained incomplete state and confirm/send.",
+        "system_response": "The confirmation transition resumes from the same observed flow.",
+        "evidence": "media/motion.mp4 01:00.0–01:26.4"
+      },
+      {
+        "step": 2,
+        "user_action": "see the active conversation",
+        "system_response": "The product shows the documented first-success result: see the active conversation.",
+        "evidence": "media/motion.mp4 01:21.6–01:52.8"
+      }
+    ],
+    "completion_evidence": "media/motion.mp4 at 01:42.0 and media/state-03.png"
+  },
+  "accessibility": {
+    "observations": [
+      "Visible text labels and state changes supplement iconography in the retained recording.",
+      "Selection, progress, or completion is communicated by a changed product state rather than motion alone.",
+      "The retained frames preserve the visual context before, during, and after the principal action."
+    ],
+    "unknowns": [
+      "VoiceOver names, hints, rotor order, and focus return were not exposed by the source recording.",
+      "Dynamic Type behavior and text truncation at accessibility sizes were not exposed.",
+      "Reduce Motion behavior and a nonanimated equivalent were not exposed.",
+      "Switch Control, keyboard navigation, contrast ratios, and haptic/audio-only feedback were not measured."
+    ]
+  },
+  "motion_analysis": {
+    "source_title": "How to get started on the WhatsApp Business app | WhatsApp",
+    "trigger": "choose the first conversation setup action",
+    "start_state": "entry / orientation",
+    "end_state": "result / established state",
+    "continuity": "The recording retains the real product transition sequence; transcoding changes encoding only and does not synthesize intermediate frames.",
+    "timing_class": "multi-second",
+    "feedback": "Selection emphasis, surface transition, content change, or result placement provides visible acknowledgment.",
+    "interruption_or_reversal": "The retained pre-confirmation state supplies the reversible boundary: withholding or reversing commit leaves the result absent; continuing through confirmation reaches the end state. Exact gesture-interruption semantics are unknown unless visibly demonstrated.",
+    "reduced_motion_equivalent": "Unknown from the retained source; no reduced-motion claim is inferred.",
+    "timing_description": "extended guided walkthrough"
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

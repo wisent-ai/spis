@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921624,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Google Cloud CLI (gcloud) authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Google Cloud CLI (gcloud)\r\n"]
+[0.55,"o","cli-ref$ gcloud --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","Google Cloud SDK 500.0.0\r\nalpha 2024.11.01\r\nbq 2.1.9\r\ncore 2024.11.01\r\ngcloud-crc32c 1.0.0\r\ngsutil 5.31\r\nUpdates are available for some Google Cloud CLI components.  To install them,\r\nplease run:\r\n  $ gcloud components update\r\n"]
+[2.2,"o","cli-ref$ gcloud help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","NAME\r\n    gcloud - manage Google Cloud resources and developer workflow\r\n\r\nSYNOPSIS\r\n    gcloud GROUP | COMMAND [--account=ACCOUNT]\r\n        [--billing-project=BILLING_PROJECT] [--configuration=CONFIGURATION]\r\n        [--flags-file=YAML_FILE] [--flatten=[KEY,...]] [--format=FORMAT]\r\n        [--help] [--project=PROJECT_ID] [--quiet, -q]\r\n        [--verbosity=VERBOSITY; default=\"warning\"] [--version, -v] [-h]\r\n        [--access-token-file=ACCESS_TOKEN_FILE]\r\n        [--impersonate-service-account=SERVICE_ACCOUNT_EMAILS] [--log-http]\r\n        [--trace-token=TRACE_TOKEN] [--no-user-output-enabled]\r\n\r\nDESCRIPTION\r\n"]
+[5.1,"o","cli-ref$ gcloud --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","ERROR: (gcloud) unrecognized arguments: --definitely-invalid-option \r\n\r\nTo search the help text of gcloud commands, run:\r\n  gcloud help -- SEARCH_TERMS\r\n[exit status 2]\r\n"]
+[7.1,"o","cli-ref$ gcloud --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ gcloud help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","NAME\r\n    gcloud - manage Google Cloud resources and developer workflow\r\n\r\nSYNOPSIS\r\n"]

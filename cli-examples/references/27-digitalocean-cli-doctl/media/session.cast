@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921624,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"DigitalOcean CLI (doctl) authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: DigitalOcean CLI (doctl)\r\n"]
+[0.55,"o","cli-ref$ doctl version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","doctl version 1.166.0-release\r\n"]
+[2.2,"o","cli-ref$ doctl help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","doctl is a command line interface (CLI) for the DigitalOcean API.\r\n\r\nUsage:\r\n  doctl [command]\r\n\r\nManage DigitalOcean Resources:\r\n  1-click              Display commands that pertain to 1-click applications\r\n  account              Display commands that retrieve account details\r\n  apps                 Displays commands for working with apps\r\n  compute              Display commands that manage infrastructure\r\n  databases            Display commands that manage databases\r\n  dedicated-inference  Display commands for managing dedicated inference endpoints\r\n  gradient             Manage Gradient AI resources\r\n  kubernetes           Displays commands to manage Kubernetes clusters and configurations\r\n"]
+[5.1,"o","cli-ref$ doctl --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Error: unknown flag: --definitely-invalid-option\r\nUsage:\r\n  doctl [command]\r\n\r\nManage DigitalOcean Resources:\r\n  1-click              Display commands that pertain to 1-click applications\r\n  account              Display commands that retrieve account details\r\n  apps                 Displays commands for working with apps\r\n  compute              Display commands that manage infrastructure\r\n  databases            Display commands that manage databases\r\n  dedicated-inference  Display commands for managing dedicated inference endpoints\r\n  gradient             Manage Gradient AI resources\r\n  kubernetes           Displays commands to manage Kubernetes clusters and configurations\r\n  monitoring           Display commands to manage monitoring\r\n[exit status 255]\r\n"]
+[7.1,"o","cli-ref$ doctl --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ doctl help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","doctl is a command line interface (CLI) for the DigitalOcean API.\r\n\r\nUsage:\r\n  doctl [command]\r\n"]

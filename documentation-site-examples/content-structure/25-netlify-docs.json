@@ -1,0 +1,502 @@
+{
+  "name": "Netlify Docs",
+  "source_url": "https://docs.netlify.com/",
+  "category": "Deployment platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 421,
+  "landing_nav": [
+    {
+      "text": "Netlify Docs",
+      "path": "/"
+    },
+    {
+      "text": "Start",
+      "path": "/start/choose-your-path"
+    },
+    {
+      "text": "Build with AI",
+      "path": "/build/build-with-ai/overview"
+    },
+    {
+      "text": "Configure builds",
+      "path": "/build/configure-builds/overview"
+    },
+    {
+      "text": "Git workflows",
+      "path": "/build/git-workflows/overview"
+    },
+    {
+      "text": "Environment variables",
+      "path": "/build/environment-variables/overview"
+    },
+    {
+      "text": "Frameworks",
+      "path": "/build/frameworks/overview"
+    },
+    {
+      "text": "Post-processing",
+      "path": "/build/post-processing/overview"
+    },
+    {
+      "text": "User-Agent categories",
+      "path": "/build/user-agent-categories"
+    },
+    {
+      "text": "AI Gateway",
+      "path": "/build/ai-gateway/overview"
+    },
+    {
+      "text": "Serverless Functions",
+      "path": "/build/functions/overview"
+    },
+    {
+      "text": "Edge Functions",
+      "path": "/build/edge-functions/overview"
+    },
+    {
+      "text": "Image CDN",
+      "path": "/build/image-cdn/overview"
+    },
+    {
+      "text": "Blobs",
+      "path": "/build/data-and-storage/netlify-blobs"
+    },
+    {
+      "text": "Database",
+      "path": "/build/data-and-storage/netlify-database"
+    },
+    {
+      "text": "Caching",
+      "path": "/build/caching/caching-overview"
+    },
+    {
+      "text": "Async Workloads",
+      "path": "/build/async-workloads/overview"
+    },
+    {
+      "text": "Deploy",
+      "path": "/deploy/deploy-overview"
+    },
+    {
+      "text": "Accounts & Billing",
+      "path": "/manage/accounts-and-billing/overview"
+    },
+    {
+      "text": "Projects",
+      "path": "/manage/projects/how-projects-work"
+    },
+    {
+      "text": "Domains",
+      "path": "/manage/domains/get-started-with-domains"
+    },
+    {
+      "text": "Data & Storage",
+      "path": "/build/data-and-storage/overview"
+    },
+    {
+      "text": "Security & access",
+      "path": "/manage/security/overview"
+    },
+    {
+      "text": "Monitoring & Insights",
+      "path": "/manage/monitoring/overview"
+    },
+    {
+      "text": "Preview Servers",
+      "path": "/manage/preview-servers/overview"
+    },
+    {
+      "text": "Forms",
+      "path": "/manage/forms/setup"
+    },
+    {
+      "text": "Visual Editor",
+      "path": "/manage/visual-editor/overview"
+    },
+    {
+      "text": "Routing & Redirects",
+      "path": "/manage/routing/overview"
+    },
+    {
+      "text": "Install & use",
+      "path": "/extend/install-and-use/overview"
+    },
+    {
+      "text": "Develop & share",
+      "path": "/extend/develop-and-share/overview"
+    },
+    {
+      "text": "Building code agents",
+      "path": "/extend/building-code-agents/overview"
+    },
+    {
+      "text": "Framework adapter API",
+      "path": "/build/frameworks/frameworks-api"
+    },
+    {
+      "text": "Error reference",
+      "path": "/resources/troubleshooting/error-reference"
+    },
+    {
+      "text": "Request processing order",
+      "path": "/resources/troubleshooting/request-chain"
+    },
+    {
+      "text": "Database API",
+      "path": "/build/data-and-storage/netlify-database/api"
+    },
+    {
+      "text": "Frameworks API",
+      "path": "/build/frameworks/frameworks-api"
+    },
+    {
+      "text": "Cache API",
+      "path": "/build/caching/cache-api"
+    },
+    {
+      "text": "Blobs API",
+      "path": "/build/data-and-storage/netlify-blobs"
+    },
+    {
+      "text": "Serverless Functions API",
+      "path": "/build/functions/api"
+    },
+    {
+      "text": "Edge Functions API",
+      "path": "/build/edge-functions/api"
+    },
+    {
+      "text": "API and CLI guides",
+      "path": "/api-and-cli-guides/overview"
+    },
+    {
+      "text": "Terraform provider",
+      "path": "/terraform-provider"
+    },
+    {
+      "text": "Command Palette",
+      "path": "/command-palette"
+    },
+    {
+      "text": "Troubleshooting",
+      "path": "/resources/troubleshooting/overview"
+    },
+    {
+      "text": "Migrate",
+      "path": "/resources/migrate/overview"
+    },
+    {
+      "text": "Checklists",
+      "path": "/resources/checklists/overview"
+    },
+    {
+      "text": "Release phases",
+      "path": "/release-phases"
+    },
+    {
+      "text": "Enterprise credits",
+      "path": "/manage/accounts-and-billing/billing/billing-for-credit-based-plans/how-credits-work-for-enterprise-plans"
+    },
+    {
+      "text": "AI",
+      "path": "/build/build-with-ai/overview"
+    },
+    {
+      "text": "llms.txt",
+      "path": "/llms.txt"
+    },
+    {
+      "text": "Previews",
+      "path": "/deploy/compare-preview-options"
+    },
+    {
+      "text": "Security",
+      "path": "/manage/security/overview"
+    },
+    {
+      "text": "Netlify DNS",
+      "path": "/manage/domains/set-up-netlify-dns"
+    },
+    {
+      "text": "Redirects & Rewrites",
+      "path": "/manage/routing/overview"
+    },
+    {
+      "text": "Netlify Extensions",
+      "path": "/extend/install-and-use/overview"
+    },
+    {
+      "text": "Data & Storage",
+      "path": "/build/data-and-storage/netlify-blobs"
+    },
+    {
+      "text": "Compute",
+      "path": "/start/core-concepts/primitives"
+    },
+    {
+      "text": "Prompt Templates",
+      "path": "/prompt-templates/browse/"
+    },
+    {
+      "text": "Agent Runners",
+      "path": "/build/build-with-ai/agent-runners/overview"
+    },
+    {
+      "text": "even more framework guides",
+      "path": "/start/framework-setup"
+    },
+    {
+      "text": "Vite",
+      "path": "/build/frameworks/framework-setup-guides/vite/"
+    },
+    {
+      "text": "Astro",
+      "path": "/build/frameworks/framework-setup-guides/astro/"
+    },
+    {
+      "text": "React",
+      "path": "/build/frameworks/framework-setup-guides/react/"
+    },
+    {
+      "text": "Next.js",
+      "path": "/build/frameworks/framework-setup-guides/nextjs/overview/"
+    },
+    {
+      "text": "TanStack",
+      "path": "/build/frameworks/framework-setup-guides/tanstack-start/"
+    },
+    {
+      "text": "Vue",
+      "path": "/build/frameworks/framework-setup-guides/vue-cli/"
+    },
+    {
+      "text": "Nuxt",
+      "path": "/build/frameworks/framework-setup-guides/nuxt/"
+    },
+    {
+      "text": "Svelte",
+      "path": "/build/frameworks/framework-setup-guides/sveltekit/"
+    },
+    {
+      "text": "Angular",
+      "path": "/build/frameworks/framework-setup-guides/angular/"
+    },
+    {
+      "text": "Eleventy",
+      "path": "/build/frameworks/framework-setup-guides/eleventy/"
+    },
+    {
+      "text": "Gatsby",
+      "path": "/build/frameworks/framework-setup-guides/gatsby/"
+    },
+    {
+      "text": "Netlify API",
+      "path": "/api-and-cli-guides/api-guides/get-started-with-api"
+    },
+    {
+      "text": "Netlify CLI",
+      "path": "/api-and-cli-guides/cli-guides/get-started-with-cli"
+    },
+    {
+      "text": "Go to Ask Netlify docs",
+      "path": "/resources/troubleshooting/ask-netlify/"
+    }
+  ],
+  "url_sections": {
+    "manage": 201,
+    "build": 128,
+    "extend": 20,
+    "prompt-templates": 20,
+    "resources": 14,
+    "deploy": 13,
+    "start": 10,
+    "api-and-cli-guides": 6,
+    "snippets": 4,
+    "command-palette": 1,
+    "release-phases": 1,
+    "samples": 1,
+    "terraform-provider": 1
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "samples"
+    ],
+    "getting started / quickstart": [
+      "/manage/domains/get-started-with-domains",
+      "/api-and-cli-guides/api-guides/get-started-with-api",
+      "/api-and-cli-guides/cli-guides/get-started-with-cli"
+    ],
+    "guides / how-to": [
+      "api and cli guides",
+      "api-and-cli-guides",
+      "even more framework guides",
+      "/api-and-cli-guides/overview"
+    ],
+    "api reference": [
+      "blobs api",
+      "cache api",
+      "netlify api",
+      "database api"
+    ],
+    "troubleshooting / errors": [
+      "error reference",
+      "troubleshooting",
+      "/resources/troubleshooting/overview",
+      "/resources/troubleshooting/ask-netlify/"
+    ],
+    "migration / upgrade": [
+      "migrate",
+      "/resources/migrate/overview"
+    ],
+    "security": [
+      "security",
+      "security & access",
+      "/manage/security/overview"
+    ],
+    "cli reference": [
+      "netlify cli",
+      "api and cli guides",
+      "api-and-cli-guides",
+      "/api-and-cli-guides/overview"
+    ],
+    "configuration / settings": [
+      "configure builds",
+      "/build/configure-builds/overview"
+    ],
+    "concepts / architecture": [
+      "/start/core-concepts/primitives"
+    ],
+    "deployment / production": [
+      "deploy",
+      "/deploy/deploy-overview",
+      "/deploy/compare-preview-options"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://docs.netlify.com/terraform-provider",
+      "h1": "Terraform Provider",
+      "h2": [
+        "On this page",
+        "Supported Terraform Versions",
+        "Get Help"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/command-palette",
+      "h1": "Command Palette",
+      "h2": [
+        "On this page",
+        "Get started",
+        "Use the Command Palette"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/release-phases",
+      "h1": "Release Phases",
+      "h2": [
+        "On this page",
+        "Beta",
+        "Private beta",
+        "Public beta",
+        "Early access",
+        "General availability",
+        "Deprecated",
+        "End of service"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/start/choose-your-path",
+      "h1": "Choose your path",
+      "h2": [
+        "On this page",
+        "Deploy wizard",
+        "Start something new",
+        "Start with existing project"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/build/user-agent-categories",
+      "h1": "User-Agent Categories",
+      "h2": [
+        "On this page",
+        "Why the User-Agent header is useful",
+        "Using categories on Netlify",
+        "Available categories"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/deploy/deploy-overview",
+      "h1": "Deploy overview",
+      "h2": [
+        "On this page",
+        "How atomic deploys work",
+        "Skew protection",
+        "Deploy summary",
+        "Deploy log",
+        "Branches and deploys",
+        "Deploy contexts",
+        "Deploy protection",
+        "Deploy permissions",
+        "Netlify deploys as previews",
+        "Types of previews",
+        "Preview URL visibility",
+        "More site deploys resources"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/api-and-cli-guides/overview",
+      "h1": "API & CLI Guides",
+      "h2": [
+        "On this page",
+        "API Guides",
+        "CLI Guides"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/manage/accounts-and-billing/overview",
+      "h1": "Accounts & Billing overview",
+      "h2": [
+        "On this page",
+        "Manage personal user settings",
+        "Manage a Netlify team and team members",
+        "Manage billing",
+        "Manage a Netlify organization"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/extend/install-and-use/overview",
+      "h1": "Overview",
+      "h2": [
+        "On this page",
+        "Finding an extension or integration",
+        "Installing an extension or integration",
+        "Installing Netlify Apps",
+        "Installing a build plugin"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/resources/troubleshooting/error-reference",
+      "h1": "Error reference",
+      "h2": [
+        "On this page",
+        "Overview",
+        "Deploy timeout error",
+        "Domains and DNS errors",
+        "Drag and drop deploy stuck \"uploading\" or \"In progress\"",
+        "HTTPS errors",
+        "Non-zero exit code",
+        "Page not found error",
+        "Payment error",
+        "Site doesn't have a secure URL with https",
+        "SSL certificate errors"
+      ]
+    },
+    {
+      "url": "https://docs.netlify.com/prompt-templates/browse/",
+      "h1": "Browse Prompt Templates",
+      "h2": []
+    }
+  ]
+}

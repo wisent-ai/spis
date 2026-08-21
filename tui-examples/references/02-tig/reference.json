@@ -1,0 +1,240 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Tig",
+  "product_url": "https://github.com/jonas/tig",
+  "evidence_status": "partial",
+  "upstream_owner": "jonas",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/product-motion.cast",
+      "source_url": "https://github.com/jonas/tig",
+      "media_kind": "terminal-cast",
+      "width": 100,
+      "height": 30,
+      "duration_seconds": 7.493,
+      "frame_count": 29,
+      "bytes": 3621,
+      "sha256": "708622ba9ace3a9b0555c1fa6e428b6e11b93583ec8b1a3b5d2de1c463b77cfb",
+      "capture_method": "Real installed product recorded through a pseudo-terminal on macOS 25.4.0 arm64 in an isolated temporary HOME/XDG environment with deterministic Git, filesystem, SQLite, Maildir, notmuch, or MPD fixtures as applicable; no still-image animation or generated product frames",
+      "declared_media_kind": "terminal-cast",
+      "measured": true,
+      "measurement_method": "asciinema-v2 header and event stream",
+      "provenance_class": "local-product-run"
+    }
+  ],
+  "states": [
+    {
+      "name": "main log view, top row 'Untracked changes' selected, status bar '[main] Untracked changes 100%'",
+      "local_path": "media/state-1.png",
+      "source_motion_path": "rendering of media/product-motion.cast at 0.1s: the cast was re-rendered with agg (default theme, font size 16) to a 983x694 GIF and this PNG matched the 0.1s frame with mean abs diff 0.003/255 over a 64x64 grayscale comparison",
+      "width": 983,
+      "height": 694,
+      "bytes": 27850,
+      "sha256": "80e97b7434c875324d2fa1e34511755aa7fd6edbdd76a13f86822f6ea4357bec"
+    },
+    {
+      "name": "split view: 'Unstaged changes' row selected above the stage pane showing the beta.md diff, search prompt '/' open on the last line",
+      "local_path": "media/state-2.png",
+      "source_motion_path": "rendering of media/product-motion.cast at 3.6s: same agg re-render, matched with mean abs diff 0.006/255 over a 64x64 grayscale comparison",
+      "width": 983,
+      "height": 694,
+      "bytes": 46543,
+      "sha256": "cc3ffb43b93751de17895bb382b953e97594381971a494e7ef4fd5caf9022055"
+    },
+    {
+      "name": "search prompt filled with '/fixt' while the beta.md diff and 'line 2 of 12' status bar stay visible behind it",
+      "local_path": "media/state-3.png",
+      "source_motion_path": "rendering of media/product-motion.cast at 6.7s: same agg re-render, matched with mean abs diff 0.008/255 over a 64x64 grayscale comparison",
+      "width": 983,
+      "height": 694,
+      "bytes": 46792,
+      "sha256": "58026c9d7edf8e898e29e581437f3f587bd288d57004fb67220278e4e384eb8a"
+    }
+  ],
+  "interactions": [
+    {
+      "name": "launch",
+      "trigger": "Invoke the product in the isolated fixture",
+      "response": "The terminal enters the product surface or its first-run gate",
+      "feedback": "Full-screen redraw or explicit startup status",
+      "cancellation": "Quit key or terminal interrupt",
+      "failure": "Missing service, account, device, or configuration is surfaced in-terminal",
+      "recovery": "Open help, supply the prerequisite, and relaunch",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "move selection",
+      "trigger": "j or Down",
+      "response": "Selection advances by one visible item",
+      "feedback": "Highlight/cursor relocates without leaving the view",
+      "cancellation": "k or Up reverses the move",
+      "failure": "At a boundary the selection remains in place",
+      "recovery": "Reverse direction or change region",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "change focus",
+      "trigger": "Tab or the product panel key",
+      "response": "Keyboard focus moves to another region",
+      "feedback": "Active border, title, cursor, or highlight changes",
+      "cancellation": "Shift-Tab, Tab cycle, or Escape",
+      "failure": "Unavailable regions do not accept focus",
+      "recovery": "Return to the populated primary region",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "confirm or inspect",
+      "trigger": "Enter",
+      "response": "The selected item opens, expands, or becomes the active detail",
+      "feedback": "A detail, child view, dialog, or status repaint appears",
+      "cancellation": "Escape, h, or the parent-navigation key",
+      "failure": "An empty or unavailable selection produces no destructive action",
+      "recovery": "Choose an available item and confirm again",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "open help",
+      "trigger": "? or the product help key",
+      "response": "Shortcut discovery appears or help is requested",
+      "feedback": "Help overlay, footer expansion, or help text",
+      "cancellation": "Escape or the same help key",
+      "failure": "Context may not bind ?",
+      "recovery": "Use the persistent footer/function-key map",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "cancel/backtrack",
+      "trigger": "Escape, h, or Back",
+      "response": "The transient layer closes or parent context returns",
+      "feedback": "Previous selection and primary surface reappear",
+      "cancellation": "Not applicable; this is the cancellation path",
+      "failure": "Root view cannot backtrack further",
+      "recovery": "Resume navigation from the retained selection",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "recover from prerequisite failure",
+      "trigger": "Read the visible error/empty/loading state and invoke help or relaunch after supplying the prerequisite",
+      "response": "The product exposes its supported next action rather than silently proceeding",
+      "feedback": "Explicit status text followed by a stable interactive surface",
+      "cancellation": "Quit leaves the external system unchanged",
+      "failure": "Account, daemon, cluster, device, or data remains unavailable",
+      "recovery": "Restore that named prerequisite and repeat launch",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    },
+    {
+      "name": "quit",
+      "trigger": "q, F10, or the product quit command",
+      "response": "The full-screen surface closes",
+      "feedback": "Terminal control and cursor are restored",
+      "cancellation": "Remain in the surface by not confirming a quit dialog",
+      "failure": "A modal may consume the first quit key",
+      "recovery": "Dismiss the modal, then use the documented quit command",
+      "evidence": "product motion: recorded input and immediately following terminal repaint"
+    }
+  ],
+  "journey": {
+    "actor": "Keyboard user evaluating the real terminal application",
+    "goal": "Reach the first inspectable git and developer workflows result in Tig, discover controls, and recover from a blocked or transient state",
+    "prerequisites": [
+      "https://github.com/jonas/tig",
+      "A terminal with keyboard input",
+      "The product-specific local data, account, daemon, device, or service shown in the recording"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Launch Tig with the recorded prerequisite/fixture",
+        "system_response": "The application claims the terminal and begins its first render",
+        "state": "launch transition",
+        "evidence": "isolated real-program terminal cast at the opening segment"
+      },
+      {
+        "index": 2,
+        "user_action": "Wait for the first stable product surface",
+        "system_response": "Primary content, an onboarding gate, or an explicit prerequisite state becomes readable",
+        "state": "first stable surface",
+        "evidence": "isolated real-program terminal cast at the first retained key state"
+      },
+      {
+        "index": 3,
+        "user_action": "Move the active selection within the primary list or table",
+        "system_response": "The highlight/cursor moves and selection-coupled content repaints",
+        "state": "navigated selection",
+        "evidence": "isolated real-program terminal cast in the early-to-middle segment"
+      },
+      {
+        "index": 4,
+        "user_action": "Change panel/context or inspect the selected item",
+        "system_response": "A secondary region, detail, child view, or contextual status becomes active",
+        "state": "context/detail transition",
+        "evidence": "isolated real-program terminal cast around the midpoint key state"
+      },
+      {
+        "index": 5,
+        "user_action": "Read the persistent key map or invoke the recorded help/discovery control",
+        "system_response": "The visible footer, function-key map, prompt, or help layer exposes the next supported controls",
+        "state": "help/discovery",
+        "evidence": "isolated real-program terminal cast in the middle-to-late segment"
+      },
+      {
+        "index": 6,
+        "user_action": "Cancel/backtrack from the transient or nested state",
+        "system_response": "The prior stable context returns with selection continuity where supported",
+        "state": "recovered primary surface",
+        "evidence": "isolated real-program terminal cast before the final key state"
+      },
+      {
+        "index": 7,
+        "user_action": "Finish the first inspection and leave or settle on the meaningful result",
+        "system_response": "The result remains inspectable or terminal control is cleanly restored",
+        "state": "first-success completion",
+        "evidence": "isolated real-program terminal cast at the final retained state"
+      }
+    ],
+    "failure_route": [
+      "Launch without a required product-specific prerequisite or reach an unavailable/empty selection.",
+      "Observe the explicit terminal error, empty state, disabled action, or unchanged boundary selection.",
+      "Do not substitute a marketing claim for that recorded failure state."
+    ],
+    "recovery_route": [
+      "Use the recorded help/footer/discovery affordance to identify the supported action.",
+      "Restore the named account, daemon, cluster, device, file, database, or selection prerequisite.",
+      "Relaunch or backtrack and repeat the successful navigation shown in the motion evidence."
+    ],
+    "completion_evidence": "product-motion.cast is local and replayable, contains 29 recorded events over 7.493 seconds, and is tied to three retained key states rendered from it (mean abs diff 0.003-0.008/255)."
+  },
+  "accessibility": {
+    "observations": [
+      "Every log row prints its date, author and subject as text, and the selected row is marked both by a full-width green bar and by the status bar at the bottom repeating that row's title ('[main] Untracked changes'), so the selection is not carried by colour alone.",
+      "Position is written out rather than shown: the status bar in state-3.png reads '[stage] Unstaged changes - line 2 of 12' with '100%' at the right edge.",
+      "The search prompt echoes the typed characters on the last line ('/fixt') beside a visible block cursor, so the input mode and its content are both readable in one still frame.",
+      "Measured on the retained frames: the dark row text rgb(40,42,54) against the green selection bar rgb(80,250,123) is 10.4:1 and against the purple status bar rgb(189,147,249) is 5.9:1 - both above 4.5:1, though this palette is the agg renderer's default rather than the terminal the operator will use."
+    ],
+    "unknowns": [
+      "Screen-reader behavior was not exposed by the terminal capture.",
+      "The colours measured above are the renderer's defaults; the product's own contrast depends on the user's terminal theme, which the cast does not record.",
+      "Behavior under user-defined reduced-motion settings is not documented in the observed evidence.",
+      "Mouse parity, switch-control mappings, and nonvisual ordering are not visible in the cast."
+    ]
+  },
+  "motion_provenance": [
+    "local-product-run"
+  ],
+  "motion_analysis": {
+    "trigger": "The cast header records the command 'tig --all'; the recorded keystrokes are 'j' at 1.211s, Enter at 2.019s, 'j' at 2.778s, then '/', 'f', 'i', 'x', 't', 'u' typed between 3.585s and 7.493s.",
+    "start_state": "At 0.096s the screen is painted in one pass with the four-row all-refs log and the top 'Untracked changes' row selected.",
+    "end_state": "At 7.493s the search prompt on the last line holds '/fixtu' over the split log-and-diff view; the cast ends before the search is submitted.",
+    "continuity": "Each keystroke is answered inside the same event batch by a partial repaint: the green selection bar moves one row and the status line is rewritten. Panes appear in place - Enter opens the stage pane with the beta.md diff below the log, which keeps its rows and its selection.",
+    "timing_class": "instant",
+    "interruption_or_reversal": null,
+    "feedback": "Full-width green bar on the selected row, purple status bar naming the view and position ('[main] Untracked changes 100%', '[stage] Unstaged changes - line 2 of 12'), and echoed characters with a block cursor on the search line.",
+    "reduced_motion_equivalent": "No animation is used: every change is an instant text repaint that persists, so the three retained PNGs carry the same information as replaying the cast. No product-level reduced-motion setting appears in the recording."
+  },
+  "evidence_gaps": [
+    "motion analysis missing interruption_or_reversal",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

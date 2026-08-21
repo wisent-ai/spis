@@ -1,0 +1,614 @@
+{
+  "name": "Firebase Documentation",
+  "source_url": "https://firebase.google.com/docs",
+  "category": "Backend platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 3731,
+  "landing_nav": [
+    {
+      "text": "Build",
+      "path": "/products-build"
+    },
+    {
+      "text": "Go to Build",
+      "path": "/products-build"
+    },
+    {
+      "text": "App Check",
+      "path": "/products/app-check"
+    },
+    {
+      "text": "App Hosting",
+      "path": "/products/app-hosting"
+    },
+    {
+      "text": "Authentication",
+      "path": "/products/auth"
+    },
+    {
+      "text": "Cloud Functions",
+      "path": "/products/functions"
+    },
+    {
+      "text": "Cloud Storage",
+      "path": "/products/storage"
+    },
+    {
+      "text": "SQL Connect",
+      "path": "/products/sql-connect"
+    },
+    {
+      "text": "Extensions",
+      "path": "/products/extensions"
+    },
+    {
+      "text": "Firestore",
+      "path": "/products/firestore"
+    },
+    {
+      "text": "Hosting",
+      "path": "/products/hosting"
+    },
+    {
+      "text": "Phone Number Verification",
+      "path": "/products/phone-number-verification"
+    },
+    {
+      "text": "Realtime Database",
+      "path": "/products/realtime-database"
+    },
+    {
+      "text": "Firebase AI Logic",
+      "path": "/products/firebase-ai-logic"
+    },
+    {
+      "text": "Generative AI",
+      "path": "/products/generative-ai"
+    },
+    {
+      "text": "Run",
+      "path": "/products-run"
+    },
+    {
+      "text": "Go to Run",
+      "path": "/products-run"
+    },
+    {
+      "text": "A/B Testing",
+      "path": "/products/ab-testing"
+    },
+    {
+      "text": "App Distribution",
+      "path": "/products/app-distribution"
+    },
+    {
+      "text": "Cloud Messaging",
+      "path": "/products/cloud-messaging"
+    },
+    {
+      "text": "Crashlytics",
+      "path": "/products/crashlytics"
+    },
+    {
+      "text": "Google Analytics",
+      "path": "/products/analytics"
+    },
+    {
+      "text": "In-App Messaging",
+      "path": "/products/in-app-messaging"
+    },
+    {
+      "text": "Performance Monitoring",
+      "path": "/products/performance"
+    },
+    {
+      "text": "Remote Config",
+      "path": "/products/remote-config"
+    },
+    {
+      "text": "Test Lab",
+      "path": "/products/test-lab"
+    },
+    {
+      "text": "Solutions",
+      "path": "/solutions"
+    },
+    {
+      "text": "Pricing",
+      "path": "/pricing"
+    },
+    {
+      "text": "Docs",
+      "path": "/docs"
+    },
+    {
+      "text": "Overview",
+      "path": "/docs"
+    },
+    {
+      "text": "Fundamentals",
+      "path": "/docs/guides"
+    },
+    {
+      "text": "AI",
+      "path": "/docs/ai"
+    },
+    {
+      "text": "Build",
+      "path": "/docs/build"
+    },
+    {
+      "text": "Run",
+      "path": "/docs/run"
+    },
+    {
+      "text": "Reference",
+      "path": "/docs/reference"
+    },
+    {
+      "text": "Samples",
+      "path": "/docs/samples"
+    },
+    {
+      "text": "Community",
+      "path": "/community"
+    },
+    {
+      "text": "Learn",
+      "path": "/community/learn"
+    },
+    {
+      "text": "Stories",
+      "path": "/community/stories"
+    },
+    {
+      "text": "Support",
+      "path": "/support"
+    },
+    {
+      "text": "Documentation",
+      "path": "/docs"
+    },
+    {
+      "text": "Add Firebase - Apple platforms (iOS+)",
+      "path": "/docs/ios/setup"
+    },
+    {
+      "text": "Add Firebase - Android",
+      "path": "/docs/android/setup"
+    },
+    {
+      "text": "Add Firebase - Web",
+      "path": "/docs/web/setup"
+    },
+    {
+      "text": "Add Firebase - Flutter",
+      "path": "/docs/flutter/setup"
+    },
+    {
+      "text": "Add Firebase - C++",
+      "path": "/docs/cpp/setup"
+    },
+    {
+      "text": "Add Firebase - Unity",
+      "path": "/docs/unity/setup"
+    },
+    {
+      "text": "Add Firebase - Server environments",
+      "path": "/docs/admin/setup"
+    },
+    {
+      "text": "Manage Firebase projects",
+      "path": "/docs/projects/learn-more"
+    },
+    {
+      "text": "Supported platforms & frameworks",
+      "path": "/docs/libraries"
+    },
+    {
+      "text": "Overview",
+      "path": "/docs/ai-assistance"
+    },
+    {
+      "text": "App Check Protect your backend resources from abuse and unauthorized access.",
+      "path": "/docs/app-check"
+    },
+    {
+      "text": "Realtime Database Store and sync data in realtime with a NoSQL cloud database.",
+      "path": "/docs/database"
+    },
+    {
+      "text": "Crashlytics Track, prioritize, and fix app stability issues.",
+      "path": "/docs/crashlytics"
+    },
+    {
+      "text": "Gemini in Firebase",
+      "path": "/docs/ai-assistance/gemini-in-firebase"
+    },
+    {
+      "text": "AI tools, skills, & MCP",
+      "path": "/docs/ai-assistance/agent-skills"
+    },
+    {
+      "text": "Firebase Studio (deprecated)",
+      "path": "/docs/studio/migrating-project"
+    },
+    {
+      "text": "Firebase AI Logic",
+      "path": "/docs/ai-logic"
+    },
+    {
+      "text": "Authentication",
+      "path": "/docs/auth"
+    },
+    {
+      "text": "Phone Number Verification",
+      "path": "/docs/phone-number-verification"
+    },
+    {
+      "text": "App Check",
+      "path": "/docs/app-check"
+    },
+    {
+      "text": "Security Rules",
+      "path": "/docs/rules"
+    },
+    {
+      "text": "SQL Connect",
+      "path": "/docs/sql-connect"
+    },
+    {
+      "text": "Firestore",
+      "path": "/docs/firestore"
+    },
+    {
+      "text": "Realtime Database",
+      "path": "/docs/database"
+    },
+    {
+      "text": "Storage",
+      "path": "/docs/storage"
+    },
+    {
+      "text": "App Hosting",
+      "path": "/docs/app-hosting"
+    },
+    {
+      "text": "Hosting",
+      "path": "/docs/hosting"
+    },
+    {
+      "text": "Cloud Functions",
+      "path": "/docs/functions"
+    },
+    {
+      "text": "Extensions (deprecated)",
+      "path": "/docs/extensions"
+    },
+    {
+      "text": "Emulator Suite",
+      "path": "/docs/emulator-suite"
+    },
+    {
+      "text": "Test Lab",
+      "path": "/docs/test-lab"
+    },
+    {
+      "text": "App Distribution",
+      "path": "/docs/app-distribution"
+    },
+    {
+      "text": "Crashlytics",
+      "path": "/docs/crashlytics"
+    },
+    {
+      "text": "Performance Monitoring",
+      "path": "/docs/perf-mon"
+    },
+    {
+      "text": "Remote Config",
+      "path": "/docs/remote-config"
+    },
+    {
+      "text": "A/B Testing",
+      "path": "/docs/ab-testing"
+    },
+    {
+      "text": "Cloud Messaging",
+      "path": "/docs/cloud-messaging"
+    },
+    {
+      "text": "In-App Messaging",
+      "path": "/docs/in-app-messaging"
+    },
+    {
+      "text": "Google Analytics",
+      "path": "/docs/analytics"
+    },
+    {
+      "text": "Google AdMob",
+      "path": "/docs/admob"
+    },
+    {
+      "text": "Google Ads",
+      "path": "/docs/ads"
+    },
+    {
+      "text": "Firebase",
+      "path": "/"
+    },
+    {
+      "text": "fundamentals of Firebase",
+      "path": "/docs/guides"
+    },
+    {
+      "text": "auto_awesome",
+      "path": "/docs/ai"
+    },
+    {
+      "text": "Products to help you harness AI",
+      "path": "/docs/ai"
+    },
+    {
+      "text": "Learn more",
+      "path": "/docs/ai"
+    },
+    {
+      "text": "code",
+      "path": "/docs/build"
+    },
+    {
+      "text": "Products to help you BUILD your app",
+      "path": "/docs/build"
+    },
+    {
+      "text": "Learn more",
+      "path": "/docs/build"
+    },
+    {
+      "text": "rocket_launch",
+      "path": "/docs/run"
+    },
+    {
+      "text": "Products to help you RUN your app",
+      "path": "/docs/run"
+    },
+    {
+      "text": "Learn more",
+      "path": "/docs/run"
+    },
+    {
+      "text": "iOS",
+      "path": "/codelabs/firebase-ios-swift"
+    },
+    {
+      "text": "Android",
+      "path": "/codelabs/firebase-android"
+    },
+    {
+      "text": "Web",
+      "path": "/codelabs/firebase-web"
+    },
+    {
+      "text": "Developer guides",
+      "path": "/docs/"
+    },
+    {
+      "text": "SDK & API reference",
+      "path": "/docs/reference/"
+    },
+    {
+      "text": "Samples",
+      "path": "/docs/samples/"
+    },
+    {
+      "text": "Libraries",
+      "path": "/docs/libraries/"
+    },
+    {
+      "text": "Attend an event",
+      "path": "/community/events"
+    },
+    {
+      "text": "Contact support",
+      "path": "/support/"
+    },
+    {
+      "text": "Release notes",
+      "path": "/support/releases"
+    },
+    {
+      "text": "Brand guidelines",
+      "path": "/brand-guidelines/"
+    },
+    {
+      "text": "FAQs",
+      "path": "/support/faq/"
+    },
+    {
+      "text": "Firebase",
+      "path": ""
+    },
+    {
+      "text": "Terms",
+      "path": "/terms/"
+    }
+  ],
+  "url_sections": {
+    "docs": 3568,
+    "case-studies": 53,
+    "support": 52,
+    "summit": 16,
+    "community": 14,
+    "products": 7,
+    "googleb1d43f0940e874af": 7,
+    "learn": 5,
+    "terms": 5,
+    "go": 2,
+    "google247fd3c84a5365f3": 1,
+    "downloads": 1
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "samples",
+      "/docs/samples",
+      "/docs/samples/"
+    ],
+    "tutorials / learn": [
+      "learn",
+      "learn more",
+      "/community/learn",
+      "/codelabs/firebase-web"
+    ],
+    "guides / how-to": [
+      "/docs/guides",
+      "developer guides"
+    ],
+    "api reference": [
+      "reference",
+      "/docs/reference",
+      "/docs/reference/",
+      "sdk & api reference"
+    ],
+    "changelog / release notes": [
+      "release notes",
+      "/support/releases"
+    ],
+    "migration / upgrade": [
+      "/docs/studio/migrating-project"
+    ],
+    "security": [
+      "security rules"
+    ],
+    "faq": [
+      "/support/faq/"
+    ],
+    "sdk / client libraries": [
+      "libraries",
+      "/docs/libraries",
+      "/docs/libraries/",
+      "sdk & api reference"
+    ],
+    "configuration / settings": [
+      "remote config",
+      "/docs/remote-config",
+      "/products/remote-config"
+    ],
+    "community / support": [
+      "support",
+      "/support",
+      "community",
+      "/support/"
+    ],
+    "deployment / production": [
+      "hosting",
+      "app hosting",
+      "/docs/hosting",
+      "/products/hosting"
+    ],
+    "pricing / limits": [
+      "pricing",
+      "/pricing"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://firebase.google.com/products-build",
+      "h1": "Get to market quickly and securely with products that can scale globally",
+      "h2": [
+        "Build AI-powered experiences into your apps and accelerate your development with"
+      ]
+    },
+    {
+      "url": "https://firebase.google.com/products-run",
+      "h1": "Run your app with confidence and deliver the best experience for your users",
+      "h2": [
+        "Launch, monitor, and iterate with AI-assistive tools that help you optimize your"
+      ]
+    },
+    {
+      "url": "https://firebase.google.com/solutions",
+      "h1": "Mix and match Firebase products to solve common app development challenges",
+      "h2": [
+        "Build a backend",
+        "Host a web app",
+        "Test and rollout features",
+        "Monitor an app",
+        "Engage end users",
+        "Monetize an app"
+      ]
+    },
+    {
+      "url": "https://firebase.google.com/pricing",
+      "h1": "Explore pricing plans, and if eligible, get $300 in free credit",
+      "h2": [
+        "Blaze plan calculator"
+      ]
+    },
+    {
+      "url": "https://firebase.google.com/docs",
+      "h1": "",
+      "h2": [
+        "Firebase developer documentation",
+        "Documentation and learning content"
+      ]
+    },
+    {
+      "url": "https://firebase.google.com/community",
+      "h1": "Find the latest news & content, attend events, and stay connected",
+      "h2": [
+        "Latest news & articles",
+        "Events",
+        "Past Events",
+        "Videos & tutorials",
+        "Join the discussion",
+        "Stay connected"
+      ]
+    },
+    {
+      "url": "https://firebase.google.com/support",
+      "h1": "What can we help you with?",
+      "h2": []
+    },
+    {
+      "url": "https://firebase.google.com/products/app-check",
+      "h1": "Protect your backend APIs",
+      "h2": [
+        "Safeguard your API resources by preventing unauthorized clients from accessing y"
+      ]
+    },
+    {
+      "url": "https://firebase.google.com/codelabs/firebase-ios-swift",
+      "h1": "Firebase iOS Codelab Swift Stay organized with collections Save and categorize c",
+      "h2": [
+        "1. Overview",
+        "2. Get the sample code",
+        "3. Build the starter app",
+        "4. Set up a Firebase project",
+        "5. Identify Users",
+        "6. Activate Realtime Database",
+        "7. Send Messages",
+        "8. Store and Receive images",
+        "9. Send Image Messages",
+        "10. Congratulations!"
+      ]
+    },
+    {
+      "url": "https://firebase.google.com/brand-guidelines/",
+      "h1": "Representing the Firebase brand",
+      "h2": [
+        "Logo",
+        "Product Logos",
+        "Colors",
+        "Sizing & Spacing",
+        "Common Errors"
+      ]
+    },
+    {
+      "url": "https://firebase.google.com/terms/",
+      "h1": "Terms of Service for Firebase Services Stay organized with collections Save and ",
+      "h2": []
+    }
+  ]
+}

@@ -1,0 +1,552 @@
+{
+  "name": ".NET Documentation",
+  "source_url": "https://learn.microsoft.com/en-us/dotnet/",
+  "category": "Application platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "scoped sitemap (/dotnet)",
+  "inventory_url_count": 201460,
+  "landing_nav": [
+    {
+      "text": "More info about Internet Explorer and Microsoft Edge",
+      "path": "/en-us/lifecycle/faq/internet-explorer-microsoft-edge"
+    },
+    {
+      "text": "What's new in .NET",
+      "path": "/en-us/dotnet/core/whats-new/dotnet-11/overview"
+    },
+    {
+      "text": "Build AI apps in .NET",
+      "path": "/en-us/dotnet/ai/"
+    },
+    {
+      "text": "Interactive introduction to C#",
+      "path": "/en-us/dotnet/csharp/tour-of-csharp/tutorials/hello-world"
+    },
+    {
+      "text": "Azure for .NET developers",
+      "path": "/en-us/dotnet/azure/"
+    },
+    {
+      "text": ".NET architecture docs",
+      "path": "/en-us/dotnet/architecture/"
+    },
+    {
+      "text": ".NET overview",
+      "path": "/en-us/dotnet/core/introduction"
+    },
+    {
+      "text": ".NET tutorials",
+      "path": "/en-us/dotnet/core/tutorials/"
+    },
+    {
+      "text": "What's new in .NET 11",
+      "path": "/en-us/dotnet/core/whats-new/dotnet-11/overview"
+    },
+    {
+      "text": "Community Toolkits",
+      "path": "/en-us/dotnet/communitytoolkit/"
+    },
+    {
+      "text": "What is .NET?",
+      "path": "/en-us/shows/dotnet-for-beginners/what-is-dotnet-dotnet-for-beginners"
+    },
+    {
+      "text": ".NET fundamentals",
+      "path": "/en-us/dotnet/fundamentals/"
+    },
+    {
+      "text": ".NET implementations",
+      "path": "/en-us/dotnet/fundamentals/implementations"
+    },
+    {
+      "text": ".NET Framework (for Windows)",
+      "path": "/en-us/dotnet/framework/"
+    },
+    {
+      "text": ".NET Standard",
+      "path": "/en-us/dotnet/standard/net-standard"
+    },
+    {
+      "text": ".NET Q&A",
+      "path": "/en-us/answers/products/dotnet"
+    },
+    {
+      "text": "Security in .NET",
+      "path": "/en-us/dotnet/standard/security/"
+    },
+    {
+      "text": "Build an Azure AI chat app with .NET",
+      "path": "/en-us/dotnet/ai/quickstarts/build-chat-app"
+    },
+    {
+      "text": "Create .NET desktop apps for Windows",
+      "path": "/en-us/dotnet/desktop/wpf/get-started/create-app-visual-studio"
+    },
+    {
+      "text": "Create web apps with ASP.NET Core",
+      "path": "/en-us/aspnet/core/"
+    },
+    {
+      "text": "Build cloud-native .NET apps with Orleans",
+      "path": "/en-us/dotnet/orleans/"
+    },
+    {
+      "text": "Containerize .NET apps with Docker",
+      "path": "/en-us/dotnet/core/docker/build-container"
+    },
+    {
+      "text": ".NET SDK overview",
+      "path": "/en-us/dotnet/core/sdk"
+    },
+    {
+      "text": ".NET CLI overview",
+      "path": "/en-us/dotnet/core/tools/"
+    },
+    {
+      "text": "MSBuild property reference",
+      "path": "/en-us/dotnet/core/project-sdk/msbuild-props"
+    },
+    {
+      "text": "Global and local tools",
+      "path": "/en-us/dotnet/core/tools/global-tools"
+    },
+    {
+      "text": "Diagnostics tools",
+      "path": "/en-us/dotnet/core/diagnostics/"
+    },
+    {
+      "text": "Code analysis",
+      "path": "/en-us/dotnet/fundamentals/code-analysis/overview"
+    },
+    {
+      "text": "Package validation",
+      "path": "/en-us/dotnet/fundamentals/package-validation/overview"
+    },
+    {
+      "text": "Port from .NET Framework to .NET",
+      "path": "/en-us/dotnet/core/porting/framework-overview"
+    },
+    {
+      "text": ".NET breaking changes",
+      "path": "/en-us/dotnet/core/compatibility/breaking-changes"
+    },
+    {
+      "text": "Deploy .NET apps",
+      "path": "/en-us/dotnet/core/deploying/"
+    },
+    {
+      "text": "Unit test .NET apps",
+      "path": "/en-us/dotnet/core/testing/"
+    },
+    {
+      "text": "GitHub Actions and .NET",
+      "path": "/en-us/dotnet/devops/github-actions-overview"
+    },
+    {
+      "text": "LINQ overview",
+      "path": "/en-us/dotnet/standard/linq/"
+    },
+    {
+      "text": "Entity Framework Core",
+      "path": "/en-us/ef/core/"
+    },
+    {
+      "text": "Azure Storage",
+      "path": "/en-us/dotnet/api/overview/azure/storage/"
+    },
+    {
+      "text": "XML data",
+      "path": "/en-us/dotnet/standard/data/xml/"
+    },
+    {
+      "text": "Async programming patterns overview",
+      "path": "/en-us/dotnet/standard/asynchronous-programming-patterns/"
+    },
+    {
+      "text": "Threading overview",
+      "path": "/en-us/dotnet/standard/threading/managed-threading-basics"
+    },
+    {
+      "text": "Parallel programming overview",
+      "path": "/en-us/dotnet/standard/parallel-programming/"
+    },
+    {
+      "text": "Native interoperability",
+      "path": "/en-us/dotnet/standard/native-interop/"
+    },
+    {
+      "text": "Garbage collection",
+      "path": "/en-us/dotnet/standard/garbage-collection/"
+    },
+    {
+      "text": "Write .NET apps in C#, F#, or Visual Basic",
+      "path": "/en-us/dotnet/fundamentals/languages"
+    },
+    {
+      "text": "A modern, object-oriented, and type-safe language",
+      "path": "/en-us/dotnet/csharp/"
+    },
+    {
+      "text": "A simple language for succinct, robust, and performant code",
+      "path": "/en-us/dotnet/fsharp/"
+    },
+    {
+      "text": "An approachable language with readable syntax",
+      "path": "/en-us/dotnet/visual-basic/"
+    },
+    {
+      "text": "ASP.NET Core tutorials",
+      "path": "/en-us/aspnet/core/tutorials"
+    },
+    {
+      "text": "What is ASP.NET Core?",
+      "path": "/en-us/aspnet/core"
+    },
+    {
+      "text": "ASP.NET Core in Visual Studio",
+      "path": "/en-us/aspnet/core/tutorials/first-mvc-app/start-mvc"
+    },
+    {
+      "text": "ASP.NET MVC apps in Windows containers",
+      "path": "/en-us/aspnet/mvc/overview/deployment/docker-aspnetmvc"
+    },
+    {
+      "text": "Blazor: Interactive client-side web UI with .NET",
+      "path": "/en-us/aspnet/core/blazor/"
+    },
+    {
+      "text": "F# for web development",
+      "path": "/en-us/dotnet/fsharp/scenarios/web-development"
+    },
+    {
+      "text": ".NET Multi-platform App UI (.NET MAUI)",
+      "path": "/en-us/dotnet/maui"
+    },
+    {
+      "text": "WinUI apps",
+      "path": "/en-us/windows/apps/winui"
+    },
+    {
+      "text": "Windows Presentation Foundation",
+      "path": "/en-us/dotnet/desktop/wpf/"
+    },
+    {
+      "text": "Windows Forms",
+      "path": "/en-us/dotnet/desktop/winforms/"
+    },
+    {
+      "text": "Dapr for .NET developers",
+      "path": "/en-us/dotnet/architecture/dapr-for-net-developers/"
+    },
+    {
+      "text": "Cloud native .NET apps",
+      "path": "/en-us/dotnet/architecture/cloud-native/"
+    },
+    {
+      "text": "Serverless apps with Azure",
+      "path": "/en-us/dotnet/architecture/serverless/"
+    },
+    {
+      "text": "Architecture for containerized .NET apps",
+      "path": "/en-us/dotnet/architecture/microservices/"
+    },
+    {
+      "text": "Deploy a Worker Service to Azure",
+      "path": "/en-us/dotnet/core/extensions/cloud-service"
+    },
+    {
+      "text": "Migrate on-premises .NET web apps or services",
+      "path": "/en-us/dotnet/azure/migration/app-service"
+    },
+    {
+      "text": "Azure services for .NET developers",
+      "path": "/en-us/dotnet/azure/key-azure-services"
+    },
+    {
+      "text": "Azure SDK for .NET",
+      "path": "/en-us/dotnet/azure/sdk/azure-sdk-for-dotnet"
+    },
+    {
+      "text": "Deploying Azure Resources with F#",
+      "path": "/en-us/dotnet/fsharp/using-fsharp-on-azure/deploying-and-managing"
+    },
+    {
+      "text": "AI for .NET developers",
+      "path": "/en-us/dotnet/ai/"
+    },
+    {
+      "text": "Build a chat app",
+      "path": "/en-us/dotnet/ai/quickstarts/build-chat-app"
+    },
+    {
+      "text": "Understand prompt engineering",
+      "path": "/en-us/dotnet/ai/conceptual/prompt-engineering-dotnet"
+    },
+    {
+      "text": "Implement RAG using vector search",
+      "path": "/en-us/dotnet/ai/tutorials/tutorial-ai-vector-search"
+    },
+    {
+      "text": "Get started with the .NET enterprise chat sample",
+      "path": "/en-us/dotnet/ai/get-started-app-chat-template"
+    },
+    {
+      "text": "Build custom AI solutions with ML.NET",
+      "path": "/en-us/dotnet/machine-learning/"
+    },
+    {
+      "text": "Azure Cognitive Services",
+      "path": "/en-us/azure/cognitive-services/"
+    },
+    {
+      "text": "Azure machine learning",
+      "path": "/en-us/azure/machine-learning"
+    },
+    {
+      "text": "F# for Machine Leaning",
+      "path": "/en-us/dotnet/fsharp/scenarios/machine-learning"
+    },
+    {
+      "text": ".NET IoT Libraries",
+      "path": "/en-us/dotnet/iot/"
+    },
+    {
+      "text": "Get started in 5 minutes",
+      "path": "/en-us/dotnet/iot/quickstarts/sensehat"
+    },
+    {
+      "text": "Blink an LED",
+      "path": "/en-us/dotnet/iot/tutorials/blink-led"
+    },
+    {
+      "text": ".NET API reference",
+      "path": "/en-us/dotnet/api/"
+    },
+    {
+      "text": "ASP.NET Core API reference",
+      "path": "/en-us/dotnet/api/"
+    },
+    {
+      "text": "C# language reference",
+      "path": "/en-us/dotnet/csharp/language-reference/"
+    },
+    {
+      "text": "F# language reference",
+      "path": "/en-us/dotnet/fsharp/language-reference/"
+    },
+    {
+      "text": "Visual Basic language reference",
+      "path": "/en-us/dotnet/visual-basic/language-reference/"
+    },
+    {
+      "text": ".NET Framework API reference",
+      "path": "/en-us/dotnet/api/"
+    },
+    {
+      "text": "contributor guide",
+      "path": "/en-us/contribute/dotnet/dotnet-contribute"
+    }
+  ],
+  "url_sections": {
+    "dotnet": 201460
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "get started with the .net enterprise chat sample"
+    ],
+    "tutorials / learn": [
+      ".net tutorials",
+      "azure machine learning",
+      "asp.net core tutorials",
+      "/en-us/aspnet/core/tutorials"
+    ],
+    "getting started / quickstart": [
+      "get started in 5 minutes",
+      "/en-us/dotnet/iot/quickstarts/sensehat",
+      "/en-us/dotnet/ai/quickstarts/build-chat-app",
+      "/en-us/dotnet/ai/get-started-app-chat-template"
+    ],
+    "guides / how-to": [
+      "contributor guide"
+    ],
+    "api reference": [
+      ".net api reference",
+      "/en-us/dotnet/api/",
+      "f# language reference",
+      "c# language reference"
+    ],
+    "changelog / release notes": [
+      "what's new in .net",
+      "what's new in .net 11",
+      "/en-us/dotnet/core/whats-new/dotnet-11/overview"
+    ],
+    "troubleshooting / errors": [
+      "diagnostics tools",
+      "/en-us/dotnet/core/diagnostics/"
+    ],
+    "migration / upgrade": [
+      "/en-us/dotnet/azure/migration/app-service",
+      "migrate on-premises .net web apps or services"
+    ],
+    "security": [
+      "security in .net",
+      "/en-us/dotnet/standard/security/"
+    ],
+    "faq": [
+      "/en-us/lifecycle/faq/internet-explorer-microsoft-edge"
+    ],
+    "cli reference": [
+      ".net cli overview"
+    ],
+    "sdk / client libraries": [
+      ".net sdk overview",
+      "azure sdk for .net",
+      ".net iot libraries",
+      "/en-us/dotnet/core/sdk"
+    ],
+    "community / support": [
+      "community toolkits",
+      "/en-us/dotnet/communitytoolkit/"
+    ],
+    "concepts / architecture": [
+      ".net architecture docs",
+      "/en-us/dotnet/architecture/",
+      "/en-us/dotnet/architecture/serverless/",
+      "architecture for containerized .net apps"
+    ],
+    "deployment / production": [
+      "deploy .net apps",
+      "/en-us/dotnet/core/deploying/",
+      "deploy a worker service to azure",
+      "deploying azure resources with f#"
+    ],
+    "contributing": [
+      "contributor guide",
+      "/en-us/contribute/dotnet/dotnet-contribute"
+    ],
+    "versioned docs": [
+      "previous-versions"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://learn.microsoft.com/en-us/aspnet/core",
+      "h1": "ASP.NET documentation",
+      "h2": [
+        "Develop ASP.NET Core apps",
+        "Concepts and features"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/maui",
+      "h1": ".NET Multi-platform App UI documentation",
+      "h2": [
+        ".NET MAUI common tasks",
+        ".NET MAUI guides",
+        ".NET MAUI Blazor Hybrid apps",
+        ".NET MAUI community resources",
+        "API reference"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/machine-learning",
+      "h1": "Azure Machine Learning documentation",
+      "h2": [
+        "Overview",
+        "Setup & quickstart",
+        "Start with the basics",
+        "Build AI solutions",
+        "Work with data",
+        "Train models",
+        "Deploy models",
+        "Manage the ML lifecycle (MLOps)",
+        "Security for ML projects",
+        "Reference docs",
+        "Resources"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/lifecycle/faq/internet-explorer-microsoft-edge",
+      "h1": "Lifecycle FAQ - Internet Explorer and Microsoft Edge",
+      "h2": [
+        "In this article",
+        "What is the Lifecycle policy for Microsoft Edge?",
+        "What is the Lifecycle policy for Internet Explorer?",
+        "Is Internet Explorer 11 the last version of Internet Explorer?",
+        "What if my enterprise line-of-business (LOB) application has a dependency on a v",
+        "Feedback",
+        "Additional resources"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/shows/dotnet-for-beginners/what-is-dotnet-dotnet-for-beginners",
+      "h1": "What is .NET? (Part 1 of 3) | .NET for Beginners",
+      "h2": []
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/answers/products/dotnet",
+      "h1": "Developer technologies",
+      "h2": [
+        "Filter",
+        "56,219 questions with Developer technologies-related tags",
+        "Security issues if I use a encrypted value as a Query string that I send to user",
+        "Creating a new List<int>() throws a NullReferenceException.",
+        "How Do Developers Usually Handle Decimal Precision in JavaScript Calculators?",
+        "Project Spartan 10009/10049 AppX reports \"End of Life\" on modern Windows",
+        "Can I get a model using TorchSharp?",
+        "VS Code Marketplace publish blocked by VSID \"Concurrency\" rate limit for over 24",
+        "Run time error 9, Subscript out of range eroor is showing while using Excel VBA",
+        "How to download Microsoft Visual C++ 2015–2022 Redistributable (64x)",
+        "How do I restore controls and there properties from a .json file?",
+        "how do i get into Microsoft Academy benefit",
+        "A version of Visual Studio is Available, visit the link to get information on th",
+        "Windows Update breaks WPF TrueType font subsetting (Calibri.ttf format specifica",
+        "The retirement announcement for all Dotnet8",
+        "[solved] Can't create new VB form-based projects in VS2022/26.",
+        "If class variable stored in stack and object in the managed heap then where the ",
+        "my visual studio code is unable to compile c++ file",
+        "How to set up VS code and use python on new surface laptop? (Processor: Snapdrag",
+        "How to see an Active Report in the design view of Visual Studio."
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/ef/core/",
+      "h1": "Entity Framework Core",
+      "h2": [
+        "In this article",
+        "The model",
+        "Querying",
+        "Saving data",
+        "EF O/RM considerations",
+        "Next steps",
+        "Feedback",
+        "Additional resources"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/apps/winui",
+      "h1": "WinUI 3",
+      "h2": [
+        "In this article",
+        "Get started with WinUI",
+        "Feedback",
+        "Additional resources"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/contribute/dotnet/dotnet-contribute",
+      "h1": "Contribute to the .NET documentation repositories",
+      "h2": [
+        "In this article",
+        "Guidelines for contributions",
+        "Contribution process",
+        "Example folder structure",
+        "Contribute to samples",
+        "The C# interactive experience",
+        "Contributor license agreement",
+        "Feedback",
+        "Additional resources"
+      ]
+    }
+  ]
+}

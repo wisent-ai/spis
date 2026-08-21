@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Signal — register a phone number",
+  "product_url": "https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number",
+  "evidence_status": "partial",
+  "upstream_owner": "Signal Technology Foundation",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://signal.org/blog/videos/usernames-chat-via-username.mp4",
+      "media_kind": "video-mp4",
+      "width": 960,
+      "height": 964,
+      "duration_seconds": 17.933,
+      "frame_count": 269,
+      "bytes": 148014,
+      "sha256": "e95fc9cfb4188e8a162f3ed4dc4c1b7747ae29ab55803506fe0e9c5f7e3c2b65",
+      "capture_method": "direct official-product download; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "registration entry",
+      "local_path": "media/state-01-registration-entry.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 0s (mean abs diff 1.9297/255)",
+      "width": 960,
+      "height": 964,
+      "bytes": 197584,
+      "sha256": "8f4c9f288e0b08b6fb9118cd94598244283248db39bc7195729beed352a429a6",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.0,
+        "mean_abs_diff": 1.9297,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "verification pending",
+      "local_path": "media/state-02-verification-pending.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 4s (mean abs diff 2.0859/255)",
+      "width": 960,
+      "height": 964,
+      "bytes": 183694,
+      "sha256": "322d6192f422f21f8e6f28171b90ae5a415f6bfc487d37a275f3cc0ebd3d013e",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.0,
+        "mean_abs_diff": 2.0859,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "number verified",
+      "local_path": "media/state-03-number-verified.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 6.5s (mean abs diff 2.0156/255)",
+      "width": 960,
+      "height": 964,
+      "bytes": 230889,
+      "sha256": "1b8f918d5ec8958be27f7eab2ddab860a37ade9ff9f01bf4710ac5ed8f9834dd",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 6.5,
+        "mean_abs_diff": 2.0156,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "profile ready",
+      "local_path": "media/state-04-profile-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 8s (mean abs diff 2.0117/255)",
+      "width": 960,
+      "height": 964,
+      "bytes": 233937,
+      "sha256": "1ee25df7b85a200a05615fa9350ce5efefc433bec4d7cdc95d1f9a9f03e12731",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 8.0,
+        "mean_abs_diff": 2.0117,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "app ready",
+      "local_path": "media/state-05-app-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 11.5s (mean abs diff 2.0039/255)",
+      "width": 960,
+      "height": 964,
+      "bytes": 241338,
+      "sha256": "289c4d8a84b502e7fa5d6fcfd681fef13e53bd0eb7e91c9cbeb3299f15bf02f8",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 11.5,
+        "mean_abs_diff": 2.0039,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "first message",
+      "local_path": "media/state-06-first-message.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 13.5s (mean abs diff 2.0508/255)",
+      "width": 960,
+      "height": 964,
+      "bytes": 256006,
+      "sha256": "75d08e329cb4502deda9786a417accb687dd42b49eba8a0d55242759bd014fe0",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 13.5,
+        "mean_abs_diff": 2.0508,
+        "sampled_frames": 36
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Open Signal and begin registration",
+      "response": "Signal presents phone-number entry",
+      "feedback": "The retained registration entry state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-registration-entry.png @ 0.90s; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Enter the phone number and request verification",
+      "response": "Signal sends an SMS or offers the voice route",
+      "feedback": "The recording advances to verification pending and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-registration-entry.png @ 0.90s; media/state-02-verification-pending.png @ 3.95s; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Enter the received verification code",
+      "response": "Signal accepts the number and advances to account setup",
+      "feedback": "The navigation result is visible as number verified.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-verification-pending.png @ 3.95s; media/state-03-number-verified.png @ 6.99s; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Set the Signal PIN and profile name",
+      "response": "Signal establishes the account profile",
+      "feedback": "The official recording shows the confirmed profile ready state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-number-verified.png @ 6.99s; media/state-04-profile-ready.png @ 10.04s; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-verification-pending.png @ 3.95s; media/state-03-number-verified.png @ 6.99s; media/state-04-profile-ready.png @ 10.04s; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Grant or decline contact and notification permissions",
+      "response": "Signal records the choices and opens the conversation list",
+      "feedback": "Progress is observable as the distinct app ready state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-profile-ready.png @ 10.04s; media/state-05-app-ready.png @ 13.09s; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-number-verified.png @ 6.99s; media/state-04-profile-ready.png @ 10.04s; media/state-05-app-ready.png @ 13.09s; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Start a chat by contact or username and send a message",
+      "response": "The conversation shows the sent message, proving first messaging success",
+      "feedback": "The retained first message state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-app-ready.png @ 13.09s; media/state-06-first-message.png @ 16.14s; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+    }
+  ],
+  "journey": {
+    "actor": "new Signal user",
+    "goal": "register the phone number and send the first private message",
+    "prerequisites": [
+      "Signal installed on a phone",
+      "phone number able to receive SMS or a call"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open Signal and begin registration",
+        "system_response": "Signal presents phone-number entry",
+        "state": "registration entry",
+        "evidence": "media/state-01-registration-entry.png; media/official-recording.mp4#t=0.897; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+      },
+      {
+        "index": 2,
+        "user_action": "Enter the phone number and request verification",
+        "system_response": "Signal sends an SMS or offers the voice route",
+        "state": "verification pending",
+        "evidence": "media/state-02-verification-pending.png; media/official-recording.mp4#t=3.945; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+      },
+      {
+        "index": 3,
+        "user_action": "Enter the received verification code",
+        "system_response": "Signal accepts the number and advances to account setup",
+        "state": "number verified",
+        "evidence": "media/state-03-number-verified.png; media/official-recording.mp4#t=6.994; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+      },
+      {
+        "index": 4,
+        "user_action": "Set the Signal PIN and profile name",
+        "system_response": "Signal establishes the account profile",
+        "state": "profile ready",
+        "evidence": "media/state-04-profile-ready.png; media/official-recording.mp4#t=10.042; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+      },
+      {
+        "index": 5,
+        "user_action": "Grant or decline contact and notification permissions",
+        "system_response": "Signal records the choices and opens the conversation list",
+        "state": "app ready",
+        "evidence": "media/state-05-app-ready.png; media/official-recording.mp4#t=13.091; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+      },
+      {
+        "index": 6,
+        "user_action": "Start a chat by contact or username and send a message",
+        "system_response": "The conversation shows the sent message, proving first messaging success",
+        "state": "first message",
+        "evidence": "media/state-06-first-message.png; media/official-recording.mp4#t=16.140; https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+      }
+    ],
+    "failure_route": [
+      "At verification pending or number verified, invalid, expired, denied, or missing required input leaves the flow short of first message; evidence: media/state-02-verification-pending.png, media/state-03-number-verified.png, and https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-number-verified.png through media/state-05-app-ready.png."
+    ],
+    "recovery_route": [
+      "Return to the retained verification pending or number verified requirement, correct or resend the blocking input, and resubmit; evidence: https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number.",
+      "Continue through the same terminal action until first message is visible in media/state-06-first-message.png and the motion at 16.140s."
+    ],
+    "completion_evidence": "first message retained at media/state-06-first-message.png and media/official-recording.mp4#t=16.140; source https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-registration-entry.png and media/state-02-verification-pending.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-number-verified.png and media/state-04-profile-ready.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

@@ -1,0 +1,361 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "ios-app-examples",
+  "generated_at": "2026-08-16",
+  "reference_count": 50,
+  "complete_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "Things 3",
+      "path": "references/01-things-3/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 2,
+      "name": "Todoist",
+      "path": "references/02-todoist/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 3,
+      "name": "Notion",
+      "path": "references/03-notion/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 4,
+      "name": "Bear",
+      "path": "references/04-bear/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 5,
+      "name": "Craft",
+      "path": "references/05-craft/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 6,
+      "name": "Fantastical",
+      "path": "references/06-fantastical/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 7,
+      "name": "Microsoft 365 Copilot",
+      "path": "references/07-microsoft-365-copilot/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 8,
+      "name": "Dropbox",
+      "path": "references/08-dropbox/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 9,
+      "name": "Slack",
+      "path": "references/09-slack/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 10,
+      "name": "Discord",
+      "path": "references/10-discord/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 11,
+      "name": "Signal",
+      "path": "references/11-signal/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 12,
+      "name": "Telegram Messenger",
+      "path": "references/12-telegram-messenger/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 13,
+      "name": "WhatsApp Messenger",
+      "path": "references/13-whatsapp-messenger/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 14,
+      "name": "Zoom Workplace",
+      "path": "references/14-zoom-workplace/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 15,
+      "name": "Revolut",
+      "path": "references/15-revolut/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 16,
+      "name": "Wise",
+      "path": "references/16-wise/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 17,
+      "name": "PayPal",
+      "path": "references/17-paypal/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 18,
+      "name": "Coinbase",
+      "path": "references/18-coinbase/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 19,
+      "name": "YNAB",
+      "path": "references/19-ynab/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 20,
+      "name": "Splitwise",
+      "path": "references/20-splitwise/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 21,
+      "name": "Apple Health",
+      "path": "references/21-apple-health/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 22,
+      "name": "Strava",
+      "path": "references/22-strava/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 23,
+      "name": "Headspace",
+      "path": "references/23-headspace/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 24,
+      "name": "Calm",
+      "path": "references/24-calm/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 25,
+      "name": "MyFitnessPal",
+      "path": "references/25-myfitnesspal/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 26,
+      "name": "Nike Run Club",
+      "path": "references/26-nike-run-club/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 27,
+      "name": "Procreate Pocket",
+      "path": "references/27-procreate-pocket/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 28,
+      "name": "Adobe Lightroom for mobile",
+      "path": "references/28-adobe-lightroom-for-mobile/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 29,
+      "name": "Canva",
+      "path": "references/29-canva/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 30,
+      "name": "CapCut",
+      "path": "references/30-capcut/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 31,
+      "name": "VSCO",
+      "path": "references/31-vsco/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 32,
+      "name": "Concepts",
+      "path": "references/32-concepts/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 33,
+      "name": "1Password for iOS",
+      "path": "references/33-1password-for-ios/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 34,
+      "name": "Bitwarden",
+      "path": "references/34-bitwarden/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 35,
+      "name": "Halide",
+      "path": "references/35-halide/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 36,
+      "name": "Flighty",
+      "path": "references/36-flighty/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 37,
+      "name": "CARROT Weather",
+      "path": "references/37-carrot-weather/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 38,
+      "name": "Spotify",
+      "path": "references/38-spotify/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 39,
+      "name": "Netflix",
+      "path": "references/39-netflix/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 40,
+      "name": "YouTube",
+      "path": "references/40-youtube/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 41,
+      "name": "Pocket Casts",
+      "path": "references/41-pocket-casts/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 42,
+      "name": "Libby",
+      "path": "references/42-libby/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 43,
+      "name": "Apple Maps",
+      "path": "references/43-apple-maps/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 44,
+      "name": "Google Maps",
+      "path": "references/44-google-maps/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 45,
+      "name": "Citymapper",
+      "path": "references/45-citymapper/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 46,
+      "name": "AllTrails",
+      "path": "references/46-alltrails/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 47,
+      "name": "GitHub Mobile",
+      "path": "references/47-github-mobile/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 48,
+      "name": "Working Copy",
+      "path": "references/48-working-copy/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 49,
+      "name": "Blink Shell",
+      "path": "references/49-blink-shell/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 50,
+      "name": "TestFlight",
+      "path": "references/50-testflight/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    }
+  ],
+  "measured_at": "2026-08-19",
+  "partial_count": 50
+}

@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921626,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Cosign authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Cosign\r\n"]
+[0.55,"o","cli-ref$ cosign version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","  ______   ______        _______. __    _______ .__   __.\r\n /      | /  __  \\      /       ||  |  /  _____||  \\ |  |\r\n|  ,----'|  |  |  |    |   (----`|  | |  |  __  |   \\|  |\r\n|  |     |  |  |  |     \\   \\    |  | |  | |_ | |  . `  |\r\n|  `----.|  `--'  | .----)   |   |  | |  |__| | |  |\\   |\r\n \\______| \\______/  |_______/    |__|  \\______| |__| \\__|\r\ncosign: A tool for Container Signing, Verification and Storage in an OCI registry\r\n\r\nGitVersion:    v3.1.3\r\nGitCommit:     11926fa5bbbbde47e88fc006b625a17769b743b2\r\nGitTreeState:  \"clean\"\r\nBuildDate:     2026-08-05T23:43:27Z\r\nGoVersion:     go1.26.5\r\nCompiler:      gc\r\n"]
+[2.2,"o","cli-ref$ cosign help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","A tool for Container Signing, Verification and Storage in an OCI registry\r\n\r\nUsage:\r\ncosign [command]\r\n\r\nAvailable Commands:\r\nattest                  Attest the supplied container image\r\nattest-blob             Attest the supplied blob\r\nbundle                  Interact with a Sigstore protobuf bundle\r\nclean                   Remove all signatures from an image\r\ncompletion              Generate completion script\r\ndownload                Provides utilities for downloading artifacts and attached artifacts in a registry\r\nenv                     Prints Cosign environment variables\r\ngenerate-key-pair       Generates a key-pair\r\n"]
+[5.1,"o","cli-ref$ cosign --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Error: unknown flag: --definitely-invalid-option\r\nerror during command execution: unknown flag: --definitely-invalid-option\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ cosign --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ cosign help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","A tool for Container Signing, Verification and Storage in an OCI registry\r\n\r\nUsage:\r\ncosign [command]\r\n"]

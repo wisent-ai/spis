@@ -1,0 +1,283 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Angular Documentation",
+  "product_url": "https://angular.dev/overview",
+  "evidence_status": "partial",
+  "upstream_owner": "Angular Documentation (angular.dev)",
+  "captured_at": "2026-08-16T23:06:22.683Z",
+  "motion": [
+    {
+      "local_path": "media/motion.webm",
+      "source_url": "https://angular.dev/overview",
+      "media_kind": "video-webm",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 14.48,
+      "frame_count": 362,
+      "bytes": 582768,
+      "sha256": "16fc1335744bcf835c46ce5c521b117f345b1b4e607ddd21f393826294461ac7",
+      "capture_method": "Weles AsyncNewBrowser with checksum-verified Weles Chromium 147.0.7727.108-weles.1 on Stado-selected dedicated host charless-mac-mini",
+      "analysis": {
+        "trigger": "Official page navigation followed by product search/learn interaction",
+        "start_state": "public documentation landing/article",
+        "end_state": "first useful canonical answer",
+        "continuity": "single real-browser context video; no synthesized or interpolated frames",
+        "timing_class": "brief",
+        "interruption_reversal": "the deliberately impossible route is abandoned before the useful query/route",
+        "feedback": "landing, open, failed, recovered, and answer frames retain the visible state changes",
+        "reduced_motion_or_nonanimated_equivalent": "reduced-motion behavior was not observed; five local states are retained as nonanimated inspection equivalents"
+      },
+      "declared_media_kind": "video-webm",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "local-browser-recording"
+    }
+  ],
+  "states": [
+    {
+      "name": "landing",
+      "local_path": "media/state-01-landing.png",
+      "source_motion_path": "frame of media/motion.webm at 2s (mean abs diff 0.3125/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 168813,
+      "sha256": "eee4a41e553f18f060d02fcd2478f966fcb7e7dbb1cae735f2680e591adb627e",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.0,
+        "mean_abs_diff": 0.3125,
+        "sampled_frames": 29
+      }
+    },
+    {
+      "name": "search open",
+      "local_path": "media/state-02-search-open.png",
+      "source_motion_path": "frame of media/motion.webm at 2.5s (mean abs diff 0.1562/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 84264,
+      "sha256": "cd7abd3c84e26c9330cfe1e12151674103db083c21e4de9b160a00c1252a8c7d",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.5,
+        "mean_abs_diff": 0.1562,
+        "sampled_frames": 29
+      }
+    },
+    {
+      "name": "failed search",
+      "local_path": "media/state-03-failed-search.png",
+      "source_motion_path": "frame of media/motion.webm at 4s (mean abs diff 0.1719/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 83270,
+      "sha256": "258af353b21aa13d7e621f652830a7c2498fc1bd6b579545f1490d858a74e237",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.0,
+        "mean_abs_diff": 0.1719,
+        "sampled_frames": 29
+      }
+    },
+    {
+      "name": "recovered results",
+      "local_path": "media/state-04-results.png",
+      "source_motion_path": "frame of media/motion.webm at 5s (mean abs diff 0.2617/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 89893,
+      "sha256": "be91465922ad0d699e950c44cad07dfca0c376819bd7ad2889b500f3ea099ca3",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.0,
+        "mean_abs_diff": 0.2617,
+        "sampled_frames": 29
+      }
+    },
+    {
+      "name": "first answer",
+      "local_path": "media/state-05-answer.png",
+      "source_motion_path": "frame of media/motion.webm at 14s (mean abs diff 0.293/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 81741,
+      "sha256": "3e014fb0a1d964e61f32e0499f8d1d8187943176abd4dcf1c62e96d4542789fc",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 14.0,
+        "mean_abs_diff": 0.293,
+        "sampled_frames": 29
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Load documentation",
+      "trigger": "Navigate to the official documentation URL",
+      "response": "The live documentation landing/article surface renders",
+      "feedback": "Title and content settle before search",
+      "cancellation": "Navigation may be stopped before completion",
+      "failure": "Origin or network failure prevents the landing state",
+      "recovery": "Reload the same canonical URL",
+      "evidence": "media/state-01-landing.png and opening of media/motion.webm"
+    },
+    {
+      "name": "Open search or learn route",
+      "trigger": "Activate the visible native search control, keyboard convention, or official product search/learn route",
+      "response": "A product-owned query/result surface appears",
+      "feedback": "The surface is visibly distinct from landing",
+      "cancellation": "Leave the surface without choosing an answer",
+      "failure": "Some book-style sites expose no visible inline search field",
+      "recovery": "Use the same product’s official search/result or concept navigation route",
+      "evidence": "media/state-02-search-open.png and media/motion.webm"
+    },
+    {
+      "name": "Focus query input",
+      "trigger": "Target the visible query control when the product exposes one",
+      "response": "The product accepts text input or a query-bearing official route",
+      "feedback": "Query/result state becomes visible",
+      "cancellation": "Clear or replace the query before confirmation",
+      "failure": "A hidden or absent field cannot accept direct text",
+      "recovery": "Continue through the official product result/learn route retained in the recording",
+      "evidence": "media/state-02-search-open.png and media/motion.webm"
+    },
+    {
+      "name": "Enter impossible query",
+      "trigger": "Enter or request zzwissent-no-result-7f3c9",
+      "response": "The product returns an unmatched/failed lookup state",
+      "feedback": "The failed state is retained locally",
+      "cancellation": "Clear or replace the term",
+      "failure": "No useful answer exists for the deliberately impossible query",
+      "recovery": "Replace it with “components”",
+      "evidence": "media/state-03-failed-search.png and media/motion.webm"
+    },
+    {
+      "name": "Cancel failed query",
+      "trigger": "Clear or leave the impossible-query route",
+      "response": "The failed lookup is abandoned",
+      "feedback": "The next product state no longer represents the impossible term",
+      "cancellation": "Remain on the documentation surface without selection",
+      "failure": "Stale no-result feedback may persist",
+      "recovery": "Load the recovered query/result state",
+      "evidence": "transition from media/state-03-failed-search.png to media/state-04-results.png"
+    },
+    {
+      "name": "Submit learn query",
+      "trigger": "Enter or request “components”",
+      "response": "The product renders relevant documentation feedback",
+      "feedback": "Recovered candidate content is visible",
+      "cancellation": "Revise the term before opening an answer",
+      "failure": "A narrow query can yield no exact match",
+      "recovery": "Use the broader recorded product term and official route",
+      "evidence": "media/state-04-results.png and media/motion.webm"
+    },
+    {
+      "name": "Inspect result feedback",
+      "trigger": "Wait for the product result/learn surface to settle",
+      "response": "Candidate content remains stable for inspection",
+      "feedback": "The recovered result state is frozen in a local frame",
+      "cancellation": "Return to query/navigation to revise the route",
+      "failure": "An empty result surface is not treated as success",
+      "recovery": "Follow the captured canonical concept route",
+      "evidence": "media/state-04-results.png and media/motion.webm"
+    },
+    {
+      "name": "Open first answer",
+      "trigger": "Activate or navigate from the recovered product route to the first relevant answer",
+      "response": "The official documentation answer renders",
+      "feedback": "URL/title/content change visibly",
+      "cancellation": "Browser Back is the available post-navigation return path",
+      "failure": "A route may land on missing or generic content",
+      "recovery": "Return to results and choose the captured canonical answer route",
+      "evidence": "media/state-05-answer.png and closing of media/motion.webm"
+    }
+  ],
+  "journey": {
+    "actor": "A public documentation visitor looking for one product concept",
+    "goal": "Reach the first useful Angular Documentation answer for “components”",
+    "prerequisites": [
+      "Network access to the official public documentation origin",
+      "A Weles-managed real browser on the Stado-selected dedicated host",
+      "No account unless the public origin itself imposes a gate"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the official documentation URL",
+        "system_response": "Render the public product landing/article surface",
+        "state": "landing",
+        "evidence": "media/state-01-landing.png"
+      },
+      {
+        "index": 2,
+        "user_action": "Invoke the product search or official learn route",
+        "system_response": "Expose a query/result/navigation surface",
+        "state": "search or learn open",
+        "evidence": "media/state-02-search-open.png"
+      },
+      {
+        "index": 3,
+        "user_action": "Request the deliberately impossible term zzwissent-no-result-7f3c9",
+        "system_response": "Return no useful answer",
+        "state": "failed search",
+        "evidence": "media/state-03-failed-search.png"
+      },
+      {
+        "index": 4,
+        "user_action": "Cancel the failed route and request “components”",
+        "system_response": "Recover with relevant documentation feedback",
+        "state": "recovered results",
+        "evidence": "media/state-04-results.png"
+      },
+      {
+        "index": 5,
+        "user_action": "Inspect the first relevant product-owned route",
+        "system_response": "Keep the candidate state stable for confirmation",
+        "state": "result ready",
+        "evidence": "media/state-04-results.png and media/motion.webm"
+      },
+      {
+        "index": 6,
+        "user_action": "Open the captured canonical answer",
+        "system_response": "Render the first useful documentation answer",
+        "state": "first answer",
+        "evidence": "media/state-05-answer.png and media/motion.webm"
+      }
+    ],
+    "failure_route": [
+      "Request the deliberately impossible term zzwissent-no-result-7f3c9",
+      "Observe and retain the no-useful-answer state"
+    ],
+    "recovery_route": [
+      "Abandon the failed term and request “components”",
+      "Inspect the recovered product result/learn state",
+      "Open the captured canonical answer"
+    ],
+    "completion_evidence": "media/state-05-answer.png plus the closing transition in media/motion.webm"
+  },
+  "accessibility": {
+    "observations": [
+      "The captured query/navigation path was operable through focused controls or official product links without drag-only gestures.",
+      "Failure, recovery, and answer feedback remained visually persistent long enough to retain inspectable frames."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, live-region announcements, and reading order were not audited.",
+      "Focus styling and focus restoration after cancellation were not independently audited.",
+      "Reduced motion, 400% zoom reflow, high contrast, and switch-device access were not tested."
+    ]
+  },
+  "motion_provenance": [
+    "local-browser-recording"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "fewer than three accessibility observations",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

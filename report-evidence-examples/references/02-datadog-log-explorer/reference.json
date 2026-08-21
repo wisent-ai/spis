@@ -1,0 +1,277 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Datadog Log Explorer",
+  "product_url": "https://docs.datadoghq.com/logs/explorer/",
+  "evidence_status": "partial",
+  "upstream_owner": "Datadog",
+  "captured_at": "2026-08-16T23:30:33Z",
+  "motion": [
+    {
+      "local_path": "media/journey.mp4",
+      "source_url": "https://www.youtube.com/watch?v=FJhzNoZgO0s&t=31s",
+      "media_kind": "video-mp4",
+      "width": 256,
+      "height": 144,
+      "duration_seconds": 12.0,
+      "frame_count": 360,
+      "bytes": 34078,
+      "sha256": "0ef57ce5645726cc7a31ea9c763352ab4e566a828519ccc572df13b73cac712a",
+      "capture_method": "Downloaded the upstream-published YouTube video through the Cobalt media gateway, then transcoded a continuous 12-second excerpt beginning at source timestamp 31s; no frames were synthesized",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "log list with the event detail panel open across the right side",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/journey.mp4 at 0.5s (mean abs diff 1.9297/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 25190,
+      "sha256": "0aa81efe8721dbc7504ca9612eff7c45d495d7261e0268660e1905e99956e3aa",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.5,
+        "mean_abs_diff": 1.9297,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "context menu open over the event detail panel, one item filled blue",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/journey.mp4 at 2.5s (mean abs diff 1.9492/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 27505,
+      "sha256": "a7c8aa1ed53380b6999a498f66cdabfcc22cfb10eec00201ef076d270dc10ff6",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.5,
+        "mean_abs_diff": 1.9492,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "detail panel closed, full-width timeline above a blue staircase top list",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/journey.mp4 at 5s (mean abs diff 2.1133/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 26785,
+      "sha256": "48ddb87d9afdad8b85f03e1b49fb50c9db42d615ae5486d07a5ed1b838700c2a",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.0,
+        "mean_abs_diff": 2.1133,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "top list expanded to many more rows with narrower blue bars",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/journey.mp4 at 8.5s (mean abs diff 2.0195/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 27282,
+      "sha256": "f830686a408c0fb7c1994d77c69e5bf1ea07a636892c621a32418e0747a4db66",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 8.5,
+        "mean_abs_diff": 2.0195,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "small popover over the dense top list, one option filled blue",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/journey.mp4 at 10.5s (mean abs diff 2.0508/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 27632,
+      "sha256": "34af626b1cd82596dc2dad501cdf1f49fedfa7fd5fd0c60c663c28c069d371bc",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 10.5,
+        "mean_abs_diff": 2.0508,
+        "sampled_frames": 24
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "open evidence",
+      "trigger": "Open the local motion asset at its beginning.",
+      "response": "The evidence viewer presents the upstream product demonstration at the selected investigation segment.",
+      "feedback": "The first retained frame establishes product and viewer context.",
+      "cancellation": "Close the player or leave it at the initial frame.",
+      "failure": "A missing or unreadable asset prevents the product state from appearing.",
+      "recovery": "Reopen the hash-verified local asset.",
+      "evidence": "media/journey.mp4 and media/state-01.png"
+    },
+    {
+      "name": "start playback",
+      "trigger": "Activate play.",
+      "response": "The playhead advances through authentic upstream product motion.",
+      "feedback": "Successive product-rendered states replace the ready frame.",
+      "cancellation": "Pause returns control without discarding the current position.",
+      "failure": "Playback can remain on the ready frame when interrupted.",
+      "recovery": "Activate play again.",
+      "evidence": "media/journey.mp4, opening segment through media/state-02.png"
+    },
+    {
+      "name": "focus or select",
+      "trigger": "Follow the source recording as its pointer or focus changes the visible evidence surface.",
+      "response": "The product binds a selected summary, row, finding, span, report item, or visual mark to more specific evidence.",
+      "feedback": "The retained overview and paused-detail states visibly differ.",
+      "cancellation": "Pause before accepting the changed selection.",
+      "failure": "A transient frame can make the selected target ambiguous.",
+      "recovery": "Step backward and replay the transition.",
+      "evidence": "media/state-02.png and media/state-03.png"
+    },
+    {
+      "name": "pause for inspection",
+      "trigger": "Pause at the retained detail state.",
+      "response": "Motion stops while the selected product evidence remains visible.",
+      "feedback": "The paused frame is retained as media/state-03.png.",
+      "cancellation": "Resume immediately without seeking.",
+      "failure": "The evidence flow is intentionally interrupted at the paused state.",
+      "recovery": "Resume playback from the same playhead position.",
+      "evidence": "media/journey.mp4 and media/state-03.png"
+    },
+    {
+      "name": "resume after interruption",
+      "trigger": "Activate play after the pause.",
+      "response": "The source journey continues from the retained detail.",
+      "feedback": "The subsequent deeper-evidence frame appears.",
+      "cancellation": "Pause again.",
+      "failure": "Resumption may not advance when the player remains paused.",
+      "recovery": "Activate play and confirm the next visible frame.",
+      "evidence": "media/state-03.png to media/state-04.png"
+    },
+    {
+      "name": "navigate forward",
+      "trigger": "Seek forward within the local recording.",
+      "response": "The viewer reveals a later product state without changing evidence provenance.",
+      "feedback": "The playhead and visible product content advance together.",
+      "cancellation": "Seek back to the prior retained frame.",
+      "failure": "An over-large seek can skip the intended intermediate state.",
+      "recovery": "Use the retained state images or seek backward.",
+      "evidence": "media/journey.mp4 and media/state-04.png"
+    },
+    {
+      "name": "backtrack",
+      "trigger": "Seek backward or return to an earlier retained state.",
+      "response": "The prior evidence context is restored.",
+      "feedback": "The same earlier frame can be compared with the later state.",
+      "cancellation": "Resume forward playback.",
+      "failure": "A viewer without precise seeking can land between documented states.",
+      "recovery": "Open the corresponding local state image directly.",
+      "evidence": "media/state-02.png, media/state-03.png, and media/state-04.png"
+    },
+    {
+      "name": "confirm completion",
+      "trigger": "Continue to the retained completion point.",
+      "response": "A later, more specific product evidence state is visible.",
+      "feedback": "media/state-05.png records the completion evidence.",
+      "cancellation": "Return to any earlier state without altering the source asset.",
+      "failure": "Stopping early leaves the summary claim unsupported by the final retained state.",
+      "recovery": "Resume or seek to the completion frame.",
+      "evidence": "media/journey.mp4 and media/state-05.png"
+    }
+  ],
+  "journey": {
+    "actor": "A reviewer validating a summary claim against product-native evidence",
+    "goal": "Study facet-driven filtering and the event side panel, which preserves raw log context while supporting rapid drill-down.",
+    "prerequisites": [
+      "A local media player capable of the recorded format",
+      "The numbered state images in this reference directory",
+      "No network connection is required after capture"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the local evidence recording.",
+        "system_response": "The authentic upstream demonstration is ready at the chosen investigation segment.",
+        "state": "log list with the event detail panel open across the right side",
+        "evidence": "media/state-01.png"
+      },
+      {
+        "index": 2,
+        "user_action": "Start playback and orient to the report or evidence surface.",
+        "system_response": "The product moves from its summary context toward an inspectable evidence view.",
+        "state": "context menu open over the event detail panel, one item filled blue",
+        "evidence": "media/state-02.png"
+      },
+      {
+        "index": 3,
+        "user_action": "Pause when the selected detail becomes visible.",
+        "system_response": "The viewer freezes the product-native state for inspection.",
+        "state": "detail panel closed, full-width timeline above a blue staircase top list",
+        "evidence": "media/state-03.png"
+      },
+      {
+        "index": 4,
+        "user_action": "Resume and navigate farther into the recorded investigation.",
+        "system_response": "A later product state reveals deeper or differently scoped evidence.",
+        "state": "top list expanded to many more rows with narrower blue bars",
+        "evidence": "media/state-04.png"
+      },
+      {
+        "index": 5,
+        "user_action": "Continue to the retained completion point.",
+        "system_response": "The source journey leaves a final visible state that supports the investigation outcome.",
+        "state": "small popover over the dense top list, one option filled blue",
+        "evidence": "media/state-05.png"
+      }
+    ],
+    "failure_route": [
+      "Playback is paused or a seek skips the intended evidence transition.",
+      "The reviewer does not treat the interrupted or skipped state as completed evidence."
+    ],
+    "recovery_route": [
+      "Resume from the paused position or seek backward.",
+      "Use the retained state images to re-establish context, then continue to media/state-05.png."
+    ],
+    "completion_evidence": "media/journey.mp4 together with media/state-05.png"
+  },
+  "motion_analysis": {
+    "trigger": "Pointer interaction inside the recording: a context menu sits over the event detail panel at 2.5s and is gone one frame later than 3.400s, the detail panel itself is removed between the 4.450s and 4.483s frames, and a small popover open at 6.900s is replaced by a much longer result list by 6.967s.",
+    "start_state": "media/state-01.png at 0.5s: the dark left navigation rail, a facet sidebar with grouped rows, a narrow log list, and a white event detail panel open across the right side of the page showing stacked attribute rows.",
+    "end_state": "media/state-05.png at 10.5s: no detail panel, a full-width teal timeline across the top of the result area, a dense blue staircase list beneath it with a percentage column and a count column, and a small popover over the list whose current option is a solid blue band.",
+    "continuity": "Continuous inside one page. The dark left rail, the top query bar with its filled blue run control, and the facet sidebar all stay in place while the right-hand detail panel is removed and the result area is replaced; sampled at 30 fps the detail panel fills the right side in the 4.450s frame and is completely absent in the 4.483s frame, with no intermediate blend, fade or slide, and the menu dismissal at 3.400s and the list replacement at 6.900s behave the same way.",
+    "timing_class": "instant",
+    "interruption_or_reversal": "Dismissal is shown: the context menu that covers the detail panel at 2.5s and at 3.400s is absent from the 3.467s frame onward while the detail panel underneath is still open, so closing the overlay leaves the surface beneath it intact.",
+    "feedback": "The current item is drawn as a solid filled blue band with reversed light text, both in the 2.5s context menu and in the 10.5s popover; the run control at the right end of the query row stays a filled blue button in the three later stills; and every row of the result list keeps a printed percentage and a printed count to the left of its blue bar.",
+    "reduced_motion_equivalent": "The outcome survives without motion: media/state-05.png alone carries the closed detail panel, the full-width timeline and the dense result list with its printed percentages and counts, so a reader who never sees the transition still reaches the same result."
+  },
+  "accessibility": {
+    "observations": [
+      "Every row of the result list in media/state-03.png, media/state-04.png and media/state-05.png prints a percentage and a count in two left-hand columns beside its blue bar, so magnitude is carried by text and not by bar length alone.",
+      "Contrast measured from media/state-01.png: the frame's best pair is #FAFAFB against #2C2243 at 14.21:1 by the WCAG relative-luminance formula over the frame's eight-colour histogram; the dominant #FAFAFB is the white page background and the darkest #2C2243 is the dark navigation rail that runs down the left edge of every retained still.",
+      "The current item in the context menu of media/state-02.png and in the popover of media/state-05.png is a solid filled band spanning the whole menu width with reversed light text, so the current item is marked by a change of shape and not by hue alone.",
+      "In media/state-03.png, media/state-04.png and media/state-05.png each sidebar row carries a small square marker followed by a text label, with a right-aligned value at the end of the row, so the filter rows are labelled rather than icon-only.",
+      "Five discrete local states cover the whole recorded sequence, giving a nonanimated inspection path through it."
+    ],
+    "unknowns": [
+      "The source recording does not expose the product accessibility tree, screen-reader announcements, or exact focus order.",
+      "Reduced-motion behavior inside the recorded product is not established by this visual evidence.",
+      "Audio narration and caption quality were not used as evidence in this reference.",
+      "Whether the icon-only buttons in the dark left navigation rail carry text labels cannot be read from a 256x144 frame."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

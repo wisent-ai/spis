@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921622,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Cargo authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Cargo\r\n"]
+[0.55,"o","cli-ref$ cargo --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","cargo 1.97.1 (c980f4866 2026-06-30)\r\n"]
+[2.2,"o","cli-ref$ cargo help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Rust's package manager\r\n\r\nUsage: cargo [+toolchain] [OPTIONS] [COMMAND]\r\n       cargo [+toolchain] [OPTIONS] -Zscript <MANIFEST_RS> [ARGS]...\r\n\r\nOptions:\r\n  -V, --version                  Print version info and exit\r\n      --list                     List installed commands\r\n      --explain <CODE>           Provide a detailed explanation of a rustc error message\r\n  -v, --verbose...               Use verbose output (-vv very verbose/build.rs output)\r\n  -q, --quiet                    Do not print cargo log messages\r\n      --color <WHEN>             Coloring [possible values: auto, always, never]\r\n  -C <DIRECTORY>                 Change to DIRECTORY before doing anything (nightly-only)\r\n      --locked                   Assert that `Cargo.lock` will remain unchanged\r\n"]
+[5.1,"o","cli-ref$ cargo --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","error: unexpected argument '--definitely-invalid-option' found\r\n\r\nUsage: cargo [+toolchain] [OPTIONS] [COMMAND]\r\n       cargo [+toolchain] [OPTIONS] -Zscript <MANIFEST_RS> [ARGS]...\r\n\r\nFor more information, try '--help'.\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ cargo --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ cargo help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Rust's package manager\r\n\r\nUsage: cargo [+toolchain] [OPTIONS] [COMMAND]\r\n       cargo [+toolchain] [OPTIONS] -Zscript <MANIFEST_RS> [ARGS]...\r\n"]

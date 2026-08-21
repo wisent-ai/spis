@@ -1,0 +1,290 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Android — set up a new device",
+  "product_url": "https://support.google.com/android/answer/6193424?hl=en",
+  "evidence_status": "partial",
+  "upstream_owner": "Google LLC",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=Z4PwQyp9Yjk",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 34.667,
+      "frame_count": 520,
+      "bytes": 495907,
+      "sha256": "9a4385ae90de63177e2e92f9ba14bc644754f8d918a927436e6326bb77616d6b",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "welcome",
+      "local_path": "media/state-01-welcome.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 1.5s (mean abs diff 1.2812/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 83381,
+      "sha256": "f3404369150b495222c414dae70e90ea981aea86941dbec074fc0fbc3dda74b5",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 1.5,
+        "mean_abs_diff": 1.2812,
+        "sampled_frames": 69
+      }
+    },
+    {
+      "name": "connected",
+      "local_path": "media/state-02-connected.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 7.5s (mean abs diff 1.0742/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 101016,
+      "sha256": "5692499e470b3127747828c9f2cff1a56c9e51f5abb3791c27edef3c993fd3eb",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 7.5,
+        "mean_abs_diff": 1.0742,
+        "sampled_frames": 69
+      }
+    },
+    {
+      "name": "data decision",
+      "local_path": "media/state-03-data-decision.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 13.5s (mean abs diff 1.3633/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 90992,
+      "sha256": "8a8caa01409a3b9dc5a0517aaed51d08e2120be9ff07c0ca6a05211fc8e98520",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 13.5,
+        "mean_abs_diff": 1.3633,
+        "sampled_frames": 69
+      }
+    },
+    {
+      "name": "account decision",
+      "local_path": "media/state-04-account-decision.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.6016/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 31232,
+      "sha256": "b6ce51db5154297be67e97e33c0e0df04f168141d2f7d76c33145397309e3d0f",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 19.5,
+        "mean_abs_diff": 1.6016,
+        "sampled_frames": 69
+      }
+    },
+    {
+      "name": "device secured",
+      "local_path": "media/state-05-device-secured.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 25s (mean abs diff 1.7734/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 43128,
+      "sha256": "7f4483053200a7fb766509bb10897eaf795346b9e023f706c75fba58416ffc78",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 25.0,
+        "mean_abs_diff": 1.7734,
+        "sampled_frames": 69
+      }
+    },
+    {
+      "name": "launcher",
+      "local_path": "media/state-06-launcher.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 31s (mean abs diff 1.625/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 50412,
+      "sha256": "8dd532270df16c09b8c6a205ef78af2bbdb1782f77103e9d0c5cd560cca4b591",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 31.0,
+        "mean_abs_diff": 1.625,
+        "sampled_frames": 69
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Power on and start setup",
+      "response": "Android shows language and accessibility controls",
+      "feedback": "The retained welcome state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-welcome.png @ 1.73s; https://support.google.com/android/answer/6193424"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Choose language and connect to a network",
+      "response": "Android checks updates and activation",
+      "feedback": "The recording advances to connected and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-welcome.png @ 1.73s; media/state-02-connected.png @ 7.63s; https://support.google.com/android/answer/6193424"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Choose copy-data or set-up-as-new",
+      "response": "Android prepares the selected transfer path",
+      "feedback": "The navigation result is visible as data decision.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-connected.png @ 7.63s; media/state-03-data-decision.png @ 13.52s; https://support.google.com/android/answer/6193424"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Sign in to a Google Account or use the allowed skip route",
+      "response": "Android applies account context and services",
+      "feedback": "The official recording shows the confirmed account decision state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-data-decision.png @ 13.52s; media/state-04-account-decision.png @ 19.41s; https://support.google.com/android/answer/6193424"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-connected.png @ 7.63s; media/state-03-data-decision.png @ 13.52s; media/state-04-account-decision.png @ 19.41s; https://support.google.com/android/answer/6193424"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Set screen lock and review service permissions",
+      "response": "Android records security and privacy choices",
+      "feedback": "Progress is observable as the distinct device secured state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-account-decision.png @ 19.41s; media/state-05-device-secured.png @ 25.31s; https://support.google.com/android/answer/6193424"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-data-decision.png @ 13.52s; media/state-04-account-decision.png @ 19.41s; media/state-05-device-secured.png @ 25.31s; https://support.google.com/android/answer/6193424"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Complete setup",
+      "response": "The launcher appears, proving first usable-device success",
+      "feedback": "The retained launcher state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-device-secured.png @ 25.31s; media/state-06-launcher.png @ 31.20s; https://support.google.com/android/answer/6193424"
+    }
+  ],
+  "journey": {
+    "actor": "new Android device owner",
+    "goal": "finish device setup and reach the launcher",
+    "prerequisites": [
+      "charged Android device",
+      "Wi-Fi or cellular access",
+      "Google Account or explicit skip decision"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Power on and start setup",
+        "system_response": "Android shows language and accessibility controls",
+        "state": "welcome",
+        "evidence": "media/state-01-welcome.png; media/official-recording.mp4#t=1.733; https://support.google.com/android/answer/6193424"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose language and connect to a network",
+        "system_response": "Android checks updates and activation",
+        "state": "connected",
+        "evidence": "media/state-02-connected.png; media/official-recording.mp4#t=7.627; https://support.google.com/android/answer/6193424"
+      },
+      {
+        "index": 3,
+        "user_action": "Choose copy-data or set-up-as-new",
+        "system_response": "Android prepares the selected transfer path",
+        "state": "data decision",
+        "evidence": "media/state-03-data-decision.png; media/official-recording.mp4#t=13.520; https://support.google.com/android/answer/6193424"
+      },
+      {
+        "index": 4,
+        "user_action": "Sign in to a Google Account or use the allowed skip route",
+        "system_response": "Android applies account context and services",
+        "state": "account decision",
+        "evidence": "media/state-04-account-decision.png; media/official-recording.mp4#t=19.414; https://support.google.com/android/answer/6193424"
+      },
+      {
+        "index": 5,
+        "user_action": "Set screen lock and review service permissions",
+        "system_response": "Android records security and privacy choices",
+        "state": "device secured",
+        "evidence": "media/state-05-device-secured.png; media/official-recording.mp4#t=25.307; https://support.google.com/android/answer/6193424"
+      },
+      {
+        "index": 6,
+        "user_action": "Complete setup",
+        "system_response": "The launcher appears, proving first usable-device success",
+        "state": "launcher",
+        "evidence": "media/state-06-launcher.png; media/official-recording.mp4#t=31.200; https://support.google.com/android/answer/6193424"
+      }
+    ],
+    "failure_route": [
+      "At connected or data decision, invalid, expired, denied, or missing required input leaves the flow short of launcher; evidence: media/state-02-connected.png, media/state-03-data-decision.png, and https://support.google.com/android/answer/6193424.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-data-decision.png through media/state-05-device-secured.png."
+    ],
+    "recovery_route": [
+      "Return to the retained connected or data decision requirement, correct or resend the blocking input, and resubmit; evidence: https://support.google.com/android/answer/6193424.",
+      "Continue through the same terminal action until launcher is visible in media/state-06-launcher.png and the motion at 31.200s."
+    ],
+    "completion_evidence": "launcher retained at media/state-06-launcher.png and media/official-recording.mp4#t=31.200; source https://support.google.com/android/answer/6193424"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-welcome.png and media/state-02-connected.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-data-decision.png and media/state-04-account-decision.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19",
+  "original_product_url": "https://support.google.com/android/answer/6193424"
+}

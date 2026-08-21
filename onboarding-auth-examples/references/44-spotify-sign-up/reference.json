@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Spotify — sign up",
+  "product_url": "https://support.spotify.com/article/how-to-sign-up/",
+  "evidence_status": "partial",
+  "upstream_owner": "Spotify AB",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=j8L5ySUufdE",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 53.8,
+      "frame_count": 807,
+      "bytes": 513296,
+      "sha256": "a3c10cbc7ca24bc15c74a3f787df8077984f681bda87e8ce88981b129e406eb0",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "signup route",
+      "local_path": "media/state-01-signup-route.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 2.5s (mean abs diff 0.2773/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 26124,
+      "sha256": "d315a7701fdc020ccb819f4c923997c0f096ad2cfb22825061484dfdb8acd2a4",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.5,
+        "mean_abs_diff": 0.2773,
+        "sampled_frames": 108
+      }
+    },
+    {
+      "name": "credentials ready",
+      "local_path": "media/state-02-credentials-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 12s (mean abs diff 3.8047/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 49401,
+      "sha256": "c019ea4315aa068208b04dd083bef7a8c3c435bdd40a99f4d8cb7509467c44ee",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 12.0,
+        "mean_abs_diff": 3.8047,
+        "sampled_frames": 108
+      }
+    },
+    {
+      "name": "account created",
+      "local_path": "media/state-03-account-created.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 21s (mean abs diff 3.1875/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 14331,
+      "sha256": "1974318bbf1e27853bd9a99c54c27af54fdf8181c0894e1256fb03a9764b5176",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 21.0,
+        "mean_abs_diff": 3.1875,
+        "sampled_frames": 108
+      }
+    },
+    {
+      "name": "identity active",
+      "local_path": "media/state-04-identity-active.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 30s (mean abs diff 7.9062/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 210189,
+      "sha256": "7fed4966b52bb34445b09bcb25e9b63374c2c2222531fe35e06154673dd4e975",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 30.0,
+        "mean_abs_diff": 7.9062,
+        "sampled_frames": 108
+      }
+    },
+    {
+      "name": "content selected",
+      "local_path": "media/state-05-content-selected.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 39s (mean abs diff 2.082/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 73287,
+      "sha256": "8bc2df59c44bcd42dd5479e7fc8970c5ba69386061db37c20a40b15870717f7b",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 39.0,
+        "mean_abs_diff": 2.082,
+        "sampled_frames": 108
+      }
+    },
+    {
+      "name": "first playback",
+      "local_path": "media/state-06-first-playback.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 48s (mean abs diff 0.2148/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 20310,
+      "sha256": "2e72c14936b9a356445e54528895a239edddf6f21aa0f948fbaf88a9b3aa2b6d",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 48.0,
+        "mean_abs_diff": 0.2148,
+        "sampled_frames": 108
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Choose Sign up and an identity method",
+      "response": "Spotify opens provider authorization or account fields",
+      "feedback": "The retained signup route state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-signup-route.png @ 2.69s; https://support.spotify.com/article/how-to-sign-up/"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Complete provider authorization or enter email and password",
+      "response": "Spotify validates the identity",
+      "feedback": "The recording advances to credentials ready and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-signup-route.png @ 2.69s; media/state-02-credentials-ready.png @ 11.84s; https://support.spotify.com/article/how-to-sign-up/"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Enter required profile details and accept terms",
+      "response": "Spotify creates the account",
+      "feedback": "The navigation result is visible as account created.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-credentials-ready.png @ 11.84s; media/state-03-account-created.png @ 20.98s; https://support.spotify.com/article/how-to-sign-up/"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Complete email verification or sign in when required",
+      "response": "Spotify opens the authenticated Home surface",
+      "feedback": "The official recording shows the confirmed identity active state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-account-created.png @ 20.98s; media/state-04-identity-active.png @ 30.13s; https://support.spotify.com/article/how-to-sign-up/"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-credentials-ready.png @ 11.84s; media/state-03-account-created.png @ 20.98s; media/state-04-identity-active.png @ 30.13s; https://support.spotify.com/article/how-to-sign-up/"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Search for or select music",
+      "response": "Spotify opens the track, album, or playlist context",
+      "feedback": "Progress is observable as the distinct content selected state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-identity-active.png @ 30.13s; media/state-05-content-selected.png @ 39.27s; https://support.spotify.com/article/how-to-sign-up/"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-account-created.png @ 20.98s; media/state-04-identity-active.png @ 30.13s; media/state-05-content-selected.png @ 39.27s; https://support.spotify.com/article/how-to-sign-up/"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Press Play",
+      "response": "Playback begins and controls update, proving first listening success",
+      "feedback": "The retained first playback state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-content-selected.png @ 39.27s; media/state-06-first-playback.png @ 48.42s; https://support.spotify.com/article/how-to-sign-up/"
+    }
+  ],
+  "journey": {
+    "actor": "new Spotify listener",
+    "goal": "create an account and play the first track",
+    "prerequisites": [
+      "email or supported identity provider",
+      "network connection"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Choose Sign up and an identity method",
+        "system_response": "Spotify opens provider authorization or account fields",
+        "state": "signup route",
+        "evidence": "media/state-01-signup-route.png; media/official-recording.mp4#t=2.690; https://support.spotify.com/article/how-to-sign-up/"
+      },
+      {
+        "index": 2,
+        "user_action": "Complete provider authorization or enter email and password",
+        "system_response": "Spotify validates the identity",
+        "state": "credentials ready",
+        "evidence": "media/state-02-credentials-ready.png; media/official-recording.mp4#t=11.836; https://support.spotify.com/article/how-to-sign-up/"
+      },
+      {
+        "index": 3,
+        "user_action": "Enter required profile details and accept terms",
+        "system_response": "Spotify creates the account",
+        "state": "account created",
+        "evidence": "media/state-03-account-created.png; media/official-recording.mp4#t=20.982; https://support.spotify.com/article/how-to-sign-up/"
+      },
+      {
+        "index": 4,
+        "user_action": "Complete email verification or sign in when required",
+        "system_response": "Spotify opens the authenticated Home surface",
+        "state": "identity active",
+        "evidence": "media/state-04-identity-active.png; media/official-recording.mp4#t=30.128; https://support.spotify.com/article/how-to-sign-up/"
+      },
+      {
+        "index": 5,
+        "user_action": "Search for or select music",
+        "system_response": "Spotify opens the track, album, or playlist context",
+        "state": "content selected",
+        "evidence": "media/state-05-content-selected.png; media/official-recording.mp4#t=39.274; https://support.spotify.com/article/how-to-sign-up/"
+      },
+      {
+        "index": 6,
+        "user_action": "Press Play",
+        "system_response": "Playback begins and controls update, proving first listening success",
+        "state": "first playback",
+        "evidence": "media/state-06-first-playback.png; media/official-recording.mp4#t=48.420; https://support.spotify.com/article/how-to-sign-up/"
+      }
+    ],
+    "failure_route": [
+      "At credentials ready or account created, invalid, expired, denied, or missing required input leaves the flow short of first playback; evidence: media/state-02-credentials-ready.png, media/state-03-account-created.png, and https://support.spotify.com/article/how-to-sign-up/.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-account-created.png through media/state-05-content-selected.png."
+    ],
+    "recovery_route": [
+      "Return to the retained credentials ready or account created requirement, correct or resend the blocking input, and resubmit; evidence: https://support.spotify.com/article/how-to-sign-up/.",
+      "Continue through the same terminal action until first playback is visible in media/state-06-first-playback.png and the motion at 48.420s."
+    ],
+    "completion_evidence": "first playback retained at media/state-06-first-playback.png and media/official-recording.mp4#t=48.420; source https://support.spotify.com/article/how-to-sign-up/"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-signup-route.png and media/state-02-credentials-ready.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-account-created.png and media/state-04-identity-active.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

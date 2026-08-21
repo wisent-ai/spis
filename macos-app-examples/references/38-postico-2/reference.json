@@ -1,0 +1,264 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Postico 2",
+  "product_url": "https://eggerapps.at/postico2/",
+  "evidence_status": "partial",
+  "upstream_owner": "Just Another Dang How To recording; Jakob Egger / Postico",
+  "captured_at": "2026-08-16T23:27:18Z",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=7ROh8Mel6Cs",
+      "media_kind": "video-mp4",
+      "width": 960,
+      "height": 540,
+      "duration_seconds": 18.0,
+      "frame_count": 270,
+      "bytes": 82345,
+      "sha256": "b353dd251798899b07ec8e620f7a9ee2ec8d84d6d6fc98208c822bbdfc15a201",
+      "capture_method": "Downloaded as a real-product tutorial recording with yt-dlp, then excerpted and transcoded to H.264 without synthesized frames.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "Entry state: Open Postico",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 1.4219/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 175847,
+      "sha256": "df295aa35f78ba3b0e738f07ad8c78fdabdcbaffdf2e2e88a7b8a72d4380842f",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 1.0,
+        "mean_abs_diff": 1.4219,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Invocation state: Enter or select connection details",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 5s (mean abs diff 1.4062/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 172503,
+      "sha256": "2899a089ecb1e7d156dd8b613123a94bae3ca63edeefca6b3ed3db48455e68bd",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.0,
+        "mean_abs_diff": 1.4062,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Focused intermediate state: Connect to the server",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 7s (mean abs diff 1.4336/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 174232,
+      "sha256": "a3cedd90f0c46265c97473465c2056d187d1c5af0739a66f65bcaf956bf09891",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 7.0,
+        "mean_abs_diff": 1.4336,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Committed transition: Choose a database object",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/motion.mp4 at 15.5s (mean abs diff 1.4492/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 172850,
+      "sha256": "0c7259431415f23b1220bd40cf0c495b0062c8f714fe87b44b491441a9fd4b39",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 15.5,
+        "mean_abs_diff": 1.4492,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "First-success result: Observe the database content surface",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/motion.mp4 at 16s (mean abs diff 1.4258/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 177529,
+      "sha256": "0b30d4e1d2c291dd5cfe515c37028cd8febc9a1bb79e320b788e4fb74ef78c54",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 16.0,
+        "mean_abs_diff": 1.4258,
+        "sampled_frames": 36
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Open Postico",
+      "response": "Postico 2 exposes the entry surface visible in the retained motion.",
+      "feedback": "The first state establishes the active surface before manipulation.",
+      "cancellation": "Stopping here leaves the product unchanged.",
+      "failure": "The goal is not yet complete in the entry state.",
+      "recovery": "Enter or select connection details.",
+      "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Enter or select connection details",
+      "response": "A target control, item, document, or workspace becomes the active context.",
+      "feedback": "The next retained state visibly differs and identifies the active path.",
+      "cancellation": "Focus can remain on the previous context without committing.",
+      "failure": "An unintended target would leave the desired result unavailable.",
+      "recovery": "Move focus to the intended visible target and continue.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Connect to the server",
+      "response": "The recording advances into the product’s intermediate working state.",
+      "feedback": "Content, controls, or selection context changes in place.",
+      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+      "failure": "Stopping at this state produces no completion evidence.",
+      "recovery": "Choose a database object.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Choose a database object",
+      "response": "The selected operation crosses from preparation into a committed transition.",
+      "feedback": "The fourth state records the immediate product response.",
+      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+      "failure": "Without confirmation, the fifth-state result does not appear.",
+      "recovery": "Repeat the intended selection and confirm it.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+    },
+    {
+      "name": "Completion feedback",
+      "trigger": "Observe the database content surface",
+      "response": "The recording reaches the first meaningful result for “Connect to PostgreSQL with Postico”.",
+      "feedback": "The fifth local frame is the offline completion evidence.",
+      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+      "failure": "Absence of the fifth state means the journey is incomplete.",
+      "recovery": "Replay the recorded sequence from the entry state.",
+      "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Cancellation and backtracking",
+      "trigger": "Leave the path before the committed transition.",
+      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+      "failure": "Exiting early does not produce completion evidence.",
+      "recovery": "Re-enter through state 2 and continue to state 4.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s; media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Failure boundary",
+      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+      "feedback": "No fifth-state visual is present before commitment.",
+      "cancellation": "The actor may abandon the incomplete path without claiming success.",
+      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s; contrasted with media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Recovery",
+      "trigger": "Resume from the last valid intermediate state.",
+      "response": "The same visible action sequence advances to the retained result.",
+      "feedback": "State 5 supplies positive completion feedback after state 4.",
+      "cancellation": "The actor can still stop before replaying confirmation.",
+      "failure": "A replay that never reaches state 5 remains incomplete.",
+      "recovery": "Replay state 4 and verify state 5.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s; media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning Postico 2 user",
+    "goal": "Connect to PostgreSQL with Postico",
+    "prerequisites": [
+      "Postico 2 available on macOS or the official recording environment",
+      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open Postico",
+        "system_response": "Postico 2 advances to the entry state retained in state 1.",
+        "state": "Entry state: Open Postico",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+      },
+      {
+        "index": 2,
+        "user_action": "Enter or select connection details",
+        "system_response": "Postico 2 advances to the invocation state retained in state 2.",
+        "state": "Invocation state: Enter or select connection details",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+      },
+      {
+        "index": 3,
+        "user_action": "Connect to the server",
+        "system_response": "Postico 2 advances to the focused intermediate state retained in state 3.",
+        "state": "Focused intermediate state: Connect to the server",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+      },
+      {
+        "index": 4,
+        "user_action": "Choose a database object",
+        "system_response": "Postico 2 advances to the committed transition retained in state 4.",
+        "state": "Committed transition: Choose a database object",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+      },
+      {
+        "index": 5,
+        "user_action": "Observe the database content surface",
+        "system_response": "Postico 2 advances to the first-success result retained in state 5.",
+        "state": "First-success result: Observe the database content surface",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    ],
+    "failure_route": [
+      "Stop at the third retained state before confirmation; the meaningful result is absent.",
+      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+    ],
+    "recovery_route": [
+      "Return to the second retained state and restore the intended focus or selection.",
+      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+    ],
+    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+  },
+  "accessibility": {
+    "observations": [
+      "Active focus or selection is conveyed by a visible change between retained states.",
+      "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown.",
+      "The five extracted frames provide a nonanimated way to inspect the same sequence."
+    ],
+    "unknowns": [
+      "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
+      "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
+      "The product’s Reduce Motion behavior and contrast preferences are not demonstrated."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

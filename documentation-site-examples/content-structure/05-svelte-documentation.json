@@ -1,0 +1,533 @@
+{
+  "name": "Svelte Documentation",
+  "source_url": "https://svelte.dev/docs/svelte/overview",
+  "category": "Frontend framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "llms.txt+nav",
+  "inventory_url_count": 70,
+  "landing_nav": [
+    {
+      "text": "Docs",
+      "path": "/docs"
+    },
+    {
+      "text": "Svelte",
+      "path": "/docs/svelte"
+    },
+    {
+      "text": "SvelteKit",
+      "path": "/docs/kit"
+    },
+    {
+      "text": "CLI",
+      "path": "/docs/cli"
+    },
+    {
+      "text": "AI",
+      "path": "/docs/ai"
+    },
+    {
+      "text": "Tutorial",
+      "path": "/tutorial"
+    },
+    {
+      "text": "Packages",
+      "path": "/packages"
+    },
+    {
+      "text": "Playground",
+      "path": "/playground"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog"
+    },
+    {
+      "text": "Overview",
+      "path": "/docs/svelte/overview"
+    },
+    {
+      "text": "Getting started",
+      "path": "/docs/svelte/getting-started"
+    },
+    {
+      "text": ".svelte files",
+      "path": "/docs/svelte/svelte-files"
+    },
+    {
+      "text": ".svelte.js and .svelte.ts files",
+      "path": "/docs/svelte/svelte-js-files"
+    },
+    {
+      "text": "What are runes?",
+      "path": "/docs/svelte/what-are-runes"
+    },
+    {
+      "text": "$state",
+      "path": "/docs/svelte/$state"
+    },
+    {
+      "text": "$derived",
+      "path": "/docs/svelte/$derived"
+    },
+    {
+      "text": "$effect",
+      "path": "/docs/svelte/$effect"
+    },
+    {
+      "text": "$props",
+      "path": "/docs/svelte/$props"
+    },
+    {
+      "text": "$bindable",
+      "path": "/docs/svelte/$bindable"
+    },
+    {
+      "text": "$inspect",
+      "path": "/docs/svelte/$inspect"
+    },
+    {
+      "text": "$host",
+      "path": "/docs/svelte/$host"
+    },
+    {
+      "text": "Basic markup",
+      "path": "/docs/svelte/basic-markup"
+    },
+    {
+      "text": "{#if ...}",
+      "path": "/docs/svelte/if"
+    },
+    {
+      "text": "{#each ...}",
+      "path": "/docs/svelte/each"
+    },
+    {
+      "text": "{#key ...}",
+      "path": "/docs/svelte/key"
+    },
+    {
+      "text": "{#await ...}",
+      "path": "/docs/svelte/await"
+    },
+    {
+      "text": "{#snippet ...}",
+      "path": "/docs/svelte/snippet"
+    },
+    {
+      "text": "{@render ...}",
+      "path": "/docs/svelte/@render"
+    },
+    {
+      "text": "{@html ...}",
+      "path": "/docs/svelte/@html"
+    },
+    {
+      "text": "{@attach ...}",
+      "path": "/docs/svelte/@attach"
+    },
+    {
+      "text": "{@const ...}",
+      "path": "/docs/svelte/@const"
+    },
+    {
+      "text": "{@debug ...}",
+      "path": "/docs/svelte/@debug"
+    },
+    {
+      "text": "{let/const ...}",
+      "path": "/docs/svelte/declaration-tags"
+    },
+    {
+      "text": "bind:",
+      "path": "/docs/svelte/bind"
+    },
+    {
+      "text": "use:",
+      "path": "/docs/svelte/use"
+    },
+    {
+      "text": "transition:",
+      "path": "/docs/svelte/transition"
+    },
+    {
+      "text": "in: and out:",
+      "path": "/docs/svelte/in-and-out"
+    },
+    {
+      "text": "animate:",
+      "path": "/docs/svelte/animate"
+    },
+    {
+      "text": "style:",
+      "path": "/docs/svelte/style"
+    },
+    {
+      "text": "class",
+      "path": "/docs/svelte/class"
+    },
+    {
+      "text": "await",
+      "path": "/docs/svelte/await-expressions"
+    },
+    {
+      "text": "Scoped styles",
+      "path": "/docs/svelte/scoped-styles"
+    },
+    {
+      "text": "Global styles",
+      "path": "/docs/svelte/global-styles"
+    },
+    {
+      "text": "Custom properties",
+      "path": "/docs/svelte/custom-properties"
+    },
+    {
+      "text": "Nested <style> elements",
+      "path": "/docs/svelte/nested-style-elements"
+    },
+    {
+      "text": "<svelte:boundary>",
+      "path": "/docs/svelte/svelte-boundary"
+    },
+    {
+      "text": "<svelte:window>",
+      "path": "/docs/svelte/svelte-window"
+    },
+    {
+      "text": "<svelte:document>",
+      "path": "/docs/svelte/svelte-document"
+    },
+    {
+      "text": "<svelte:body>",
+      "path": "/docs/svelte/svelte-body"
+    },
+    {
+      "text": "<svelte:head>",
+      "path": "/docs/svelte/svelte-head"
+    },
+    {
+      "text": "<svelte:element>",
+      "path": "/docs/svelte/svelte-element"
+    },
+    {
+      "text": "<svelte:options>",
+      "path": "/docs/svelte/svelte-options"
+    },
+    {
+      "text": "Stores",
+      "path": "/docs/svelte/stores"
+    },
+    {
+      "text": "Context",
+      "path": "/docs/svelte/context"
+    },
+    {
+      "text": "Lifecycle hooks",
+      "path": "/docs/svelte/lifecycle-hooks"
+    },
+    {
+      "text": "Imperative component API",
+      "path": "/docs/svelte/imperative-component-api"
+    },
+    {
+      "text": "Hydratable data",
+      "path": "/docs/svelte/hydratable"
+    },
+    {
+      "text": "Best practices",
+      "path": "/docs/svelte/best-practices"
+    },
+    {
+      "text": "Testing",
+      "path": "/docs/svelte/testing"
+    },
+    {
+      "text": "TypeScript",
+      "path": "/docs/svelte/typescript"
+    },
+    {
+      "text": "Custom elements",
+      "path": "/docs/svelte/custom-elements"
+    },
+    {
+      "text": "Browser support",
+      "path": "/docs/svelte/browser-support"
+    },
+    {
+      "text": "Svelte 4 migration guide",
+      "path": "/docs/svelte/v4-migration-guide"
+    },
+    {
+      "text": "Svelte 5 migration guide",
+      "path": "/docs/svelte/v5-migration-guide"
+    },
+    {
+      "text": "Frequently asked questions",
+      "path": "/docs/svelte/faq"
+    },
+    {
+      "text": "svelte",
+      "path": "/docs/svelte/svelte"
+    },
+    {
+      "text": "svelte/action",
+      "path": "/docs/svelte/svelte-action"
+    },
+    {
+      "text": "svelte/animate",
+      "path": "/docs/svelte/svelte-animate"
+    },
+    {
+      "text": "svelte/attachments",
+      "path": "/docs/svelte/svelte-attachments"
+    },
+    {
+      "text": "svelte/compiler",
+      "path": "/docs/svelte/svelte-compiler"
+    },
+    {
+      "text": "svelte/easing",
+      "path": "/docs/svelte/svelte-easing"
+    },
+    {
+      "text": "svelte/events",
+      "path": "/docs/svelte/svelte-events"
+    },
+    {
+      "text": "svelte/legacy",
+      "path": "/docs/svelte/svelte-legacy"
+    },
+    {
+      "text": "svelte/motion",
+      "path": "/docs/svelte/svelte-motion"
+    },
+    {
+      "text": "svelte/reactivity/window",
+      "path": "/docs/svelte/svelte-reactivity-window"
+    },
+    {
+      "text": "svelte/reactivity",
+      "path": "/docs/svelte/svelte-reactivity"
+    },
+    {
+      "text": "svelte/server",
+      "path": "/docs/svelte/svelte-server"
+    },
+    {
+      "text": "svelte/store",
+      "path": "/docs/svelte/svelte-store"
+    },
+    {
+      "text": "svelte/transition",
+      "path": "/docs/svelte/svelte-transition"
+    },
+    {
+      "text": "Compiler errors",
+      "path": "/docs/svelte/compiler-errors"
+    },
+    {
+      "text": "Compiler warnings",
+      "path": "/docs/svelte/compiler-warnings"
+    },
+    {
+      "text": "Runtime errors",
+      "path": "/docs/svelte/runtime-errors"
+    },
+    {
+      "text": "Runtime warnings",
+      "path": "/docs/svelte/runtime-warnings"
+    },
+    {
+      "text": "Overview",
+      "path": "/docs/svelte/legacy-overview"
+    },
+    {
+      "text": "Reactive let/var declarations",
+      "path": "/docs/svelte/legacy-let"
+    },
+    {
+      "text": "Reactive $: statements",
+      "path": "/docs/svelte/legacy-reactive-assignments"
+    },
+    {
+      "text": "export let",
+      "path": "/docs/svelte/legacy-export-let"
+    },
+    {
+      "text": "$$props and $$restProps",
+      "path": "/docs/svelte/legacy-$$props-and-$$restProps"
+    },
+    {
+      "text": "on:",
+      "path": "/docs/svelte/legacy-on"
+    },
+    {
+      "text": "<slot>",
+      "path": "/docs/svelte/legacy-slots"
+    },
+    {
+      "text": "$$slots",
+      "path": "/docs/svelte/legacy-$$slots"
+    },
+    {
+      "text": "<svelte:fragment>",
+      "path": "/docs/svelte/legacy-svelte-fragment"
+    },
+    {
+      "text": "<svelte:component>",
+      "path": "/docs/svelte/legacy-svelte-component"
+    },
+    {
+      "text": "<svelte:self>",
+      "path": "/docs/svelte/legacy-svelte-self"
+    },
+    {
+      "text": "Imperative component API",
+      "path": "/docs/svelte/legacy-component-api"
+    },
+    {
+      "text": "interactive tutorial",
+      "path": "/tutorial"
+    },
+    {
+      "text": "llms.txt",
+      "path": "/docs/svelte/overview/llms.txt"
+    }
+  ],
+  "url_sections": {
+    "docs": 70
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorial",
+      "/tutorial",
+      "interactive tutorial"
+    ],
+    "getting started / quickstart": [
+      "getting started",
+      "/docs/svelte/getting-started"
+    ],
+    "guides / how-to": [
+      "svelte 4 migration guide",
+      "svelte 5 migration guide",
+      "/docs/svelte/v5-migration-guide",
+      "/docs/svelte/v4-migration-guide"
+    ],
+    "api reference": [
+      "imperative component api",
+      "/docs/svelte/legacy-component-api",
+      "/docs/svelte/imperative-component-api"
+    ],
+    "troubleshooting / errors": [
+      "runtime errors",
+      "compiler errors",
+      "/docs/svelte/runtime-errors",
+      "/docs/svelte/compiler-errors"
+    ],
+    "migration / upgrade": [
+      "svelte 4 migration guide",
+      "svelte 5 migration guide",
+      "/docs/svelte/v5-migration-guide",
+      "/docs/svelte/v4-migration-guide"
+    ],
+    "faq": [
+      "/docs/svelte/faq",
+      "frequently asked questions"
+    ],
+    "cli reference": [
+      "cli",
+      "/docs/cli"
+    ],
+    "best practices": [
+      "best practices",
+      "/docs/svelte/best-practices"
+    ],
+    "community / support": [
+      "browser support",
+      "/docs/svelte/browser-support"
+    ],
+    "playground / sandbox": [
+      "playground",
+      "/playground"
+    ],
+    "versioned docs": [
+      "/docs/svelte/v4-migration-guide",
+      "/docs/svelte/v5-migration-guide"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://svelte.dev/docs",
+      "h1": "Documentation",
+      "h2": [
+        "I’m brand new here",
+        "I’m migrating an app from Svelte 4",
+        "I just want to try it out",
+        "I’m a Large Language Model (LLM)",
+        "I’m looking for the old docs",
+        "Help! I’m stuck"
+      ]
+    },
+    {
+      "url": "https://svelte.dev/tutorial",
+      "h1": "",
+      "h2": [
+        "What is Svelte?",
+        "How to use this tutorial"
+      ]
+    },
+    {
+      "url": "https://svelte.dev/packages",
+      "h1": "Packages",
+      "h2": [
+        "Svelte CLI add-ons aa",
+        "Component libraries aa",
+        "SvelteKit adapters aa",
+        "Content aa",
+        "Rich text editing aa",
+        "Data visualization aa",
+        "Auth aa",
+        "Third party services aa",
+        "Internationalization (i18n) aa",
+        "Media aa",
+        "Individual components aa",
+        "Animations aa",
+        "SEO aa",
+        "Devtools aa",
+        "Icons aa",
+        "Testing aa",
+        "Bundler plugins aa",
+        "Routing aa",
+        "Data fetching aa",
+        "Forms aa"
+      ]
+    },
+    {
+      "url": "https://svelte.dev/blog",
+      "h1": "Blog",
+      "h2": [
+        "The SvelteKit 3 Release Candidate is here",
+        "What’s new in Svelte: August 2026",
+        "What’s new in Svelte: July 2026",
+        "What’s new in Svelte: June 2026",
+        "What’s new in Svelte: May 2026",
+        "What’s new in Svelte: April 2026",
+        "What’s new in Svelte: March 2026",
+        "What’s new in Svelte: February 2026",
+        "CVEs affecting the Svelte ecosystem",
+        "What’s new in Svelte: January 2026",
+        "What’s new in Svelte: December 2025",
+        "Advent of Svelte is back",
+        "What’s new in Svelte: November 2025",
+        "What’s new in Svelte: October 2025",
+        "What’s new in Svelte: September 2025",
+        "Introducing integrated observability in SvelteKit",
+        "What’s new in Svelte: August 2025",
+        "What’s new in Svelte: July 2025",
+        "What’s new in Svelte: June 2025",
+        "Bringing Svelte Summit to the whole community"
+      ]
+    }
+  ]
+}

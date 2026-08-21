@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921622,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"pip authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: pip\r\n"]
+[0.55,"o","cli-ref$ pip3 --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","pip 24.0 from /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pip (python 3.12)\r\n"]
+[2.2,"o","cli-ref$ pip3 help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage:   \r\n  pip3 <command> [options]\r\n\r\nCommands:\r\n  install                     Install packages.\r\n  download                    Download packages.\r\n  uninstall                   Uninstall packages.\r\n  freeze                      Output installed packages in requirements format.\r\n  inspect                     Inspect the python environment.\r\n  list                        List installed packages.\r\n  show                        Show information about installed packages.\r\n  check                       Verify installed packages have compatible dependencies.\r\n  config                      Manage local and global configuration.\r\n"]
+[5.1,"o","cli-ref$ pip3 --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Usage:   \r\n  pip3 <command> [options]\r\n\r\nno such option: --definitely-invalid-option\r\n[exit status 2]\r\n"]
+[7.1,"o","cli-ref$ pip3 --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ pip3 help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage:   \r\n  pip3 <command> [options]\r\n\r\nCommands:\r\n"]

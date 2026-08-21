@@ -1,0 +1,255 @@
+{
+  "name": "GitLab Docs",
+  "source_url": "https://docs.gitlab.com/",
+  "category": "DevOps platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 7037,
+  "landing_nav": [],
+  "url_sections": {
+    "user": 1862,
+    "development": 1280,
+    "administration": 754,
+    "cli": 588,
+    "api": 496,
+    "releases": 298,
+    "charts": 250,
+    "omnibus": 183,
+    "runner": 136,
+    "tutorials": 113,
+    "integration": 97,
+    "topics": 96,
+    "orbit": 64,
+    "solutions": 64,
+    "update": 62,
+    "security": 58,
+    "install": 57,
+    "editor_extensions": 52,
+    "operations": 51,
+    "operator": 46,
+    "subscriptions": 33,
+    "testing": 32,
+    "runners": 32,
+    "pipelines": 30,
+    "yaml": 26,
+    "jobs": 24,
+    "secrets": 22,
+    "docker": 22,
+    "auth": 20,
+    "environments": 20,
+    "migration": 14,
+    "legal": 12,
+    "variables": 12,
+    "examples": 10,
+    "services": 10,
+    "pipeline_security": 9,
+    "ci_cd_for_external_repos": 8,
+    "cloud_services": 8,
+    "functions": 8,
+    "rate_limits": 6
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "examples"
+    ],
+    "tutorials / learn": [
+      "tutorials"
+    ],
+    "api reference": [
+      "api"
+    ],
+    "changelog / release notes": [
+      "releases"
+    ],
+    "migration / upgrade": [
+      "migration"
+    ],
+    "security": [
+      "security",
+      "pipeline_security"
+    ],
+    "cli reference": [
+      "cli"
+    ],
+    "integrations": [
+      "integration"
+    ],
+    "deployment / production": [
+      "operations"
+    ],
+    "pricing / limits": [
+      "rate_limits"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://docs.gitlab.com/releases/",
+      "h1": "GitLab release notes",
+      "h2": []
+    },
+    {
+      "url": "https://docs.gitlab.com/claude/",
+      "h1": "",
+      "h2": [
+        "Output requirements",
+        "Common mistakes to avoid in AI-generated documentation"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/administration/",
+      "h1": "Administer GitLab",
+      "h2": []
+    },
+    {
+      "url": "https://docs.gitlab.com/auth/",
+      "h1": "Authentication and authorization",
+      "h2": []
+    },
+    {
+      "url": "https://docs.gitlab.com/cloud_seed/",
+      "h1": "Cloud Seed",
+      "h2": [
+        "Purpose",
+        "Why Google Cloud",
+        "Deploy to Google Cloud Run",
+        "Provision Cloud SQL Databases",
+        "Contribute to Cloud Seed"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/development/",
+      "h1": "Contribute to development",
+      "h2": []
+    },
+    {
+      "url": "https://docs.gitlab.com/editor_extensions/",
+      "h1": "Editor extensions",
+      "h2": [
+        "Available extensions",
+        "Security considerations",
+        "Editor extensions team runbook",
+        "Feedback and contributions",
+        "Related topics"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/api/",
+      "h1": "Extend with GitLab",
+      "h2": []
+    },
+    {
+      "url": "https://docs.gitlab.com/ci/",
+      "h1": "Get started with GitLab CI/CD",
+      "h2": [
+        "Step 1: Configure your pipeline",
+        "Step 2: Find or create runners",
+        "Step 3: Use CI/CD variables and expressions",
+        "Step 4: Use CI/CD components"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/cli/",
+      "h1": "GitLab CLI (glab)",
+      "h2": [
+        "Install the CLI",
+        "Authenticate with GitLab",
+        "Pagination",
+        "Environment Variables",
+        "Options",
+        "Commands",
+        "Report issues"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/archives/",
+      "h1": "GitLab Docs Archives",
+      "h2": [
+        "Default Version",
+        "Previously released versions",
+        "Offline archives"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/charts/",
+      "h1": "GitLab Helm chart",
+      "h2": [
+        "Learn more"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/operator/",
+      "h1": "GitLab Operator",
+      "h2": [
+        "Known issues",
+        "Installation",
+        "Upgrading",
+        "Backup and restore",
+        "Using RedHat certified images",
+        "Developer Tooling",
+        "Merge request reviews"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/orbit/",
+      "h1": "GitLab Orbit",
+      "h2": [
+        "GitLab Orbit Remote",
+        "GitLab Orbit Local",
+        "GitLab Orbit on GitLab Self-Managed",
+        "What GitLab Orbit indexes",
+        "Get started"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/runner/",
+      "h1": "GitLab Runner",
+      "h2": [
+        "What GitLab Runner does",
+        "Runner execution flow",
+        "Runner deployment options",
+        "GitLab Runner versions",
+        "Troubleshooting",
+        "Glossary",
+        "Contributing",
+        "Changelog",
+        "License"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/devsecops/",
+      "h1": "GitLab: The DevSecOps platform",
+      "h2": [
+        "DevSecOps compared to DevOps",
+        "DevSecOps fundamentals",
+        "DevSecOps in practice",
+        "Is DevSecOps right for you?"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/install/",
+      "h1": "Install GitLab",
+      "h2": []
+    },
+    {
+      "url": "https://docs.gitlab.com/integration/",
+      "h1": "Integrate with GitLab",
+      "h2": [
+        "Project integrations",
+        "Issue trackers",
+        "Authentication providers",
+        "Security improvements",
+        "Troubleshooting"
+      ]
+    },
+    {
+      "url": "https://docs.gitlab.com/tutorials/",
+      "h1": "Learn GitLab with tutorials",
+      "h2": []
+    },
+    {
+      "url": "https://docs.gitlab.com/legal/",
+      "h1": "Legal",
+      "h2": []
+    }
+  ]
+}

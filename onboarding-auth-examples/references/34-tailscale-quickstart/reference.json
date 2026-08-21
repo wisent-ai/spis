@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Tailscale — quickstart",
+  "product_url": "https://tailscale.com/kb/1017/install",
+  "evidence_status": "partial",
+  "upstream_owner": "Tailscale Inc.",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=sPdvyR7bLqI",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 881604,
+      "sha256": "372f2b6329f35134be4666a0afbed3fe2d1ee4b0570028419877512ed66e9224",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "client ready",
+      "local_path": "media/state-01-client-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 14.5s (mean abs diff 1.7617/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 177217,
+      "sha256": "fe5f11a15b51a429dd75abd5e37fc574efd530e091b578dd4025e794968e310d",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 14.5,
+        "mean_abs_diff": 1.7617,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "auth handoff",
+      "local_path": "media/state-02-auth-handoff.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 20s (mean abs diff 1.9727/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 8218,
+      "sha256": "e068f7f6833b750bba619531dd2d451b675aaee3a09dd5e912d690510350e53d",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 20.0,
+        "mean_abs_diff": 1.9727,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "identity verified",
+      "local_path": "media/state-03-identity-verified.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 1.582/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 151820,
+      "sha256": "cf97f3bf98bfe8539e202bd56dcb6fa0f7702801ad70762a884f4c311c7bf2f6",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 35.0,
+        "mean_abs_diff": 1.582,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "device connected",
+      "local_path": "media/state-04-device-connected.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 1.8438/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 158180,
+      "sha256": "b17d04b82d2d1f72a9c2b9a2a6dc2a39c7c290a7d7fdac19230fefb7ba5ffa45",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 50.0,
+        "mean_abs_diff": 1.8438,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "device enrolled",
+      "local_path": "media/state-05-device-enrolled.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 1.5273/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 162467,
+      "sha256": "72f38d0fade7d082925514afaca67174d706a65597e79f242ecb0c7341ece2e3",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.5,
+        "mean_abs_diff": 1.5273,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "first connection",
+      "local_path": "media/state-06-first-connection.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 81s (mean abs diff 2.1016/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 163916,
+      "sha256": "a807bbfb6ed40e4eb92ed53e0a8ab32ef311a048cbf77f2a003009b4a4322624",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 81.0,
+        "mean_abs_diff": 2.1016,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Install and launch Tailscale",
+      "response": "Tailscale exposes the sign-in action",
+      "feedback": "The retained client ready state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-client-ready.png @ 4.50s; https://tailscale.com/kb/1017/install"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Choose Sign in",
+      "response": "Tailscale opens browser authentication",
+      "feedback": "The recording advances to auth handoff and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-client-ready.png @ 4.50s; media/state-02-auth-handoff.png @ 19.79s; https://tailscale.com/kb/1017/install"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Select and complete the identity-provider flow",
+      "response": "Tailscale confirms authorization for the tailnet",
+      "feedback": "The navigation result is visible as identity verified.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-auth-handoff.png @ 19.79s; media/state-03-identity-verified.png @ 35.07s; https://tailscale.com/kb/1017/install"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Return to the client",
+      "response": "The client reports connected status and assigned address",
+      "feedback": "The official recording shows the confirmed device connected state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-identity-verified.png @ 35.07s; media/state-04-device-connected.png @ 50.36s; https://tailscale.com/kb/1017/install"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-auth-handoff.png @ 19.79s; media/state-03-identity-verified.png @ 35.07s; media/state-04-device-connected.png @ 50.36s; https://tailscale.com/kb/1017/install"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Open the admin device list",
+      "response": "The new device appears with identity and status",
+      "feedback": "Progress is observable as the distinct device enrolled state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-device-connected.png @ 50.36s; media/state-05-device-enrolled.png @ 65.65s; https://tailscale.com/kb/1017/install"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-identity-verified.png @ 35.07s; media/state-04-device-connected.png @ 50.36s; media/state-05-device-enrolled.png @ 65.65s; https://tailscale.com/kb/1017/install"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Reach another enrolled service or run the documented connectivity check",
+      "response": "The private connection succeeds, proving first network success",
+      "feedback": "The retained first connection state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-device-enrolled.png @ 65.65s; media/state-06-first-connection.png @ 80.94s; https://tailscale.com/kb/1017/install"
+    }
+  ],
+  "journey": {
+    "actor": "new Tailscale network owner",
+    "goal": "add the first device and verify private connectivity",
+    "prerequisites": [
+      "supported device",
+      "supported identity provider"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Install and launch Tailscale",
+        "system_response": "Tailscale exposes the sign-in action",
+        "state": "client ready",
+        "evidence": "media/state-01-client-ready.png; media/official-recording.mp4#t=4.497; https://tailscale.com/kb/1017/install"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose Sign in",
+        "system_response": "Tailscale opens browser authentication",
+        "state": "auth handoff",
+        "evidence": "media/state-02-auth-handoff.png; media/official-recording.mp4#t=19.785; https://tailscale.com/kb/1017/install"
+      },
+      {
+        "index": 3,
+        "user_action": "Select and complete the identity-provider flow",
+        "system_response": "Tailscale confirms authorization for the tailnet",
+        "state": "identity verified",
+        "evidence": "media/state-03-identity-verified.png; media/official-recording.mp4#t=35.074; https://tailscale.com/kb/1017/install"
+      },
+      {
+        "index": 4,
+        "user_action": "Return to the client",
+        "system_response": "The client reports connected status and assigned address",
+        "state": "device connected",
+        "evidence": "media/state-04-device-connected.png; media/official-recording.mp4#t=50.362; https://tailscale.com/kb/1017/install"
+      },
+      {
+        "index": 5,
+        "user_action": "Open the admin device list",
+        "system_response": "The new device appears with identity and status",
+        "state": "device enrolled",
+        "evidence": "media/state-05-device-enrolled.png; media/official-recording.mp4#t=65.651; https://tailscale.com/kb/1017/install"
+      },
+      {
+        "index": 6,
+        "user_action": "Reach another enrolled service or run the documented connectivity check",
+        "system_response": "The private connection succeeds, proving first network success",
+        "state": "first connection",
+        "evidence": "media/state-06-first-connection.png; media/official-recording.mp4#t=80.940; https://tailscale.com/kb/1017/install"
+      }
+    ],
+    "failure_route": [
+      "At auth handoff or identity verified, invalid, expired, denied, or missing required input leaves the flow short of first connection; evidence: media/state-02-auth-handoff.png, media/state-03-identity-verified.png, and https://tailscale.com/kb/1017/install.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-identity-verified.png through media/state-05-device-enrolled.png."
+    ],
+    "recovery_route": [
+      "Return to the retained auth handoff or identity verified requirement, correct or resend the blocking input, and resubmit; evidence: https://tailscale.com/kb/1017/install.",
+      "Continue through the same terminal action until first connection is visible in media/state-06-first-connection.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "first connection retained at media/state-06-first-connection.png and media/official-recording.mp4#t=80.940; source https://tailscale.com/kb/1017/install"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-client-ready.png and media/state-02-auth-handoff.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-identity-verified.png and media/state-04-device-connected.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

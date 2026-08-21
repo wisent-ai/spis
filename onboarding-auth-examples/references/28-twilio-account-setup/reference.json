@@ -1,0 +1,289 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Twilio — account setup",
+  "product_url": "https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account",
+  "evidence_status": "partial",
+  "upstream_owner": "Twilio Inc.",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=UBjMm_nb45U",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 507047,
+      "sha256": "f43f41be9a886c6f82aa519d692cc79de7804aadba3ef07965378564257b07c8",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "account entry",
+      "local_path": "media/state-01-account-entry.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 4s (mean abs diff 1.8164/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 168585,
+      "sha256": "a076dfd9bc43b58712a7a77403f13eaf152724020c2c4da9d4b4b282ada64cbc",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.0,
+        "mean_abs_diff": 1.8164,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "identity verified",
+      "local_path": "media/state-02-identity-verified.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.7734/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 37235,
+      "sha256": "5b3ff3e25e4912ef8c244c4acccc423efdf92fd552555e17088ae024a91397f9",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 19.5,
+        "mean_abs_diff": 1.7734,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "project ready",
+      "local_path": "media/state-03-project-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 34s (mean abs diff 1.0273/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 9351,
+      "sha256": "a38f180c7b635f36853033563cb99178deb14a86fd5556749b1a94e1cff35225",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 34.0,
+        "mean_abs_diff": 1.0273,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "verification service",
+      "local_path": "media/state-04-verification-service.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 51.5s (mean abs diff 1.2773/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 21936,
+      "sha256": "e895772a3c31f7c5b671618f2329ec898c240eb5f3c4455f4db0e38a06cf52f4",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 51.5,
+        "mean_abs_diff": 1.2773,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "code sent",
+      "local_path": "media/state-05-code-sent.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 1.8594/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 181778,
+      "sha256": "26f8030b650d7672746a2dd163c3271a895ab4eafa3cec89ebbc62303b324c0e",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.5,
+        "mean_abs_diff": 1.8594,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "verification approved",
+      "local_path": "media/state-06-verification-approved.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 80.5s (mean abs diff 1.8555/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 80183,
+      "sha256": "3ce37dc50389974a0ddb64aefb8285e641e6867d1513d9ccc948b826a29644a1",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 80.5,
+        "mean_abs_diff": 1.8555,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Create or sign in to a Twilio account",
+      "response": "Twilio opens account and trial setup",
+      "feedback": "The retained account entry state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-account-entry.png @ 4.50s; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Verify email and phone ownership",
+      "response": "Twilio marks identity channels verified",
+      "feedback": "The recording advances to identity verified and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-account-entry.png @ 4.50s; media/state-02-identity-verified.png @ 19.79s; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Create or select the project",
+      "response": "Twilio exposes account credentials and console navigation",
+      "feedback": "The navigation result is visible as project ready.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-project-ready.png @ 35.07s; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Create a Verify service or use the guided setup",
+      "response": "Twilio returns service configuration",
+      "feedback": "The official recording shows the confirmed verification service state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-project-ready.png @ 35.07s; media/state-04-verification-service.png @ 50.36s; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-project-ready.png @ 35.07s; media/state-04-verification-service.png @ 50.36s; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Send a one-time code to the test recipient",
+      "response": "Twilio reports delivery state",
+      "feedback": "Progress is observable as the distinct code sent state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-verification-service.png @ 50.36s; media/state-05-code-sent.png @ 65.65s; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-project-ready.png @ 35.07s; media/state-04-verification-service.png @ 50.36s; media/state-05-code-sent.png @ 65.65s; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Submit the received code for checking",
+      "response": "Twilio returns approved status, proving first verification success",
+      "feedback": "The retained verification approved state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-code-sent.png @ 65.65s; media/state-06-verification-approved.png @ 80.94s; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+    }
+  ],
+  "journey": {
+    "actor": "new Twilio developer",
+    "goal": "verify identity and complete the first verification check",
+    "prerequisites": [
+      "Twilio account",
+      "phone able to receive verification",
+      "test application or console access"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Create or sign in to a Twilio account",
+        "system_response": "Twilio opens account and trial setup",
+        "state": "account entry",
+        "evidence": "media/state-01-account-entry.png; media/official-recording.mp4#t=4.497; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+      },
+      {
+        "index": 2,
+        "user_action": "Verify email and phone ownership",
+        "system_response": "Twilio marks identity channels verified",
+        "state": "identity verified",
+        "evidence": "media/state-02-identity-verified.png; media/official-recording.mp4#t=19.785; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+      },
+      {
+        "index": 3,
+        "user_action": "Create or select the project",
+        "system_response": "Twilio exposes account credentials and console navigation",
+        "state": "project ready",
+        "evidence": "media/state-03-project-ready.png; media/official-recording.mp4#t=35.074; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+      },
+      {
+        "index": 4,
+        "user_action": "Create a Verify service or use the guided setup",
+        "system_response": "Twilio returns service configuration",
+        "state": "verification service",
+        "evidence": "media/state-04-verification-service.png; media/official-recording.mp4#t=50.362; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+      },
+      {
+        "index": 5,
+        "user_action": "Send a one-time code to the test recipient",
+        "system_response": "Twilio reports delivery state",
+        "state": "code sent",
+        "evidence": "media/state-05-code-sent.png; media/official-recording.mp4#t=65.651; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+      },
+      {
+        "index": 6,
+        "user_action": "Submit the received code for checking",
+        "system_response": "Twilio returns approved status, proving first verification success",
+        "state": "verification approved",
+        "evidence": "media/state-06-verification-approved.png; media/official-recording.mp4#t=80.940; https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+      }
+    ],
+    "failure_route": [
+      "At identity verified or project ready, invalid, expired, denied, or missing required input leaves the flow short of verification approved; evidence: media/state-02-identity-verified.png, media/state-03-project-ready.png, and https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-project-ready.png through media/state-05-code-sent.png."
+    ],
+    "recovery_route": [
+      "Return to the retained identity verified or project ready requirement, correct or resend the blocking input, and resubmit; evidence: https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account.",
+      "Continue through the same terminal action until verification approved is visible in media/state-06-verification-approved.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "verification approved retained at media/state-06-verification-approved.png and media/official-recording.mp4#t=80.940; source https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-account-entry.png and media/state-02-identity-verified.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-project-ready.png and media/state-04-verification-service.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

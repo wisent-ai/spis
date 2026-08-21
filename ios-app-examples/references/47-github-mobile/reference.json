@@ -1,0 +1,259 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "GitHub Mobile",
+  "product_url": "https://github.com/mobile",
+  "evidence_status": "partial",
+  "upstream_owner": "GitHub Mobile product owner; recording published by GitHub",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=ObPdcm6jWoQ",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 73.067,
+      "frame_count": 1096,
+      "bytes": 1532640,
+      "sha256": "3ca957c438eaa232ba0733954d307190d728ffd25d3e6e38a2311664d0e87981",
+      "capture_method": "official publisher YouTube stream downloaded from the product/vendor channel and transcoded to H.264 MP4; no frames synthesized",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "entry / orientation",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 10.5s (mean abs diff 2.2695/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 253807,
+      "sha256": "af1f37cd42f7fce92f84aa0355ddb4a80164f65d68bc559630f1cc20a2d58477",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 10.5,
+        "mean_abs_diff": 2.2695,
+        "sampled_frames": 146
+      }
+    },
+    {
+      "name": "action in progress",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 32.5s (mean abs diff 2.8672/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 235729,
+      "sha256": "82f8717eb58db1f0bbdcdb6c06f380d2c1c91d9ef4d6ef5327510519734de5cb",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 32.5,
+        "mean_abs_diff": 2.8672,
+        "sampled_frames": 146
+      }
+    },
+    {
+      "name": "result / established state",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 62s (mean abs diff 1.6367/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 248396,
+      "sha256": "5dae18d3a8ad95688ce7218b3775d4b9477dd4b33a51cb5eafdeb91c5f69ce12",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 62.0,
+        "mean_abs_diff": 1.6367,
+        "sampled_frames": 146
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "select a repository or notification",
+      "response": "The primary task surface opens.",
+      "feedback": "Selection highlight and surface transition make the response visible.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through perform and confirm an action to the visible result.",
+      "evidence": "media/motion.mp4 00:08.8–00:20.5"
+    },
+    {
+      "name": "focus / selection",
+      "trigger": "open the work item",
+      "response": "The chosen field, row, item, or canvas becomes the active target.",
+      "feedback": "The target changes emphasis or reveals contextual controls.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through perform and confirm an action to the visible result.",
+      "evidence": "media/motion.mp4 00:19.0–00:32.1"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Open GitHub Mobile",
+      "response": "The app moves from entry context to the task destination.",
+      "feedback": "Header, content, or navigation state changes.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through perform and confirm an action to the visible result.",
+      "evidence": "media/motion.mp4 00:02.9–00:17.5"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "perform and confirm an action",
+      "response": "The pending action commits and the result transition begins.",
+      "feedback": "A changed state, progress response, or completed item acknowledges the commit.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through perform and confirm an action to the visible result.",
+      "evidence": "media/motion.mp4 00:42.4–00:55.5"
+    },
+    {
+      "name": "cancellation / backtracking",
+      "trigger": "Withhold or reverse the visible commit while the recorded pre-confirmation state is on screen.",
+      "response": "The task remains in its pre-result state; the success artifact is absent.",
+      "feedback": "The unchanged/incomplete state distinguishes cancellation from completion.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through perform and confirm an action to the visible result.",
+      "evidence": "media/motion.mp4 00:27.8–00:42.4"
+    },
+    {
+      "name": "feedback",
+      "trigger": "Complete a visible selection or commit.",
+      "response": "The interface updates immediately or after a bounded progress transition.",
+      "feedback": "Motion, highlight, changed content, or result placement communicates status.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through perform and confirm an action to the visible result.",
+      "evidence": "media/motion.mp4 00:45.3–01:04.3"
+    },
+    {
+      "name": "failure",
+      "trigger": "Reach the recorded pre-confirmation state without issuing the final commit.",
+      "response": "The intended result is not yet present, so the goal remains incomplete.",
+      "feedback": "The pre-result surface remains visibly distinct from state-03.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through perform and confirm an action to the visible result.",
+      "evidence": "media/motion.mp4 00:23.4–00:40.2"
+    },
+    {
+      "name": "recovery",
+      "trigger": "Continue from the incomplete state and perform and confirm an action.",
+      "response": "The product resumes the path and produces the visible result.",
+      "feedback": "The final state replaces the incomplete state.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through perform and confirm an action to the visible result.",
+      "evidence": "media/motion.mp4 00:38.0–01:07.2"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning iPhone user with the minimum product account/device prerequisites",
+    "goal": "Use GitHub Mobile on a repository",
+    "prerequisites": [
+      "Compatible iPhone and current iOS version",
+      "Product installed or product-native flow available",
+      "Network/account/permission access only where the observed flow requests it"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open GitHub Mobile",
+        "system_response": "The product exposes its initial context and available next action.",
+        "state": "entry",
+        "evidence": "media/motion.mp4 at 00:03.7"
+      },
+      {
+        "index": 2,
+        "user_action": "select a repository or notification",
+        "system_response": "The selected destination or task surface replaces or overlays the prior state.",
+        "state": "selection",
+        "evidence": "media/motion.mp4 at 00:18.3"
+      },
+      {
+        "index": 3,
+        "user_action": "open the work item",
+        "system_response": "The product reflects the entered choice or manipulation and exposes the next control.",
+        "state": "configuration",
+        "evidence": "media/motion.mp4 at 00:32.9"
+      },
+      {
+        "index": 4,
+        "user_action": "perform and confirm an action",
+        "system_response": "The product acknowledges the commit and transitions toward the result.",
+        "state": "confirmation",
+        "evidence": "media/motion.mp4 at 00:47.5"
+      },
+      {
+        "index": 5,
+        "user_action": "see the repository state update",
+        "system_response": "The completed result remains visible as durable evidence of first success.",
+        "state": "first success",
+        "evidence": "media/motion.mp4 at 01:02.1"
+      }
+    ],
+    "failure_route": [
+      {
+        "step": 1,
+        "user_action": "Stop at the recorded pre-confirmation state instead of committing.",
+        "system_response": "The intended result is absent at this point; the first-success goal remains incomplete.",
+        "evidence": "media/motion.mp4 00:23.4–00:42.4"
+      }
+    ],
+    "recovery_route": [
+      {
+        "step": 1,
+        "user_action": "Continue from the retained incomplete state and perform and confirm an action.",
+        "system_response": "The confirmation transition resumes from the same observed flow.",
+        "evidence": "media/motion.mp4 00:36.5–00:52.6"
+      },
+      {
+        "step": 2,
+        "user_action": "see the repository state update",
+        "system_response": "The product shows the documented first-success result: see the repository state update.",
+        "evidence": "media/motion.mp4 00:49.7–01:08.7"
+      }
+    ],
+    "completion_evidence": "media/motion.mp4 at 01:02.1 and media/state-03.png"
+  },
+  "accessibility": {
+    "observations": [
+      "Visible text labels and state changes supplement iconography in the retained recording.",
+      "Selection, progress, or completion is communicated by a changed product state rather than motion alone.",
+      "The retained frames preserve the visual context before, during, and after the principal action."
+    ],
+    "unknowns": [
+      "VoiceOver names, hints, rotor order, and focus return were not exposed by the source recording.",
+      "Dynamic Type behavior and text truncation at accessibility sizes were not exposed.",
+      "Reduce Motion behavior and a nonanimated equivalent were not exposed.",
+      "Switch Control, keyboard navigation, contrast ratios, and haptic/audio-only feedback were not measured."
+    ]
+  },
+  "motion_analysis": {
+    "source_title": "What is GitHub Mobile?",
+    "trigger": "select a repository or notification",
+    "start_state": "entry / orientation",
+    "end_state": "result / established state",
+    "continuity": "The recording retains the real product transition sequence; transcoding changes encoding only and does not synthesize intermediate frames.",
+    "timing_class": "multi-second",
+    "feedback": "Selection emphasis, surface transition, content change, or result placement provides visible acknowledgment.",
+    "interruption_or_reversal": "The retained pre-confirmation state supplies the reversible boundary: withholding or reversing commit leaves the result absent; continuing through confirmation reaches the end state. Exact gesture-interruption semantics are unknown unless visibly demonstrated.",
+    "reduced_motion_equivalent": "Unknown from the retained source; no reduced-motion claim is inferred.",
+    "timing_description": "extended guided walkthrough"
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

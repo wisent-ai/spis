@@ -1,0 +1,771 @@
+{
+  "name": "Go Documentation",
+  "source_url": "https://go.dev/doc/",
+  "category": "Programming language documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "landing-nav (the landing is the table of contents)",
+  "inventory_url_count": 114,
+  "landing_nav": [
+    {
+      "text": "Case Studies",
+      "path": "/solutions/case-studies"
+    },
+    {
+      "text": "Use Cases",
+      "path": "/solutions/use-cases"
+    },
+    {
+      "text": "Security",
+      "path": "/security/"
+    },
+    {
+      "text": "Learn",
+      "path": "/learn/"
+    },
+    {
+      "text": "Go Spec",
+      "path": "/ref/spec"
+    },
+    {
+      "text": "Go User Manual",
+      "path": "/doc"
+    },
+    {
+      "text": "Release Notes",
+      "path": "/doc/devel/release"
+    },
+    {
+      "text": "Effective Go",
+      "path": "/doc/effective_go"
+    },
+    {
+      "text": "Recorded Talks",
+      "path": "/talks/"
+    },
+    {
+      "text": "Conferences open_in_new",
+      "path": "/wiki/Conferences"
+    },
+    {
+      "text": "Go blog",
+      "path": "/blog"
+    },
+    {
+      "text": "Go project",
+      "path": "/help"
+    },
+    {
+      "text": "Installing Go",
+      "path": "/doc/install"
+    },
+    {
+      "text": "Tutorial: Getting started",
+      "path": "/doc/tutorial/getting-started.html"
+    },
+    {
+      "text": "Tutorial: Create a module",
+      "path": "/doc/tutorial/create-module.html"
+    },
+    {
+      "text": "Tutorial: Getting started with multi-module workspaces",
+      "path": "/doc/tutorial/workspaces.html"
+    },
+    {
+      "text": "Tutorial: Developing a RESTful API with Go and Gin",
+      "path": "/doc/tutorial/web-service-gin.html"
+    },
+    {
+      "text": "Tutorial: Getting started with generics",
+      "path": "/doc/tutorial/generics.html"
+    },
+    {
+      "text": "Tutorial: Getting started with fuzzing",
+      "path": "/doc/tutorial/fuzz.html"
+    },
+    {
+      "text": "Writing Web Applications",
+      "path": "/doc/articles/wiki/"
+    },
+    {
+      "text": "How to write Go code",
+      "path": "/doc/code.html"
+    },
+    {
+      "text": "go command",
+      "path": "/cmd/go/"
+    },
+    {
+      "text": "A Tour of Go",
+      "path": "/tour/"
+    },
+    {
+      "text": "take the tour online",
+      "path": "/tour/"
+    },
+    {
+      "text": "Effective Go",
+      "path": "/doc/effective_go.html"
+    },
+    {
+      "text": "Frequently Asked Questions (FAQ)",
+      "path": "/doc/faq"
+    },
+    {
+      "text": "Editor plugins and IDEs",
+      "path": "/doc/editors.html"
+    },
+    {
+      "text": "Diagnostics",
+      "path": "/doc/diagnostics.html"
+    },
+    {
+      "text": "A Guide to the Go Garbage Collector",
+      "path": "/doc/gc-guide"
+    },
+    {
+      "text": "Managing dependencies",
+      "path": "/doc/modules/managing-dependencies"
+    },
+    {
+      "text": "Fuzzing",
+      "path": "/security/fuzz"
+    },
+    {
+      "text": "Coverage for Go applications",
+      "path": "/doc/build-cover"
+    },
+    {
+      "text": "Profile-guided optimization",
+      "path": "/doc/pgo"
+    },
+    {
+      "text": "encoding/json/v2 Migration Guide",
+      "path": "/doc/jsonv2-migration"
+    },
+    {
+      "text": "Package Documentation",
+      "path": "/pkg/"
+    },
+    {
+      "text": "Command Documentation",
+      "path": "/doc/cmd"
+    },
+    {
+      "text": "Language Specification",
+      "path": "/ref/spec"
+    },
+    {
+      "text": "Go Modules Reference",
+      "path": "/ref/mod"
+    },
+    {
+      "text": "go.mod file reference",
+      "path": "/doc/modules/gomod-ref"
+    },
+    {
+      "text": "The Go Memory Model",
+      "path": "/ref/mem"
+    },
+    {
+      "text": "Contribution Guide",
+      "path": "/doc/contribute"
+    },
+    {
+      "text": "Release History",
+      "path": "/doc/devel/release.html"
+    },
+    {
+      "text": "Tutorial: Accessing a relational database",
+      "path": "/doc/tutorial/database-access"
+    },
+    {
+      "text": "Accessing relational databases",
+      "path": "/doc/database/index"
+    },
+    {
+      "text": "Opening a database handle",
+      "path": "/doc/database/open-handle"
+    },
+    {
+      "text": "Executing SQL statements that don't return data",
+      "path": "/doc/database/change-data"
+    },
+    {
+      "text": "Querying for data",
+      "path": "/doc/database/querying"
+    },
+    {
+      "text": "Using prepared statements",
+      "path": "/doc/database/prepared-statements"
+    },
+    {
+      "text": "Executing transactions",
+      "path": "/doc/database/execute-transactions"
+    },
+    {
+      "text": "Canceling in-progress database operations",
+      "path": "/doc/database/cancel-operations"
+    },
+    {
+      "text": "Managing connections",
+      "path": "/doc/database/manage-connections"
+    },
+    {
+      "text": "Avoiding SQL injection risk",
+      "path": "/doc/database/sql-injection"
+    },
+    {
+      "text": "Developing and publishing modules",
+      "path": "/doc/modules/developing"
+    },
+    {
+      "text": "Module release and versioning workflow",
+      "path": "/doc/modules/release-workflow"
+    },
+    {
+      "text": "Managing module source",
+      "path": "/doc/modules/managing-source"
+    },
+    {
+      "text": "Organizing a Go module",
+      "path": "/doc/modules/layout"
+    },
+    {
+      "text": "Developing a major version update",
+      "path": "/doc/modules/major-version"
+    },
+    {
+      "text": "Publishing a module",
+      "path": "/doc/modules/publishing"
+    },
+    {
+      "text": "Module version numbering",
+      "path": "/doc/modules/version-numbers"
+    },
+    {
+      "text": "Go Talks site",
+      "path": "/talks"
+    },
+    {
+      "text": "wiki page",
+      "path": "/wiki/GoTalks"
+    },
+    {
+      "text": "First-Class Functions in Go",
+      "path": "/doc/codewalk/functions"
+    },
+    {
+      "text": "Generating arbitrary text: a Markov chain algorithm",
+      "path": "/doc/codewalk/markov"
+    },
+    {
+      "text": "Share Memory by Communicating",
+      "path": "/doc/codewalk/sharemem"
+    },
+    {
+      "text": "JSON-RPC: a tale of interfaces",
+      "path": "/blog/json-rpc-tale-of-interfaces"
+    },
+    {
+      "text": "Go's Declaration Syntax",
+      "path": "/blog/gos-declaration-syntax"
+    },
+    {
+      "text": "Defer, Panic, and Recover",
+      "path": "/blog/defer-panic-and-recover"
+    },
+    {
+      "text": "Go Concurrency Patterns: Timing out, moving on",
+      "path": "/blog/go-concurrency-patterns-timing-out-and"
+    },
+    {
+      "text": "Go Slices: usage and internals",
+      "path": "/blog/go-slices-usage-and-internals"
+    },
+    {
+      "text": "A GIF decoder: an exercise in Go interfaces",
+      "path": "/blog/gif-decoder-exercise-in-go-interfaces"
+    },
+    {
+      "text": "Error Handling and Go",
+      "path": "/blog/error-handling-and-go"
+    },
+    {
+      "text": "Working with JSON",
+      "path": "/doc/tutorial/json"
+    },
+    {
+      "text": "json",
+      "path": "/pkg/encoding/json/v2"
+    },
+    {
+      "text": "Gobs of data",
+      "path": "/blog/gobs-of-data"
+    },
+    {
+      "text": "gob",
+      "path": "/pkg/encoding/gob/"
+    },
+    {
+      "text": "The Laws of Reflection",
+      "path": "/blog/laws-of-reflection"
+    },
+    {
+      "text": "reflect",
+      "path": "/pkg/reflect/"
+    },
+    {
+      "text": "The Go image package",
+      "path": "/blog/go-image-package"
+    },
+    {
+      "text": "image",
+      "path": "/pkg/image/"
+    },
+    {
+      "text": "The Go image/draw package",
+      "path": "/blog/go-imagedraw-package"
+    },
+    {
+      "text": "image/draw",
+      "path": "/pkg/image/draw/"
+    },
+    {
+      "text": "Using Go Modules",
+      "path": "/blog/using-go-modules"
+    },
+    {
+      "text": "Migrating to Go Modules",
+      "path": "/blog/migrating-to-go-modules"
+    },
+    {
+      "text": "Publishing Go Modules",
+      "path": "/blog/publishing-go-modules"
+    },
+    {
+      "text": "Go Modules: v2 and Beyond",
+      "path": "/blog/v2-go-modules"
+    },
+    {
+      "text": "Keeping Your Modules Compatible",
+      "path": "/blog/module-compatibility"
+    },
+    {
+      "text": "About the Go command",
+      "path": "/doc/articles/go_command.html"
+    },
+    {
+      "text": "Go Doc Comments",
+      "path": "/doc/comment"
+    },
+    {
+      "text": "Debugging Go Code with GDB",
+      "path": "/doc/gdb"
+    },
+    {
+      "text": "Data Race Detector",
+      "path": "/doc/articles/race_detector.html"
+    },
+    {
+      "text": "A Quick Guide to Go's Assembler",
+      "path": "/doc/asm"
+    },
+    {
+      "text": "C? Go? Cgo!",
+      "path": "/blog/c-go-cgo"
+    },
+    {
+      "text": "cgo",
+      "path": "/cmd/cgo/"
+    },
+    {
+      "text": "Profiling Go Programs",
+      "path": "/blog/profiling-go-programs"
+    },
+    {
+      "text": "Introducing the Go Race Detector",
+      "path": "/blog/race-detector"
+    },
+    {
+      "text": "Gopls: The language server for Go",
+      "path": "/gopls"
+    },
+    {
+      "text": "Go Wiki",
+      "path": "/wiki"
+    },
+    {
+      "text": "Learn",
+      "path": "/wiki/Learn"
+    },
+    {
+      "text": "Wiki",
+      "path": "/wiki"
+    },
+    {
+      "text": "NonEnglish",
+      "path": "/wiki/NonEnglish"
+    },
+    {
+      "text": "Why Go",
+      "path": "/solutions/"
+    },
+    {
+      "text": "Get Started",
+      "path": "/learn/"
+    },
+    {
+      "text": "Playground",
+      "path": "/play"
+    },
+    {
+      "text": "Tour",
+      "path": "/tour/"
+    },
+    {
+      "text": "Help",
+      "path": "/help/"
+    },
+    {
+      "text": "Standard Library",
+      "path": "/pkg/"
+    },
+    {
+      "text": "About",
+      "path": "/project"
+    },
+    {
+      "text": "Download",
+      "path": "/dl/"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog/"
+    },
+    {
+      "text": "Brand Guidelines",
+      "path": "/brand"
+    },
+    {
+      "text": "Code of Conduct",
+      "path": "/conduct"
+    },
+    {
+      "text": "Copyright",
+      "path": "/copyright"
+    },
+    {
+      "text": "Terms of Service",
+      "path": "/tos"
+    },
+    {
+      "text": "Report an Issue",
+      "path": "/s/website-issue"
+    }
+  ],
+  "url_sections": {
+    "doc": 51,
+    "blog": 21,
+    "pkg": 7,
+    "wiki": 6,
+    "ref": 4,
+    "solutions": 3,
+    "tour": 3,
+    "security": 2,
+    "learn": 2,
+    "talks": 2,
+    "help": 2,
+    "cmd": 2,
+    "gopls": 1,
+    "play": 1,
+    "project": 1,
+    "brand": 1,
+    "conduct": 1,
+    "copyright": 1,
+    "tos": 1,
+    "s": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "learn",
+      "/learn/",
+      "/wiki/learn",
+      "/doc/tutorial/json"
+    ],
+    "getting started / quickstart": [
+      "get started",
+      "tutorial: getting started",
+      "/doc/tutorial/getting-started.html",
+      "tutorial: getting started with fuzzing"
+    ],
+    "guides / how-to": [
+      "/doc/gc-guide",
+      "contribution guide",
+      "how to write go code",
+      "a quick guide to go's assembler"
+    ],
+    "api reference": [
+      "go modules reference",
+      "go.mod file reference",
+      "tutorial: developing a restful api with go and gin"
+    ],
+    "changelog / release notes": [
+      "release notes"
+    ],
+    "troubleshooting / errors": [
+      "diagnostics",
+      "/doc/diagnostics.html",
+      "error handling and go",
+      "debugging go code with gdb"
+    ],
+    "migration / upgrade": [
+      "/doc/jsonv2-migration",
+      "migrating to go modules",
+      "/blog/migrating-to-go-modules",
+      "encoding/json/v2 migration guide"
+    ],
+    "security": [
+      "security",
+      "/security/",
+      "/security/fuzz"
+    ],
+    "faq": [
+      "/doc/faq",
+      "frequently asked questions (faq)"
+    ],
+    "playground / sandbox": [
+      "playground"
+    ],
+    "concepts / architecture": [
+      "go slices: usage and internals",
+      "/blog/go-slices-usage-and-internals"
+    ],
+    "deployment / production": [
+      "/doc/database/cancel-operations",
+      "canceling in-progress database operations"
+    ],
+    "contributing": [
+      "/doc/contribute",
+      "contribution guide"
+    ],
+    "versioned docs": [
+      "/blog/v2-go-modules",
+      "/pkg/encoding/json/v2",
+      "module version numbering",
+      "/doc/modules/major-version"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://go.dev/doc",
+      "h1": "Documentation",
+      "h2": [
+        "Getting Started",
+        "Using and understanding Go",
+        "References",
+        "Accessing databases",
+        "Developing modules",
+        "Talks",
+        "Codewalks",
+        "Wiki",
+        "Non-English Documentation"
+      ]
+    },
+    {
+      "url": "https://go.dev/blog",
+      "h1": "The Go Blog",
+      "h2": []
+    },
+    {
+      "url": "https://go.dev/help",
+      "h1": "Help",
+      "h2": [
+        "Get help",
+        "Stay informed",
+        "Community resources"
+      ]
+    },
+    {
+      "url": "https://go.dev/talks",
+      "h1": "Go talks",
+      "h2": [
+        "talks"
+      ]
+    },
+    {
+      "url": "https://go.dev/gopls",
+      "h1": "Gopls: The language server for Go",
+      "h2": [
+        "Features",
+        "Editors",
+        "Installation",
+        "Releases",
+        "Setting up your workspace",
+        "Configuration",
+        "Support policy",
+        "Additional information"
+      ]
+    },
+    {
+      "url": "https://go.dev/wiki",
+      "h1": "Go Wiki: Home",
+      "h2": [
+        "Questions about Go",
+        "Contributing",
+        "Getting started with Go",
+        "Working with Go",
+        "Learning more about Go",
+        "The Go Community",
+        "Using the Go Toolchain",
+        "Additional Go Programming Wikis",
+        "Online Services that work with Go",
+        "Troubleshooting Go Programs in Production",
+        "Contributing to the Go Project",
+        "Platform Specific Information"
+      ]
+    },
+    {
+      "url": "https://go.dev/play",
+      "h1": "The Go Playground",
+      "h2": []
+    },
+    {
+      "url": "https://go.dev/project",
+      "h1": "The Go Project",
+      "h2": [
+        "Version history",
+        "Developer Resources",
+        "How you can help"
+      ]
+    },
+    {
+      "url": "https://go.dev/brand",
+      "h1": "Brand and Trademark Usage Guidelines",
+      "h2": [
+        "Trademark Guidelines",
+        "Use of the Go Trademarks",
+        "Naming Conventions for Authorized Uses",
+        "Use of the Go Logo",
+        "Authorization Non-Transferrable",
+        "Go Trademarks Enforcement",
+        "Guideline Version",
+        "Contact Us"
+      ]
+    },
+    {
+      "url": "https://go.dev/conduct",
+      "h1": "Go Community Code of Conduct",
+      "h2": [
+        "About",
+        "Gopher values",
+        "Code of Conduct",
+        "Summary"
+      ]
+    },
+    {
+      "url": "https://go.dev/copyright",
+      "h1": "Copyright",
+      "h2": []
+    },
+    {
+      "url": "https://go.dev/tos",
+      "h1": "Terms of Service",
+      "h2": []
+    },
+    {
+      "url": "https://go.dev/solutions/case-studies",
+      "h1": "",
+      "h2": [
+        "Using Go at Google",
+        "PayPal Taps Go to Modernize and Scale",
+        "American Express Uses Go for Payments & Rewards",
+        "Allegro – Writing a very fast cache service with millions of entries in Go",
+        "American Express Uses Go for Payments & Rewards",
+        "How Armut Labs use Go",
+        "Bitly - Why We Write Everything in Go",
+        "Massive practice in Go at ByteDance",
+        "Capital One - A Serverless and Go Journey",
+        "Graceful upgrades in Go",
+        "Cockroach Labs - Why We Chose to Build Our Database with Go",
+        "How Curve is getting ahead with Golang",
+        "Dropbox - Open sourcing our Go libraries",
+        "How Facebook built an entity framework in Go",
+        "Using Go at Google",
+        "Bigslice - A cluster computing system in Go",
+        "MercadoLibre Grows with Go",
+        "How Microsoft Embraces Go",
+        "Monzo – Building a Bank with Golang, Microservices and Containers",
+        "Netflix - Application data caching using SSDs"
+      ]
+    },
+    {
+      "url": "https://go.dev/security/",
+      "h1": "Security",
+      "h2": [
+        "Find and fix known vulnerabilities",
+        "Report security bugs in the Go project",
+        "Test unexpected inputs with fuzzing",
+        "Secure services with Go’s cryptography libraries",
+        "FIPS 140-3 compliant cryptography"
+      ]
+    },
+    {
+      "url": "https://go.dev/learn/",
+      "h1": "Install the latest version of Go",
+      "h2": []
+    },
+    {
+      "url": "https://go.dev/ref/spec",
+      "h1": "The Go Programming Language Specification",
+      "h2": [
+        "Language version go1.27 (May 26, 2026)",
+        "Introduction",
+        "Notation",
+        "Source code representation",
+        "Lexical elements",
+        "Constants",
+        "Variables",
+        "Types",
+        "Properties of types and values",
+        "Blocks",
+        "Declarations and scope",
+        "Expressions",
+        "Statements",
+        "Built-in functions",
+        "Packages",
+        "Program initialization and execution",
+        "Errors",
+        "Run-time panics",
+        "System considerations",
+        "Appendix"
+      ]
+    },
+    {
+      "url": "https://go.dev/pkg/",
+      "h1": "Standard library",
+      "h2": [
+        "Details",
+        "Repository",
+        "Links",
+        "Directories ¶",
+        "Jump to",
+        "Keyboard shortcuts"
+      ]
+    },
+    {
+      "url": "https://go.dev/dl/",
+      "h1": "All releases",
+      "h2": [
+        "Featured downloads",
+        "Stable versions",
+        "Archived versions Show",
+        "Archived versions Hide"
+      ]
+    },
+    {
+      "url": "https://go.dev/s/website-issue",
+      "h1": "Sign in to GitHub",
+      "h2": []
+    }
+  ]
+}

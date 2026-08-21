@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921624,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Vagrant authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Vagrant\r\n"]
+[0.55,"o","cli-ref$ vagrant --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","Vagrant 2.4.9\r\n"]
+[2.2,"o","cli-ref$ vagrant --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage: vagrant [options] <command> [<args>]\r\n\r\n    -h, --help                       Print this help.\r\n\r\nCommon commands:\r\n     autocomplete    manages autocomplete installation on host\r\n     box             manages boxes: installation, removal, etc.\r\n     cloud           manages everything related to Vagrant Cloud\r\n     destroy         stops and deletes all traces of the vagrant machine\r\n     global-status   outputs status Vagrant environments for this user\r\n     halt            stops the vagrant machine\r\n     help            shows the help for a subcommand\r\n     init            initializes a new Vagrant environment by creating a Vagrantfile\r\n     login           \r\n"]
+[5.1,"o","cli-ref$ vagrant --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Usage: vagrant [options] <command> [<args>]\r\n\r\n    -h, --help                       Print this help.\r\n\r\nCommon commands:\r\n     autocomplete    manages autocomplete installation on host\r\n     box             manages boxes: installation, removal, etc.\r\n     cloud           manages everything related to Vagrant Cloud\r\n     destroy         stops and deletes all traces of the vagrant machine\r\n     global-status   outputs status Vagrant environments for this user\r\n     halt            stops the vagrant machine\r\n     help            shows the help for a subcommand\r\n     init            initializes a new Vagrant environment by creating a Vagrantfile\r\n     login           \r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ vagrant --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ vagrant --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage: vagrant [options] <command> [<args>]\r\n\r\n    -h, --help                       Print this help.\r\n\r\n"]

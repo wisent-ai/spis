@@ -1,0 +1,563 @@
+{
+  "name": "Twilio Documentation",
+  "source_url": "https://www.twilio.com/docs",
+  "category": "Communications API documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 22676,
+  "landing_nav": [
+    {
+      "text": "Global infrastructure",
+      "path": "/docs/global-infrastructure"
+    },
+    {
+      "text": "Helper libraries",
+      "path": "/docs/libraries"
+    },
+    {
+      "text": "IAM",
+      "path": "/docs/iam"
+    },
+    {
+      "text": "Setup Twilio phone number",
+      "path": "/docs/phone-numbers"
+    },
+    {
+      "text": "Pricing",
+      "path": "/en-us/pricing"
+    },
+    {
+      "text": "Try Twilio",
+      "path": "/try-twilio"
+    },
+    {
+      "text": "Building with AI",
+      "path": "/docs/ai"
+    },
+    {
+      "text": "Code Exchange",
+      "path": "/code-exchange"
+    },
+    {
+      "text": "Functions",
+      "path": "/docs/serverless/functions-assets"
+    },
+    {
+      "text": "Marketplace",
+      "path": "/docs/marketplace"
+    },
+    {
+      "text": "Open API",
+      "path": "/docs/openapi"
+    },
+    {
+      "text": "Serverless",
+      "path": "/docs/serverless"
+    },
+    {
+      "text": "Studio",
+      "path": "/docs/studio"
+    },
+    {
+      "text": "TwiML Bins",
+      "path": "/docs/serverless/twiml-bins"
+    },
+    {
+      "text": "Twilio CLI",
+      "path": "/docs/twilio-cli"
+    },
+    {
+      "text": "Changelog",
+      "path": "/en-us/changelog"
+    },
+    {
+      "text": "Error codes",
+      "path": "/docs/api/errors"
+    },
+    {
+      "text": "Glossary",
+      "path": "/docs/glossary"
+    },
+    {
+      "text": "Content Template Builder",
+      "path": "/docs/content"
+    },
+    {
+      "text": "Conversations",
+      "path": "/docs/conversations"
+    },
+    {
+      "text": "Conversations (classic)",
+      "path": "/docs/conversations-classic"
+    },
+    {
+      "text": "Elastic SIP Trunking",
+      "path": "/docs/sip-trunking"
+    },
+    {
+      "text": "Event Streams",
+      "path": "/docs/events"
+    },
+    {
+      "text": "Flex",
+      "path": "/docs/flex"
+    },
+    {
+      "text": "Interconnect",
+      "path": "/docs/interconnect"
+    },
+    {
+      "text": "Lookup",
+      "path": "/docs/lookup"
+    },
+    {
+      "text": "Marketing Campaigns",
+      "path": "/docs/sendgrid/ui/sending-email/how-to-send-email-with-marketing-campaigns"
+    },
+    {
+      "text": "Network Traversal Service",
+      "path": "/docs/stun-turn"
+    },
+    {
+      "text": "Notify",
+      "path": "/docs/notify"
+    },
+    {
+      "text": "Programmable Messaging",
+      "path": "/docs/messaging"
+    },
+    {
+      "text": "Proxy",
+      "path": "/docs/proxy"
+    },
+    {
+      "text": "Segment Connections",
+      "path": "/docs/segment/connections"
+    },
+    {
+      "text": "Segment Protocols",
+      "path": "/docs/segment/protocols"
+    },
+    {
+      "text": "Segment Unify",
+      "path": "/docs/segment/unify"
+    },
+    {
+      "text": "Salesforce",
+      "path": "/docs/salesforce"
+    },
+    {
+      "text": "SendGrid Email",
+      "path": "/docs/sendgrid"
+    },
+    {
+      "text": "Sync",
+      "path": "/docs/sync"
+    },
+    {
+      "text": "TaskRouter",
+      "path": "/docs/taskrouter"
+    },
+    {
+      "text": "Trust Hub",
+      "path": "/docs/trust-hub"
+    },
+    {
+      "text": "Twilio Email",
+      "path": "/docs/email"
+    },
+    {
+      "text": "Twilio Engage",
+      "path": "/docs/segment/engage"
+    },
+    {
+      "text": "Unified Profiles",
+      "path": "/docs/unified-profiles"
+    },
+    {
+      "text": "Verify",
+      "path": "/docs/verify"
+    },
+    {
+      "text": "Video",
+      "path": "/docs/video"
+    },
+    {
+      "text": "Voice",
+      "path": "/docs/voice"
+    },
+    {
+      "text": "WhatsApp",
+      "path": "/docs/whatsapp"
+    },
+    {
+      "text": "Messaging",
+      "path": "/docs/messaging"
+    },
+    {
+      "text": "All docs...",
+      "path": "/docs"
+    },
+    {
+      "text": "Build with AI",
+      "path": "/docs/ai"
+    },
+    {
+      "text": "SDKs",
+      "path": "/docs/libraries"
+    },
+    {
+      "text": "Log in",
+      "path": "/login"
+    },
+    {
+      "text": "Sign up",
+      "path": "/try-twilio"
+    },
+    {
+      "text": "Conversation Memory",
+      "path": "/docs/conversations/memory"
+    },
+    {
+      "text": "Conversation Orchestrator",
+      "path": "/docs/conversations/orchestrator"
+    },
+    {
+      "text": "Conversation Intelligence",
+      "path": "/docs/conversations/intelligence"
+    },
+    {
+      "text": "Conversation Relay",
+      "path": "/docs/voice/twiml/connect/conversationrelay"
+    },
+    {
+      "text": "Messaging APIs",
+      "path": "/docs/messaging"
+    },
+    {
+      "text": "Twilio SendGrid Email API",
+      "path": "/docs/sendgrid"
+    },
+    {
+      "text": "Voice API",
+      "path": "/docs/voice"
+    },
+    {
+      "text": "Phone Numbers",
+      "path": "/docs/phone-numbers"
+    },
+    {
+      "text": "Twilio Flex",
+      "path": "/docs/flex"
+    },
+    {
+      "text": "Twilio Segment Connections",
+      "path": "/docs/segment/connections"
+    },
+    {
+      "text": "Twilio Protocols",
+      "path": "/docs/segment/protocols"
+    },
+    {
+      "text": "Twilio Unify",
+      "path": "/docs/segment/unify"
+    },
+    {
+      "text": "Twilio Privacy Portal",
+      "path": "/docs/segment/privacy"
+    },
+    {
+      "text": "Functions",
+      "path": "/docs/serverless/functions-assets/functions"
+    },
+    {
+      "text": "Support Plans",
+      "path": "/en-us/support-plans"
+    },
+    {
+      "text": "Partners",
+      "path": "/en-us/partners"
+    },
+    {
+      "text": "Professional Services",
+      "path": "/en-us/professional-services"
+    },
+    {
+      "text": "General usage",
+      "path": "/docs/usage"
+    },
+    {
+      "text": "Regulatory and compliance",
+      "path": "/en-us/guidelines"
+    },
+    {
+      "text": "OpenAPI",
+      "path": "/docs/openapi"
+    },
+    {
+      "text": "Developer Hub",
+      "path": "/en-us/developers"
+    },
+    {
+      "text": "Blog",
+      "path": "/en-us/blog"
+    },
+    {
+      "text": "Champions",
+      "path": "/en-us/champions"
+    },
+    {
+      "text": "Developer events",
+      "path": "/en-us/events"
+    },
+    {
+      "text": "Terms of service",
+      "path": "/en-us/legal/tos"
+    },
+    {
+      "text": "Privacy Policy",
+      "path": "/en-us/legal/privacy"
+    }
+  ],
+  "url_sections": {
+    "blog": 13500,
+    "changelog": 1552,
+    "voice": 1381,
+    "sms": 1328,
+    "sip-trunking": 1301,
+    "resource-center": 630,
+    "guidelines": 468,
+    "press": 430,
+    "products": 283,
+    "legal": 172,
+    "solutions": 136,
+    "use-cases": 131,
+    "recipes": 114,
+    "state-of-customer-engagement": 91,
+    "messaging": 79,
+    "covid": 57,
+    "flex": 42,
+    "report": 38,
+    "user-authentication-identity": 31,
+    "company": 31,
+    "errors": 28,
+    "public-policy": 27,
+    "serverless": 24,
+    "developers": 21,
+    "help": 20,
+    "phone-numbers": 19,
+    "partners": 19,
+    "pricing": 19,
+    "verify": 18,
+    "innovators-report": 18,
+    "whatsapp": 17,
+    "sonder": 16,
+    "security": 12,
+    "trust": 12,
+    "video": 12,
+    "interconnect": 12,
+    "events": 9,
+    "connected-government-report-public-sector-digital-engagement-2026": 8,
+    "sendgrid": 7,
+    "support-plans": 7
+  },
+  "content_kinds": {
+    "guides / how-to": [
+      "/docs/sendgrid/ui/sending-email/how-to-send-email-with-marketing-campaigns"
+    ],
+    "api reference": [
+      "open api",
+      "voice api",
+      "/docs/api/errors",
+      "twilio sendgrid email api"
+    ],
+    "changelog / release notes": [
+      "changelog",
+      "/en-us/changelog"
+    ],
+    "troubleshooting / errors": [
+      "errors",
+      "error codes",
+      "/docs/api/errors"
+    ],
+    "security": [
+      "security"
+    ],
+    "glossary / definitions": [
+      "glossary",
+      "/docs/glossary"
+    ],
+    "cli reference": [
+      "twilio cli",
+      "/docs/twilio-cli"
+    ],
+    "sdk / client libraries": [
+      "sdks",
+      "/docs/libraries",
+      "helper libraries"
+    ],
+    "community / support": [
+      "support-plans",
+      "support plans",
+      "/en-us/support-plans"
+    ],
+    "cookbook / recipes": [
+      "recipes"
+    ],
+    "videos": [
+      "video",
+      "/docs/video"
+    ],
+    "pricing / limits": [
+      "pricing",
+      "/en-us/pricing"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://www.twilio.com/code-exchange",
+      "h1": "Twilio Code Exchange",
+      "h2": [
+        "Prototype your Twilio project quickly and easily with our library of pre-coded s",
+        "Filter",
+        "Need some help?"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/docs",
+      "h1": "Twilio Docs",
+      "h2": [
+        "Build better and engage your customers across all channels with our API referenc",
+        "Conversations",
+        "Communications",
+        "Authentication",
+        "Customer Data",
+        "Builder Tools",
+        "Support and Services",
+        "Featured content",
+        "Twilio essentials",
+        "Developer Toolkit",
+        "Tools",
+        "Resources",
+        "Community",
+        "Need some help?"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/pricing",
+      "h1": "Start for free. Then pay as you go.",
+      "h2": [
+        "Conversations",
+        "Communications",
+        "Authentication",
+        "Customer Data",
+        "Builder tools",
+        "Support plans",
+        "The Twilio advantage",
+        "Build now, buy later"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/changelog",
+      "h1": "Product changelog and announcements",
+      "h2": [
+        "Deep dive on recent Twilio product updates"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/support-plans",
+      "h1": "Support Plans",
+      "h2": [
+        "Benefits",
+        "From free to enterprise-scale",
+        "We can’t wait to see what you build"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/partners",
+      "h1": "Move faster with a Twilio Partner",
+      "h2": [
+        "Find a partner and build without roadblocks",
+        "Building assistance for small-scale and self-service projects",
+        "Buy through marketplaces to simplify procurement",
+        "Looking to become a partner?",
+        "Twilio Partner Program FAQs"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/professional-services",
+      "h1": "Accelerate your time to value",
+      "h2": [
+        "Get guidance at every step of your journey",
+        "You’re on a mission to build amazing digital experiences. We’re here to help.",
+        "Why start from scratch when you can build with best practices",
+        "Dig into resources curated by Twilio experts",
+        "Expert guidance to build confidently with Twilio tools"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/guidelines",
+      "h1": "Guidelines",
+      "h2": [
+        "Compliance Toolkit for Twilio Messaging"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/developers",
+      "h1": "Ahoy! Welcome to the Developer Hub",
+      "h2": [
+        "Building Voice AI with Twilio",
+        "Pause and connect with the community",
+        "You've seen what's possible. Now build it.",
+        "Developer Resources",
+        "Let's find the right products for you",
+        "Generating your product picks...",
+        "See your product picks",
+        "What's in your toolkit",
+        "Add-ons to enhance your basic toolkit",
+        "Ask about your toolkit",
+        "Toolkit summary",
+        "Ready, set, build! Resources to get started",
+        "Put the toolkit to use"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/blog",
+      "h1": "Twilio Blog",
+      "h2": [
+        "Start building with Twilio for free",
+        "Developers",
+        "Industry Insights",
+        "Product News",
+        "Events & Community",
+        "Partners & Ecosystem",
+        "Company",
+        "Archive"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/champions",
+      "h1": "Twilio Champions",
+      "h2": [
+        "Applications are currently paused"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/events",
+      "h1": "Join us for events where ideas turn into innovation",
+      "h2": [
+        "Our main events",
+        "Upcoming events",
+        "On-demand webinars",
+        "Get started with Twilio for free"
+      ]
+    },
+    {
+      "url": "https://www.twilio.com/en-us/legal/tos",
+      "h1": "Twilio Terms of Service",
+      "h2": [
+        "Table of Contents"
+      ]
+    }
+  ]
+}

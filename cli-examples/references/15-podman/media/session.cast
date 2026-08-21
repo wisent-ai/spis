@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921623,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Podman authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Podman\r\n"]
+[0.55,"o","cli-ref$ podman --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","podman version 4.9.3\r\n"]
+[2.2,"o","cli-ref$ podman --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Manage pods, containers and images\r\n\r\nUsage:\r\n  podman [options] [command]\r\n\r\nAvailable Commands:\r\n  attach      Attach to a running container\r\n  auto-update Auto update containers according to their auto-update policy\r\n  build       Build an image using instructions from Containerfiles\r\n  commit      Create new image based on the changed container\r\n  compose     Run compose workloads via an external provider such as docker-compose or podman-compose\r\n  container   Manage containers\r\n  cp          Copy files/folders between a container and the local filesystem\r\n  create      Create but do not start a container\r\n"]
+[5.1,"o","cli-ref$ podman --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Error: unknown flag: --definitely-invalid-option\r\nSee 'podman --help'\r\n[exit status 125]\r\n"]
+[7.1,"o","cli-ref$ podman --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ podman --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Manage pods, containers and images\r\n\r\nUsage:\r\n  podman [options] [command]\r\n"]

@@ -1,0 +1,552 @@
+{
+  "name": "Hugging Face Documentation",
+  "source_url": "https://huggingface.co/docs",
+  "category": "Machine learning platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 34491,
+  "landing_nav": [
+    {
+      "text": "Hugging Face",
+      "path": "/"
+    },
+    {
+      "text": "Models",
+      "path": "/models"
+    },
+    {
+      "text": "Datasets",
+      "path": "/datasets"
+    },
+    {
+      "text": "Spaces",
+      "path": "/spaces"
+    },
+    {
+      "text": "Buckets new",
+      "path": "/storage"
+    },
+    {
+      "text": "Docs",
+      "path": "/docs"
+    },
+    {
+      "text": "Enterprise",
+      "path": "/enterprise"
+    },
+    {
+      "text": "Pricing",
+      "path": "/pricing"
+    },
+    {
+      "text": "Tasks",
+      "path": "/tasks"
+    },
+    {
+      "text": "HuggingChat",
+      "path": "/chat"
+    },
+    {
+      "text": "Collections",
+      "path": "/collections"
+    },
+    {
+      "text": "Languages",
+      "path": "/languages"
+    },
+    {
+      "text": "Organizations",
+      "path": "/organizations"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog"
+    },
+    {
+      "text": "Posts",
+      "path": "/posts"
+    },
+    {
+      "text": "Daily Papers",
+      "path": "/papers"
+    },
+    {
+      "text": "Hardware",
+      "path": "/hardware"
+    },
+    {
+      "text": "Learn",
+      "path": "/learn"
+    },
+    {
+      "text": "Discord",
+      "path": "/join/discord"
+    },
+    {
+      "text": "Team & Enterprise",
+      "path": "/enterprise"
+    },
+    {
+      "text": "Hugging Face PRO",
+      "path": "/pro"
+    },
+    {
+      "text": "Enterprise Support",
+      "path": "/support"
+    },
+    {
+      "text": "Inference Providers",
+      "path": "/inference/models"
+    },
+    {
+      "text": "Inference Endpoints",
+      "path": "/inference-endpoints"
+    },
+    {
+      "text": "Storage Buckets",
+      "path": "/storage"
+    },
+    {
+      "text": "Log In",
+      "path": "/login"
+    },
+    {
+      "text": "Sign Up",
+      "path": "/join"
+    },
+    {
+      "text": "Hub Host Git-based models, datasets, and Spaces on the HF Hub",
+      "path": "/docs/hub"
+    },
+    {
+      "text": "Hub Python Library Python client to interact with the Hugging Face Hub",
+      "path": "/docs/huggingface_hub"
+    },
+    {
+      "text": "CLI Tools for agents and humans to interact with all the Hugging Face services",
+      "path": "/docs/cli"
+    },
+    {
+      "text": "Huggingface.js JavaScript libraries for Hugging Face with built-in TS types",
+      "path": "/docs/huggingface.js"
+    },
+    {
+      "text": "Tasks Explore demos, models, and datasets for any ML tasks",
+      "path": "/tasks"
+    },
+    {
+      "text": "Dataset viewer API for metadata, stats, and content of HF Hub datasets",
+      "path": "/docs/dataset-viewer"
+    },
+    {
+      "text": "Inference Providers Call 200k+ models hosted by our 10+ Inference partners",
+      "path": "/docs/inference-providers"
+    },
+    {
+      "text": "Deploying on AWS Train/deploy models from Hugging Face to AWS with DLCs",
+      "path": "/docs/sagemaker"
+    },
+    {
+      "text": "Text Generation Inference Serve language models with TGI optimized toolkit",
+      "path": "/docs/text-generation-inference"
+    },
+    {
+      "text": "Text Embeddings Inference Serve embeddings models with TEI optimized toolkit",
+      "path": "/docs/text-embeddings-inference"
+    },
+    {
+      "text": "Microsoft Azure Deploy Hugging Face models on Microsoft Azure",
+      "path": "/docs/microsoft-azure"
+    },
+    {
+      "text": "Google Cloud Train and Deploy Hugging Face models on Google Cloud",
+      "path": "/docs/google-cloud"
+    },
+    {
+      "text": "Transformers State-of-the-art AI models for PyTorch",
+      "path": "/docs/transformers"
+    },
+    {
+      "text": "Diffusers State-of-the-art Diffusion models in PyTorch",
+      "path": "/docs/diffusers"
+    },
+    {
+      "text": "Datasets Access & share datasets for any ML tasks",
+      "path": "/docs/datasets"
+    },
+    {
+      "text": "Transformers.js State-of-the-art ML running directly in your browser",
+      "path": "/docs/transformers.js"
+    },
+    {
+      "text": "Tokenizers Fast tokenizers optimized for research & production",
+      "path": "/docs/tokenizers"
+    },
+    {
+      "text": "Evaluate Evaluate and compare models performance",
+      "path": "/docs/evaluate"
+    },
+    {
+      "text": "timm State-of-the-art vision models: layers, optimizers, and utilities",
+      "path": "/docs/timm"
+    },
+    {
+      "text": "Kernels Load and run compute kernels from the Hugging Face Hub",
+      "path": "/docs/kernels"
+    },
+    {
+      "text": "PEFT Parameter-efficient finetuning for large language models",
+      "path": "/docs/peft"
+    },
+    {
+      "text": "Accelerate Train PyTorch models with multi-GPU, TPU, mixed precision",
+      "path": "/docs/accelerate"
+    },
+    {
+      "text": "Optimum Optimize HF Transformers for faster training/inference",
+      "path": "/docs/optimum"
+    },
+    {
+      "text": "AWS Trainium & Inferentia Train/deploy Transformers/Diffusers on AWS",
+      "path": "/docs/optimum-neuron"
+    },
+    {
+      "text": "Google TPUs Train and Deploy models on Google TPUs via Optimum.",
+      "path": "/docs/optimum-tpu"
+    },
+    {
+      "text": "TRL Train transformers LMs with reinforcement learning",
+      "path": "/docs/trl"
+    },
+    {
+      "text": "OpenEnv Create and deploy agentic RL execution environments",
+      "path": "/docs/openenv"
+    },
+    {
+      "text": "Safetensors Safe way to store/distribute neural network weights",
+      "path": "/docs/safetensors"
+    },
+    {
+      "text": "Bitsandbytes Optimize and quantize models with bitsandbytes",
+      "path": "/docs/bitsandbytes"
+    },
+    {
+      "text": "Lighteval All-in-one toolkit to evaluate LLMs across multiple backends",
+      "path": "/docs/lighteval"
+    },
+    {
+      "text": "Trackio A lightweight, local-first, and free experiment tracking Python library",
+      "path": "/docs/trackio"
+    },
+    {
+      "text": "smolagents Smol library to build great agents in Python",
+      "path": "/docs/smolagents"
+    },
+    {
+      "text": "LeRobot Making AI for Robotics more accessible with end-to-end learning",
+      "path": "/docs/lerobot"
+    },
+    {
+      "text": "Reachy Mini Open-source expressive robot SDK for hackers and AI builders",
+      "path": "/docs/reachy_mini"
+    },
+    {
+      "text": "AutoTrain AutoTrain API and UI for seamless model training",
+      "path": "/docs/autotrain"
+    },
+    {
+      "text": "Chat UI Open source chat frontend powering HuggingChat",
+      "path": "/docs/chat-ui"
+    },
+    {
+      "text": "Leaderboards Create custom Leaderboards on Hugging Face",
+      "path": "/docs/leaderboards"
+    },
+    {
+      "text": "Xet Xet Protocol Specification",
+      "path": "/docs/xet"
+    },
+    {
+      "text": "TOS",
+      "path": "/terms-of-service"
+    },
+    {
+      "text": "Privacy",
+      "path": "/privacy"
+    },
+    {
+      "text": "About",
+      "path": "/huggingface"
+    }
+  ],
+  "url_sections": {
+    "papers": 10000,
+    "spaces": 9967,
+    "datasets": 7958,
+    "blog": 845,
+    "mradermacher": 233,
+    "pyaging": 173,
+    "ssurface": 162,
+    "longtermrisk": 151,
+    "dt4h": 58,
+    "huluhuluu": 48,
+    "kerasformers": 42,
+    "ketiswp": 42,
+    "docs": 41,
+    "phuctahong": 40,
+    "daanvdweijden": 28,
+    "amberyifan": 28,
+    "ishowbackup": 26,
+    "chengheng": 25,
+    "fairc": 25,
+    "sbcho0325": 24,
+    "fpadovani": 24,
+    "alinagonch": 24,
+    "qtum": 24,
+    "anonymousresearch123": 24,
+    "joaoreiz": 24,
+    "novastar111": 23,
+    "hoborific": 22,
+    "justbackup": 21,
+    "siddhjagani": 21,
+    "model-organisms-for-real": 18,
+    "ornith-ai": 18,
+    "sadjava": 18,
+    "machalek29": 16,
+    "rjz123": 16,
+    "jrepifano": 16,
+    "gradients-io-tournaments": 16,
+    "lexiiiii": 15,
+    "bodenmaurice": 15,
+    "drinkicedt": 15,
+    "jongbin-kr": 14
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "learn",
+      "/learn",
+      "trl train transformers lms with reinforcement learning",
+      "autotrain autotrain api and ui for seamless model training"
+    ],
+    "api reference": [
+      "autotrain autotrain api and ui for seamless model training",
+      "dataset viewer api for metadata, stats, and content of hf hub datasets"
+    ],
+    "cli reference": [
+      "/docs/cli",
+      "cli tools for agents and humans to interact with all the hugging face services"
+    ],
+    "sdk / client libraries": [
+      "reachy mini open-source expressive robot sdk for hackers and ai builders",
+      "huggingface.js javascript libraries for hugging face with built-in ts types"
+    ],
+    "community / support": [
+      "discord",
+      "/support",
+      "/join/discord",
+      "enterprise support"
+    ],
+    "deployment / production": [
+      "openenv create and deploy agentic rl execution environments",
+      "microsoft azure deploy hugging face models on microsoft azure",
+      "tokenizers fast tokenizers optimized for research & production",
+      "google tpus train and deploy models on google tpus via optimum."
+    ],
+    "pricing / limits": [
+      "pricing",
+      "/pricing"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://huggingface.co/models",
+      "h1": "Models",
+      "h2": []
+    },
+    {
+      "url": "https://huggingface.co/datasets",
+      "h1": "Datasets",
+      "h2": []
+    },
+    {
+      "url": "https://huggingface.co/spaces",
+      "h1": "Spaces",
+      "h2": []
+    },
+    {
+      "url": "https://huggingface.co/storage",
+      "h1": "Hugging Face Storage Buckets Storage Buckets",
+      "h2": [
+        "Storage built for AI teams",
+        "Next-gen large-scale storage for AI",
+        "Transparent, volume-based pricing",
+        "Assemble training data at any scale",
+        "Your data, independent of your compute",
+        "Built-in CDN for blazing fast access",
+        "Give your coding agents persistent storage",
+        "Get started with HF Storage Buckets HF Storage Buckets"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/docs",
+      "h1": "Documentation",
+      "h2": []
+    },
+    {
+      "url": "https://huggingface.co/enterprise",
+      "h1": "Hugging Face Enterprise",
+      "h2": [
+        "Single Sign-On",
+        "Regions",
+        "Audit Logs",
+        "Resource Groups",
+        "Token Management",
+        "Analytics",
+        "Advanced Compute Options",
+        "ZeroGPU Quota Boost",
+        "Private Datasets Viewer",
+        "Private Storage",
+        "Inference Providers",
+        "Advanced security",
+        "Billing",
+        "Priority Support",
+        "Compare plans",
+        "Join the most forward-thinking AI organizations"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/pricing",
+      "h1": "Leveling up AI collaboration and compute.",
+      "h2": [
+        "Transparent, volume-based pricing",
+        "Explore, experiment, collaborate and build technology with Machine Learning",
+        "Create with ML",
+        "Collaborate",
+        "Play and learn",
+        "Build your ML portfolio",
+        "On-demand GPU hardware. Starting at $0.",
+        "Dedicated inference, starting at $0.033/hour.",
+        "Do more with Hugging Face PRO"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/tasks",
+      "h1": "Tasks",
+      "h2": [
+        "Multimodal",
+        "Natural Language Processing",
+        "Computer Vision",
+        "Audio",
+        "Tabular",
+        "Reinforcement Learning"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/collections",
+      "h1": "Collections",
+      "h2": []
+    },
+    {
+      "url": "https://huggingface.co/organizations",
+      "h1": "Organizations",
+      "h2": []
+    },
+    {
+      "url": "https://huggingface.co/blog",
+      "h1": "Community Blog & Articles",
+      "h2": [
+        "LFM2.5 Q4\\_0 Checkpoints from Quantization-Aware Distillation",
+        "How Much Memory Does Your Agent Actually Need?",
+        "Multi-Vector (Late Interaction) Embedding Models with Sentence Transformers",
+        "Same Cluster, 33 Points More Utilization: What Changed Was the Order",
+        "State of Open Models: Summer 2026 Observations",
+        "Record, train, and deploy from one place with Strands Agents, LeRobot, and Huggi",
+        "What We Learned by Reproducing 2,200 papers from ICML",
+        "Introducing OlmoEarth embeddings: Custom embedding exports from OlmoEarth Studio",
+        "Build Low-Latency Multilingual Voice Agents: Open Weights & Full Deployment Cont",
+        "Making Knowledge Distillation Cheap Enough to Run at Scale",
+        "Meta is back with Muse Glimmer: local, agentic, multimodal, and open source",
+        "Baseten on Hugging Face Inference Providers 🔥",
+        "GPU Management: Why Idle GPUs Are the New Grounded Aircraft",
+        "NVIDIA Cosmos-H-Dreams: Bringing Real-Time Generative Simulation to Surgical Rob"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/posts",
+      "h1": "",
+      "h2": [
+        "All HF Hub posts"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/papers",
+      "h1": "Daily Papers",
+      "h2": [
+        "byAK and the research community"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/hardware",
+      "h1": "",
+      "h2": [
+        "What the community is running"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/learn",
+      "h1": "Learn",
+      "h2": [
+        "LLM Course",
+        "Context Course",
+        "Robotics Course",
+        "a smol course",
+        "Agents Course",
+        "Deep RL Course",
+        "Community Computer Vision Course",
+        "Audio Course",
+        "Open-Source AI Cookbook",
+        "ML for Games Course",
+        "Diffusion Course",
+        "ML for 3D Course"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/pro",
+      "h1": "Hugging Face Pro Pro",
+      "h2": [
+        "Your go-to for AI Apps",
+        "Get 10× more Storage",
+        "Get 20× more Inference Usage",
+        "Share your AI Journey",
+        "Access more Premium Perks Access more Premium Perks",
+        "Unlock Hugging Face PRO"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/support",
+      "h1": "Hugging Face Enterprise Support",
+      "h2": [
+        "Get the most out of your Enterprise plan on the Hub",
+        "Single Sign-On",
+        "Regions",
+        "Audit Logs",
+        "Resource Groups",
+        "Harness the power of open source",
+        "Guidance from our AI Experts",
+        "Join the most forward-thinking AI organizations"
+      ]
+    },
+    {
+      "url": "https://huggingface.co/inference-endpoints",
+      "h1": "Hugging Face Inference Endpoints Inference Endpoints",
+      "h2": [
+        "One-click deployment",
+        "Deploy from your agents",
+        "Everything you need to deploy AI models at scale",
+        "Powered by the best open-source inference engines",
+        "Choose a plan that fits your needs",
+        "Ship AI Faster with Inference Endpoints"
+      ]
+    }
+  ]
+}

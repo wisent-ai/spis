@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Miro — getting started",
+  "product_url": "https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics",
+  "evidence_status": "partial",
+  "upstream_owner": "Miro",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=sxqdN2eD59Q",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 827270,
+      "sha256": "f7d9125be9d645d5d25767e41aadeef2fdfc0b25639634a8276a29998e59eb52",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "dashboard",
+      "local_path": "media/state-01-dashboard.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 4.5s (mean abs diff 1.7539/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 108324,
+      "sha256": "070b40f82490f2d725d1864cfa9fdc545163f549db03af6e75acc6e331a81e4c",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 1.7539,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "board creation",
+      "local_path": "media/state-02-board-creation.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.5508/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 98609,
+      "sha256": "d1133aa30bc86765ca7c9e7a7a1abe1ffa11a00565b1b03c1f4a01c5b4458cff",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 19.5,
+        "mean_abs_diff": 1.5508,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "canvas ready",
+      "local_path": "media/state-03-canvas-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 2.8086/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 46527,
+      "sha256": "53db6cc681046ab03619a7fc739f1eea1583c53e8a654f61f86997481ad06eaf",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 35.0,
+        "mean_abs_diff": 2.8086,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "board named",
+      "local_path": "media/state-04-board-named.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 50.5s (mean abs diff 1.3477/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 90723,
+      "sha256": "24dac9683946657cd097c3dbf177e525156cbb34d4f7b4a429a59e0a57e5ad17",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 50.5,
+        "mean_abs_diff": 1.3477,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "object added",
+      "local_path": "media/state-05-object-added.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 1.4961/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 84577,
+      "sha256": "f7beb51f82e568086ef848edbfce08a68cbc77ccb3b0525581c52e7640827c1b",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.5,
+        "mean_abs_diff": 1.4961,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "board saved",
+      "local_path": "media/state-06-board-saved.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 81.5s (mean abs diff 1.5625/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 110726,
+      "sha256": "55ee619e8a0d7421f02e8b849ea6c9ae1c46b22c5faf9ee6f4e324f769ab368e",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 81.5,
+        "mean_abs_diff": 1.5625,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Authenticate and enter the Miro dashboard",
+      "response": "Miro shows team spaces and board creation controls",
+      "feedback": "The retained dashboard state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-dashboard.png @ 4.50s; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Choose to create a new board",
+      "response": "Miro opens the template or blank-board choice",
+      "feedback": "The recording advances to board creation and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-dashboard.png @ 4.50s; media/state-02-board-creation.png @ 19.79s; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Select a blank board or starter template",
+      "response": "Miro loads the editable canvas",
+      "feedback": "The navigation result is visible as canvas ready.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-board-creation.png @ 19.79s; media/state-03-canvas-ready.png @ 35.07s; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Name the board",
+      "response": "Miro persists the board identity in the workspace",
+      "feedback": "The official recording shows the confirmed board named state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-canvas-ready.png @ 35.07s; media/state-04-board-named.png @ 50.36s; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-board-creation.png @ 19.79s; media/state-03-canvas-ready.png @ 35.07s; media/state-04-board-named.png @ 50.36s; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Add a note, shape, or text object",
+      "response": "Miro places the object on the canvas with editing feedback",
+      "feedback": "Progress is observable as the distinct object added state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-board-named.png @ 50.36s; media/state-05-object-added.png @ 65.65s; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-canvas-ready.png @ 35.07s; media/state-04-board-named.png @ 50.36s; media/state-05-object-added.png @ 65.65s; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Leave the board or share it from the saved state",
+      "response": "The board remains in the dashboard, proving first persisted result",
+      "feedback": "The retained board saved state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-object-added.png @ 65.65s; media/state-06-board-saved.png @ 80.94s; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+    }
+  ],
+  "journey": {
+    "actor": "new Miro board owner",
+    "goal": "create a board and place the first object",
+    "prerequisites": [
+      "Miro account",
+      "team or workspace context"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Authenticate and enter the Miro dashboard",
+        "system_response": "Miro shows team spaces and board creation controls",
+        "state": "dashboard",
+        "evidence": "media/state-01-dashboard.png; media/official-recording.mp4#t=4.497; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose to create a new board",
+        "system_response": "Miro opens the template or blank-board choice",
+        "state": "board creation",
+        "evidence": "media/state-02-board-creation.png; media/official-recording.mp4#t=19.785; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+      },
+      {
+        "index": 3,
+        "user_action": "Select a blank board or starter template",
+        "system_response": "Miro loads the editable canvas",
+        "state": "canvas ready",
+        "evidence": "media/state-03-canvas-ready.png; media/official-recording.mp4#t=35.074; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+      },
+      {
+        "index": 4,
+        "user_action": "Name the board",
+        "system_response": "Miro persists the board identity in the workspace",
+        "state": "board named",
+        "evidence": "media/state-04-board-named.png; media/official-recording.mp4#t=50.362; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+      },
+      {
+        "index": 5,
+        "user_action": "Add a note, shape, or text object",
+        "system_response": "Miro places the object on the canvas with editing feedback",
+        "state": "object added",
+        "evidence": "media/state-05-object-added.png; media/official-recording.mp4#t=65.651; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+      },
+      {
+        "index": 6,
+        "user_action": "Leave the board or share it from the saved state",
+        "system_response": "The board remains in the dashboard, proving first persisted result",
+        "state": "board saved",
+        "evidence": "media/state-06-board-saved.png; media/official-recording.mp4#t=80.940; https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+      }
+    ],
+    "failure_route": [
+      "At board creation or canvas ready, invalid, expired, denied, or missing required input leaves the flow short of board saved; evidence: media/state-02-board-creation.png, media/state-03-canvas-ready.png, and https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-canvas-ready.png through media/state-05-object-added.png."
+    ],
+    "recovery_route": [
+      "Return to the retained board creation or canvas ready requirement, correct or resend the blocking input, and resubmit; evidence: https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics.",
+      "Continue through the same terminal action until board saved is visible in media/state-06-board-saved.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "board saved retained at media/state-06-board-saved.png and media/official-recording.mp4#t=80.940; source https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-dashboard.png and media/state-02-board-creation.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-canvas-ready.png and media/state-04-board-named.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

@@ -1,0 +1,1366 @@
+{
+  "name": "Django Documentation",
+  "source_url": "https://docs.djangoproject.com/en/stable/",
+  "category": "Backend framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "scoped sitemap (/en/5 /en/stable /en/dev)",
+  "inventory_url_count": 2748,
+  "landing_nav": [
+    {
+      "text": "Documentation",
+      "path": "/"
+    },
+    {
+      "text": "Documentation",
+      "path": "/en/6.1/"
+    },
+    {
+      "text": "Getting Help",
+      "path": "/en/6.1/faq/help/"
+    },
+    {
+      "text": "zh-hans",
+      "path": "/zh-hans/6.1/"
+    },
+    {
+      "text": "sv",
+      "path": "/sv/6.1/"
+    },
+    {
+      "text": "pt-br",
+      "path": "/pt-br/6.1/"
+    },
+    {
+      "text": "pl",
+      "path": "/pl/6.1/"
+    },
+    {
+      "text": "ko",
+      "path": "/ko/6.1/"
+    },
+    {
+      "text": "ja",
+      "path": "/ja/6.1/"
+    },
+    {
+      "text": "it",
+      "path": "/it/6.1/"
+    },
+    {
+      "text": "id",
+      "path": "/id/6.1/"
+    },
+    {
+      "text": "fr",
+      "path": "/fr/6.1/"
+    },
+    {
+      "text": "es",
+      "path": "/es/6.1/"
+    },
+    {
+      "text": "el",
+      "path": "/el/6.1/"
+    },
+    {
+      "text": "dev",
+      "path": "/en/dev/"
+    },
+    {
+      "text": "6.0",
+      "path": "/en/6.0/"
+    },
+    {
+      "text": "5.2",
+      "path": "/en/5.2/"
+    },
+    {
+      "text": "5.1",
+      "path": "/en/5.1/"
+    },
+    {
+      "text": "5.0",
+      "path": "/en/5.0/"
+    },
+    {
+      "text": "4.2",
+      "path": "/en/4.2/"
+    },
+    {
+      "text": "4.1",
+      "path": "/en/4.1/"
+    },
+    {
+      "text": "4.0",
+      "path": "/en/4.0/"
+    },
+    {
+      "text": "3.2",
+      "path": "/en/3.2/"
+    },
+    {
+      "text": "3.1",
+      "path": "/en/3.1/"
+    },
+    {
+      "text": "3.0",
+      "path": "/en/3.0/"
+    },
+    {
+      "text": "2.2",
+      "path": "/en/2.2/"
+    },
+    {
+      "text": "2.1",
+      "path": "/en/2.1/"
+    },
+    {
+      "text": "2.0",
+      "path": "/en/2.0/"
+    },
+    {
+      "text": "1.11",
+      "path": "/en/1.11/"
+    },
+    {
+      "text": "1.10",
+      "path": "/en/1.10/"
+    },
+    {
+      "text": "1.9",
+      "path": "/en/1.9/"
+    },
+    {
+      "text": "1.8",
+      "path": "/en/1.8/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/intro/overview/"
+    },
+    {
+      "text": "Installation",
+      "path": "/en/stable/intro/install/"
+    },
+    {
+      "text": "Part 1: Requests and responses",
+      "path": "/en/stable/intro/tutorial01/"
+    },
+    {
+      "text": "Part 2: Models and the admin site",
+      "path": "/en/stable/intro/tutorial02/"
+    },
+    {
+      "text": "Part 3: Views and templates",
+      "path": "/en/stable/intro/tutorial03/"
+    },
+    {
+      "text": "Part 4: Forms and generic views",
+      "path": "/en/stable/intro/tutorial04/"
+    },
+    {
+      "text": "Part 5: Testing",
+      "path": "/en/stable/intro/tutorial05/"
+    },
+    {
+      "text": "Part 6: Static files",
+      "path": "/en/stable/intro/tutorial06/"
+    },
+    {
+      "text": "Part 7: Customizing the admin site",
+      "path": "/en/stable/intro/tutorial07/"
+    },
+    {
+      "text": "Part 8: Adding third-party packages",
+      "path": "/en/stable/intro/tutorial08/"
+    },
+    {
+      "text": "How to write reusable apps",
+      "path": "/en/stable/intro/reusable-apps/"
+    },
+    {
+      "text": "Writing your first contribution to Django",
+      "path": "/en/stable/intro/contributing/"
+    },
+    {
+      "text": "FAQ",
+      "path": "/en/stable/faq/"
+    },
+    {
+      "text": "Index",
+      "path": "/en/stable/genindex/"
+    },
+    {
+      "text": "Module Index",
+      "path": "/en/stable/py-modindex/"
+    },
+    {
+      "text": "detailed table of contents",
+      "path": "/en/stable/contents/"
+    },
+    {
+      "text": "FAQ: Getting Help",
+      "path": "/en/stable/faq/help/"
+    },
+    {
+      "text": "Tutorials",
+      "path": "/en/stable/intro/"
+    },
+    {
+      "text": "Topic guides",
+      "path": "/en/stable/topics/"
+    },
+    {
+      "text": "Reference guides",
+      "path": "/en/stable/ref/"
+    },
+    {
+      "text": "How-to guides",
+      "path": "/en/stable/howto/"
+    },
+    {
+      "text": "Introduction to models",
+      "path": "/en/stable/topics/db/models/"
+    },
+    {
+      "text": "Field types",
+      "path": "/en/stable/ref/models/fields/"
+    },
+    {
+      "text": "Indexes",
+      "path": "/en/stable/ref/models/indexes/"
+    },
+    {
+      "text": "Meta options",
+      "path": "/en/stable/ref/models/options/"
+    },
+    {
+      "text": "Model class",
+      "path": "/en/stable/ref/models/class/"
+    },
+    {
+      "text": "Making queries",
+      "path": "/en/stable/topics/db/queries/"
+    },
+    {
+      "text": "QuerySet method reference",
+      "path": "/en/stable/ref/models/querysets/"
+    },
+    {
+      "text": "Lookup expressions",
+      "path": "/en/stable/ref/models/lookups/"
+    },
+    {
+      "text": "Instance methods",
+      "path": "/en/stable/ref/models/instances/"
+    },
+    {
+      "text": "Accessing related objects",
+      "path": "/en/stable/ref/models/relations/"
+    },
+    {
+      "text": "Introduction to Migrations",
+      "path": "/en/stable/topics/migrations/"
+    },
+    {
+      "text": "Operations reference",
+      "path": "/en/stable/ref/migration-operations/"
+    },
+    {
+      "text": "SchemaEditor",
+      "path": "/en/stable/ref/schema-editor/"
+    },
+    {
+      "text": "Writing migrations",
+      "path": "/en/stable/howto/writing-migrations/"
+    },
+    {
+      "text": "Managers",
+      "path": "/en/stable/topics/db/managers/"
+    },
+    {
+      "text": "Raw SQL",
+      "path": "/en/stable/topics/db/sql/"
+    },
+    {
+      "text": "Transactions",
+      "path": "/en/stable/topics/db/transactions/"
+    },
+    {
+      "text": "Aggregation",
+      "path": "/en/stable/topics/db/aggregation/"
+    },
+    {
+      "text": "Search",
+      "path": "/en/stable/topics/db/search/"
+    },
+    {
+      "text": "Custom fields",
+      "path": "/en/stable/howto/custom-model-fields/"
+    },
+    {
+      "text": "Multiple databases",
+      "path": "/en/stable/topics/db/multi-db/"
+    },
+    {
+      "text": "Custom lookups",
+      "path": "/en/stable/howto/custom-lookups/"
+    },
+    {
+      "text": "Query Expressions",
+      "path": "/en/stable/ref/models/expressions/"
+    },
+    {
+      "text": "Conditional Expressions",
+      "path": "/en/stable/ref/models/conditional-expressions/"
+    },
+    {
+      "text": "Database Functions",
+      "path": "/en/stable/ref/models/database-functions/"
+    },
+    {
+      "text": "Supported databases",
+      "path": "/en/stable/ref/databases/"
+    },
+    {
+      "text": "Legacy databases",
+      "path": "/en/stable/howto/legacy-databases/"
+    },
+    {
+      "text": "Providing initial data",
+      "path": "/en/stable/howto/initial-data/"
+    },
+    {
+      "text": "Optimize database access",
+      "path": "/en/stable/topics/db/optimization/"
+    },
+    {
+      "text": "PostgreSQL specific features",
+      "path": "/en/stable/ref/contrib/postgres/"
+    },
+    {
+      "text": "URLconfs",
+      "path": "/en/stable/topics/http/urls/"
+    },
+    {
+      "text": "View functions",
+      "path": "/en/stable/topics/http/views/"
+    },
+    {
+      "text": "Shortcuts",
+      "path": "/en/stable/topics/http/shortcuts/"
+    },
+    {
+      "text": "Decorators",
+      "path": "/en/stable/topics/http/decorators/"
+    },
+    {
+      "text": "Asynchronous Support",
+      "path": "/en/stable/topics/async/"
+    },
+    {
+      "text": "Built-in Views",
+      "path": "/en/stable/ref/views/"
+    },
+    {
+      "text": "Request/response objects",
+      "path": "/en/stable/ref/request-response/"
+    },
+    {
+      "text": "TemplateResponse objects",
+      "path": "/en/stable/ref/template-response/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/topics/http/file-uploads/"
+    },
+    {
+      "text": "File objects",
+      "path": "/en/stable/ref/files/file/"
+    },
+    {
+      "text": "Storage API",
+      "path": "/en/stable/ref/files/storage/"
+    },
+    {
+      "text": "Managing files",
+      "path": "/en/stable/topics/files/"
+    },
+    {
+      "text": "Custom storage",
+      "path": "/en/stable/howto/custom-file-storage/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/topics/class-based-views/"
+    },
+    {
+      "text": "Built-in display views",
+      "path": "/en/stable/topics/class-based-views/generic-display/"
+    },
+    {
+      "text": "Built-in editing views",
+      "path": "/en/stable/topics/class-based-views/generic-editing/"
+    },
+    {
+      "text": "Using mixins",
+      "path": "/en/stable/topics/class-based-views/mixins/"
+    },
+    {
+      "text": "API reference",
+      "path": "/en/stable/ref/class-based-views/"
+    },
+    {
+      "text": "Flattened index",
+      "path": "/en/stable/ref/class-based-views/flattened-index/"
+    },
+    {
+      "text": "Generating CSV",
+      "path": "/en/stable/howto/outputting-csv/"
+    },
+    {
+      "text": "Generating PDF",
+      "path": "/en/stable/howto/outputting-pdf/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/topics/http/middleware/"
+    },
+    {
+      "text": "Built-in middleware classes",
+      "path": "/en/stable/ref/middleware/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/topics/templates/"
+    },
+    {
+      "text": "Language overview",
+      "path": "/en/stable/ref/templates/language/"
+    },
+    {
+      "text": "Built-in tags and filters",
+      "path": "/en/stable/ref/templates/builtins/"
+    },
+    {
+      "text": "Humanization",
+      "path": "/en/stable/ref/contrib/humanize/"
+    },
+    {
+      "text": "Template API",
+      "path": "/en/stable/ref/templates/api/"
+    },
+    {
+      "text": "Custom tags and filters",
+      "path": "/en/stable/howto/custom-template-tags/"
+    },
+    {
+      "text": "Custom template backend",
+      "path": "/en/stable/howto/custom-template-backend/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/topics/forms/"
+    },
+    {
+      "text": "Form API",
+      "path": "/en/stable/ref/forms/api/"
+    },
+    {
+      "text": "Built-in fields",
+      "path": "/en/stable/ref/forms/fields/"
+    },
+    {
+      "text": "Built-in widgets",
+      "path": "/en/stable/ref/forms/widgets/"
+    },
+    {
+      "text": "Forms for models",
+      "path": "/en/stable/topics/forms/modelforms/"
+    },
+    {
+      "text": "Integrating media",
+      "path": "/en/stable/topics/forms/media/"
+    },
+    {
+      "text": "Formsets",
+      "path": "/en/stable/topics/forms/formsets/"
+    },
+    {
+      "text": "Customizing validation",
+      "path": "/en/stable/ref/forms/validation/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/topics/settings/"
+    },
+    {
+      "text": "Full list of settings",
+      "path": "/en/stable/ref/settings/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/ref/applications/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/ref/exceptions/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/ref/django-admin/"
+    },
+    {
+      "text": "Adding custom commands",
+      "path": "/en/stable/howto/custom-management-commands/"
+    },
+    {
+      "text": "Introduction",
+      "path": "/en/stable/topics/testing/"
+    },
+    {
+      "text": "Writing and running tests",
+      "path": "/en/stable/topics/testing/overview/"
+    },
+    {
+      "text": "Included testing tools",
+      "path": "/en/stable/topics/testing/tools/"
+    },
+    {
+      "text": "Advanced topics",
+      "path": "/en/stable/topics/testing/advanced/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/howto/deployment/"
+    },
+    {
+      "text": "WSGI servers",
+      "path": "/en/stable/howto/deployment/wsgi/"
+    },
+    {
+      "text": "ASGI servers",
+      "path": "/en/stable/howto/deployment/asgi/"
+    },
+    {
+      "text": "Deploying static files",
+      "path": "/en/stable/howto/static-files/deployment/"
+    },
+    {
+      "text": "Tracking code errors by email",
+      "path": "/en/stable/howto/error-reporting/"
+    },
+    {
+      "text": "Deployment checklist",
+      "path": "/en/stable/howto/deployment/checklist/"
+    },
+    {
+      "text": "Admin site",
+      "path": "/en/stable/ref/contrib/admin/"
+    },
+    {
+      "text": "Admin actions",
+      "path": "/en/stable/ref/contrib/admin/actions/"
+    },
+    {
+      "text": "Admin documentation generator",
+      "path": "/en/stable/ref/contrib/admin/admindocs/"
+    },
+    {
+      "text": "Security overview",
+      "path": "/en/stable/topics/security/"
+    },
+    {
+      "text": "Disclosed security issues in Django",
+      "path": "/en/stable/releases/security/"
+    },
+    {
+      "text": "Clickjacking protection",
+      "path": "/en/stable/ref/clickjacking/"
+    },
+    {
+      "text": "Cross Site Request Forgery protection",
+      "path": "/en/stable/ref/csrf/"
+    },
+    {
+      "text": "Cryptographic signing",
+      "path": "/en/stable/topics/signing/"
+    },
+    {
+      "text": "Content Security Policy",
+      "path": "/en/stable/ref/csp/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/topics/i18n/"
+    },
+    {
+      "text": "Internationalization",
+      "path": "/en/stable/topics/i18n/translation/"
+    },
+    {
+      "text": "Localized web UI formatting and form input",
+      "path": "/en/stable/topics/i18n/formatting/"
+    },
+    {
+      "text": "Time zones",
+      "path": "/en/stable/topics/i18n/timezones/"
+    },
+    {
+      "text": "Performance and optimization overview",
+      "path": "/en/stable/topics/performance/"
+    },
+    {
+      "text": "GeoDjango",
+      "path": "/en/stable/ref/contrib/gis/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/topics/auth/"
+    },
+    {
+      "text": "Using the authentication system",
+      "path": "/en/stable/topics/auth/default/"
+    },
+    {
+      "text": "Password management",
+      "path": "/en/stable/topics/auth/passwords/"
+    },
+    {
+      "text": "Customizing authentication",
+      "path": "/en/stable/topics/auth/customizing/"
+    },
+    {
+      "text": "API Reference",
+      "path": "/en/stable/ref/contrib/auth/"
+    },
+    {
+      "text": "Caching",
+      "path": "/en/stable/topics/cache/"
+    },
+    {
+      "text": "Logging",
+      "path": "/en/stable/topics/logging/"
+    },
+    {
+      "text": "Tasks framework",
+      "path": "/en/stable/topics/tasks/"
+    },
+    {
+      "text": "Sending emails",
+      "path": "/en/stable/topics/email/"
+    },
+    {
+      "text": "Syndication feeds (RSS/Atom)",
+      "path": "/en/stable/ref/contrib/syndication/"
+    },
+    {
+      "text": "Pagination",
+      "path": "/en/stable/topics/pagination/"
+    },
+    {
+      "text": "Messages framework",
+      "path": "/en/stable/ref/contrib/messages/"
+    },
+    {
+      "text": "Serialization",
+      "path": "/en/stable/topics/serialization/"
+    },
+    {
+      "text": "Sessions",
+      "path": "/en/stable/topics/http/sessions/"
+    },
+    {
+      "text": "Sitemaps",
+      "path": "/en/stable/ref/contrib/sitemaps/"
+    },
+    {
+      "text": "Static files management",
+      "path": "/en/stable/ref/contrib/staticfiles/"
+    },
+    {
+      "text": "Data validation",
+      "path": "/en/stable/ref/validators/"
+    },
+    {
+      "text": "Conditional content processing",
+      "path": "/en/stable/topics/conditional-view-processing/"
+    },
+    {
+      "text": "Content types and generic relations",
+      "path": "/en/stable/ref/contrib/contenttypes/"
+    },
+    {
+      "text": "Flatpages",
+      "path": "/en/stable/ref/contrib/flatpages/"
+    },
+    {
+      "text": "Redirects",
+      "path": "/en/stable/ref/contrib/redirects/"
+    },
+    {
+      "text": "Signals",
+      "path": "/en/stable/topics/signals/"
+    },
+    {
+      "text": "System check framework",
+      "path": "/en/stable/topics/checks/"
+    },
+    {
+      "text": "The sites framework",
+      "path": "/en/stable/ref/contrib/sites/"
+    },
+    {
+      "text": "Unicode in Django",
+      "path": "/en/stable/ref/unicode/"
+    },
+    {
+      "text": "Contributing to Django",
+      "path": "/en/stable/internals/contributing/"
+    },
+    {
+      "text": "The release process",
+      "path": "/en/stable/internals/release-process/"
+    },
+    {
+      "text": "Team organization",
+      "path": "/en/stable/internals/organization/"
+    },
+    {
+      "text": "The Django source code repository",
+      "path": "/en/stable/internals/git/"
+    },
+    {
+      "text": "Security policies",
+      "path": "/en/stable/internals/security/"
+    },
+    {
+      "text": "Mailing lists and Forum",
+      "path": "/en/stable/internals/mailing-lists/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/misc/design-philosophies/"
+    },
+    {
+      "text": "About this documentation",
+      "path": "/en/stable/internals/contributing/writing-documentation/"
+    },
+    {
+      "text": "Overview",
+      "path": "/en/stable/misc/distributions/"
+    },
+    {
+      "text": "API stability",
+      "path": "/en/stable/misc/api-stability/"
+    },
+    {
+      "text": "Release notes and upgrading instructions",
+      "path": "/en/stable/releases/"
+    },
+    {
+      "text": "Deprecation Timeline",
+      "path": "/en/stable/internals/deprecation/"
+    },
+    {
+      "text": "Django documentation contents",
+      "path": "/en/stable/contents/"
+    },
+    {
+      "text": "Getting started",
+      "path": "/en/stable/intro/"
+    },
+    {
+      "text": "Table of contents",
+      "path": "/en/6.1/contents/"
+    },
+    {
+      "text": "General Index",
+      "path": "/en/6.1/genindex/"
+    },
+    {
+      "text": "Python Module Index",
+      "path": "/en/6.1/py-modindex/"
+    },
+    {
+      "text": "Django 6.1 documentation",
+      "path": "/en/6.1/"
+    },
+    {
+      "text": "FAQ",
+      "path": "/en/6.1/faq/"
+    },
+    {
+      "text": "Table of Contents",
+      "path": "/en/stable/contents/"
+    },
+    {
+      "text": "Contribute to Django",
+      "path": "/en/dev/internals/contributing/"
+    },
+    {
+      "text": "Submit a Bug",
+      "path": "/en/dev/internals/contributing/bugs-and-features/"
+    },
+    {
+      "text": "Getting Help FAQ",
+      "path": "/en/stable/faq/"
+    }
+  ],
+  "url_sections": {
+    "5.0": 796,
+    "dev": 672,
+    "5.2": 652,
+    "5.1": 628
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorials",
+      "/en/stable/intro/tutorial01/",
+      "/en/stable/intro/tutorial04/",
+      "/en/stable/intro/tutorial03/"
+    ],
+    "getting started / quickstart": [
+      "getting started"
+    ],
+    "guides / how-to": [
+      "topic guides",
+      "how-to guides",
+      "reference guides",
+      "/en/stable/howto/"
+    ],
+    "api reference": [
+      "form api",
+      "storage api",
+      "template api",
+      "api reference"
+    ],
+    "changelog / release notes": [
+      "/en/stable/releases/",
+      "/en/stable/releases/security/",
+      "release notes and upgrading instructions"
+    ],
+    "troubleshooting / errors": [
+      "tracking code errors by email",
+      "/en/stable/howto/error-reporting/"
+    ],
+    "migration / upgrade": [
+      "writing migrations",
+      "introduction to migrations",
+      "/en/stable/topics/migrations/",
+      "/en/stable/howto/writing-migrations/"
+    ],
+    "security": [
+      "security overview",
+      "security policies",
+      "content security policy",
+      "/en/stable/topics/security/"
+    ],
+    "faq": [
+      "faq",
+      "/en/6.1/faq/",
+      "/en/stable/faq/",
+      "getting help faq"
+    ],
+    "configuration / settings": [
+      "full list of settings",
+      "/en/stable/ref/settings/",
+      "/en/stable/topics/settings/"
+    ],
+    "community / support": [
+      "supported databases",
+      "asynchronous support",
+      "mailing lists and forum"
+    ],
+    "integrations": [
+      "integrating media"
+    ],
+    "concepts / architecture": [
+      "/en/stable/internals/git/",
+      "/en/stable/internals/security/",
+      "/en/dev/internals/contributing/",
+      "/en/stable/internals/deprecation/"
+    ],
+    "deployment / production": [
+      "operations reference",
+      "deployment checklist",
+      "deploying static files",
+      "/en/stable/howto/deployment/"
+    ],
+    "contributing": [
+      "contribute to django",
+      "contributing to django",
+      "/en/stable/intro/contributing/",
+      "/en/dev/internals/contributing/"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://docs.djangoproject.com/en/6.1/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/dev/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/6.0/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/5.2/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/5.1/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/5.0/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/4.2/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/4.1/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/4.0/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/3.2/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/3.1/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/3.0/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "First steps¶",
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/2.2/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "First steps¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/2.1/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "First steps¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/2.0/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "First steps¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/1.11/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "First steps¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Python compatibility¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/1.10/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "First steps¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Python compatibility¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/1.9/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "Getting help¶",
+        "How the documentation is organized¶",
+        "First steps¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Python compatibility¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/1.8/",
+      "h1": "Django documentation¶",
+      "h2": [
+        "Getting help¶",
+        "First steps¶",
+        "The model layer¶",
+        "The view layer¶",
+        "The template layer¶",
+        "Forms¶",
+        "The development process¶",
+        "The admin¶",
+        "Security¶",
+        "Internationalization and localization¶",
+        "Performance and optimization¶",
+        "Python compatibility¶",
+        "Geographic framework¶",
+        "Common Web application tools¶",
+        "Other core functionalities¶",
+        "The Django open-source project¶",
+        "Additional Information",
+        "Django Links"
+      ]
+    },
+    {
+      "url": "https://docs.djangoproject.com/en/stable/faq/",
+      "h1": "Django FAQ¶",
+      "h2": [
+        "Additional Information",
+        "Django Links"
+      ]
+    }
+  ]
+}

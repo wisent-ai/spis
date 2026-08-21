@@ -1,0 +1,243 @@
+{
+  "name": "Amazon Web Services Documentation",
+  "source_url": "https://docs.aws.amazon.com/",
+  "category": "Cloud platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 1568,
+  "landing_nav": [],
+  "url_sections": {
+    "amazon-q-connect": 307,
+    "acm": 237,
+    "agentworkspace": 220,
+    "amazon-mq": 181,
+    "al2": 166,
+    "access-analyzer": 132,
+    "accounts": 121,
+    "agent-registry-control": 77,
+    "account-access": 35,
+    "agent-toolkit": 28,
+    "agent-registry": 26,
+    "responsible-ai": 19,
+    "amazon-s3-encryption-client": 18,
+    "account-billing": 1
+  },
+  "content_kinds": {},
+  "page_anatomy": [
+    {
+      "url": "https://docs.aws.amazon.com/account-billing/index.html",
+      "h1": "AWS Billing and Cost Management Documentation",
+      "h2": [
+        "AWS Billing and Cost Management User Guides",
+        "AWS Billing Conductor User Guide",
+        "API References",
+        "AWS Flat-Rate Plans",
+        "Related Links"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/acm/index.html",
+      "h1": "AWS Certificate Manager Documentation",
+      "h2": [
+        "Related Links"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/agent-registry/index.html",
+      "h1": "AWS Agent Registry Documentation",
+      "h2": [
+        "Console and SDKs",
+        "Documentation"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/Welcome.html",
+      "h1": "Welcome",
+      "h2": []
+    },
+    {
+      "url": "https://docs.aws.amazon.com/account-access/latest/APIReference/Welcome.html",
+      "h1": "Welcome",
+      "h2": []
+    },
+    {
+      "url": "https://docs.aws.amazon.com/accounts/latest/APIReference/Welcome.html",
+      "h1": "Welcome",
+      "h2": []
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_Operations.html",
+      "h1": "Actions",
+      "h2": []
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_ApplyArchiveRule.html",
+      "h1": "ApplyArchiveRule",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CancelPolicyGeneration.html",
+      "h1": "CancelPolicyGeneration",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckAccessNotGranted.html",
+      "h1": "CheckAccessNotGranted",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckNoNewAccess.html",
+      "h1": "CheckNoNewAccess",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckNoPublicAccess.html",
+      "h1": "CheckNoPublicAccess",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CreateAccessPreview.html",
+      "h1": "CreateAccessPreview",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CreateAnalyzer.html",
+      "h1": "CreateAnalyzer",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CreateArchiveRule.html",
+      "h1": "CreateArchiveRule",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_DeleteAnalyzer.html",
+      "h1": "DeleteAnalyzer",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_DeleteArchiveRule.html",
+      "h1": "DeleteArchiveRule",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_GenerateFindingRecommendation.html",
+      "h1": "GenerateFindingRecommendation",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_GetAccessPreview.html",
+      "h1": "GetAccessPreview",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    },
+    {
+      "url": "https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_GetAnalyzedResource.html",
+      "h1": "GetAnalyzedResource",
+      "h2": [
+        "Request Syntax",
+        "URI Request Parameters",
+        "Request Body",
+        "Response Syntax",
+        "Response Elements",
+        "Errors",
+        "See Also"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,278 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Pixelmator Pro",
+  "product_url": "https://www.pixelmator.com/pro/",
+  "evidence_status": "partial",
+  "upstream_owner": "Pixelmator Team",
+  "captured_at": "2026-08-16T23:27:18Z",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=pcUOuy7nENI",
+      "media_kind": "video-mp4",
+      "width": 960,
+      "height": 540,
+      "duration_seconds": 18.0,
+      "frame_count": 270,
+      "bytes": 147163,
+      "sha256": "ae0a4be28caaea614340cf171f6012767903a24f631f2b4814c4797b7033a3b3",
+      "capture_method": "Downloaded from the product publisher’s official video channel with yt-dlp, then excerpted and transcoded to H.264 without synthesized frames.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "\"Welcome to Pixelmator Pro\" window on the desktop: \"Version 3.3.7 Mosaic\", the three actions \"Create a new document\", \"Open the Photos browser\" and \"Browse files on your Mac\", a recent-file list (Zahara, Willow, Dunes, Pix) with Zahara highlighted blue, and \"Show this window when Pixelmator Pro launches\" checked",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 3.5s (mean abs diff 2.0273/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 248154,
+      "sha256": "716f65925d55c180531f1ef70809e2a9621ca215a060bbaa071d2833ab4122f6",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 3.5,
+        "mean_abs_diff": 2.0273,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "New-image template browser on \"All Templates\": the \"Last Used / 1366 × 768\" thumbnail is selected, \"Default / 4096 × 2304\" beside it, \"What's New\" (Billboard, Framed Poster, Framed Poster, Poster) and \"Collections\" rows below, right pane Preset \"Web Most Common\", Size W 1366 H 768 pixels, Resolution 72 pixels/inch, Color Depth 8-bits per channel, Cancel and Create buttons",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 4s (mean abs diff 1.8711/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 292070,
+      "sha256": "b72db491ff1e22f9db5cbe2b47b697465d929c707de379b07ec433829e50c922",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.0,
+        "mean_abs_diff": 1.8711,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Template browser on \"Recents\": a \"Recent Blank Documents\" row of three presets — \"Web Most Common / 1366 × 768\" selected, \"Cinema 2K / 2048 × 1080\", \"A4 Paper / 210 × 297 mm\" — with \"Clear Recents\" at the right and the rest of the pane empty",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 8.5s (mean abs diff 1.8438/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 238719,
+      "sha256": "ccf20f67d94d0ecdada5006d046f819197672cc68d9382ee1ebf03a8d0fc4c55",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 8.5,
+        "mean_abs_diff": 1.8438,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Template browser on \"Collections\": grid of collection tiles (Book Club 17 templates, Whitepine, Design Fair, Jane Smith 18 templates, Viola, Yoga, Love Me, Ocean Of Life) with the right pane showing \"Billboard\", Size 1600 × 1200, Resolution 72, Color Profile Display P3, File Size 14.5 MB",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/motion.mp4 at 11s (mean abs diff 1.8984/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 359825,
+      "sha256": "0b565dd65b0b7f471ba96e50c1ccd9ccced8fc85104fb6d333ddcbb180298144",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 11.0,
+        "mean_abs_diff": 1.8984,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Template browser on \"Mockups\": a \"Devices\" grid with MacBook Pro selected among MacBook Air, iPhone, iPad Pro, iPad mini and iMac tiles, right pane showing the MacBook Pro preview, a \"MacBook Pro 14-in.\" popup, Size 6000 × 4500, Display P3, File Size 1.6 MB; the pointer rests on the highlighted \"Mockups\" sidebar row",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/motion.mp4 at 16s (mean abs diff 1.8398/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 296706,
+      "sha256": "eb52a54e5a4019f8d5eb0ac05b00135790161a58de0bd9e361200346685cebc3",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 16.0,
+        "mean_abs_diff": 1.8398,
+        "sampled_frames": 36
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Open the welcome window",
+      "response": "Pixelmator Pro exposes the entry surface visible in the retained motion.",
+      "feedback": "The first state establishes the active surface before manipulation.",
+      "cancellation": "Stopping here leaves the product unchanged.",
+      "failure": "The goal is not yet complete in the entry state.",
+      "recovery": "Choose a creation or open action.",
+      "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Choose a creation or open action",
+      "response": "A target control, item, document, or workspace becomes the active context.",
+      "feedback": "The next retained state visibly differs and identifies the active path.",
+      "cancellation": "Focus can remain on the previous context without committing.",
+      "failure": "An unintended target would leave the desired result unavailable.",
+      "recovery": "Move focus to the intended visible target and continue.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Select a template or asset",
+      "response": "The recording advances into the product’s intermediate working state.",
+      "feedback": "Content, controls, or selection context changes in place.",
+      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+      "failure": "Stopping at this state produces no completion evidence.",
+      "recovery": "Confirm the new document.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Confirm the new document",
+      "response": "The selected operation crosses from preparation into a committed transition.",
+      "feedback": "The fourth state records the immediate product response.",
+      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+      "failure": "Without confirmation, the fifth-state result does not appear.",
+      "recovery": "Repeat the intended selection and confirm it.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+    },
+    {
+      "name": "Completion feedback",
+      "trigger": "Observe the created document canvas",
+      "response": "The recording reaches the first meaningful result for “Create a Pixelmator Pro document”.",
+      "feedback": "The fifth local frame is the offline completion evidence.",
+      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+      "failure": "Absence of the fifth state means the journey is incomplete.",
+      "recovery": "Replay the recorded sequence from the entry state.",
+      "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Cancellation and backtracking",
+      "trigger": "Leave the path before the committed transition.",
+      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+      "failure": "Exiting early does not produce completion evidence.",
+      "recovery": "Re-enter through state 2 and continue to state 4.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s; media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Failure boundary",
+      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+      "feedback": "No fifth-state visual is present before commitment.",
+      "cancellation": "The actor may abandon the incomplete path without claiming success.",
+      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s; contrasted with media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Recovery",
+      "trigger": "Resume from the last valid intermediate state.",
+      "response": "The same visible action sequence advances to the retained result.",
+      "feedback": "State 5 supplies positive completion feedback after state 4.",
+      "cancellation": "The actor can still stop before replaying confirmation.",
+      "failure": "A replay that never reaches state 5 remains incomplete.",
+      "recovery": "Replay state 4 and verify state 5.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s; media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning Pixelmator Pro user",
+    "goal": "Create a Pixelmator Pro document",
+    "prerequisites": [
+      "Pixelmator Pro available on macOS or the official recording environment",
+      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the welcome window",
+        "system_response": "Pixelmator Pro advances to the entry state retained in state 1.",
+        "state": "Entry state: Open the welcome window",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose a creation or open action",
+        "system_response": "Pixelmator Pro advances to the invocation state retained in state 2.",
+        "state": "Invocation state: Choose a creation or open action",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+      },
+      {
+        "index": 3,
+        "user_action": "Select a template or asset",
+        "system_response": "Pixelmator Pro advances to the focused intermediate state retained in state 3.",
+        "state": "Focused intermediate state: Select a template or asset",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+      },
+      {
+        "index": 4,
+        "user_action": "Confirm the new document",
+        "system_response": "Pixelmator Pro advances to the committed transition retained in state 4.",
+        "state": "Committed transition: Confirm the new document",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+      },
+      {
+        "index": 5,
+        "user_action": "Observe the created document canvas",
+        "system_response": "Pixelmator Pro advances to the first-success result retained in state 5.",
+        "state": "First-success result: Observe the created document canvas",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    ],
+    "failure_route": [
+      "Stop at the third retained state before confirmation; the meaningful result is absent.",
+      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+    ],
+    "recovery_route": [
+      "Return to the second retained state and restore the intended focus or selection.",
+      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+    ],
+    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+  },
+  "accessibility": {
+    "observations": [
+      "Every row of the Templates sidebar pairs a small icon with a readable text label — \"All Templates\", \"Recents\", \"What's New\", \"Collections\", \"Social Media\", \"Print\", \"Video\", \"Logo\", \"Resume\", \"Mockups\" — and every thumbnail in the browsing pane carries a name plus its size caption (\"Web Most Common / 1366 × 768\", \"Cinema 2K / 2048 × 1080\", \"A4 Paper / 210 × 297 mm\"), so no target in these frames is icon-only.",
+      "Selection is doubly encoded and readable from one still: in media/state-02.png and media/state-03.png the chosen thumbnail carries a blue rounded outline and its caption is redrawn as white text in a filled blue pill (pill fill sampled at #1C6CDE in a 60×11 px crop at x=302,y=181 of media/state-03.png), while the active sidebar row is drawn as a lighter filled bar — the \"Mockups\" row in media/state-05.png with the arrow pointer over it.",
+      "Contrast measured from media/state-01.png: in a 120×20 px crop at x=350,y=150 the \"Welcome to Pixelmator Pro\" title glyphs are #EBEBEB on the #212121 panel, a WCAG contrast ratio of 13.51:1; the \"Version 3.3.7 Mosaic\" line one row down, in a 100×10 px crop at x=375,y=186, is only #8D8D8D on #1B1B1B, 5.19:1, so the two text tiers in the same window differ by more than a factor of two.",
+      "State is carried by printed text rather than by movement: each of the seven screens in the clip names itself in the window's title position (\"All Templates\", \"Recents\", \"Collections\", \"Social Media\", \"Mockups\"), and the right-hand inspector spells the consequence of the selection out in words (\"Size 6000 × 4500\", \"Color Profile Display P3\", \"File Size 1.6 MB\" in media/state-05.png).",
+      "No keyboard shortcut, key hint, tooltip or focus ring appears in any of the 270 frames; the menu bar (Pixelmator Pro, File, Edit, Insert, Image, Tools, Format, Arrange, View, Window, Help) is never opened, so no shortcut is printed anywhere in the excerpt."
+    ],
+    "unknowns": [
+      "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
+      "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
+      "The product’s Reduce Motion behavior and contrast preferences are not demonstrated.",
+      "Keyboard focus is not observable: no focus ring appears on any control in the 270 frames, and because the clip is six hard cuts between frozen screens there is no tab traversal to read an order from.",
+      "The template-thumbnail captions and the inspector labels are rendered at 6–8 px in this 960×540 transcode, so their exact glyph colours cannot be sampled cleanly and only the larger welcome-window text was measurable for contrast."
+    ]
+  },
+  "motion_analysis": {
+    "trigger": "No trigger is visible. The arrow pointer sits over the \"Framed Poster\" thumbnail at 4s, over the \"Ocean Of Life\" sidebar row at 11s and over the \"Mockups\" sidebar row at 16s, but each new screen is already fully drawn on the frame after the cut, and no pressed control, click ripple, cursor-down state or pointer travel between the two positions is recorded.",
+    "start_state": "The \"Welcome to Pixelmator Pro\" window (Version 3.3.7 Mosaic) centred on the macOS Ventura desktop with the Dock visible, its recent-file list showing Zahara selected, and the menu bar clock reading \"Thu Jun 29 9:41 AM\".",
+    "end_state": "The new-image template browser on the \"Mockups\" category, MacBook Pro selected in the Devices grid and the inspector reading \"MacBook Pro 14-in.\", 6000 × 4500, Display P3, 1.6 MB. The clip never reaches an open document canvas — no image window, no tools sidebar and no layers list appears in any of the 270 frames.",
+    "continuity": "Not one continuous take. The per-frame change profile over all 269 frame pairs is quiet in 263 of them (below 0.2/255) and spikes in exactly six: 3.93s (34.46/255), 7.33s (16.14), 9.13s (18.88), 11.07s (14.49), 13.53s (14.17) and 15.73s (17.8). Those six single-frame spikes are hard cuts between seven otherwise frozen screens — Welcome, All Templates, Recents, What's New, Collections, Social Media, Mockups — with a mean change of 0.438/255 across the clip. The desktop wallpaper, Dock and the 9:41 AM clock are identical in every frame.",
+    "timing_class": "instant",
+    "interruption_or_reversal": null,
+    "feedback": "The only feedback the clip contains is the replaced screen itself. Within each of the seven segments nothing at all moves — no spinner, no progress bar, no thumbnail loading placeholder, no hover highlight following the pointer — and the selection marks (blue thumbnail outline, blue caption pill, lighter sidebar bar) are already final in the first frame after each cut.",
+    "reduced_motion_equivalent": null
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis missing interruption_or_reversal, reduced_motion_equivalent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

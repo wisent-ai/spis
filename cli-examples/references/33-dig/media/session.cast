@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921625,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"dig authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: dig\r\n"]
+[0.55,"o","cli-ref$ dig -v 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","DiG 9.18.39-0ubuntu0.24.04.5-Ubuntu\r\n"]
+[2.2,"o","cli-ref$ dig -h 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage:  dig [@global-server] [domain] [q-type] [q-class] {q-opt}\r\n            {global-d-opt} host [@local-server] {local-d-opt}\r\n            [ host [@local-server] {local-d-opt} [...]]\r\nWhere:  domain\t  is in the Domain Name System\r\n        q-class  is one of (in,hs,ch,...) [default: in]\r\n        q-type   is one of (a,any,mx,ns,soa,hinfo,axfr,txt,...) [default:a]\r\n                 (Use ixfr=version for type ixfr)\r\n        q-opt    is one of:\r\n                 -4                  (use IPv4 query transport only)\r\n                 -6                  (use IPv6 query transport only)\r\n                 -b address[#port]   (bind to source address/port)\r\n                 -c class            (specify query class)\r\n                 -f filename         (batch mode)\r\n                 -k keyfile          (specify tsig key file)\r\n"]
+[5.1,"o","cli-ref$ dig --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Invalid option: --definitely-invalid-option\r\nUsage:  dig [@global-server] [domain] [q-type] [q-class] {q-opt}\r\n            {global-d-opt} host [@local-server] {local-d-opt}\r\n            [ host [@local-server] {local-d-opt} [...]]\r\n\r\nUse \"dig -h\" (or \"dig -h | more\") for complete list of options\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ dig --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ dig -h 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage:  dig [@global-server] [domain] [q-type] [q-class] {q-opt}\r\n            {global-d-opt} host [@local-server] {local-d-opt}\r\n            [ host [@local-server] {local-d-opt} [...]]\r\nWhere:  domain\t  is in the Domain Name System\r\n"]

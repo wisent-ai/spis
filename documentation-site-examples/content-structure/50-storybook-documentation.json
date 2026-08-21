@@ -1,0 +1,672 @@
+{
+  "name": "Storybook Documentation",
+  "source_url": "https://storybook.js.org/docs",
+  "category": "UI development tooling documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 1935,
+  "landing_nav": [
+    {
+      "text": "Docs",
+      "path": "/docs"
+    },
+    {
+      "text": "AI",
+      "path": "/ai"
+    },
+    {
+      "text": "Addons",
+      "path": "/addons"
+    },
+    {
+      "text": "Showcase",
+      "path": "/showcase"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog"
+    },
+    {
+      "text": "Documentation",
+      "path": "/docs"
+    },
+    {
+      "text": "API",
+      "path": "/docs/api"
+    },
+    {
+      "text": "Tutorials",
+      "path": "/tutorials"
+    },
+    {
+      "text": "Addons",
+      "path": "/integrations"
+    },
+    {
+      "text": "Changelog",
+      "path": "/releases"
+    },
+    {
+      "text": "Get Started",
+      "path": "/docs/get-started"
+    },
+    {
+      "text": "Why Storybook?",
+      "path": "/docs/get-started/why-storybook"
+    },
+    {
+      "text": "Install",
+      "path": "/docs/get-started/install"
+    },
+    {
+      "text": "What's a story?",
+      "path": "/docs/get-started/whats-a-story"
+    },
+    {
+      "text": "Browse stories",
+      "path": "/docs/get-started/browse-stories"
+    },
+    {
+      "text": "Setup",
+      "path": "/docs/get-started/setup"
+    },
+    {
+      "text": "Conclusion",
+      "path": "/docs/get-started/conclusion"
+    },
+    {
+      "text": "Stories",
+      "path": "/docs/writing-stories"
+    },
+    {
+      "text": "Args",
+      "path": "/docs/writing-stories/args"
+    },
+    {
+      "text": "Parameters",
+      "path": "/docs/writing-stories/parameters"
+    },
+    {
+      "text": "Decorators",
+      "path": "/docs/writing-stories/decorators"
+    },
+    {
+      "text": "Play function",
+      "path": "/docs/writing-stories/play-function"
+    },
+    {
+      "text": "Loaders",
+      "path": "/docs/writing-stories/loaders"
+    },
+    {
+      "text": "Tags",
+      "path": "/docs/writing-stories/tags"
+    },
+    {
+      "text": "Naming components and hierarchy",
+      "path": "/docs/writing-stories/naming-components-and-hierarchy"
+    },
+    {
+      "text": "Building pages and screens",
+      "path": "/docs/writing-stories/build-pages-with-storybook"
+    },
+    {
+      "text": "Stories for multiple components",
+      "path": "/docs/writing-stories/stories-for-multiple-components"
+    },
+    {
+      "text": "Writing stories in TypeScript",
+      "path": "/docs/writing-stories/typescript"
+    },
+    {
+      "text": "Testing",
+      "path": "/docs/writing-tests"
+    },
+    {
+      "text": "Interaction tests",
+      "path": "/docs/writing-tests/interaction-testing"
+    },
+    {
+      "text": "Accessibility tests",
+      "path": "/docs/writing-tests/accessibility-testing"
+    },
+    {
+      "text": "Visual tests",
+      "path": "/docs/writing-tests/visual-testing"
+    },
+    {
+      "text": "Snapshot tests",
+      "path": "/docs/writing-tests/snapshot-testing"
+    },
+    {
+      "text": "Test coverage",
+      "path": "/docs/writing-tests/test-coverage"
+    },
+    {
+      "text": "In CI",
+      "path": "/docs/writing-tests/in-ci"
+    },
+    {
+      "text": "Docs",
+      "path": "/docs/writing-docs"
+    },
+    {
+      "text": "Autodocs",
+      "path": "/docs/writing-docs/autodocs"
+    },
+    {
+      "text": "MDX",
+      "path": "/docs/writing-docs/mdx"
+    },
+    {
+      "text": "Doc blocks",
+      "path": "/docs/writing-docs/doc-blocks"
+    },
+    {
+      "text": "Code panel",
+      "path": "/docs/writing-docs/code-panel"
+    },
+    {
+      "text": "Preview and build docs",
+      "path": "/docs/writing-docs/build-documentation"
+    },
+    {
+      "text": "AI",
+      "path": "/docs/ai"
+    },
+    {
+      "text": "Agentic setup",
+      "path": "/docs/ai/setup"
+    },
+    {
+      "text": "Best practices",
+      "path": "/docs/ai/best-practices"
+    },
+    {
+      "text": "Manifests",
+      "path": "/docs/ai/manifests"
+    },
+    {
+      "text": "Sharing",
+      "path": "/docs/sharing"
+    },
+    {
+      "text": "Publish",
+      "path": "/docs/sharing/publish-storybook"
+    },
+    {
+      "text": "Embed",
+      "path": "/docs/sharing/embed"
+    },
+    {
+      "text": "Design integrations",
+      "path": "/docs/sharing/design-integrations"
+    },
+    {
+      "text": "Composition",
+      "path": "/docs/sharing/storybook-composition"
+    },
+    {
+      "text": "Package Composition",
+      "path": "/docs/sharing/package-composition"
+    },
+    {
+      "text": "Essentials",
+      "path": "/docs/essentials"
+    },
+    {
+      "text": "Actions",
+      "path": "/docs/essentials/actions"
+    },
+    {
+      "text": "Backgrounds",
+      "path": "/docs/essentials/backgrounds"
+    },
+    {
+      "text": "Controls",
+      "path": "/docs/essentials/controls"
+    },
+    {
+      "text": "Highlight",
+      "path": "/docs/essentials/highlight"
+    },
+    {
+      "text": "Measure & outline",
+      "path": "/docs/essentials/measure-and-outline"
+    },
+    {
+      "text": "Toolbars & globals",
+      "path": "/docs/essentials/toolbars-and-globals"
+    },
+    {
+      "text": "Viewport",
+      "path": "/docs/essentials/viewport"
+    },
+    {
+      "text": "Addons",
+      "path": "/docs/addons"
+    },
+    {
+      "text": "Install",
+      "path": "/docs/addons/install-addons"
+    },
+    {
+      "text": "Write",
+      "path": "/docs/addons/writing-addons"
+    },
+    {
+      "text": "Configure addons",
+      "path": "/docs/addons/configure-addons"
+    },
+    {
+      "text": "Write a preset",
+      "path": "/docs/addons/writing-presets"
+    },
+    {
+      "text": "Add to catalog",
+      "path": "/docs/addons/integration-catalog"
+    },
+    {
+      "text": "Types of addons",
+      "path": "/docs/addons/addon-types"
+    },
+    {
+      "text": "Knowledge base",
+      "path": "/docs/addons/addon-knowledge-base"
+    },
+    {
+      "text": "Addon API",
+      "path": "/docs/addons/addons-api"
+    },
+    {
+      "text": "Migrate addons to 10.0",
+      "path": "/docs/addons/addon-migration-guide"
+    },
+    {
+      "text": "Configure",
+      "path": "/docs/configure"
+    },
+    {
+      "text": "Styling and CSS",
+      "path": "/docs/configure/styling-and-css"
+    },
+    {
+      "text": "Telemetry",
+      "path": "/docs/configure/telemetry"
+    },
+    {
+      "text": "Story rendering",
+      "path": "/docs/configure/story-rendering"
+    },
+    {
+      "text": "Story layout",
+      "path": "/docs/configure/story-layout"
+    },
+    {
+      "text": "Environment variables",
+      "path": "/docs/configure/environment-variables"
+    },
+    {
+      "text": "Builders",
+      "path": "/docs/builders"
+    },
+    {
+      "text": "Vite",
+      "path": "/docs/builders/vite"
+    },
+    {
+      "text": "Webpack",
+      "path": "/docs/builders/webpack"
+    },
+    {
+      "text": "API",
+      "path": "/docs/builders/builder-api"
+    },
+    {
+      "text": "Component Story Format (CSF)",
+      "path": "/docs/api/csf"
+    },
+    {
+      "text": "ArgTypes",
+      "path": "/docs/api/arg-types"
+    },
+    {
+      "text": "Parameters",
+      "path": "/docs/api/parameters"
+    },
+    {
+      "text": "Frameworks",
+      "path": "/docs/api/new-frameworks"
+    },
+    {
+      "text": "CLI options",
+      "path": "/docs/api/cli-options"
+    },
+    {
+      "text": "Releases",
+      "path": "/docs/releases"
+    },
+    {
+      "text": "Migrate to Storybook 10",
+      "path": "/docs/releases/migration-guide"
+    },
+    {
+      "text": "Migrate from 8 to 9",
+      "path": "/docs/releases/migration-guide-from-older-version"
+    },
+    {
+      "text": "Upgrading",
+      "path": "/docs/releases/upgrading"
+    },
+    {
+      "text": "Feature Lifecycle",
+      "path": "/docs/releases/features"
+    },
+    {
+      "text": "Roadmap",
+      "path": "/docs/releases/roadmap"
+    },
+    {
+      "text": "Contribute",
+      "path": "/docs/contribute"
+    },
+    {
+      "text": "RFC process",
+      "path": "/docs/contribute/RFC"
+    },
+    {
+      "text": "Code",
+      "path": "/docs/contribute/code"
+    },
+    {
+      "text": "Frameworks",
+      "path": "/docs/contribute/framework"
+    },
+    {
+      "text": "Reproduce",
+      "path": "/docs/contribute/how-to-reproduce"
+    },
+    {
+      "text": "FAQ",
+      "path": "/docs/faq"
+    },
+    {
+      "text": "set up Storybook for you",
+      "path": "/docs/ai/setup"
+    },
+    {
+      "text": "installation guide",
+      "path": "/docs/get-started/install"
+    },
+    {
+      "text": "Next.js",
+      "path": "/docs/get-started/frameworks/nextjs/"
+    },
+    {
+      "text": "Next.jswith Vite",
+      "path": "/docs/get-started/frameworks/nextjs-vite/"
+    },
+    {
+      "text": "TanStack React",
+      "path": "/docs/get-started/frameworks/tanstack-react/"
+    },
+    {
+      "text": "Reactwith Vite",
+      "path": "/docs/get-started/frameworks/react-vite/"
+    },
+    {
+      "text": "Reactwith Webpack",
+      "path": "/docs/get-started/frameworks/react-webpack5/"
+    },
+    {
+      "text": "React Native Webwith Vite (in browser)",
+      "path": "/docs/get-started/frameworks/react-native-web-vite/"
+    },
+    {
+      "text": "Preactwith Vite",
+      "path": "/docs/get-started/frameworks/preact-vite"
+    },
+    {
+      "text": "Vuewith Vite",
+      "path": "/docs/get-started/frameworks/vue3-vite/"
+    },
+    {
+      "text": "Angular",
+      "path": "/docs/get-started/frameworks/angular/"
+    },
+    {
+      "text": "SvelteKit",
+      "path": "/docs/get-started/frameworks/sveltekit/"
+    },
+    {
+      "text": "Sveltewith Vite",
+      "path": "/docs/get-started/frameworks/svelte-vite/"
+    },
+    {
+      "text": "Web Componentswith Vite",
+      "path": "/docs/get-started/frameworks/web-components-vite/"
+    },
+    {
+      "text": "Essential features",
+      "path": "/docs/essentials"
+    },
+    {
+      "text": "Configure Storybook",
+      "path": "/docs/configure"
+    },
+    {
+      "text": "Addons & Integrations",
+      "path": "/addons"
+    },
+    {
+      "text": "Migrate to 10.5",
+      "path": "/docs/releases/migration-guide"
+    },
+    {
+      "text": "See changelog",
+      "path": "/releases/"
+    },
+    {
+      "text": "Why Storybook",
+      "path": "/docs/get-started/why-storybook"
+    },
+    {
+      "text": "Guides",
+      "path": "/docs"
+    },
+    {
+      "text": "Get involved",
+      "path": "/community"
+    },
+    {
+      "text": "Explore",
+      "path": "/showcase"
+    },
+    {
+      "text": "About",
+      "path": "/showcase/about"
+    }
+  ],
+  "url_sections": {
+    "addons": 1039,
+    "tutorials": 314,
+    "blog": 254,
+    "docs": 168,
+    "showcase": 112,
+    "releases": 32,
+    "recipes": 14,
+    "community": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorials",
+      "/tutorials"
+    ],
+    "getting started / quickstart": [
+      "get started",
+      "/docs/get-started",
+      "/docs/get-started/setup",
+      "/docs/get-started/install"
+    ],
+    "guides / how-to": [
+      "guides",
+      "installation guide",
+      "/docs/releases/migration-guide",
+      "/docs/contribute/how-to-reproduce"
+    ],
+    "api reference": [
+      "api",
+      "/docs/api",
+      "addon api",
+      "/docs/api/csf"
+    ],
+    "changelog / release notes": [
+      "releases",
+      "/releases",
+      "changelog",
+      "/releases/"
+    ],
+    "migration / upgrade": [
+      "upgrading",
+      "migrate to 10.5",
+      "migrate from 8 to 9",
+      "migrate addons to 10.0"
+    ],
+    "faq": [
+      "faq",
+      "/docs/faq"
+    ],
+    "cli reference": [
+      "cli options",
+      "/docs/api/cli-options"
+    ],
+    "configuration / settings": [
+      "configure",
+      "/docs/configure",
+      "configure addons",
+      "configure storybook"
+    ],
+    "best practices": [
+      "best practices",
+      "/docs/ai/best-practices"
+    ],
+    "community / support": [
+      "community",
+      "/community"
+    ],
+    "cookbook / recipes": [
+      "recipes"
+    ],
+    "integrations": [
+      "/integrations",
+      "design integrations",
+      "addons & integrations",
+      "/docs/addons/integration-catalog"
+    ],
+    "roadmap": [
+      "roadmap",
+      "/docs/releases/roadmap"
+    ],
+    "contributing": [
+      "contribute",
+      "/docs/contribute",
+      "/docs/contribute/rfc",
+      "/docs/contribute/code"
+    ],
+    "accessibility": [
+      "accessibility tests",
+      "/docs/writing-tests/accessibility-testing"
+    ],
+    "versioned docs": [
+      "/docs/releases/migration-guide-from-older-version"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://storybook.js.org/docs",
+      "h1": "Get started with Storybook",
+      "h2": [
+        "Install Storybook",
+        "Supported frameworks",
+        "Community-maintained frameworks",
+        "Main concepts",
+        "Additional resources"
+      ]
+    },
+    {
+      "url": "https://storybook.js.org/ai",
+      "h1": "Now AI can ship production UI",
+      "h2": [
+        "Generate UI from your components",
+        "Enforce UI quality",
+        "Share UI context across teams"
+      ]
+    },
+    {
+      "url": "https://storybook.js.org/addons",
+      "h1": "Integrations",
+      "h2": []
+    },
+    {
+      "url": "https://storybook.js.org/showcase",
+      "h1": "Showcase",
+      "h2": []
+    },
+    {
+      "url": "https://storybook.js.org/blog",
+      "h1": "News and updates from the team",
+      "h2": [
+        "Storybook for TanStack React",
+        "Storybook 10.4",
+        "Storybook 10.3",
+        "Storybook MCP for React",
+        "Storybook 💙 npmx",
+        "Security advisory",
+        "Storybook MCP sneak peek",
+        "Storybook 10",
+        "Storybook is going ESM-only",
+        "Next-generation module mocking in Storybook",
+        "Component Test with Storybook and Vitest",
+        "Storybook bloat? Fixed.",
+        "The accessibility pipeline for frontend teams",
+        "Frontend test coverage with Storybook 9"
+      ]
+    },
+    {
+      "url": "https://storybook.js.org/tutorials",
+      "h1": "Tutorials",
+      "h2": []
+    },
+    {
+      "url": "https://storybook.js.org/integrations",
+      "h1": "Integrations",
+      "h2": []
+    },
+    {
+      "url": "https://storybook.js.org/community",
+      "h1": "",
+      "h2": [
+        "Meet world-class frontend devs",
+        "Get Support",
+        "Search the docs",
+        "Post a question in GitHub Discussions",
+        "File an issue on GitHub",
+        "Join live events & streams",
+        "Subscribe to YouTube channel",
+        "Follow #announcements chat",
+        "Follow on BlueSky",
+        "Follow on X",
+        "Use brand & presentation resources",
+        "Logo and brand",
+        "Give a talk",
+        "Contributors",
+        "Contribute to Storybook",
+        "Write or update docs",
+        "Find and report issues",
+        "Send a pull request",
+        "Join #contributing chat",
+        "Sponsor the community"
+      ]
+    }
+  ]
+}

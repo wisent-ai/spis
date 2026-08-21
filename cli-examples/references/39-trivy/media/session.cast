@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921626,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Trivy authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Trivy\r\n"]
+[0.55,"o","cli-ref$ trivy --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","Version: 0.74.0\r\n"]
+[2.2,"o","cli-ref$ trivy --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Scanner for vulnerabilities in container images, file systems, and Git repositories, as well as for configuration issues and hard-coded secrets\r\n\r\nUsage:\r\n  trivy [global flags] command [flags] target\r\n  trivy [command]\r\n\r\nExamples:\r\n  # Scan a container image\r\n  $ trivy image python:3.4-alpine\r\n\r\n  # Scan a container image from a tar archive\r\n  $ trivy image --input ruby-3.1.tar\r\n\r\n  # Scan local filesystem\r\n"]
+[5.1,"o","cli-ref$ trivy --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Error: unknown flag: --definitely-invalid-option\r\nUsage:\r\n  trivy [global flags] command [flags] target\r\n  trivy [command]\r\n\r\nExamples:\r\n  # Scan a container image\r\n  $ trivy image python:3.4-alpine\r\n\r\n  # Scan a container image from a tar archive\r\n  $ trivy image --input ruby-3.1.tar\r\n\r\n  # Scan local filesystem\r\n  $ trivy fs .\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ trivy --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ trivy --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Scanner for vulnerabilities in container images, file systems, and Git repositories, as well as for configuration issues and hard-coded secrets\r\n\r\nUsage:\r\n  trivy [global flags] command [flags] target\r\n"]

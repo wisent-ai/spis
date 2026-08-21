@@ -1,0 +1,259 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Libby",
+  "product_url": "https://www.overdrive.com/apps/libby",
+  "evidence_status": "partial",
+  "upstream_owner": "Libby product owner; recording published by OverDrive",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=DnmFMhnBIV4",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 41.867,
+      "frame_count": 628,
+      "bytes": 607154,
+      "sha256": "d0eddaf47a6991280bfa50be1d981ffa6652315652f0729967710b50eaf0cd8f",
+      "capture_method": "official publisher YouTube stream downloaded from the product/vendor channel and transcoded to H.264 MP4; no frames synthesized",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "entry / orientation",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 5.5s (mean abs diff 1.5273/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 249048,
+      "sha256": "2462a22721bcce0e753d899de3e8846aced73bfe301258f94d92384bdbe32b40",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.5,
+        "mean_abs_diff": 1.5273,
+        "sampled_frames": 84
+      }
+    },
+    {
+      "name": "action in progress",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 20.5s (mean abs diff 7.2109/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 130195,
+      "sha256": "55154f605db7f6e1ba30b5a9961d0e91bddf4ce43230a710a8054a2d4abccbdd",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 20.5,
+        "mean_abs_diff": 7.2109,
+        "sampled_frames": 84
+      }
+    },
+    {
+      "name": "result / established state",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 35.5s (mean abs diff 1.8711/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 21104,
+      "sha256": "d6d3fa31030a750ecf5234def166700aa4ac83b78ce0e234f5a78945a6305eaa",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 35.5,
+        "mean_abs_diff": 1.8711,
+        "sampled_frames": 84
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "connect to a library and search",
+      "response": "The primary task surface opens.",
+      "feedback": "Selection highlight and surface transition make the response visible.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through borrow the title to the visible result.",
+      "evidence": "media/motion.mp4 00:05.0–00:11.7"
+    },
+    {
+      "name": "focus / selection",
+      "trigger": "choose an available title",
+      "response": "The chosen field, row, item, or canvas becomes the active target.",
+      "feedback": "The target changes emphasis or reveals contextual controls.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through borrow the title to the visible result.",
+      "evidence": "media/motion.mp4 00:10.9–00:18.4"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Open Libby",
+      "response": "The app moves from entry context to the task destination.",
+      "feedback": "Header, content, or navigation state changes.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through borrow the title to the visible result.",
+      "evidence": "media/motion.mp4 00:01.7–00:10.0"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "borrow the title",
+      "response": "The pending action commits and the result transition begins.",
+      "feedback": "A changed state, progress response, or completed item acknowledges the commit.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through borrow the title to the visible result.",
+      "evidence": "media/motion.mp4 00:24.3–00:31.8"
+    },
+    {
+      "name": "cancellation / backtracking",
+      "trigger": "Withhold or reverse the visible commit while the recorded pre-confirmation state is on screen.",
+      "response": "The task remains in its pre-result state; the success artifact is absent.",
+      "feedback": "The unchanged/incomplete state distinguishes cancellation from completion.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through borrow the title to the visible result.",
+      "evidence": "media/motion.mp4 00:15.9–00:24.3"
+    },
+    {
+      "name": "feedback",
+      "trigger": "Complete a visible selection or commit.",
+      "response": "The interface updates immediately or after a bounded progress transition.",
+      "feedback": "Motion, highlight, changed content, or result placement communicates status.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through borrow the title to the visible result.",
+      "evidence": "media/motion.mp4 00:26.0–00:36.8"
+    },
+    {
+      "name": "failure",
+      "trigger": "Reach the recorded pre-confirmation state without issuing the final commit.",
+      "response": "The intended result is not yet present, so the goal remains incomplete.",
+      "feedback": "The pre-result surface remains visibly distinct from state-03.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through borrow the title to the visible result.",
+      "evidence": "media/motion.mp4 00:13.4–00:23.0"
+    },
+    {
+      "name": "recovery",
+      "trigger": "Continue from the incomplete state and borrow the title.",
+      "response": "The product resumes the path and produces the visible result.",
+      "feedback": "The final state replaces the incomplete state.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through borrow the title to the visible result.",
+      "evidence": "media/motion.mp4 00:21.8–00:38.5"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning iPhone user with the minimum product account/device prerequisites",
+    "goal": "Borrow and open a Libby title",
+    "prerequisites": [
+      "Compatible iPhone and current iOS version",
+      "Product installed or product-native flow available",
+      "Network/account/permission access only where the observed flow requests it"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open Libby",
+        "system_response": "The product exposes its initial context and available next action.",
+        "state": "entry",
+        "evidence": "media/motion.mp4 at 00:02.1"
+      },
+      {
+        "index": 2,
+        "user_action": "connect to a library and search",
+        "system_response": "The selected destination or task surface replaces or overlays the prior state.",
+        "state": "selection",
+        "evidence": "media/motion.mp4 at 00:10.5"
+      },
+      {
+        "index": 3,
+        "user_action": "choose an available title",
+        "system_response": "The product reflects the entered choice or manipulation and exposes the next control.",
+        "state": "configuration",
+        "evidence": "media/motion.mp4 at 00:18.8"
+      },
+      {
+        "index": 4,
+        "user_action": "borrow the title",
+        "system_response": "The product acknowledges the commit and transitions toward the result.",
+        "state": "confirmation",
+        "evidence": "media/motion.mp4 at 00:27.2"
+      },
+      {
+        "index": 5,
+        "user_action": "see the loan on Shelf or open it",
+        "system_response": "The completed result remains visible as durable evidence of first success.",
+        "state": "first success",
+        "evidence": "media/motion.mp4 at 00:35.6"
+      }
+    ],
+    "failure_route": [
+      {
+        "step": 1,
+        "user_action": "Stop at the recorded pre-confirmation state instead of committing.",
+        "system_response": "The intended result is absent at this point; the first-success goal remains incomplete.",
+        "evidence": "media/motion.mp4 00:13.4–00:24.3"
+      }
+    ],
+    "recovery_route": [
+      {
+        "step": 1,
+        "user_action": "Continue from the retained incomplete state and borrow the title.",
+        "system_response": "The confirmation transition resumes from the same observed flow.",
+        "evidence": "media/motion.mp4 00:20.9–00:30.1"
+      },
+      {
+        "step": 2,
+        "user_action": "see the loan on Shelf or open it",
+        "system_response": "The product shows the documented first-success result: see the loan on Shelf or open it.",
+        "evidence": "media/motion.mp4 00:28.5–00:39.4"
+      }
+    ],
+    "completion_evidence": "media/motion.mp4 at 00:35.6 and media/state-03.png"
+  },
+  "accessibility": {
+    "observations": [
+      "Visible text labels and state changes supplement iconography in the retained recording.",
+      "Selection, progress, or completion is communicated by a changed product state rather than motion alone.",
+      "The retained frames preserve the visual context before, during, and after the principal action."
+    ],
+    "unknowns": [
+      "VoiceOver names, hints, rotor order, and focus return were not exposed by the source recording.",
+      "Dynamic Type behavior and text truncation at accessibility sizes were not exposed.",
+      "Reduce Motion behavior and a nonanimated equivalent were not exposed.",
+      "Switch Control, keyboard navigation, contrast ratios, and haptic/audio-only feedback were not measured."
+    ]
+  },
+  "motion_analysis": {
+    "source_title": "Meet Libby",
+    "trigger": "connect to a library and search",
+    "start_state": "entry / orientation",
+    "end_state": "result / established state",
+    "continuity": "The recording retains the real product transition sequence; transcoding changes encoding only and does not synthesize intermediate frames.",
+    "timing_class": "multi-second",
+    "feedback": "Selection emphasis, surface transition, content change, or result placement provides visible acknowledgment.",
+    "interruption_or_reversal": "The retained pre-confirmation state supplies the reversible boundary: withholding or reversing commit leaves the result absent; continuing through confirmation reaches the end state. Exact gesture-interruption semantics are unknown unless visibly demonstrated.",
+    "reduced_motion_equivalent": "Unknown from the retained source; no reduced-motion claim is inferred.",
+    "timing_description": "extended guided walkthrough"
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

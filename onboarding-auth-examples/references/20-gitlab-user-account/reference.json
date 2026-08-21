@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "GitLab — user account",
+  "product_url": "https://docs.gitlab.com/user/profile/account/create_accounts/",
+  "evidence_status": "partial",
+  "upstream_owner": "GitLab Inc.",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=B4PzPz_J9-E",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 306,
+      "duration_seconds": 65.067,
+      "frame_count": 976,
+      "bytes": 265770,
+      "sha256": "98fa4d62c889564fcd25b51b868bdfed2d4b36d78ad8045fc7cf4867e535f79e",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "account pending",
+      "local_path": "media/state-01-account-pending.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 0s (mean abs diff 1.4609/255)",
+      "width": 640,
+      "height": 306,
+      "bytes": 61851,
+      "sha256": "1b36ec3cb6c623917ef3da99d05b32af62cdd98caaf73990d7f48b023a421992",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.0,
+        "mean_abs_diff": 1.4609,
+        "sampled_frames": 130
+      }
+    },
+    {
+      "name": "identity verified",
+      "local_path": "media/state-02-identity-verified.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 14s (mean abs diff 1.5586/255)",
+      "width": 640,
+      "height": 306,
+      "bytes": 73040,
+      "sha256": "0f261fcb6bfbc46e1795550c994516b493a7f648c74033f9ca303e6e178a95cc",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 14.0,
+        "mean_abs_diff": 1.5586,
+        "sampled_frames": 130
+      }
+    },
+    {
+      "name": "namespace ready",
+      "local_path": "media/state-03-namespace-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 25.5s (mean abs diff 1.5117/255)",
+      "width": 640,
+      "height": 306,
+      "bytes": 78977,
+      "sha256": "f8cada1d24c0cea1a50bc5a8458547b143603071de3bf14918b5c4e69e92d835",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 25.5,
+        "mean_abs_diff": 1.5117,
+        "sampled_frames": 130
+      }
+    },
+    {
+      "name": "project creation",
+      "local_path": "media/state-04-project-creation.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 34s (mean abs diff 1.2734/255)",
+      "width": 640,
+      "height": 306,
+      "bytes": 59609,
+      "sha256": "65277daca6ec7aa69ed64c19736b31ebf4e9c53aafdbdbe5ac551332853dd1f4",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 34.0,
+        "mean_abs_diff": 1.2734,
+        "sampled_frames": 130
+      }
+    },
+    {
+      "name": "project configured",
+      "local_path": "media/state-05-project-configured.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 44s (mean abs diff 1.3867/255)",
+      "width": 640,
+      "height": 306,
+      "bytes": 52282,
+      "sha256": "b7fa04d2840dd064c5ea0e39909befe04a0bb69f443afd83397637d4c5f92ac1",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 44.0,
+        "mean_abs_diff": 1.3867,
+        "sampled_frames": 130
+      }
+    },
+    {
+      "name": "first commit",
+      "local_path": "media/state-06-first-commit.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 56s (mean abs diff 1.5352/255)",
+      "width": 640,
+      "height": 306,
+      "bytes": 73091,
+      "sha256": "fc6bb886e108b1542bb37864bb6740a43db542dd987cc3f15b7c81bc2a5ac5e1",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 56.0,
+        "mean_abs_diff": 1.5352,
+        "sampled_frames": 130
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Register or accept an organization invitation",
+      "response": "GitLab creates a pending user identity",
+      "feedback": "The retained account pending state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-account-pending.png @ 3.25s; https://docs.gitlab.com/user/profile/account/create_accounts/"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Complete email or external-provider verification",
+      "response": "GitLab activates the user and returns to the product",
+      "feedback": "The recording advances to identity verified and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-account-pending.png @ 3.25s; media/state-02-identity-verified.png @ 14.31s; https://docs.gitlab.com/user/profile/account/create_accounts/"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Set the profile and namespace",
+      "response": "GitLab exposes the effective project namespace",
+      "feedback": "The navigation result is visible as namespace ready.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-identity-verified.png @ 14.31s; media/state-03-namespace-ready.png @ 25.38s; https://docs.gitlab.com/user/profile/account/create_accounts/"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Choose New project",
+      "response": "GitLab presents blank, import, and template routes",
+      "feedback": "The official recording shows the confirmed project creation state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-namespace-ready.png @ 25.38s; media/state-04-project-creation.png @ 36.44s; https://docs.gitlab.com/user/profile/account/create_accounts/"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-identity-verified.png @ 14.31s; media/state-03-namespace-ready.png @ 25.38s; media/state-04-project-creation.png @ 36.44s; https://docs.gitlab.com/user/profile/account/create_accounts/"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Name and configure project visibility",
+      "response": "GitLab validates the path and settings",
+      "feedback": "Progress is observable as the distinct project configured state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-project-creation.png @ 36.44s; media/state-05-project-configured.png @ 47.50s; https://docs.gitlab.com/user/profile/account/create_accounts/"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-namespace-ready.png @ 25.38s; media/state-04-project-creation.png @ 36.44s; media/state-05-project-configured.png @ 47.50s; https://docs.gitlab.com/user/profile/account/create_accounts/"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Create the project and add the first file or commit",
+      "response": "The repository renders the commit, proving first project success",
+      "feedback": "The retained first commit state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-project-configured.png @ 47.50s; media/state-06-first-commit.png @ 58.56s; https://docs.gitlab.com/user/profile/account/create_accounts/"
+    }
+  ],
+  "journey": {
+    "actor": "new GitLab developer",
+    "goal": "activate an account and create the first project",
+    "prerequisites": [
+      "email or approved external identity",
+      "project name"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Register or accept an organization invitation",
+        "system_response": "GitLab creates a pending user identity",
+        "state": "account pending",
+        "evidence": "media/state-01-account-pending.png; media/official-recording.mp4#t=3.253; https://docs.gitlab.com/user/profile/account/create_accounts/"
+      },
+      {
+        "index": 2,
+        "user_action": "Complete email or external-provider verification",
+        "system_response": "GitLab activates the user and returns to the product",
+        "state": "identity verified",
+        "evidence": "media/state-02-identity-verified.png; media/official-recording.mp4#t=14.315; https://docs.gitlab.com/user/profile/account/create_accounts/"
+      },
+      {
+        "index": 3,
+        "user_action": "Set the profile and namespace",
+        "system_response": "GitLab exposes the effective project namespace",
+        "state": "namespace ready",
+        "evidence": "media/state-03-namespace-ready.png; media/official-recording.mp4#t=25.376; https://docs.gitlab.com/user/profile/account/create_accounts/"
+      },
+      {
+        "index": 4,
+        "user_action": "Choose New project",
+        "system_response": "GitLab presents blank, import, and template routes",
+        "state": "project creation",
+        "evidence": "media/state-04-project-creation.png; media/official-recording.mp4#t=36.438; https://docs.gitlab.com/user/profile/account/create_accounts/"
+      },
+      {
+        "index": 5,
+        "user_action": "Name and configure project visibility",
+        "system_response": "GitLab validates the path and settings",
+        "state": "project configured",
+        "evidence": "media/state-05-project-configured.png; media/official-recording.mp4#t=47.499; https://docs.gitlab.com/user/profile/account/create_accounts/"
+      },
+      {
+        "index": 6,
+        "user_action": "Create the project and add the first file or commit",
+        "system_response": "The repository renders the commit, proving first project success",
+        "state": "first commit",
+        "evidence": "media/state-06-first-commit.png; media/official-recording.mp4#t=58.560; https://docs.gitlab.com/user/profile/account/create_accounts/"
+      }
+    ],
+    "failure_route": [
+      "At identity verified or namespace ready, invalid, expired, denied, or missing required input leaves the flow short of first commit; evidence: media/state-02-identity-verified.png, media/state-03-namespace-ready.png, and https://docs.gitlab.com/user/profile/account/create_accounts/.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-namespace-ready.png through media/state-05-project-configured.png."
+    ],
+    "recovery_route": [
+      "Return to the retained identity verified or namespace ready requirement, correct or resend the blocking input, and resubmit; evidence: https://docs.gitlab.com/user/profile/account/create_accounts/.",
+      "Continue through the same terminal action until first commit is visible in media/state-06-first-commit.png and the motion at 58.560s."
+    ],
+    "completion_evidence": "first commit retained at media/state-06-first-commit.png and media/official-recording.mp4#t=58.560; source https://docs.gitlab.com/user/profile/account/create_accounts/"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-account-pending.png and media/state-02-identity-verified.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-namespace-ready.png and media/state-04-project-creation.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

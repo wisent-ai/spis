@@ -1,0 +1,787 @@
+{
+  "name": "Ruby on Rails Guides",
+  "source_url": "https://guides.rubyonrails.org/",
+  "category": "Backend framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "landing-nav (the landing is the table of contents)",
+  "inventory_url_count": 77,
+  "landing_nav": [
+    {
+      "text": "Guides",
+      "path": "/"
+    },
+    {
+      "text": "Guides",
+      "path": "/index.html"
+    },
+    {
+      "text": "Guides Index",
+      "path": "/index.html"
+    },
+    {
+      "text": "Getting Started with Rails",
+      "path": "/getting_started.html"
+    },
+    {
+      "text": "Install Ruby on Rails",
+      "path": "/install_ruby_on_rails.html"
+    },
+    {
+      "text": "Active Record Basics",
+      "path": "/active_record_basics.html"
+    },
+    {
+      "text": "Active Record Migrations",
+      "path": "/active_record_migrations.html"
+    },
+    {
+      "text": "Active Record Validations",
+      "path": "/active_record_validations.html"
+    },
+    {
+      "text": "Active Record Callbacks",
+      "path": "/active_record_callbacks.html"
+    },
+    {
+      "text": "Active Record Associations",
+      "path": "/association_basics.html"
+    },
+    {
+      "text": "Active Record Query Interface",
+      "path": "/active_record_querying.html"
+    },
+    {
+      "text": "Active Model Basics",
+      "path": "/active_model_basics.html"
+    },
+    {
+      "text": "Action View Overview",
+      "path": "/action_view_overview.html"
+    },
+    {
+      "text": "Layouts and Rendering in Rails",
+      "path": "/layouts_and_rendering.html"
+    },
+    {
+      "text": "Action View Helpers",
+      "path": "/action_view_helpers.html"
+    },
+    {
+      "text": "Action View Form Helpers",
+      "path": "/form_helpers.html"
+    },
+    {
+      "text": "Action Controller Overview",
+      "path": "/action_controller_overview.html"
+    },
+    {
+      "text": "Action Controller Advanced Topics",
+      "path": "/action_controller_advanced_topics.html"
+    },
+    {
+      "text": "Rails Routing from the Outside In",
+      "path": "/routing.html"
+    },
+    {
+      "text": "Active Support Core Extensions",
+      "path": "/active_support_core_extensions.html"
+    },
+    {
+      "text": "Action Mailer Basics",
+      "path": "/action_mailer_basics.html"
+    },
+    {
+      "text": "Action Mailbox Basics",
+      "path": "/action_mailbox_basics.html"
+    },
+    {
+      "text": "Action Text Overview",
+      "path": "/action_text_overview.html"
+    },
+    {
+      "text": "Active Job Basics",
+      "path": "/active_job_basics.html"
+    },
+    {
+      "text": "Active Storage Overview",
+      "path": "/active_storage_overview.html"
+    },
+    {
+      "text": "Action Cable Overview",
+      "path": "/action_cable_overview.html"
+    },
+    {
+      "text": "Rails Internationalization (I18n) API",
+      "path": "/i18n.html"
+    },
+    {
+      "text": "Testing Rails Applications",
+      "path": "/testing.html"
+    },
+    {
+      "text": "Debugging Rails Applications",
+      "path": "/debugging_rails_applications.html"
+    },
+    {
+      "text": "Configuring Rails Applications",
+      "path": "/configuring.html"
+    },
+    {
+      "text": "The Rails Command Line",
+      "path": "/command_line.html"
+    },
+    {
+      "text": "The Asset Pipeline",
+      "path": "/asset_pipeline.html"
+    },
+    {
+      "text": "Working with JavaScript in Rails",
+      "path": "/working_with_javascript_in_rails.html"
+    },
+    {
+      "text": "Autoloading and Reloading",
+      "path": "/autoloading_and_reloading_constants.html"
+    },
+    {
+      "text": "Using Rails for API-only Applications",
+      "path": "/api_app.html"
+    },
+    {
+      "text": "Tuning Performance for Deployment",
+      "path": "/tuning_performance_for_deployment.html"
+    },
+    {
+      "text": "Caching with Rails: An Overview",
+      "path": "/caching_with_rails.html"
+    },
+    {
+      "text": "Securing Rails Applications",
+      "path": "/security.html"
+    },
+    {
+      "text": "Error Reporting in Rails Applications",
+      "path": "/error_reporting.html"
+    },
+    {
+      "text": "Multiple Databases",
+      "path": "/active_record_multiple_databases.html"
+    },
+    {
+      "text": "Active Record Encryption",
+      "path": "/active_record_encryption.html"
+    },
+    {
+      "text": "Composite Primary Keys",
+      "path": "/active_record_composite_primary_keys.html"
+    },
+    {
+      "text": "The Basics of Creating Rails Plugins",
+      "path": "/plugins.html"
+    },
+    {
+      "text": "Rails on Rack",
+      "path": "/rails_on_rack.html"
+    },
+    {
+      "text": "Creating and Customizing Rails Generators & Templates",
+      "path": "/generators.html"
+    },
+    {
+      "text": "Contributing to Ruby on Rails",
+      "path": "/contributing_to_ruby_on_rails.html"
+    },
+    {
+      "text": "API Documentation Guidelines",
+      "path": "/api_documentation_guidelines.html"
+    },
+    {
+      "text": "Guides Guidelines",
+      "path": "/ruby_on_rails_guides_guidelines.html"
+    },
+    {
+      "text": "Installing Rails Core Development Dependencies",
+      "path": "/development_dependencies_install.html"
+    },
+    {
+      "text": "Maintenance Policy",
+      "path": "/maintenance_policy.html"
+    },
+    {
+      "text": "Upgrading Ruby on Rails",
+      "path": "/upgrading_ruby_on_rails.html"
+    },
+    {
+      "text": "Version 8.1 - October 2025",
+      "path": "/8_1_release_notes.html"
+    },
+    {
+      "text": "Version 8.0 - November 2024",
+      "path": "/8_0_release_notes.html"
+    },
+    {
+      "text": "Version 7.2 - August 2024",
+      "path": "/7_2_release_notes.html"
+    },
+    {
+      "text": "Version 7.1 - October 2023",
+      "path": "/7_1_release_notes.html"
+    },
+    {
+      "text": "Version 7.0 - December 2021",
+      "path": "/7_0_release_notes.html"
+    },
+    {
+      "text": "Version 6.1 - December 2020",
+      "path": "/6_1_release_notes.html"
+    },
+    {
+      "text": "Version 6.0 - August 2019",
+      "path": "/6_0_release_notes.html"
+    },
+    {
+      "text": "Version 5.2 - April 2018",
+      "path": "/5_2_release_notes.html"
+    },
+    {
+      "text": "Version 5.1 - April 2017",
+      "path": "/5_1_release_notes.html"
+    },
+    {
+      "text": "Version 5.0 - June 2016",
+      "path": "/5_0_release_notes.html"
+    },
+    {
+      "text": "Version 4.2 - December 2014",
+      "path": "/4_2_release_notes.html"
+    },
+    {
+      "text": "Version 4.1 - April 2014",
+      "path": "/4_1_release_notes.html"
+    },
+    {
+      "text": "Version 4.0 - June 2013",
+      "path": "/4_0_release_notes.html"
+    },
+    {
+      "text": "Version 3.2 - January 2012",
+      "path": "/3_2_release_notes.html"
+    },
+    {
+      "text": "Version 3.1 - August 2011",
+      "path": "/3_1_release_notes.html"
+    },
+    {
+      "text": "Version 3.0 - August 2010",
+      "path": "/3_0_release_notes.html"
+    },
+    {
+      "text": "Version 2.3 - March 2009",
+      "path": "/2_3_release_notes.html"
+    },
+    {
+      "text": "Version 2.2 - November 2008",
+      "path": "/2_2_release_notes.html"
+    },
+    {
+      "text": "Contribute",
+      "path": "/contributing_to_ruby_on_rails.html"
+    },
+    {
+      "text": "Kindle",
+      "path": "/epub/ruby_on_rails_guides_v8.1.3.1.epub"
+    },
+    {
+      "text": "The Rails Initialization Process",
+      "path": "/initialization.html"
+    },
+    {
+      "text": "Active Support Instrumentation",
+      "path": "/active_support_instrumentation.html"
+    },
+    {
+      "text": "Active Record and PostgreSQL",
+      "path": "/active_record_postgresql.html"
+    },
+    {
+      "text": "Getting Started with Engines",
+      "path": "/engines.html"
+    },
+    {
+      "text": "Threading and Code Execution in Rails",
+      "path": "/threading_and_code_execution.html"
+    },
+    {
+      "text": "Ruby on Rails Guides Guidelines",
+      "path": "/ruby_on_rails_guides_guidelines.html"
+    }
+  ],
+  "url_sections": {
+    "index.html": 2,
+    "contributing_to_ruby_on_rails.html": 2,
+    "ruby_on_rails_guides_guidelines.html": 2,
+    "getting_started.html": 1,
+    "install_ruby_on_rails.html": 1,
+    "active_record_basics.html": 1,
+    "active_record_migrations.html": 1,
+    "active_record_validations.html": 1,
+    "active_record_callbacks.html": 1,
+    "association_basics.html": 1,
+    "active_record_querying.html": 1,
+    "active_model_basics.html": 1,
+    "action_view_overview.html": 1,
+    "layouts_and_rendering.html": 1,
+    "action_view_helpers.html": 1,
+    "form_helpers.html": 1,
+    "action_controller_overview.html": 1,
+    "action_controller_advanced_topics.html": 1,
+    "routing.html": 1,
+    "active_support_core_extensions.html": 1,
+    "action_mailer_basics.html": 1,
+    "action_mailbox_basics.html": 1,
+    "action_text_overview.html": 1,
+    "active_job_basics.html": 1,
+    "active_storage_overview.html": 1,
+    "action_cable_overview.html": 1,
+    "i18n.html": 1,
+    "testing.html": 1,
+    "debugging_rails_applications.html": 1,
+    "configuring.html": 1,
+    "command_line.html": 1,
+    "asset_pipeline.html": 1,
+    "working_with_javascript_in_rails.html": 1,
+    "autoloading_and_reloading_constants.html": 1,
+    "api_app.html": 1,
+    "tuning_performance_for_deployment.html": 1,
+    "caching_with_rails.html": 1,
+    "security.html": 1,
+    "error_reporting.html": 1,
+    "active_record_multiple_databases.html": 1
+  },
+  "content_kinds": {
+    "getting started / quickstart": [
+      "getting_started.html",
+      "/getting_started.html",
+      "getting started with rails",
+      "getting started with engines"
+    ],
+    "guides / how-to": [
+      "guides",
+      "guides index",
+      "guides guidelines",
+      "ruby on rails guides guidelines"
+    ],
+    "api reference": [
+      "api documentation guidelines",
+      "using rails for api-only applications",
+      "rails internationalization (i18n) api"
+    ],
+    "changelog / release notes": [
+      "/7_2_release_notes.html",
+      "/5_0_release_notes.html",
+      "/5_2_release_notes.html",
+      "/6_0_release_notes.html"
+    ],
+    "troubleshooting / errors": [
+      "debugging rails applications",
+      "debugging_rails_applications.html",
+      "/debugging_rails_applications.html",
+      "error reporting in rails applications"
+    ],
+    "migration / upgrade": [
+      "upgrading ruby on rails",
+      "active record migrations",
+      "active_record_migrations.html",
+      "/upgrading_ruby_on_rails.html"
+    ],
+    "security": [
+      "security.html",
+      "/security.html"
+    ],
+    "cli reference": [
+      "command_line.html",
+      "/command_line.html",
+      "the rails command line"
+    ],
+    "configuration / settings": [
+      "configuring.html",
+      "/configuring.html",
+      "configuring rails applications"
+    ],
+    "community / support": [
+      "active support core extensions",
+      "active support instrumentation",
+      "active_support_core_extensions.html",
+      "/active_support_core_extensions.html"
+    ],
+    "deployment / production": [
+      "tuning performance for deployment",
+      "tuning_performance_for_deployment.html",
+      "/tuning_performance_for_deployment.html"
+    ],
+    "contributing": [
+      "contribute",
+      "contributing to ruby on rails",
+      "contributing_to_ruby_on_rails.html",
+      "/contributing_to_ruby_on_rails.html"
+    ],
+    "versioned docs": [
+      "version 4.0 - june 2013",
+      "version 5.0 - june 2016",
+      "version 4.1 - april 2014",
+      "version 2.3 - march 2009"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://guides.rubyonrails.org/index.html",
+      "h1": "Ruby on Rails Guides (v8.1.3.1)",
+      "h2": [
+        "Start Here",
+        "Models",
+        "Views",
+        "Controllers",
+        "Other Components",
+        "Digging Deeper",
+        "Going to Production",
+        "Advanced Active Record",
+        "Extending Rails",
+        "Contributing",
+        "Policies",
+        "Release Notes",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/getting_started.html",
+      "h1": "Getting Started with Rails",
+      "h2": [
+        "Chapters",
+        "1. Introduction",
+        "2. Rails Philosophy",
+        "3. Creating a New Rails App",
+        "4. Hello, Rails!",
+        "5. Creating a Database Model",
+        "6. Rails Console",
+        "7. Active Record Model Basics",
+        "8. A Request's Journey Through Rails",
+        "9. Routes",
+        "10. Controllers & Actions",
+        "11. Adding Authentication",
+        "12. Caching Products",
+        "13. Rich Text Fields with Action Text",
+        "14. File Uploads with Active Storage",
+        "15. Internationalization (I18n)",
+        "16. Action Mailer and Email Notifications",
+        "17. Adding CSS & JavaScript",
+        "18. Testing",
+        "19. Consistently Formatted Code with RuboCop"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/install_ruby_on_rails.html",
+      "h1": "Install Ruby on Rails Guide",
+      "h2": [
+        "Chapters",
+        "1. Choose Your Operating System",
+        "2. Verifying Your Ruby Install",
+        "3. Installing Rails",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/active_record_basics.html",
+      "h1": "Active Record Basics",
+      "h2": [
+        "Chapters",
+        "1. What is Active Record?",
+        "2. Convention over Configuration in Active Record",
+        "3. Creating Active Record Models",
+        "4. Overriding the Naming Conventions",
+        "5. CRUD: Reading and Writing Data",
+        "6. Validations",
+        "7. Callbacks",
+        "8. Migrations",
+        "9. Associations",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/active_record_migrations.html",
+      "h1": "Active Record Migrations",
+      "h2": [
+        "Chapters",
+        "1. Migration Overview",
+        "2. Generating Migration Files",
+        "3. Updating Migrations",
+        "4. Running Migrations",
+        "5. Changing Existing Migrations",
+        "6. Schema Dumping and You",
+        "7. Active Record and Referential Integrity",
+        "8. Migrations and Seed Data",
+        "9. Old Migrations",
+        "10. Miscellaneous",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/active_record_validations.html",
+      "h1": "Active Record Validations",
+      "h2": [
+        "Chapters",
+        "1. Validations Overview",
+        "2. Validations",
+        "3. Validation Options",
+        "4. Conditional Validations",
+        "5. Strict Validations",
+        "6. Listing Validators",
+        "7. Performing Custom Validations",
+        "8. Working with Validation Errors",
+        "9. Displaying Validation Errors in Views",
+        "prohibited this article from being saved:",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/active_record_callbacks.html",
+      "h1": "Active Record Callbacks",
+      "h2": [
+        "Chapters",
+        "1. The Object Life Cycle",
+        "2. Callback Registration",
+        "3. Available Callbacks",
+        "4. Running Callbacks",
+        "5. Conditional Callbacks",
+        "6. Skipping Callbacks",
+        "7. Suppressing Saving",
+        "8. Halting Execution",
+        "9. Association Callbacks",
+        "10. Cascading Association Callbacks",
+        "11. Transaction Callbacks",
+        "12. Callback Objects",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/association_basics.html",
+      "h1": "Active Record Associations",
+      "h2": [
+        "Chapters",
+        "1. Associations Overview",
+        "2. Types of Associations",
+        "3. Choosing an Association",
+        "4. Advanced Associations",
+        "5. Single Table Inheritance (STI)",
+        "6. Delegated Types",
+        "7. Tips, Tricks, and Warnings",
+        "8. Association References",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/active_record_querying.html",
+      "h1": "Active Record Query Interface",
+      "h2": [
+        "Chapters",
+        "1. What is the Active Record Query Interface?",
+        "2. Retrieving Objects from the Database",
+        "3. Conditions",
+        "4. Ordering",
+        "5. Selecting Specific Fields",
+        "6. Limit and Offset",
+        "7. Grouping",
+        "8. Overriding Conditions",
+        "9. Null Relation",
+        "10. Readonly Objects",
+        "11. Locking Records for Update",
+        "12. Joining Tables",
+        "13. Eager Loading Associations",
+        "14. Scopes",
+        "15. Dynamic Finders",
+        "16. Enums",
+        "17. Understanding Method Chaining",
+        "18. Find or Build a New Object",
+        "19. Finding by SQL"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/active_model_basics.html",
+      "h1": "Active Model Basics",
+      "h2": [
+        "Chapters",
+        "1. What is Active Model?",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/action_view_overview.html",
+      "h1": "Action View Overview",
+      "h2": [
+        "Chapters",
+        "1. What is Action View?",
+        "2. Using Action View with Rails",
+        "3. Templates",
+        "4. Partials",
+        "5. Layouts",
+        "6. Helpers",
+        "7. Localized Views",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/layouts_and_rendering.html",
+      "h1": "Layouts and Rendering in Rails",
+      "h2": [
+        "Chapters",
+        "1. Overview: How the Pieces Fit Together",
+        "2. Creating Responses",
+        "3. Structuring Layouts",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/action_view_helpers.html",
+      "h1": "Action View Helpers",
+      "h2": [
+        "Chapters",
+        "1. Formatting",
+        "2. Forms",
+        "3. Navigation",
+        "4. Sanitization",
+        "5. Assets",
+        "6. JavaScript",
+        "7. Alternative Tags",
+        "8. Capture Blocks",
+        "9. Performance",
+        "10. Miscellaneous",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/form_helpers.html",
+      "h1": "Action View Form Helpers",
+      "h2": [
+        "Chapters",
+        "1. Working with Basic Forms",
+        "2. Creating Forms with Model Objects",
+        "3. Making Select Boxes with Ease",
+        "4. Using Date and Time Form Helpers",
+        "5. Collection Related Helpers",
+        "6. Uploading Files",
+        "7. Customizing Form Builders",
+        "8. Form Input Naming Conventions and params Hash",
+        "9. Building Complex Forms",
+        "10. Forms to External Resources",
+        "11. Using Tag Helpers without a Form Builder",
+        "12. Using form_tag and form_for",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/action_controller_overview.html",
+      "h1": "Action Controller Overview",
+      "h2": [
+        "Chapters",
+        "1. Introduction",
+        "2. Creating a Controller",
+        "3. Parameters",
+        "4. Strong Parameters",
+        "5. Cookies",
+        "6. Session",
+        "7. Controller Callbacks",
+        "8. The Request and Response Objects",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/action_controller_advanced_topics.html",
+      "h1": "Action Controller Advanced Topics",
+      "h2": [
+        "Chapters",
+        "1. Introduction",
+        "2. Authenticity Token and Request Forgery Protection",
+        "3. Controlling Allowed Browser Versions",
+        "4. HTTP Authentication",
+        "5. Streaming and File Downloads",
+        "6. Log Filtering",
+        "7. Force HTTPS Protocol",
+        "8. Built-in Health Check Endpoint",
+        "9. Handling Errors",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/routing.html",
+      "h1": "Rails Routing from the Outside In",
+      "h2": [
+        "Chapters",
+        "1. The Purpose of the Rails Router",
+        "2. Resource Routing: the Rails Default",
+        "3. Non-Resourceful Routes",
+        "4. Customizing Resourceful Routes",
+        "5. Inspecting Routes",
+        "6. Testing Routes",
+        "7. Breaking Up a Large Route File With draw",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/active_support_core_extensions.html",
+      "h1": "Active Support Core Extensions",
+      "h2": [
+        "Chapters",
+        "1. How to Load Core Extensions",
+        "2. Extensions to All Objects",
+        "3. Extensions to Module",
+        "4. Extensions to Class",
+        "5. Extensions to String",
+        "6. Extensions to Symbol",
+        "7. Extensions to Numeric",
+        "8. Extensions to Integer",
+        "9. Extensions to BigDecimal",
+        "10. Extensions to Enumerable",
+        "11. Extensions to Array",
+        "12. Extensions to Hash",
+        "13. Extensions to Regexp",
+        "14. Extensions to Range",
+        "15. Extensions to Date",
+        "16. Extensions to DateTime",
+        "17. Extensions to Time",
+        "18. Extensions to File",
+        "19. Extensions to NameError"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/action_mailer_basics.html",
+      "h1": "Action Mailer Basics",
+      "h2": [
+        "Chapters",
+        "1. What is Action Mailer?",
+        "2. Creating a Mailer and Views",
+        "3. Multipart Emails and Attachments",
+        "4. Mailer Views and Layouts",
+        "5. Sending Email",
+        "6. Action Mailer Callbacks",
+        "7. Action Mailer View Helpers",
+        "8. Action Mailer Configuration",
+        "9. Previewing and Testing Mailers",
+        "10. Intercepting and Observing Emails",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://guides.rubyonrails.org/action_mailbox_basics.html",
+      "h1": "Action Mailbox Basics",
+      "h2": [
+        "Chapters",
+        "1. What is Action Mailbox?",
+        "2. Setup",
+        "3. Ingress Configuration",
+        "4. Processing Incoming Email",
+        "5. Example",
+        "6. Local Development and Testing",
+        "7. Incineration of InboundEmails",
+        "Feedback"
+      ]
+    }
+  ]
+}

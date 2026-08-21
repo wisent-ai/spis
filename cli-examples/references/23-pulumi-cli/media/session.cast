@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921624,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Pulumi CLI authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Pulumi CLI\r\n"]
+[0.55,"o","cli-ref$ pulumi version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","v3.257.0\r\n"]
+[2.2,"o","cli-ref$ pulumi --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Pulumi - Modern Infrastructure as Code\r\n\r\nTo begin working with Pulumi, run the `pulumi new` command:\r\n\r\n    $ pulumi new\r\n\r\nThis will prompt you to create a new project for your cloud and language of choice.\r\n\r\nThe most common commands from there are:\r\n\r\n    - pulumi up       : Deploy code and/or resource changes\r\n    - pulumi stack    : Manage instances of your project\r\n    - pulumi config   : Alter your stack's configuration or secrets\r\n    - pulumi destroy  : Tear down your stack's resources entirely\r\n"]
+[5.1,"o","cli-ref$ pulumi --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","error: unknown flag: --definitely-invalid-option\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ pulumi --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ pulumi --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Pulumi - Modern Infrastructure as Code\r\n\r\nTo begin working with Pulumi, run the `pulumi new` command:\r\n\r\n"]

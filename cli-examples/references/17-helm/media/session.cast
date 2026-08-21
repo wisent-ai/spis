@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921623,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Helm authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Helm\r\n"]
+[0.55,"o","cli-ref$ helm version --short 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","v4.2.4+g3900f43\r\n"]
+[2.2,"o","cli-ref$ helm help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","The Kubernetes package manager\r\n\r\nCommon actions for Helm:\r\n\r\n- helm search:    search for charts\r\n- helm pull:      download a chart to your local directory to view\r\n- helm install:   upload the chart to Kubernetes\r\n- helm list:      list releases of charts\r\n\r\nEnvironment variables:\r\n\r\n| Name                               | Description                                                                                                |\r\n|------------------------------------|------------------------------------------------------------------------------------------------------------|\r\n| $HELM_CACHE_HOME                   | set an alternative location for storing cached files.                                                      |\r\n"]
+[5.1,"o","cli-ref$ helm --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Error: unknown flag: --definitely-invalid-option\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ helm --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ helm help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","The Kubernetes package manager\r\n\r\nCommon actions for Helm:\r\n\r\n"]

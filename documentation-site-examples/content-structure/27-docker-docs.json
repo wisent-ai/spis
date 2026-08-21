@@ -1,0 +1,231 @@
+{
+  "name": "Docker Docs",
+  "source_url": "https://docs.docker.com/",
+  "category": "Infrastructure documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 1632,
+  "landing_nav": [
+    {
+      "text": "\\u007b\\u007b meta.title \\u007d\\u007d",
+      "path": "/\\u007b\\u007b meta.url | default(url) | safeUrl \\u007d\\u007d"
+    },
+    {
+      "text": "\\u007b\\u007b sub.title \\u007d\\u007d",
+      "path": "/\\u007b\\u007b sub.url | safeUrl \\u007d\\u007d"
+    }
+  ],
+  "url_sections": {
+    "reference": 655,
+    "engine": 158,
+    "docker-agent": 108,
+    "guides": 98,
+    "build": 96,
+    "dhi": 63,
+    "sandboxes": 58,
+    "enterprise": 53,
+    "desktop": 50,
+    "docker-hub": 44,
+    "compose": 42,
+    "extensions": 37,
+    "scout": 35,
+    "get-started": 34,
+    "admin": 21,
+    "mcp-catalog-and-toolkit": 10,
+    "gordon": 9,
+    "subscription": 9,
+    "security": 8,
+    "model-runner": 8,
+    "offload": 8,
+    "build-cloud": 7,
+    "billing": 7,
+    "accounts": 5,
+    "ai-overview": 1,
+    "testcontainers": 1,
+    "support": 1,
+    "platform-release-notes": 1,
+    "tcc": 1,
+    "retired": 1,
+    "manuals": 1,
+    "release-lifecycle": 1
+  },
+  "content_kinds": {
+    "getting started / quickstart": [
+      "get-started"
+    ],
+    "guides / how-to": [
+      "guides"
+    ],
+    "api reference": [
+      "reference"
+    ],
+    "changelog / release notes": [
+      "platform-release-notes"
+    ],
+    "security": [
+      "security"
+    ],
+    "community / support": [
+      "support"
+    ],
+    "playground / sandbox": [
+      "sandboxes"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://docs.docker.com/ai-overview/",
+      "h1": "Docker AI overview",
+      "h2": [
+        "Which tool do I need?",
+        "How these tools relate"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/dhi/",
+      "h1": "Docker Hardened Images",
+      "h2": [
+        "Community features",
+        "Select and Enterprise features",
+        "Get started"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/admin/",
+      "h1": "Administration",
+      "h2": [
+        "Company and organization hierarchy",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/accounts/",
+      "h1": "Docker accounts",
+      "h2": [
+        "Docker ID, email, and sign-in",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/desktop/",
+      "h1": "Docker Desktop",
+      "h2": [
+        "Key features",
+        "Products inside Docker Desktop",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/engine/",
+      "h1": "Docker Engine",
+      "h2": [
+        "Licensing"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/offload/",
+      "h1": "Docker Offload",
+      "h2": []
+    },
+    {
+      "url": "https://docs.docker.com/build/",
+      "h1": "Docker Build",
+      "h2": []
+    },
+    {
+      "url": "https://docs.docker.com/build-cloud/",
+      "h1": "Docker Build Cloud",
+      "h2": [
+        "How Docker Build Cloud works",
+        "Get Docker Build Cloud"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/subscription/",
+      "h1": "Overview",
+      "h2": [
+        "Docker plans",
+        "Top up your plan",
+        "Manage your plans",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/billing/",
+      "h1": "Manage billing and payments",
+      "h2": [
+        "Docker plans and billing behaviors",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/compose/",
+      "h1": "Docker Compose",
+      "h2": []
+    },
+    {
+      "url": "https://docs.docker.com/docker-hub/",
+      "h1": "Docker Hub",
+      "h2": []
+    },
+    {
+      "url": "https://docs.docker.com/scout/",
+      "h1": "Docker Scout",
+      "h2": []
+    },
+    {
+      "url": "https://docs.docker.com/security/",
+      "h1": "Security for developers",
+      "h2": [
+        "For developers",
+        "More resources"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/testcontainers/",
+      "h1": "Testcontainers",
+      "h2": [
+        "Quickstart",
+        "Guides"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/support/",
+      "h1": "Get support for Docker products",
+      "h2": [
+        "Paid subscription support",
+        "Community support",
+        "Docker Desktop support"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/extensions/",
+      "h1": "Docker Extensions",
+      "h2": [
+        "What extensions are available?",
+        "Security and trust"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/platform-release-notes/",
+      "h1": "Release notes for Docker Home, the Admin Console, billing, security, and subscri",
+      "h2": [
+        "2026-02-13",
+        "2026-01-27",
+        "2025-01-30",
+        "2024-12-10",
+        "2024-11-18",
+        "2024-11-11",
+        "2024-10-15",
+        "2024-08-29",
+        "2024-08-24",
+        "2024-07-17"
+      ]
+    },
+    {
+      "url": "https://docs.docker.com/tcc/",
+      "h1": "Testcontainers Cloud",
+      "h2": []
+    }
+  ]
+}

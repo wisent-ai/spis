@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921627,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"rclone authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: rclone\r\n"]
+[0.55,"o","cli-ref$ rclone version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","rclone v1.60.1-DEV\r\n- os/version: ubuntu 24.04 (64 bit)\r\n- os/kernel: 6.8.0-134-generic (aarch64)\r\n- os/type: linux\r\n- os/arch: arm64\r\n- go/version: go1.22.2\r\n- go/linking: dynamic\r\n- go/tags: none\r\n"]
+[2.2,"o","cli-ref$ rclone help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage:\r\n  rclone [flags]\r\n  rclone [command]\r\n\r\nAvailable Commands:\r\n  about           Get quota information from the remote.\r\n  authorize       Remote authorization.\r\n  backend         Run a backend-specific command.\r\n  bisync          Perform bidirectional synchronization between two paths.\r\n  cat             Concatenates any files and sends them to stdout.\r\n  check           Checks the files in the source and destination match.\r\n  checksum        Checks the files in the source against a SUM file.\r\n  cleanup         Clean up the remote if possible.\r\n  completion      Generate the autocompletion script for the specified shell\r\n"]
+[5.1,"o","cli-ref$ rclone --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Error: unknown flag: --definitely-invalid-option\r\nUsage:\r\n  rclone [flags]\r\n  rclone [command]\r\n\r\nAvailable Commands:\r\n  about           Get quota information from the remote.\r\n  authorize       Remote authorization.\r\n  backend         Run a backend-specific command.\r\n  bisync          Perform bidirectional synchronization between two paths.\r\n  cat             Concatenates any files and sends them to stdout.\r\n  check           Checks the files in the source and destination match.\r\n  checksum        Checks the files in the source against a SUM file.\r\n  cleanup         Clean up the remote if possible.\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ rclone --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ rclone help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage:\r\n  rclone [flags]\r\n  rclone [command]\r\n\r\n"]

@@ -1,0 +1,218 @@
+{
+  "name": "Shopify Polaris",
+  "source_url": "https://polaris.shopify.com/",
+  "category": "Design system documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "landing-nav",
+  "inventory_url_count": 40,
+  "landing_nav": [
+    {
+      "text": "Apps",
+      "path": "/docs/apps/build"
+    },
+    {
+      "text": "Storefronts",
+      "path": "/docs/storefronts"
+    },
+    {
+      "text": "Agents",
+      "path": "/docs/agents"
+    },
+    {
+      "text": "Changelog",
+      "path": "/changelog"
+    },
+    {
+      "text": "Help",
+      "path": "/support"
+    },
+    {
+      "text": "Shopify APIs, libraries, and tools",
+      "path": "/docs/api"
+    },
+    {
+      "text": "Shopify CLI",
+      "path": "/docs/api/shopify-cli"
+    },
+    {
+      "text": "React Router app package",
+      "path": "/docs/api/shopify-app-react-router"
+    },
+    {
+      "text": "Stores",
+      "path": "/docs/apps/build/dev-dashboard/stores"
+    },
+    {
+      "text": "Libraries and templates",
+      "path": "/docs/api/libraries-and-templates"
+    },
+    {
+      "text": "GraphQL Admin API",
+      "path": "/docs/api/admin-graphql"
+    },
+    {
+      "text": "Shopify Functions",
+      "path": "/docs/api/functions"
+    },
+    {
+      "text": "ShopifyQL for analytics",
+      "path": "/docs/api/shopifyql/latest"
+    },
+    {
+      "text": "Events",
+      "path": "/docs/api/events"
+    },
+    {
+      "text": "Webhooks",
+      "path": "/docs/api/webhooks"
+    },
+    {
+      "text": "Payments Apps API",
+      "path": "/docs/api/payments-apps"
+    },
+    {
+      "text": "Polaris references",
+      "path": "/docs/api/polaris"
+    },
+    {
+      "text": "App Home (iframe)",
+      "path": "/docs/api/app-home"
+    },
+    {
+      "text": "App Home (UI extension)",
+      "path": "/docs/api/app-home-ui-extension"
+    },
+    {
+      "text": "Admin",
+      "path": "/docs/api/admin-extensions"
+    },
+    {
+      "text": "Checkout",
+      "path": "/docs/api/checkout-ui-extensions"
+    },
+    {
+      "text": "Customer accounts",
+      "path": "/docs/api/customer-account-ui-extensions"
+    },
+    {
+      "text": "POS",
+      "path": "/docs/api/pos-ui-extensions"
+    },
+    {
+      "text": "Using Polaris web components",
+      "path": "/docs/api/polaris/using-polaris-web-components"
+    },
+    {
+      "text": "Storefront API",
+      "path": "/docs/api/storefront"
+    },
+    {
+      "text": "Liquid",
+      "path": "/docs/api/liquid"
+    },
+    {
+      "text": "Hydrogen framework",
+      "path": "/docs/api/hydrogen"
+    },
+    {
+      "text": "Hydrogen React library",
+      "path": "/docs/api/hydrogen-react"
+    },
+    {
+      "text": "Storefront Web Components",
+      "path": "/docs/api/storefront-web-components"
+    },
+    {
+      "text": "Standard events and actions",
+      "path": "/docs/api/storefront-events-and-actions"
+    },
+    {
+      "text": "Customer Privacy API",
+      "path": "/docs/api/customer-privacy"
+    },
+    {
+      "text": "Customer Account API",
+      "path": "/docs/api/customer"
+    },
+    {
+      "text": "WebMCP Tools",
+      "path": "/docs/api/web-mcp"
+    },
+    {
+      "text": "Partner API",
+      "path": "/docs/api/partner"
+    },
+    {
+      "text": "App Events API",
+      "path": "/docs/api/app-events"
+    },
+    {
+      "text": "Shop API",
+      "path": "/docs/api/shop"
+    },
+    {
+      "text": "Shop Pay Wallet API",
+      "path": "/docs/api/commerce-components/pay"
+    },
+    {
+      "text": "App surfaces",
+      "path": "/docs/apps/build/app-surfaces"
+    },
+    {
+      "text": "Polaris",
+      "path": "/docs/api/polaris/using-polaris-web-components"
+    },
+    {
+      "text": "Developer changelog",
+      "path": "/changelog"
+    }
+  ],
+  "url_sections": {
+    "docs": 37,
+    "changelog": 2,
+    "support": 1
+  },
+  "content_kinds": {
+    "api reference": [
+      "shop api",
+      "/docs/api",
+      "partner api",
+      "/docs/api/shop"
+    ],
+    "changelog / release notes": [
+      "changelog",
+      "/changelog",
+      "developer changelog"
+    ],
+    "cli reference": [
+      "shopify cli",
+      "/docs/api/shopify-cli"
+    ],
+    "sdk / client libraries": [
+      "libraries and templates",
+      "/docs/api/libraries-and-templates",
+      "shopify apis, libraries, and tools"
+    ],
+    "community / support": [
+      "support",
+      "/support"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://polaris.shopify.com/changelog",
+      "h1": "Polaris references",
+      "h2": []
+    },
+    {
+      "url": "https://polaris.shopify.com/support",
+      "h1": "Polaris references",
+      "h2": []
+    },
+    {
+      "url": "https://polaris.shopify.com/docs/storefronts",
+      "h1": "Polaris references",
+      "h2": []
+    }
+  ]
+}

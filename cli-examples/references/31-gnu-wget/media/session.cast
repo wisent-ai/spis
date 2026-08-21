@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921625,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"GNU Wget authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: GNU Wget\r\n"]
+[0.55,"o","cli-ref$ wget --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","GNU Wget 1.21.4 built on linux-gnu.\r\n\r\n-cares +digest -gpgme +https +ipv6 +iri +large-file -metalink +nls \r\n+ntlm +opie +psl +ssl/openssl \r\n\r\nWgetrc: \r\n    /etc/wgetrc (system)\r\nLocale: \r\n    /usr/share/locale \r\nCompile: \r\n    gcc -DHAVE_CONFIG_H -DSYSTEM_WGETRC=\"/etc/wgetrc\" \r\n    -DLOCALEDIR=\"/usr/share/locale\" -I. -I../../src -I../lib \r\n    -I../../lib -Wdate-time -D_FORTIFY_SOURCE=3 -DHAVE_LIBSSL -DNDEBUG \r\n    -g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer \r\n"]
+[2.2,"o","cli-ref$ wget --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","GNU Wget 1.21.4, a non-interactive network retriever.\r\nUsage: wget [OPTION]... [URL]...\r\n\r\nMandatory arguments to long options are mandatory for short options too.\r\n\r\nStartup:\r\n  -V,  --version                   display the version of Wget and exit\r\n  -h,  --help                      print this help\r\n  -b,  --background                go to background after startup\r\n  -e,  --execute=COMMAND           execute a `.wgetrc'-style command\r\n\r\nLogging and input file:\r\n  -o,  --output-file=FILE          log messages to FILE\r\n  -a,  --append-output=FILE        append messages to FILE\r\n"]
+[5.1,"o","cli-ref$ wget --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","wget: unrecognized option '--definitely-invalid-option'\r\nUsage: wget [OPTION]... [URL]...\r\n\r\nTry `wget --help' for more options.\r\n[exit status 2]\r\n"]
+[7.1,"o","cli-ref$ wget --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ wget --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","GNU Wget 1.21.4, a non-interactive network retriever.\r\nUsage: wget [OPTION]... [URL]...\r\n\r\nMandatory arguments to long options are mandatory for short options too.\r\n"]

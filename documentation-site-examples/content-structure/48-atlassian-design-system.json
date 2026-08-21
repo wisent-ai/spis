@@ -1,0 +1,117 @@
+{
+  "name": "Atlassian Design System",
+  "source_url": "https://atlassian.design/",
+  "category": "Design system documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "https://atlassian.design/llms.txt",
+  "inventory_url_count": 14,
+  "landing_nav": [
+    {
+      "text": "News",
+      "path": "/news"
+    },
+    {
+      "text": "About the design system",
+      "path": "/get-started/about-atlassian-design-system"
+    },
+    {
+      "text": "Explore Rovo UI",
+      "path": "/rovo-ui"
+    },
+    {
+      "text": "Accessibility",
+      "path": "/foundations/accessibility"
+    },
+    {
+      "text": "Iconography",
+      "path": "/foundations/iconography"
+    },
+    {
+      "text": "Get started",
+      "path": "/get-started"
+    },
+    {
+      "text": "See what's new",
+      "path": "/whats-new"
+    }
+  ],
+  "url_sections": {
+    "foundations": 2,
+    "v1": 1,
+    "package": 1,
+    "get-started": 1,
+    "components": 1,
+    "llms-full.txt": 1,
+    "llms-components.txt": 1,
+    "llms-primitives.txt": 1,
+    "llms-tokens.txt": 1,
+    "llms-styling.txt": 1,
+    "llms-a11y.txt": 1,
+    "llms-content.txt": 1
+  },
+  "content_kinds": {
+    "getting started / quickstart": [
+      "get-started",
+      "get started",
+      "/get-started",
+      "/get-started/about-atlassian-design-system"
+    ],
+    "changelog / release notes": [
+      "/whats-new",
+      "see what's new"
+    ],
+    "accessibility": [
+      "llms-a11y.txt",
+      "accessibility",
+      "/foundations/accessibility"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://atlassian.design/news",
+      "h1": "News",
+      "h2": [
+        "Featured",
+        "Design blogs",
+        "Leadership talks",
+        "Team stories",
+        "Join the team"
+      ]
+    },
+    {
+      "url": "https://atlassian.design/rovo-ui",
+      "h1": "Rovo UI",
+      "h2": [
+        "Overview",
+        "Foundations for Rovo",
+        "Components for Rovo"
+      ]
+    },
+    {
+      "url": "https://atlassian.design/get-started",
+      "h1": "Get started",
+      "h2": [
+        "Access up-to-date guidelines and tools",
+        "Explore the design system and contact us"
+      ]
+    },
+    {
+      "url": "https://atlassian.design/whats-new",
+      "h1": "What's new",
+      "h2": [
+        "Featured article",
+        "All articles"
+      ]
+    },
+    {
+      "url": "https://atlassian.design/foundations/accessibility",
+      "h1": "Accessibility",
+      "h2": [
+        "Building accessible apps",
+        "What to consider when building accessible apps",
+        "Benefits of accessible apps",
+        "Helpful tools (Atlassians only)"
+      ]
+    }
+  ]
+}

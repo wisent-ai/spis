@@ -1,0 +1,153 @@
+{
+  "name": "Apple Developer Documentation",
+  "source_url": "https://developer.apple.com/documentation/",
+  "category": "Application platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "technologies.json",
+  "inventory_url_count": 401,
+  "landing_nav": [],
+  "url_sections": {
+    "documentation": 401
+  },
+  "content_kinds": {},
+  "page_anatomy": [
+    {
+      "url": "https://developer.apple.com/documentation",
+      "h1": "This page requires JavaScript.",
+      "h2": []
+    },
+    {
+      "url": "https://developer.apple.com/documentation/arkit",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/avfaudio",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/avfoundation",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/avkit",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/avrouting",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/avsystemrouting",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accelerate",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accelerate/simd-library",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accessibility",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accessoryaccess",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accessoryliveactivities",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accessorynotifications",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accessorysetupkit",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accessorytransportextension",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accountdatatransfer",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accountorganizationaldatasharing",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/accounts",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/activitykit",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    },
+    {
+      "url": "https://developer.apple.com/documentation/adattributionkit",
+      "h1": "This page requires JavaScript.",
+      "h2": [
+        "Automated tools and assistive tools:"
+      ]
+    }
+  ]
+}

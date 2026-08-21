@@ -1,0 +1,259 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "VSCO",
+  "product_url": "https://www.vsco.co/",
+  "evidence_status": "partial",
+  "upstream_owner": "VSCO product owner; recording published by VSCO",
+  "captured_at": "2026-08-16",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=qg3Tu9PP16M",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 120.0,
+      "frame_count": 1800,
+      "bytes": 2159992,
+      "sha256": "efe41de981799e1c47d34fe1741b3446770932ae633e17fe330cc075cee5c258",
+      "capture_method": "official publisher YouTube stream downloaded from the product/vendor channel and transcoded to H.264 MP4; no frames synthesized",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "entry / orientation",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 16.5s (mean abs diff 2.7695/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 150520,
+      "sha256": "9954b3c4ffb7de09590d13d05513b3d954ee14b9806c17aa2b67416b52a6e7bb",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 16.5,
+        "mean_abs_diff": 2.7695,
+        "sampled_frames": 240
+      }
+    },
+    {
+      "name": "action in progress",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 60s (mean abs diff 2.6562/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 161789,
+      "sha256": "59e7366e35a8f269d15bf5397ff804ec1fb64c34ca7c7609f8463120882de5d5",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 60.0,
+        "mean_abs_diff": 2.6562,
+        "sampled_frames": 240
+      }
+    },
+    {
+      "name": "result / established state",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 101.5s (mean abs diff 2.5078/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 161870,
+      "sha256": "40d81036166275d92aa0f92aee0aa5747d8637854067e59c0ed2b584670964e9",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 101.5,
+        "mean_abs_diff": 2.5078,
+        "sampled_frames": 240
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "choose a photo",
+      "response": "The primary task surface opens.",
+      "feedback": "Selection highlight and surface transition make the response visible.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through save the edit to the visible result.",
+      "evidence": "media/motion.mp4 00:14.4–00:33.6"
+    },
+    {
+      "name": "focus / selection",
+      "trigger": "select and adjust a preset",
+      "response": "The chosen field, row, item, or canvas becomes the active target.",
+      "feedback": "The target changes emphasis or reveals contextual controls.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through save the edit to the visible result.",
+      "evidence": "media/motion.mp4 00:31.2–00:52.8"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Open VSCO Studio",
+      "response": "The app moves from entry context to the task destination.",
+      "feedback": "Header, content, or navigation state changes.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through save the edit to the visible result.",
+      "evidence": "media/motion.mp4 00:04.8–00:28.8"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "save the edit",
+      "response": "The pending action commits and the result transition begins.",
+      "feedback": "A changed state, progress response, or completed item acknowledges the commit.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through save the edit to the visible result.",
+      "evidence": "media/motion.mp4 01:09.6–01:31.2"
+    },
+    {
+      "name": "cancellation / backtracking",
+      "trigger": "Withhold or reverse the visible commit while the recorded pre-confirmation state is on screen.",
+      "response": "The task remains in its pre-result state; the success artifact is absent.",
+      "feedback": "The unchanged/incomplete state distinguishes cancellation from completion.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through save the edit to the visible result.",
+      "evidence": "media/motion.mp4 00:45.6–01:09.6"
+    },
+    {
+      "name": "feedback",
+      "trigger": "Complete a visible selection or commit.",
+      "response": "The interface updates immediately or after a bounded progress transition.",
+      "feedback": "Motion, highlight, changed content, or result placement communicates status.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through save the edit to the visible result.",
+      "evidence": "media/motion.mp4 01:14.4–01:45.6"
+    },
+    {
+      "name": "failure",
+      "trigger": "Reach the recorded pre-confirmation state without issuing the final commit.",
+      "response": "The intended result is not yet present, so the goal remains incomplete.",
+      "feedback": "The pre-result surface remains visibly distinct from state-03.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through save the edit to the visible result.",
+      "evidence": "media/motion.mp4 00:38.4–01:06.0"
+    },
+    {
+      "name": "recovery",
+      "trigger": "Continue from the incomplete state and save the edit.",
+      "response": "The product resumes the path and produces the visible result.",
+      "feedback": "The final state replaces the incomplete state.",
+      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+      "recovery": "The retained sequence continues from that incomplete state through save the edit to the visible result.",
+      "evidence": "media/motion.mp4 01:02.4–01:50.4"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning iPhone user with the minimum product account/device prerequisites",
+    "goal": "Apply and save a VSCO look",
+    "prerequisites": [
+      "Compatible iPhone and current iOS version",
+      "Product installed or product-native flow available",
+      "Network/account/permission access only where the observed flow requests it"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open VSCO Studio",
+        "system_response": "The product exposes its initial context and available next action.",
+        "state": "entry",
+        "evidence": "media/motion.mp4 at 00:06.0"
+      },
+      {
+        "index": 2,
+        "user_action": "choose a photo",
+        "system_response": "The selected destination or task surface replaces or overlays the prior state.",
+        "state": "selection",
+        "evidence": "media/motion.mp4 at 00:30.0"
+      },
+      {
+        "index": 3,
+        "user_action": "select and adjust a preset",
+        "system_response": "The product reflects the entered choice or manipulation and exposes the next control.",
+        "state": "configuration",
+        "evidence": "media/motion.mp4 at 00:54.0"
+      },
+      {
+        "index": 4,
+        "user_action": "save the edit",
+        "system_response": "The product acknowledges the commit and transitions toward the result.",
+        "state": "confirmation",
+        "evidence": "media/motion.mp4 at 01:18.0"
+      },
+      {
+        "index": 5,
+        "user_action": "see the finished image in Studio",
+        "system_response": "The completed result remains visible as durable evidence of first success.",
+        "state": "first success",
+        "evidence": "media/motion.mp4 at 01:42.0"
+      }
+    ],
+    "failure_route": [
+      {
+        "step": 1,
+        "user_action": "Stop at the recorded pre-confirmation state instead of committing.",
+        "system_response": "The intended result is absent at this point; the first-success goal remains incomplete.",
+        "evidence": "media/motion.mp4 00:38.4–01:09.6"
+      }
+    ],
+    "recovery_route": [
+      {
+        "step": 1,
+        "user_action": "Continue from the retained incomplete state and save the edit.",
+        "system_response": "The confirmation transition resumes from the same observed flow.",
+        "evidence": "media/motion.mp4 01:00.0–01:26.4"
+      },
+      {
+        "step": 2,
+        "user_action": "see the finished image in Studio",
+        "system_response": "The product shows the documented first-success result: see the finished image in Studio.",
+        "evidence": "media/motion.mp4 01:21.6–01:52.8"
+      }
+    ],
+    "completion_evidence": "media/motion.mp4 at 01:42.0 and media/state-03.png"
+  },
+  "accessibility": {
+    "observations": [
+      "Visible text labels and state changes supplement iconography in the retained recording.",
+      "Selection, progress, or completion is communicated by a changed product state rather than motion alone.",
+      "The retained frames preserve the visual context before, during, and after the principal action."
+    ],
+    "unknowns": [
+      "VoiceOver names, hints, rotor order, and focus return were not exposed by the source recording.",
+      "Dynamic Type behavior and text truncation at accessibility sizes were not exposed.",
+      "Reduce Motion behavior and a nonanimated equivalent were not exposed.",
+      "Switch Control, keyboard navigation, contrast ratios, and haptic/audio-only feedback were not measured."
+    ]
+  },
+  "motion_analysis": {
+    "source_title": "How to Get Started With Using VSCO",
+    "trigger": "choose a photo",
+    "start_state": "entry / orientation",
+    "end_state": "result / established state",
+    "continuity": "The recording retains the real product transition sequence; transcoding changes encoding only and does not synthesize intermediate frames.",
+    "timing_class": "multi-second",
+    "feedback": "Selection emphasis, surface transition, content change, or result placement provides visible acknowledgment.",
+    "interruption_or_reversal": "The retained pre-confirmation state supplies the reversible boundary: withholding or reversing commit leaves the result absent; continuing through confirmation reaches the end state. Exact gesture-interruption semantics are unknown unless visibly demonstrated.",
+    "reduced_motion_equivalent": "Unknown from the retained source; no reduced-motion claim is inferred.",
+    "timing_description": "extended guided walkthrough"
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

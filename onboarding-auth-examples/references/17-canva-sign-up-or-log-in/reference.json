@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Canva — sign up or log in",
+  "product_url": "https://www.canva.com/help/sign-up-log-in/",
+  "evidence_status": "partial",
+  "upstream_owner": "Canva Pty Ltd",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=V9LtRF6EbyY",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 969837,
+      "sha256": "5e02223fa62a7061d8a3eacd971f982a41509817c9b68746af5c24adaf64655d",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "signup route",
+      "local_path": "media/state-01-signup-route.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 4.5s (mean abs diff 1.7031/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 130366,
+      "sha256": "bea32ba23b1e00573a78bc036bd47f3697deaee485f0f9968fc46bb08698cf9b",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 1.7031,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "identity verified",
+      "local_path": "media/state-02-identity-verified.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 2.3594/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 49870,
+      "sha256": "90e24d4beda5f5fc40265b5cc5833194e861e9e9e7f32a4447a2753f2aaebb16",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 19.5,
+        "mean_abs_diff": 2.3594,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "personalization decided",
+      "local_path": "media/state-03-personalization-decided.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 35.5s (mean abs diff 1.5273/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 202278,
+      "sha256": "117b8260ebf666b9ed16f61d0ef32a8055b0188538feaeaca33926edc455eca2",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 35.5,
+        "mean_abs_diff": 1.5273,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "editor ready",
+      "local_path": "media/state-04-editor-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 3.7656/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 234692,
+      "sha256": "1670ba0f33928ac8951efcf2550c075f44f187bd91e5e8abf52f9cab7a2686b1",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 50.0,
+        "mean_abs_diff": 3.7656,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "design edited",
+      "local_path": "media/state-05-design-edited.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 66.5s (mean abs diff 1.6797/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 52791,
+      "sha256": "ae14477e155f1eb63c0a1fb3fecb983c6546d2427400def07abbeb76962863af",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 66.5,
+        "mean_abs_diff": 1.6797,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "first design",
+      "local_path": "media/state-06-first-design.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 80.5s (mean abs diff 1.4805/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 128327,
+      "sha256": "ed1f9bca2269c380a4052694744a985b9ddf26a4859ed23dbce8e316e60a4989",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 80.5,
+        "mean_abs_diff": 1.4805,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Choose a sign-up method",
+      "response": "Canva opens provider authorization or email entry",
+      "feedback": "The retained signup route state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-signup-route.png @ 4.50s; https://www.canva.com/help/sign-up-log-in/"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Complete provider or email verification",
+      "response": "Canva creates the authenticated account",
+      "feedback": "The recording advances to identity verified and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-signup-route.png @ 4.50s; media/state-02-identity-verified.png @ 19.79s; https://www.canva.com/help/sign-up-log-in/"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Answer role or intended-use prompts or skip optional setup",
+      "response": "Canva tailors the home surface",
+      "feedback": "The navigation result is visible as personalization decided.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-personalization-decided.png @ 35.07s; https://www.canva.com/help/sign-up-log-in/"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Choose a template or blank design",
+      "response": "Canva opens the editor",
+      "feedback": "The official recording shows the confirmed editor ready state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-personalization-decided.png @ 35.07s; media/state-04-editor-ready.png @ 50.36s; https://www.canva.com/help/sign-up-log-in/"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-personalization-decided.png @ 35.07s; media/state-04-editor-ready.png @ 50.36s; https://www.canva.com/help/sign-up-log-in/"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Add or change visible content",
+      "response": "Canva updates the canvas and autosave state",
+      "feedback": "Progress is observable as the distinct design edited state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-editor-ready.png @ 50.36s; media/state-05-design-edited.png @ 65.65s; https://www.canva.com/help/sign-up-log-in/"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-personalization-decided.png @ 35.07s; media/state-04-editor-ready.png @ 50.36s; media/state-05-design-edited.png @ 65.65s; https://www.canva.com/help/sign-up-log-in/"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Return to Home or share the design",
+      "response": "The saved design remains in the account, proving first creation success",
+      "feedback": "The retained first design state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-design-edited.png @ 65.65s; media/state-06-first-design.png @ 80.94s; https://www.canva.com/help/sign-up-log-in/"
+    }
+  ],
+  "journey": {
+    "actor": "new Canva creator",
+    "goal": "create an account and save the first design",
+    "prerequisites": [
+      "email or supported identity provider",
+      "design goal"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Choose a sign-up method",
+        "system_response": "Canva opens provider authorization or email entry",
+        "state": "signup route",
+        "evidence": "media/state-01-signup-route.png; media/official-recording.mp4#t=4.497; https://www.canva.com/help/sign-up-log-in/"
+      },
+      {
+        "index": 2,
+        "user_action": "Complete provider or email verification",
+        "system_response": "Canva creates the authenticated account",
+        "state": "identity verified",
+        "evidence": "media/state-02-identity-verified.png; media/official-recording.mp4#t=19.785; https://www.canva.com/help/sign-up-log-in/"
+      },
+      {
+        "index": 3,
+        "user_action": "Answer role or intended-use prompts or skip optional setup",
+        "system_response": "Canva tailors the home surface",
+        "state": "personalization decided",
+        "evidence": "media/state-03-personalization-decided.png; media/official-recording.mp4#t=35.074; https://www.canva.com/help/sign-up-log-in/"
+      },
+      {
+        "index": 4,
+        "user_action": "Choose a template or blank design",
+        "system_response": "Canva opens the editor",
+        "state": "editor ready",
+        "evidence": "media/state-04-editor-ready.png; media/official-recording.mp4#t=50.362; https://www.canva.com/help/sign-up-log-in/"
+      },
+      {
+        "index": 5,
+        "user_action": "Add or change visible content",
+        "system_response": "Canva updates the canvas and autosave state",
+        "state": "design edited",
+        "evidence": "media/state-05-design-edited.png; media/official-recording.mp4#t=65.651; https://www.canva.com/help/sign-up-log-in/"
+      },
+      {
+        "index": 6,
+        "user_action": "Return to Home or share the design",
+        "system_response": "The saved design remains in the account, proving first creation success",
+        "state": "first design",
+        "evidence": "media/state-06-first-design.png; media/official-recording.mp4#t=80.940; https://www.canva.com/help/sign-up-log-in/"
+      }
+    ],
+    "failure_route": [
+      "At identity verified or personalization decided, invalid, expired, denied, or missing required input leaves the flow short of first design; evidence: media/state-02-identity-verified.png, media/state-03-personalization-decided.png, and https://www.canva.com/help/sign-up-log-in/.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-personalization-decided.png through media/state-05-design-edited.png."
+    ],
+    "recovery_route": [
+      "Return to the retained identity verified or personalization decided requirement, correct or resend the blocking input, and resubmit; evidence: https://www.canva.com/help/sign-up-log-in/.",
+      "Continue through the same terminal action until first design is visible in media/state-06-first-design.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "first design retained at media/state-06-first-design.png and media/official-recording.mp4#t=80.940; source https://www.canva.com/help/sign-up-log-in/"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-signup-route.png and media/state-02-identity-verified.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-personalization-decided.png and media/state-04-editor-ready.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

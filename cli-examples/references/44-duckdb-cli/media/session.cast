@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921627,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"DuckDB CLI authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: DuckDB CLI\r\n"]
+[0.55,"o","cli-ref$ duckdb --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","v1.5.5 (Variegata) d8cdaa33fd\r\n"]
+[2.2,"o","cli-ref$ duckdb -help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage: duckdb [OPTIONS] FILENAME [SQL]\r\n\r\nFILENAME is the name of a DuckDB database. A new database is created\r\nif the file does not previously exist.\r\n\r\nOPTIONS:\r\n  -ascii                  set output mode to 'ascii'\r\n  -bail                   stop after hitting an error\r\n  -batch                  force batch I/O'\r\n  -box                    set output mode to 'box'\r\n  -column                 set output mode to 'column'\r\n  -cmd COMMAND            run \"COMMAND\" before reading stdin\r\n  -csv                    set output mode to 'csv'\r\n  -c COMMAND              run \"COMMAND\" and exit\r\n"]
+[5.1,"o","cli-ref$ duckdb --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Unknown Option Error: Unrecognized option '-definitely-invalid-option'\r\n\r\nDid you mean: \"-no-init\"\r\nRun 'duckdb -help' for a list of options.\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ duckdb --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ duckdb -help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage: duckdb [OPTIONS] FILENAME [SQL]\r\n\r\nFILENAME is the name of a DuckDB database. A new database is created\r\nif the file does not previously exist.\r\n"]

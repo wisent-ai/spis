@@ -1,0 +1,265 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Accessibility Insights for Web",
+  "product_url": "https://accessibilityinsights.io/docs/web/overview/",
+  "evidence_status": "partial",
+  "upstream_owner": "Accessibility Insights",
+  "captured_at": "2026-08-16T23:30:33Z",
+  "motion": [
+    {
+      "local_path": "media/journey.mp4",
+      "source_url": "https://www.youtube.com/watch?v=XVvBJoEe4Is&t=49s",
+      "media_kind": "video-mp4",
+      "width": 256,
+      "height": 144,
+      "duration_seconds": 12.0,
+      "frame_count": 360,
+      "bytes": 36062,
+      "sha256": "2ab65637a59ff8a88f1d8330fba7b66afabdb612fd6d3837aa19f6c8329601f7",
+      "capture_method": "Downloaded the upstream-published YouTube video through the Cobalt media gateway, then transcoded a continuous 12-second excerpt beginning at source timestamp 49s; no frames were synthesized",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "evidence ready",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/journey.mp4 at 0s (mean abs diff 0.2422/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 20206,
+      "sha256": "7268ca46b8bd36560936f9017e08bc165397a9c673e437d275eb6bfc68c91e55",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.0,
+        "mean_abs_diff": 0.2422,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "overview visible",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/journey.mp4 at 2.5s (mean abs diff 0.0898/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 3737,
+      "sha256": "75b05737af88f91d4a88b2a987919ffd77395419eb9dfa7c993e7bb82b9dbb40",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.5,
+        "mean_abs_diff": 0.0898,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "paused detail",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/journey.mp4 at 5.5s (mean abs diff 7.3359/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 34537,
+      "sha256": "29b11df368340af1867dd06f4ec122de91c3422cd2e0a716737dfa391c253f31",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.5,
+        "mean_abs_diff": 7.3359,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "deeper evidence",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/journey.mp4 at 8.5s (mean abs diff 0.4219/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 36401,
+      "sha256": "43d76bb61daedfd1c1fa08ce96c40117b17f4fbfefcda76d9b2384ac88b23af9",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 8.5,
+        "mean_abs_diff": 0.4219,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "completion evidence",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/journey.mp4 at 10s (mean abs diff 0.418/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 36413,
+      "sha256": "8481d4bb8697721fb93bec56e3bd64b1b22351729d64e903ceb90a8f5bf6ec89",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 10.0,
+        "mean_abs_diff": 0.418,
+        "sampled_frames": 24
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "open evidence",
+      "trigger": "Open the local motion asset at its beginning.",
+      "response": "The evidence viewer presents the upstream product demonstration at the selected investigation segment.",
+      "feedback": "The first retained frame establishes product and viewer context.",
+      "cancellation": "Close the player or leave it at the initial frame.",
+      "failure": "A missing or unreadable asset prevents the product state from appearing.",
+      "recovery": "Reopen the hash-verified local asset.",
+      "evidence": "media/journey.mp4 and media/state-01.png"
+    },
+    {
+      "name": "start playback",
+      "trigger": "Activate play.",
+      "response": "The playhead advances through authentic upstream product motion.",
+      "feedback": "Successive product-rendered states replace the ready frame.",
+      "cancellation": "Pause returns control without discarding the current position.",
+      "failure": "Playback can remain on the ready frame when interrupted.",
+      "recovery": "Activate play again.",
+      "evidence": "media/journey.mp4, opening segment through media/state-02.png"
+    },
+    {
+      "name": "focus or select",
+      "trigger": "Follow the source recording as its pointer or focus changes the visible evidence surface.",
+      "response": "The product binds a selected summary, row, finding, span, report item, or visual mark to more specific evidence.",
+      "feedback": "The retained overview and paused-detail states visibly differ.",
+      "cancellation": "Pause before accepting the changed selection.",
+      "failure": "A transient frame can make the selected target ambiguous.",
+      "recovery": "Step backward and replay the transition.",
+      "evidence": "media/state-02.png and media/state-03.png"
+    },
+    {
+      "name": "pause for inspection",
+      "trigger": "Pause at the retained detail state.",
+      "response": "Motion stops while the selected product evidence remains visible.",
+      "feedback": "The paused frame is retained as media/state-03.png.",
+      "cancellation": "Resume immediately without seeking.",
+      "failure": "The evidence flow is intentionally interrupted at the paused state.",
+      "recovery": "Resume playback from the same playhead position.",
+      "evidence": "media/journey.mp4 and media/state-03.png"
+    },
+    {
+      "name": "resume after interruption",
+      "trigger": "Activate play after the pause.",
+      "response": "The source journey continues from the retained detail.",
+      "feedback": "The subsequent deeper-evidence frame appears.",
+      "cancellation": "Pause again.",
+      "failure": "Resumption may not advance when the player remains paused.",
+      "recovery": "Activate play and confirm the next visible frame.",
+      "evidence": "media/state-03.png to media/state-04.png"
+    },
+    {
+      "name": "navigate forward",
+      "trigger": "Seek forward within the local recording.",
+      "response": "The viewer reveals a later product state without changing evidence provenance.",
+      "feedback": "The playhead and visible product content advance together.",
+      "cancellation": "Seek back to the prior retained frame.",
+      "failure": "An over-large seek can skip the intended intermediate state.",
+      "recovery": "Use the retained state images or seek backward.",
+      "evidence": "media/journey.mp4 and media/state-04.png"
+    },
+    {
+      "name": "backtrack",
+      "trigger": "Seek backward or return to an earlier retained state.",
+      "response": "The prior evidence context is restored.",
+      "feedback": "The same earlier frame can be compared with the later state.",
+      "cancellation": "Resume forward playback.",
+      "failure": "A viewer without precise seeking can land between documented states.",
+      "recovery": "Open the corresponding local state image directly.",
+      "evidence": "media/state-02.png, media/state-03.png, and media/state-04.png"
+    },
+    {
+      "name": "confirm completion",
+      "trigger": "Continue to the retained completion point.",
+      "response": "A later, more specific product evidence state is visible.",
+      "feedback": "media/state-05.png records the completion evidence.",
+      "cancellation": "Return to any earlier state without altering the source asset.",
+      "failure": "Stopping early leaves the summary claim unsupported by the final retained state.",
+      "recovery": "Resume or seek to the completion frame.",
+      "evidence": "media/journey.mp4 and media/state-05.png"
+    }
+  ],
+  "journey": {
+    "actor": "A reviewer validating a summary claim against product-native evidence",
+    "goal": "Study the progression from automated checks to guided assessment, with requirement-level instructions, evidence capture, and result export.",
+    "prerequisites": [
+      "A local media player capable of the recorded format",
+      "The numbered state images in this reference directory",
+      "No network connection is required after capture"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the local evidence recording.",
+        "system_response": "The authentic upstream demonstration is ready at the chosen investigation segment.",
+        "state": "evidence ready",
+        "evidence": "media/state-01.png"
+      },
+      {
+        "index": 2,
+        "user_action": "Start playback and orient to the report or evidence surface.",
+        "system_response": "The product moves from its summary context toward an inspectable evidence view.",
+        "state": "overview visible",
+        "evidence": "media/state-02.png"
+      },
+      {
+        "index": 3,
+        "user_action": "Pause when the selected detail becomes visible.",
+        "system_response": "The viewer freezes the product-native state for inspection.",
+        "state": "paused detail",
+        "evidence": "media/state-03.png"
+      },
+      {
+        "index": 4,
+        "user_action": "Resume and navigate farther into the recorded investigation.",
+        "system_response": "A later product state reveals deeper or differently scoped evidence.",
+        "state": "deeper evidence",
+        "evidence": "media/state-04.png"
+      },
+      {
+        "index": 5,
+        "user_action": "Continue to the retained completion point.",
+        "system_response": "The source journey leaves a final visible state that supports the investigation outcome.",
+        "state": "completion evidence",
+        "evidence": "media/state-05.png"
+      }
+    ],
+    "failure_route": [
+      "Playback is paused or a seek skips the intended evidence transition.",
+      "The reviewer does not treat the interrupted or skipped state as completed evidence."
+    ],
+    "recovery_route": [
+      "Resume from the paused position or seek backward.",
+      "Use the retained state images to re-establish context, then continue to media/state-05.png."
+    ],
+    "completion_evidence": "media/journey.mp4 together with media/state-05.png"
+  },
+  "accessibility": {
+    "observations": [
+      "Playback can be paused, resumed, and revisited without changing the underlying evidence identity.",
+      "Five discrete local states provide a nonanimated inspection path for the recorded visual sequence."
+    ],
+    "unknowns": [
+      "The source recording does not expose the product accessibility tree, screen-reader announcements, or exact focus order.",
+      "Reduced-motion behavior inside the recorded product is not established by this visual evidence.",
+      "Audio narration and caption quality were not used as evidence in this reference."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "fewer than three accessibility observations",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

@@ -1,0 +1,343 @@
+{
+  "name": "Python 3 Documentation",
+  "source_url": "https://docs.python.org/3/",
+  "category": "Programming language documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "contents.html (full table of contents)",
+  "inventory_url_count": 472,
+  "landing_nav": [
+    {
+      "text": "Download these documents",
+      "path": "/3/download.html"
+    },
+    {
+      "text": "Python 3.16 (in development)",
+      "path": "/3.16/"
+    },
+    {
+      "text": "Python 3.15 (pre-release)",
+      "path": "/3.15/"
+    },
+    {
+      "text": "Python 3.14 (stable)",
+      "path": "/3.14/"
+    },
+    {
+      "text": "Python 3.13 (stable)",
+      "path": "/3.13/"
+    },
+    {
+      "text": "Python 3.12 (security-fixes)",
+      "path": "/3.12/"
+    },
+    {
+      "text": "Python 3.11 (security-fixes)",
+      "path": "/3.11/"
+    },
+    {
+      "text": "Python 3.10 (security-fixes)",
+      "path": "/3.10/"
+    },
+    {
+      "text": "Python 3.9 (EOL)",
+      "path": "/3.9/"
+    },
+    {
+      "text": "Python 3.8 (EOL)",
+      "path": "/3.8/"
+    },
+    {
+      "text": "Python 3.7 (EOL)",
+      "path": "/3.7/"
+    },
+    {
+      "text": "Python 3.6 (EOL)",
+      "path": "/3.6/"
+    },
+    {
+      "text": "Python 3.5 (EOL)",
+      "path": "/3.5/"
+    },
+    {
+      "text": "Python 3.4 (EOL)",
+      "path": "/3.4/"
+    },
+    {
+      "text": "Python 3.3 (EOL)",
+      "path": "/3.3/"
+    },
+    {
+      "text": "Python 3.2 (EOL)",
+      "path": "/3.2/"
+    },
+    {
+      "text": "Python 3.1 (EOL)",
+      "path": "/3.1/"
+    },
+    {
+      "text": "Python 3.0 (EOL)",
+      "path": "/3.0/"
+    },
+    {
+      "text": "Python 2.7 (EOL)",
+      "path": "/2.7/"
+    },
+    {
+      "text": "Python 2.6 (EOL)",
+      "path": "/2.6/"
+    },
+    {
+      "text": "index",
+      "path": "/3/genindex.html"
+    },
+    {
+      "text": "modules",
+      "path": "/3/py-modindex.html"
+    },
+    {
+      "text": "What's new in Python 3.14?",
+      "path": "/3/whatsnew/3.14.html"
+    },
+    {
+      "text": "all \"What's new\" documents since Python 2.0",
+      "path": "/3/whatsnew/index.html"
+    },
+    {
+      "text": "Tutorial",
+      "path": "/3/tutorial/index.html"
+    },
+    {
+      "text": "Library reference",
+      "path": "/3/library/index.html"
+    },
+    {
+      "text": "Language reference",
+      "path": "/3/reference/index.html"
+    },
+    {
+      "text": "Python setup and usage",
+      "path": "/3/using/index.html"
+    },
+    {
+      "text": "Python HOWTOs",
+      "path": "/3/howto/index.html"
+    },
+    {
+      "text": "Installing Python modules",
+      "path": "/3/installing/index.html"
+    },
+    {
+      "text": "Extending and embedding",
+      "path": "/3/extending/index.html"
+    },
+    {
+      "text": "Python's C API",
+      "path": "/3/c-api/index.html"
+    },
+    {
+      "text": "FAQs",
+      "path": "/3/faq/index.html"
+    },
+    {
+      "text": "Deprecations",
+      "path": "/3/deprecations/index.html"
+    },
+    {
+      "text": "Global module index",
+      "path": "/3/py-modindex.html"
+    },
+    {
+      "text": "General index",
+      "path": "/3/genindex.html"
+    },
+    {
+      "text": "Glossary",
+      "path": "/3/glossary.html"
+    },
+    {
+      "text": "Search page",
+      "path": "/3/search.html"
+    },
+    {
+      "text": "Complete table of contents",
+      "path": "/3/contents.html"
+    },
+    {
+      "text": "Reporting issues",
+      "path": "/3/bugs.html"
+    },
+    {
+      "text": "Download the documentation",
+      "path": "/3/download.html"
+    },
+    {
+      "text": "History and license of Python",
+      "path": "/3/license.html"
+    },
+    {
+      "text": "Copyright",
+      "path": "/3/copyright.html"
+    },
+    {
+      "text": "About the documentation",
+      "path": "/3/about.html"
+    },
+    {
+      "text": "History and License",
+      "path": "/license.html"
+    },
+    {
+      "text": "Found a bug",
+      "path": "/bugs.html"
+    }
+  ],
+  "url_sections": {
+    "3": 472
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorial",
+      "/3/tutorial/index.html"
+    ],
+    "guides / how-to": [
+      "python howtos",
+      "/3/howto/index.html"
+    ],
+    "api reference": [
+      "python's c api",
+      "library reference",
+      "language reference",
+      "/3/c-api/index.html"
+    ],
+    "changelog / release notes": [
+      "/3/whatsnew/3.14.html",
+      "/3/whatsnew/index.html",
+      "what's new in python 3.14?",
+      "all \"what's new\" documents since python 2.0"
+    ],
+    "security": [
+      "python 3.12 (security-fixes)",
+      "python 3.10 (security-fixes)",
+      "python 3.11 (security-fixes)"
+    ],
+    "faq": [
+      "/3/faq/index.html"
+    ],
+    "glossary / definitions": [
+      "glossary",
+      "/3/glossary.html"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://docs.python.org/license.html",
+      "h1": "History and License¶",
+      "h2": [
+        "History of the software¶",
+        "Terms and conditions for accessing or otherwise using Python¶",
+        "Licenses and Acknowledgements for Incorporated Software¶"
+      ]
+    },
+    {
+      "url": "https://docs.python.org/bugs.html",
+      "h1": "Dealing with Bugs¶",
+      "h2": [
+        "Documentation bugs¶",
+        "Using the Python issue tracker¶",
+        "Getting started contributing to Python yourself¶"
+      ]
+    },
+    {
+      "url": "https://docs.python.org/3/download.html",
+      "h1": "Download Python 3.14 documentation",
+      "h2": [
+        "Problems"
+      ]
+    },
+    {
+      "url": "https://docs.python.org/3.16/",
+      "h1": "Python 3.16.0a0 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.15/",
+      "h1": "Python 3.15.0rc1 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.14/",
+      "h1": "Python 3.14.7 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.13/",
+      "h1": "Python 3.13.15 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.12/",
+      "h1": "Python 3.12.13 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.11/",
+      "h1": "Python 3.11.15 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.10/",
+      "h1": "Python 3.10.20 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.9/",
+      "h1": "Python 3.9.25 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.8/",
+      "h1": "Python 3.8.20 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.7/",
+      "h1": "Python 3.7.17 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.6/",
+      "h1": "Python 3.6.15 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.5/",
+      "h1": "Python 3.5.10 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.4/",
+      "h1": "Python 3.4.10 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.3/",
+      "h1": "Python 3.3.7 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.2/",
+      "h1": "Python v3.2.6 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.1/",
+      "h1": "Python v3.1.5 documentation",
+      "h2": []
+    },
+    {
+      "url": "https://docs.python.org/3.0/",
+      "h1": "Python v3.0.1 documentation",
+      "h2": []
+    }
+  ]
+}

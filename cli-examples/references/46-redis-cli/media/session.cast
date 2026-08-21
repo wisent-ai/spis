@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921627,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"redis-cli authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: redis-cli\r\n"]
+[0.55,"o","cli-ref$ redis-cli --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","redis-cli 7.0.15\r\n"]
+[2.2,"o","cli-ref$ redis-cli --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","redis-cli 7.0.15\r\n\r\nUsage: redis-cli [OPTIONS] [cmd [arg [arg ...]]]\r\n  -h <hostname>      Server hostname (default: 127.0.0.1).\r\n  -p <port>          Server port (default: 6379).\r\n  -s <socket>        Server socket (overrides hostname and port).\r\n  -a <password>      Password to use when connecting to the server.\r\n                     You can also use the REDISCLI_AUTH environment\r\n                     variable to pass this password more safely\r\n                     (if both are used, this argument takes precedence).\r\n  --user <username>  Used to send ACL style 'AUTH username pass'. Needs -a.\r\n  --pass <password>  Alias of -a for consistency with the new --user option.\r\n  --askpass          Force user to input password with mask from STDIN.\r\n                     If this argument is used, '-a' and REDISCLI_AUTH\r\n"]
+[5.1,"o","cli-ref$ redis-cli --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Unrecognized option or bad number of args for: '--definitely-invalid-option'\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ redis-cli --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ redis-cli --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","redis-cli 7.0.15\r\n\r\nUsage: redis-cli [OPTIONS] [cmd [arg [arg ...]]]\r\n  -h <hostname>      Server hostname (default: 127.0.0.1).\r\n"]

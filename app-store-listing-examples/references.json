@@ -1,0 +1,361 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "app-store-listing-examples",
+  "generated_at": "2026-08-16",
+  "reference_count": 50,
+  "complete_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "Duolingo: Language Lessons (Apple App Store)",
+      "path": "references/01-duolingo-language-lessons/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 2,
+      "name": "Canva: Design, Art & AI Editor (Apple App Store)",
+      "path": "references/02-canva-design-art-ai-editor/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 3,
+      "name": "Notion: Notes, Tasks, AI (Apple App Store)",
+      "path": "references/03-notion-notes-tasks-ai/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 4,
+      "name": "Headspace: Meditation & Sleep (Apple App Store)",
+      "path": "references/04-headspace-meditation-sleep/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 5,
+      "name": "Calm (Apple App Store)",
+      "path": "references/05-calm/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 6,
+      "name": "Strava: Run, Bike, Hike (Apple App Store)",
+      "path": "references/06-strava-run-bike-hike/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 7,
+      "name": "Airbnb (Apple App Store)",
+      "path": "references/07-airbnb/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 8,
+      "name": "Uber (Apple App Store)",
+      "path": "references/08-uber/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 9,
+      "name": "Spotify: Music and Podcasts (Apple App Store)",
+      "path": "references/09-spotify-music-and-podcasts/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 10,
+      "name": "TikTok (Apple App Store)",
+      "path": "references/10-tiktok/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 11,
+      "name": "Pinterest (Apple App Store)",
+      "path": "references/11-pinterest/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 12,
+      "name": "LinkedIn: Network & Job Finder (Apple App Store)",
+      "path": "references/12-linkedin-network-job-finder/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 13,
+      "name": "Slack (Apple App Store)",
+      "path": "references/13-slack/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 14,
+      "name": "Dropbox: Cloud Photo Storage (Apple App Store)",
+      "path": "references/14-dropbox-cloud-photo-storage/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 15,
+      "name": "Revolut: Send, Spend and Save (Apple App Store)",
+      "path": "references/15-revolut-send-spend-and-save/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 16,
+      "name": "Wise: International Transfers (Apple App Store)",
+      "path": "references/16-wise-international-transfers/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 17,
+      "name": "Too Good To Go: End Food Waste (Apple App Store)",
+      "path": "references/17-too-good-to-go-end-food-waste/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 18,
+      "name": "Adobe Lightroom: Photo Editor (Apple App Store)",
+      "path": "references/18-adobe-lightroom-photo-editor/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 19,
+      "name": "Picsart AI Photo Editor, Video (Apple App Store)",
+      "path": "references/19-picsart-ai-photo-editor-video/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 20,
+      "name": "Nike Run Club: Running Coach (Apple App Store)",
+      "path": "references/20-nike-run-club-running-coach/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 21,
+      "name": "AllTrails: Hike, Bike & Run (Apple App Store)",
+      "path": "references/21-alltrails-hike-bike-run/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 22,
+      "name": "Flo Period & Pregnancy Tracker (Apple App Store)",
+      "path": "references/22-flo-period-pregnancy-tracker/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 23,
+      "name": "ChatGPT (Apple App Store)",
+      "path": "references/23-chatgpt/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 24,
+      "name": "YAZIO Calorie Counter & Diet (Apple App Store)",
+      "path": "references/24-yazio-calorie-counter-diet/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 25,
+      "name": "Blinkist: Big Ideas in 15 Min (Apple App Store)",
+      "path": "references/25-blinkist-big-ideas-in-15-min/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 26,
+      "name": "Google Maps (Google Play)",
+      "path": "references/26-google-maps/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 27,
+      "name": "WhatsApp Messenger (Google Play)",
+      "path": "references/27-whatsapp-messenger/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 28,
+      "name": "Instagram (Google Play)",
+      "path": "references/28-instagram/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 29,
+      "name": "Netflix (Google Play)",
+      "path": "references/29-netflix/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 30,
+      "name": "Amazon Shopping (Google Play)",
+      "path": "references/30-amazon-shopping/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 31,
+      "name": "Microsoft Teams (Google Play)",
+      "path": "references/31-microsoft-teams/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 32,
+      "name": "Todoist: Planner & Calendar (Google Play)",
+      "path": "references/32-todoist-planner-calendar/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 33,
+      "name": "TickTick: To Do List & Calendar (Google Play)",
+      "path": "references/33-ticktick-to-do-list-calendar/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 34,
+      "name": "Any.do: To-do List & Calendar (Google Play)",
+      "path": "references/34-any-do-to-do-list-calendar/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 35,
+      "name": "Shazam: Find Music & Concerts (Google Play)",
+      "path": "references/35-shazam-find-music-concerts/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 36,
+      "name": "SoundCloud: Play Music & Songs (Google Play)",
+      "path": "references/36-soundcloud-play-music-songs/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 37,
+      "name": "Firefox Fast & Private Browser (Google Play)",
+      "path": "references/37-firefox-fast-private-browser/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 38,
+      "name": "Brave Private Web Browser, VPN (Google Play)",
+      "path": "references/38-brave-private-web-browser-vpn/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 39,
+      "name": "Booking.com: Hotels and More (Google Play)",
+      "path": "references/39-booking-com-hotels-and-more/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 40,
+      "name": "Tripadvisor: Plan & Book Trips (Google Play)",
+      "path": "references/40-tripadvisor-plan-book-trips/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 41,
+      "name": "Yelp: Food, Delivery & Reviews (Google Play)",
+      "path": "references/41-yelp-food-delivery-reviews/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 42,
+      "name": "GetYourGuide: Travel & Tickets (Google Play)",
+      "path": "references/42-getyourguide-travel-tickets/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 43,
+      "name": "Omio: Europe & U.S. Travel (Google Play)",
+      "path": "references/43-omio-europe-u-s-travel/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 44,
+      "name": "Memrise: Speak a New Language (Google Play)",
+      "path": "references/44-memrise-speak-a-new-language/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 45,
+      "name": "Babbel: Language Learning (Google Play)",
+      "path": "references/45-babbel-language-learning/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 46,
+      "name": "Khan Academy (Google Play)",
+      "path": "references/46-khan-academy/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 47,
+      "name": "Medium (Google Play)",
+      "path": "references/47-medium/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 48,
+      "name": "Goodreads (Google Play)",
+      "path": "references/48-goodreads/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 49,
+      "name": "YouTube Music (Google Play)",
+      "path": "references/49-youtube-music/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 50,
+      "name": "Tinder Dating App: Chat & Date (Google Play)",
+      "path": "references/50-tinder-dating-app-chat-date/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    }
+  ],
+  "measured_at": "2026-08-19",
+  "partial_count": 50
+}

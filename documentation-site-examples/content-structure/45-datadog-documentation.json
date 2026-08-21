@@ -1,0 +1,175 @@
+{
+  "name": "Datadog Documentation",
+  "source_url": "https://docs.datadoghq.com/",
+  "category": "Observability documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 26624,
+  "landing_nav": [
+    {
+      "text": "Mobile App",
+      "path": "/service_management/mobile/"
+    },
+    {
+      "text": "Access Control",
+      "path": "/account_management/rbac/"
+    },
+    {
+      "text": "Monitors",
+      "path": "/monitors/types/ci/"
+    },
+    {
+      "text": "EnglishEnglish",
+      "path": "/"
+    },
+    {
+      "text": "FrançaisFrench",
+      "path": "/fr/"
+    },
+    {
+      "text": "日本語Japanese",
+      "path": "/ja/"
+    },
+    {
+      "text": "한국어Korean",
+      "path": "/ko/"
+    },
+    {
+      "text": "EspañolSpanish",
+      "path": "/es/"
+    }
+  ],
+  "url_sections": {
+    "security": 6374,
+    "integrations": 5294,
+    "api": 2314,
+    "ddsql_reference": 2177,
+    "infrastructure": 1676,
+    "tracing": 785,
+    "real_user_monitoring": 602,
+    "cloudcraft": 569,
+    "logs": 471,
+    "dashboards": 424,
+    "containers": 365,
+    "account_management": 364,
+    "observability_pipelines": 346,
+    "serverless": 342,
+    "monitors": 341,
+    "agent": 318,
+    "synthetics": 318,
+    "database_monitoring": 270,
+    "continuous_integration": 249,
+    "getting_started": 221,
+    "service_management": 214,
+    "opentelemetry": 188,
+    "network_monitoring": 157,
+    "developers": 147,
+    "tests": 137,
+    "metrics": 135,
+    "cloudprem": 120,
+    "error_tracking": 115,
+    "llm_observability": 105,
+    "profiler": 100,
+    "actions": 85,
+    "cloud_cost_management": 80,
+    "incident_response": 80,
+    "continuous_testing": 78,
+    "internal_developer_portal": 74,
+    "extend": 57,
+    "data_security": 57,
+    "data_streams": 57,
+    "feature_flags": 55,
+    "product_analytics": 53
+  },
+  "content_kinds": {
+    "getting started / quickstart": [
+      "getting_started"
+    ],
+    "api reference": [
+      "api",
+      "ddsql_reference"
+    ],
+    "security": [
+      "security",
+      "data_security"
+    ],
+    "integrations": [
+      "integrations",
+      "continuous_integration"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://docs.datadoghq.com/fr/",
+      "h1": "Bienvenue dans la documentation de Datadog !",
+      "h2": [
+        "Besoin d'aide ?"
+      ]
+    },
+    {
+      "url": "https://docs.datadoghq.com/ja/",
+      "h1": "Datadog について",
+      "h2": [
+        "お困りですか？"
+      ]
+    },
+    {
+      "url": "https://docs.datadoghq.com/ko/",
+      "h1": "Datadog 설명서에 오신 것을 환영합니다.",
+      "h2": [
+        "찾으시는 정보가 없나요?"
+      ]
+    },
+    {
+      "url": "https://docs.datadoghq.com/es/",
+      "h1": "¡Bienvenido a la documentación de Datadog!",
+      "h2": [
+        "¿No encuentras algo?"
+      ]
+    },
+    {
+      "url": "https://docs.datadoghq.com/service_management/mobile/",
+      "h1": "Datadog Mobile App",
+      "h2": [
+        "Installing",
+        "On-Call",
+        "Incidents",
+        "Notification Center",
+        "Dashboards",
+        "Monitors",
+        "Notebooks",
+        "Traces",
+        "Logs",
+        "Services",
+        "Bits AI",
+        "Frequently Asked Question",
+        "Troubleshooting",
+        "Further Reading",
+        "Can't find something?"
+      ]
+    },
+    {
+      "url": "https://docs.datadoghq.com/account_management/rbac/",
+      "h1": "Access Control",
+      "h2": [
+        "Overview",
+        "Role based access control",
+        "Datadog default roles",
+        "Custom roles",
+        "Further Reading",
+        "Can't find something?"
+      ]
+    },
+    {
+      "url": "https://docs.datadoghq.com/monitors/types/ci/",
+      "h1": "CI/CD & Test Monitor",
+      "h2": [
+        "Overview",
+        "Monitor creation",
+        "Example monitors",
+        "Further Reading",
+        "Can't find something?"
+      ]
+    }
+  ]
+}

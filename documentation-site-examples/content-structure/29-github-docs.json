@@ -1,0 +1,517 @@
+{
+  "name": "GitHub Docs",
+  "source_url": "https://docs.github.com/en",
+  "category": "Developer platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "https://docs.github.com/llms.txt",
+  "inventory_url_count": 117,
+  "landing_nav": [
+    {
+      "text": "GitHub Docs",
+      "path": "/en"
+    },
+    {
+      "text": "Get started",
+      "path": "/en/get-started"
+    },
+    {
+      "text": "Migrations",
+      "path": "/en/migrations"
+    },
+    {
+      "text": "Account and profile",
+      "path": "/en/account-and-profile"
+    },
+    {
+      "text": "Subscriptions & notifications",
+      "path": "/en/subscriptions-and-notifications"
+    },
+    {
+      "text": "Authentication",
+      "path": "/en/authentication"
+    },
+    {
+      "text": "Billing and payments",
+      "path": "/en/billing"
+    },
+    {
+      "text": "Site policy",
+      "path": "/en/site-policy"
+    },
+    {
+      "text": "Codespaces",
+      "path": "/en/codespaces"
+    },
+    {
+      "text": "Repositories",
+      "path": "/en/repositories"
+    },
+    {
+      "text": "Pull requests",
+      "path": "/en/pull-requests"
+    },
+    {
+      "text": "GitHub Discussions",
+      "path": "/en/discussions"
+    },
+    {
+      "text": "Integrations",
+      "path": "/en/integrations"
+    },
+    {
+      "text": "GitHub Copilot",
+      "path": "/en/copilot"
+    },
+    {
+      "text": "Plans",
+      "path": "/en/copilot/get-started/plans"
+    },
+    {
+      "text": "Cloud agent",
+      "path": "/en/copilot/how-tos/use-copilot-agents/cloud-agent"
+    },
+    {
+      "text": "Tutorials",
+      "path": "/en/copilot/tutorials"
+    },
+    {
+      "text": "GitHub Copilot Cookbook",
+      "path": "/en/copilot/tutorials/copilot-cookbook"
+    },
+    {
+      "text": "Customization library",
+      "path": "/en/copilot/tutorials/customization-library"
+    },
+    {
+      "text": "Copilot CLI",
+      "path": "/en/copilot/how-tos/copilot-cli"
+    },
+    {
+      "text": "GitHub Actions",
+      "path": "/en/actions"
+    },
+    {
+      "text": "GitHub Packages",
+      "path": "/en/packages"
+    },
+    {
+      "text": "GitHub Pages",
+      "path": "/en/pages"
+    },
+    {
+      "text": "Security and code quality",
+      "path": "/en/code-security"
+    },
+    {
+      "text": "Secure your secrets",
+      "path": "/en/code-security/how-tos/secure-your-secrets"
+    },
+    {
+      "text": "Find and fix code vulnerabilities",
+      "path": "/en/code-security/how-tos/find-and-fix-code-vulnerabilities"
+    },
+    {
+      "text": "Secure your supply chain",
+      "path": "/en/code-security/how-tos/secure-your-supply-chain"
+    },
+    {
+      "text": "Maintain quality code",
+      "path": "/en/code-security/how-tos/maintain-quality-code"
+    },
+    {
+      "text": "Secure at scale",
+      "path": "/en/code-security/how-tos/secure-at-scale"
+    },
+    {
+      "text": "GitHub CLI",
+      "path": "/en/github-cli"
+    },
+    {
+      "text": "GitHub Mobile",
+      "path": "/en/get-started/using-github/github-mobile"
+    },
+    {
+      "text": "GitHub Desktop",
+      "path": "/en/desktop"
+    },
+    {
+      "text": "GitHub Issues",
+      "path": "/en/issues"
+    },
+    {
+      "text": "Projects",
+      "path": "/en/issues/planning-and-tracking-with-projects"
+    },
+    {
+      "text": "Search on GitHub",
+      "path": "/en/search-github"
+    },
+    {
+      "text": "Organizations",
+      "path": "/en/organizations"
+    },
+    {
+      "text": "Enterprise onboarding",
+      "path": "/en/enterprise-cloud@latest/admin/enterprise-onboarding"
+    },
+    {
+      "text": "Enterprise administrators",
+      "path": "/en/enterprise-cloud@latest/admin"
+    },
+    {
+      "text": "Apps",
+      "path": "/en/apps"
+    },
+    {
+      "text": "REST API",
+      "path": "/en/rest"
+    },
+    {
+      "text": "GraphQL API",
+      "path": "/en/graphql"
+    },
+    {
+      "text": "Webhooks",
+      "path": "/en/webhooks"
+    },
+    {
+      "text": "Building communities",
+      "path": "/en/communities"
+    },
+    {
+      "text": "GitHub Sponsors",
+      "path": "/en/sponsors"
+    },
+    {
+      "text": "GitHub Education",
+      "path": "/en/education"
+    },
+    {
+      "text": "GitHub for Nonprofits",
+      "path": "/en/nonprofit"
+    },
+    {
+      "text": "GitHub Support",
+      "path": "/en/support"
+    },
+    {
+      "text": "Contribute to GitHub Docs",
+      "path": "/en/contributing"
+    },
+    {
+      "text": "Privacy policy",
+      "path": "/en/site-policy/privacy-policies/github-privacy-statement"
+    },
+    {
+      "text": "Learn how to contribute",
+      "path": "/contributing"
+    },
+    {
+      "text": "Terms",
+      "path": "/en/site-policy/github-terms/github-terms-of-service"
+    },
+    {
+      "text": "Privacy",
+      "path": "/en/site-policy/privacy-policies/github-privacy-statement"
+    }
+  ],
+  "url_sections": {
+    "copilot": 23,
+    "get-started": 16,
+    "authentication": 13,
+    "account-and-profile": 11,
+    "pages": 9,
+    "actions": 7,
+    "api": 6,
+    "repositories": 6,
+    "rest": 4,
+    "apps": 3,
+    "organizations": 3,
+    "pull-requests": 3,
+    "github-cli": 2,
+    "billing": 2,
+    "github": 1,
+    "graphql": 1,
+    "code-security": 1,
+    "codespaces": 1,
+    "desktop": 1,
+    "issues": 1,
+    "migrations": 1,
+    "packages": 1,
+    "search-github": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorials",
+      "/en/copilot/tutorials",
+      "learn how to contribute",
+      "/en/copilot/tutorials/copilot-cookbook"
+    ],
+    "getting started / quickstart": [
+      "get started",
+      "get-started",
+      "/en/get-started",
+      "enterprise onboarding"
+    ],
+    "guides / how-to": [
+      "learn how to contribute"
+    ],
+    "api reference": [
+      "api",
+      "rest api",
+      "graphql api"
+    ],
+    "migration / upgrade": [
+      "migrations",
+      "/en/migrations"
+    ],
+    "security": [
+      "code-security",
+      "/en/code-security",
+      "security and code quality",
+      "find and fix code vulnerabilities"
+    ],
+    "cli reference": [
+      "github cli",
+      "github-cli",
+      "copilot cli",
+      "/en/github-cli"
+    ],
+    "community / support": [
+      "/en/support",
+      "github support"
+    ],
+    "cookbook / recipes": [
+      "github copilot cookbook",
+      "/en/copilot/tutorials/copilot-cookbook"
+    ],
+    "integrations": [
+      "integrations",
+      "/en/integrations"
+    ],
+    "contributing": [
+      "/contributing",
+      "/en/contributing",
+      "learn how to contribute",
+      "contribute to github docs"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://docs.github.com/en",
+      "h1": "GitHub Docs",
+      "h2": [
+        "All docs",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/contributing",
+      "h1": "Contributing to GitHub Docs documentation",
+      "h2": [
+        "Contribute to GitHub Docs",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/get-started",
+      "h1": "Get started with GitHub documentation",
+      "h2": [
+        "Get started",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/migrations",
+      "h1": "Migrations documentation",
+      "h2": [
+        "Migrations",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/account-and-profile",
+      "h1": "Account and profile documentation",
+      "h2": [
+        "Account and profile",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/subscriptions-and-notifications",
+      "h1": "Subscriptions and notifications documentation",
+      "h2": [
+        "Subscriptions & notifications",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/authentication",
+      "h1": "Authentication documentation",
+      "h2": [
+        "Authentication",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/billing",
+      "h1": "Billing and payments documentation",
+      "h2": [
+        "Billing and payments",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/site-policy",
+      "h1": "Site policy documentation",
+      "h2": [
+        "Site policy",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/codespaces",
+      "h1": "Codespaces documentation",
+      "h2": [
+        "Codespaces",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/repositories",
+      "h1": "Repositories documentation",
+      "h2": [
+        "Repositories",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/pull-requests",
+      "h1": "Pull requests documentation",
+      "h2": [
+        "Pull requests",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/discussions",
+      "h1": "GitHub Discussions documentation",
+      "h2": [
+        "GitHub Discussions",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/integrations",
+      "h1": "GitHub integrations",
+      "h2": [
+        "Integrations",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/copilot",
+      "h1": "GitHub Copilot documentation",
+      "h2": [
+        "GitHub Copilot",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/actions",
+      "h1": "GitHub Actions documentation",
+      "h2": [
+        "GitHub Actions",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/packages",
+      "h1": "GitHub Packages documentation",
+      "h2": [
+        "GitHub Packages",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/pages",
+      "h1": "GitHub Pages documentation",
+      "h2": [
+        "GitHub Pages",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/code-security",
+      "h1": "Security and code quality documentation",
+      "h2": [
+        "Security and code quality",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    },
+    {
+      "url": "https://docs.github.com/en/github-cli",
+      "h1": "GitHub CLI documentation",
+      "h2": [
+        "GitHub CLI",
+        "Recommended",
+        "Articles",
+        "Help and support",
+        "Legal"
+      ]
+    }
+  ]
+}

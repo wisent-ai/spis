@@ -1,0 +1,404 @@
+{
+  "name": "Terraform Documentation",
+  "source_url": "https://developer.hashicorp.com/terraform/docs",
+  "category": "Infrastructure as code documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 7133,
+  "landing_nav": [
+    {
+      "text": ".cls-1{fill:#fff;stroke-width:0}",
+      "path": "/"
+    },
+    {
+      "text": "Learn more",
+      "path": "/hcp"
+    },
+    {
+      "text": "TerraformManage infrastructure as code",
+      "path": "/terraform"
+    },
+    {
+      "text": "PackerBuild machine images",
+      "path": "/packer"
+    },
+    {
+      "text": "NomadOrchestrate workloads",
+      "path": "/nomad"
+    },
+    {
+      "text": "WaypointStandardize application patterns",
+      "path": "/waypoint"
+    },
+    {
+      "text": "VagrantBuild developer environments",
+      "path": "/vagrant"
+    },
+    {
+      "text": "VaultCentrally manage secrets",
+      "path": "/vault"
+    },
+    {
+      "text": "BoundarySecure remote access",
+      "path": "/boundary"
+    },
+    {
+      "text": "Vault RadarScan for embedded secrets",
+      "path": "/hcp/docs/vault-radar"
+    },
+    {
+      "text": "ConsulSecure network services",
+      "path": "/consul"
+    },
+    {
+      "text": "CertificationsGet HashiCorp certified",
+      "path": "/certifications"
+    },
+    {
+      "text": "TutorialsLearn HashiCorp products",
+      "path": "/tutorials"
+    },
+    {
+      "text": "Validated DesignsCustomer-validated designs for HashiCorp products",
+      "path": "/validated-designs"
+    },
+    {
+      "text": "Well-Architected FrameworkAdopt HashiCorp best practices",
+      "path": "/well-architected-framework"
+    },
+    {
+      "text": "Sign up",
+      "path": "/sign-up"
+    },
+    {
+      "text": "Install",
+      "path": "/terraform/install"
+    },
+    {
+      "text": "Tutorials",
+      "path": "/terraform/tutorials"
+    },
+    {
+      "text": "Documentation",
+      "path": "/terraform/docs"
+    },
+    {
+      "text": "Intro to Terraform",
+      "path": "/terraform/intro"
+    },
+    {
+      "text": "Configuration Language",
+      "path": "/terraform/language"
+    },
+    {
+      "text": "Terraform CLI",
+      "path": "/terraform/cli"
+    },
+    {
+      "text": "HCP Terraform",
+      "path": "/terraform/cloud-docs"
+    },
+    {
+      "text": "Terraform Enterprise",
+      "path": "/terraform/enterprise"
+    },
+    {
+      "text": "Terraform MCP Server",
+      "path": "/terraform/mcp-server"
+    },
+    {
+      "text": "Terraform Migrate",
+      "path": "/terraform/migrate"
+    },
+    {
+      "text": "Provider Use",
+      "path": "/terraform/language/providers"
+    },
+    {
+      "text": "Terraform PolicyBETA",
+      "path": "/terraform/policy"
+    },
+    {
+      "text": "Plugin Development",
+      "path": "/terraform/plugin"
+    },
+    {
+      "text": "Registry Publishing",
+      "path": "/terraform/registry"
+    },
+    {
+      "text": "Integration Program",
+      "path": "/terraform/docs/partnerships"
+    },
+    {
+      "text": "Terraform Home",
+      "path": "/terraform"
+    },
+    {
+      "text": "CDK for Terraform",
+      "path": "/terraform/cdktf"
+    },
+    {
+      "text": "Terraform Tools",
+      "path": "/terraform/docs/tools"
+    },
+    {
+      "text": "Glossary",
+      "path": "/terraform/docs/glossary"
+    },
+    {
+      "text": "Tutorial Library",
+      "path": "/tutorials/library"
+    },
+    {
+      "text": "Certifications",
+      "path": "/certifications/infrastructure-automation"
+    },
+    {
+      "text": "Sandbox",
+      "path": "/terraform/sandbox"
+    },
+    {
+      "text": "Developer",
+      "path": "/"
+    },
+    {
+      "text": "Terraform",
+      "path": "/terraform"
+    },
+    {
+      "text": "Certifications",
+      "path": "/certifications"
+    }
+  ],
+  "url_sections": {
+    "terraform": 2017,
+    "vault": 1057,
+    "nomad": 908,
+    "consul": 845,
+    "hcp": 596,
+    "boundary": 522,
+    "packer": 437,
+    "validated-designs": 230,
+    "vagrant": 215,
+    "well-architected-framework": 125,
+    "sentinel": 111,
+    "validated-patterns": 49,
+    "waypoint": 13,
+    "certifications": 4,
+    "tutorials": 2,
+    "sign-up": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorials",
+      "learn more",
+      "/tutorials",
+      "tutorial library"
+    ],
+    "migration / upgrade": [
+      "terraform migrate",
+      "/terraform/migrate"
+    ],
+    "glossary / definitions": [
+      "glossary",
+      "/terraform/docs/glossary"
+    ],
+    "cli reference": [
+      "terraform cli",
+      "/terraform/cli"
+    ],
+    "configuration / settings": [
+      "configuration language"
+    ],
+    "best practices": [
+      "well-architected frameworkadopt hashicorp best practices"
+    ],
+    "playground / sandbox": [
+      "sandbox",
+      "/terraform/sandbox"
+    ],
+    "integrations": [
+      "integration program"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://developer.hashicorp.com/hcp",
+      "h1": "The fastest way to get up and running with HashiCorp tools",
+      "h2": [
+        "HashiCorp Cloud Platform",
+        "What is HCP?",
+        "Getting Started",
+        "Featured Content",
+        "Popular Use Cases"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/terraform",
+      "h1": "Automate Infrastructure on Any Cloud",
+      "h2": [
+        "Terraform",
+        "What is Terraform?",
+        "Get Started",
+        "Sandbox",
+        "Best Practices",
+        "Featured Documentation",
+        "Popular Use Cases",
+        "Get Certified"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/packer",
+      "h1": "Build Automated Machine Images",
+      "h2": [
+        "Packer",
+        "What is Packer?",
+        "Get Started",
+        "Featured Documentation",
+        "Popular Use Cases",
+        "Join the Community"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/nomad",
+      "h1": "Orchestrate, deploy, and manage containers, binaries, and batch jobs in the clou",
+      "h2": [
+        "Nomad",
+        "What is Nomad?",
+        "Getting Started",
+        "Sandbox",
+        "Featured Tutorials",
+        "Nomad Jobs",
+        "HashiCorp Tools Integrations",
+        "Nomad in Production",
+        "Cluster Management",
+        "Plugins and Tools",
+        "Best practices for deploying infrastructure",
+        "Best practices for package management",
+        "CI/CD automation best practices"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/waypoint",
+      "h1": "Internal developer platform made easy",
+      "h2": [
+        "Waypoint",
+        "What is HCP Waypoint?",
+        "Getting Started",
+        "HCP Waypoint Concepts",
+        "Platform Team",
+        "Application Developers"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/vagrant",
+      "h1": "Development Environments Made Easy",
+      "h2": [
+        "Vagrant",
+        "What is Vagrant?",
+        "Getting Started",
+        "Fundamentals",
+        "Important Concepts",
+        "Additional Reading",
+        "Use Cases with Vagrant",
+        "Contributing to Vagrant",
+        "Vagrant vs. Other Software"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault",
+      "h1": "Manage Secrets & Protect Sensitive Data",
+      "h2": [
+        "Vault",
+        "What is Vault?",
+        "Getting Started",
+        "Sandbox",
+        "Use Cases",
+        "Get Certified",
+        "Security best practices",
+        "Popular Vault Features"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/boundary",
+      "h1": "Simple and secure remote access",
+      "h2": [
+        "Boundary",
+        "What is Boundary?",
+        "Getting Started",
+        "How Boundary Works",
+        "Sandbox",
+        "Popular Tutorials"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/consul",
+      "h1": "Service Networking Automations Across Clouds",
+      "h2": [
+        "Consul",
+        "What is Consul?",
+        "Get Started",
+        "Sandbox",
+        "Introduction to Consul: Architecture and Concepts",
+        "Consul Fundamentals",
+        "Popular Use Cases"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/certifications",
+      "h1": "HashiCorp Cloud Engineer Certifications",
+      "h2": [
+        "Certification Program Details",
+        "Stay Informed"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/tutorials",
+      "h1": "Learn HashiCorp products",
+      "h2": [
+        "Terraform",
+        "Terraform",
+        "Vault",
+        "Vault",
+        "Consul",
+        "Consul",
+        "Learn your way, at your own pace",
+        "Nomad",
+        "Nomad",
+        "Packer",
+        "Packer",
+        "Boundary",
+        "Boundary",
+        "Vagrant",
+        "Vagrant",
+        "Waypoint",
+        "Waypoint",
+        "Use HashiCorp products together"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/validated-designs",
+      "h1": "HashiCorp Validated Designs",
+      "h2": [
+        "Documentation",
+        "Validated Designs",
+        "Boundary Enterprise",
+        "Consul Enterprise",
+        "Nomad Enterprise",
+        "Terraform Enterprise",
+        "Vault Enterprise",
+        "Vault Radar"
+      ]
+    },
+    {
+      "url": "https://developer.hashicorp.com/well-architected-framework",
+      "h1": "Best practices for managing your infrastructure and security lifecycle",
+      "h2": [
+        "Documentation",
+        "Well-Architected Framework (WAF)",
+        "Framework Pillars"
+      ]
+    }
+  ]
+}

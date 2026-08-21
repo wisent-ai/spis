@@ -1,0 +1,228 @@
+{
+  "name": "Kotlin Documentation",
+  "source_url": "https://kotlinlang.org/docs/home.html",
+  "category": "Programming language documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 10202,
+  "landing_nav": [],
+  "url_sections": {
+    "api": 9699,
+    "docs": 477,
+    "case-studies": 11,
+    "community": 3,
+    "education": 3,
+    "benchmark": 2,
+    "kotlin-effect": 2,
+    "backend": 1,
+    "compose-multiplatform": 1,
+    "grammar": 1,
+    "multiplatform": 1
+  },
+  "content_kinds": {
+    "api reference": [
+      "api"
+    ],
+    "community / support": [
+      "community"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://kotlinlang.org/backend/",
+      "h1": "Modern backend development with Kotlin",
+      "h2": [
+        "Safety: fewer production bugs and crashes",
+        "Performance: optimized for high-load",
+        "Rich JVM ecosystem for backend development",
+        "How to start – incremental adoption in Java projects",
+        "Use your favorite tools",
+        "Additional materials",
+        "Get started",
+        "Ktor quick start",
+        "Go server-side with Spring"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/benchmark/",
+      "h1": "The Kotlin Benchmark",
+      "h2": [
+        "How Kotlin Benchmark works"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/case-studies/",
+      "h1": "Case studies",
+      "h2": [
+        "How teams use Kotlin Multiplatform in production",
+        "How teams use Kotlin Multiplatform in production"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/community/",
+      "h1": "",
+      "h2": [
+        "Keep in Touch",
+        "Join a Kotlin User Group or start your own",
+        "Give us your feedback or ask any questionsyou have about the Kotlin community"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/compose-multiplatform/",
+      "h1": "Compose Multiplatform",
+      "h2": [
+        "An open-source, declarative framework for sharing stunning UIs across multiple p",
+        "Try Compose Multiplatform"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/docs/advent-of-code.html",
+      "h1": "Advent of Code puzzles in idiomatic Kotlin",
+      "h2": [
+        "Get ready for Advent of Code",
+        "Advent of Code 2022",
+        "Advent of Code 2021",
+        "Advent of Code 2020",
+        "What's next?"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/education/",
+      "h1": "Teach Computer Science with Kotlin",
+      "h2": [
+        "Kotlin Courses Around the World",
+        "Kotlin is taught at 0 universities",
+        "Start Teaching Kotlin with These Resources",
+        "Connect with us"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/grammar/",
+      "h1": "Grammar",
+      "h2": [
+        "Description",
+        "Syntax grammar",
+        "Lexical grammar"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/kotlin-effect/",
+      "h1": "",
+      "h2": [
+        "Write less. Do more. Enjoy the process.",
+        "The Kotlin Effect in Real Life",
+        "The Kotlin Effect in Action",
+        "Make the Kotlin Effect Yours",
+        "15 years of Kotlin.Thank you for being part of the journey!"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/multiplatform/",
+      "h1": "Kotlin Multiplatform",
+      "h2": [
+        "Choose what to share",
+        "Choose where to share",
+        "AI-powered code generation",
+        "Seamless tooling",
+        "KMP presence among the top 10K apps doubled year over year.",
+        "Real-world success stories",
+        "Go cross-platform without compromises —try Kotlin Multiplatform today."
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/api/core/",
+      "h1": "",
+      "h2": [
+        "All modules:"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/",
+      "h1": "Kotlin",
+      "h2": [
+        "Kotlin, Built for the AI Era",
+        "Latest news",
+        "Kotlin in action",
+        "Share code on your terms and for different platforms",
+        "Big, friendly and helpful community",
+        "Kotlin Foundation",
+        "Start using Kotlin today!"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/benchmark/methodology/",
+      "h1": "The Kotlin Benchmark — Methodology and Outlook",
+      "h2": [
+        "What we built",
+        "The Dataset",
+        "Methodology",
+        "Future outlook"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/case-studies/autodesk/",
+      "h1": "Autodesk",
+      "h2": [
+        "What have been your most significant gains and pains?"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/case-studies/baidu/",
+      "h1": "Baidu",
+      "h2": []
+    },
+    {
+      "url": "https://kotlinlang.org/case-studies/cash-app/",
+      "h1": "Cash App",
+      "h2": []
+    },
+    {
+      "url": "https://kotlinlang.org/case-studies/doordash/",
+      "h1": "DoorDash",
+      "h2": [
+        "About DoorDash",
+        "Why Kotlin?",
+        "Building up in the JVM ecosystem",
+        "Favourite feature",
+        "Summary",
+        "Get started",
+        "Ktor quick start",
+        "Go server-side with Spring"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/case-studies/down-dog/",
+      "h1": "Down Dog",
+      "h2": []
+    },
+    {
+      "url": "https://kotlinlang.org/case-studies/expedia/",
+      "h1": "Expedia",
+      "h2": [
+        "The technology stack at Expedia Group",
+        "Why Kotlin?",
+        "GraphQL with Kotlin",
+        "The shift to Kotlin Coroutines",
+        "Summary",
+        "Get started",
+        "Ktor quick start",
+        "Go server-side with Spring"
+      ]
+    },
+    {
+      "url": "https://kotlinlang.org/case-studies/faire/",
+      "h1": "Faire",
+      "h2": [
+        "About Faire",
+        "Architecture Overview",
+        "Why Kotlin?",
+        "Java to Kotlin Migration: Challenges and Benefits",
+        "Favorite features",
+        "Summary",
+        "Get started",
+        "Ktor quick start",
+        "Go server-side with Spring"
+      ]
+    }
+  ]
+}

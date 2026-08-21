@@ -1,0 +1,237 @@
+{
+  "name": "React Documentation",
+  "source_url": "https://react.dev/",
+  "category": "Frontend framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "https://react.dev/llms.txt",
+  "inventory_url_count": 178,
+  "landing_nav": [
+    {
+      "text": "React",
+      "path": "/"
+    },
+    {
+      "text": "v19.2",
+      "path": "/versions"
+    },
+    {
+      "text": "Learn",
+      "path": "/learn"
+    },
+    {
+      "text": "Reference",
+      "path": "/reference/react"
+    },
+    {
+      "text": "Community",
+      "path": "/community"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog"
+    },
+    {
+      "text": "Learn React",
+      "path": "/learn"
+    },
+    {
+      "text": "API Reference",
+      "path": "/reference/react"
+    },
+    {
+      "text": "Add React to your page",
+      "path": "/learn/add-react-to-an-existing-project"
+    },
+    {
+      "text": "Get started with a framework",
+      "path": "/learn/creating-a-react-app"
+    },
+    {
+      "text": "Read more React news",
+      "path": "/blog"
+    },
+    {
+      "text": "Additional Vulnerabilities in RSCDecember 11, 2025",
+      "path": "/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components"
+    },
+    {
+      "text": "Vulnerability in React Server ComponentsDecember 3, 2025",
+      "path": "/blog/2025/12/03/critical-security-vulnerability-in-react-server-components"
+    },
+    {
+      "text": "React Conf 2025 RecapOctober 16, 2025",
+      "path": "/blog/2025/10/16/react-conf-2025-recap"
+    },
+    {
+      "text": "Get Started",
+      "path": "/learn"
+    },
+    {
+      "text": "Quick Start",
+      "path": "/learn"
+    },
+    {
+      "text": "Installation",
+      "path": "/learn/installation"
+    },
+    {
+      "text": "Describing the UI",
+      "path": "/learn/describing-the-ui"
+    },
+    {
+      "text": "Adding Interactivity",
+      "path": "/learn/adding-interactivity"
+    },
+    {
+      "text": "Managing State",
+      "path": "/learn/managing-state"
+    },
+    {
+      "text": "Escape Hatches",
+      "path": "/learn/escape-hatches"
+    },
+    {
+      "text": "React APIs",
+      "path": "/reference/react"
+    },
+    {
+      "text": "React DOM APIs",
+      "path": "/reference/react-dom"
+    },
+    {
+      "text": "Meet the Team",
+      "path": "/community/team"
+    },
+    {
+      "text": "Docs Contributors",
+      "path": "/community/docs-contributors"
+    },
+    {
+      "text": "Acknowledgements",
+      "path": "/community/acknowledgements"
+    }
+  ],
+  "url_sections": {
+    "reference": 127,
+    "learn": 50,
+    "learn.md": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "learn",
+      "/learn",
+      "learn.md",
+      "learn react"
+    ],
+    "getting started / quickstart": [
+      "quick start",
+      "get started",
+      "get started with a framework"
+    ],
+    "api reference": [
+      "reference",
+      "api reference",
+      "/reference/react",
+      "/reference/react-dom"
+    ],
+    "security": [
+      "additional vulnerabilities in rscdecember 11, 2025",
+      "vulnerability in react server componentsdecember 3, 2025",
+      "/blog/2025/12/03/critical-security-vulnerability-in-react-server-components"
+    ],
+    "community / support": [
+      "community",
+      "/community",
+      "/community/team",
+      "/community/acknowledgements"
+    ],
+    "contributing": [
+      "docs contributors",
+      "/community/docs-contributors"
+    ],
+    "versioned docs": [
+      "v19.2",
+      "/versions"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://react.dev/versions",
+      "h1": "React Versions",
+      "h2": [
+        "Latest version: 19.2",
+        "Previous versions",
+        "Changelog",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://react.dev/learn",
+      "h1": "Quick Start",
+      "h2": [
+        "Creating and nesting components",
+        "Writing markup with JSX",
+        "Adding styles",
+        "Displaying data",
+        "Conditional rendering",
+        "Rendering lists",
+        "Responding to events",
+        "Updating the screen",
+        "Using Hooks",
+        "Sharing data between components",
+        "Next Steps",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://react.dev/community",
+      "h1": "React Community",
+      "h2": [
+        "Code of Conduct",
+        "Stack Overflow",
+        "Popular Discussion Forums",
+        "News",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://react.dev/blog",
+      "h1": "React Blog",
+      "h2": [
+        "The React Foundation: A New Home for React Hosted by the Linux Foundation",
+        "Denial of Service and Source Code Exposure in React Server Components",
+        "Critical Security Vulnerability in React Server Components",
+        "React Conf 2025 Recap",
+        "React Compiler v1.0",
+        "Introducing the React Foundation",
+        "React 19.2",
+        "React Labs: View Transitions, Activity, and more",
+        "Sunsetting Create React App",
+        "React v19",
+        "React Compiler Beta Release",
+        "React Conf 2024 Recap",
+        "React 19 Upgrade Guide",
+        "React Labs: What We've Been Working On – February 2024",
+        "React Canaries: Incremental Feature Rollout Outside Meta",
+        "React Labs: What We've Been Working On – March 2023",
+        "Introducing react.dev",
+        "React Labs: What We've Been Working On – June 2022",
+        "React v18.0",
+        "How to Upgrade to React 18"
+      ]
+    },
+    {
+      "url": "https://react.dev/reference/react",
+      "h1": "React Reference Overview",
+      "h2": [
+        "React",
+        "React DOM",
+        "React Compiler",
+        "ESLint Plugin React Hooks",
+        "Rules of React",
+        "Legacy APIs",
+        "On this page"
+      ]
+    }
+  ]
+}

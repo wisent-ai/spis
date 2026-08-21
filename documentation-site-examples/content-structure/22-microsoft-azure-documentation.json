@@ -1,0 +1,1061 @@
+{
+  "name": "Microsoft Azure Documentation",
+  "source_url": "https://learn.microsoft.com/en-us/azure/",
+  "category": "Cloud platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "scoped sitemap (/azure)",
+  "inventory_url_count": 201009,
+  "landing_nav": [
+    {
+      "text": "More info about Internet Explorer and Microsoft Edge",
+      "path": "/en-us/lifecycle/faq/internet-explorer-microsoft-edge"
+    },
+    {
+      "text": "Get started for Azure developers",
+      "path": "/en-us/azure/developer/"
+    },
+    {
+      "text": "Build skills with Microsoft Learn for Azure",
+      "path": "/en-us/training/azure"
+    },
+    {
+      "text": "Design your app using the Azure Architecture Center",
+      "path": "/en-us/azure/architecture/"
+    },
+    {
+      "text": "Achieve organizational goals with the Cloud Adoption Framework",
+      "path": "/en-us/azure/cloud-adoption-framework/"
+    },
+    {
+      "text": "All networking services",
+      "path": "/en-us/azure/networking/"
+    },
+    {
+      "text": "API Management",
+      "path": "/en-us/azure/api-management/"
+    },
+    {
+      "text": "App Configuration",
+      "path": "/en-us/azure/azure-app-configuration/"
+    },
+    {
+      "text": "App Service",
+      "path": "/en-us/azure/app-service/"
+    },
+    {
+      "text": "Application Gateway",
+      "path": "/en-us/azure/application-gateway/"
+    },
+    {
+      "text": "Archive Storage",
+      "path": "/en-us/azure/storage/blobs/access-tiers-overview"
+    },
+    {
+      "text": "ARM templates",
+      "path": "/en-us/azure/azure-resource-manager/templates/"
+    },
+    {
+      "text": "Automation",
+      "path": "/en-us/azure/automation/"
+    },
+    {
+      "text": "Azure Advisor",
+      "path": "/en-us/azure/advisor/"
+    },
+    {
+      "text": "Azure AI Bot Service",
+      "path": "/en-us/azure/bot-service/"
+    },
+    {
+      "text": "Azure AI Content Safety",
+      "path": "/en-us/azure/ai-services/content-safety/"
+    },
+    {
+      "text": "Azure AI Custom Vision",
+      "path": "/en-us/azure/ai-services/custom-vision-service/"
+    },
+    {
+      "text": "Azure AI Face",
+      "path": "/en-us/azure/ai-services/computer-vision/overview-identity"
+    },
+    {
+      "text": "Azure AI Immersive Reader",
+      "path": "/en-us/azure/ai-services/immersive-reader/"
+    },
+    {
+      "text": "Azure AI Search",
+      "path": "/en-us/azure/search/"
+    },
+    {
+      "text": "Azure AI Video Indexer",
+      "path": "/en-us/azure/azure-video-indexer/"
+    },
+    {
+      "text": "Azure Analysis Services",
+      "path": "/en-us/azure/analysis-services/"
+    },
+    {
+      "text": "Azure API for FHIR",
+      "path": "/en-us/azure/healthcare-apis/azure-api-for-fhir/"
+    },
+    {
+      "text": "Azure App Testing",
+      "path": "/en-us/azure/app-testing/"
+    },
+    {
+      "text": "Azure Arc",
+      "path": "/en-us/azure/azure-arc/"
+    },
+    {
+      "text": "Azure Artifacts",
+      "path": "/en-us/azure/devops/artifacts/"
+    },
+    {
+      "text": "Azure Backup",
+      "path": "/en-us/azure/backup/"
+    },
+    {
+      "text": "Azure Blob Storage",
+      "path": "/en-us/azure/storage/blobs/"
+    },
+    {
+      "text": "Azure Blueprints (Preview)",
+      "path": "/en-us/azure/governance/blueprints/"
+    },
+    {
+      "text": "Azure Boards",
+      "path": "/en-us/azure/devops/boards/"
+    },
+    {
+      "text": "Azure Cache for Redis",
+      "path": "/en-us/azure/azure-cache-for-redis/"
+    },
+    {
+      "text": "Azure Chaos Studio",
+      "path": "/en-us/azure/chaos-studio/"
+    },
+    {
+      "text": "Azure Cloud Shell",
+      "path": "/en-us/azure/cloud-shell/overview"
+    },
+    {
+      "text": "Azure Communication Services",
+      "path": "/en-us/azure/communication-services/overview"
+    },
+    {
+      "text": "Azure Compute Fleet (Preview)",
+      "path": "/en-us/azure/azure-compute-fleet/overview"
+    },
+    {
+      "text": "Azure confidential ledger",
+      "path": "/en-us/azure/confidential-ledger/"
+    },
+    {
+      "text": "Azure Container Apps",
+      "path": "/en-us/azure/container-apps/"
+    },
+    {
+      "text": "Azure Container Instances",
+      "path": "/en-us/azure/container-instances/"
+    },
+    {
+      "text": "Azure Container Registry",
+      "path": "/en-us/azure/container-registry/"
+    },
+    {
+      "text": "Azure Container Storage",
+      "path": "/en-us/azure/storage/container-storage/"
+    },
+    {
+      "text": "Azure Copilot",
+      "path": "/en-us/azure/copilot"
+    },
+    {
+      "text": "Azure Cosmos DB",
+      "path": "/en-us/azure/cosmos-db/"
+    },
+    {
+      "text": "Azure CycleCloud",
+      "path": "/en-us/azure/cyclecloud/index"
+    },
+    {
+      "text": "Azure Data Box",
+      "path": "/en-us/azure/databox/"
+    },
+    {
+      "text": "Azure Data Explorer",
+      "path": "/en-us/azure/data-explorer"
+    },
+    {
+      "text": "Azure Data Factory",
+      "path": "/en-us/azure/data-factory/"
+    },
+    {
+      "text": "Azure Data Lake Storage",
+      "path": "/en-us/azure/storage/blobs/data-lake-storage-introduction"
+    },
+    {
+      "text": "Azure Data Manager for Agriculture (Preview)",
+      "path": "/en-us/azure/data-manager-for-agri/"
+    },
+    {
+      "text": "Azure Data Share",
+      "path": "/en-us/azure/data-share/"
+    },
+    {
+      "text": "Azure Database for MariaDB",
+      "path": "/en-us/azure/mariadb/"
+    },
+    {
+      "text": "Azure Database for MySQL",
+      "path": "/en-us/azure/mysql/"
+    },
+    {
+      "text": "Azure Database for PostgreSQL",
+      "path": "/en-us/azure/postgresql/"
+    },
+    {
+      "text": "Azure Database Migration Service",
+      "path": "/en-us/azure/dms/"
+    },
+    {
+      "text": "Azure Databricks",
+      "path": "/en-us/azure/databricks/"
+    },
+    {
+      "text": "Azure DDoS Protection",
+      "path": "/en-us/azure/ddos-protection/"
+    },
+    {
+      "text": "Azure Dedicated Host",
+      "path": "/en-us/azure/virtual-machines/dedicated-hosts"
+    },
+    {
+      "text": "Azure Dedicated HSM",
+      "path": "/en-us/azure/dedicated-hsm/"
+    },
+    {
+      "text": "Azure Deployment Environments",
+      "path": "/en-us/azure/deployment-environments/"
+    },
+    {
+      "text": "Azure DevOps",
+      "path": "/en-us/azure/devops/"
+    },
+    {
+      "text": "Azure DevTest Labs",
+      "path": "/en-us/azure/devtest-labs/"
+    },
+    {
+      "text": "Azure Digital Twins",
+      "path": "/en-us/azure/digital-twins/"
+    },
+    {
+      "text": "Azure Disk Storage",
+      "path": "/en-us/azure/virtual-machines/managed-disks-overview"
+    },
+    {
+      "text": "Azure DNS",
+      "path": "/en-us/azure/dns/"
+    },
+    {
+      "text": "Azure Document Intelligence in Foundry Tools",
+      "path": "/en-us/azure/ai-services/document-intelligence/"
+    },
+    {
+      "text": "Azure DocumentDB",
+      "path": "/en-us/azure/documentdb/"
+    },
+    {
+      "text": "Azure Elastic SAN",
+      "path": "/en-us/azure/storage/elastic-san/"
+    },
+    {
+      "text": "Azure Enclave",
+      "path": "/en-us/azure/enclave/"
+    },
+    {
+      "text": "Azure ExpressRoute",
+      "path": "/en-us/azure/expressroute/"
+    },
+    {
+      "text": "Azure Files",
+      "path": "/en-us/azure/storage/files/"
+    },
+    {
+      "text": "Azure Firewall",
+      "path": "/en-us/azure/firewall/"
+    },
+    {
+      "text": "Azure Fluid Relay",
+      "path": "/en-us/azure/azure-fluid-relay/"
+    },
+    {
+      "text": "Azure Front Door",
+      "path": "/en-us/azure/frontdoor/"
+    },
+    {
+      "text": "Azure Front Door and Content Delivery Network (CDN)",
+      "path": "/en-us/azure/frontdoor/"
+    },
+    {
+      "text": "Azure Functions",
+      "path": "/en-us/azure/azure-functions/"
+    },
+    {
+      "text": "Azure Health Data Services",
+      "path": "/en-us/azure/healthcare-apis/"
+    },
+    {
+      "text": "Azure Information Protection",
+      "path": "/en-us/azure/information-protection/"
+    },
+    {
+      "text": "Azure IoT",
+      "path": "/en-us/azure/iot/"
+    },
+    {
+      "text": "Azure IoT Central",
+      "path": "/en-us/azure/iot-central/"
+    },
+    {
+      "text": "Azure IoT Edge",
+      "path": "/en-us/azure/iot-edge/"
+    },
+    {
+      "text": "Azure IoT Hub",
+      "path": "/en-us/azure/iot-hub/"
+    },
+    {
+      "text": "Azure IoT Operations",
+      "path": "/en-us/azure/iot-operations/"
+    },
+    {
+      "text": "Azure Kubernetes Fleet Manager",
+      "path": "/en-us/azure/kubernetes-fleet/"
+    },
+    {
+      "text": "Azure Kubernetes Service (AKS)",
+      "path": "/en-us/azure/aks/"
+    },
+    {
+      "text": "Azure Kubernetes Service Edge Essentials",
+      "path": "/en-us/azure/aks/hybrid/aks-edge-overview"
+    },
+    {
+      "text": "Azure Lab Services",
+      "path": "/en-us/azure/lab-services/"
+    },
+    {
+      "text": "Azure Language in Foundry Tools",
+      "path": "/en-us/azure/ai-services/language-service/"
+    },
+    {
+      "text": "Azure Lighthouse",
+      "path": "/en-us/azure/lighthouse/"
+    },
+    {
+      "text": "Azure Local",
+      "path": "/en-us/azure/azure-local/"
+    },
+    {
+      "text": "Azure Machine Learning",
+      "path": "/en-us/azure/machine-learning/"
+    },
+    {
+      "text": "Azure Managed Applications",
+      "path": "/en-us/azure/azure-resource-manager/managed-applications/"
+    },
+    {
+      "text": "Azure Managed Grafana",
+      "path": "/en-us/azure/managed-grafana/"
+    },
+    {
+      "text": "Azure Managed Instance for Apache Cassandra",
+      "path": "/en-us/azure/managed-instance-apache-cassandra/"
+    },
+    {
+      "text": "Azure Managed Lustre",
+      "path": "/en-us/azure/azure-managed-lustre/"
+    },
+    {
+      "text": "Azure Managed Redis",
+      "path": "/en-us/azure/redis/"
+    },
+    {
+      "text": "Azure Maps",
+      "path": "/en-us/azure/azure-maps/"
+    },
+    {
+      "text": "Azure Media Player",
+      "path": "/en-us/azure/media-services/latest/player-media-players-concept"
+    },
+    {
+      "text": "Azure Migrate",
+      "path": "/en-us/azure/migrate/"
+    },
+    {
+      "text": "Azure Monitor",
+      "path": "/en-us/azure/azure-monitor/"
+    },
+    {
+      "text": "Azure NetApp Files",
+      "path": "/en-us/azure/azure-netapp-files/"
+    },
+    {
+      "text": "Azure Open Datasets",
+      "path": "/en-us/azure/open-datasets/"
+    },
+    {
+      "text": "Azure OpenAI Service",
+      "path": "/en-us/azure/ai-services/openai/"
+    },
+    {
+      "text": "Azure Operator Nexus",
+      "path": "/en-us/azure/operator-nexus/"
+    },
+    {
+      "text": "Azure Operator Service Manager",
+      "path": "/en-us/azure/operator-service-manager/"
+    },
+    {
+      "text": "Azure Pipelines",
+      "path": "/en-us/azure/devops/pipelines/"
+    },
+    {
+      "text": "Azure Policy",
+      "path": "/en-us/azure/governance/policy/"
+    },
+    {
+      "text": "Azure Private Link",
+      "path": "/en-us/azure/private-link/"
+    },
+    {
+      "text": "Azure Quantum",
+      "path": "/en-us/azure/quantum/"
+    },
+    {
+      "text": "Azure Red Hat OpenShift",
+      "path": "/en-us/azure/openshift/"
+    },
+    {
+      "text": "Azure Repos",
+      "path": "/en-us/azure/devops/repos/"
+    },
+    {
+      "text": "Azure Resource Manager",
+      "path": "/en-us/azure/azure-resource-manager/"
+    },
+    {
+      "text": "Azure Resource Mover",
+      "path": "/en-us/azure/resource-mover/"
+    },
+    {
+      "text": "Azure Service Fabric",
+      "path": "/en-us/azure/service-fabric/"
+    },
+    {
+      "text": "Azure Service Health",
+      "path": "/en-us/azure/service-health/"
+    },
+    {
+      "text": "Azure SignalR Service",
+      "path": "/en-us/azure/azure-signalr/"
+    },
+    {
+      "text": "Azure Site Recovery",
+      "path": "/en-us/azure/site-recovery/"
+    },
+    {
+      "text": "Azure Sphere",
+      "path": "/en-us/azure-sphere/"
+    },
+    {
+      "text": "Azure Spot Virtual Machines",
+      "path": "/en-us/azure/virtual-machines/spot-vms"
+    },
+    {
+      "text": "Azure Spring Apps",
+      "path": "/en-us/azure/spring-apps/"
+    },
+    {
+      "text": "Azure SQL",
+      "path": "/en-us/azure/azure-sql/index"
+    },
+    {
+      "text": "Azure SQL Database",
+      "path": "/en-us/azure/azure-sql/database/index"
+    },
+    {
+      "text": "Azure SQL Managed Instance",
+      "path": "/en-us/azure/azure-sql/managed-instance/index"
+    },
+    {
+      "text": "Azure Stack Edge",
+      "path": "/en-us/azure/databox-online/"
+    },
+    {
+      "text": "Azure Stack Hub",
+      "path": "/en-us/azure-stack/operator/"
+    },
+    {
+      "text": "Azure Storage Actions",
+      "path": "/en-us/azure/storage-actions/storage-tasks/"
+    },
+    {
+      "text": "Azure Stream Analytics",
+      "path": "/en-us/azure/stream-analytics/"
+    },
+    {
+      "text": "Azure Synapse Analytics",
+      "path": "/en-us/azure/synapse-analytics/"
+    },
+    {
+      "text": "Azure Test Plans",
+      "path": "/en-us/azure/devops/test/"
+    },
+    {
+      "text": "Azure Update Manager",
+      "path": "/en-us/azure/update-manager/"
+    },
+    {
+      "text": "Azure Virtual Desktop",
+      "path": "/en-us/azure/virtual-desktop/"
+    },
+    {
+      "text": "Azure VMware Solution",
+      "path": "/en-us/azure/azure-vmware/"
+    },
+    {
+      "text": "Azure Web PubSub",
+      "path": "/en-us/azure/azure-web-pubsub/"
+    },
+    {
+      "text": "Batch",
+      "path": "/en-us/azure/batch/"
+    },
+    {
+      "text": "Cloud Services",
+      "path": "/en-us/azure/cloud-services-extended-support/"
+    },
+    {
+      "text": "Content Protection",
+      "path": "/en-us/azure/media-services/latest/drm-content-protection-concept"
+    },
+    {
+      "text": "Cost Management + Billing",
+      "path": "/en-us/azure/cost-management-billing/"
+    },
+    {
+      "text": "Data Lake Analytics",
+      "path": "/en-us/azure/data-lake-analytics/"
+    },
+    {
+      "text": "Data Science Virtual Machines",
+      "path": "/en-us/azure/machine-learning/data-science-virtual-machine/"
+    },
+    {
+      "text": "Encoding",
+      "path": "/en-us/azure/media-services/latest/encode-concept"
+    },
+    {
+      "text": "Event Grid",
+      "path": "/en-us/azure/event-grid/"
+    },
+    {
+      "text": "Event Hubs",
+      "path": "/en-us/azure/event-hubs/"
+    },
+    {
+      "text": "HDInsight",
+      "path": "/en-us/azure/hdinsight/"
+    },
+    {
+      "text": "Health Bot",
+      "path": "/en-us/azure/health-bot/"
+    },
+    {
+      "text": "Key Vault",
+      "path": "/en-us/azure/key-vault/"
+    },
+    {
+      "text": "Live and On-Demand Streaming",
+      "path": "/en-us/azure/media-services/latest/stream-live-tutorial-with-api"
+    },
+    {
+      "text": "Load Balancer",
+      "path": "/en-us/azure/load-balancer/"
+    },
+    {
+      "text": "Logic Apps",
+      "path": "/en-us/azure/logic-apps/"
+    },
+    {
+      "text": "Media Services",
+      "path": "/en-us/azure/media-services/latest/"
+    },
+    {
+      "text": "Microsoft Azure Data Manager for Energy (Preview)",
+      "path": "/en-us/azure/energy-data-services/"
+    },
+    {
+      "text": "Microsoft Azure portal",
+      "path": "/en-us/azure/azure-portal/"
+    },
+    {
+      "text": "Microsoft Defender for Cloud",
+      "path": "/en-us/azure/defender-for-cloud/"
+    },
+    {
+      "text": "Microsoft Defender for External Attack Surface Management",
+      "path": "/en-us/azure/external-attack-surface-management/overview"
+    },
+    {
+      "text": "Microsoft Defender for IoT",
+      "path": "/en-us/azure/defender-for-iot/"
+    },
+    {
+      "text": "Microsoft Dev Box",
+      "path": "/en-us/azure/dev-box/"
+    },
+    {
+      "text": "Microsoft Entra Domain Services",
+      "path": "/en-us/entra/identity/domain-services/"
+    },
+    {
+      "text": "Microsoft Entra External ID",
+      "path": "/en-us/entra/external-id/"
+    },
+    {
+      "text": "Microsoft Entra ID",
+      "path": "/en-us/entra/identity/"
+    },
+    {
+      "text": "Microsoft Fabric",
+      "path": "/en-us/fabric/fundamentals/microsoft-fabric-overview"
+    },
+    {
+      "text": "Microsoft Foundry",
+      "path": "/en-us/azure/ai-foundry/"
+    },
+    {
+      "text": "Microsoft Playwright Testing (Preview)",
+      "path": "/en-us/azure/playwright-testing/"
+    },
+    {
+      "text": "Microsoft Purview",
+      "path": "/en-us/purview/index"
+    },
+    {
+      "text": "Microsoft Sentinel",
+      "path": "/en-us/azure/sentinel/"
+    },
+    {
+      "text": "NAT Gateway",
+      "path": "/en-us/azure/nat-gateway/"
+    },
+    {
+      "text": "Notification Hubs",
+      "path": "/en-us/azure/notification-hubs/"
+    },
+    {
+      "text": "Power BI",
+      "path": "/en-us/power-bi/developer/azure-pbie-what-is-power-bi-embedded"
+    },
+    {
+      "text": "Power BI Embedded",
+      "path": "/en-us/power-bi/fundamentals/power-bi-overview"
+    },
+    {
+      "text": "Queue Storage",
+      "path": "/en-us/azure/storage/queues/"
+    },
+    {
+      "text": "Service Bus",
+      "path": "/en-us/azure/service-bus-messaging/"
+    },
+    {
+      "text": "Speech",
+      "path": "/en-us/azure/ai-services/speech-service/"
+    },
+    {
+      "text": "SQL Server on Virtual Machines",
+      "path": "/en-us/azure/azure-sql/virtual-machines/windows/sql-server-on-azure-vm-iaas-what-is-overview"
+    },
+    {
+      "text": "Static Web Apps",
+      "path": "/en-us/azure/static-web-apps/"
+    },
+    {
+      "text": "Storage",
+      "path": "/en-us/azure/storage/"
+    },
+    {
+      "text": "Storage Explorer",
+      "path": "/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer"
+    },
+    {
+      "text": "Table Storage",
+      "path": "/en-us/azure/storage/tables/table-storage-overview"
+    },
+    {
+      "text": "Translator",
+      "path": "/en-us/azure/ai-services/translator/"
+    },
+    {
+      "text": "Virtual Machine Scale Sets",
+      "path": "/en-us/azure/virtual-machine-scale-sets/"
+    },
+    {
+      "text": "Virtual Machines",
+      "path": "/en-us/azure/virtual-machines/"
+    },
+    {
+      "text": "Virtual Network",
+      "path": "/en-us/azure/virtual-network/"
+    },
+    {
+      "text": "Virtual WAN",
+      "path": "/en-us/azure/virtual-wan/"
+    },
+    {
+      "text": "Vision",
+      "path": "/en-us/azure/ai-services/computer-vision/"
+    },
+    {
+      "text": "Visual Studio",
+      "path": "/en-us/visualstudio/windows"
+    },
+    {
+      "text": "Visual Studio App Center",
+      "path": "/en-us/appcenter/"
+    },
+    {
+      "text": "VPN Gateway",
+      "path": "/en-us/azure/vpn-gateway/"
+    },
+    {
+      "text": "Web App for Containers",
+      "path": "/en-us/azure/app-service/"
+    },
+    {
+      "text": "Web Application Firewall",
+      "path": "/en-us/azure/web-application-firewall/"
+    },
+    {
+      "text": "Windows 10 IoT Core Services",
+      "path": "/en-us/windows-hardware/manufacture/iot/iotcoreservicesoverview"
+    },
+    {
+      "text": "Windows for IoT",
+      "path": "/en-us/windows/iot/"
+    },
+    {
+      "text": "Python",
+      "path": "/en-us/azure/developer/python/"
+    },
+    {
+      "text": ".NET",
+      "path": "/en-us/dotnet/azure/"
+    },
+    {
+      "text": "JavaScript",
+      "path": "/en-us/azure/developer/javascript/"
+    },
+    {
+      "text": "Java",
+      "path": "/en-us/azure/developer/java/"
+    },
+    {
+      "text": "Go",
+      "path": "/en-us/azure/developer/go/"
+    },
+    {
+      "text": "REST API",
+      "path": "/en-us/rest/api/"
+    },
+    {
+      "text": "Azure PowerShell",
+      "path": "/en-us/powershell/azure/"
+    },
+    {
+      "text": "Azure CLI",
+      "path": "/en-us/cli/azure/"
+    },
+    {
+      "text": "Bicep",
+      "path": "/en-us/azure/azure-resource-manager/bicep/"
+    },
+    {
+      "text": "Jenkins",
+      "path": "/en-us/azure/developer/jenkins"
+    },
+    {
+      "text": "Terraform",
+      "path": "/en-us/azure/developer/terraform/"
+    },
+    {
+      "text": "Azure Government",
+      "path": "/en-us/azure/azure-government/"
+    },
+    {
+      "text": "Microsoft Azure operated by 21Vianet",
+      "path": "/en-us/azure/china/"
+    },
+    {
+      "text": "Microsoft Marketplace customer documentation",
+      "path": "/en-us/marketplace/"
+    }
+  ],
+  "url_sections": {
+    "azure": 184445,
+    "azure-sphere": 16564
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "/en-us/training/azure",
+      "azure machine learning",
+      "/en-us/azure/machine-learning/",
+      "build skills with microsoft learn for azure"
+    ],
+    "getting started / quickstart": [
+      "get started for azure developers"
+    ],
+    "api reference": [
+      "rest api",
+      "api management",
+      "/en-us/rest/api/",
+      "azure api for fhir"
+    ],
+    "migration / upgrade": [
+      "azure migrate",
+      "/en-us/azure/migrate/",
+      "azure database migration service"
+    ],
+    "faq": [
+      "/en-us/lifecycle/faq/internet-explorer-microsoft-edge"
+    ],
+    "cli reference": [
+      "azure cli",
+      "/en-us/cli/azure/"
+    ],
+    "configuration / settings": [
+      "app configuration",
+      "/en-us/azure/azure-app-configuration/"
+    ],
+    "community / support": [
+      "/en-us/azure/cloud-services-extended-support/"
+    ],
+    "concepts / architecture": [
+      "/en-us/azure/architecture/",
+      "/en-us/azure/media-services/latest/encode-concept",
+      "design your app using the azure architecture center",
+      "/en-us/azure/media-services/latest/player-media-players-concept"
+    ],
+    "deployment / production": [
+      "azure iot operations",
+      "/en-us/azure/iot-operations/",
+      "azure deployment environments",
+      "/en-us/azure/deployment-environments/"
+    ],
+    "videos": [
+      "azure ai video indexer",
+      "/en-us/azure/azure-video-indexer/"
+    ],
+    "versioned docs": [
+      "previous-versions"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://learn.microsoft.com/en-us/training/azure",
+      "h1": "Microsoft Azure",
+      "h2": [
+        "Azure Overview",
+        "Your path to getting started on Azure",
+        "Virtual Training Days"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure/copilot",
+      "h1": "Azure Copilot documentation",
+      "h2": [
+        "Enhanced scenarios",
+        "Explore more"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure-sphere/",
+      "h1": "Azure Sphere Documentation",
+      "h2": [
+        "About Azure Sphere",
+        "Get started with a dev kit",
+        "Develop applications",
+        "Code samples and hardware designs",
+        "Manage devices and deployments",
+        "Design and manufacture connected devices"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/purview/index",
+      "h1": "Microsoft Purview",
+      "h2": [
+        "Explore Microsoft Purview solutions"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/visualstudio/windows",
+      "h1": "Visual Studio documentation",
+      "h2": [
+        "Get started",
+        "Tasks",
+        "Development with Visual Studio"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/appcenter/",
+      "h1": "Visual Studio App Center documentation",
+      "h2": [
+        "Services",
+        "Get Started with the SDK",
+        "Reference"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/marketplace/",
+      "h1": "Microsoft Marketplace customer documentation",
+      "h2": [
+        "More information"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/lifecycle/faq/internet-explorer-microsoft-edge",
+      "h1": "Lifecycle FAQ - Internet Explorer and Microsoft Edge",
+      "h2": [
+        "In this article",
+        "What is the Lifecycle policy for Microsoft Edge?",
+        "What is the Lifecycle policy for Internet Explorer?",
+        "Is Internet Explorer 11 the last version of Internet Explorer?",
+        "What if my enterprise line-of-business (LOB) application has a dependency on a v",
+        "Feedback",
+        "Additional resources"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/azure-stack/operator/",
+      "h1": "Azure Stack Hub Operator Documentation",
+      "h2": [
+        "About Azure Stack Hub",
+        "Get started",
+        "Azure Stack Hub tools",
+        "Offer services",
+        "Manage Azure Stack Hub"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/entra/external-id/",
+      "h1": "Microsoft Entra External ID Documentation",
+      "h2": [
+        "Get started",
+        "Resources"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/microsoft-fabric-overview",
+      "h1": "What is Microsoft Fabric?",
+      "h2": [
+        "In this article",
+        "Capabilities of Fabric",
+        "Microsoft Fabric architecture",
+        "Components of Microsoft Fabric",
+        "OneLake: The unification of lakehouses",
+        "Real-Time hub: the unification of data streams",
+        "Fabric compute engines",
+        "Fabric solutions for ISVs",
+        "Related content",
+        "Feedback",
+        "Additional resources"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/power-bi/developer/azure-pbie-what-is-power-bi-embedded",
+      "h1": "What is Power BI embedded analytics?",
+      "h2": [
+        "In this article",
+        "Secure embed",
+        "What are the Power BI embedded analytics solutions?",
+        "Comparison of the embed for your customers vs embed for your organization soluti",
+        "What are Power BI capacities?",
+        "Related content",
+        "Feedback",
+        "Additional resources"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/iot/",
+      "h1": "Windows for IoT Documentation",
+      "h2": []
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/azure/",
+      "h1": "Azure for .NET developers",
+      "h2": [
+        "Featured content",
+        ".NET and Azure community resources"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/rest/api/",
+      "h1": "REST API Browser",
+      "h2": []
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/powershell/azure/",
+      "h1": "Azure PowerShell documentation",
+      "h2": [
+        "About Azure PowerShell",
+        "Installation",
+        "What's new",
+        "Azure PowerShell reference",
+        "Identity and authentication",
+        "Concepts",
+        "Configuration",
+        "Deploy",
+        "Samples",
+        "Migrate from AzureRM",
+        "Help & support"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/cli/azure/",
+      "h1": "Azure Command-Line Interface (CLI) documentation",
+      "h2": [
+        "About Azure CLI",
+        "Installation",
+        "What's new",
+        "Azure CLI reference",
+        "Identity and authentication",
+        "Concepts",
+        "Configuration",
+        "Fundamentals",
+        "Samples",
+        "Environment-specific guidance",
+        "Help & support"
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows-hardware/manufacture/iot/iotcoreservicesoverview",
+      "h1": "Windows 10 IoT Core Services",
+      "h2": [
+        "In this article",
+        "What's included with Windows 10 IoT Core Services?",
+        "Long Term Support",
+        "Update Control with Device Update Center",
+        "Commercialize with Device Health Attestation",
+        "Is this for me?",
+        "Getting started",
+        "Additional resources"
+      ]
+    }
+  ]
+}

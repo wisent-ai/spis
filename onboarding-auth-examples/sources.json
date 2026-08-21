@@ -1,0 +1,5419 @@
+{
+  "schema": "wisent.example-catalog.v2",
+  "catalog": "onboarding-auth-examples",
+  "title": "Onboarding and authentication examples",
+  "description": "Account creation, identity, workspace setup, provisioning, and first-success journeys.",
+  "curated_at": "2026-08-16",
+  "count": 50,
+  "examples": [
+    {
+      "name": "Slack — workspace creation",
+      "source_url": "https://slack.com/help/articles/206845317-Create-a-Slack-workspace",
+      "category": "Collaboration / workspace creation",
+      "selection_note": "Study the staged workspace-creation sequence that collects team context before inviting additional members.",
+      "visual": {
+        "source_page_url": "https://slack.com/help/articles/206845317-Create-a-Slack-workspace",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://slack.com/help/articles/206845317-Create-a-Slack-workspace",
+        "local_path": "images/01-slack-workspace-creation.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 69908,
+        "sha256": "37af6a919e48476b1ada294b0fc041be352f5ebee755f87c64aa1ae88406c355",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "37af6a919e48476b1ada294b0fc041be352f5ebee755f87c64aa1ae88406c355",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.064
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.064,
+              "width": 0.191,
+              "height": 0.936
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.191,
+              "y": 0.064,
+              "width": 0.809,
+              "height": 0.936
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.191,
+              "strength": 1.0
+            },
+            {
+              "position": 0.302,
+              "strength": 0.999
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.064,
+              "strength": 1.0
+            },
+            {
+              "position": 0.254,
+              "strength": 0.86
+            },
+            {
+              "position": 0.366,
+              "strength": 0.404
+            },
+            {
+              "position": 0.442,
+              "strength": 0.34
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Notion — create and switch workspaces",
+      "source_url": "https://www.notion.com/help/create-delete-and-switch-workspaces",
+      "category": "Collaboration / workspace creation",
+      "selection_note": "Study how workspace creation, account context, and switching between personal and team spaces are explained together.",
+      "visual": {
+        "source_page_url": "https://www.notion.com/help/create-delete-and-switch-workspaces",
+        "source_image_url": "https://www.notion.com/_next/image?url=https%3A%2F%2Fimages.ctfassets.net%2Fspoqsaf9291f%2F36skPIuv5mFIbul49eegL7%2F57226712a1df0b1012a6f2d34009161f%2FCreate_new_workspace.png&w=1920&q=75",
+        "local_path": "images/02-notion-create-and-switch-workspaces.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 875,
+        "original_width": 1920,
+        "original_height": 1200,
+        "bytes": 24966,
+        "sha256": "3a036f1825e7d1203d2e6344225befde956a051558970c637bc18115b3c4b823",
+        "source_hint": "Create new workspace  next-image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "3a036f1825e7d1203d2e6344225befde956a051558970c637bc18115b3c4b823",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.096
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.096,
+              "width": 0.366,
+              "height": 0.904
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.633,
+              "y": 0.096,
+              "width": 0.367,
+              "height": 0.904
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.366,
+              "y": 0.096,
+              "width": 0.267,
+              "height": 0.904
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.062,
+              "strength": 1.0
+            },
+            {
+              "position": 0.366,
+              "strength": 0.93
+            },
+            {
+              "position": 0.496,
+              "strength": 0.669
+            },
+            {
+              "position": 0.633,
+              "strength": 0.92
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.096,
+              "strength": 1.0
+            },
+            {
+              "position": 0.366,
+              "strength": 0.476
+            },
+            {
+              "position": 0.519,
+              "strength": 0.464
+            },
+            {
+              "position": 0.657,
+              "strength": 0.6
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Asana — account setup",
+      "source_url": "https://asana.com/guide/get-started/begin/quick-start",
+      "category": "Collaboration / account creation",
+      "selection_note": "Study the progressive account setup that connects identity, organization membership, and initial team configuration.",
+      "visual": {
+        "source_page_url": "https://asana.com/guide/get-started/begin/quick-start",
+        "source_image_url": "https://cdn.cookielaw.org/logos/cca9340c-a88b-4c4c-a235-5c49e3d407de/1763a00e-b7d3-471b-95c8-ee21f8bd6d86/da8202fb-3d30-45ad-884e-0b14b8ff0475/Asana-Logo-Horizontal-Coral-Black.png",
+        "local_path": "images/03-asana-account-setup.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 277,
+        "original_width": 2000,
+        "original_height": 395,
+        "bytes": 12194,
+        "sha256": "b6da6b3ccaa672ccfee91fda00493ee797f8f1621450e604178faf2415012c78",
+        "source_hint": "embedded image URL"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b6da6b3ccaa672ccfee91fda00493ee797f8f1621450e604178faf2415012c78",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.157
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.843,
+              "width": 1.0,
+              "height": 0.157
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.157,
+              "width": 0.401,
+              "height": 0.686
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.719,
+              "y": 0.157,
+              "width": 0.281,
+              "height": 0.686
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.401,
+              "y": 0.157,
+              "width": 0.318,
+              "height": 0.686
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.401,
+              "strength": 0.897
+            },
+            {
+              "position": 0.572,
+              "strength": 0.369
+            },
+            {
+              "position": 0.719,
+              "strength": 1.0
+            },
+            {
+              "position": 0.837,
+              "strength": 0.763
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.157,
+              "strength": 0.871
+            },
+            {
+              "position": 0.281,
+              "strength": 0.72
+            },
+            {
+              "position": 0.719,
+              "strength": 0.597
+            },
+            {
+              "position": 0.843,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Atlassian — invite users to a site",
+      "source_url": "https://support.atlassian.com/user-management/docs/invite-a-user/",
+      "category": "Enterprise collaboration / invitations",
+      "selection_note": "Study the administrator-led invitation flow, including product access selection and pending-invite status.",
+      "visual": {
+        "source_page_url": "https://support.atlassian.com/user-management/docs/invite-a-user/",
+        "source_image_url": "https://images.ctfassets.net/zsv3d0ugroxu/4xDJS7tC2c2Jzp82YL5aOJ/4fe1e63a96584e485ee1f2ead53c47d2/Screenshot_OriginalUserManagement.png",
+        "local_path": "images/04-atlassian-invite-users-to-a-site.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 656,
+        "height": 727,
+        "original_width": 656,
+        "original_height": 727,
+        "bytes": 13638,
+        "sha256": "3bc11ebd0b9151a665936a99e797751dfef88160545e2d3f220f1601026f189c",
+        "source_hint": "Centralized user management png"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "3bc11ebd0b9151a665936a99e797751dfef88160545e2d3f220f1601026f189c",
+        "orientation": "portrait",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.087
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.851,
+              "width": 1.0,
+              "height": 0.149
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.087,
+              "width": 0.244,
+              "height": 0.764
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.244,
+              "y": 0.087,
+              "width": 0.756,
+              "height": 0.764
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.134,
+              "strength": 0.814
+            },
+            {
+              "position": 0.244,
+              "strength": 1.0
+            },
+            {
+              "position": 0.329,
+              "strength": 0.679
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.087,
+              "strength": 0.452
+            },
+            {
+              "position": 0.524,
+              "strength": 0.996
+            },
+            {
+              "position": 0.629,
+              "strength": 1.0
+            },
+            {
+              "position": 0.851,
+              "strength": 0.456
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Miro — getting started",
+      "source_url": "https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics",
+      "category": "Collaboration / first-run setup",
+      "selection_note": "Study the first-run path from profile setup into team creation, board creation, and collaborator invitation.",
+      "visual": {
+        "source_page_url": "https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://help.miro.com/hc/en-us/articles/360017730233-Miro-basics",
+        "local_path": "images/05-miro-getting-started.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 15254,
+        "sha256": "9f25dd0b950ff40435f4333b5870273f9a3801d08812d05317ab702e084e0189",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "9f25dd0b950ff40435f4333b5870273f9a3801d08812d05317ab702e084e0189",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.147
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.147,
+              "width": 0.188,
+              "height": 0.853
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.188,
+              "y": 0.147,
+              "width": 0.812,
+              "height": 0.853
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.188,
+              "strength": 1.0
+            },
+            {
+              "position": 0.34,
+              "strength": 0.767
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.147,
+              "strength": 0.388
+            },
+            {
+              "position": 0.234,
+              "strength": 1.0
+            },
+            {
+              "position": 0.338,
+              "strength": 0.24
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Figma — create a team",
+      "original_source_url": "https://help.figma.com/hc/en-us/articles/360038006494-Create-a-team",
+      "source_url": "https://help.figma.com/hc/en-us/articles/360039484194-Create-a-new-team",
+      "source_url_state": "reachable",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "Figma replaced article 360038006494 with 360039484194 'Create a new team'; the new article carries the same og:image that was captured.",
+      "category": "Design collaboration / workspace creation",
+      "selection_note": "Study the team-creation flow that pairs workspace naming with member invitations and plan context.",
+      "visual": {
+        "original_source_page_url": "https://help.figma.com/hc/en-us/articles/360038006494-Create-a-team",
+        "source_page_url": "https://help.figma.com/hc/en-us/articles/360039484194-Create-a-new-team",
+        "source_page_url_state": "reachable",
+        "source_page_url_checked_at": "2026-08-19",
+        "source_image_url": "https://help.figma.com/hc/theming_assets/01JMYWSNCNTYE97HCPWWCJNSRN",
+        "local_path": "images/06-figma-create-a-team.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 788,
+        "original_width": 1920,
+        "original_height": 1080,
+        "bytes": 20276,
+        "sha256": "54e2c70cb487d55e4cb796c6af0e6d804a3d139cc0d965c92fd1d5e8fdcd8176",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "54e2c70cb487d55e4cb796c6af0e6d804a3d139cc0d965c92fd1d5e8fdcd8176",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.118
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.118,
+              "width": 0.246,
+              "height": 0.882
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.774,
+              "y": 0.118,
+              "width": 0.226,
+              "height": 0.882
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.246,
+              "y": 0.118,
+              "width": 0.528,
+              "height": 0.882
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.098,
+              "strength": 1.0
+            },
+            {
+              "position": 0.246,
+              "strength": 0.686
+            },
+            {
+              "position": 0.63,
+              "strength": 0.658
+            },
+            {
+              "position": 0.774,
+              "strength": 0.842
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.118,
+              "strength": 1.0
+            },
+            {
+              "position": 0.469,
+              "strength": 0.704
+            },
+            {
+              "position": 0.576,
+              "strength": 0.844
+            },
+            {
+              "position": 0.718,
+              "strength": 0.987
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Airtable — onboarding",
+      "source_url": "https://support.airtable.com/docs/getting-started-with-airtable",
+      "category": "Collaboration / onboarding",
+      "selection_note": "Study the guided onboarding checklist that moves users from account entry to a populated first workflow.",
+      "visual": {
+        "source_page_url": "https://support.airtable.com/docs/getting-started-with-airtable",
+        "source_image_url": "https://assets.usepylon.com/1237091b-3473-415f-9428-359cbf617e00%2F1781720054054-Tier1_Hero_Abstract_2160x1080_0929.png?Expires=253370764800&Signature=YlhZgCx862pqTmUXHfIzLDPq30l2k~ZU0upfK4YB4eZw1zhpaSqypA0Ib2IOK-rV4d6b1zxNng6fC~7apJhnVlEi62jsVx90qqaPxR81GN0C4D3deiDynSQ8RoFQjZ-B8aeYxZpVDhBMhdYVnQNRb12hCFRLBfJs9Y9uZquXetg9AvRJ0n0Bp3ryPRK7zgEYMf0~wyONTQRMlwM1RMJQg1J7ajwNeBEWnzSGkpw9sc-~WteGpJUa-80DTKu5QfZTKr2oyFjgEER4HqzrGpxHYhalAf681EwjcHI4jTHlcxWO8nGAd7Pe9XQMUARUgwaCfgTyZJ1ecV1aiOq3sdMyWA__&Key-Pair-Id=K3NV4LZ47N8M46",
+        "local_path": "images/07-airtable-onboarding.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 700,
+        "original_width": 2160,
+        "original_height": 1080,
+        "bytes": 11802,
+        "sha256": "9613eda015ab47747695f97e7258218d6f93fcd95ac2a17228ba8c42dc00ed78",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "9613eda015ab47747695f97e7258218d6f93fcd95ac2a17228ba8c42dc00ed78",
+        "orientation": "landscape",
+        "layout_model": "content-inspector",
+        "panel_summary": "Dominant content area with a trailing detail or property inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.842,
+              "width": 1.0,
+              "height": 0.158
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.753,
+              "y": 0.12,
+              "width": 0.247,
+              "height": 0.722
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.753,
+              "height": 0.722
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.11,
+              "strength": 0.712
+            },
+            {
+              "position": 0.753,
+              "strength": 1.0
+            },
+            {
+              "position": 0.838,
+              "strength": 0.72
+            },
+            {
+              "position": 0.933,
+              "strength": 0.923
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.284,
+              "strength": 1.0
+            },
+            {
+              "position": 0.709,
+              "strength": 0.903
+            },
+            {
+              "position": 0.842,
+              "strength": 0.762
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "ClickUp — onboarding",
+      "source_url": "https://help.clickup.com/hc/en-us/categories/5735245366551-Onboarding",
+      "category": "Work management / onboarding",
+      "selection_note": "Study the role-sensitive onboarding path that introduces hierarchy, workspace concepts, and initial configuration tasks.",
+      "visual": {
+        "source_page_url": "https://help.clickup.com/hc/en-us/articles/6310834724247-Intro-to-onboarding",
+        "source_image_url": "https://help.clickup.com/hc/article_attachments/39945010042519",
+        "local_path": "images/08-clickup-onboarding.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 718,
+        "original_width": 2462,
+        "original_height": 1262,
+        "bytes": 27016,
+        "sha256": "71c292464fd340a401080bb8f0cb9327fe1165a4f64f4ff9c9300f85999dc325",
+        "source_hint": "Screenshot showing an invalid status with the option to create a new status.png"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "71c292464fd340a401080bb8f0cb9327fe1165a4f64f4ff9c9300f85999dc325",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.152
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.853,
+              "width": 1.0,
+              "height": 0.147
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.152,
+              "width": 0.321,
+              "height": 0.701
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.321,
+              "y": 0.152,
+              "width": 0.679,
+              "height": 0.701
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.06,
+              "strength": 0.99
+            },
+            {
+              "position": 0.321,
+              "strength": 1.0
+            },
+            {
+              "position": 0.543,
+              "strength": 0.754
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.152,
+              "strength": 1.0
+            },
+            {
+              "position": 0.316,
+              "strength": 0.396
+            },
+            {
+              "position": 0.409,
+              "strength": 0.352
+            },
+            {
+              "position": 0.853,
+              "strength": 0.534
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      },
+      "original_source_url": "https://help.clickup.com/hc/en-us/articles/6310834724247-Intro-to-onboarding",
+      "source_url_state": "reachable",
+      "source_url_checked_at": "2026-08-19"
+    },
+    {
+      "name": "monday.com — getting started",
+      "original_source_url": "https://support.monday.com/hc/en-us/articles/360002197259-How-to-get-started-with-monday-com",
+      "source_url": "https://support.monday.com/hc/en-us/articles/115005305649-Get-started-with-monday-AI-work-platform",
+      "source_url_state": "guarded",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "The old getting-started article was withdrawn; monday.com's current one is article 115005305649. Its Zendesk help centre answers 403 to non-browser clients, so the drift checker sees it as guarded.",
+      "category": "Work management / first-run setup",
+      "selection_note": "Study the first-board setup sequence that combines template choice, data entry, and teammate invitations.",
+      "visual": {
+        "original_source_page_url": "https://support.monday.com/hc/en-us/articles/360002197259-How-to-get-started-with-monday-com",
+        "source_page_url": "https://support.monday.com/hc/en-us/articles/115005305649-Get-started-with-monday-AI-work-platform",
+        "source_page_url_state": "guarded",
+        "source_page_url_checked_at": "2026-08-19",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://support.monday.com/hc/en-us/articles/360002197259-How-to-get-started-with-monday-com",
+        "local_path": "images/09-monday-com-getting-started.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 52926,
+        "sha256": "50554eae8bd9af777c1a5589b8e074947435f74e51973f2d2264838e8139c970",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "50554eae8bd9af777c1a5589b8e074947435f74e51973f2d2264838e8139c970",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.212
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.919,
+              "width": 1.0,
+              "height": 0.081
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.212,
+              "width": 0.231,
+              "height": 0.707
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.231,
+              "y": 0.212,
+              "width": 0.769,
+              "height": 0.707
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.097,
+              "strength": 1.0
+            },
+            {
+              "position": 0.231,
+              "strength": 0.852
+            },
+            {
+              "position": 0.334,
+              "strength": 0.761
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.212,
+              "strength": 0.99
+            },
+            {
+              "position": 0.459,
+              "strength": 1.0
+            },
+            {
+              "position": 0.686,
+              "strength": 0.725
+            },
+            {
+              "position": 0.919,
+              "strength": 0.79
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Trello — create a Workspace",
+      "source_url": "https://support.atlassian.com/trello/docs/creating-a-new-workspace/",
+      "category": "Collaboration / workspace creation",
+      "selection_note": "Study the lightweight workspace-creation form and how it leads directly into member and board organization.",
+      "visual": {
+        "source_page_url": "https://support.atlassian.com/trello/docs/creating-a-new-workspace/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://support.atlassian.com/trello/docs/creating-a-new-workspace/",
+        "local_path": "images/10-trello-create-a-workspace.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 59338,
+        "sha256": "0104e6337a0055a0ed234db887eb8e597204ec6121746102c2d7cc01aec84dd2",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "0104e6337a0055a0ed234db887eb8e597204ec6121746102c2d7cc01aec84dd2",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.088
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.088,
+              "width": 0.188,
+              "height": 0.912
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.188,
+              "y": 0.088,
+              "width": 0.812,
+              "height": 0.912
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.077,
+              "strength": 1.0
+            },
+            {
+              "position": 0.188,
+              "strength": 0.874
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.088,
+              "strength": 1.0
+            },
+            {
+              "position": 0.254,
+              "strength": 0.762
+            },
+            {
+              "position": 0.521,
+              "strength": 0.611
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Zoom — sign up and activate an account",
+      "source_url": "https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0063655",
+      "category": "Communication / account creation",
+      "selection_note": "Study the email activation loop, including age confirmation, identity setup, and return from email to product.",
+      "visual": {
+        "source_page_url": "https://support.zoom.com/hc/en/article?id=zm_kb&sysparm_article=KB0063655",
+        "source_image_url": "https://support.zoom.com/zoom-social-img.jpg",
+        "local_path": "images/11-zoom-sign-up-and-activate-an-account.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 12372,
+        "sha256": "1dd348f5aa503e5585b8c7443ba986eea274580bc27278d06f7f08155b31ddd0",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1dd348f5aa503e5585b8c7443ba986eea274580bc27278d06f7f08155b31ddd0",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.321,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.731,
+              "y": 0.12,
+              "width": 0.269,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.321,
+              "y": 0.12,
+              "width": 0.41,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.321,
+              "strength": 0.646
+            },
+            {
+              "position": 0.626,
+              "strength": 0.939
+            },
+            {
+              "position": 0.731,
+              "strength": 1.0
+            },
+            {
+              "position": 0.808,
+              "strength": 0.985
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.368,
+              "strength": 1.0
+            },
+            {
+              "position": 0.628,
+              "strength": 0.886
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Cisco Webex — get started",
+      "source_url": "https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App",
+      "category": "Enterprise communication / onboarding",
+      "selection_note": "Study how first sign-in, permissions, profile completion, and initial communication actions are introduced.",
+      "visual": {
+        "source_page_url": "https://help.webex.com/en-us/article/nrbgeodb/Get-started-with-Webex-App",
+        "source_image_url": "https://cisco-api.ingeniuxondemand.com/DITA/content/en/us/td/i/400001-500000/450001-460000/450001-451000/450705.jpg",
+        "local_path": "images/12-cisco-webex-get-started.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 788,
+        "original_width": 2880,
+        "original_height": 1620,
+        "bytes": 41690,
+        "sha256": "8110939cfbc2bf9caf990379db0153b9c9560916f44eb284209d707ff5d45d5d",
+        "source_hint": "Join meeting preview window highlighting the audio option in Webex App  image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "8110939cfbc2bf9caf990379db0153b9c9560916f44eb284209d707ff5d45d5d",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.146
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.805,
+              "width": 1.0,
+              "height": 0.195
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.146,
+              "width": 0.189,
+              "height": 0.659
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.809,
+              "y": 0.146,
+              "width": 0.191,
+              "height": 0.659
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.189,
+              "y": 0.146,
+              "width": 0.62,
+              "height": 0.659
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.189,
+              "strength": 0.905
+            },
+            {
+              "position": 0.479,
+              "strength": 0.616
+            },
+            {
+              "position": 0.581,
+              "strength": 0.374
+            },
+            {
+              "position": 0.809,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.146,
+              "strength": 0.474
+            },
+            {
+              "position": 0.241,
+              "strength": 0.525
+            },
+            {
+              "position": 0.805,
+              "strength": 1.0
+            },
+            {
+              "position": 0.886,
+              "strength": 0.442
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Discord — getting started",
+      "source_url": "https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started",
+      "category": "Consumer communication / onboarding",
+      "selection_note": "Study the path from account registration into server discovery or creation and early identity customization.",
+      "visual": {
+        "source_page_url": "https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started",
+        "source_image_url": "https://support.discord.com/hc/article_attachments/30910013244695",
+        "local_path": "images/13-discord-getting-started.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 745,
+        "original_width": 1600,
+        "original_height": 851,
+        "bytes": 35574,
+        "sha256": "3e0b5f1a14f650d46e6d56bbe4ac52433d992a9bd9ef0ada964a1901652c4819",
+        "source_hint": "img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "3e0b5f1a14f650d46e6d56bbe4ac52433d992a9bd9ef0ada964a1901652c4819",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.331,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.684,
+              "y": 0.12,
+              "width": 0.316,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.331,
+              "y": 0.12,
+              "width": 0.353,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.098,
+              "strength": 1.0
+            },
+            {
+              "position": 0.331,
+              "strength": 0.859
+            },
+            {
+              "position": 0.55,
+              "strength": 0.32
+            },
+            {
+              "position": 0.684,
+              "strength": 0.308
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.299,
+              "strength": 0.561
+            },
+            {
+              "position": 0.403,
+              "strength": 0.634
+            },
+            {
+              "position": 0.499,
+              "strength": 1.0
+            },
+            {
+              "position": 0.662,
+              "strength": 0.671
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Dropbox — import files and folders",
+      "source_url": "https://help.dropbox.com/create-upload/add-files",
+      "category": "Cloud storage / import",
+      "selection_note": "Study the multiple import entry points for file upload, folder upload, drag-and-drop, and desktop synchronization.",
+      "visual": {
+        "source_page_url": "https://help.dropbox.com/create-upload/add-files",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://help.dropbox.com/create-upload/add-files",
+        "local_path": "images/14-dropbox-import-files-and-folders.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 63474,
+        "sha256": "c0c70306771ffefb0c14e6f01a503597c5b139617d24aa99efe09479acc8be74",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c0c70306771ffefb0c14e6f01a503597c5b139617d24aa99efe09479acc8be74",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.841,
+              "width": 1.0,
+              "height": 0.159
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.318,
+              "height": 0.721
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.583,
+              "y": 0.12,
+              "width": 0.417,
+              "height": 0.721
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.318,
+              "y": 0.12,
+              "width": 0.265,
+              "height": 0.721
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.229,
+              "strength": 0.871
+            },
+            {
+              "position": 0.318,
+              "strength": 1.0
+            },
+            {
+              "position": 0.499,
+              "strength": 0.823
+            },
+            {
+              "position": 0.583,
+              "strength": 0.799
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.363,
+              "strength": 1.0
+            },
+            {
+              "position": 0.65,
+              "strength": 0.808
+            },
+            {
+              "position": 0.841,
+              "strength": 0.806
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Google Workspace — setup guide",
+      "original_source_url": "https://support.google.com/a/answer/6365252",
+      "source_url": "https://knowledge.workspace.google.com/admin/getting-started/set-up-google-workspace-for-your-organization",
+      "source_url_state": "reachable",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "Google retired the a/answer/6365252 setup guide and redirects it to the Workspace knowledge centre article 'Set up Google Workspace for your organization'.",
+      "category": "Enterprise productivity / first-run setup",
+      "selection_note": "Study the administrator checklist that sequences domain verification, user creation, Gmail activation, and migration.",
+      "visual": {
+        "original_source_page_url": "https://support.google.com/a/answer/6365252",
+        "source_page_url": "https://knowledge.workspace.google.com/admin/getting-started/set-up-google-workspace-for-your-organization",
+        "source_page_url_state": "reachable",
+        "source_page_url_checked_at": "2026-08-19",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://support.google.com/a/answer/6365252",
+        "local_path": "images/15-google-workspace-setup-guide.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 82150,
+        "sha256": "357bb7c9af47e308ac10d97d6c9f3df16687fd68282a8e09b2fb505b21888842",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "357bb7c9af47e308ac10d97d6c9f3df16687fd68282a8e09b2fb505b21888842",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.935,
+              "width": 1.0,
+              "height": 0.065
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.303,
+              "height": 0.815
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.303,
+              "y": 0.12,
+              "width": 0.697,
+              "height": 0.815
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.06,
+              "strength": 1.0
+            },
+            {
+              "position": 0.303,
+              "strength": 0.856
+            },
+            {
+              "position": 0.383,
+              "strength": 0.764
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.228,
+              "strength": 0.887
+            },
+            {
+              "position": 0.591,
+              "strength": 0.817
+            },
+            {
+              "position": 0.738,
+              "strength": 1.0
+            },
+            {
+              "position": 0.935,
+              "strength": 0.864
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Microsoft 365 — setup wizard",
+      "source_url": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide",
+      "category": "Enterprise productivity / setup wizard",
+      "selection_note": "Study the guided setup model that adapts recommended configuration tasks to an administrator’s selected services.",
+      "visual": {
+        "source_page_url": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide",
+        "source_image_url": "https://learn.microsoft.com/en-us/media/open-graph-image.png",
+        "local_path": "images/16-microsoft-365-setup-wizard.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 19752,
+        "sha256": "59d7c01c2e9097b8b5b269ca9a28306b30ca1f98628e55862d32ed82ce51de63",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "59d7c01c2e9097b8b5b269ca9a28306b30ca1f98628e55862d32ed82ce51de63",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.212,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.719,
+              "y": 0.12,
+              "width": 0.281,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.212,
+              "y": 0.12,
+              "width": 0.507,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.212,
+              "strength": 0.979
+            },
+            {
+              "position": 0.334,
+              "strength": 0.9
+            },
+            {
+              "position": 0.54,
+              "strength": 1.0
+            },
+            {
+              "position": 0.719,
+              "strength": 0.88
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.537,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Canva — sign up or log in",
+      "source_url": "https://www.canva.com/help/sign-up-log-in/",
+      "category": "Design / account creation and sign-in",
+      "selection_note": "Study how multiple identity providers, email registration, and existing-account recovery are presented in one flow.",
+      "visual": {
+        "source_page_url": "https://www.canva.com/help/sign-up-log-in/",
+        "source_image_url": "https://static.canva.com/static/images/fb_cover-1.jpg",
+        "local_path": "images/17-canva-sign-up-or-log-in.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 48778,
+        "sha256": "f803dc43b3cc97a72c68d5c9f65bf01313c192ff266198ca6d8cc44c06aca737",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "f803dc43b3cc97a72c68d5c9f65bf01313c192ff266198ca6d8cc44c06aca737",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.11
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.11,
+              "width": 0.152,
+              "height": 0.89
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.602,
+              "y": 0.11,
+              "width": 0.398,
+              "height": 0.89
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.152,
+              "y": 0.11,
+              "width": 0.45,
+              "height": 0.89
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.152,
+              "strength": 0.893
+            },
+            {
+              "position": 0.498,
+              "strength": 0.693
+            },
+            {
+              "position": 0.602,
+              "strength": 0.662
+            },
+            {
+              "position": 0.936,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.11,
+              "strength": 0.946
+            },
+            {
+              "position": 0.218,
+              "strength": 0.941
+            },
+            {
+              "position": 0.634,
+              "strength": 0.99
+            },
+            {
+              "position": 0.732,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Postman — create and manage workspaces",
+      "source_url": "https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/",
+      "category": "Developer collaboration / workspace creation",
+      "selection_note": "Study workspace creation with explicit visibility choices, naming, summaries, and invitation paths for collaborators.",
+      "visual": {
+        "source_page_url": "https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/",
+        "local_path": "images/18-postman-create-and-manage-workspaces.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 76532,
+        "sha256": "515f2d72d18cf427b5979bbca075a52085f5b5b6bca6335118c1e241007e9296",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "515f2d72d18cf427b5979bbca075a52085f5b5b6bca6335118c1e241007e9296",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.199
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.917,
+              "width": 1.0,
+              "height": 0.083
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.199,
+              "width": 0.384,
+              "height": 0.718
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.384,
+              "y": 0.199,
+              "width": 0.616,
+              "height": 0.718
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.069,
+              "strength": 1.0
+            },
+            {
+              "position": 0.384,
+              "strength": 0.773
+            },
+            {
+              "position": 0.477,
+              "strength": 0.8
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.199,
+              "strength": 0.912
+            },
+            {
+              "position": 0.358,
+              "strength": 1.0
+            },
+            {
+              "position": 0.841,
+              "strength": 0.859
+            },
+            {
+              "position": 0.917,
+              "strength": 0.994
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "GitHub — creating an account",
+      "source_url": "https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github",
+      "category": "Developer platform / account creation",
+      "selection_note": "Study the registration sequence combining credential creation, email verification, personalization, and optional plan decisions.",
+      "visual": {
+        "source_page_url": "https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github",
+        "source_image_url": "https://docs.github.com/assets/cb-345/images/social-cards/account-and-profile.png",
+        "local_path": "images/19-github-creating-an-account.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 628,
+        "original_width": 1200,
+        "original_height": 628,
+        "bytes": 9834,
+        "sha256": "31f4dd4e58e534c95e6bbd0076e9edfc49d30570aac99e77dec39ba1d8233d3e",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "31f4dd4e58e534c95e6bbd0076e9edfc49d30570aac99e77dec39ba1d8233d3e",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.418,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.627,
+              "y": 0.12,
+              "width": 0.373,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.418,
+              "y": 0.12,
+              "width": 0.209,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.418,
+              "strength": 0.702
+            },
+            {
+              "position": 0.503,
+              "strength": 0.653
+            },
+            {
+              "position": 0.627,
+              "strength": 1.0
+            },
+            {
+              "position": 0.764,
+              "strength": 0.755
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.34,
+              "strength": 0.736
+            },
+            {
+              "position": 0.463,
+              "strength": 0.872
+            },
+            {
+              "position": 0.618,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "GitLab — user account",
+      "source_url": "https://docs.gitlab.com/user/profile/account/create_accounts/",
+      "category": "Developer platform / account creation",
+      "selection_note": "Study how self-registration, administrator-created accounts, invitations, and external authentication are distinguished.",
+      "visual": {
+        "source_page_url": "https://docs.gitlab.com/user/profile/account/create_accounts/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://docs.gitlab.com/user/profile/account/create_accounts/",
+        "local_path": "images/20-gitlab-user-account.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 81898,
+        "sha256": "48f703ec13a0b80ded2254f310079fee7ae0d2a67ef4585e5932367883c6c131",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "48f703ec13a0b80ded2254f310079fee7ae0d2a67ef4585e5932367883c6c131",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.089
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.913,
+              "width": 1.0,
+              "height": 0.087
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.089,
+              "width": 0.314,
+              "height": 0.824
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.314,
+              "y": 0.089,
+              "width": 0.686,
+              "height": 0.824
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.06,
+              "strength": 1.0
+            },
+            {
+              "position": 0.314,
+              "strength": 0.933
+            },
+            {
+              "position": 0.412,
+              "strength": 0.823
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.089,
+              "strength": 0.807
+            },
+            {
+              "position": 0.202,
+              "strength": 0.746
+            },
+            {
+              "position": 0.447,
+              "strength": 1.0
+            },
+            {
+              "position": 0.913,
+              "strength": 0.846
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Vercel — import a Git repository",
+      "source_url": "https://vercel.com/docs/getting-started-with-vercel/import",
+      "category": "Developer platform / import",
+      "selection_note": "Study the repository-import flow that progressively requests provider access, project settings, and deployment configuration.",
+      "visual": {
+        "source_page_url": "https://vercel.com/docs/getting-started-with-vercel/import",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://vercel.com/docs/getting-started-with-vercel/import",
+        "local_path": "images/21-vercel-import-a-git-repository.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 54238,
+        "sha256": "644e1cf54579beeee50603365c207a8af37b793afff6bee845a3be0ca920debd",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "644e1cf54579beeee50603365c207a8af37b793afff6bee845a3be0ca920debd",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.17
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.17,
+              "width": 0.328,
+              "height": 0.83
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.328,
+              "y": 0.17,
+              "width": 0.672,
+              "height": 0.83
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.328,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.17,
+              "strength": 0.987
+            },
+            {
+              "position": 0.255,
+              "strength": 1.0
+            },
+            {
+              "position": 0.386,
+              "strength": 0.802
+            },
+            {
+              "position": 0.688,
+              "strength": 0.901
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "name": "Netlify — import an existing project",
+      "source_url": "https://docs.netlify.com/welcome/add-new-site/",
+      "category": "Developer platform / import",
+      "selection_note": "Study the import path from Git provider authorization through repository selection, build settings, and first deployment.",
+      "visual": {
+        "source_page_url": "https://docs.netlify.com/welcome/add-new-site/",
+        "source_image_url": "https://docs.netlify.com/images/netlify-docs-hero-card.png/?v=1",
+        "local_path": "images/22-netlify-import-an-existing-project.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 11696,
+        "sha256": "1c9da1fe104d2b8810a4f6730162a11cb11e924ce79b9236ead07917742a1c4d",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1c9da1fe104d2b8810a4f6730162a11cb11e924ce79b9236ead07917742a1c4d",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.108
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.108,
+              "width": 0.312,
+              "height": 0.892
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.599,
+              "y": 0.108,
+              "width": 0.401,
+              "height": 0.892
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.312,
+              "y": 0.108,
+              "width": 0.287,
+              "height": 0.892
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.312,
+              "strength": 1.0
+            },
+            {
+              "position": 0.424,
+              "strength": 0.951
+            },
+            {
+              "position": 0.51,
+              "strength": 0.666
+            },
+            {
+              "position": 0.599,
+              "strength": 0.608
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.108,
+              "strength": 0.719
+            },
+            {
+              "position": 0.216,
+              "strength": 0.653
+            },
+            {
+              "position": 0.457,
+              "strength": 0.789
+            },
+            {
+              "position": 0.541,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Render — deploy from a Git repository",
+      "source_url": "https://render.com/docs/deploys",
+      "category": "Developer platform / first-run deployment",
+      "selection_note": "Study the connected-repository authorization and service setup flow that culminates in a visible initial deploy.",
+      "visual": {
+        "source_page_url": "https://render.com/docs/deploys",
+        "source_image_url": "https://render.com/docs-assets/0279fe915a577449dd3ca701232e77b3de3875567bd1621fd31dde2d3e7542e8/overlapping-deploy-policy.png",
+        "local_path": "images/23-render-deploy-from-a-git-repository.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 731,
+        "original_width": 1448,
+        "original_height": 756,
+        "bytes": 38742,
+        "sha256": "6b4890b23d64cb00a672a95d1d27e9177a19da7f1e76863dee974190929286e6",
+        "source_hint": "The Overlapping Deploy Policy setting in the Render Dashboard"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "6b4890b23d64cb00a672a95d1d27e9177a19da7f1e76863dee974190929286e6",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.189
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.189,
+              "width": 0.296,
+              "height": 0.811
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.586,
+              "y": 0.189,
+              "width": 0.414,
+              "height": 0.811
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.296,
+              "y": 0.189,
+              "width": 0.29,
+              "height": 0.811
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.138,
+              "strength": 0.532
+            },
+            {
+              "position": 0.296,
+              "strength": 0.438
+            },
+            {
+              "position": 0.51,
+              "strength": 1.0
+            },
+            {
+              "position": 0.586,
+              "strength": 0.426
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.189,
+              "strength": 0.469
+            },
+            {
+              "position": 0.374,
+              "strength": 0.956
+            },
+            {
+              "position": 0.583,
+              "strength": 0.492
+            },
+            {
+              "position": 0.728,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Heroku — deploying with Git",
+      "source_url": "https://devcenter.heroku.com/articles/git",
+      "category": "Developer platform / first-run deployment",
+      "selection_note": "Study the command-line onboarding pattern that links authentication, app creation, repository push, and deployment feedback.",
+      "visual": {
+        "source_page_url": "https://devcenter.heroku.com/articles/git",
+        "source_image_url": "https://www.herokucdn.com/images/og.png",
+        "local_path": "images/24-heroku-deploying-with-git.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 17204,
+        "sha256": "16ac346e7781f3423929a06a4bd9c622e86b5514e2677184718fc6220599b695",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "16ac346e7781f3423929a06a4bd9c622e86b5514e2677184718fc6220599b695",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.839,
+              "width": 1.0,
+              "height": 0.161
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.402,
+              "height": 0.719
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.596,
+              "y": 0.12,
+              "width": 0.404,
+              "height": 0.719
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.402,
+              "y": 0.12,
+              "width": 0.194,
+              "height": 0.719
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.402,
+              "strength": 1.0
+            },
+            {
+              "position": 0.596,
+              "strength": 0.85
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.262,
+              "strength": 0.856
+            },
+            {
+              "position": 0.634,
+              "strength": 1.0
+            },
+            {
+              "position": 0.753,
+              "strength": 0.594
+            },
+            {
+              "position": 0.839,
+              "strength": 0.485
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Docker Desktop — sign in",
+      "source_url": "https://docs.docker.com/desktop/setup/sign-in/",
+      "category": "Developer tools / sign-in",
+      "selection_note": "Study the browser-mediated desktop sign-in handoff and the treatment of organizations, subscriptions, and authentication requirements.",
+      "visual": {
+        "source_page_url": "https://docs.docker.com/desktop/setup/sign-in/",
+        "source_image_url": "https://docs.docker.com/images/thumbnail.webp",
+        "local_path": "images/25-docker-desktop-sign-in.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 735,
+        "original_width": 2400,
+        "original_height": 1260,
+        "bytes": 9910,
+        "sha256": "19e33cc2c4945823874e84d58d51633008225f1e67b678b9784b3349b749d57e",
+        "source_hint": "twitter:image:src"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "19e33cc2c4945823874e84d58d51633008225f1e67b678b9784b3349b749d57e",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.803,
+              "width": 1.0,
+              "height": 0.197
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.323,
+              "height": 0.683
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.619,
+              "y": 0.12,
+              "width": 0.381,
+              "height": 0.683
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.323,
+              "y": 0.12,
+              "width": 0.296,
+              "height": 0.683
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.323,
+              "strength": 0.695
+            },
+            {
+              "position": 0.494,
+              "strength": 1.0
+            },
+            {
+              "position": 0.619,
+              "strength": 0.451
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.296,
+              "strength": 0.451
+            },
+            {
+              "position": 0.404,
+              "strength": 0.77
+            },
+            {
+              "position": 0.512,
+              "strength": 1.0
+            },
+            {
+              "position": 0.803,
+              "strength": 0.249
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Sentry — guided onboarding",
+      "source_url": "https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/",
+      "category": "Developer monitoring / onboarding",
+      "selection_note": "Study the framework-specific onboarding that generates tailored SDK installation steps and validates the first captured error.",
+      "visual": {
+        "source_page_url": "https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/",
+        "local_path": "images/26-sentry-guided-onboarding.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 105234,
+        "sha256": "fb136a7a788677734ede1d2fa3cb22490275e491ecc9a100b4e93fd4de114eb7",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "fb136a7a788677734ede1d2fa3cb22490275e491ecc9a100b4e93fd4de114eb7",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.773,
+              "width": 1.0,
+              "height": 0.227
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.312,
+              "height": 0.653
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.312,
+              "y": 0.12,
+              "width": 0.688,
+              "height": 0.653
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.312,
+              "strength": 1.0
+            },
+            {
+              "position": 0.413,
+              "strength": 0.88
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.324,
+              "strength": 1.0
+            },
+            {
+              "position": 0.519,
+              "strength": 0.96
+            },
+            {
+              "position": 0.609,
+              "strength": 0.914
+            },
+            {
+              "position": 0.773,
+              "strength": 0.971
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Datadog — getting started",
+      "source_url": "https://docs.datadoghq.com/getting_started/",
+      "category": "Enterprise monitoring / onboarding",
+      "selection_note": "Study the branching first-run information architecture that routes users by telemetry type, platform, and intended task.",
+      "visual": {
+        "source_page_url": "https://docs.datadoghq.com/getting_started/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://docs.datadoghq.com/getting_started/",
+        "local_path": "images/27-datadog-getting-started.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 81626,
+        "sha256": "335199e937753e8eef7e81e76267298f6d124acd393811f167dee8e3ef3547b1",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "335199e937753e8eef7e81e76267298f6d124acd393811f167dee8e3ef3547b1",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.061
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.841,
+              "width": 1.0,
+              "height": 0.159
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.061,
+              "width": 0.317,
+              "height": 0.78
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.317,
+              "y": 0.061,
+              "width": 0.683,
+              "height": 0.78
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.061,
+              "strength": 1.0
+            },
+            {
+              "position": 0.317,
+              "strength": 0.536
+            },
+            {
+              "position": 0.432,
+              "strength": 0.609
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.061,
+              "strength": 1.0
+            },
+            {
+              "position": 0.32,
+              "strength": 0.866
+            },
+            {
+              "position": 0.696,
+              "strength": 0.761
+            },
+            {
+              "position": 0.841,
+              "strength": 0.779
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Twilio — account setup",
+      "source_url": "https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account",
+      "category": "Developer communications / account setup",
+      "selection_note": "Study trial onboarding that introduces identity verification, project credentials, usage restrictions, and the first test action.",
+      "visual": {
+        "source_page_url": "https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account",
+        "source_image_url": "https://www.twilio.com/_next/static/media/illo-contact-us.2-4ae6l2b3kv8.png?w=640",
+        "local_path": "images/28-twilio-account-setup.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 835,
+        "height": 672,
+        "original_width": 835,
+        "original_height": 672,
+        "bytes": 45506,
+        "sha256": "b5829c149ad100c4a5e5964a2cb299838689086ca189b7b93852f08182a5f7ca",
+        "source_hint": "Contact us"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b5829c149ad100c4a5e5964a2cb299838689086ca189b7b93852f08182a5f7ca",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.159
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.856,
+              "width": 1.0,
+              "height": 0.144
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.159,
+              "width": 0.301,
+              "height": 0.697
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.6,
+              "y": 0.159,
+              "width": 0.4,
+              "height": 0.697
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.301,
+              "y": 0.159,
+              "width": 0.299,
+              "height": 0.697
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.301,
+              "strength": 0.6
+            },
+            {
+              "position": 0.46,
+              "strength": 0.807
+            },
+            {
+              "position": 0.6,
+              "strength": 1.0
+            },
+            {
+              "position": 0.734,
+              "strength": 0.86
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.159,
+              "strength": 0.964
+            },
+            {
+              "position": 0.423,
+              "strength": 0.879
+            },
+            {
+              "position": 0.856,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Auth0 — Universal Login",
+      "source_url": "https://auth0.com/docs/authenticate/login/auth0-universal-login",
+      "category": "Identity platform / sign-in",
+      "selection_note": "Study the hosted authentication flow’s organization discovery, social and enterprise connections, and progressive identifier collection.",
+      "visual": {
+        "source_page_url": "https://auth0.com/docs/authenticate/login/auth0-universal-login",
+        "source_image_url": "https://auth0.mintlify.app/docs/images/share-image.png",
+        "local_path": "images/29-auth0-universal-login.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 737,
+        "original_width": 2408,
+        "original_height": 1268,
+        "bytes": 28214,
+        "sha256": "305bb4efb1ee812f95dfcaf5b138dbd53baa61dc3abb02e1e8f6fa14716db26d",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "305bb4efb1ee812f95dfcaf5b138dbd53baa61dc3abb02e1e8f6fa14716db26d",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.114
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.901,
+              "width": 1.0,
+              "height": 0.099
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.114,
+              "width": 0.242,
+              "height": 0.787
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.633,
+              "y": 0.114,
+              "width": 0.367,
+              "height": 0.787
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.242,
+              "y": 0.114,
+              "width": 0.391,
+              "height": 0.787
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.099,
+              "strength": 0.826
+            },
+            {
+              "position": 0.242,
+              "strength": 0.968
+            },
+            {
+              "position": 0.633,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.114,
+              "strength": 0.249
+            },
+            {
+              "position": 0.297,
+              "strength": 0.633
+            },
+            {
+              "position": 0.399,
+              "strength": 0.706
+            },
+            {
+              "position": 0.901,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Okta — device authorization flow",
+      "source_url": "https://developer.okta.com/docs/guides/device-authorization-grant/main/",
+      "category": "Identity platform / device authorization",
+      "selection_note": "Study the cross-device authorization pattern using a short user code, verification URL, polling, and explicit consent.",
+      "visual": {
+        "source_page_url": "https://developer.okta.com/docs/guides/device-authorization-grant/main/",
+        "source_image_url": "https://developer.okta.com/img/authorization/QRActivate.png",
+        "local_path": "images/30-okta-device-authorization-flow.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 715,
+        "height": 308,
+        "original_width": 715,
+        "original_height": 308,
+        "bytes": 16830,
+        "sha256": "4f3acf5c7cc98b6ada02946b7ba7788525a912ad38df10eb05e75372c154f1aa",
+        "source_hint": "Verification on the smart device"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "4f3acf5c7cc98b6ada02946b7ba7788525a912ad38df10eb05e75372c154f1aa",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.347,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.347,
+              "y": 0.12,
+              "width": 0.653,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.131,
+              "strength": 1.0
+            },
+            {
+              "position": 0.248,
+              "strength": 0.717
+            },
+            {
+              "position": 0.347,
+              "strength": 0.869
+            },
+            {
+              "position": 0.497,
+              "strength": 0.819
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.347,
+              "strength": 0.701
+            },
+            {
+              "position": 0.438,
+              "strength": 0.727
+            },
+            {
+              "position": 0.61,
+              "strength": 1.0
+            },
+            {
+              "position": 0.695,
+              "strength": 0.919
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Microsoft identity platform — device authorization grant",
+      "source_url": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code",
+      "category": "Enterprise identity / device authorization",
+      "selection_note": "Study the device-code flow’s separation of constrained-device instructions, browser authentication, and token polling states.",
+      "visual": {
+        "source_page_url": "https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code",
+        "source_image_url": "https://learn.microsoft.com/en-us/media/open-graph-image.png",
+        "local_path": "images/31-microsoft-identity-platform-device-authorization-grant.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 19752,
+        "sha256": "59d7c01c2e9097b8b5b269ca9a28306b30ca1f98628e55862d32ed82ce51de63",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "59d7c01c2e9097b8b5b269ca9a28306b30ca1f98628e55862d32ed82ce51de63",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.212,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.719,
+              "y": 0.12,
+              "width": 0.281,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.212,
+              "y": 0.12,
+              "width": 0.507,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.212,
+              "strength": 0.979
+            },
+            {
+              "position": 0.334,
+              "strength": 0.9
+            },
+            {
+              "position": 0.54,
+              "strength": 1.0
+            },
+            {
+              "position": 0.719,
+              "strength": 0.88
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.537,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "AWS IAM Identity Center — device authorization",
+      "source_url": "https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html",
+      "category": "Cloud security / device authorization",
+      "selection_note": "Study the API information model for verification URIs, user codes, expiration windows, and polling intervals.",
+      "visual": {
+        "source_page_url": "https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_StartDeviceAuthorization.html",
+        "local_path": "images/32-aws-iam-identity-center-device-authorization.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 65140,
+        "sha256": "64b8be9f5832f365888d17895ba9f24ce896a5fc8c3d6c95e99d7de4cce30dc5",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "64b8be9f5832f365888d17895ba9f24ce896a5fc8c3d6c95e99d7de4cce30dc5",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.064
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.064,
+              "width": 0.25,
+              "height": 0.936
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.25,
+              "y": 0.064,
+              "width": 0.75,
+              "height": 0.936
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.25,
+              "strength": 1.0
+            },
+            {
+              "position": 0.403,
+              "strength": 0.889
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.064,
+              "strength": 1.0
+            },
+            {
+              "position": 0.183,
+              "strength": 0.97
+            },
+            {
+              "position": 0.306,
+              "strength": 0.894
+            },
+            {
+              "position": 0.407,
+              "strength": 0.637
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Cloudflare Zero Trust — setup",
+      "source_url": "https://developers.cloudflare.com/cloudflare-one/setup/",
+      "category": "Enterprise security / first-run setup",
+      "selection_note": "Study the administrator setup sequence that establishes an organization, identity provider, device client, and access policy.",
+      "visual": {
+        "source_page_url": "https://developers.cloudflare.com/cloudflare-one/setup/",
+        "source_image_url": "https://developers.cloudflare.com/og-docs.png",
+        "local_path": "images/33-cloudflare-zero-trust-setup.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 800,
+        "original_width": 1400,
+        "original_height": 800,
+        "bytes": 153304,
+        "sha256": "23f3a8555dc324c7948aea3ea1123c9aea221eeefce4f3bc100d953b16d7a082",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "23f3a8555dc324c7948aea3ea1123c9aea221eeefce4f3bc100d953b16d7a082",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.249,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.807,
+              "y": 0.12,
+              "width": 0.193,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.249,
+              "y": 0.12,
+              "width": 0.558,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.249,
+              "strength": 0.985
+            },
+            {
+              "position": 0.423,
+              "strength": 1.0
+            },
+            {
+              "position": 0.591,
+              "strength": 0.958
+            },
+            {
+              "position": 0.807,
+              "strength": 0.987
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.232,
+              "strength": 0.496
+            },
+            {
+              "position": 0.385,
+              "strength": 1.0
+            },
+            {
+              "position": 0.597,
+              "strength": 0.903
+            },
+            {
+              "position": 0.718,
+              "strength": 0.867
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Tailscale — quickstart",
+      "source_url": "https://tailscale.com/kb/1017/install",
+      "category": "Network security / device onboarding",
+      "selection_note": "Study the install-to-authenticate loop that adds each device to a shared network with immediate connection feedback.",
+      "visual": {
+        "source_page_url": "https://tailscale.com/kb/1017/install",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://tailscale.com/kb/1017/install",
+        "local_path": "images/34-tailscale-quickstart.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 91272,
+        "sha256": "91fd11e8f36ac9188f864d9a16711d2668bd0fec2bcd3bdb1d4bff6be174aadf",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "91fd11e8f36ac9188f864d9a16711d2668bd0fec2bcd3bdb1d4bff6be174aadf",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.088
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.834,
+              "width": 1.0,
+              "height": 0.166
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.088,
+              "width": 0.318,
+              "height": 0.746
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.318,
+              "y": 0.088,
+              "width": 0.682,
+              "height": 0.746
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.087,
+              "strength": 0.865
+            },
+            {
+              "position": 0.318,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.088,
+              "strength": 0.776
+            },
+            {
+              "position": 0.405,
+              "strength": 1.0
+            },
+            {
+              "position": 0.714,
+              "strength": 0.439
+            },
+            {
+              "position": 0.834,
+              "strength": 0.825
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "1Password — get started",
+      "source_url": "https://support.1password.com/explore/get-started/",
+      "category": "Consumer security / onboarding",
+      "selection_note": "Study the onboarding checklist that combines account recovery materials, app installation, import, and family or team invitations.",
+      "visual": {
+        "source_page_url": "https://support.1password.com/explore/get-started/",
+        "source_image_url": "https://support.1password.com/img/meta-og-image.png",
+        "local_path": "images/35-1password-get-started.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 627,
+        "original_width": 1200,
+        "original_height": 627,
+        "bytes": 32244,
+        "sha256": "9f0969bcc3aee19b622743dc05a79cfe4556983e2c7afabe9093f4116c545bdb",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "9f0969bcc3aee19b622743dc05a79cfe4556983e2c7afabe9093f4116c545bdb",
+        "orientation": "landscape",
+        "layout_model": "content-inspector",
+        "panel_summary": "Dominant content area with a trailing detail or property inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.164
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.806,
+              "y": 0.164,
+              "width": 0.194,
+              "height": 0.836
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.164,
+              "width": 0.806,
+              "height": 0.836
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.597,
+              "strength": 0.981
+            },
+            {
+              "position": 0.69,
+              "strength": 0.426
+            },
+            {
+              "position": 0.806,
+              "strength": 1.0
+            },
+            {
+              "position": 0.919,
+              "strength": 0.466
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.164,
+              "strength": 0.922
+            },
+            {
+              "position": 0.357,
+              "strength": 0.51
+            },
+            {
+              "position": 0.515,
+              "strength": 1.0
+            },
+            {
+              "position": 0.651,
+              "strength": 0.892
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Bitwarden — get started",
+      "source_url": "https://bitwarden.com/help/getting-started-webvault/",
+      "category": "Consumer security / onboarding",
+      "selection_note": "Study the first-vault flow covering account creation, email verification, item creation, import, and security configuration.",
+      "visual": {
+        "source_page_url": "https://bitwarden.com/help/getting-started-webvault/",
+        "source_image_url": "https://bitwarden.com/assets/3vTFNIvjUzFoLMsDH8GVUr/7ad2a8a17d8b2ac2143389ad61ec85de/help-getting-started-webvault-og.png",
+        "local_path": "images/36-bitwarden-get-started.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 28706,
+        "sha256": "c10dcf57a643ae6c5030dc0e7ef479c80a468cf80a7522b0781c2a64b71570ff",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c10dcf57a643ae6c5030dc0e7ef479c80a468cf80a7522b0781c2a64b71570ff",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.786,
+              "width": 1.0,
+              "height": 0.214
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.38,
+              "height": 0.666
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.38,
+              "y": 0.12,
+              "width": 0.62,
+              "height": 0.666
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.084,
+              "strength": 1.0
+            },
+            {
+              "position": 0.232,
+              "strength": 0.875
+            },
+            {
+              "position": 0.38,
+              "strength": 0.974
+            },
+            {
+              "position": 0.46,
+              "strength": 0.932
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.304,
+              "strength": 0.671
+            },
+            {
+              "position": 0.416,
+              "strength": 0.744
+            },
+            {
+              "position": 0.786,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Dashlane — get started",
+      "original_source_url": "https://support.dashlane.com/hc/en-us/categories/360001537079-Get-started",
+      "source_url": "https://support.dashlane.com/hc/en-us/categories/360000606579-Get-Started",
+      "source_url_state": "guarded",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "Dashlane renumbered its Get Started category from 360001537079 to 360000606579; the old id is 404 and the new one serves the same section. Its Zendesk help centre answers 403 to non-browser clients.",
+      "category": "Consumer security / onboarding",
+      "selection_note": "Study the staged setup across account creation, app installation, credential import, autofill, and device access.",
+      "visual": {
+        "original_source_page_url": "https://support.dashlane.com/hc/en-us/categories/360001537079-Get-started",
+        "source_page_url": "https://support.dashlane.com/hc/en-us/categories/360000606579-Get-Started",
+        "source_page_url_state": "guarded",
+        "source_page_url_checked_at": "2026-08-19",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://support.dashlane.com/hc/en-us/categories/360001537079-Get-started",
+        "local_path": "images/37-dashlane-get-started.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 16732,
+        "sha256": "412ef22b1ab3e43b2195470e38a55abe2d23adc18e4bef11ac5c0dd91a76f968",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "412ef22b1ab3e43b2195470e38a55abe2d23adc18e4bef11ac5c0dd91a76f968",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.147
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.147,
+              "width": 0.196,
+              "height": 0.853
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.196,
+              "y": 0.147,
+              "width": 0.804,
+              "height": 0.853
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.196,
+              "strength": 1.0
+            },
+            {
+              "position": 0.372,
+              "strength": 0.794
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.147,
+              "strength": 0.62
+            },
+            {
+              "position": 0.234,
+              "strength": 1.0
+            },
+            {
+              "position": 0.338,
+              "strength": 0.24
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Yubico — set up a security key",
+      "source_url": "https://www.yubico.com/setup/",
+      "category": "Hardware security / device setup",
+      "selection_note": "Study the product-selection entry point that routes users into service-specific enrollment instructions for a physical key.",
+      "visual": {
+        "source_page_url": "https://www.yubico.com/setup/",
+        "source_image_url": "https://resources.yubico.com/XEG5TAAH/at/3vqfrm46hs7kqmf56v6hf74/image-20250319-024015.png?auto=webp&format=png",
+        "local_path": "images/38-yubico-set-up-a-security-key.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1385,
+        "height": 1000,
+        "original_width": 1972,
+        "original_height": 1424,
+        "bytes": 28438,
+        "sha256": "45dc7b7b4dbcd47f89f83c0365765dcf30dc832a402a06f47e9ba7e2dfbe244a",
+        "source_hint": "services compatible with yubikey"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "45dc7b7b4dbcd47f89f83c0365765dcf30dc832a402a06f47e9ba7e2dfbe244a",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.195
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.8,
+              "width": 1.0,
+              "height": 0.2
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.195,
+              "width": 0.393,
+              "height": 0.605
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.591,
+              "y": 0.195,
+              "width": 0.409,
+              "height": 0.605
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.393,
+              "y": 0.195,
+              "width": 0.198,
+              "height": 0.605
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.149,
+              "strength": 0.562
+            },
+            {
+              "position": 0.393,
+              "strength": 1.0
+            },
+            {
+              "position": 0.591,
+              "strength": 0.892
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.195,
+              "strength": 0.683
+            },
+            {
+              "position": 0.366,
+              "strength": 1.0
+            },
+            {
+              "position": 0.692,
+              "strength": 0.995
+            },
+            {
+              "position": 0.8,
+              "strength": 0.951
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Duo Security — device enrollment",
+      "source_url": "https://guide.duo.com/enrollment",
+      "category": "Enterprise security / device enrollment",
+      "selection_note": "Study the enrollment wizard for choosing an authenticator, verifying ownership, activating the device, and testing access.",
+      "visual": {
+        "source_page_url": "https://guide.duo.com/enrollment",
+        "source_image_url": "https://guide.duo.com/static/images/en/duo-desktop-auth-link-account-windows_2x.png",
+        "local_path": "images/39-duo-security-device-enrollment.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1307,
+        "height": 1000,
+        "original_width": 1854,
+        "original_height": 1418,
+        "bytes": 34986,
+        "sha256": "60fd63749a4b9510bcdeefcb06a829048bd172bd37c38afd807b331b8cee3e81",
+        "source_hint": "Linking an Account for Duo Desktop Authentication on Windows"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "60fd63749a4b9510bcdeefcb06a829048bd172bd37c38afd807b331b8cee3e81",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.177
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.177,
+              "width": 0.161,
+              "height": 0.823
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.161,
+              "y": 0.177,
+              "width": 0.839,
+              "height": 0.823
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.161,
+              "strength": 0.721
+            },
+            {
+              "position": 0.273,
+              "strength": 0.389
+            },
+            {
+              "position": 0.363,
+              "strength": 0.485
+            },
+            {
+              "position": 0.512,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.177,
+              "strength": 1.0
+            },
+            {
+              "position": 0.402,
+              "strength": 0.903
+            },
+            {
+              "position": 0.543,
+              "strength": 0.942
+            },
+            {
+              "position": 0.652,
+              "strength": 0.838
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Proton — create an account",
+      "source_url": "https://proton.me/support/create-a-free-email-account-address",
+      "category": "Consumer privacy / account creation",
+      "selection_note": "Study privacy-oriented registration with username selection, password setup, recovery choices, and anti-abuse verification.",
+      "visual": {
+        "source_page_url": "https://proton.me/support/create-a-free-email-account-address",
+        "source_image_url": "https://res.cloudinary.com/dbulfrlrz/images/w_2048,h_1310,c_scale/f_auto,q_auto/v1775814967/wp-pme/screenshot-2026-04-10-at-10-55-35/screenshot-2026-04-10-at-10-55-35.png?_i=AA",
+        "local_path": "images/40-proton-create-an-account.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 896,
+        "original_width": 2048,
+        "original_height": 1310,
+        "bytes": 30502,
+        "sha256": "d36fe67cb14ffab1cd5635f1de1a38a2f49fd3a69d1d3cae358b964fd8980da8",
+        "source_hint": "wp-post-3419 wp-image-117117"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d36fe67cb14ffab1cd5635f1de1a38a2f49fd3a69d1d3cae358b964fd8980da8",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.123
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.123,
+              "width": 0.403,
+              "height": 0.877
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.403,
+              "y": 0.123,
+              "width": 0.597,
+              "height": 0.877
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.128,
+              "strength": 0.944
+            },
+            {
+              "position": 0.403,
+              "strength": 0.865
+            },
+            {
+              "position": 0.899,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.123,
+              "strength": 0.938
+            },
+            {
+              "position": 0.311,
+              "strength": 0.639
+            },
+            {
+              "position": 0.481,
+              "strength": 1.0
+            },
+            {
+              "position": 0.606,
+              "strength": 0.988
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Signal — register a phone number",
+      "source_url": "https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number",
+      "category": "Consumer communication / account creation",
+      "selection_note": "Study phone-number registration with SMS or voice verification, PIN entry, and clear troubleshooting branches.",
+      "visual": {
+        "source_page_url": "https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://support.signal.org/hc/en-us/articles/360007318691-Register-a-phone-number",
+        "local_path": "images/41-signal-register-a-phone-number.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 16296,
+        "sha256": "fbf2914521d294d180626af10ab802b1aeee932fcbc04e731589da96e4c3b1d2",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "fbf2914521d294d180626af10ab802b1aeee932fcbc04e731589da96e4c3b1d2",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.147
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.147,
+              "width": 0.196,
+              "height": 0.853
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.196,
+              "y": 0.147,
+              "width": 0.804,
+              "height": 0.853
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.196,
+              "strength": 1.0
+            },
+            {
+              "position": 0.362,
+              "strength": 0.81
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.147,
+              "strength": 0.49
+            },
+            {
+              "position": 0.234,
+              "strength": 1.0
+            },
+            {
+              "position": 0.338,
+              "strength": 0.24
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Apple — set up an iPhone or iPad",
+      "source_url": "https://support.apple.com/en-us/105132",
+      "category": "Consumer devices / first-run setup",
+      "selection_note": "Study Setup Assistant’s sequential handling of accessibility, network access, activation, data transfer, identity, and privacy.",
+      "visual": {
+        "source_page_url": "https://support.apple.com/en-us/105132",
+        "source_image_url": "https://cdsassets.apple.com/live/7WUAS350/images/ios/ios-26-iphone-16-pro-setup-hello.png",
+        "local_path": "images/42-apple-set-up-an-iphone-or-ipad.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 483,
+        "height": 1000,
+        "original_width": 640,
+        "original_height": 1324,
+        "bytes": 25938,
+        "sha256": "509399b2011d297f02d734352105282e3d7a475f82a90ff2d671c36a82f7739e",
+        "source_hint": "The initial \"Hello\" screen displayed during the setup of a new iPhone or iPad running iOS 26.  gb-image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "509399b2011d297f02d734352105282e3d7a475f82a90ff2d671c36a82f7739e",
+        "orientation": "portrait",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.069
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.929,
+              "width": 1.0,
+              "height": 0.071
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.069,
+              "width": 0.359,
+              "height": 0.86
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.823,
+              "y": 0.069,
+              "width": 0.177,
+              "height": 0.86
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.359,
+              "y": 0.069,
+              "width": 0.464,
+              "height": 0.86
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.359,
+              "strength": 0.694
+            },
+            {
+              "position": 0.577,
+              "strength": 0.694
+            },
+            {
+              "position": 0.823,
+              "strength": 0.705
+            },
+            {
+              "position": 0.92,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.069,
+              "strength": 0.424
+            },
+            {
+              "position": 0.489,
+              "strength": 0.457
+            },
+            {
+              "position": 0.929,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Android — set up a new device",
+      "source_url": "https://support.google.com/android/answer/6193424?hl=en",
+      "source_url_state": "reachable",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "The article is live as 'Switch to a new Android device' (HTTP 200 to GET). support.google.com answers 404 to HEAD for every path including its root, which is what the drift checker sends.",
+      "category": "Consumer devices / first-run setup",
+      "selection_note": "Study the device setup sequence for connectivity, Google account sign-in, data transfer, security, and service permissions.",
+      "visual": {
+        "source_page_url": "https://support.google.com/android/answer/6193424",
+        "source_page_url_state": "reachable",
+        "source_page_url_checked_at": "2026-08-19",
+        "source_image_url": "https://lh3.googleusercontent.com/pXnM8rw6t7F6iivSse_U8OajR09iK27PjFby00G1o8NdV3W10LbgyPOryPto-SYSfd4=w895",
+        "local_path": "images/43-android-set-up-a-new-device.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 895,
+        "height": 867,
+        "original_width": 895,
+        "original_height": 867,
+        "bytes": 42276,
+        "sha256": "d6aa7498cc773393486d099e4bc64d265718afc81c50fb804f36aa3b5f9a3533",
+        "source_hint": "Pause work apps"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d6aa7498cc773393486d099e4bc64d265718afc81c50fb804f36aa3b5f9a3533",
+        "orientation": "square",
+        "layout_model": "single-surface",
+        "panel_summary": "One dominant content surface without a stable secondary panel detected.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.097
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.932,
+              "width": 1.0,
+              "height": 0.068
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.097,
+              "width": 1.0,
+              "height": 0.835
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.451,
+              "strength": 0.575
+            },
+            {
+              "position": 0.537,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.097,
+              "strength": 1.0
+            },
+            {
+              "position": 0.284,
+              "strength": 0.597
+            },
+            {
+              "position": 0.405,
+              "strength": 0.439
+            },
+            {
+              "position": 0.932,
+              "strength": 0.46
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "low"
+      },
+      "original_source_url": "https://support.google.com/android/answer/6193424"
+    },
+    {
+      "name": "Spotify — sign up",
+      "source_url": "https://support.spotify.com/article/how-to-sign-up/",
+      "category": "Consumer media / account creation",
+      "selection_note": "Study concise account creation across email and federated identity options, with clear handling of login-method differences.",
+      "visual": {
+        "source_page_url": "https://support.spotify.com/article/how-to-sign-up/",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://support.spotify.com/article/how-to-sign-up/",
+        "local_path": "images/44-spotify-sign-up.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 53664,
+        "sha256": "a494a461b257bc618160cbdba927518c83f258cb5869c4f0cf1e9c4b072ae7ad",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "a494a461b257bc618160cbdba927518c83f258cb5869c4f0cf1e9c4b072ae7ad",
+        "orientation": "landscape",
+        "layout_model": "content-inspector",
+        "panel_summary": "Dominant content area with a trailing detail or property inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.121
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.913,
+              "width": 1.0,
+              "height": 0.087
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.732,
+              "y": 0.121,
+              "width": 0.268,
+              "height": 0.792
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.121,
+              "width": 0.732,
+              "height": 0.792
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.108,
+              "strength": 0.975
+            },
+            {
+              "position": 0.732,
+              "strength": 1.0
+            },
+            {
+              "position": 0.828,
+              "strength": 0.903
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.121,
+              "strength": 0.978
+            },
+            {
+              "position": 0.385,
+              "strength": 0.49
+            },
+            {
+              "position": 0.565,
+              "strength": 0.814
+            },
+            {
+              "position": 0.913,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Netflix — sign up",
+      "source_url": "https://help.netflix.com/en/node/112419",
+      "category": "Consumer media / account creation",
+      "selection_note": "Study the conversion sequence from plan choice through credential setup, payment entry, and device-specific continuation.",
+      "visual": {
+        "source_page_url": "https://help.netflix.com/en/node/112419",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://help.netflix.com/en/node/112419",
+        "local_path": "images/45-netflix-sign-up.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 56028,
+        "sha256": "390fc3a3d37d0914f5862f415946e3a54310939684d6db2fc68360a008fb6b47",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "390fc3a3d37d0914f5862f415946e3a54310939684d6db2fc68360a008fb6b47",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.064
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.865,
+              "width": 1.0,
+              "height": 0.135
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.064,
+              "width": 0.169,
+              "height": 0.801
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.169,
+              "y": 0.064,
+              "width": 0.831,
+              "height": 0.801
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.067,
+              "strength": 1.0
+            },
+            {
+              "position": 0.169,
+              "strength": 0.675
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.064,
+              "strength": 1.0
+            },
+            {
+              "position": 0.393,
+              "strength": 0.441
+            },
+            {
+              "position": 0.497,
+              "strength": 0.259
+            },
+            {
+              "position": 0.865,
+              "strength": 0.833
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Stripe Connect — embedded onboarding",
+      "source_url": "https://docs.stripe.com/connect/embedded-onboarding",
+      "category": "Finance platform / progressive profile",
+      "selection_note": "Study requirements-driven onboarding that progressively collects identity and business information while surfacing unresolved tasks.",
+      "visual": {
+        "source_page_url": "https://docs.stripe.com/connect/embedded-onboarding",
+        "source_image_url": "https://d37ugbyn3rpeym.cloudfront.net/docs/og-image/connect.embedded-onboarding.ogimage.png",
+        "local_path": "images/46-stripe-connect-embedded-onboarding.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 19642,
+        "sha256": "1c12cac8fb7c79cecf98821ff90470ce6b5d31f64b3921a0f0571e3e5e03fdb7",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1c12cac8fb7c79cecf98821ff90470ce6b5d31f64b3921a0f0571e3e5e03fdb7",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.892,
+              "width": 1.0,
+              "height": 0.108
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.203,
+              "height": 0.772
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.203,
+              "y": 0.12,
+              "width": 0.797,
+              "height": 0.772
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.111,
+              "strength": 1.0
+            },
+            {
+              "position": 0.203,
+              "strength": 0.839
+            },
+            {
+              "position": 0.352,
+              "strength": 0.728
+            },
+            {
+              "position": 0.5,
+              "strength": 0.853
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.378,
+              "strength": 0.386
+            },
+            {
+              "position": 0.476,
+              "strength": 0.577
+            },
+            {
+              "position": 0.564,
+              "strength": 0.502
+            },
+            {
+              "position": 0.892,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Plaid Link — overview",
+      "source_url": "https://plaid.com/docs/link/",
+      "category": "Finance platform / account linking",
+      "selection_note": "Study institution search, credential handoff, consent, multifactor prompts, account selection, and recoverable error states.",
+      "visual": {
+        "source_page_url": "https://plaid.com/docs/link/",
+        "source_image_url": "https://plaid.com/assets/img/plaid-social-card-landscape.jpg",
+        "local_path": "images/47-plaid-link-overview.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 126644,
+        "sha256": "e62f71845000e536efa32f3e3dc1737ea4bf900532e378488eb4f6e24a24897f",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "e62f71845000e536efa32f3e3dc1737ea4bf900532e378488eb4f6e24a24897f",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.066
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.911,
+              "width": 1.0,
+              "height": 0.089
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.066,
+              "width": 0.261,
+              "height": 0.845
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.261,
+              "y": 0.066,
+              "width": 0.739,
+              "height": 0.845
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.261,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.066,
+              "strength": 1.0
+            },
+            {
+              "position": 0.161,
+              "strength": 0.457
+            },
+            {
+              "position": 0.911,
+              "strength": 0.637
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "PayPal — create an account",
+      "source_url": "https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315",
+      "category": "Consumer finance / account creation",
+      "selection_note": "Study the branch between personal and business registration and the progressive collection of contact and payment details.",
+      "visual": {
+        "source_page_url": "https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315",
+        "source_image_url": "https://www.paypal.com/cshelp/_next/image?url=https%3A%2F%2Fwww.paypalobjects.com%2Fhelpcenter%2Fimages%2F241211.jpg&w=640&q=75",
+        "local_path": "images/48-paypal-create-an-account.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 640,
+        "height": 480,
+        "original_width": 640,
+        "original_height": 480,
+        "bytes": 44706,
+        "sha256": "ae94846f99e77eb0b78cb43b915b6ad20431c3b9590077ad1bd79f514c15ac17",
+        "source_hint": "hc-help-option-img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "ae94846f99e77eb0b78cb43b915b6ad20431c3b9590077ad1bd79f514c15ac17",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content",
+        "panel_summary": "Leading navigation or collection list beside a dominant content area.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.148
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.148,
+              "width": 0.237,
+              "height": 0.852
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "primary canvas/content",
+            "position": "center",
+            "bounds": {
+              "x": 0.237,
+              "y": 0.148,
+              "width": 0.763,
+              "height": 0.852
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.136,
+              "strength": 0.943
+            },
+            {
+              "position": 0.237,
+              "strength": 1.0
+            },
+            {
+              "position": 0.334,
+              "strength": 0.968
+            },
+            {
+              "position": 0.438,
+              "strength": 0.937
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.148,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Shopify — initial setup",
+      "source_url": "https://help.shopify.com/en/manual/intro-to-shopify/initial-setup",
+      "category": "Commerce / first-run setup",
+      "selection_note": "Study the merchant checklist that sequences store configuration, products, policies, payments, shipping, and launch readiness.",
+      "visual": {
+        "source_page_url": "https://help.shopify.com/en/manual/intro-to-shopify/initial-setup",
+        "source_image_url": "https://image.thum.io/get/width/1400/crop/1000/noanimate/https://help.shopify.com/en/manual/intro-to-shopify/initial-setup",
+        "local_path": "images/49-shopify-initial-setup.webp",
+        "capture_kind": "remote-page-screenshot",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1201,
+        "height": 1000,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 5800,
+        "sha256": "8447058e1327b898314ef93625624db38d4964fcc0a643e9a08b5912fff877fb",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "8447058e1327b898314ef93625624db38d4964fcc0a643e9a08b5912fff877fb",
+        "orientation": "landscape",
+        "layout_model": "sidebar-content-inspector",
+        "panel_summary": "Leading navigation, central work area, and trailing detail inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.085
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "navigation/list sidebar",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.085,
+              "width": 0.377,
+              "height": 0.915
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.728,
+              "y": 0.085,
+              "width": 0.272,
+              "height": 0.915
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.377,
+              "y": 0.085,
+              "width": 0.351,
+              "height": 0.915
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.377,
+              "strength": 0.971
+            },
+            {
+              "position": 0.527,
+              "strength": 1.0
+            },
+            {
+              "position": 0.611,
+              "strength": 0.808
+            },
+            {
+              "position": 0.728,
+              "strength": 0.876
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.085,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Square — account setup guide",
+      "source_url": "https://squareup.com/help/us/en/article/5123-square-get-started-guide",
+      "visual_source_url": "https://app.squareup.com/signup/en-US",
+      "category": "Commerce finance / account setup",
+      "selection_note": "Study the operational onboarding checklist spanning identity, bank linking, catalog setup, hardware, staff, and first payment.",
+      "visual": {
+        "source_page_url": "https://squareup.com/help/us/en/article/5123-square-get-started-guide",
+        "source_image_url": "https://onboardfrontend-production-c.squarecdn.com/builds/cac7161/assets/images/referrals/social-share.us.jpg",
+        "local_path": "images/50-square-account-setup-guide.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 13438,
+        "sha256": "144b94aebdecd7d820f6020afaf39320464c833a97ada5556843ff91a8a02d46",
+        "source_hint": "twitter:image:src"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "144b94aebdecd7d820f6020afaf39320464c833a97ada5556843ff91a8a02d46",
+        "orientation": "landscape",
+        "layout_model": "content-inspector",
+        "panel_summary": "Dominant content area with a trailing detail or property inspector.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "detail/inspector",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.747,
+              "y": 0.12,
+              "width": 0.253,
+              "height": 0.88
+            },
+            "evidence": "semantic cue plus measured or conventional boundary"
+          },
+          {
+            "role": "data table/list",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 0.747,
+              "height": 0.88
+            },
+            "evidence": "dominant remaining region"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.576,
+              "strength": 1.0
+            },
+            {
+              "position": 0.747,
+              "strength": 0.808
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.357,
+              "strength": 0.705
+            },
+            {
+              "position": 0.436,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    }
+  ],
+  "visual_count": 50,
+  "structure_count": 50
+}

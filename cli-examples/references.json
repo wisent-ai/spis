@@ -1,0 +1,361 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "cli-examples",
+  "generated_at": "2026-08-16",
+  "reference_count": 50,
+  "complete_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "Git",
+      "path": "references/01-git/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 2,
+      "name": "GitHub CLI (gh)",
+      "path": "references/02-github-cli-gh/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 3,
+      "name": "GitLab CLI (glab)",
+      "path": "references/03-gitlab-cli-glab/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 4,
+      "name": "Cargo",
+      "path": "references/04-cargo/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 5,
+      "name": "Go command",
+      "path": "references/05-go-command/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 6,
+      "name": "uv",
+      "path": "references/06-uv/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 7,
+      "name": "npm CLI",
+      "path": "references/07-npm-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 8,
+      "name": "pnpm",
+      "path": "references/08-pnpm/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 9,
+      "name": "pip",
+      "path": "references/09-pip/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 10,
+      "name": "Homebrew",
+      "path": "references/10-homebrew/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 11,
+      "name": "APT",
+      "path": "references/11-apt/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 12,
+      "name": "DNF",
+      "path": "references/12-dnf/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 13,
+      "name": "Nix CLI",
+      "path": "references/13-nix-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 14,
+      "name": "Docker CLI",
+      "path": "references/14-docker-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 15,
+      "name": "Podman",
+      "path": "references/15-podman/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 16,
+      "name": "kubectl",
+      "path": "references/16-kubectl/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 17,
+      "name": "Helm",
+      "path": "references/17-helm/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 18,
+      "name": "Terraform CLI",
+      "path": "references/18-terraform-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 19,
+      "name": "OpenTofu CLI",
+      "path": "references/19-opentofu-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 20,
+      "name": "Ansible command-line tools",
+      "path": "references/20-ansible-command-line-tools/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 21,
+      "name": "Packer",
+      "path": "references/21-packer/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 22,
+      "name": "Vagrant",
+      "path": "references/22-vagrant/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 23,
+      "name": "Pulumi CLI",
+      "path": "references/23-pulumi-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 24,
+      "name": "AWS CLI",
+      "path": "references/24-aws-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 25,
+      "name": "Google Cloud CLI (gcloud)",
+      "path": "references/25-google-cloud-cli-gcloud/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 26,
+      "name": "Azure CLI",
+      "path": "references/26-azure-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 27,
+      "name": "DigitalOcean CLI (doctl)",
+      "path": "references/27-digitalocean-cli-doctl/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 28,
+      "name": "Oracle Cloud Infrastructure CLI",
+      "path": "references/28-oracle-cloud-infrastructure-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 29,
+      "name": "curl",
+      "path": "references/29-curl/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 30,
+      "name": "HTTPie CLI",
+      "path": "references/30-httpie-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 31,
+      "name": "GNU Wget",
+      "path": "references/31-gnu-wget/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 32,
+      "name": "Nmap",
+      "path": "references/32-nmap/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 33,
+      "name": "dig",
+      "path": "references/33-dig/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 34,
+      "name": "iproute2",
+      "path": "references/34-iproute2/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 35,
+      "name": "OpenSSL command-line tools",
+      "path": "references/35-openssl-command-line-tools/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 36,
+      "name": "age",
+      "path": "references/36-age/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 37,
+      "name": "SOPS",
+      "path": "references/37-sops/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 38,
+      "name": "Cosign",
+      "path": "references/38-cosign/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 39,
+      "name": "Trivy",
+      "path": "references/39-trivy/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 40,
+      "name": "Vault CLI",
+      "path": "references/40-vault-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 41,
+      "name": "jq",
+      "path": "references/41-jq/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 42,
+      "name": "yq",
+      "path": "references/42-yq/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 43,
+      "name": "SQLite command-line shell",
+      "path": "references/43-sqlite-command-line-shell/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 44,
+      "name": "DuckDB CLI",
+      "path": "references/44-duckdb-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 45,
+      "name": "psql",
+      "path": "references/45-psql/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 46,
+      "name": "redis-cli",
+      "path": "references/46-redis-cli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 47,
+      "name": "MongoDB Shell (mongosh)",
+      "path": "references/47-mongodb-shell-mongosh/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 48,
+      "name": "rclone",
+      "path": "references/48-rclone/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 49,
+      "name": "rsync",
+      "path": "references/49-rsync/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 50,
+      "name": "systemctl",
+      "path": "references/50-systemctl/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    }
+  ],
+  "measured_at": "2026-08-19",
+  "partial_count": 50
+}

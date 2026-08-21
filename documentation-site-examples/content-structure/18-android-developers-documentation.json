@@ -1,0 +1,1001 @@
+{
+  "name": "Android Developers Documentation",
+  "source_url": "https://developer.android.com/docs",
+  "category": "Mobile platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 8563,
+  "landing_nav": [
+    {
+      "text": "Essentials",
+      "path": "/get-started"
+    },
+    {
+      "text": "Get started",
+      "path": "/ai"
+    },
+    {
+      "text": "Hello, world!",
+      "path": "/get-started/overview"
+    },
+    {
+      "text": "Developer Verification",
+      "path": "/developer-verification"
+    },
+    {
+      "text": "Adaptive apps",
+      "path": "/adaptive-apps"
+    },
+    {
+      "text": "Compose for UI",
+      "path": "/compose"
+    },
+    {
+      "text": "AI-powered IDE",
+      "path": "/studio"
+    },
+    {
+      "text": "Training",
+      "path": "/courses"
+    },
+    {
+      "text": "Phones, tablets, foldables",
+      "path": "/phones-tablets-foldables"
+    },
+    {
+      "text": "Android for Cars",
+      "path": "/cars"
+    },
+    {
+      "text": "Android TV",
+      "path": "/tv"
+    },
+    {
+      "text": "Android XR",
+      "path": "/xr"
+    },
+    {
+      "text": "Googlebook",
+      "path": "/googlebook"
+    },
+    {
+      "text": "ChromeOS",
+      "path": "/chrome-os"
+    },
+    {
+      "text": "Wear OS",
+      "path": "/wear"
+    },
+    {
+      "text": "Games",
+      "path": "/games"
+    },
+    {
+      "text": "Camera & media",
+      "path": "/media"
+    },
+    {
+      "text": "Social & messaging",
+      "path": "/social-and-messaging"
+    },
+    {
+      "text": "Health & fitness",
+      "path": "/health-and-fitness"
+    },
+    {
+      "text": "Productivity",
+      "path": "/productivity"
+    },
+    {
+      "text": "Enterprise apps",
+      "path": "/work/overview"
+    },
+    {
+      "text": "Latest updates",
+      "path": "/latest-updates"
+    },
+    {
+      "text": "Experimental updates",
+      "path": "/latest-updates/experimental"
+    },
+    {
+      "text": "Android Studio preview",
+      "path": "/studio/preview"
+    },
+    {
+      "text": "Jetpack & Compose libraries",
+      "path": "/jetpack/androidx/versions"
+    },
+    {
+      "text": "Wear OS releases",
+      "path": "/training/wearables/versions/latest"
+    },
+    {
+      "text": "Privacy Sandbox ↗️",
+      "path": "/design-for-safety/privacy-sandbox"
+    },
+    {
+      "text": "Design & Plan",
+      "path": "/design"
+    },
+    {
+      "text": "Learn more",
+      "path": "/quality/excellent"
+    },
+    {
+      "text": "Design for Android",
+      "path": "/design/ui"
+    },
+    {
+      "text": "Mobile",
+      "path": "/design/ui/mobile"
+    },
+    {
+      "text": "Desktop experiences",
+      "path": "/design/ui/desktop"
+    },
+    {
+      "text": "XR Headsets & XR Glasses",
+      "path": "/design/ui/xr"
+    },
+    {
+      "text": "AI Glasses",
+      "path": "/design/ui/ai-glasses"
+    },
+    {
+      "text": "Widgets",
+      "path": "/design/ui/widget"
+    },
+    {
+      "text": "Wear OS",
+      "path": "/design/ui/wear"
+    },
+    {
+      "text": "Android TV",
+      "path": "/design/ui/tv"
+    },
+    {
+      "text": "Android for Cars",
+      "path": "/design/ui/cars"
+    },
+    {
+      "text": "Introduction",
+      "path": "/topic/architecture/intro"
+    },
+    {
+      "text": "Libraries",
+      "path": "/topic/libraries/view-binding"
+    },
+    {
+      "text": "Navigation",
+      "path": "/guide/navigation/navigation-principles"
+    },
+    {
+      "text": "Modularization",
+      "path": "/topic/modularization"
+    },
+    {
+      "text": "Testing",
+      "path": "/training/testing/fundamentals"
+    },
+    {
+      "text": "Kotlin Multiplatform",
+      "path": "/kotlin/multiplatform"
+    },
+    {
+      "text": "Overview",
+      "path": "/quality"
+    },
+    {
+      "text": "Core value",
+      "path": "/quality/core-value"
+    },
+    {
+      "text": "User experience",
+      "path": "/quality/user-experience"
+    },
+    {
+      "text": "Accessibility",
+      "path": "/guide/topics/ui/accessibility"
+    },
+    {
+      "text": "Technical quality",
+      "path": "/quality/technical"
+    },
+    {
+      "text": "Excellent Experiences",
+      "path": "/quality/excellent"
+    },
+    {
+      "text": "Overview",
+      "path": "/security"
+    },
+    {
+      "text": "Privacy",
+      "path": "/privacy"
+    },
+    {
+      "text": "Identity",
+      "path": "/identity"
+    },
+    {
+      "text": "Fraud prevention",
+      "path": "/security/fraud-prevention"
+    },
+    {
+      "text": "Develop",
+      "path": "/develop"
+    },
+    {
+      "text": "Learn more",
+      "path": "/gemini-in-android"
+    },
+    {
+      "text": "Get Android Studio",
+      "path": "/studio"
+    },
+    {
+      "text": "Samples",
+      "path": "/samples"
+    },
+    {
+      "text": "Multidevice support",
+      "path": "/multidevice"
+    },
+    {
+      "text": "User interfaces",
+      "path": "/develop/ui"
+    },
+    {
+      "text": "Background work",
+      "path": "/develop/background-work"
+    },
+    {
+      "text": "Data and files",
+      "path": "/guide/topics/data"
+    },
+    {
+      "text": "Connectivity",
+      "path": "/develop/connectivity"
+    },
+    {
+      "text": "Write and debug code",
+      "path": "/studio/write"
+    },
+    {
+      "text": "Build projects",
+      "path": "/build/gradle-build-overview"
+    },
+    {
+      "text": "Test your app",
+      "path": "/training/testing"
+    },
+    {
+      "text": "Performance",
+      "path": "/topic/performance/overview"
+    },
+    {
+      "text": "Command-line tools",
+      "path": "/tools"
+    },
+    {
+      "text": "Gradle plugin API",
+      "path": "/reference/tools/gradle-api"
+    },
+    {
+      "text": "Android Bench",
+      "path": "/bench"
+    },
+    {
+      "text": "Android for Cars",
+      "path": "/training/cars"
+    },
+    {
+      "text": "Android TV",
+      "path": "/training/tv"
+    },
+    {
+      "text": "Android XR",
+      "path": "/develop/xr"
+    },
+    {
+      "text": "Wear OS",
+      "path": "/training/wearables"
+    },
+    {
+      "text": "Android Health",
+      "path": "/health-and-fitness/guides"
+    },
+    {
+      "text": "Better Together",
+      "path": "/develop/better-together"
+    },
+    {
+      "text": "Android platform",
+      "path": "/reference/packages"
+    },
+    {
+      "text": "Jetpack libraries",
+      "path": "/jetpack/androidx/explorer"
+    },
+    {
+      "text": "Compose libraries",
+      "path": "/jetpack/androidx/releases/compose"
+    },
+    {
+      "text": "Google Play",
+      "path": "/distribute"
+    },
+    {
+      "text": "Play Monetization",
+      "path": "/distribute/play-billing"
+    },
+    {
+      "text": "Play Integrity",
+      "path": "/google/play/integrity"
+    },
+    {
+      "text": "Play Policies",
+      "path": "/distribute/play-policies"
+    },
+    {
+      "text": "Overview",
+      "path": "/games"
+    },
+    {
+      "text": "Play Asset Delivery",
+      "path": "/guide/playcore/asset-delivery"
+    },
+    {
+      "text": "Play Games Services",
+      "path": "/games/pgs/overview"
+    },
+    {
+      "text": "Play Games on PC",
+      "path": "/games/playgames/overview"
+    },
+    {
+      "text": "Level Up guidelines",
+      "path": "/games/guidelines"
+    },
+    {
+      "text": "All Play guides ⤵️",
+      "path": "/distribute"
+    },
+    {
+      "text": "Play Feature Delivery",
+      "path": "/guide/playcore/feature-delivery"
+    },
+    {
+      "text": "Play In-app Updates",
+      "path": "/guide/playcore/in-app-updates"
+    },
+    {
+      "text": "Play In-app Reviews",
+      "path": "/guide/playcore/in-app-review"
+    },
+    {
+      "text": "Play Install Referrer",
+      "path": "/google/play/installreferrer"
+    },
+    {
+      "text": "All Play libraries ⤵️",
+      "path": "/distribute"
+    },
+    {
+      "text": "Android App Bundles",
+      "path": "/guide/app-bundle"
+    },
+    {
+      "text": "Brand & marketing",
+      "path": "/distribute/marketing-tools"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog"
+    },
+    {
+      "text": "Read the latest",
+      "path": "/blog/latest"
+    },
+    {
+      "text": "Explore the authors →",
+      "path": "/blog/authors"
+    },
+    {
+      "text": "Android Studio",
+      "path": "/studio"
+    },
+    {
+      "text": "Product News",
+      "path": "/blog/categories/product-news"
+    },
+    {
+      "text": "Community",
+      "path": "/blog/categories/community"
+    },
+    {
+      "text": "How-tos",
+      "path": "/blog/categories/how-tos"
+    },
+    {
+      "text": "Case Studies",
+      "path": "/blog/categories/case-studies"
+    },
+    {
+      "text": "Events & Programs",
+      "path": "/blog/categories/events-and-programs"
+    },
+    {
+      "text": "Documentation",
+      "path": "/blog/categories/documentation"
+    },
+    {
+      "text": "Android Developers",
+      "path": "/"
+    },
+    {
+      "text": "Develop for Android",
+      "path": "/get-started/overview"
+    },
+    {
+      "text": "I'm new to Android",
+      "path": "/get-started/overview"
+    },
+    {
+      "text": "Download samples",
+      "path": "/samples"
+    },
+    {
+      "text": "See code",
+      "path": "/samples"
+    },
+    {
+      "text": "Develop with Android Studio",
+      "path": "/studio/write"
+    },
+    {
+      "text": "Write code",
+      "path": "/studio/write"
+    },
+    {
+      "text": "Browse API reference",
+      "path": "/reference"
+    },
+    {
+      "text": "Look up code",
+      "path": "/reference"
+    },
+    {
+      "text": "Integrate AI into your apps",
+      "path": "/ai"
+    },
+    {
+      "text": "Get started with AI on Android",
+      "path": "/ai"
+    },
+    {
+      "text": "Adaptive apps",
+      "path": "/develop/adaptive-apps"
+    },
+    {
+      "text": "About adaptive layouts",
+      "path": "/develop/adaptive-apps"
+    },
+    {
+      "text": "Large screens",
+      "path": "/guide/topics/large-screens/get-started-with-large-screens"
+    },
+    {
+      "text": "ChromeOS",
+      "path": "/chrome-os/intro"
+    },
+    {
+      "text": "Cross device SDK",
+      "path": "/guide/topics/connectivity/cross-device-sdk/overview"
+    },
+    {
+      "text": "Health Connect",
+      "path": "/guide/health-and-fitness/health-connect"
+    },
+    {
+      "text": "Gemini",
+      "path": "/ai/overview"
+    },
+    {
+      "text": "Learn more",
+      "path": "/productivity"
+    },
+    {
+      "text": "Media apps",
+      "path": "/media"
+    },
+    {
+      "text": "Learn more",
+      "path": "/media"
+    },
+    {
+      "text": "Learn more",
+      "path": "/games"
+    },
+    {
+      "text": "Learn more",
+      "path": "/health-and-fitness"
+    },
+    {
+      "text": "Learn more",
+      "path": "/social-and-messaging"
+    },
+    {
+      "text": "Develop your UI",
+      "path": "/develop/ui"
+    },
+    {
+      "text": "Data & files",
+      "path": "/guide/topics/data"
+    },
+    {
+      "text": "Permissions",
+      "path": "/guide/topics/permissions/overview"
+    },
+    {
+      "text": "User identity",
+      "path": "/training/sign-in"
+    },
+    {
+      "text": "Navigation",
+      "path": "/guide/navigation/use-graph/navigate"
+    },
+    {
+      "text": "Intents and intent filters",
+      "path": "/guide/components/intents-filters"
+    },
+    {
+      "text": "Background tasks",
+      "path": "/develop/background-work/background-tasks"
+    },
+    {
+      "text": "Services",
+      "path": "/guide/components/services"
+    },
+    {
+      "text": "Alarms",
+      "path": "/training/scheduling"
+    },
+    {
+      "text": "Audio & video",
+      "path": "/guide/topics/media"
+    },
+    {
+      "text": "Camera",
+      "path": "/training/camera/choose-camera-library"
+    },
+    {
+      "text": "Sensors",
+      "path": "/guide/topics/sensors/sensors_overview"
+    },
+    {
+      "text": "User location",
+      "path": "/training/location"
+    },
+    {
+      "text": "App compatibility",
+      "path": "/guide/app-compatibility"
+    },
+    {
+      "text": "App bundles",
+      "path": "/guide/app-bundle"
+    },
+    {
+      "text": "Configure",
+      "path": "/build"
+    },
+    {
+      "text": "Test",
+      "path": "/training/testing"
+    },
+    {
+      "text": "View all stories",
+      "path": "/stories"
+    },
+    {
+      "text": "Google Photos builds for large screens",
+      "path": "/stories/apps/google-photos"
+    },
+    {
+      "text": "Monzo moves to CameraX",
+      "path": "/stories/apps/monzo-camerax"
+    },
+    {
+      "text": "Evernote users spend more time on large screens",
+      "path": "/stories/apps/evernote"
+    },
+    {
+      "text": "News",
+      "path": "/news"
+    },
+    {
+      "text": "Podcasts",
+      "path": "/podcasts"
+    },
+    {
+      "text": "Gaming",
+      "path": "/games"
+    },
+    {
+      "text": "Machine Learning",
+      "path": "/ml"
+    },
+    {
+      "text": "5G",
+      "path": "/training/connectivity/5g"
+    },
+    {
+      "text": "Large screens",
+      "path": "/large-screens"
+    },
+    {
+      "text": "ChromeOS devices",
+      "path": "/chrome-os"
+    },
+    {
+      "text": "Android 17",
+      "path": "/about/versions/17"
+    },
+    {
+      "text": "Android 16",
+      "path": "/about/versions/16"
+    },
+    {
+      "text": "Android 15",
+      "path": "/about/versions/15"
+    },
+    {
+      "text": "Android 14",
+      "path": "/about/versions/14"
+    },
+    {
+      "text": "Android 13",
+      "path": "/about/versions/13"
+    },
+    {
+      "text": "Android 12",
+      "path": "/about/versions/12"
+    },
+    {
+      "text": "Android 11",
+      "path": "/about/versions/11"
+    },
+    {
+      "text": "Android Studio guide",
+      "path": "/studio/intro"
+    },
+    {
+      "text": "Developers guides",
+      "path": "/guide"
+    },
+    {
+      "text": "API reference",
+      "path": "/reference"
+    },
+    {
+      "text": "Download Studio",
+      "path": "/studio"
+    },
+    {
+      "text": "Android NDK",
+      "path": "/ndk"
+    },
+    {
+      "text": "Android",
+      "path": ""
+    },
+    {
+      "text": "License",
+      "path": "/license"
+    },
+    {
+      "text": "Brand guidelines",
+      "path": "/distribute/marketing-tools/brand-guidelines"
+    },
+    {
+      "text": "Subscribe",
+      "path": "/updates"
+    }
+  ],
+  "url_sections": {
+    "reference": 2654,
+    "sdk": 973,
+    "develop": 871,
+    "blog": 489,
+    "training": 421,
+    "games": 358,
+    "studio": 306,
+    "design": 252,
+    "guide": 236,
+    "newsletter": 208,
+    "topic": 204,
+    "about": 180,
+    "courses": 152,
+    "jetpack": 144,
+    "build": 144,
+    "google": 126,
+    "media": 126,
+    "design-for-safety": 111,
+    "health-and-fitness": 108,
+    "privacy-and-security": 90,
+    "identity": 72,
+    "ndk": 59,
+    "distribute": 54,
+    "kotlin": 37,
+    "work": 36,
+    "tools": 36,
+    "wear": 19,
+    "social-and-messaging": 18,
+    "docs": 18,
+    "agi": 18,
+    "stories": 18,
+    "quality": 18,
+    "agents": 5,
+    "events": 1,
+    "productivity": 1
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "samples",
+      "/samples",
+      "download samples"
+    ],
+    "tutorials / learn": [
+      "courses",
+      "/courses",
+      "training",
+      "learn more"
+    ],
+    "getting started / quickstart": [
+      "get started",
+      "/get-started",
+      "/get-started/overview",
+      "get started with ai on android"
+    ],
+    "guides / how-to": [
+      "guide",
+      "/guide",
+      "/guide/app-bundle",
+      "developers guides"
+    ],
+    "api reference": [
+      "reference",
+      "/reference",
+      "api reference",
+      "gradle plugin api"
+    ],
+    "changelog / release notes": [
+      "/updates",
+      "latest updates",
+      "/latest-updates",
+      "wear os releases"
+    ],
+    "security": [
+      "/security",
+      "privacy-and-security",
+      "/security/fraud-prevention"
+    ],
+    "cli reference": [
+      "command-line tools"
+    ],
+    "sdk / client libraries": [
+      "sdk",
+      "libraries",
+      "cross device sdk",
+      "compose libraries"
+    ],
+    "configuration / settings": [
+      "configure"
+    ],
+    "community / support": [
+      "community",
+      "multidevice support",
+      "/blog/categories/community"
+    ],
+    "playground / sandbox": [
+      "privacy sandbox ↗️",
+      "/design-for-safety/privacy-sandbox"
+    ],
+    "integrations": [
+      "integrate ai into your apps"
+    ],
+    "concepts / architecture": [
+      "/topic/architecture/intro"
+    ],
+    "videos": [
+      "audio & video"
+    ],
+    "accessibility": [
+      "accessibility",
+      "/guide/topics/ui/accessibility"
+    ],
+    "versioned docs": [
+      "/about/versions/14",
+      "/about/versions/15",
+      "/about/versions/16",
+      "/about/versions/12"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://developer.android.com/get-started",
+      "h1": "",
+      "h2": [
+        "Developer centers",
+        "Latest updates",
+        "Developer stories"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/ai",
+      "h1": "",
+      "h2": [
+        "Integrate your app with the Android intelligence system",
+        "Find your Android AI pathway",
+        "New Android intelligent features",
+        "AI case studies",
+        "Traditional ML solutions",
+        "Accelerate your development",
+        "Latest news and videos",
+        "Community & Support"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/developer-verification",
+      "h1": "",
+      "h2": [
+        "Choose your verification path",
+        "Timeline",
+        "Get support",
+        "Latest News"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/adaptive-apps",
+      "h1": "",
+      "h2": [
+        "Build adaptive apps",
+        "Optimize the user experience on all devices",
+        "Guarantee reliability with automated testing",
+        "Get inspired",
+        "Latest news",
+        "Latest videos"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/compose",
+      "h1": "",
+      "h2": [
+        "Build across devices using Compose",
+        "Featured resources",
+        "What’s next for Jetpack Compose",
+        "Latest news and videos",
+        "Join the Compose community"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/studio",
+      "h1": "",
+      "h2": [
+        "Getting started",
+        "Recent videos",
+        "Download Android Studio Quail 3 | 2026.1.3 Patch 1",
+        "Terms and Conditions",
+        "Download Android Studio Quail 3 | 2026.1.3 Patch 1",
+        "Terms and Conditions",
+        "Download Android Studio Quail 3 | 2026.1.3 Patch 1",
+        "Terms and Conditions",
+        "Download Android Studio Quail 3 | 2026.1.3 Patch 1",
+        "Terms and Conditions",
+        "Download Android Studio Quail 3 | 2026.1.3 Patch 1",
+        "Terms and Conditions",
+        "Download Android Studio Quail 3 | 2026.1.3 Patch 1",
+        "Terms and Conditions",
+        "Download Android Studio Quail 3 | 2026.1.3 Patch 1",
+        "Terms and Conditions",
+        "Download Android Command Line Tools",
+        "Terms and Conditions",
+        "Download Android Command Line Tools",
+        "Terms and Conditions"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/courses",
+      "h1": "",
+      "h2": [
+        "For beginners",
+        "For experienced Android developers",
+        "Certification program",
+        "For Educators"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/phones-tablets-foldables",
+      "h1": "",
+      "h2": [
+        "Jetpack Compose APIs",
+        "Adaptive design",
+        "Latest news",
+        "Latest videos"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/cars",
+      "h1": "",
+      "h2": [
+        "Latest news",
+        "Latest videos"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/tv",
+      "h1": "",
+      "h2": [
+        "Latest news",
+        "Latest videos"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/xr",
+      "h1": "",
+      "h2": [
+        "Create endless possibilities with Android XR",
+        "Choose your preferred platform",
+        "Start designing for Android XR",
+        "Try out samples",
+        "What's new",
+        "Share your feedback"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/googlebook",
+      "h1": "",
+      "h2": [
+        "Create seamless experiences for Googlebook",
+        "Build essentials",
+        "Differentiate on desktop",
+        "Get inspired",
+        "Start developing"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/chrome-os",
+      "h1": "",
+      "h2": [
+        "Latest news",
+        "Latest videos"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/wear",
+      "h1": "",
+      "h2": [
+        "Build apps for the wrist with Wear OS",
+        "Get started with Wear OS",
+        "New features",
+        "Highlighted samples & codelabs",
+        "What developers are saying",
+        "Latest news",
+        "Join the Wear OS community"
+      ]
+    },
+    {
+      "url": "https://developer.android.com/games",
+      "h1": "",
+      "h2": [
+        "What's new",
+        "2026 GDC Highlights",
+        "Priority workstreams",
+        "Developer stories",
+        "Highlighted resources",
+        "Community resources"
+      ]
+    }
+  ]
+}

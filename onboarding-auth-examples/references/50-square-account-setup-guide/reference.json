@@ -1,0 +1,289 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Square — account setup guide",
+  "product_url": "https://squareup.com/help/us/en/article/5123-square-get-started-guide",
+  "evidence_status": "partial",
+  "upstream_owner": "Block, Inc. / Square",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=Gbf0ljareRk",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 538123,
+      "sha256": "796fea8c483569a53cea88e525a3f69bcadbb99ba3db755b8a71d5145a52ef9e",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "account entry",
+      "local_path": "media/state-01-account-entry.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 10s (mean abs diff 1.4961/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 66516,
+      "sha256": "4726395c70e7ab6b8e4626af5ccd05a6b74b2cb2675d3bedb90816432f89634d",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 10.0,
+        "mean_abs_diff": 1.4961,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "identity verified",
+      "local_path": "media/state-02-identity-verified.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.6445/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 88043,
+      "sha256": "a3b1b1f139cc5ea80de1ddc16ac54a1569dae7d1bec89dd813d7095e13e75ccd",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 19.5,
+        "mean_abs_diff": 1.6445,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "bank linked",
+      "local_path": "media/state-03-bank-linked.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 34.5s (mean abs diff 1.6289/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 31661,
+      "sha256": "d52f86106fea9a3a394396d2f1bb929782a3df3ca2eaa0fe0884c908793b7a42",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 34.5,
+        "mean_abs_diff": 1.6289,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "catalog ready",
+      "local_path": "media/state-04-catalog-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 1.6992/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 36131,
+      "sha256": "01c4fb9eb1c23b2f17de114fe13081a10d62fc764362f6fffda475b53e06dc7b",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 50.0,
+        "mean_abs_diff": 1.6992,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "payments ready",
+      "local_path": "media/state-05-payments-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65s (mean abs diff 1.5664/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 52897,
+      "sha256": "74e1d9a225d93f8ac44d6788ec39b9ab145b3967a092d6be5a4270fc998314b3",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.0,
+        "mean_abs_diff": 1.5664,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "first payment",
+      "local_path": "media/state-06-first-payment.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 81s (mean abs diff 1.7539/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 40969,
+      "sha256": "18a798274c9a325a14544f087a9419aa5fe3f5b9f3ad47b0bef82edab7e57bd2",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 81.0,
+        "mean_abs_diff": 1.7539,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Create or sign in to the Square account",
+      "response": "Square opens the seller setup checklist",
+      "feedback": "The retained account entry state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-account-entry.png @ 4.50s; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Enter and verify business and representative details",
+      "response": "Square activates the seller identity",
+      "feedback": "The recording advances to identity verified and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-account-entry.png @ 4.50s; media/state-02-identity-verified.png @ 19.79s; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Link the payout bank account",
+      "response": "Square confirms the payout destination",
+      "feedback": "The navigation result is visible as bank linked.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-bank-linked.png @ 35.07s; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Create the first item and price",
+      "response": "Square persists the catalog item",
+      "feedback": "The official recording shows the confirmed catalog ready state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-bank-linked.png @ 35.07s; media/state-04-catalog-ready.png @ 50.36s; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-bank-linked.png @ 35.07s; media/state-04-catalog-ready.png @ 50.36s; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Connect or configure the payment device or Tap to Pay",
+      "response": "Square reports the reader ready",
+      "feedback": "Progress is observable as the distinct payments ready state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-catalog-ready.png @ 50.36s; media/state-05-payments-ready.png @ 65.65s; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-bank-linked.png @ 35.07s; media/state-04-catalog-ready.png @ 50.36s; media/state-05-payments-ready.png @ 65.65s; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Run the first payment or documented test",
+      "response": "Square records the transaction, proving first selling success",
+      "feedback": "The retained first payment state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-payments-ready.png @ 65.65s; media/state-06-first-payment.png @ 80.94s; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+    }
+  ],
+  "journey": {
+    "actor": "new Square seller",
+    "goal": "complete operational setup and take the first payment",
+    "prerequisites": [
+      "Square account",
+      "business identity",
+      "bank details or payment hardware"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Create or sign in to the Square account",
+        "system_response": "Square opens the seller setup checklist",
+        "state": "account entry",
+        "evidence": "media/state-01-account-entry.png; media/official-recording.mp4#t=4.497; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+      },
+      {
+        "index": 2,
+        "user_action": "Enter and verify business and representative details",
+        "system_response": "Square activates the seller identity",
+        "state": "identity verified",
+        "evidence": "media/state-02-identity-verified.png; media/official-recording.mp4#t=19.785; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+      },
+      {
+        "index": 3,
+        "user_action": "Link the payout bank account",
+        "system_response": "Square confirms the payout destination",
+        "state": "bank linked",
+        "evidence": "media/state-03-bank-linked.png; media/official-recording.mp4#t=35.074; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+      },
+      {
+        "index": 4,
+        "user_action": "Create the first item and price",
+        "system_response": "Square persists the catalog item",
+        "state": "catalog ready",
+        "evidence": "media/state-04-catalog-ready.png; media/official-recording.mp4#t=50.362; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+      },
+      {
+        "index": 5,
+        "user_action": "Connect or configure the payment device or Tap to Pay",
+        "system_response": "Square reports the reader ready",
+        "state": "payments ready",
+        "evidence": "media/state-05-payments-ready.png; media/official-recording.mp4#t=65.651; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+      },
+      {
+        "index": 6,
+        "user_action": "Run the first payment or documented test",
+        "system_response": "Square records the transaction, proving first selling success",
+        "state": "first payment",
+        "evidence": "media/state-06-first-payment.png; media/official-recording.mp4#t=80.940; https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+      }
+    ],
+    "failure_route": [
+      "At identity verified or bank linked, invalid, expired, denied, or missing required input leaves the flow short of first payment; evidence: media/state-02-identity-verified.png, media/state-03-bank-linked.png, and https://squareup.com/help/us/en/article/5123-square-get-started-guide.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-bank-linked.png through media/state-05-payments-ready.png."
+    ],
+    "recovery_route": [
+      "Return to the retained identity verified or bank linked requirement, correct or resend the blocking input, and resubmit; evidence: https://squareup.com/help/us/en/article/5123-square-get-started-guide.",
+      "Continue through the same terminal action until first payment is visible in media/state-06-first-payment.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "first payment retained at media/state-06-first-payment.png and media/official-recording.mp4#t=80.940; source https://squareup.com/help/us/en/article/5123-square-get-started-guide"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-account-entry.png and media/state-02-identity-verified.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-bank-linked.png and media/state-04-catalog-ready.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

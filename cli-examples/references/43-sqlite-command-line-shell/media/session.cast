@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921626,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"SQLite command-line shell authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: SQLite command-line shell\r\n"]
+[0.55,"o","cli-ref$ sqlite3 --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","3.45.1 2024-01-30 16:01:20 e876e51a0ed5c5b3126f52e532044363a014bc594cfefa87ffb5b82257ccalt1 (64-bit)\r\n"]
+[2.2,"o","cli-ref$ sqlite3 --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage: sqlite3 [OPTIONS] [FILENAME [SQL]]\r\nFILENAME is the name of an SQLite database. A new database is created\r\nif the file does not previously exist. Defaults to :memory:.\r\nOPTIONS include:\r\n   --                   treat no subsequent arguments as options\r\n   -A ARGS...           run \".archive ARGS\" and exit\r\n   -append              append the database to the end of the file\r\n   -ascii               set output mode to 'ascii'\r\n   -bail                stop after hitting an error\r\n   -batch               force batch I/O\r\n   -box                 set output mode to 'box'\r\n   -column              set output mode to 'column'\r\n   -cmd COMMAND         run \"COMMAND\" before reading stdin\r\n   -csv                 set output mode to 'csv'\r\n"]
+[5.1,"o","cli-ref$ sqlite3 --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","sqlite3: Error: unknown option: -definitely-invalid-option\r\nUse -help for a list of options.\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ sqlite3 --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ sqlite3 --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage: sqlite3 [OPTIONS] [FILENAME [SQL]]\r\nFILENAME is the name of an SQLite database. A new database is created\r\nif the file does not previously exist. Defaults to :memory:.\r\nOPTIONS include:\r\n"]

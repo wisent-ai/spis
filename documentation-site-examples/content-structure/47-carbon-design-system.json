@@ -1,0 +1,169 @@
+{
+  "name": "Carbon Design System",
+  "source_url": "https://carbondesignsystem.com/",
+  "category": "Design system documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 319,
+  "landing_nav": [
+    {
+      "text": "Carbon Design System",
+      "path": "/"
+    },
+    {
+      "text": "IntroducingCarbon for AI",
+      "path": "/guidelines/carbon-for-ai/"
+    },
+    {
+      "text": "Design",
+      "path": "/designing/get-started"
+    },
+    {
+      "text": "Develop",
+      "path": "/developing/get-started"
+    },
+    {
+      "text": "Migrate",
+      "path": "/migrating/guide/overview/"
+    },
+    {
+      "text": "What is Carbon?",
+      "path": "/all-about-carbon/what-is-carbon/"
+    },
+    {
+      "text": "The Carbon ecosystem",
+      "path": "/all-about-carbon/the-carbon-ecosystem/"
+    },
+    {
+      "text": "Figma kit",
+      "path": "/designing/kits/figma/"
+    },
+    {
+      "text": "Sketch kits",
+      "path": "/designing/kits/sketch/"
+    },
+    {
+      "text": "Start contributing →",
+      "path": "/contributing/get-started/overview"
+    },
+    {
+      "text": "PreviousHome",
+      "path": "/"
+    },
+    {
+      "text": "NextAll about Carbon: What is Carbon?",
+      "path": "/all-about-carbon/what-is-carbon/"
+    }
+  ],
+  "url_sections": {
+    "components": 175,
+    "developing": 43,
+    "elements": 25,
+    "patterns": 18,
+    "community": 14,
+    "data-visualization": 11,
+    "guidelines": 8,
+    "contributing": 6,
+    "all-about-carbon": 4,
+    "designing": 4,
+    "migrating": 4,
+    "help": 3,
+    "whats-happening": 2,
+    "deprecations": 1
+  },
+  "content_kinds": {
+    "getting started / quickstart": [
+      "/designing/get-started",
+      "/developing/get-started",
+      "/contributing/get-started/overview"
+    ],
+    "guides / how-to": [
+      "/migrating/guide/overview/"
+    ],
+    "migration / upgrade": [
+      "migrate",
+      "migrating",
+      "/migrating/guide/overview/"
+    ],
+    "community / support": [
+      "community"
+    ],
+    "contributing": [
+      "contributing",
+      "start contributing →",
+      "/contributing/get-started/overview"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://carbondesignsystem.com/designing/get-started",
+      "h1": "Get started",
+      "h2": [
+        "Step 1: Learn about Carbon",
+        "Step 2: Access the tools",
+        "Step 3: Get the Figma design kits",
+        "Step 4: Review our usage guidance",
+        "Step 5: Explore foundational guidance",
+        "Step 6: Connect with us"
+      ]
+    },
+    {
+      "url": "https://carbondesignsystem.com/developing/get-started",
+      "h1": "Get started",
+      "h2": [
+        "Overview",
+        "Installation and setup",
+        "Additional guidance",
+        "Connect with us"
+      ]
+    },
+    {
+      "url": "https://carbondesignsystem.com/guidelines/carbon-for-ai/",
+      "h1": "Carbon for AI",
+      "h2": [
+        "Introduction",
+        "Style elements",
+        "AI explainability",
+        "AI label",
+        "AI chat",
+        "AI components",
+        "Accessibility",
+        "AI resources",
+        "Feedback"
+      ]
+    },
+    {
+      "url": "https://carbondesignsystem.com/all-about-carbon/what-is-carbon/",
+      "h1": "What is Carbon?",
+      "h2": [
+        "Overview",
+        "Introduction to Carbon",
+        "How Carbon works",
+        "Carbon compliance at IBM",
+        "Contact us"
+      ]
+    },
+    {
+      "url": "https://carbondesignsystem.com/contributing/get-started/overview",
+      "h1": "Getting started",
+      "h2": [
+        "Get started",
+        "Contribution gallery",
+        "Carbon champions",
+        "Carbon Labs",
+        "Types of contribution",
+        "The process"
+      ]
+    },
+    {
+      "url": "https://carbondesignsystem.com/migrating/guide/overview/",
+      "h1": "Guide",
+      "h2": [
+        "Overview",
+        "Getting started",
+        "YourLearning",
+        "Updates"
+      ]
+    }
+  ]
+}

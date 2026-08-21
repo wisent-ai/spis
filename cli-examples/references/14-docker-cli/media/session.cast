@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921623,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Docker CLI authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Docker CLI\r\n"]
+[0.55,"o","cli-ref$ docker --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","Docker version 29.1.3, build 29.1.3-0ubuntu3~24.04.2\r\n"]
+[2.2,"o","cli-ref$ docker --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage:  docker [OPTIONS] COMMAND\r\n\r\nA self-sufficient runtime for containers\r\n\r\nCommon Commands:\r\n  run         Create and run a new container from an image\r\n  exec        Execute a command in a running container\r\n  ps          List containers\r\n  build       Build an image from a Dockerfile\r\n  pull        Download an image from a registry\r\n  push        Upload an image to a registry\r\n  images      List images\r\n  login       Authenticate to a registry\r\n  logout      Log out from a registry\r\n"]
+[5.1,"o","cli-ref$ docker --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","unknown flag: --definitely-invalid-option\r\n\r\nUsage:  docker [OPTIONS] COMMAND [ARG...]\r\n\r\nRun 'docker --help' for more information\r\n[exit status 125]\r\n"]
+[7.1,"o","cli-ref$ docker --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ docker --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage:  docker [OPTIONS] COMMAND\r\n\r\nA self-sufficient runtime for containers\r\n\r\n"]

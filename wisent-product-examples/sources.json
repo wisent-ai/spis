@@ -1,0 +1,658 @@
+{
+  "schema": "wisent.example-catalog.v2",
+  "catalog": "wisent-product-examples",
+  "title": "Wisent product examples",
+  "description": "The Wisent products with a runnable CLI on the capture host, each measured by running it: version form, top-level help, one subcommand help surface, one invalid flag, a Ctrl-C on an unsubmitted line, the recovering help, and the same help with NO_COLOR=1.",
+  "catalog_scope": "This catalog is bounded by the Wisent products installed on the capture host: it contains one record for each of the 10 Wisent products with a runnable CLI on this workstation, and nothing else. It is not a curated fifty, it is not a sample of the company's product surface, and it does not cover Wisent products that ship only as a macOS app, an iOS app, a web application or a service. Every Wisent repository whose CLI is not installed here is absent by construction.",
+  "capture_host": {
+    "os": "macOS",
+    "os_version": "26.4.1",
+    "os_build": "25E253",
+    "arch": "arm64",
+    "kernel": "Darwin 25.4.0",
+    "shell": "/bin/bash",
+    "terminal": "pseudo-terminal, 100x32, TERM=xterm-256color"
+  },
+  "excluded_from_scope": [
+    {
+      "binary": "omp",
+      "resolved": "~/.local/bin/omp",
+      "reason": "Not a Wisent repository: the binary's own build metadata names github.com/can1357/oh-my-pi. It is the harness we run, not a product we ship."
+    },
+    {
+      "binary": "stado_fleet",
+      "resolved": "~/.stado/bin/stado_fleet",
+      "reason": "A second binary of the same product (Stado, wisent-ai/stado), not a separate product."
+    },
+    {
+      "binary": "wc",
+      "resolved": "~/.local/bin/wc",
+      "reason": "The legacy name of the Stado CLI; `wc --version` prints `stado 0.6.0`. Same product."
+    }
+  ],
+  "curated_at": "2026-08-19",
+  "count": 10,
+  "visual_count": 10,
+  "structure_count": 10,
+  "examples": [
+    {
+      "name": "Stado",
+      "slug": "stado",
+      "source_url": "https://github.com/wisent-ai/stado",
+      "repository": "wisent-ai/stado",
+      "category": "Infrastructure / compute and queue control plane",
+      "selection_note": "The widest command surface we ship: a Clap-style noun tree over jobs, hosts, quota and credits. Study how a large control-plane CLI keeps its top-level help to one screen of verbs and pushes detail into per-command help.",
+      "installed": {
+        "binary": "stado",
+        "resolved_path": "/Users/lukaszbartoszcze/.local/bin/stado",
+        "version_command": "stado --version",
+        "version_output": "stado 0.7.9",
+        "version_exit_status": 0,
+        "version_flag_supported": true
+      },
+      "reference_path": "references/01-stado/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/stado",
+        "source_recording_path": "references/01-stado/media/session.cast",
+        "local_path": "references/01-stado/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:19:10+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 87230,
+        "sha256": "44351ef5b756c33fd85644891457ee6920f825684b0bb2664ceb75f5050e0015"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "44351ef5b756c33fd85644891457ee6920f825684b0bb2664ceb75f5050e0015",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/01-stado/media/session.cast",
+        "duration_seconds": 3.17,
+        "frame_count": 178,
+        "bytes": 21077,
+        "sha256": "74e027989c72a36737ce5b9ee5414266ce4ca67a80d585e67284287adc33b62e",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:19:10+00:00"
+      }
+    },
+    {
+      "name": "Skarbiec",
+      "slug": "skarbiec",
+      "source_url": "https://github.com/wisent-ai/skarbiec",
+      "repository": "wisent-ai/skarbiec",
+      "category": "Security / credential and authentication management",
+      "selection_note": "The only product here whose help is machine-readable JSON rather than prose, and the only one whose first refusal is a state gate rather than a parse error. Study what a credential CLI is willing to say before a vault exists.",
+      "installed": {
+        "binary": "skarbiec",
+        "resolved_path": "/Users/lukaszbartoszcze/.local/bin/skarbiec",
+        "version_command": "skarbiec --version",
+        "version_output": "{",
+        "version_exit_status": 0,
+        "version_flag_supported": true
+      },
+      "reference_path": "references/02-skarbiec/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/skarbiec",
+        "source_recording_path": "references/02-skarbiec/media/session.cast",
+        "local_path": "references/02-skarbiec/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:19:16+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 38144,
+        "sha256": "e972c0649e3337aecffae7a0c149b425713d70267b0ef61aea2bcdfd9d6f3f46"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "e972c0649e3337aecffae7a0c149b425713d70267b0ef61aea2bcdfd9d6f3f46",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/02-skarbiec/media/session.cast",
+        "duration_seconds": 3.145,
+        "frame_count": 142,
+        "bytes": 8854,
+        "sha256": "9108eb403fe6e3d4d2a8f3d5eaeb91b3151d790fafa7f06e1479be72afb5cc6f",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:19:16+00:00"
+      }
+    },
+    {
+      "name": "Weles",
+      "slug": "weles",
+      "source_url": "https://github.com/wisent-ai/weles",
+      "repository": "wisent-ai/weles",
+      "category": "Automation / authorized browser execution",
+      "selection_note": "A CLI whose real work is gated on an authorization boundary, so its safe surface is help and identity only. Study how a product that refuses unauthorized work advertises that boundary in its own usage text.",
+      "installed": {
+        "binary": "weles",
+        "resolved_path": "/Users/lukaszbartoszcze/.nvm/versions/node/v22.20.0/bin/weles",
+        "version_command": "weles --version",
+        "version_output": "0.5.1",
+        "version_exit_status": 0,
+        "version_flag_supported": true
+      },
+      "reference_path": "references/03-weles/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/weles",
+        "source_recording_path": "references/03-weles/media/session.cast",
+        "local_path": "references/03-weles/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:19:23+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 89457,
+        "sha256": "e536758e9f8ee900af7828bb5d11f37b8a58d18e3c0f637441785b578b197ae1"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "e536758e9f8ee900af7828bb5d11f37b8a58d18e3c0f637441785b578b197ae1",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/03-weles/media/session.cast",
+        "duration_seconds": 3.385,
+        "frame_count": 162,
+        "bytes": 10323,
+        "sha256": "847b6e02ba2149540884f23634880746e734ba0edcd1a505e0d92f3cdb5cd3f4",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:19:23+00:00"
+      },
+      "source_url_state": "guarded",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "Private Wisent GitHub repository; anonymous GitHub reads return 404."
+    },
+    {
+      "name": "Jeden",
+      "slug": "jeden",
+      "source_url": "https://github.com/wisent-ai/jeden",
+      "repository": "wisent-ai/jeden",
+      "category": "Agents / autonomous coding and company building",
+      "selection_note": "A single-block usage synopsis for an agent runtime whose flags are permission grants (`--allow-write`, `--allow-command`, `--yolo`). Study how a dangerous capability set is presented in first-run help.",
+      "installed": {
+        "binary": "jeden",
+        "resolved_path": "/Users/lukaszbartoszcze/.nvm/versions/node/v22.20.0/bin/jeden",
+        "version_command": "jeden --version",
+        "version_output": "jeden 0.1.1+dev.341.e2d6a22",
+        "version_exit_status": 0,
+        "version_flag_supported": true
+      },
+      "reference_path": "references/04-jeden/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/jeden",
+        "source_recording_path": "references/04-jeden/media/session.cast",
+        "local_path": "references/04-jeden/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:19:35+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 64647,
+        "sha256": "1a795f5aec97b1198f9573194bde6b2d3b0d5ac0079d0bc1c12ad4be9202fffe"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "1a795f5aec97b1198f9573194bde6b2d3b0d5ac0079d0bc1c12ad4be9202fffe",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/04-jeden/media/session.cast",
+        "duration_seconds": 8.852,
+        "frame_count": 163,
+        "bytes": 18354,
+        "sha256": "8d29d137d2f0df246cc5725346c606e569ad5820909dfc52e2235cb47828fc4b",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:19:35+00:00"
+      }
+    },
+    {
+      "name": "Probierz",
+      "slug": "probierz",
+      "source_url": "https://github.com/wisent-ai/probierz",
+      "repository": "wisent-ai/probierz",
+      "category": "Quality / test execution and evidence boundary",
+      "selection_note": "The one product whose refusal is a structured machine-readable failure envelope rather than a usage dump. Study a CLI that answers an unknown surface with a parseable `probierz-failure` line plus one plain sentence.",
+      "installed": {
+        "binary": "probierz",
+        "resolved_path": "/Users/lukaszbartoszcze/.local/bin/probierz",
+        "version_command": "probierz --version",
+        "version_output": "usage:",
+        "version_exit_status": 2,
+        "version_flag_supported": false
+      },
+      "reference_path": "references/05-probierz/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/probierz",
+        "source_recording_path": "references/05-probierz/media/session.cast",
+        "local_path": "references/05-probierz/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:19:42+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 102030,
+        "sha256": "00398f681fe1b67b4e0dec10bdf9a1362ad1fe3a991074bd46063cd1cfcfdc1f"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "00398f681fe1b67b4e0dec10bdf9a1362ad1fe3a991074bd46063cd1cfcfdc1f",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/05-probierz/media/session.cast",
+        "duration_seconds": 3.583,
+        "frame_count": 186,
+        "bytes": 36144,
+        "sha256": "a160079d54f79141c7d41df410ca7b42376d9eda10b85f5e502b0dd421d435a4",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:19:42+00:00"
+      }
+    },
+    {
+      "name": "Oko (oko-cli)",
+      "slug": "oko-cli",
+      "source_url": "https://github.com/wisent-ai/oko",
+      "repository": "wisent-ai/oko",
+      "category": "Observability / agent session inspection",
+      "selection_note": "A headless companion CLI with one flat usage block and no version form at all. Study the cost of that: the same text answers help, an unknown flag, and a subcommand help request, and only the exit status distinguishes them.",
+      "installed": {
+        "binary": "oko-cli",
+        "resolved_path": "/Users/lukaszbartoszcze/.local/bin/oko-cli",
+        "version_command": "oko-cli --version",
+        "version_output": "unknown command: --version",
+        "version_exit_status": 1,
+        "version_flag_supported": false
+      },
+      "reference_path": "references/06-oko-cli/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/oko",
+        "source_recording_path": "references/06-oko-cli/media/session.cast",
+        "local_path": "references/06-oko-cli/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:19:49+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 97003,
+        "sha256": "64b8fc02fbb8211b002aa77c647f7a1c2c0b82a871b8a603a6a676e063490427"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "64b8fc02fbb8211b002aa77c647f7a1c2c0b82a871b8a603a6a676e063490427",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/06-oko-cli/media/session.cast",
+        "duration_seconds": 3.189,
+        "frame_count": 198,
+        "bytes": 26401,
+        "sha256": "9d7dec2e9a3cd0e6b34626b728b8784dd020ce0814bab7cd13c173b2d6609d7f",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:19:49+00:00"
+      },
+      "source_url_state": "guarded",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "Private Wisent GitHub repository; anonymous GitHub reads return 404."
+    },
+    {
+      "name": "Singularity",
+      "slug": "singularity",
+      "source_url": "https://github.com/wisent-ai/singularity",
+      "repository": "wisent-ai/singularity",
+      "category": "Agents / autonomous agent runtime",
+      "selection_note": "The narrowest installed surface in the catalog: one subcommand, `onboarding`. Study a product whose CLI deliberately exposes only the first-use journey.",
+      "installed": {
+        "binary": "singularity",
+        "resolved_path": "/Library/Frameworks/Python.framework/Versions/3.12/bin/singularity",
+        "version_command": "singularity --version",
+        "version_output": "<coroutine object main at 0x100d0e740>",
+        "version_exit_status": 1,
+        "version_flag_supported": false
+      },
+      "reference_path": "references/07-singularity/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/singularity",
+        "source_recording_path": "references/07-singularity/media/session.cast",
+        "local_path": "references/07-singularity/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:21:45+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 36167,
+        "sha256": "fb4df4e7b368fdfe1b2e8d9d332df7b75e385b637fe4505e65aa2d4a12cf0680"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "fb4df4e7b368fdfe1b2e8d9d332df7b75e385b637fe4505e65aa2d4a12cf0680",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/07-singularity/media/session.cast",
+        "duration_seconds": 113.372,
+        "frame_count": 147,
+        "bytes": 5054,
+        "sha256": "7e7bcd0c8ec73d0efb0a42f918c05f4557e137824293fc569589d77a92618932",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:21:45+00:00"
+      }
+    },
+    {
+      "name": "Tama (tama-cli)",
+      "slug": "tama",
+      "source_url": "https://github.com/wisent-ai/hooks-rotator",
+      "repository": "wisent-ai/hooks-rotator",
+      "category": "Policy / agent and Git hook catalog",
+      "selection_note": "A policy catalog CLI that answers `--help` after a subcommand by ignoring the flag and running the read-only command. Study how a hook installer separates a plan from an install.",
+      "installed": {
+        "binary": "tama",
+        "resolved_path": "/Users/lukaszbartoszcze/.nvm/versions/node/v22.20.0/bin/tama",
+        "version_command": "tama --version",
+        "version_output": "tama <command>",
+        "version_exit_status": 2,
+        "version_flag_supported": false
+      },
+      "reference_path": "references/08-tama/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/hooks-rotator",
+        "source_recording_path": "references/08-tama/media/session.cast",
+        "local_path": "references/08-tama/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:21:52+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 74207,
+        "sha256": "b46d26b2df5ec8d81947dfa4833597df5e8e2cc46304986088d56dd3c5803703"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "b46d26b2df5ec8d81947dfa4833597df5e8e2cc46304986088d56dd3c5803703",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/08-tama/media/session.cast",
+        "duration_seconds": 3.155,
+        "frame_count": 164,
+        "bytes": 10355,
+        "sha256": "51846bedc0ca86b805364025cd83a610b57758d1818949bda9f4f099f0d169b3",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:21:52+00:00"
+      },
+      "source_url_state": "guarded",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "Private Wisent GitHub repository; anonymous GitHub reads return 404."
+    },
+    {
+      "name": "Transcript Lake",
+      "slug": "transcript-lake",
+      "source_url": "https://github.com/wisent-ai/transcript-lake",
+      "repository": "wisent-ai/transcript-lake",
+      "category": "Data / local privacy-masked transcript archive",
+      "selection_note": "The only help here that opens with a `Start safely:` section and names the read-only commands first. Study help text that is ordered by risk rather than alphabetically.",
+      "installed": {
+        "binary": "transcript-lake",
+        "resolved_path": "/Users/lukaszbartoszcze/.local/bin/transcript-lake",
+        "version_command": "transcript-lake --version",
+        "version_output": "0.2.0",
+        "version_exit_status": 0,
+        "version_flag_supported": true
+      },
+      "reference_path": "references/09-transcript-lake/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/transcript-lake",
+        "source_recording_path": "references/09-transcript-lake/media/session.cast",
+        "local_path": "references/09-transcript-lake/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:21:58+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 70678,
+        "sha256": "9b4a0b56b31e6937324b10e621bcdb6fd136043c0b55b9910ff342a51ffe4e69"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "9b4a0b56b31e6937324b10e621bcdb6fd136043c0b55b9910ff342a51ffe4e69",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/09-transcript-lake/media/session.cast",
+        "duration_seconds": 3.146,
+        "frame_count": 171,
+        "bytes": 16407,
+        "sha256": "3e4e02d1ad868a06647f34d93f26a770de66fd49dd3e7591c8edc86c1ea24944",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:21:58+00:00"
+      }
+    },
+    {
+      "name": "Transcript Label Trainer",
+      "slug": "transcript-label-trainer",
+      "source_url": "https://github.com/wisent-ai/transcript-label-trainer",
+      "repository": "wisent-ai/transcript-label-trainer",
+      "category": "Models / local classifiers over transcript labels",
+      "selection_note": "An argparse CLI that states its own boundary in the help body — 'Never writes to the lake.' Study a product that publishes what it will not touch above its command list.",
+      "installed": {
+        "binary": "transcript-label-trainer",
+        "resolved_path": "/Users/lukaszbartoszcze/.local/bin/transcript-label-trainer",
+        "version_command": "transcript-label-trainer --version",
+        "version_output": "usage: transcript-label-trainer [-h] [--training-root PATH]",
+        "version_exit_status": 2,
+        "version_flag_supported": false
+      },
+      "reference_path": "references/10-transcript-label-trainer/reference.json",
+      "visual": {
+        "source_page_url": "https://github.com/wisent-ai/transcript-label-trainer",
+        "source_recording_path": "references/10-transcript-label-trainer/media/session.cast",
+        "local_path": "references/10-transcript-label-trainer/media/02-help-surface.png",
+        "capture_kind": "local-terminal-render",
+        "captured_at": "2026-08-19T23:22:05+00:00",
+        "format": "png",
+        "width": 924,
+        "height": 728,
+        "bytes": 71001,
+        "sha256": "39b9d268f0cab1b3c99fde111e8ddf0eaae807829bdd95a953603e805e92bdc6"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-terminal-layout-v1",
+        "image_sha256": "39b9d268f0cab1b3c99fde111e8ddf0eaae807829bdd95a953603e805e92bdc6",
+        "orientation": "landscape",
+        "layout_model": "single-terminal-surface",
+        "panel_summary": "One 100-column pseudo-terminal surface retaining the product help as selectable text.",
+        "regions": [
+          {
+            "role": "terminal transcript",
+            "position": "full canvas",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            }
+          }
+        ],
+        "detected_separators": [],
+        "visual_density": "medium",
+        "confidence": 1.0
+      },
+      "evidence": {
+        "kind": "asciinema-v2-terminal-cast plus deterministic renders of it",
+        "local_path": "references/10-transcript-label-trainer/media/session.cast",
+        "duration_seconds": 3.167,
+        "frame_count": 185,
+        "bytes": 9520,
+        "sha256": "52bab386a096b751132bd68ca2c128e1b62f21538c2daa6781b0e1c7ea9bec96",
+        "state_count": 5,
+        "captured_at": "2026-08-19T23:22:05+00:00"
+      }
+    }
+  ]
+}

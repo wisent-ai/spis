@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Atlassian — invite users to a site",
+  "product_url": "https://support.atlassian.com/user-management/docs/invite-a-user/",
+  "evidence_status": "partial",
+  "upstream_owner": "Atlassian Pty Ltd",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=emidrJeUTaM",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 925193,
+      "sha256": "74289536524fabc3a10cdef1ddd47f3a403e2d6b7d7f19b0e7d3c1d49a750738",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "user administration",
+      "local_path": "media/state-01-user-administration.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 4.5s (mean abs diff 1.9062/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 81754,
+      "sha256": "73b0314022f49f3ff8feb5ccdc8097477a52523de8f0898032eff75e6716b85a",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 1.9062,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "invite form",
+      "local_path": "media/state-02-invite-form.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 2.0938/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 71065,
+      "sha256": "981e3f4f63d44030003b4c8da639d3d74bd7a1d4cfdbf6a698eec1826783b4e6",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 19.5,
+        "mean_abs_diff": 2.0938,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "recipient selection",
+      "local_path": "media/state-03-recipient-selection.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 1.875/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 71596,
+      "sha256": "37b95705fb99f15982210d30cc7a4567fff0ee486481a135faf9ccbd8f45a08a",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 35.0,
+        "mean_abs_diff": 1.875,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "access assignment",
+      "local_path": "media/state-04-access-assignment.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 1.8086/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 74563,
+      "sha256": "9643e425b855009c700c2174882d1832f22e0102096177f426df97b2c6290007",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 50.0,
+        "mean_abs_diff": 1.8086,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "invitation pending",
+      "local_path": "media/state-05-invitation-pending.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 1.668/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 72499,
+      "sha256": "6fa0a36d5ce22d118ff14599e8f062ae23a7826dcd29b404c4fdc0c1ded9a508",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.5,
+        "mean_abs_diff": 1.668,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "invite recorded",
+      "local_path": "media/state-06-invite-recorded.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 81s (mean abs diff 2.625/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 99323,
+      "sha256": "331f19658fb6eba4b280a6d0ecbef48f8cd7b90feb142a8d4bad7bf93cc602a3",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 81.0,
+        "mean_abs_diff": 2.625,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Sign in and open user management",
+      "response": "Atlassian shows managed users and invitation controls",
+      "feedback": "The retained user administration state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-user-administration.png @ 4.50s; https://support.atlassian.com/user-management/docs/invite-a-user/"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Choose Invite users",
+      "response": "Atlassian opens the invitation form",
+      "feedback": "The recording advances to invite form and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-user-administration.png @ 4.50s; media/state-02-invite-form.png @ 19.79s; https://support.atlassian.com/user-management/docs/invite-a-user/"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Enter one or more email addresses",
+      "response": "Atlassian resolves invite recipients and enables access choices",
+      "feedback": "The navigation result is visible as recipient selection.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-invite-form.png @ 19.79s; media/state-03-recipient-selection.png @ 35.07s; https://support.atlassian.com/user-management/docs/invite-a-user/"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Select the products or roles the invitees may access",
+      "response": "Atlassian displays the effective access assignment",
+      "feedback": "The official recording shows the confirmed access assignment state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-recipient-selection.png @ 35.07s; media/state-04-access-assignment.png @ 50.36s; https://support.atlassian.com/user-management/docs/invite-a-user/"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-invite-form.png @ 19.79s; media/state-03-recipient-selection.png @ 35.07s; media/state-04-access-assignment.png @ 50.36s; https://support.atlassian.com/user-management/docs/invite-a-user/"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Review and send the invitation",
+      "response": "Atlassian confirms submission and records pending invitations",
+      "feedback": "Progress is observable as the distinct invitation pending state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-access-assignment.png @ 50.36s; media/state-05-invitation-pending.png @ 65.65s; https://support.atlassian.com/user-management/docs/invite-a-user/"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-recipient-selection.png @ 35.07s; media/state-04-access-assignment.png @ 50.36s; media/state-05-invitation-pending.png @ 65.65s; https://support.atlassian.com/user-management/docs/invite-a-user/"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Open the pending-user record",
+      "response": "The invite and assigned access are visible, proving administrative success",
+      "feedback": "The retained invite recorded state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-invitation-pending.png @ 65.65s; media/state-06-invite-recorded.png @ 80.94s; https://support.atlassian.com/user-management/docs/invite-a-user/"
+    }
+  ],
+  "journey": {
+    "actor": "Atlassian site administrator",
+    "goal": "invite a person and assign product access",
+    "prerequisites": [
+      "site-admin permission",
+      "invitee email address"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Sign in and open user management",
+        "system_response": "Atlassian shows managed users and invitation controls",
+        "state": "user administration",
+        "evidence": "media/state-01-user-administration.png; media/official-recording.mp4#t=4.497; https://support.atlassian.com/user-management/docs/invite-a-user/"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose Invite users",
+        "system_response": "Atlassian opens the invitation form",
+        "state": "invite form",
+        "evidence": "media/state-02-invite-form.png; media/official-recording.mp4#t=19.785; https://support.atlassian.com/user-management/docs/invite-a-user/"
+      },
+      {
+        "index": 3,
+        "user_action": "Enter one or more email addresses",
+        "system_response": "Atlassian resolves invite recipients and enables access choices",
+        "state": "recipient selection",
+        "evidence": "media/state-03-recipient-selection.png; media/official-recording.mp4#t=35.074; https://support.atlassian.com/user-management/docs/invite-a-user/"
+      },
+      {
+        "index": 4,
+        "user_action": "Select the products or roles the invitees may access",
+        "system_response": "Atlassian displays the effective access assignment",
+        "state": "access assignment",
+        "evidence": "media/state-04-access-assignment.png; media/official-recording.mp4#t=50.362; https://support.atlassian.com/user-management/docs/invite-a-user/"
+      },
+      {
+        "index": 5,
+        "user_action": "Review and send the invitation",
+        "system_response": "Atlassian confirms submission and records pending invitations",
+        "state": "invitation pending",
+        "evidence": "media/state-05-invitation-pending.png; media/official-recording.mp4#t=65.651; https://support.atlassian.com/user-management/docs/invite-a-user/"
+      },
+      {
+        "index": 6,
+        "user_action": "Open the pending-user record",
+        "system_response": "The invite and assigned access are visible, proving administrative success",
+        "state": "invite recorded",
+        "evidence": "media/state-06-invite-recorded.png; media/official-recording.mp4#t=80.940; https://support.atlassian.com/user-management/docs/invite-a-user/"
+      }
+    ],
+    "failure_route": [
+      "At invite form or recipient selection, invalid, expired, denied, or missing required input leaves the flow short of invite recorded; evidence: media/state-02-invite-form.png, media/state-03-recipient-selection.png, and https://support.atlassian.com/user-management/docs/invite-a-user/.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-recipient-selection.png through media/state-05-invitation-pending.png."
+    ],
+    "recovery_route": [
+      "Return to the retained invite form or recipient selection requirement, correct or resend the blocking input, and resubmit; evidence: https://support.atlassian.com/user-management/docs/invite-a-user/.",
+      "Continue through the same terminal action until invite recorded is visible in media/state-06-invite-recorded.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "invite recorded retained at media/state-06-invite-recorded.png and media/official-recording.mp4#t=80.940; source https://support.atlassian.com/user-management/docs/invite-a-user/"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-user-administration.png and media/state-02-invite-form.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-recipient-selection.png and media/state-04-access-assignment.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

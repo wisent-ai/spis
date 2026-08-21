@@ -1,0 +1,4627 @@
+{
+  "schema": "wisent.example-catalog.v2",
+  "catalog": "ios-app-examples",
+  "title": "iOS app examples",
+  "description": "Native iPhone and iPad product interfaces.",
+  "curated_at": "2026-08-16",
+  "count": 50,
+  "examples": [
+    {
+      "name": "Things 3",
+      "source_url": "https://culturedcode.com/things/",
+      "category": "Productivity",
+      "selection_note": "Study the Today and Upcoming hierarchy, plus the quick-entry sheet’s progressive disclosure for dates, tags, and projects.",
+      "visual": {
+        "source_page_url": "https://culturedcode.com/things/",
+        "source_image_url": "https://culturedcode.com/things/2024-01-20/images/whatsnew-collage-io60.png",
+        "local_path": "images/01-things-3.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1000,
+        "height": 1000,
+        "original_width": 2000,
+        "original_height": 2000,
+        "bytes": 49474,
+        "sha256": "a6a54929da966f678ebef4c12654cfc14f099bb165e1d8954791b61da8d88f6f",
+        "source_hint": "Screenshots of Things running on Mac, iPhone, iPad, and Apple Watch"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "a6a54929da966f678ebef4c12654cfc14f099bb165e1d8954791b61da8d88f6f",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.122
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.122,
+              "width": 1.0,
+              "height": 0.878
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.06,
+              "strength": 1.0
+            },
+            {
+              "position": 0.277,
+              "strength": 0.849
+            },
+            {
+              "position": 0.717,
+              "strength": 0.791
+            },
+            {
+              "position": 0.939,
+              "strength": 0.615
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.122,
+              "strength": 0.603
+            },
+            {
+              "position": 0.349,
+              "strength": 0.4
+            },
+            {
+              "position": 0.442,
+              "strength": 0.374
+            },
+            {
+              "position": 0.663,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Todoist",
+      "source_url": "https://www.todoist.com/",
+      "category": "Productivity",
+      "selection_note": "Study Quick Add for compact task capture and the navigation between Inbox, projects, labels, filters, and scheduled views.",
+      "visual": {
+        "source_page_url": "https://www.todoist.com/",
+        "source_image_url": "https://res.cloudinary.com/imagist/image/fetch/q_auto,f_auto,c_scale,w_1000/https%3A%2F%2Fwww.todoist.com%2F_astro%2Fheaderui.en.DAyuar6R.png",
+        "local_path": "images/02-todoist.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1000,
+        "height": 933,
+        "original_width": 1000,
+        "original_height": 933,
+        "bytes": 30326,
+        "sha256": "e522b66ded48c8d73559d86b4daf8826855da2d28965654e57eaf00148ba4f78",
+        "source_hint": "Todoist app interface showing daily tasks, projects, and team sections with a mobile view of task entry screen.  foreground-image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "e522b66ded48c8d73559d86b4daf8826855da2d28965654e57eaf00148ba4f78",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.762,
+              "width": 1.0,
+              "height": 0.238
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.642
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.2,
+              "strength": 0.604
+            },
+            {
+              "position": 0.316,
+              "strength": 1.0
+            },
+            {
+              "position": 0.393,
+              "strength": 0.65
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.411,
+              "strength": 0.589
+            },
+            {
+              "position": 0.489,
+              "strength": 1.0
+            },
+            {
+              "position": 0.619,
+              "strength": 0.784
+            },
+            {
+              "position": 0.762,
+              "strength": 0.653
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Notion",
+      "source_url": "https://www.notion.so/product",
+      "category": "Productivity",
+      "selection_note": "Study how workspace and page hierarchy compresses onto iPhone, including block insertion, reordering, and slash-command discovery.",
+      "visual": {
+        "source_page_url": "https://www.notion.so/product",
+        "source_image_url": "https://www.notion.com/_next/image?url=https%3A%2F%2Fimages.ctfassets.net%2Fspoqsaf9291f%2F3pCHbRV7f5UjIssdK3CDpy%2F7b48cf81bad50d66e31caa5a3b80d5b5%2Ffaire.png&w=1200&q=75",
+        "local_path": "images/03-notion.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 800,
+        "height": 1000,
+        "original_width": 1200,
+        "original_height": 1500,
+        "bytes": 43656,
+        "sha256": "d9b2e4d91a74e2c58f0a26b60a1dd328b65318465c1f9b4a8a4bc91691b7918e",
+        "source_hint": "Renee Solorzano, Sr. Director of Product Design at Faire  next-image socialProofV2_portrait__DHrDX"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d9b2e4d91a74e2c58f0a26b60a1dd328b65318465c1f9b4a8a4bc91691b7918e",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.133
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.133,
+              "width": 1.0,
+              "height": 0.867
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.29,
+              "strength": 0.789
+            },
+            {
+              "position": 0.643,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.133,
+              "strength": 1.0
+            },
+            {
+              "position": 0.269,
+              "strength": 0.524
+            },
+            {
+              "position": 0.594,
+              "strength": 0.612
+            },
+            {
+              "position": 0.709,
+              "strength": 0.508
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Bear",
+      "source_url": "https://bear.app/",
+      "category": "Productivity",
+      "selection_note": "Study nested-tag navigation and the editing keyboard’s formatting shortcuts, which keep Markdown-oriented actions close to the cursor.",
+      "visual": {
+        "source_page_url": "https://bear.app/",
+        "source_image_url": "https://bear.app/images/home/hero_mac@2x.jpg",
+        "local_path": "images/04-bear.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1369,
+        "height": 1000,
+        "original_width": 2516,
+        "original_height": 1838,
+        "bytes": 55986,
+        "sha256": "393cd6b73e9164290e1d2cc647886ae44c0306368807669da36badfcde9b6886",
+        "source_hint": "apps-screenshot-mac"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "393cd6b73e9164290e1d2cc647886ae44c0306368807669da36badfcde9b6886",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.209
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.866,
+              "width": 1.0,
+              "height": 0.134
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.209,
+              "width": 1.0,
+              "height": 0.657
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.079,
+              "strength": 0.66
+            },
+            {
+              "position": 0.222,
+              "strength": 1.0
+            },
+            {
+              "position": 0.329,
+              "strength": 0.39
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.209,
+              "strength": 1.0
+            },
+            {
+              "position": 0.516,
+              "strength": 0.931
+            },
+            {
+              "position": 0.691,
+              "strength": 0.529
+            },
+            {
+              "position": 0.866,
+              "strength": 0.612
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Craft",
+      "source_url": "https://www.craft.do/",
+      "category": "Productivity",
+      "selection_note": "Study card-to-page navigation and block-level editing, especially insertion, selection, reordering, and contextual formatting on iPhone.",
+      "visual": {
+        "source_page_url": "https://www.craft.do/",
+        "source_image_url": "https://www.craft.do/craft_og.png",
+        "local_path": "images/05-craft.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 21478,
+        "sha256": "2de483e9d404e0287d074c68a7203394c2ada446ef25220d1c61bab98c021e25",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "2de483e9d404e0287d074c68a7203394c2ada446ef25220d1c61bab98c021e25",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.082,
+              "strength": 0.367
+            },
+            {
+              "position": 0.397,
+              "strength": 1.0
+            },
+            {
+              "position": 0.542,
+              "strength": 0.853
+            },
+            {
+              "position": 0.678,
+              "strength": 0.698
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.433,
+              "strength": 1.0
+            },
+            {
+              "position": 0.562,
+              "strength": 0.857
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Fantastical",
+      "source_url": "https://flexibits.com/fantastical",
+      "category": "Productivity",
+      "selection_note": "Study the combined calendar-and-task timeline and the natural-language event composer’s handling of time, location, and invitees.",
+      "visual": {
+        "source_page_url": "https://flexibits.com/fantastical",
+        "source_image_url": "https://flexibits.com/img/fantastical/weather/screenshot@2x.png?41935b46bba9447c826663404b014c07",
+        "local_path": "images/06-fantastical.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 690,
+        "height": 1000,
+        "original_width": 1024,
+        "original_height": 1484,
+        "bytes": 23970,
+        "sha256": "ead02dbe750f8ee9f90c6163a23482f2febb6d3f64fe650224c18c3084b7e169",
+        "source_hint": "Fantastical Weather screenshot."
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "ead02dbe750f8ee9f90c6163a23482f2febb6d3f64fe650224c18c3084b7e169",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.901,
+              "width": 1.0,
+              "height": 0.099
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.781
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.19,
+              "strength": 0.962
+            },
+            {
+              "position": 0.32,
+              "strength": 1.0
+            },
+            {
+              "position": 0.422,
+              "strength": 0.655
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.424,
+              "strength": 0.507
+            },
+            {
+              "position": 0.648,
+              "strength": 1.0
+            },
+            {
+              "position": 0.76,
+              "strength": 0.446
+            },
+            {
+              "position": 0.901,
+              "strength": 0.843
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Microsoft 365 Copilot",
+      "original_source_url": "https://www.microsoft.com/en-us/microsoft-365/mobile",
+      "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/download-copilot-app",
+      "source_url_state": "reachable",
+      "source_url_checked_at": "2026-08-19",
+      "source_url_note": "The microsoft-365/mobile page was retired and now times out; Microsoft's current page for the Copilot mobile apps is download-copilot-app.",
+      "visual_source_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/29/ad/45/29ad45d9-71b0-0922-6d1d-cbacf0df6547/iOS_AS_iPhone_5.5_Hero_One_Screen.png/392x696bb.png",
+      "category": "Productivity",
+      "selection_note": "Study the mobile hub architecture connecting recent documents, search, capture, scanning, and create actions across file types.",
+      "visual": {
+        "original_source_page_url": "https://www.microsoft.com/en-us/microsoft-365/mobile",
+        "source_page_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/download-copilot-app",
+        "source_page_url_state": "reachable",
+        "source_page_url_checked_at": "2026-08-19",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/29/ad/45/29ad45d9-71b0-0922-6d1d-cbacf0df6547/iOS_AS_iPhone_5.5_Hero_One_Screen.png/392x696bb.png",
+        "local_path": "images/07-microsoft-365-copilot.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 392,
+        "height": 696,
+        "original_width": 392,
+        "original_height": 696,
+        "bytes": 17150,
+        "sha256": "1c1179f735f88834c491249cbf5ae31fa611e191d924630b547d6093c76c93f8",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1c1179f735f88834c491249cbf5ae31fa611e191d924630b547d6093c76c93f8",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.141
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.829,
+              "width": 1.0,
+              "height": 0.171
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.141,
+              "width": 1.0,
+              "height": 0.688
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.247,
+              "strength": 1.0
+            },
+            {
+              "position": 0.485,
+              "strength": 0.476
+            },
+            {
+              "position": 0.617,
+              "strength": 0.356
+            },
+            {
+              "position": 0.74,
+              "strength": 0.465
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.141,
+              "strength": 0.6
+            },
+            {
+              "position": 0.234,
+              "strength": 1.0
+            },
+            {
+              "position": 0.731,
+              "strength": 0.612
+            },
+            {
+              "position": 0.829,
+              "strength": 0.861
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Dropbox",
+      "source_url": "https://www.dropbox.com/mobile",
+      "category": "Productivity",
+      "selection_note": "Study the separation of Home, Files, and Photos, plus contextual file actions such as sharing, offline access, and scanning.",
+      "visual": {
+        "source_page_url": "https://www.dropbox.com/mobile",
+        "source_image_url": "https://fjord.dropboxstatic.com/warp/conversion/dropbox/warp/en-us/mobile/MobileVideoThumbnail.jpg?id=bc28c534-32b9-487a-a7e0-b93e93e0cc7a&width=1920&output_type=jpg",
+        "local_path": "images/08-dropbox.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 785,
+        "original_width": 1920,
+        "original_height": 1077,
+        "bytes": 67442,
+        "sha256": "30eb80dab650a40394cbee426c697eaf423b1bad5aed49bce26009186dee1128",
+        "source_hint": "A video that provides an overview of what you can do with the Dropbox app, including sharing, storing, scanning, and backing up important documents and files  dwg-media-image dwg-media-image--object-fit-cover dwg-box dwg-position--absolute dwg-width--full dwg-height--full"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "30eb80dab650a40394cbee426c697eaf423b1bad5aed49bce26009186dee1128",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.164
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.909,
+              "width": 1.0,
+              "height": 0.091
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.164,
+              "width": 1.0,
+              "height": 0.745
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.078,
+              "strength": 0.84
+            },
+            {
+              "position": 0.196,
+              "strength": 1.0
+            },
+            {
+              "position": 0.402,
+              "strength": 0.881
+            },
+            {
+              "position": 0.803,
+              "strength": 0.839
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.164,
+              "strength": 1.0
+            },
+            {
+              "position": 0.309,
+              "strength": 0.491
+            },
+            {
+              "position": 0.45,
+              "strength": 0.75
+            },
+            {
+              "position": 0.909,
+              "strength": 0.97
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Slack",
+      "source_url": "https://slack.com/downloads/ios",
+      "category": "Communication",
+      "selection_note": "Study workspace and channel hierarchy, unread navigation, threaded replies, and how the composer exposes attachments and mentions.",
+      "visual": {
+        "source_page_url": "https://slack.com/downloads/ios",
+        "source_image_url": "https://a.slack-edge.com/b211f31/marketing/img/downloads/screenshots/ios/slack-ia4-ios@2x.png",
+        "local_path": "images/09-slack.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 979,
+        "original_width": 1910,
+        "original_height": 1336,
+        "bytes": 78684,
+        "sha256": "199eb57db9d77db082cea135bb4f96b1e87dc26d9ff84092fc30c4ecee41bdfe",
+        "source_hint": "Screenshot of the Slack app  o-hero__header__mobile_screenshot"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "199eb57db9d77db082cea135bb4f96b1e87dc26d9ff84092fc30c4ecee41bdfe",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.194
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.194,
+              "width": 1.0,
+              "height": 0.806
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.372,
+              "strength": 1.0
+            },
+            {
+              "position": 0.449,
+              "strength": 0.905
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.194,
+              "strength": 0.755
+            },
+            {
+              "position": 0.386,
+              "strength": 1.0
+            },
+            {
+              "position": 0.615,
+              "strength": 0.721
+            },
+            {
+              "position": 0.738,
+              "strength": 0.721
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Discord",
+      "source_url": "https://discord.com/",
+      "category": "Communication",
+      "selection_note": "Study the server-to-channel information hierarchy and transitions among text threads, member context, direct messages, and voice rooms.",
+      "visual": {
+        "source_page_url": "https://discord.com/",
+        "source_image_url": "https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/661f9dcf53591e4046ea40e8_art-product-featured%20(1).webp",
+        "local_path": "images/10-discord.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1306,
+        "height": 1000,
+        "original_width": 1515,
+        "original_height": 1160,
+        "bytes": 4292,
+        "sha256": "fd86ae9ae39e92cdef67f8e315bd93409d6aaa419da04a48fa49525aa7edb1f4",
+        "source_hint": "section4-image radius-60 hide reduce-motion-img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "fd86ae9ae39e92cdef67f8e315bd93409d6aaa419da04a48fa49525aa7edb1f4",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.125
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.125,
+              "width": 1.0,
+              "height": 0.875
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.144,
+              "strength": 0.867
+            },
+            {
+              "position": 0.303,
+              "strength": 1.0
+            },
+            {
+              "position": 0.454,
+              "strength": 0.849
+            },
+            {
+              "position": 0.548,
+              "strength": 0.783
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.125,
+              "strength": 1.0
+            },
+            {
+              "position": 0.382,
+              "strength": 0.868
+            },
+            {
+              "position": 0.624,
+              "strength": 0.879
+            },
+            {
+              "position": 0.717,
+              "strength": 0.967
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Signal",
+      "source_url": "https://signal.org/",
+      "category": "Communication",
+      "selection_note": "Study the focused conversation-list-to-thread flow, attachment sheet, safety-number access, and disappearing-message timer controls.",
+      "visual": {
+        "source_page_url": "https://signal.org/",
+        "source_image_url": "https://signal.org/assets/images/features/signal-iphone.png",
+        "local_path": "images/11-signal.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 487,
+        "height": 1000,
+        "original_width": 600,
+        "original_height": 1233,
+        "bytes": 58424,
+        "sha256": "eac3d7d0c9ccedde3b42622b44fe4ec38e8bf6d2739646a834ba9df0df4ad24c",
+        "source_hint": "screenshot1"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "eac3d7d0c9ccedde3b42622b44fe4ec38e8bf6d2739646a834ba9df0df4ad24c",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.786,
+              "width": 1.0,
+              "height": 0.214
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.666
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.068,
+              "strength": 0.79
+            },
+            {
+              "position": 0.502,
+              "strength": 1.0
+            },
+            {
+              "position": 0.922,
+              "strength": 0.863
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.293,
+              "strength": 1.0
+            },
+            {
+              "position": 0.484,
+              "strength": 0.888
+            },
+            {
+              "position": 0.684,
+              "strength": 0.724
+            },
+            {
+              "position": 0.786,
+              "strength": 0.677
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Telegram Messenger",
+      "source_url": "https://telegram.org/",
+      "visual_source_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c7/43/08/c7430887-1b12-f786-988f-df61b671ac4b/0_APP_IPHONE_55_0.png/392x696bb.png",
+      "category": "Communication",
+      "selection_note": "Study chat folders, conversation-level search, message action menus, and the attachment sheet’s organization of media and files.",
+      "visual": {
+        "source_page_url": "https://telegram.org/",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/c7/43/08/c7430887-1b12-f786-988f-df61b671ac4b/0_APP_IPHONE_55_0.png/392x696bb.png",
+        "local_path": "images/12-telegram-messenger.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 392,
+        "height": 696,
+        "original_width": 392,
+        "original_height": 696,
+        "bytes": 24118,
+        "sha256": "b502f7b43fcebf56de8cd431f846e9d3b6c868e00f04da8472324157e9a5e02c",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b502f7b43fcebf56de8cd431f846e9d3b6c868e00f04da8472324157e9a5e02c",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.217
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.934,
+              "width": 1.0,
+              "height": 0.066
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.217,
+              "width": 1.0,
+              "height": 0.717
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.204,
+              "strength": 1.0
+            },
+            {
+              "position": 0.791,
+              "strength": 0.968
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.108,
+              "strength": 0.396
+            },
+            {
+              "position": 0.217,
+              "strength": 0.993
+            },
+            {
+              "position": 0.506,
+              "strength": 0.394
+            },
+            {
+              "position": 0.934,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "WhatsApp Messenger",
+      "source_url": "https://www.whatsapp.com/",
+      "category": "Communication",
+      "selection_note": "Study the tab-level separation of chats, updates, communities, and calls, plus message reply, reaction, forwarding, and attachment actions.",
+      "visual": {
+        "source_page_url": "https://www.whatsapp.com/",
+        "source_image_url": "https://scontent.whatsapp.net/v/t39.8562-34/657592971_1341415488020645_5683758003213531705_n.png?stp=dst-webp&ccb=1-7&_nc_sid=73b08c&_nc_ohc=QHfSuVQsQnYQ7kNvwHUXIVO&_nc_oc=AdpYkZt_Omuaw7e6IyCuM4vcfOPlwz3_GE4VbQbxqXvi4dg-oIY41vqecUbksceNEn0&_nc_zt=3&_nc_ht=scontent.whatsapp.net&_nc_gid=ckjuzsulfytDmyEhL94dOg&_nc_ss=7b20f&oh=01_Q5Aa5QFfuVaQhLdfm-joPXGXqw94d3NYEb2UGBVG3KGAMZm8oQ&oe=6A87F0BA",
+        "local_path": "images/13-whatsapp-messenger.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 741,
+        "original_width": 2720,
+        "original_height": 1440,
+        "bytes": 124928,
+        "sha256": "bb7e1573f1f0b76efe80a6c3e3540488db655de56add3899c0ba36d3801b4b53",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "bb7e1573f1f0b76efe80a6c3e3540488db655de56add3899c0ba36d3801b4b53",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.502,
+              "strength": 0.89
+            },
+            {
+              "position": 0.584,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.542,
+              "strength": 0.92
+            },
+            {
+              "position": 0.62,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Zoom Workplace",
+      "source_url": "https://www.zoom.com/en/products/virtual-meetings/",
+      "category": "Communication",
+      "selection_note": "Study the join-versus-start meeting entry points and the in-call interface’s revealable controls, participant list, and device-state feedback.",
+      "visual": {
+        "source_page_url": "https://www.zoom.com/en/products/virtual-meetings/",
+        "source_image_url": "https://media.zoom.com/images/assets/meetings-hero.webp/Zz05MjI4NTZkYWRjMzExMWYwOGE1NmY2OTA2OTRiNWY2Ng==",
+        "local_path": "images/14-zoom-workplace.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 503,
+        "original_width": 2784,
+        "original_height": 1000,
+        "bytes": 58650,
+        "sha256": "230451ac07bb1d3f46bacf3d0a5ca1ea460185dcf8e243f69ed99a07a7dd7047",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "230451ac07bb1d3f46bacf3d0a5ca1ea460185dcf8e243f69ed99a07a7dd7047",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.139
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.139,
+              "width": 1.0,
+              "height": 0.861
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.094,
+              "strength": 0.961
+            },
+            {
+              "position": 0.264,
+              "strength": 0.376
+            },
+            {
+              "position": 0.369,
+              "strength": 0.67
+            },
+            {
+              "position": 0.646,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.139,
+              "strength": 0.801
+            },
+            {
+              "position": 0.551,
+              "strength": 1.0
+            },
+            {
+              "position": 0.759,
+              "strength": 0.628
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Revolut",
+      "source_url": "https://www.revolut.com/",
+      "visual_source_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/03/7f/68/037f6868-28f0-ae28-cbdd-6d1aed5c0f4b/Screen_1_1242x2208.jpg/600x1066bb.jpg",
+      "category": "Finance",
+      "selection_note": "Study account switching, balance and transaction hierarchy, and the staged transfer flow for recipient, currency, amount, and confirmation.",
+      "visual": {
+        "source_page_url": "https://www.revolut.com/",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/03/7f/68/037f6868-28f0-ae28-cbdd-6d1aed5c0f4b/Screen_1_1242x2208.jpg/600x1066bb.jpg",
+        "local_path": "images/15-revolut.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 462,
+        "height": 1000,
+        "original_width": 493,
+        "original_height": 1066,
+        "bytes": 37510,
+        "sha256": "194a9116c2b708ab73c14f3aa3c0f1cfbab0714efd727fcd8a40155217a5bc13",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "194a9116c2b708ab73c14f3aa3c0f1cfbab0714efd727fcd8a40155217a5bc13",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.146
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.882,
+              "width": 1.0,
+              "height": 0.118
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.146,
+              "width": 1.0,
+              "height": 0.736
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.26,
+              "strength": 1.0
+            },
+            {
+              "position": 0.373,
+              "strength": 0.885
+            },
+            {
+              "position": 0.587,
+              "strength": 0.895
+            },
+            {
+              "position": 0.695,
+              "strength": 0.811
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.066,
+              "strength": 0.67
+            },
+            {
+              "position": 0.146,
+              "strength": 1.0
+            },
+            {
+              "position": 0.882,
+              "strength": 0.864
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Wise",
+      "source_url": "https://wise.com/",
+      "category": "Finance",
+      "selection_note": "Study multi-currency balance cards and the send-money flow, especially amount conversion, fee disclosure, recipient selection, and review.",
+      "visual": {
+        "source_page_url": "https://wise.com/",
+        "source_image_url": "https://wise.com/public-resources/assets/spend/card-asset/large/v2/personal_green_wise_2023_flag_only%403x.png",
+        "local_path": "images/16-wise.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 894,
+        "height": 564,
+        "original_width": 894,
+        "original_height": 564,
+        "bytes": 7258,
+        "sha256": "cea19d6e940da78a7eb806b038aa2acb5809978e1f69732e8396604c6d72c6e2",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "cea19d6e940da78a7eb806b038aa2acb5809978e1f69732e8396604c6d72c6e2",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.106
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.106,
+              "width": 1.0,
+              "height": 0.894
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.092,
+              "strength": 0.879
+            },
+            {
+              "position": 0.204,
+              "strength": 1.0
+            },
+            {
+              "position": 0.891,
+              "strength": 0.262
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.106,
+              "strength": 0.521
+            },
+            {
+              "position": 0.215,
+              "strength": 0.284
+            },
+            {
+              "position": 0.342,
+              "strength": 1.0
+            },
+            {
+              "position": 0.431,
+              "strength": 0.978
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "PayPal",
+      "source_url": "https://www.paypal.com/us/digital-wallet",
+      "category": "Finance",
+      "selection_note": "Study the relationship among Home, Wallet, and Activity, plus the mirrored send-and-request flows and their confirmation states.",
+      "visual": {
+        "source_page_url": "https://www.paypal.com/us/digital-wallet",
+        "source_image_url": "https://www.paypalobjects.com/marketing/web26/us/cashback-deprecation/mkt-us-page-digital-wallet-component-meta-new-size-all.jpg",
+        "local_path": "images/17-paypal.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 735,
+        "original_width": 2400,
+        "original_height": 1260,
+        "bytes": 56570,
+        "sha256": "12115b7f193b654c8c49e817dd2ed154fb59bcec1e887d1575c86dec3fda7b82",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "12115b7f193b654c8c49e817dd2ed154fb59bcec1e887d1575c86dec3fda7b82",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.07
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.926,
+              "width": 1.0,
+              "height": 0.074
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.07,
+              "width": 1.0,
+              "height": 0.856
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.071,
+              "strength": 0.47
+            },
+            {
+              "position": 0.186,
+              "strength": 0.495
+            },
+            {
+              "position": 0.301,
+              "strength": 0.325
+            },
+            {
+              "position": 0.51,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.07,
+              "strength": 1.0
+            },
+            {
+              "position": 0.214,
+              "strength": 0.61
+            },
+            {
+              "position": 0.338,
+              "strength": 0.575
+            },
+            {
+              "position": 0.926,
+              "strength": 0.809
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Coinbase",
+      "source_url": "https://www.coinbase.com/",
+      "category": "Finance",
+      "selection_note": "Study watchlist-to-asset-detail navigation and the trade sheet’s progression through asset, amount, payment source, preview, and confirmation.",
+      "visual": {
+        "source_page_url": "https://www.coinbase.com/",
+        "source_image_url": "https://images.ctfassets.net/o10es7wu5gm1/6jPp0W7xH2Pe8kwUS79ZSm/6b586189286c46e545329dbe643f74d6/CB_blog_image.png",
+        "local_path": "images/18-coinbase.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 787,
+        "original_width": 4000,
+        "original_height": 2248,
+        "bytes": 13052,
+        "sha256": "278574e08415cd987491dcf1d02f3e8d3232c7bea5980ceea858304fe16bf438",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "278574e08415cd987491dcf1d02f3e8d3232c7bea5980ceea858304fe16bf438",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.397,
+              "strength": 0.77
+            },
+            {
+              "position": 0.489,
+              "strength": 1.0
+            },
+            {
+              "position": 0.631,
+              "strength": 0.436
+            },
+            {
+              "position": 0.717,
+              "strength": 0.336
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.46,
+              "strength": 0.941
+            },
+            {
+              "position": 0.587,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "YNAB",
+      "source_url": "https://www.ynab.com/",
+      "category": "Finance",
+      "selection_note": "Study grouped budget categories, status indicators, and the Assign Money interaction for moving limited funds between competing priorities.",
+      "visual": {
+        "source_page_url": "https://www.ynab.com/",
+        "source_image_url": "https://cdn.prod.website-files.com/640f69143ec11b21d42015c6/6754d6950a834d8433241515_e3ea8d230f1a9f58459f2ce511ddd14b_app_devices_lineup_blurple%20%282%29-p-3200.png",
+        "local_path": "images/19-ynab.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 951,
+        "original_width": 3200,
+        "original_height": 2174,
+        "bytes": 87792,
+        "sha256": "83eaf7a1bd5ffd62a9eee6520b59738017f4a6a82c934579222a384b93fd46da",
+        "source_hint": "YNAB app interface showing categorized expenses, account balances, spending breakdown, and priorities on desktop and two mobile screens.  design-system--image-fullwidth"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "83eaf7a1bd5ffd62a9eee6520b59738017f4a6a82c934579222a384b93fd46da",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.067
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.879,
+              "width": 1.0,
+              "height": 0.121
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.067,
+              "width": 1.0,
+              "height": 0.812
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.192,
+              "strength": 1.0
+            },
+            {
+              "position": 0.462,
+              "strength": 0.314
+            },
+            {
+              "position": 0.619,
+              "strength": 0.857
+            },
+            {
+              "position": 0.778,
+              "strength": 0.86
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.067,
+              "strength": 1.0
+            },
+            {
+              "position": 0.489,
+              "strength": 0.482
+            },
+            {
+              "position": 0.632,
+              "strength": 0.36
+            },
+            {
+              "position": 0.879,
+              "strength": 0.379
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Splitwise",
+      "source_url": "https://www.splitwise.com/",
+      "category": "Finance",
+      "selection_note": "Study navigation among groups, friends, and activity, plus expense entry for payer selection, split methods, notes, and settlement.",
+      "visual": {
+        "source_page_url": "https://www.splitwise.com/",
+        "source_image_url": "https://assets.splitwise.com/assets/core/open-graph-preview-7156d5256fe3f2aa2c032c333f50336f298c88b288a92f2368c8c2011929461e.png",
+        "local_path": "images/20-splitwise.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 10352,
+        "sha256": "17f111c647ddbcba2b7f764aaacb372f5528eb000adf7fea292f99378609c103",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "17f111c647ddbcba2b7f764aaacb372f5528eb000adf7fea292f99378609c103",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.126,
+              "strength": 0.715
+            },
+            {
+              "position": 0.347,
+              "strength": 1.0
+            },
+            {
+              "position": 0.54,
+              "strength": 0.402
+            },
+            {
+              "position": 0.73,
+              "strength": 0.325
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.452,
+              "strength": 0.81
+            },
+            {
+              "position": 0.55,
+              "strength": 0.879
+            },
+            {
+              "position": 0.677,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Apple Health",
+      "source_url": "https://www.apple.com/ios/health/",
+      "category": "Health",
+      "selection_note": "Study the Summary, Sharing, and Browse architecture, including trend cards, pinned metrics, source attribution, and drill-down charts.",
+      "visual": {
+        "source_page_url": "https://www.apple.com/ios/health/",
+        "source_image_url": "https://www.apple.com/v/health/e/images/overview/heart-health/health_hypertension__e2e8x2sf072a_large_2x.jpg",
+        "local_path": "images/21-apple-health.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 825,
+        "original_width": 1528,
+        "original_height": 900,
+        "bytes": 33798,
+        "sha256": "5f40ea1e9e2a7644a76f3a3113113cd93f547e09fb512ae7b7188af5af369710",
+        "source_hint": "Possible hypertension notification on Apple Watch Series 11, expanded notification on iPhone"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5f40ea1e9e2a7644a76f3a3113113cd93f547e09fb512ae7b7188af5af369710",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.134
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.789,
+              "width": 1.0,
+              "height": 0.211
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.134,
+              "width": 1.0,
+              "height": 0.655
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.196,
+              "strength": 0.342
+            },
+            {
+              "position": 0.459,
+              "strength": 0.86
+            },
+            {
+              "position": 0.802,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.134,
+              "strength": 1.0
+            },
+            {
+              "position": 0.313,
+              "strength": 0.463
+            },
+            {
+              "position": 0.572,
+              "strength": 0.607
+            },
+            {
+              "position": 0.789,
+              "strength": 0.404
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Strava",
+      "source_url": "https://www.strava.com/mobile",
+      "category": "Health",
+      "selection_note": "Study activity recording with live metrics and the post-activity summary’s organization of route, splits, effort, media, and social feedback.",
+      "visual": {
+        "source_page_url": "https://www.strava.com/mobile",
+        "source_image_url": "https://d3nn82uaxijpm6.cloudfront.net/assets/website/mobile/img-mobile-phones-bddf25c1ca4597d5a9c0227dec0c0ec9818bb82d78d1fa99f587afbe1f2b25dd.jpg",
+        "local_path": "images/22-strava.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 470,
+        "height": 506,
+        "original_width": 470,
+        "original_height": 506,
+        "bytes": 15720,
+        "sha256": "44077c1b1c3a892d6ece2a13cbd7ac318143da9e2252b4c2d15d0ccbdb4f42e3",
+        "source_hint": "Image of the Strava App on your mobile device  img-responsive"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "44077c1b1c3a892d6ece2a13cbd7ac318143da9e2252b4c2d15d0ccbdb4f42e3",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.123
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.123,
+              "width": 1.0,
+              "height": 0.877
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.206,
+              "strength": 0.732
+            },
+            {
+              "position": 0.517,
+              "strength": 1.0
+            },
+            {
+              "position": 0.794,
+              "strength": 0.503
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.123,
+              "strength": 0.602
+            },
+            {
+              "position": 0.257,
+              "strength": 1.0
+            },
+            {
+              "position": 0.458,
+              "strength": 0.612
+            },
+            {
+              "position": 0.668,
+              "strength": 0.886
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Headspace",
+      "source_url": "https://www.headspace.com/",
+      "category": "Health",
+      "selection_note": "Study the Today plan and browse taxonomy, then examine session setup and the audio player’s progress, pause, and completion states.",
+      "visual": {
+        "source_page_url": "https://www.headspace.com/",
+        "source_image_url": "https://headspace-contentful.imgix.net/2pcwdm6O0Kt0rq19lLLCDC/624cec6f5e77f9d7e0d5de6f02c437b5/desktop_hero_1_june5_2x__1__copy.png?ixlib=js-3.8.0&auto=format%2Ccompress",
+        "local_path": "images/23-headspace.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1266,
+        "height": 620,
+        "original_width": 1266,
+        "original_height": 620,
+        "bytes": 36666,
+        "sha256": "83351cb327c9d3cb0518c2a3131fa7aa7c4d392eb9874119ac7fb3884dfcb756",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "83351cb327c9d3cb0518c2a3131fa7aa7c4d392eb9874119ac7fb3884dfcb756",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.118
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.887,
+              "width": 1.0,
+              "height": 0.113
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.118,
+              "width": 1.0,
+              "height": 0.769
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.072,
+              "strength": 0.502
+            },
+            {
+              "position": 0.262,
+              "strength": 0.319
+            },
+            {
+              "position": 0.339,
+              "strength": 0.72
+            },
+            {
+              "position": 0.664,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.118,
+              "strength": 0.979
+            },
+            {
+              "position": 0.456,
+              "strength": 0.683
+            },
+            {
+              "position": 0.642,
+              "strength": 0.543
+            },
+            {
+              "position": 0.887,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Calm",
+      "source_url": "https://www.calm.com/",
+      "category": "Health",
+      "selection_note": "Study content discovery by goal and duration, plus the session player’s handling of narration, ambient sound, timing, and downloads.",
+      "visual": {
+        "source_page_url": "https://www.calm.com/",
+        "source_image_url": "https://www.calm.com/_n/images/social/calm-meta.png",
+        "local_path": "images/24-calm.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 47670,
+        "sha256": "820ca5715890f5efc9353264072b31803c4ae520b01987746c578821f81c2f50",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "820ca5715890f5efc9353264072b31803c4ae520b01987746c578821f81c2f50",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.114
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.114,
+              "width": 1.0,
+              "height": 0.886
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.42,
+              "strength": 0.629
+            },
+            {
+              "position": 0.617,
+              "strength": 1.0
+            },
+            {
+              "position": 0.937,
+              "strength": 0.88
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.114,
+              "strength": 1.0
+            },
+            {
+              "position": 0.254,
+              "strength": 0.576
+            },
+            {
+              "position": 0.355,
+              "strength": 0.285
+            },
+            {
+              "position": 0.484,
+              "strength": 0.284
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "MyFitnessPal",
+      "source_url": "https://www.myfitnesspal.com/",
+      "category": "Health",
+      "selection_note": "Study the food diary’s meal-based grouping and quick-add paths for search, barcode scanning, recent foods, quantities, and nutrition review.",
+      "visual": {
+        "source_page_url": "https://www.myfitnesspal.com/",
+        "source_image_url": "https://www.myfitnesspal.com/_next/image?url=%2Fpages%2Fhome%2Flogged-out-v2%2Fhero-food-plate.png&w=1080&q=75",
+        "local_path": "images/25-myfitnesspal.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1080,
+        "height": 734,
+        "original_width": 1080,
+        "original_height": 734,
+        "bytes": 167122,
+        "sha256": "e194c794a326b642b117622c86f7bd258d9fbad46afbcc04e02944b9b5e8c262",
+        "source_hint": "An overhead view of a vibrant bowl of food with eggs, greens, tomatoes, and radishes on a wooden table."
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "e194c794a326b642b117622c86f7bd258d9fbad46afbcc04e02944b9b5e8c262",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.098
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.812,
+              "width": 1.0,
+              "height": 0.188
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.098,
+              "width": 1.0,
+              "height": 0.714
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.216,
+              "strength": 1.0
+            },
+            {
+              "position": 0.32,
+              "strength": 0.949
+            },
+            {
+              "position": 0.512,
+              "strength": 0.921
+            },
+            {
+              "position": 0.626,
+              "strength": 0.969
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.098,
+              "strength": 0.861
+            },
+            {
+              "position": 0.332,
+              "strength": 1.0
+            },
+            {
+              "position": 0.572,
+              "strength": 0.821
+            },
+            {
+              "position": 0.812,
+              "strength": 0.899
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Nike Run Club",
+      "source_url": "https://www.nike.com/nrc-app",
+      "category": "Health",
+      "selection_note": "Study guided-run discovery, pre-run configuration, live pace and distance feedback, pause controls, and the post-run recap flow.",
+      "visual": {
+        "source_page_url": "https://www.nike.com/nrc-app",
+        "source_image_url": "https://c.static-nike.com/a/images/w_1920,c_limit/mdbgldn6yg1gg88jomci/image.jpg",
+        "local_path": "images/26-nike-run-club.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 793,
+        "original_width": 1920,
+        "original_height": 1088,
+        "bytes": 4468,
+        "sha256": "38b763bad776c35169d38e3b6f0f72d03f3e686b475109666896e4b4e565f568",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "38b763bad776c35169d38e3b6f0f72d03f3e686b475109666896e4b4e565f568",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.373,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.416,
+              "strength": 0.564
+            },
+            {
+              "position": 0.514,
+              "strength": 1.0
+            },
+            {
+              "position": 0.6,
+              "strength": 0.796
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Procreate Pocket",
+      "source_url": "https://procreate.com/pocket",
+      "category": "Creativity",
+      "selection_note": "Study the gesture-first canvas and compact access to brushes, colors, layers, transforms, undo, and full-screen drawing on iPhone.",
+      "visual": {
+        "source_page_url": "https://procreate.com/pocket",
+        "source_image_url": "https://procreate-assets-cdn.procreate.com/_nuxt/pocket_en.B1FvUF18.jpg",
+        "local_path": "images/27-procreate-pocket.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1280,
+        "height": 720,
+        "original_width": 1280,
+        "original_height": 720,
+        "bytes": 35206,
+        "sha256": "a04ccefc7ea969b73ae5c50f8ad93f718e8055bcc833cb4cc9e86714ecff5858",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "a04ccefc7ea969b73ae5c50f8ad93f718e8055bcc833cb4cc9e86714ecff5858",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.352,
+              "strength": 0.777
+            },
+            {
+              "position": 0.479,
+              "strength": 1.0
+            },
+            {
+              "position": 0.639,
+              "strength": 0.975
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.397,
+              "strength": 0.853
+            },
+            {
+              "position": 0.502,
+              "strength": 0.844
+            },
+            {
+              "position": 0.672,
+              "strength": 0.879
+            },
+            {
+              "position": 0.747,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Adobe Lightroom for mobile",
+      "source_url": "https://www.adobe.com/products/photoshop-lightroom/mobile.html",
+      "category": "Creativity",
+      "selection_note": "Study the flow from library and import into editing, especially the bottom tool strip, nested adjustments, presets, masking, and compare states.",
+      "visual": {
+        "source_page_url": "https://www.adobe.com/products/photoshop-lightroom/mobile.html",
+        "source_image_url": "https://www.adobe.com/products/photoshop-lightroom/media_1c94a1873706da5eef69a9b9e81ed28241eddc354.png?width=2000&format=webply&optimize=medium",
+        "local_path": "images/28-adobe-lightroom-for-mobile.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1371,
+        "height": 1000,
+        "original_width": 1920,
+        "original_height": 1400,
+        "bytes": 87416,
+        "sha256": "14002da7d886073d30d623f0383d98e800a885ebd9769a72747d68b471937193",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "14002da7d886073d30d623f0383d98e800a885ebd9769a72747d68b471937193",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.072
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.938,
+              "width": 1.0,
+              "height": 0.062
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.072,
+              "width": 1.0,
+              "height": 0.866
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.079,
+              "strength": 1.0
+            },
+            {
+              "position": 0.523,
+              "strength": 0.93
+            },
+            {
+              "position": 0.616,
+              "strength": 0.994
+            },
+            {
+              "position": 0.813,
+              "strength": 0.922
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.072,
+              "strength": 0.837
+            },
+            {
+              "position": 0.346,
+              "strength": 1.0
+            },
+            {
+              "position": 0.544,
+              "strength": 0.794
+            },
+            {
+              "position": 0.938,
+              "strength": 0.852
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Canva",
+      "source_url": "https://apps.apple.com/us/app/canva-ai-photo-video-editor/id897446215",
+      "category": "Creativity",
+      "selection_note": "Study template-led creation and the mobile editor’s object selection, contextual bottom toolbar, layer ordering, page management, and export.",
+      "visual": {
+        "source_page_url": "https://apps.apple.com/us/app/canva-ai-photo-video-editor/id897446215",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/30/08/f0/3008f0e1-b7cb-a680-3f0e-a9beffc87864/Placeholder.mill/1200x630wa.jpg",
+        "local_path": "images/29-canva.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 10462,
+        "sha256": "3b890dbf7e8a1dcd5910c9210ea23bc276eab2651983ee54f210c1eb54944c44",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "3b890dbf7e8a1dcd5910c9210ea23bc276eab2651983ee54f210c1eb54944c44",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.159
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.837,
+              "width": 1.0,
+              "height": 0.163
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.159,
+              "width": 1.0,
+              "height": 0.678
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.322,
+              "strength": 0.827
+            },
+            {
+              "position": 0.428,
+              "strength": 0.231
+            },
+            {
+              "position": 0.554,
+              "strength": 0.22
+            },
+            {
+              "position": 0.676,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.159,
+              "strength": 0.669
+            },
+            {
+              "position": 0.461,
+              "strength": 0.565
+            },
+            {
+              "position": 0.554,
+              "strength": 0.688
+            },
+            {
+              "position": 0.837,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "CapCut",
+      "source_url": "https://www.capcut.com/",
+      "category": "Creativity",
+      "selection_note": "Study multitrack timeline manipulation, clip selection, playhead behavior, and the contextual tool tray for cuts, effects, text, and audio.",
+      "visual": {
+        "source_page_url": "https://www.capcut.com/",
+        "source_image_url": "https://p16-seeyou-useast8.capcutcdn-us.com/tos-useast8-i-2zwwjm3azk-tx2/162a382456c94d43bc5c131fb5ea6b0f~tplv-2zwwjm3azk-image.webp",
+        "local_path": "images/30-capcut.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 906,
+        "original_width": 2659,
+        "original_height": 1721,
+        "bytes": 28858,
+        "sha256": "b30c4a3579b50c0ea5aaff2158e3c27082aad021a220aa2bbfefc9897337ed7c",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b30c4a3579b50c0ea5aaff2158e3c27082aad021a220aa2bbfefc9897337ed7c",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.168
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.825,
+              "width": 1.0,
+              "height": 0.175
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.168,
+              "width": 1.0,
+              "height": 0.657
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.204,
+              "strength": 1.0
+            },
+            {
+              "position": 0.289,
+              "strength": 0.806
+            },
+            {
+              "position": 0.566,
+              "strength": 0.781
+            },
+            {
+              "position": 0.704,
+              "strength": 0.882
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.168,
+              "strength": 0.998
+            },
+            {
+              "position": 0.306,
+              "strength": 1.0
+            },
+            {
+              "position": 0.663,
+              "strength": 0.535
+            },
+            {
+              "position": 0.825,
+              "strength": 0.653
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "VSCO",
+      "source_url": "https://www.vsco.co/",
+      "category": "Creativity",
+      "selection_note": "Study the Studio-to-editor flow, preset intensity controls, adjustment history, before-and-after comparison, and publishing handoff.",
+      "visual": {
+        "source_page_url": "https://www.vsco.co/",
+        "source_image_url": "https://cdn.prod.website-files.com/64e27cdd42db7ecf119d5e61/6631533c1a6fd8d635c276e6_vsco-og-image.jpg",
+        "local_path": "images/31-vsco.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 30528,
+        "sha256": "4035c4a685e854cb686319cea66d63d758aeb511fd4a47c640394344f6a7835b",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "4035c4a685e854cb686319cea66d63d758aeb511fd4a47c640394344f6a7835b",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.37,
+              "strength": 0.55
+            },
+            {
+              "position": 0.463,
+              "strength": 1.0
+            },
+            {
+              "position": 0.552,
+              "strength": 0.784
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.279,
+              "strength": 1.0
+            },
+            {
+              "position": 0.427,
+              "strength": 0.676
+            },
+            {
+              "position": 0.522,
+              "strength": 0.669
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Concepts",
+      "source_url": "https://concepts.app/en/",
+      "category": "Creativity",
+      "selection_note": "Study infinite-canvas navigation and the tool wheel, including brush customization, precision guides, object selection, layers, and export.",
+      "visual": {
+        "source_page_url": "https://concepts.app/en/",
+        "source_image_url": "https://cdn.tophatch.com/img/social/concepts_moodboard.jpg",
+        "local_path": "images/32-concepts.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1397,
+        "height": 1000,
+        "original_width": 1920,
+        "original_height": 1374,
+        "bytes": 146908,
+        "sha256": "4837d397b2ec5d13f0e9f912c6b5a908041ddf33427ae1b93dbbe57a2978ba9c",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "4837d397b2ec5d13f0e9f912c6b5a908041ddf33427ae1b93dbbe57a2978ba9c",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.077,
+              "strength": 0.624
+            },
+            {
+              "position": 0.352,
+              "strength": 0.457
+            },
+            {
+              "position": 0.633,
+              "strength": 0.456
+            },
+            {
+              "position": 0.761,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.334,
+              "strength": 1.0
+            },
+            {
+              "position": 0.443,
+              "strength": 0.899
+            },
+            {
+              "position": 0.564,
+              "strength": 0.715
+            },
+            {
+              "position": 0.739,
+              "strength": 0.647
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "1Password for iOS",
+      "source_url": "https://1password.com/downloads/ios/",
+      "visual_source_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/79/53/4e/79534e14-4d2f-d498-cf93-e2f2d60fbc85/04c938ec-4b22-47b0-9b24-d7d6c1ecc7d0_en-app-store-screenshots-iphone-8-01.png/392x696bb.png",
+      "category": "Utilities",
+      "selection_note": "Study vault and item hierarchy, search, favorite access, secure-field reveal and copy behavior, and the handoff to system AutoFill.",
+      "visual": {
+        "source_page_url": "https://1password.com/downloads/ios/",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/79/53/4e/79534e14-4d2f-d498-cf93-e2f2d60fbc85/04c938ec-4b22-47b0-9b24-d7d6c1ecc7d0_en-app-store-screenshots-iphone-8-01.png/392x696bb.png",
+        "local_path": "images/33-1password-for-ios.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 392,
+        "height": 696,
+        "original_width": 392,
+        "original_height": 696,
+        "bytes": 23560,
+        "sha256": "1e2a1449f451c4db8143d274ae34931addf80952acc23537dc0d6b8bddffa078",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1e2a1449f451c4db8143d274ae34931addf80952acc23537dc0d6b8bddffa078",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.162
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.927,
+              "width": 1.0,
+              "height": 0.073
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.162,
+              "width": 1.0,
+              "height": 0.765
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.217,
+              "strength": 0.789
+            },
+            {
+              "position": 0.49,
+              "strength": 1.0
+            },
+            {
+              "position": 0.587,
+              "strength": 0.74
+            },
+            {
+              "position": 0.702,
+              "strength": 0.741
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.073,
+              "strength": 0.494
+            },
+            {
+              "position": 0.162,
+              "strength": 0.746
+            },
+            {
+              "position": 0.295,
+              "strength": 0.924
+            },
+            {
+              "position": 0.927,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Bitwarden",
+      "source_url": "https://bitwarden.com/download/",
+      "category": "Utilities",
+      "selection_note": "Study navigation among Vault, Send, Generator, and Settings, plus item-detail actions for copying, launching, editing, and autofilling credentials.",
+      "visual": {
+        "source_page_url": "https://bitwarden.com/download/",
+        "source_image_url": "https://bitwarden.com/assets/1CDBaM9cJRltadRkQ5xEeX/f86830d58cd77185cdbead8e121b0ebd/WindowsDesk.png?w=1400&fm=avif",
+        "local_path": "images/34-bitwarden.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 940,
+        "original_width": 1400,
+        "original_height": 940,
+        "bytes": 51496,
+        "sha256": "336bb3c104f12bef104cf2ebdd63a7beb4200dbe2cf8cfd523e8c342f7111cee",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "336bb3c104f12bef104cf2ebdd63a7beb4200dbe2cf8cfd523e8c342f7111cee",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.084
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.084,
+              "width": 1.0,
+              "height": 0.916
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.06,
+              "strength": 0.631
+            },
+            {
+              "position": 0.224,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.084,
+              "strength": 1.0
+            },
+            {
+              "position": 0.402,
+              "strength": 0.188
+            },
+            {
+              "position": 0.49,
+              "strength": 0.185
+            },
+            {
+              "position": 0.669,
+              "strength": 0.21
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Halide",
+      "source_url": "https://halide.cam/",
+      "category": "Utilities",
+      "selection_note": "Study the direct-manipulation camera interface, particularly focus and exposure gestures, manual controls, capture feedback, and photo review.",
+      "visual": {
+        "source_page_url": "https://halide.cam/",
+        "source_image_url": "https://halide.cam/og_banner.jpg",
+        "local_path": "images/35-halide.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1152,
+        "height": 604,
+        "original_width": 1152,
+        "original_height": 604,
+        "bytes": 26790,
+        "sha256": "36521dca21f4a7580de01a8676c810212cf1a08520473e907b13f69b8c49c511",
+        "source_hint": "og:image:secure_url"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "36521dca21f4a7580de01a8676c810212cf1a08520473e907b13f69b8c49c511",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.788,
+              "width": 1.0,
+              "height": 0.212
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.668
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.667,
+              "strength": 0.914
+            },
+            {
+              "position": 0.813,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.347,
+              "strength": 0.612
+            },
+            {
+              "position": 0.551,
+              "strength": 0.697
+            },
+            {
+              "position": 0.68,
+              "strength": 1.0
+            },
+            {
+              "position": 0.788,
+              "strength": 0.658
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Flighty",
+      "source_url": "https://www.flightyapp.com/",
+      "category": "Utilities",
+      "selection_note": "Study the itinerary timeline, flight-status card hierarchy, delay and gate-change alerts, and progressive detail around each trip segment.",
+      "visual": {
+        "source_page_url": "https://www.flightyapp.com/",
+        "source_image_url": "https://framerusercontent.com/images/vTxvYBhi0Zzlm16K4AQRqpeA.png",
+        "local_path": "images/36-flighty.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 639,
+        "original_width": 1200,
+        "original_height": 639,
+        "bytes": 46682,
+        "sha256": "f8cd81d5967576dae21f3349db0a78ed17113388d84ee92bab1f9579be07b1fe",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "f8cd81d5967576dae21f3349db0a78ed17113388d84ee92bab1f9579be07b1fe",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.85,
+              "width": 1.0,
+              "height": 0.15
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.73
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.48,
+              "strength": 0.688
+            },
+            {
+              "position": 0.621,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.48,
+              "strength": 0.603
+            },
+            {
+              "position": 0.582,
+              "strength": 0.642
+            },
+            {
+              "position": 0.772,
+              "strength": 0.978
+            },
+            {
+              "position": 0.85,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "CARROT Weather",
+      "source_url": "https://www.meetcarrot.com/weather/",
+      "category": "Utilities",
+      "selection_note": "Study the vertically scanned forecast, modular weather cards, location switching, data-source details, and alert presentation on a small screen.",
+      "visual": {
+        "source_page_url": "https://www.meetcarrot.com/weather/",
+        "source_image_url": "https://www.meetcarrot.com/weather/img/header-v6.png",
+        "local_path": "images/37-carrot-weather.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 801,
+        "height": 871,
+        "original_width": 801,
+        "original_height": 871,
+        "bytes": 34228,
+        "sha256": "6f6cab90777facf045a9efc68d3a41888b258a194473e14592082d4bfb4789a7",
+        "source_hint": "img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "6f6cab90777facf045a9efc68d3a41888b258a194473e14592082d4bfb4789a7",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.09,
+              "strength": 0.524
+            },
+            {
+              "position": 0.934,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.249,
+              "strength": 1.0
+            },
+            {
+              "position": 0.356,
+              "strength": 0.245
+            },
+            {
+              "position": 0.693,
+              "strength": 0.367
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Spotify",
+      "source_url": "https://www.spotify.com/us/download/other/",
+      "category": "Media",
+      "selection_note": "Study the Home, Search, and Library architecture, plus the Now Playing screen’s queue, device picker, scrubber, and expandable context.",
+      "visual": {
+        "source_page_url": "https://www.spotify.com/us/download/other/",
+        "source_image_url": "https://www.scdn.co/i/_global/open-graph-default.png",
+        "local_path": "images/38-spotify.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 13040,
+        "sha256": "9df131ba2711d587cbf0b466949e0252ddf1eaf3589098a46fd8e3538ae8d8bd",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "9df131ba2711d587cbf0b466949e0252ddf1eaf3589098a46fd8e3538ae8d8bd",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.124,
+              "strength": 0.627
+            },
+            {
+              "position": 0.347,
+              "strength": 0.626
+            },
+            {
+              "position": 0.47,
+              "strength": 0.985
+            },
+            {
+              "position": 0.72,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.448,
+              "strength": 1.0
+            },
+            {
+              "position": 0.598,
+              "strength": 0.716
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Netflix",
+      "source_url": "https://help.netflix.com/en/node/23927",
+      "visual_source_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/a2/2d/41/a22d4158-6f5d-8865-0420-04d542f6b062/1_APP_IPHONE_55_1.jpg/392x696bb.jpg",
+      "category": "Media",
+      "selection_note": "Study profile selection, shelf-based browsing, title-detail hierarchy, download states, and the video player’s transport and episode controls.",
+      "visual": {
+        "source_page_url": "https://help.netflix.com/en/node/23927",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/a2/2d/41/a22d4158-6f5d-8865-0420-04d542f6b062/1_APP_IPHONE_55_1.jpg/392x696bb.jpg",
+        "local_path": "images/39-netflix.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 392,
+        "height": 696,
+        "original_width": 392,
+        "original_height": 696,
+        "bytes": 24510,
+        "sha256": "c5d34f7f798845b93be4e0899b14f08ca88c9cbbde596bc85a52d5df361b3fa0",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c5d34f7f798845b93be4e0899b14f08ca88c9cbbde596bc85a52d5df361b3fa0",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.105
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.105,
+              "width": 1.0,
+              "height": 0.895
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.143,
+              "strength": 1.0
+            },
+            {
+              "position": 0.26,
+              "strength": 0.523
+            },
+            {
+              "position": 0.342,
+              "strength": 0.357
+            },
+            {
+              "position": 0.531,
+              "strength": 0.543
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.105,
+              "strength": 0.804
+            },
+            {
+              "position": 0.326,
+              "strength": 0.797
+            },
+            {
+              "position": 0.507,
+              "strength": 0.974
+            },
+            {
+              "position": 0.606,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "YouTube",
+      "source_url": "https://apps.apple.com/us/app/youtube-watch-listen-stream/id544007664",
+      "category": "Media",
+      "selection_note": "Study bottom-tab navigation, feed-to-player transitions, portrait and landscape playback, and layered access to comments, chapters, and queue.",
+      "visual": {
+        "source_page_url": "https://apps.apple.com/us/app/youtube-watch-listen-stream/id544007664",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/63/c1/8b/63c18b31-3fb1-7e93-80bf-36f8bbf29137/Placeholder.mill/1200x630wa.jpg",
+        "local_path": "images/40-youtube.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 5148,
+        "sha256": "5c9240a9bcba624d0b95dc477a42aead078ac8e184fa7c47ed5d8cc641de5a2e",
+        "source_hint": "og:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5c9240a9bcba624d0b95dc477a42aead078ac8e184fa7c47ed5d8cc641de5a2e",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.366,
+              "strength": 1.0
+            },
+            {
+              "position": 0.472,
+              "strength": 0.499
+            },
+            {
+              "position": 0.633,
+              "strength": 0.756
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.319,
+              "strength": 1.0
+            },
+            {
+              "position": 0.677,
+              "strength": 0.82
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Pocket Casts",
+      "source_url": "https://pocketcasts.com/",
+      "category": "Media",
+      "selection_note": "Study navigation among Podcasts, Filters, Discover, and Profile, plus the player’s Up Next queue, chapters, speed, and trim controls.",
+      "visual": {
+        "source_page_url": "https://pocketcasts.com/",
+        "source_image_url": "https://static.pocketcasts.com/webplayer/assets/main-hero-D-RZs3K1.webp",
+        "local_path": "images/41-pocket-casts.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 756,
+        "original_width": 4778,
+        "original_height": 2579,
+        "bytes": 26416,
+        "sha256": "9fcb5ae4157521ab9774fde6541b294cff2918a2fbe338d455cfcf59e0ae1c43",
+        "source_hint": "Background image of a phone with the Pocket Casts app open, showing a podcast episode playing.  _heroImageLarge_ygaxm_60"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "9fcb5ae4157521ab9774fde6541b294cff2918a2fbe338d455cfcf59e0ae1c43",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.297,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.37,
+              "strength": 1.0
+            },
+            {
+              "position": 0.473,
+              "strength": 0.968
+            },
+            {
+              "position": 0.642,
+              "strength": 0.932
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Libby",
+      "source_url": "https://www.overdrive.com/apps/libby",
+      "category": "Media",
+      "selection_note": "Study the Library, Shelf, and reading timeline model, including borrowing, placing holds, managing loans, downloading, and opening formats.",
+      "visual": {
+        "source_page_url": "https://www.overdrive.com/apps/libby",
+        "source_image_url": "https://www.overdrive.com/_next/image?url=https%3A%2F%2Fimages.contentstack.io%2Fv3%2Fassets%2Fbltf6a42d9e46f07d48%2Fblt948a0e3ba38b3748%2F66ccbeb770d8f819fefeadde%2Fsubjects.png&w=1200&q=75",
+        "local_path": "images/42-libby.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 563,
+        "height": 1000,
+        "original_width": 1144,
+        "original_height": 2032,
+        "bytes": 21942,
+        "sha256": "1df479eef837b5b7475775f409cfb73b5a6713b79aa56859f3619740b6b6418d",
+        "source_hint": "Mobile screen with a list of subjects/genres in Libby like mystery, romance, nonfictions and more."
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1df479eef837b5b7475775f409cfb73b5a6713b79aa56859f3619740b6b6418d",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.836,
+              "width": 1.0,
+              "height": 0.164
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.716
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.268,
+              "strength": 1.0
+            },
+            {
+              "position": 0.607,
+              "strength": 0.789
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.298,
+              "strength": 0.542
+            },
+            {
+              "position": 0.546,
+              "strength": 0.29
+            },
+            {
+              "position": 0.714,
+              "strength": 0.428
+            },
+            {
+              "position": 0.836,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Apple Maps",
+      "source_url": "https://www.apple.com/maps/",
+      "category": "Navigation",
+      "selection_note": "Study the map-and-bottom-sheet relationship, place-card hierarchy, route-mode comparison, turn preview, and transition into active navigation.",
+      "visual": {
+        "source_page_url": "https://www.apple.com/maps/",
+        "source_image_url": "https://www.apple.com/v/maps/d/images/overview/driving_screen_fallback__neubufwgev2i_large_2x.jpg",
+        "local_path": "images/43-apple-maps.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 462,
+        "height": 1000,
+        "original_width": 484,
+        "original_height": 1048,
+        "bytes": 34378,
+        "sha256": "5bcfafb4ff49f63794a20dce3cecbe10aa1bed2eea13f36bce63bebf391a2fdd",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5bcfafb4ff49f63794a20dce3cecbe10aa1bed2eea13f36bce63bebf391a2fdd",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.862,
+              "width": 1.0,
+              "height": 0.138
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.742
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.108,
+              "strength": 0.82
+            },
+            {
+              "position": 0.185,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.327,
+              "strength": 1.0
+            },
+            {
+              "position": 0.429,
+              "strength": 0.389
+            },
+            {
+              "position": 0.571,
+              "strength": 0.452
+            },
+            {
+              "position": 0.862,
+              "strength": 0.556
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Google Maps",
+      "source_url": "https://www.google.com/maps/about/",
+      "visual_source_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/f0/12/54/f0125476-fd37-8c11-ca24-1034451ccaf6/download.png/600x1066bb.png",
+      "category": "Navigation",
+      "selection_note": "Study map browsing with draggable sheets, place-detail actions, saved lists, multimodal route comparison, and active-navigation controls.",
+      "visual": {
+        "source_page_url": "https://www.google.com/maps/about/",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/f0/12/54/f0125476-fd37-8c11-ca24-1034451ccaf6/download.png/600x1066bb.png",
+        "local_path": "images/44-google-maps.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 462,
+        "height": 1000,
+        "original_width": 493,
+        "original_height": 1066,
+        "bytes": 34022,
+        "sha256": "ff367a7eef9c42f9a54edf8e78e709815a41a244980d8bda85e0be7838469c3d",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "ff367a7eef9c42f9a54edf8e78e709815a41a244980d8bda85e0be7838469c3d",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.199
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.199,
+              "width": 1.0,
+              "height": 0.801
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.094,
+              "strength": 0.988
+            },
+            {
+              "position": 0.45,
+              "strength": 0.307
+            },
+            {
+              "position": 0.901,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.091,
+              "strength": 0.682
+            },
+            {
+              "position": 0.199,
+              "strength": 1.0
+            },
+            {
+              "position": 0.356,
+              "strength": 0.517
+            },
+            {
+              "position": 0.529,
+              "strength": 0.649
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Citymapper",
+      "source_url": "https://citymapper.com/",
+      "category": "Navigation",
+      "selection_note": "Study destination search followed by multimodal route comparison, then examine step cards, transfer cues, live progress, and disruption messaging.",
+      "visual": {
+        "source_page_url": "https://citymapper.com/",
+        "source_image_url": "https://citymapper.com/static/img/home-page/app-greenie.png",
+        "local_path": "images/45-citymapper.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1150,
+        "height": 1000,
+        "original_width": 1380,
+        "original_height": 1200,
+        "bytes": 56204,
+        "sha256": "19d7c0cf4537656b54a23a4071bd8e75aced3a8df53e08a2954a7b224cbea7e7",
+        "source_hint": "The Citymapper app home screen is presented on an iPhone"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "19d7c0cf4537656b54a23a4071bd8e75aced3a8df53e08a2954a7b224cbea7e7",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.143,
+              "strength": 1.0
+            },
+            {
+              "position": 0.294,
+              "strength": 0.555
+            },
+            {
+              "position": 0.481,
+              "strength": 0.53
+            },
+            {
+              "position": 0.56,
+              "strength": 0.506
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.335,
+              "strength": 0.856
+            },
+            {
+              "position": 0.516,
+              "strength": 1.0
+            },
+            {
+              "position": 0.644,
+              "strength": 0.966
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "AllTrails",
+      "source_url": "https://www.alltrails.com/mobile",
+      "category": "Navigation",
+      "selection_note": "Study trail discovery filters, result cards, map-and-detail organization, route preview, offline map handling, and on-trail progress feedback.",
+      "visual": {
+        "source_page_url": "https://www.alltrails.com/mobile",
+        "source_image_url": "https://www.alltrails.com/mugen/image/root?url=https%3A%2F%2Fd27scpai1jcyi9.cloudfront.net%2F43f9a3cbd372a008b6af2e72d68c538231fa6f2d%2F_next%2Fstatic%2Fmedia%2Fhero-1.6b82a319.avif&w=2048&q=75",
+        "local_path": "images/46-alltrails.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 700,
+        "original_width": 2048,
+        "original_height": 1024,
+        "bytes": 283302,
+        "sha256": "907926b5f8e8666219477191ae0fe45cdbcc2443c6a856eee627964901b4765f",
+        "source_hint": "A hiker seen from behind, walking on a trail surrounded by pine trees.  styles_image__1sHEp"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "907926b5f8e8666219477191ae0fe45cdbcc2443c6a856eee627964901b4765f",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.633,
+              "strength": 0.861
+            },
+            {
+              "position": 0.733,
+              "strength": 0.957
+            },
+            {
+              "position": 0.904,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.311,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "high",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "GitHub Mobile",
+      "source_url": "https://github.com/mobile",
+      "category": "Developer tools",
+      "selection_note": "Study notification triage and repository navigation, including issue and pull-request timelines, diff review, reactions, comments, and approvals.",
+      "visual": {
+        "source_page_url": "https://github.com/mobile",
+        "source_image_url": "https://images.ctfassets.net/8aevphvgewt8/35ffAVxi5hact6WsMS1D28/72695af2073f318fd3c8ca6cae5bf56f/Hero.webp?fm=webp",
+        "local_path": "images/47-github-mobile.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 737,
+        "original_width": 4224,
+        "original_height": 2224,
+        "bytes": 64366,
+        "sha256": "597f1be5771cc5775c2f7211caeeb1aa31dbee8570e50b9c4473b823d74c5d79",
+        "source_hint": "Three GitHub mobile app screens are shown: one is a tablet screen and the other two are phone screens. The tablet screen shows a list of pull requests. The first phone screen displays the GitHub mobile app home UI, and the second phone screen displays a list of agent tasks.  Primer_Brand__Image-module__Image___JSzlx"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "597f1be5771cc5775c2f7211caeeb1aa31dbee8570e50b9c4473b823d74c5d79",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.213
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.213,
+              "width": 1.0,
+              "height": 0.787
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.06,
+              "strength": 1.0
+            },
+            {
+              "position": 0.626,
+              "strength": 0.619
+            },
+            {
+              "position": 0.78,
+              "strength": 0.714
+            },
+            {
+              "position": 0.939,
+              "strength": 0.79
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.213,
+              "strength": 0.843
+            },
+            {
+              "position": 0.344,
+              "strength": 0.978
+            },
+            {
+              "position": 0.589,
+              "strength": 1.0
+            },
+            {
+              "position": 0.726,
+              "strength": 0.755
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Working Copy",
+      "source_url": "https://workingcopy.app/",
+      "category": "Developer tools",
+      "selection_note": "Study repository and file-tree navigation, staged-versus-unstaged diff presentation, commit composition, branch switching, and remote synchronization.",
+      "visual": {
+        "source_page_url": "https://workingcopy.app/",
+        "source_image_url": "https://workingcopy.app/img/video-frame-overlay-24.png",
+        "local_path": "images/48-working-copy.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1388,
+        "height": 1000,
+        "original_width": 1600,
+        "original_height": 1153,
+        "bytes": 5474,
+        "sha256": "22cf27e56a706ea2988ba66454dc83d5d1cc6748c7a6dd3ae4e68fc75c861dca",
+        "source_hint": "Working Copy on iPad Pro clones a Git repository which is edited\n             with Textastic and committed then a Swift PLayground inside Working Copy is opened from Files app.  frame"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "22cf27e56a706ea2988ba66454dc83d5d1cc6748c7a6dd3ae4e68fc75c861dca",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.139
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.938,
+              "width": 1.0,
+              "height": 0.062
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.139,
+              "width": 1.0,
+              "height": 0.799
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.082,
+              "strength": 1.0
+            },
+            {
+              "position": 0.167,
+              "strength": 0.969
+            },
+            {
+              "position": 0.939,
+              "strength": 0.74
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.059,
+              "strength": 1.0
+            },
+            {
+              "position": 0.139,
+              "strength": 0.177
+            },
+            {
+              "position": 0.498,
+              "strength": 0.214
+            },
+            {
+              "position": 0.938,
+              "strength": 0.762
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Blink Shell",
+      "source_url": "https://blink.sh/",
+      "visual_source_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/bf/d5/e1/bfd5e18f-487a-669b-6d16-5a13b0b15cdb/50db2b12-f523-4da7-ac46-78e96de72192_2208x1242bb-1.png/1200x675bb.png",
+      "category": "Developer tools",
+      "selection_note": "Study terminal tabs, saved SSH hosts, the keyboard accessory row, modifier-key handling, and session management within iPhone constraints.",
+      "visual": {
+        "source_page_url": "https://blink.sh/",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/bf/d5/e1/bfd5e18f-487a-669b-6d16-5a13b0b15cdb/50db2b12-f523-4da7-ac46-78e96de72192_2208x1242bb-1.png/1200x675bb.png",
+        "local_path": "images/49-blink-shell.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 675,
+        "original_width": 1200,
+        "original_height": 675,
+        "bytes": 82024,
+        "sha256": "0269adf43c4927055dfad86ed7ba1b85c6cbc23aeca13f91ebaba9324487f66d",
+        "source_hint": "direct image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "0269adf43c4927055dfad86ed7ba1b85c6cbc23aeca13f91ebaba9324487f66d",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.085
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.085,
+              "width": 1.0,
+              "height": 0.915
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.181,
+              "strength": 0.82
+            },
+            {
+              "position": 0.394,
+              "strength": 0.713
+            },
+            {
+              "position": 0.472,
+              "strength": 1.0
+            },
+            {
+              "position": 0.642,
+              "strength": 0.701
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.085,
+              "strength": 0.517
+            },
+            {
+              "position": 0.188,
+              "strength": 0.45
+            },
+            {
+              "position": 0.291,
+              "strength": 1.0
+            },
+            {
+              "position": 0.706,
+              "strength": 0.457
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "TestFlight",
+      "source_url": "https://apps.apple.com/us/app/testflight/id899247664",
+      "category": "Developer tools",
+      "selection_note": "Study invitation and redemption states, app-to-build hierarchy, update notes, expiration messaging, automatic updates, and beta-feedback submission.",
+      "visual": {
+        "source_page_url": "https://apps.apple.com/us/app/testflight/id899247664",
+        "source_image_url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/13/99/db/1399dbf7-d1c4-4747-384e-fdd4277a5cfa/TestFlight-iPhone6p9-iOS26-GEOS-Wrapper_01.png/600x1300bb.webp",
+        "local_path": "images/50-testflight.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 460,
+        "height": 1000,
+        "original_width": 598,
+        "original_height": 1300,
+        "bytes": 22390,
+        "sha256": "d4e934758a08b1aa87a6bfe8418bd683fa61982b82a2c395d3e489de5ca60584",
+        "source_hint": "source-srcset"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d4e934758a08b1aa87a6bfe8418bd683fa61982b82a2c395d3e489de5ca60584",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.176
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.939,
+              "width": 1.0,
+              "height": 0.061
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.176,
+              "width": 1.0,
+              "height": 0.763
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.118,
+              "strength": 0.999
+            },
+            {
+              "position": 0.877,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.079,
+              "strength": 0.768
+            },
+            {
+              "position": 0.176,
+              "strength": 1.0
+            },
+            {
+              "position": 0.406,
+              "strength": 0.358
+            },
+            {
+              "position": 0.939,
+              "strength": 0.696
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    }
+  ],
+  "visual_count": 50,
+  "structure_count": 50
+}

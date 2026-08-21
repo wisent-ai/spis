@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Trello — create a Workspace",
+  "product_url": "https://support.atlassian.com/trello/docs/creating-a-new-workspace/",
+  "evidence_status": "partial",
+  "upstream_owner": "Atlassian Pty Ltd",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=JGLkH_EveHI",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 583557,
+      "sha256": "f67ccf55c8c97dbacf84e21d31af7ea4c1b26f567459d101c54ee0d27b0f7672",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "workspace menu",
+      "local_path": "media/state-01-workspace-menu.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 4.5s (mean abs diff 6.5156/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 70056,
+      "sha256": "4373b9171b802f4df829ca68233b143f5d5d1421a619f2388a7b31645ec401ad",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 6.5156,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "workspace form",
+      "local_path": "media/state-02-workspace-form.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 18.5s (mean abs diff 1.1289/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 95636,
+      "sha256": "e12402d3df2d22a5b1ad52bc8341bec26b3739593f722e63a9e941014c92521d",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 18.5,
+        "mean_abs_diff": 1.1289,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "workspace details",
+      "local_path": "media/state-03-workspace-details.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 34s (mean abs diff 0.8359/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 143060,
+      "sha256": "bdc9e2d96d0c5045e46df5f64b845757d1e333983a454cae02bb8b99fd67e587",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 34.0,
+        "mean_abs_diff": 0.8359,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "workspace active",
+      "local_path": "media/state-04-workspace-active.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 57s (mean abs diff 0.9414/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 117258,
+      "sha256": "f22b959d61dc22894aa0a38b480d8ae57119e32015c278765d4900d663b79128",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 57.0,
+        "mean_abs_diff": 0.9414,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "membership decision",
+      "local_path": "media/state-05-membership-decision.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 0.8125/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 75584,
+      "sha256": "89a9e5ae9dd7a07d09fadaa53ad033b0ba9eaa7d0432b781a3513293495a292b",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.5,
+        "mean_abs_diff": 0.8125,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "first board",
+      "local_path": "media/state-06-first-board.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 79.5s (mean abs diff 1.3242/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 80364,
+      "sha256": "d6c86f0f99a9a5c743724f8587eae8970e31aba33c93066f255982d994666a36",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 79.5,
+        "mean_abs_diff": 1.3242,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Authenticate and open the Workspaces menu",
+      "response": "Trello shows current workspaces and create action",
+      "feedback": "The retained workspace menu state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-workspace-menu.png @ 4.50s; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Choose Create Workspace",
+      "response": "Trello opens the lightweight workspace form",
+      "feedback": "The recording advances to workspace form and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-workspace-menu.png @ 4.50s; media/state-02-workspace-form.png @ 19.79s; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Enter the workspace name and optional description",
+      "response": "Trello validates the required name",
+      "feedback": "The navigation result is visible as workspace details.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-workspace-form.png @ 19.79s; media/state-03-workspace-details.png @ 35.07s; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Confirm creation and choose the available plan route",
+      "response": "Trello adds the Workspace to navigation",
+      "feedback": "The official recording shows the confirmed workspace active state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-workspace-details.png @ 35.07s; media/state-04-workspace-active.png @ 50.36s; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-workspace-form.png @ 19.79s; media/state-03-workspace-details.png @ 35.07s; media/state-04-workspace-active.png @ 50.36s; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Invite members or continue without invitations",
+      "response": "Trello records the membership decision",
+      "feedback": "Progress is observable as the distinct membership decision state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-workspace-active.png @ 50.36s; media/state-05-membership-decision.png @ 65.65s; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-workspace-details.png @ 35.07s; media/state-04-workspace-active.png @ 50.36s; media/state-05-membership-decision.png @ 65.65s; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Create or open the first board",
+      "response": "The board is listed under the Workspace, proving first usable result",
+      "feedback": "The retained first board state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-membership-decision.png @ 65.65s; media/state-06-first-board.png @ 80.94s; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+    }
+  ],
+  "journey": {
+    "actor": "new Trello workspace owner",
+    "goal": "create a Workspace and first board",
+    "prerequisites": [
+      "Atlassian or Trello account",
+      "workspace name"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Authenticate and open the Workspaces menu",
+        "system_response": "Trello shows current workspaces and create action",
+        "state": "workspace menu",
+        "evidence": "media/state-01-workspace-menu.png; media/official-recording.mp4#t=4.497; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose Create Workspace",
+        "system_response": "Trello opens the lightweight workspace form",
+        "state": "workspace form",
+        "evidence": "media/state-02-workspace-form.png; media/official-recording.mp4#t=19.785; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+      },
+      {
+        "index": 3,
+        "user_action": "Enter the workspace name and optional description",
+        "system_response": "Trello validates the required name",
+        "state": "workspace details",
+        "evidence": "media/state-03-workspace-details.png; media/official-recording.mp4#t=35.074; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+      },
+      {
+        "index": 4,
+        "user_action": "Confirm creation and choose the available plan route",
+        "system_response": "Trello adds the Workspace to navigation",
+        "state": "workspace active",
+        "evidence": "media/state-04-workspace-active.png; media/official-recording.mp4#t=50.362; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+      },
+      {
+        "index": 5,
+        "user_action": "Invite members or continue without invitations",
+        "system_response": "Trello records the membership decision",
+        "state": "membership decision",
+        "evidence": "media/state-05-membership-decision.png; media/official-recording.mp4#t=65.651; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+      },
+      {
+        "index": 6,
+        "user_action": "Create or open the first board",
+        "system_response": "The board is listed under the Workspace, proving first usable result",
+        "state": "first board",
+        "evidence": "media/state-06-first-board.png; media/official-recording.mp4#t=80.940; https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+      }
+    ],
+    "failure_route": [
+      "At workspace form or workspace details, invalid, expired, denied, or missing required input leaves the flow short of first board; evidence: media/state-02-workspace-form.png, media/state-03-workspace-details.png, and https://support.atlassian.com/trello/docs/creating-a-new-workspace/.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-workspace-details.png through media/state-05-membership-decision.png."
+    ],
+    "recovery_route": [
+      "Return to the retained workspace form or workspace details requirement, correct or resend the blocking input, and resubmit; evidence: https://support.atlassian.com/trello/docs/creating-a-new-workspace/.",
+      "Continue through the same terminal action until first board is visible in media/state-06-first-board.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "first board retained at media/state-06-first-board.png and media/official-recording.mp4#t=80.940; source https://support.atlassian.com/trello/docs/creating-a-new-workspace/"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-workspace-menu.png and media/state-02-workspace-form.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-workspace-details.png and media/state-04-workspace-active.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

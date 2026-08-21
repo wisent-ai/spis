@@ -1,0 +1,284 @@
+{
+  "name": "Grafana Documentation",
+  "source_url": "https://grafana.com/docs/",
+  "category": "Observability documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 22318,
+  "landing_nav": [
+    {
+      "text": "Try using Grot AI for this query ->",
+      "path": "/docs/`/grot/"
+    }
+  ],
+  "url_sections": {
+    "grafana": 10352,
+    "docs": 7335,
+    "blog": 2087,
+    "whats-new": 742,
+    "events": 624,
+    "go": 253,
+    "integrations": 227,
+    "developers": 185,
+    "security": 146,
+    "press": 78,
+    "success": 74,
+    "products": 51,
+    "oss": 33,
+    "legal": 30,
+    "tutorials": 19,
+    "workshops": 11,
+    "tags": 7,
+    "opentelemetry-report": 7,
+    "partnerships": 5,
+    "content": 5,
+    "careers": 4,
+    "observability-survey": 4,
+    "community": 4,
+    "load-testing": 4,
+    "pricing": 2,
+    "contact": 2,
+    "get": 2,
+    "solutions": 2,
+    "videos": 2,
+    "about": 2,
+    "resources": 2,
+    "trademark-policy": 2,
+    "professional-services": 1,
+    "compare": 1,
+    "observability-benefits-for-business": 1,
+    "support": 1,
+    "author": 1,
+    "help": 1,
+    "accessibility": 1,
+    "oss-vs-cloud": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorials"
+    ],
+    "changelog / release notes": [
+      "whats-new"
+    ],
+    "security": [
+      "security"
+    ],
+    "community / support": [
+      "support",
+      "community"
+    ],
+    "integrations": [
+      "integrations"
+    ],
+    "videos": [
+      "videos"
+    ],
+    "pricing / limits": [
+      "pricing"
+    ],
+    "accessibility": [
+      "accessibility"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://grafana.com/docs/",
+      "h1": "Technical documentation",
+      "h2": [
+        "Our core stack",
+        "Observability, AI, testing, and Incident Response Management (IRM)",
+        "Learning Hub",
+        "Connect and visualize data",
+        "Open source projects from Grafana Labs"
+      ]
+    },
+    {
+      "url": "https://grafana.com/pricing/",
+      "h1": "Send more, charge more is broken. We are changing it.",
+      "h2": [
+        "Pricing Philosophy",
+        "Estimate your Grafana Cloud cost",
+        "Product pricing",
+        "Sign-up time"
+      ]
+    },
+    {
+      "url": "https://grafana.com/careers/",
+      "h1": "Shape the future of observability",
+      "h2": [
+        "Our guiding principles",
+        "The perks",
+        "Our interview process",
+        "How to prepare for your interview at Grafana Labs",
+        "Create, sell, and scale technology that matters with a global, remote-first team"
+      ]
+    },
+    {
+      "url": "https://grafana.com/contact/",
+      "h1": "Contact us",
+      "h2": []
+    },
+    {
+      "url": "https://grafana.com/get/",
+      "h1": "Get started with Grafana",
+      "h2": []
+    },
+    {
+      "url": "https://grafana.com/professional-services/",
+      "h1": "Grafana Labs Professional Services",
+      "h2": [
+        "Contact us to learn more",
+        "Guess Less. Grafana More.",
+        "Professional Services packages",
+        "The Grafana Labs Professional Services experience"
+      ]
+    },
+    {
+      "url": "https://grafana.com/observability-benefits-for-business/",
+      "h1": "Get the latest research on the benefits and impact of observability *",
+      "h2": [
+        "2026 Gartner® Magic Quadrant™ for Observability Platforms",
+        "Top 4 observability impacts",
+        "Resources to guide your observability strategy",
+        "Observability Survey",
+        "Observability Journey Maturity Model",
+        "OpenTelemetry report",
+        "Real-world perspectives on observability",
+        "Executive insights from Grafana Labs",
+        "Explore the full scope of our observability platform",
+        "Your tools / data",
+        "Your environment",
+        "Visualization",
+        "Performance testing",
+        "Synthetic monitoring",
+        "Contextualized Root Cause Analysis",
+        "Frontend Observability",
+        "Application Observability",
+        "Infrastructure observability",
+        "SLO management",
+        "Alerting"
+      ]
+    },
+    {
+      "url": "https://grafana.com/integrations/",
+      "h1": "Observability, monitoring and visualization just got easier",
+      "h2": [
+        "Monitor services, systems, & more",
+        "Visualize data"
+      ]
+    },
+    {
+      "url": "https://grafana.com/whats-new/",
+      "h1": "What's new from Grafana Labs",
+      "h2": [
+        "k6 Studio 2.0: browser test authoring and autocorrelation are generally availabl",
+        "Further optimize metrics costs with Adaptive Metrics recommendations configurati",
+        "Authoring commits in Git Sync",
+        "Authoring commits in Git Sync",
+        "Git Sync support for GitHub enterprise",
+        "Service and workload entities are separating in Entity Catalog and Entity Graph",
+        "Webhooks available for GitLab and BitBucket",
+        "Revamped homepage for Grafana",
+        "Export traces of Grafana to a file for easier troubleshooting",
+        "Azure Monitor Batch API",
+        "See Your Adaptive Telemetry Cost Savings",
+        "Scripted dashboards will be removed in Grafana 14",
+        "Custom label retention for Knowledge Graph",
+        "Explore busy panels with the new View panel sidebar",
+        "Adaptive Profiles is generally available in Grafana Cloud"
+      ]
+    },
+    {
+      "url": "https://grafana.com/videos/",
+      "h1": "Webinars and videos",
+      "h2": [
+        "Upcoming live webinars",
+        "On-demand videos",
+        "Upcoming live webinars",
+        "All videos and webinars"
+      ]
+    },
+    {
+      "url": "https://grafana.com/success/",
+      "h1": "Success stories andcase studies",
+      "h2": [
+        "All success stories"
+      ]
+    },
+    {
+      "url": "https://grafana.com/press/",
+      "h1": "Grafana Labs Newsroom",
+      "h2": [
+        "Grafana Labs in the news",
+        "Press releases",
+        "Recent award highlights",
+        "Recent blog posts"
+      ]
+    },
+    {
+      "url": "https://grafana.com/support/",
+      "h1": "Grafana Labs Technical Support",
+      "h2": [
+        "What are Spheres of Support?",
+        "What types of issues are supported?",
+        "Grafana Labs Technical Support"
+      ]
+    },
+    {
+      "url": "https://grafana.com/legal/",
+      "h1": "Legal and Security",
+      "h2": []
+    },
+    {
+      "url": "https://grafana.com/partnerships/",
+      "h1": "Grafana Labs partnerships",
+      "h2": []
+    },
+    {
+      "url": "https://grafana.com/tutorials/",
+      "h1": "Grafana tutorials",
+      "h2": [
+        "Other great ways to learn and connect"
+      ]
+    },
+    {
+      "url": "https://grafana.com/tags/",
+      "h1": "Explore tags",
+      "h2": [
+        "Products",
+        "Solutions",
+        "OSS",
+        "Community",
+        "Other",
+        "Events",
+        "Enterprise"
+      ]
+    },
+    {
+      "url": "https://grafana.com/author/",
+      "h1": "All authors",
+      "h2": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    {
+      "url": "https://grafana.com/observability-survey/",
+      "h1": "Observability Survey",
+      "h2": [
+        "TL;DR",
+        "More ways to explore the survey",
+        "AI in observability: transparency is key, autonomy is the next frontier",
+        "Open source remains the bedrock of observability",
+        "The reach—and scope—of observability continues to expand",
+        "Observability practices continue to mature, though challenges remain",
+        "Demographics",
+        "Methodology",
+        "More ways to explore the survey",
+        "Learn more about observability",
+        "Previous survey results"
+      ]
+    }
+  ]
+}

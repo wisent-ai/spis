@@ -1,0 +1,264 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "ForkLift",
+  "product_url": "https://binarynights.com/",
+  "evidence_status": "partial",
+  "upstream_owner": "BinaryNights / ForkLift",
+  "captured_at": "2026-08-16T23:27:18Z",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://binarynights.com/videos/remote.mp4",
+      "media_kind": "video-mp4",
+      "width": 960,
+      "height": 720,
+      "duration_seconds": 6.933,
+      "frame_count": 104,
+      "bytes": 52901,
+      "sha256": "9006afb592863f451a3812f7e9fdbfb02bb2550cf8f3c7e8307c16e3cc8aef0e",
+      "capture_method": "Downloaded from the official product site or official App Store preview and transcoded as a time-preserving H.264 excerpt; no frames were synthesized.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "Entry state: Open ForkLift’s connection surface",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 1.1289/255)",
+      "width": 960,
+      "height": 720,
+      "bytes": 30761,
+      "sha256": "6b73992d03b186ad9a50fbbbbdb9242880b29906f8c89cea677037757df41d6c",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 1.0,
+        "mean_abs_diff": 1.1289,
+        "sampled_frames": 14
+      }
+    },
+    {
+      "name": "Invocation state: Choose a service or protocol",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 1.5s (mean abs diff 1.2539/255)",
+      "width": 960,
+      "height": 720,
+      "bytes": 75183,
+      "sha256": "803495137b1a38de8030b8502da899b9201623b6e4f330ad3a76a06bfd6305bb",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 1.5,
+        "mean_abs_diff": 1.2539,
+        "sampled_frames": 14
+      }
+    },
+    {
+      "name": "Focused intermediate state: Enter connection options",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 1.1953/255)",
+      "width": 960,
+      "height": 720,
+      "bytes": 38323,
+      "sha256": "d4adba83aee14d9e898d1632b846b0397c5fb9fee7be5917a08369f5ab3c57e6",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 1.0,
+        "mean_abs_diff": 1.1953,
+        "sampled_frames": 14
+      }
+    },
+    {
+      "name": "Committed transition: Adjust visible connection preferences",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/motion.mp4 at 4.5s (mean abs diff 1.2344/255)",
+      "width": 960,
+      "height": 720,
+      "bytes": 59549,
+      "sha256": "938ad58a6f6db8572876ef6b7dc4e36674a2ea6a896023e7a8c4b57fb834d5cc",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 1.2344,
+        "sampled_frames": 14
+      }
+    },
+    {
+      "name": "First-success result: Observe the configured remote browser",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/motion.mp4 at 5s (mean abs diff 1.2305/255)",
+      "width": 960,
+      "height": 720,
+      "bytes": 67374,
+      "sha256": "00dabf7c09d09b030a67c81057a86dcc532189155dc26942f04f8255ade0cf2e",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.0,
+        "mean_abs_diff": 1.2305,
+        "sampled_frames": 14
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Open ForkLift’s connection surface",
+      "response": "ForkLift exposes the entry surface visible in the retained motion.",
+      "feedback": "The first state establishes the active surface before manipulation.",
+      "cancellation": "Stopping here leaves the product unchanged.",
+      "failure": "The goal is not yet complete in the entry state.",
+      "recovery": "Choose a service or protocol.",
+      "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.55s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Choose a service or protocol",
+      "response": "A target control, item, document, or workspace becomes the active context.",
+      "feedback": "The next retained state visibly differs and identifies the active path.",
+      "cancellation": "Focus can remain on the previous context without committing.",
+      "failure": "An unintended target would leave the desired result unavailable.",
+      "recovery": "Move focus to the intended visible target and continue.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.94s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Enter connection options",
+      "response": "The recording advances into the product’s intermediate working state.",
+      "feedback": "Content, controls, or selection context changes in place.",
+      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+      "failure": "Stopping at this state produces no completion evidence.",
+      "recovery": "Adjust visible connection preferences.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 3.33s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Adjust visible connection preferences",
+      "response": "The selected operation crosses from preparation into a committed transition.",
+      "feedback": "The fourth state records the immediate product response.",
+      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+      "failure": "Without confirmation, the fifth-state result does not appear.",
+      "recovery": "Repeat the intended selection and confirm it.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 4.71s"
+    },
+    {
+      "name": "Completion feedback",
+      "trigger": "Observe the configured remote browser",
+      "response": "The recording reaches the first meaningful result for “Configure and use a remote connection”.",
+      "feedback": "The fifth local frame is the offline completion evidence.",
+      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+      "failure": "Absence of the fifth state means the journey is incomplete.",
+      "recovery": "Replay the recorded sequence from the entry state.",
+      "evidence": "media/state-05.png extracted from media/motion.mp4 at 6.10s"
+    },
+    {
+      "name": "Cancellation and backtracking",
+      "trigger": "Leave the path before the committed transition.",
+      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+      "failure": "Exiting early does not produce completion evidence.",
+      "recovery": "Re-enter through state 2 and continue to state 4.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.94s; media/state-03.png extracted from media/motion.mp4 at 3.33s"
+    },
+    {
+      "name": "Failure boundary",
+      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+      "feedback": "No fifth-state visual is present before commitment.",
+      "cancellation": "The actor may abandon the incomplete path without claiming success.",
+      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 3.33s; contrasted with media/state-05.png extracted from media/motion.mp4 at 6.10s"
+    },
+    {
+      "name": "Recovery",
+      "trigger": "Resume from the last valid intermediate state.",
+      "response": "The same visible action sequence advances to the retained result.",
+      "feedback": "State 5 supplies positive completion feedback after state 4.",
+      "cancellation": "The actor can still stop before replaying confirmation.",
+      "failure": "A replay that never reaches state 5 remains incomplete.",
+      "recovery": "Replay state 4 and verify state 5.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 4.71s; media/state-05.png extracted from media/motion.mp4 at 6.10s"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning ForkLift user",
+    "goal": "Configure and use a remote connection",
+    "prerequisites": [
+      "ForkLift available on macOS or the official recording environment",
+      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open ForkLift’s connection surface",
+        "system_response": "ForkLift advances to the entry state retained in state 1.",
+        "state": "Entry state: Open ForkLift’s connection surface",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.55s"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose a service or protocol",
+        "system_response": "ForkLift advances to the invocation state retained in state 2.",
+        "state": "Invocation state: Choose a service or protocol",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.94s"
+      },
+      {
+        "index": 3,
+        "user_action": "Enter connection options",
+        "system_response": "ForkLift advances to the focused intermediate state retained in state 3.",
+        "state": "Focused intermediate state: Enter connection options",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 3.33s"
+      },
+      {
+        "index": 4,
+        "user_action": "Adjust visible connection preferences",
+        "system_response": "ForkLift advances to the committed transition retained in state 4.",
+        "state": "Committed transition: Adjust visible connection preferences",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 4.71s"
+      },
+      {
+        "index": 5,
+        "user_action": "Observe the configured remote browser",
+        "system_response": "ForkLift advances to the first-success result retained in state 5.",
+        "state": "First-success result: Observe the configured remote browser",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 6.10s"
+      }
+    ],
+    "failure_route": [
+      "Stop at the third retained state before confirmation; the meaningful result is absent.",
+      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+    ],
+    "recovery_route": [
+      "Return to the second retained state and restore the intended focus or selection.",
+      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+    ],
+    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 6.10s"
+  },
+  "accessibility": {
+    "observations": [
+      "Active focus or selection is conveyed by a visible change between retained states.",
+      "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown.",
+      "The five extracted frames provide a nonanimated way to inspect the same sequence."
+    ],
+    "unknowns": [
+      "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
+      "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
+      "The product’s Reduce Motion behavior and contrast preferences are not demonstrated."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

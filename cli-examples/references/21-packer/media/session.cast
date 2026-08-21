@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921624,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Packer authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Packer\r\n"]
+[0.55,"o","cli-ref$ packer version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","Packer v1.15.4\r\n\r\nYour version of Packer is out of date! The latest version\r\nis 1.16.0. You can update by downloading from www.packer.io/downloads\r\n"]
+[2.2,"o","cli-ref$ packer --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage: packer [--version] [--help] <command> [<args>]\r\n\r\nAvailable commands are:\r\n    build           build image(s) from template\r\n    console         creates a console for testing variable interpolation\r\n    fix             fixes templates from old versions of packer\r\n    fmt             Rewrites HCL2 config files to canonical format\r\n    hcl2_upgrade    transform a JSON template into an HCL2 configuration\r\n    init            Install missing plugins or upgrade plugins\r\n    inspect         see components of a template\r\n    plugins         Interact with Packer plugins and catalog\r\n    validate        check that a template is valid\r\n    version         Prints the Packer version\r\n"]
+[5.1,"o","cli-ref$ packer --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Usage: packer [--version] [--help] <command> [<args>]\r\n\r\nAvailable commands are:\r\n    build           build image(s) from template\r\n    console         creates a console for testing variable interpolation\r\n    fix             fixes templates from old versions of packer\r\n    fmt             Rewrites HCL2 config files to canonical format\r\n    hcl2_upgrade    transform a JSON template into an HCL2 configuration\r\n    init            Install missing plugins or upgrade plugins\r\n    inspect         see components of a template\r\n    plugins         Interact with Packer plugins and catalog\r\n    validate        check that a template is valid\r\n    version         Prints the Packer version\r\n[exit status 127]\r\n"]
+[7.1,"o","cli-ref$ packer --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ packer --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage: packer [--version] [--help] <command> [<args>]\r\n\r\nAvailable commands are:\r\n    build           build image(s) from template\r\n"]

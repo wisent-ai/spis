@@ -1,0 +1,711 @@
+{
+  "name": "Anthropic API Documentation",
+  "source_url": "https://docs.anthropic.com/en/docs/overview",
+  "category": "AI API documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "platform.claude.com/llms.txt",
+  "inventory_url_count": 568,
+  "landing_nav": [
+    {
+      "text": "Claude Platform Docs",
+      "path": "/docs/en/home"
+    },
+    {
+      "text": "Messages",
+      "path": "/docs/en/intro"
+    },
+    {
+      "text": "Managed Agents",
+      "path": "/docs/en/managed-agents/overview"
+    },
+    {
+      "text": "Admin",
+      "path": "/docs/en/manage-claude/admin-api"
+    },
+    {
+      "text": "Best practices",
+      "path": "/docs/en/about-claude/use-case-guides/overview"
+    },
+    {
+      "text": "Models & pricing",
+      "path": "/docs/en/about-claude/models/overview"
+    },
+    {
+      "text": "CLI, SDKs, and libraries",
+      "path": "/docs/en/cli-sdks-libraries/overview"
+    },
+    {
+      "text": "Claude API skill",
+      "path": "/docs/en/agents-and-tools/agent-skills/claude-api-skill"
+    },
+    {
+      "text": "Release notes",
+      "path": "/docs/en/release-notes/overview"
+    },
+    {
+      "text": "API reference",
+      "path": "/docs/en/api/overview"
+    },
+    {
+      "text": "Console",
+      "path": "/"
+    },
+    {
+      "text": "Log in",
+      "path": "/login"
+    },
+    {
+      "text": "Intro to Claude",
+      "path": "/docs/en/intro"
+    },
+    {
+      "text": "Get your API key",
+      "path": "/docs/en/get-api-key"
+    },
+    {
+      "text": "Quickstart",
+      "path": "/docs/en/get-started"
+    },
+    {
+      "text": "Authentication",
+      "path": "/docs/en/manage-claude/authentication"
+    },
+    {
+      "text": "Features overview",
+      "path": "/docs/en/build-with-claude/overview"
+    },
+    {
+      "text": "Using the Messages API",
+      "path": "/docs/en/build-with-claude/working-with-messages"
+    },
+    {
+      "text": "Stop reasons and fallback",
+      "path": "/docs/en/build-with-claude/handling-stop-reasons"
+    },
+    {
+      "text": "Refusals and fallback",
+      "path": "/docs/en/build-with-claude/refusals-and-fallback"
+    },
+    {
+      "text": "Fallback credit",
+      "path": "/docs/en/build-with-claude/fallback-credit"
+    },
+    {
+      "text": "Effort",
+      "path": "/docs/en/build-with-claude/effort"
+    },
+    {
+      "text": "Task budgets (beta)",
+      "path": "/docs/en/build-with-claude/task-budgets"
+    },
+    {
+      "text": "Fast mode (research preview)",
+      "path": "/docs/en/build-with-claude/fast-mode"
+    },
+    {
+      "text": "Structured outputs",
+      "path": "/docs/en/build-with-claude/structured-outputs"
+    },
+    {
+      "text": "Citations",
+      "path": "/docs/en/build-with-claude/citations"
+    },
+    {
+      "text": "Streaming Messages",
+      "path": "/docs/en/build-with-claude/streaming"
+    },
+    {
+      "text": "Batch processing",
+      "path": "/docs/en/build-with-claude/batch-processing"
+    },
+    {
+      "text": "Search results",
+      "path": "/docs/en/build-with-claude/search-results"
+    },
+    {
+      "text": "Streaming refusals",
+      "path": "/docs/en/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals"
+    },
+    {
+      "text": "Multilingual support",
+      "path": "/docs/en/build-with-claude/multilingual-support"
+    },
+    {
+      "text": "Embeddings",
+      "path": "/docs/en/build-with-claude/embeddings"
+    },
+    {
+      "text": "Overview",
+      "path": "/docs/en/agents-and-tools/tool-use/overview"
+    },
+    {
+      "text": "How tool use works",
+      "path": "/docs/en/agents-and-tools/tool-use/how-tool-use-works"
+    },
+    {
+      "text": "Tutorial: Build a tool-using agent",
+      "path": "/docs/en/agents-and-tools/tool-use/build-a-tool-using-agent"
+    },
+    {
+      "text": "Define tools",
+      "path": "/docs/en/agents-and-tools/tool-use/define-tools"
+    },
+    {
+      "text": "Handle tool calls",
+      "path": "/docs/en/agents-and-tools/tool-use/handle-tool-calls"
+    },
+    {
+      "text": "Parallel tool use",
+      "path": "/docs/en/agents-and-tools/tool-use/parallel-tool-use"
+    },
+    {
+      "text": "Tool Runner (SDK)",
+      "path": "/docs/en/agents-and-tools/tool-use/tool-runner"
+    },
+    {
+      "text": "Strict tool use",
+      "path": "/docs/en/agents-and-tools/tool-use/strict-tool-use"
+    },
+    {
+      "text": "Server tools",
+      "path": "/docs/en/agents-and-tools/tool-use/server-tools"
+    },
+    {
+      "text": "Web search tool",
+      "path": "/docs/en/agents-and-tools/tool-use/web-search-tool"
+    },
+    {
+      "text": "Web fetch tool",
+      "path": "/docs/en/agents-and-tools/tool-use/web-fetch-tool"
+    },
+    {
+      "text": "Code execution tool",
+      "path": "/docs/en/agents-and-tools/tool-use/code-execution-tool"
+    },
+    {
+      "text": "Advisor tool",
+      "path": "/docs/en/agents-and-tools/tool-use/advisor-tool"
+    },
+    {
+      "text": "Tool search tool",
+      "path": "/docs/en/agents-and-tools/tool-use/tool-search-tool"
+    },
+    {
+      "text": "Memory tool",
+      "path": "/docs/en/agents-and-tools/tool-use/memory-tool"
+    },
+    {
+      "text": "Bash tool",
+      "path": "/docs/en/agents-and-tools/tool-use/bash-tool"
+    },
+    {
+      "text": "Text editor tool",
+      "path": "/docs/en/agents-and-tools/tool-use/text-editor-tool"
+    },
+    {
+      "text": "Computer use tool",
+      "path": "/docs/en/agents-and-tools/tool-use/computer-use-tool"
+    },
+    {
+      "text": "Troubleshooting",
+      "path": "/docs/en/agents-and-tools/tool-use/troubleshooting-tool-use"
+    },
+    {
+      "text": "Tool reference",
+      "path": "/docs/en/agents-and-tools/tool-use/tool-reference"
+    },
+    {
+      "text": "Manage tool context",
+      "path": "/docs/en/agents-and-tools/tool-use/manage-tool-context"
+    },
+    {
+      "text": "Tool combinations",
+      "path": "/docs/en/agents-and-tools/tool-use/tool-combinations"
+    },
+    {
+      "text": "Tool use with prompt caching",
+      "path": "/docs/en/agents-and-tools/tool-use/tool-use-with-prompt-caching"
+    },
+    {
+      "text": "Programmatic tool calling",
+      "path": "/docs/en/agents-and-tools/tool-use/programmatic-tool-calling"
+    },
+    {
+      "text": "Fine-grained tool streaming",
+      "path": "/docs/en/agents-and-tools/tool-use/fine-grained-tool-streaming"
+    },
+    {
+      "text": "Context windows",
+      "path": "/docs/en/build-with-claude/context-windows"
+    },
+    {
+      "text": "Compaction",
+      "path": "/docs/en/build-with-claude/compaction"
+    },
+    {
+      "text": "Context editing",
+      "path": "/docs/en/build-with-claude/context-editing"
+    },
+    {
+      "text": "Prompt caching",
+      "path": "/docs/en/build-with-claude/prompt-caching"
+    },
+    {
+      "text": "Mid-conversation system messages and tool changes",
+      "path": "/docs/en/build-with-claude/mid-conversation-system-messages"
+    },
+    {
+      "text": "Build an orchestration mode",
+      "path": "/docs/en/build-with-claude/mid-conversation-effort-example"
+    },
+    {
+      "text": "Cache diagnostics (beta)",
+      "path": "/docs/en/build-with-claude/cache-diagnostics"
+    },
+    {
+      "text": "Token counting",
+      "path": "/docs/en/build-with-claude/token-counting"
+    },
+    {
+      "text": "Files API",
+      "path": "/docs/en/build-with-claude/files"
+    },
+    {
+      "text": "PDF support",
+      "path": "/docs/en/build-with-claude/pdf-support"
+    },
+    {
+      "text": "Overview",
+      "path": "/docs/en/agents-and-tools/agent-skills/overview"
+    },
+    {
+      "text": "Quickstart",
+      "path": "/docs/en/agents-and-tools/agent-skills/quickstart"
+    },
+    {
+      "text": "Best practices",
+      "path": "/docs/en/agents-and-tools/agent-skills/best-practices"
+    },
+    {
+      "text": "Skills for enterprise",
+      "path": "/docs/en/agents-and-tools/agent-skills/enterprise"
+    },
+    {
+      "text": "Skills in the API",
+      "path": "/docs/en/build-with-claude/skills-guide"
+    },
+    {
+      "text": "Remote MCP servers",
+      "path": "/docs/en/agents-and-tools/remote-mcp-servers"
+    },
+    {
+      "text": "MCP connector",
+      "path": "/docs/en/agents-and-tools/mcp-connector"
+    },
+    {
+      "text": "Amazon Bedrock (Opus 4.7 and later)",
+      "path": "/docs/en/build-with-claude/claude-in-amazon-bedrock"
+    },
+    {
+      "text": "Amazon Bedrock (Opus 4.6 and earlier)",
+      "path": "/docs/en/build-with-claude/claude-on-amazon-bedrock-legacy"
+    },
+    {
+      "text": "Claude Platform on AWS",
+      "path": "/docs/en/build-with-claude/claude-platform-on-aws"
+    },
+    {
+      "text": "Google Cloud",
+      "path": "/docs/en/build-with-claude/claude-on-vertex-ai"
+    },
+    {
+      "text": "Microsoft Foundry",
+      "path": "/docs/en/build-with-claude/claude-in-microsoft-foundry"
+    },
+    {
+      "text": "Claude Platform Docs",
+      "path": "/docs"
+    },
+    {
+      "text": "Claude Managed Agents overview",
+      "path": "/docs/en/managed-agents/overview"
+    },
+    {
+      "text": "Go to the quickstart",
+      "path": "/docs/en/get-started"
+    },
+    {
+      "text": "Read the authentication guide",
+      "path": "/docs/en/manage-claude/authentication"
+    },
+    {
+      "text": "Read the Messages API guide",
+      "path": "/docs/en/build-with-claude/working-with-messages"
+    },
+    {
+      "text": "See the models overview",
+      "path": "/docs/en/about-claude/models/overview"
+    },
+    {
+      "text": "Browse the features overview",
+      "path": "/docs/en/build-with-claude/overview"
+    },
+    {
+      "text": "Developer Console",
+      "path": "/"
+    },
+    {
+      "text": "API Reference",
+      "path": "/docs/en/api/overview"
+    },
+    {
+      "text": "Text and code generation",
+      "path": "/docs/en/build-with-claude/overview"
+    },
+    {
+      "text": "Vision",
+      "path": "/docs/en/build-with-claude/vision"
+    }
+  ],
+  "url_sections": {
+    "docs": 567,
+    "llms-full.txt": 1
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "/docs/en/build-with-claude/mid-conversation-effort-example"
+    ],
+    "tutorials / learn": [
+      "tutorial: build a tool-using agent"
+    ],
+    "getting started / quickstart": [
+      "quickstart",
+      "go to the quickstart",
+      "/docs/en/get-started",
+      "/docs/en/agents-and-tools/agent-skills/quickstart"
+    ],
+    "guides / how-to": [
+      "read the messages api guide",
+      "read the authentication guide",
+      "/docs/en/build-with-claude/skills-guide",
+      "/docs/en/about-claude/use-case-guides/overview"
+    ],
+    "api reference": [
+      "files api",
+      "api reference",
+      "tool reference",
+      "api reference"
+    ],
+    "changelog / release notes": [
+      "release notes",
+      "/docs/en/release-notes/overview"
+    ],
+    "troubleshooting / errors": [
+      "troubleshooting",
+      "cache diagnostics (beta)",
+      "/docs/en/build-with-claude/cache-diagnostics",
+      "/docs/en/agents-and-tools/tool-use/troubleshooting-tool-use"
+    ],
+    "cli reference": [
+      "cli, sdks, and libraries",
+      "/docs/en/cli-sdks-libraries/overview"
+    ],
+    "sdk / client libraries": [
+      "tool runner (sdk)",
+      "cli, sdks, and libraries",
+      "/docs/en/cli-sdks-libraries/overview"
+    ],
+    "best practices": [
+      "best practices",
+      "/docs/en/agents-and-tools/agent-skills/best-practices"
+    ],
+    "community / support": [
+      "pdf support",
+      "multilingual support",
+      "/docs/en/build-with-claude/pdf-support",
+      "/docs/en/build-with-claude/multilingual-support"
+    ],
+    "pricing / limits": [
+      "models & pricing"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://platform.claude.com/llms-full.txt",
+      "h1": "Anthropic Developer Documentation - Full Content",
+      "h2": [
+        "Root URL",
+        "Available Languages on Website",
+        "Docs home",
+        "Messages",
+        "Prerequisites",
+        "Call the API",
+        "Next steps",
+        "Recommended path for new developers",
+        "Develop with Claude",
+        "Key capabilities",
+        "Support",
+        "API keys",
+        "Workload Identity Federation",
+        "App Attest",
+        "Next steps",
+        "Create an API key",
+        "Use your API key",
+        "API keys and the Admin API",
+        "Feature availability",
+        "Model capabilities"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview.md",
+      "h1": "PDF Processing",
+      "h2": [
+        "Why use Skills",
+        "Using Skills",
+        "How Skills work",
+        "Quick start",
+        "Where Skills work",
+        "Skill structure",
+        "Instructions",
+        "Examples",
+        "Security considerations",
+        "Available Skills",
+        "Data retention",
+        "Limitations and constraints",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/build-with-claude/overview.md",
+      "h1": "",
+      "h2": [
+        "Feature availability",
+        "Model capabilities",
+        "Tools",
+        "Tool infrastructure",
+        "Context management",
+        "Files and assets"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/quickstart.md",
+      "h1": "",
+      "h2": [
+        "Prerequisites",
+        "Agent Skills overview",
+        "Step 1: List available Skills",
+        "Step 2: Create a presentation",
+        "Step 3: Download the created file",
+        "Try more examples",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/get-started.md",
+      "h1": "",
+      "h2": [
+        "Prerequisites",
+        "Call the API",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/intro.md",
+      "h1": "",
+      "h2": [
+        "Recommended path for new developers",
+        "Develop with Claude",
+        "Key capabilities",
+        "Support"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/overview.md",
+      "h1": "",
+      "h2": [
+        "How it works",
+        "Prerequisites",
+        "Security model",
+        "Deploy a tunnel",
+        "Use the tunneled MCP servers",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/quickstart.md",
+      "h1": "",
+      "h2": [
+        "What you'll build",
+        "What you need",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview.md",
+      "h1": "",
+      "h2": [
+        "How tool use works",
+        "When Claude uses tools",
+        "Choose a tool",
+        "Pricing",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool.md",
+      "h1": "",
+      "h2": [
+        "When to use it",
+        "Quick start",
+        "How it works",
+        "Tool parameters",
+        "Response structure",
+        "Multi-turn conversations",
+        "Streaming",
+        "Usage and billing",
+        "Advisor prompt caching",
+        "Combining with other tools",
+        "Best practices",
+        "Model compatibility",
+        "Advisor on Claude Managed Agents",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-tunnels/concepts.md",
+      "h1": "",
+      "h2": [
+        "Components",
+        "Credential provisioning",
+        "Connection model",
+        "See also"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/manage-claude/authentication.md",
+      "h1": "",
+      "h2": [
+        "API keys",
+        "Workload Identity Federation",
+        "App Attest",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/bash-tool.md",
+      "h1": "",
+      "h2": [
+        "Use cases",
+        "Quick start",
+        "How it works",
+        "Parameters",
+        "Tool versions",
+        "Example: Multistep automation",
+        "Implement the bash tool",
+        "Security",
+        "Pricing",
+        "Common patterns",
+        "Limitations",
+        "Combining with other tools",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing.md",
+      "h1": "Message Batches API",
+      "h2": [
+        "How the Message Batches API works",
+        "Pricing",
+        "How to use the Message Batches API",
+        "Batch storage and privacy",
+        "Data retention",
+        "FAQ",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/build-with-claude/mid-conversation-effort-example.md",
+      "h1": "",
+      "h2": [
+        "Set up the loop",
+        "Define the mode reminders",
+        "Grant standing consent in the tool description",
+        "Run the bash tool locally",
+        "Run one subagent",
+        "Journal results so reruns resume",
+        "Fan out, then verify",
+        "Toggle the mode with mid-conversation system messages",
+        "Run it",
+        "Toward a production harness",
+        "Related"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics.md",
+      "h1": "",
+      "h2": [
+        "Compatibility",
+        "How cache diagnostics works",
+        "Basic usage",
+        "Streaming",
+        "Threading diagnostics through a conversation loop",
+        "Response format",
+        "Cache miss reason types",
+        "Reading diagnostics alongside usage",
+        "Limitations",
+        "Data retention",
+        "See also"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/build-with-claude/citations.md",
+      "h1": "",
+      "h2": [
+        "Compatibility",
+        "How citations work",
+        "Document types",
+        "Response structure",
+        "Next steps"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock.md",
+      "h1": "",
+      "h2": [
+        "Access",
+        "Prerequisites",
+        "Authentication",
+        "Install an SDK",
+        "Making your first request",
+        "Supported models",
+        "Feature support",
+        "Regions",
+        "Quotas",
+        "Data retention",
+        "Monitoring and logging",
+        "Support"
+      ]
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry.md",
+      "h1": "",
+      "h2": [
+        "Hosting options",
+        "Prerequisites",
+        "Install an SDK",
+        "Provisioning",
+        "Authentication",
+        "Correlation request IDs",
+        "Feature support",
+        "API responses",
+        "API model IDs and deployments",
+        "Billing",
+        "Migrating between hosting options",
+        "Monitoring and logging",
+        "Troubleshooting",
+        "Next steps",
+        "Additional resources"
+      ]
+    }
+  ]
+}

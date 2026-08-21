@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921625,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"curl authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: curl\r\n"]
+[0.55,"o","cli-ref$ curl --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","curl 8.5.0 (aarch64-unknown-linux-gnu) libcurl/8.5.0 OpenSSL/3.0.13 zlib/1.3 brotli/1.1.0 zstd/1.5.5 libidn2/2.3.7 libpsl/0.21.2 (+libidn2/2.3.7) libssh/0.10.6/openssl/zlib nghttp2/1.59.0 librtmp/2.3 OpenLDAP/2.6.10\r\nRelease-Date: 2023-12-06, security patched: 8.5.0-2ubuntu10.11\r\nProtocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mqtt pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp\r\nFeatures: alt-svc AsynchDNS brotli GSS-API HSTS HTTP2 HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL threadsafe TLS-SRP UnixSockets zstd\r\n"]
+[2.2,"o","cli-ref$ curl --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Usage: curl [options...] <url>\r\n -d, --data <data>          HTTP POST data\r\n -f, --fail                 Fail fast with no output on HTTP errors\r\n -h, --help <category>      Get help for commands\r\n -i, --include              Include protocol response headers in the output\r\n -o, --output <file>        Write to file instead of stdout\r\n -O, --remote-name          Write output to a file named as the remote file\r\n -s, --silent               Silent mode\r\n -T, --upload-file <file>   Transfer local FILE to destination\r\n -u, --user <user:password> Server user and password\r\n -A, --user-agent <name>    Send User-Agent <name> to server\r\n -v, --verbose              Make the operation more talkative\r\n -V, --version              Show version number and quit\r\n"]
+[5.1,"o","cli-ref$ curl --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","curl: option --definitely-invalid-option: is unknown\r\ncurl: try 'curl --help' or 'curl --manual' for more information\r\n[exit status 2]\r\n"]
+[7.1,"o","cli-ref$ curl --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ curl --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Usage: curl [options...] <url>\r\n -d, --data <data>          HTTP POST data\r\n -f, --fail                 Fail fast with no output on HTTP errors\r\n -h, --help <category>      Get help for commands\r\n"]

@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921623,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"DNF authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: DNF\r\n"]
+[0.55,"o","cli-ref$ dnf --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","4.14.0\r\n"]
+[2.2,"o","cli-ref$ dnf --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Unable to detect release version (use '--releasever' to specify release version)\r\nusage: dnf [options] COMMAND\r\n\r\nList of Main Commands:\r\n\r\nalias                     List or create command aliases\r\nautoremove                remove all unneeded packages that were originally installed as dependencies\r\ncheck                     check for problems in the packagedb\r\ncheck-update              check for available package upgrades\r\nclean                     remove cached data\r\ndeplist                   [deprecated, use repoquery --deplist] List package's dependencies and what packages provide them\r\ndistro-sync               synchronize installed packages to the latest available versions\r\ndowngrade                 Downgrade a package\r\ngroup                     display, or use, the groups information\r\n"]
+[5.1,"o","cli-ref$ dnf definitely-not-a-command 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Unable to detect release version (use '--releasever' to specify release version)\r\nNo such command: definitely-not-a-command. Please use /usr/bin/dnf --help\r\nIt could be a DNF plugin command, try: \"dnf install 'dnf-command(definitely-not-a-command)'\"\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ dnf --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ dnf --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Unable to detect release version (use '--releasever' to specify release version)\r\nusage: dnf [options] COMMAND\r\n\r\nList of Main Commands:\r\n"]

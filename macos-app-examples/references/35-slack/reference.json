@@ -1,0 +1,264 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Slack",
+  "product_url": "https://slack.com/downloads/mac",
+  "evidence_status": "partial",
+  "upstream_owner": "Slack",
+  "captured_at": "2026-08-16T23:27:18Z",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=6pvVQw03QZY",
+      "media_kind": "video-mp4",
+      "width": 960,
+      "height": 540,
+      "duration_seconds": 18.0,
+      "frame_count": 270,
+      "bytes": 291099,
+      "sha256": "d2c216e250bb96ffafd918f34ad266fe3a12f3c6e930fb847b33d8dbbf8f5be2",
+      "capture_method": "Downloaded from the product publisher’s official video channel with yt-dlp, then excerpted and transcoded to H.264 without synthesized frames.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "Entry state: Open the workspace",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 0.5s (mean abs diff 1.5195/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 90517,
+      "sha256": "f55a099b8253c8327a17e30d19915a552f6e07cbd22a2a50155704c9b57b72b4",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.5,
+        "mean_abs_diff": 1.5195,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Invocation state: Select a channel",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 5s (mean abs diff 1.4883/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 104002,
+      "sha256": "a20feb5058a3f91f73dc4d335869239a1e2892ec22f4f29191f03eaf59015903",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.0,
+        "mean_abs_diff": 1.4883,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Focused intermediate state: Focus a message or composer",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 6s (mean abs diff 1.875/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 109932,
+      "sha256": "f2818deb91d0df48d29e608a200f3269553e9cd48a3e0fb9ab9606ccc5bb2f6d",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 6.0,
+        "mean_abs_diff": 1.875,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Committed transition: Perform the visible message action",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/motion.mp4 at 12s (mean abs diff 1.418/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 115276,
+      "sha256": "0c0c4de54eaf17102a80c706e41e4ffbcfd480cc3b2d7a2459e3d4966c056b19",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 12.0,
+        "mean_abs_diff": 1.418,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "First-success result: Observe the channel response",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/motion.mp4 at 14s (mean abs diff 1.4336/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 128867,
+      "sha256": "c7373d36add59443f202f54e52c498be79f7c53d8e8a1cb0a56361e1748f8b84",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 14.0,
+        "mean_abs_diff": 1.4336,
+        "sampled_frames": 36
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Open the workspace",
+      "response": "Slack exposes the entry surface visible in the retained motion.",
+      "feedback": "The first state establishes the active surface before manipulation.",
+      "cancellation": "Stopping here leaves the product unchanged.",
+      "failure": "The goal is not yet complete in the entry state.",
+      "recovery": "Select a channel.",
+      "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Select a channel",
+      "response": "A target control, item, document, or workspace becomes the active context.",
+      "feedback": "The next retained state visibly differs and identifies the active path.",
+      "cancellation": "Focus can remain on the previous context without committing.",
+      "failure": "An unintended target would leave the desired result unavailable.",
+      "recovery": "Move focus to the intended visible target and continue.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Focus a message or composer",
+      "response": "The recording advances into the product’s intermediate working state.",
+      "feedback": "Content, controls, or selection context changes in place.",
+      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+      "failure": "Stopping at this state produces no completion evidence.",
+      "recovery": "Perform the visible message action.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Perform the visible message action",
+      "response": "The selected operation crosses from preparation into a committed transition.",
+      "feedback": "The fourth state records the immediate product response.",
+      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+      "failure": "Without confirmation, the fifth-state result does not appear.",
+      "recovery": "Repeat the intended selection and confirm it.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+    },
+    {
+      "name": "Completion feedback",
+      "trigger": "Observe the channel response",
+      "response": "The recording reaches the first meaningful result for “Navigate a channel and act on a message”.",
+      "feedback": "The fifth local frame is the offline completion evidence.",
+      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+      "failure": "Absence of the fifth state means the journey is incomplete.",
+      "recovery": "Replay the recorded sequence from the entry state.",
+      "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Cancellation and backtracking",
+      "trigger": "Leave the path before the committed transition.",
+      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+      "failure": "Exiting early does not produce completion evidence.",
+      "recovery": "Re-enter through state 2 and continue to state 4.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s; media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Failure boundary",
+      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+      "feedback": "No fifth-state visual is present before commitment.",
+      "cancellation": "The actor may abandon the incomplete path without claiming success.",
+      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s; contrasted with media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Recovery",
+      "trigger": "Resume from the last valid intermediate state.",
+      "response": "The same visible action sequence advances to the retained result.",
+      "feedback": "State 5 supplies positive completion feedback after state 4.",
+      "cancellation": "The actor can still stop before replaying confirmation.",
+      "failure": "A replay that never reaches state 5 remains incomplete.",
+      "recovery": "Replay state 4 and verify state 5.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s; media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning Slack user",
+    "goal": "Navigate a channel and act on a message",
+    "prerequisites": [
+      "Slack available on macOS or the official recording environment",
+      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the workspace",
+        "system_response": "Slack advances to the entry state retained in state 1.",
+        "state": "Entry state: Open the workspace",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+      },
+      {
+        "index": 2,
+        "user_action": "Select a channel",
+        "system_response": "Slack advances to the invocation state retained in state 2.",
+        "state": "Invocation state: Select a channel",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+      },
+      {
+        "index": 3,
+        "user_action": "Focus a message or composer",
+        "system_response": "Slack advances to the focused intermediate state retained in state 3.",
+        "state": "Focused intermediate state: Focus a message or composer",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+      },
+      {
+        "index": 4,
+        "user_action": "Perform the visible message action",
+        "system_response": "Slack advances to the committed transition retained in state 4.",
+        "state": "Committed transition: Perform the visible message action",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+      },
+      {
+        "index": 5,
+        "user_action": "Observe the channel response",
+        "system_response": "Slack advances to the first-success result retained in state 5.",
+        "state": "First-success result: Observe the channel response",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    ],
+    "failure_route": [
+      "Stop at the third retained state before confirmation; the meaningful result is absent.",
+      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+    ],
+    "recovery_route": [
+      "Return to the second retained state and restore the intended focus or selection.",
+      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+    ],
+    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+  },
+  "accessibility": {
+    "observations": [
+      "Active focus or selection is conveyed by a visible change between retained states.",
+      "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown.",
+      "The five extracted frames provide a nonanimated way to inspect the same sequence."
+    ],
+    "unknowns": [
+      "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
+      "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
+      "The product’s Reduce Motion behavior and contrast preferences are not demonstrated."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

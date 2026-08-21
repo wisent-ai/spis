@@ -1,0 +1,1065 @@
+{
+  "name": "Google Cloud Documentation",
+  "source_url": "https://cloud.google.com/docs",
+  "category": "Cloud platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "scoped sitemap (/docs)",
+  "inventory_url_count": 216092,
+  "landing_nav": [
+    {
+      "text": "Technology areas",
+      "path": "/docs"
+    },
+    {
+      "text": "Cross-product tools",
+      "path": "/docs/cross-product-overviews"
+    },
+    {
+      "text": "Google Cloud Documentation home",
+      "path": "/docs"
+    },
+    {
+      "text": "Get started with Google Cloud",
+      "path": "/docs/get-started"
+    },
+    {
+      "text": "Product list",
+      "path": "/docs/product-list"
+    },
+    {
+      "text": "Integrated AI assistance with Gemini for Google Cloud",
+      "path": "/gemini/docs"
+    },
+    {
+      "text": "What's new in documentation",
+      "path": "/docs/whats-new"
+    },
+    {
+      "text": "Recent product release notes",
+      "path": "/release-notes"
+    },
+    {
+      "text": "Cloud Customer Care",
+      "path": "/support/docs"
+    },
+    {
+      "text": "Access and resource management overview",
+      "path": "/docs/access-resources"
+    },
+    {
+      "text": "Cloud Identity",
+      "path": "/identity/docs"
+    },
+    {
+      "text": "Identity Platform",
+      "path": "/identity-platform/docs"
+    },
+    {
+      "text": "Managed Service for Microsoft Active Directory",
+      "path": "/managed-microsoft-ad/docs"
+    },
+    {
+      "text": "Access Approval",
+      "path": "/assured-workloads/access-approval/docs"
+    },
+    {
+      "text": "Cloud API Registry",
+      "path": "/api-registry/docs"
+    },
+    {
+      "text": "Cloud Marketplace",
+      "path": "/marketplace/docs"
+    },
+    {
+      "text": "Service Catalog",
+      "path": "/service-catalog/docs"
+    },
+    {
+      "text": "Service Usage",
+      "path": "/service-usage/docs"
+    },
+    {
+      "text": "Cloud Hub",
+      "path": "/hub/docs"
+    },
+    {
+      "text": "Recommender",
+      "path": "/recommender/docs"
+    },
+    {
+      "text": "Config Connector",
+      "path": "/config-connector/docs"
+    },
+    {
+      "text": "Costs and usage management overview",
+      "path": "/docs/costs-usage"
+    },
+    {
+      "text": "Cloud Billing",
+      "path": "/billing/docs"
+    },
+    {
+      "text": "App Optimize API",
+      "path": "/app-optimize"
+    },
+    {
+      "text": "Free cloud features and trial offer",
+      "path": "/free/docs/free-cloud-features"
+    },
+    {
+      "text": "Cloud Quotas",
+      "path": "/docs/quotas"
+    },
+    {
+      "text": "Carbon Footprint",
+      "path": "/carbon-footprint/docs/view-carbon-data"
+    },
+    {
+      "text": "Google Cloud SDK, languages, frameworks, and tools overview",
+      "path": "/docs/devtools"
+    },
+    {
+      "text": "General authentication guides",
+      "path": "/docs/authentication"
+    },
+    {
+      "text": "Google Cloud SDK overview",
+      "path": "/sdk/docs"
+    },
+    {
+      "text": "Google Cloud CLI",
+      "path": "/sdk/gcloud"
+    },
+    {
+      "text": "C# and .NET",
+      "path": "/dotnet/docs"
+    },
+    {
+      "text": "C++",
+      "path": "/cpp/docs"
+    },
+    {
+      "text": "Go",
+      "path": "/go/docs"
+    },
+    {
+      "text": "Java",
+      "path": "/java/docs"
+    },
+    {
+      "text": "JavaScript and Node.js",
+      "path": "/nodejs/docs"
+    },
+    {
+      "text": "PHP",
+      "path": "/php/docs"
+    },
+    {
+      "text": "Python",
+      "path": "/python/docs"
+    },
+    {
+      "text": "Ruby",
+      "path": "/ruby/docs"
+    },
+    {
+      "text": "Rust",
+      "path": "/rust"
+    },
+    {
+      "text": "Spring",
+      "path": "/java/docs/spring"
+    },
+    {
+      "text": "Prometheus",
+      "path": "/stackdriver/docs/managed-prometheus"
+    },
+    {
+      "text": "Cloud APIs",
+      "path": "/apis/docs/overview"
+    },
+    {
+      "text": "Infrastructure as code overview",
+      "path": "/docs/iac"
+    },
+    {
+      "text": "Infrastructure Manager",
+      "path": "/infrastructure-manager/docs"
+    },
+    {
+      "text": "Terraform on Google Cloud",
+      "path": "/docs/terraform"
+    },
+    {
+      "text": "Cloud Deployment Manager",
+      "path": "/deployment-manager/docs"
+    },
+    {
+      "text": "Overview of AI and ML",
+      "path": "/docs/ai-ml"
+    },
+    {
+      "text": "Gemini Enterprise Agent Platform",
+      "path": "/gemini-enterprise-agent-platform"
+    },
+    {
+      "text": "Gemini Enterprise",
+      "path": "/gemini/enterprise/docs"
+    },
+    {
+      "text": "Model Garden",
+      "path": "/gemini-enterprise-agent-platform/models/model-garden/explore-models"
+    },
+    {
+      "text": "Agent Development Kit (ADK)",
+      "path": "/gemini-enterprise-agent-platform/build/adk"
+    },
+    {
+      "text": "Agent Gateway",
+      "path": "/gemini-enterprise-agent-platform/govern/gateways/agent-gateway-overview"
+    },
+    {
+      "text": "Agent Registry",
+      "path": "/gemini-enterprise-agent-platform/govern/agent-registry"
+    },
+    {
+      "text": "Agent Runtime",
+      "path": "/gemini-enterprise-agent-platform/build/runtime"
+    },
+    {
+      "text": "Agent Studio",
+      "path": "/gemini-enterprise-agent-platform/agent-studio"
+    },
+    {
+      "text": "Agent Search",
+      "path": "/generative-ai-app-builder/docs/enterprise-search-introduction"
+    },
+    {
+      "text": "Enterprise Knowledge Graph",
+      "path": "/enterprise-knowledge-graph/docs"
+    },
+    {
+      "text": "RAG Engine",
+      "path": "/gemini-enterprise-agent-platform/build/rag-engine/rag-overview"
+    },
+    {
+      "text": "Vector Search",
+      "path": "/gemini-enterprise-agent-platform/build/vector-search/overview"
+    },
+    {
+      "text": "Agent Platform Workbench",
+      "path": "/gemini-enterprise-agent-platform/notebooks/workbench/introduction"
+    },
+    {
+      "text": "Colab Enterprise",
+      "path": "/colab/docs"
+    },
+    {
+      "text": "TensorFlow Enterprise",
+      "path": "/tensorflow-enterprise/docs"
+    },
+    {
+      "text": "Agent Platform Managed Training",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/training/overview"
+    },
+    {
+      "text": "Cloud TPU",
+      "path": "/tpu/docs"
+    },
+    {
+      "text": "Deep Learning Containers",
+      "path": "/deep-learning-containers/docs"
+    },
+    {
+      "text": "Deep Learning VM Images",
+      "path": "/deep-learning-vm/docs"
+    },
+    {
+      "text": "Experiments on Gemini Enterprise Agent Platform",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/experiments/intro-vertex-ai-experiments"
+    },
+    {
+      "text": "Neural Architecture Search",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/training/neural-architecture-search/overview"
+    },
+    {
+      "text": "Ray on Gemini Enterprise Agent Platform",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/open-source/ray-on-vertex-ai/overview"
+    },
+    {
+      "text": "AI/ML orchestration on Cloud Run",
+      "path": "/run/docs/ai"
+    },
+    {
+      "text": "AI/ML orchestration on GKE",
+      "path": "/kubernetes-engine/docs/integrations/ai-infra"
+    },
+    {
+      "text": "Agent Platform Pipelines",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/pipelines/introduction"
+    },
+    {
+      "text": "Agent Platform Inference",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/predictions/get-predictions"
+    },
+    {
+      "text": "Feature Store",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/featurestore/latest/overview"
+    },
+    {
+      "text": "Model Monitoring",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/model-monitoring/overview"
+    },
+    {
+      "text": "Model Registry",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/model-registry/introduction"
+    },
+    {
+      "text": "Vertex AI TensorBoard",
+      "path": "/gemini-enterprise-agent-platform/machine-learning/experiments/tensorboard-introduction"
+    },
+    {
+      "text": "Agent Assist",
+      "path": "/agent-assist/docs"
+    },
+    {
+      "text": "Cloud Natural Language",
+      "path": "/natural-language/docs"
+    },
+    {
+      "text": "Conversational AI",
+      "path": "/conversational-ai/docs"
+    },
+    {
+      "text": "Conversational Agents (Dialogflow CX)",
+      "path": "/dialogflow/cx/docs"
+    },
+    {
+      "text": "Customer Experience Insights",
+      "path": "/contact-center/insights/docs"
+    },
+    {
+      "text": "Dialogflow ES",
+      "path": "/dialogflow/es/docs"
+    },
+    {
+      "text": "Document AI",
+      "path": "/document-ai/docs"
+    },
+    {
+      "text": "Google Cloud CCaaS",
+      "path": "/contact-center/ccai-platform/docs"
+    },
+    {
+      "text": "Speech-to-Text",
+      "path": "/speech-to-text/docs"
+    },
+    {
+      "text": "Text-to-Speech",
+      "path": "/text-to-speech/docs"
+    },
+    {
+      "text": "Cloud Translation",
+      "path": "/translate/docs"
+    },
+    {
+      "text": "Agent Platform Vision",
+      "path": "/vision-ai/docs"
+    },
+    {
+      "text": "Cloud Vision API",
+      "path": "/vision/docs"
+    },
+    {
+      "text": "Live Stream API",
+      "path": "/livestream/docs"
+    },
+    {
+      "text": "Transcoder API",
+      "path": "/transcoder/docs"
+    },
+    {
+      "text": "Video Intelligence API",
+      "path": "/video-intelligence/docs"
+    },
+    {
+      "text": "Video Stitcher API",
+      "path": "/video-stitcher/docs"
+    },
+    {
+      "text": "Overview of application development",
+      "path": "/docs/application-development"
+    },
+    {
+      "text": "API Gateway",
+      "path": "/api-gateway/docs"
+    },
+    {
+      "text": "Apigee",
+      "path": "/apigee/docs"
+    },
+    {
+      "text": "Apigee Hybrid",
+      "path": "/apigee/docs/hybrid/latest/what-is-hybrid"
+    },
+    {
+      "text": "Cloud Endpoints",
+      "path": "/endpoints/docs"
+    },
+    {
+      "text": "Cloud Build",
+      "path": "/build/docs"
+    },
+    {
+      "text": "Artifact Registry",
+      "path": "/artifact-registry/docs"
+    },
+    {
+      "text": "Artifact Analysis",
+      "path": "/artifact-analysis/docs"
+    },
+    {
+      "text": "Software supply chain security",
+      "path": "/software-supply-chain-security/docs"
+    },
+    {
+      "text": "Cloud Deploy",
+      "path": "/deploy/docs"
+    },
+    {
+      "text": "App Hub",
+      "path": "/app-hub/docs"
+    },
+    {
+      "text": "Application Design Center",
+      "path": "/application-design-center/docs"
+    },
+    {
+      "text": "Cloud Code",
+      "path": "/code/docs"
+    },
+    {
+      "text": "Cloud Code for Cloud Shell",
+      "path": "/code/docs/shell"
+    },
+    {
+      "text": "Cloud Code for IntelliJ",
+      "path": "/code/docs/intellij"
+    },
+    {
+      "text": "Cloud Code for VS Code",
+      "path": "/code/docs/vscode"
+    },
+    {
+      "text": "Cloud Shell",
+      "path": "/shell/docs"
+    },
+    {
+      "text": "Cloud Workstations",
+      "path": "/workstations/docs"
+    },
+    {
+      "text": "Developer Device Platform",
+      "path": "/developer-device-platform"
+    },
+    {
+      "text": "Service Infrastructure",
+      "path": "/service-infrastructure/docs"
+    },
+    {
+      "text": "Cloud Scheduler",
+      "path": "/scheduler/docs"
+    },
+    {
+      "text": "Cloud Tasks",
+      "path": "/tasks/docs"
+    },
+    {
+      "text": "Eventarc",
+      "path": "/eventarc/docs"
+    },
+    {
+      "text": "Workflows",
+      "path": "/workflows/docs"
+    },
+    {
+      "text": "Application Integration",
+      "path": "/application-integration/docs"
+    },
+    {
+      "text": "Developer Connect",
+      "path": "/developer-connect/docs"
+    },
+    {
+      "text": "Integration Connectors",
+      "path": "/integration-connectors/docs"
+    },
+    {
+      "text": "GitLab on Google Cloud",
+      "path": "/docs/gitlab"
+    },
+    {
+      "text": "Cloud Source Repositories",
+      "path": "/source-repositories/docs"
+    },
+    {
+      "text": "Secure Source Manager",
+      "path": "/secure-source-manager/docs"
+    },
+    {
+      "text": "Overview of application hosting infrastructure",
+      "path": "/docs/application-hosting"
+    },
+    {
+      "text": "Cloud Run",
+      "path": "/run/docs"
+    },
+    {
+      "text": "Cloud Run functions",
+      "path": "/functions/docs"
+    },
+    {
+      "text": "App Engine",
+      "path": "/appengine/docs"
+    },
+    {
+      "text": "Google Kubernetes Engine (GKE)",
+      "path": "/kubernetes-engine/docs"
+    },
+    {
+      "text": "Buildpacks",
+      "path": "/docs/buildpacks"
+    },
+    {
+      "text": "Blockchain Node Engine",
+      "path": "/blockchain-node-engine/docs"
+    },
+    {
+      "text": "Blockchain RPC",
+      "path": "/blockchain-rpc/docs"
+    },
+    {
+      "text": "Overview of compute",
+      "path": "/docs/compute-area"
+    },
+    {
+      "text": "Compute Engine",
+      "path": "/compute/docs"
+    },
+    {
+      "text": "Capacity Planner",
+      "path": "/capacity-planner/docs"
+    },
+    {
+      "text": "Container-Optimized OS",
+      "path": "/container-optimized-os/docs"
+    },
+    {
+      "text": "Local SSD",
+      "path": "/compute/docs/disks/local-ssd"
+    },
+    {
+      "text": "Persistent Disk",
+      "path": "/compute/docs/disks/persistent-disks"
+    },
+    {
+      "text": "Hyperdisk",
+      "path": "/compute/docs/disks/hyperdisks"
+    },
+    {
+      "text": "AI Hypercomputer",
+      "path": "/ai-hypercomputer/docs"
+    },
+    {
+      "text": "Cluster Director",
+      "path": "/cluster-director/docs"
+    },
+    {
+      "text": "Batch",
+      "path": "/batch/docs"
+    },
+    {
+      "text": "Cloud GPUs",
+      "path": "/compute/docs/gpus"
+    },
+    {
+      "text": "Google Cloud VMware Engine",
+      "path": "/vmware-engine/docs"
+    },
+    {
+      "text": "SAP on Google Cloud",
+      "path": "/sap/docs"
+    },
+    {
+      "text": "Workload Manager",
+      "path": "/workload-manager/docs"
+    },
+    {
+      "text": "Cluster Toolkit",
+      "path": "/cluster-toolkit/docs"
+    },
+    {
+      "text": "Shielded VM",
+      "path": "/compute/shielded-vm/docs"
+    },
+    {
+      "text": "VM Manager",
+      "path": "/compute/vm-manager/docs"
+    },
+    {
+      "text": "Oracle on Google Cloud Compute",
+      "path": "/oracle/compute"
+    },
+    {
+      "text": "Overview of data analytics",
+      "path": "/docs/data"
+    },
+    {
+      "text": "BigQuery",
+      "path": "/bigquery/docs"
+    },
+    {
+      "text": "Data Agent Kit extension",
+      "path": "/data-cloud-extension"
+    },
+    {
+      "text": "Knowledge Catalog",
+      "path": "/dataplex/docs"
+    },
+    {
+      "text": "Lakehouse",
+      "path": "/lakehouse/docs"
+    },
+    {
+      "text": "Looker",
+      "path": "/looker/docs"
+    },
+    {
+      "text": "Data Studio",
+      "path": "/data-studio"
+    },
+    {
+      "text": "Compare Looker and Data Studio",
+      "path": "/looker/docs/studio-comparison"
+    },
+    {
+      "text": "Data Catalog",
+      "path": "/data-catalog/docs"
+    },
+    {
+      "text": "Cloud Data Fusion",
+      "path": "/data-fusion/docs"
+    },
+    {
+      "text": "Dataform",
+      "path": "/dataform/docs"
+    },
+    {
+      "text": "Datastream",
+      "path": "/datastream/docs"
+    },
+    {
+      "text": "Managed Service for Apache Airflow",
+      "path": "/composer/docs"
+    },
+    {
+      "text": "Orchestration Pipelines",
+      "path": "/orchestration-pipelines"
+    },
+    {
+      "text": "Dataproc Metastore",
+      "path": "/dataproc-metastore/docs"
+    },
+    {
+      "text": "Managed Service for Apache Spark",
+      "path": "/managed-spark/docs"
+    },
+    {
+      "text": "Dataflow",
+      "path": "/dataflow/docs"
+    },
+    {
+      "text": "Managed Service for Apache Kafka",
+      "path": "/managed-service-for-apache-kafka/docs"
+    },
+    {
+      "text": "Pub/Sub",
+      "path": "/pubsub/docs"
+    },
+    {
+      "text": "Pub/Sub Lite",
+      "path": "/pubsub/lite/docs"
+    },
+    {
+      "text": "Gemini Cloud Assist",
+      "path": "/cloud-assist"
+    },
+    {
+      "text": "Gemini in BigQuery",
+      "path": "/bigquery/docs/gemini-overview"
+    },
+    {
+      "text": "Gemini in Looker",
+      "path": "/looker/docs/gemini-overview-looker"
+    },
+    {
+      "text": "Gemini in Data Studio",
+      "path": "/data-studio/gemini-overview"
+    },
+    {
+      "text": "Blockchain Analytics",
+      "path": "/blockchain-analytics/docs"
+    },
+    {
+      "text": "Cortex Framework",
+      "path": "/cortex/docs"
+    },
+    {
+      "text": "Manufacturing Data Engine",
+      "path": "/manufacturing-data-engine/docs"
+    },
+    {
+      "text": "Overview of databases",
+      "path": "/docs/databases"
+    },
+    {
+      "text": "Bigtable",
+      "path": "/bigtable/docs"
+    },
+    {
+      "text": "Datastore",
+      "path": "/datastore/docs"
+    },
+    {
+      "text": "Firestore with MongoDB compatibility",
+      "path": "/firestore/mongodb-compatibility/docs"
+    },
+    {
+      "text": "Firestore in Native mode",
+      "path": "/firestore/native/docs"
+    },
+    {
+      "text": "Memorystore for Redis",
+      "path": "/memorystore/docs/redis"
+    },
+    {
+      "text": "Memorystore for Redis Cluster",
+      "path": "/memorystore/docs/cluster"
+    },
+    {
+      "text": "Memorystore for Valkey",
+      "path": "/memorystore/docs/valkey"
+    },
+    {
+      "text": "Memorystore for Memcached",
+      "path": "/memorystore/docs/memcached"
+    },
+    {
+      "text": "AlloyDB for PostgreSQL",
+      "path": "/alloydb/docs"
+    },
+    {
+      "text": "AlloyDB Omni",
+      "path": "/alloydb/omni/docs"
+    },
+    {
+      "text": "Spanner",
+      "path": "/spanner/docs"
+    },
+    {
+      "text": "Cloud SQL",
+      "path": "/sql/docs"
+    },
+    {
+      "text": "Database Migration Service",
+      "path": "/database-migration/docs"
+    },
+    {
+      "text": "Database Center",
+      "path": "/database-center/docs"
+    },
+    {
+      "text": "Overview of distributed, hybrid, and multicloud",
+      "path": "/docs/dhm-cloud"
+    },
+    {
+      "text": "Google Distributed Cloud air-gapped",
+      "path": "/distributed-cloud/hosted/docs/latest/gdch"
+    },
+    {
+      "text": "Google Distributed Cloud connected",
+      "path": "/distributed-cloud/edge/latest/docs"
+    },
+    {
+      "text": "Google Distributed Cloud software for bare metal",
+      "path": "/kubernetes-engine/distributed-cloud/bare-metal/docs"
+    },
+    {
+      "text": "Google Distributed Cloud software for VMware",
+      "path": "/kubernetes-engine/distributed-cloud/vmware/docs"
+    },
+    {
+      "text": "GKE Multi-Cloud",
+      "path": "/kubernetes-engine/multi-cloud/docs"
+    },
+    {
+      "text": "Cloud Location Finder",
+      "path": "/location-finder/docs"
+    }
+  ],
+  "url_sections": {
+    "java": 116650,
+    "dotnet": 30394,
+    "php": 16642,
+    "cpp": 11790,
+    "distributed-cloud": 5642,
+    "ruby": 3381,
+    "service-mesh": 2619,
+    "alloydb": 2326,
+    "kubernetes-engine": 1661,
+    "apigee": 1196,
+    "appengine": 1157,
+    "python": 1126,
+    "gemini": 1126,
+    "looker": 1066,
+    "chronicle": 1007,
+    "vertex-ai": 966,
+    "migrate": 879,
+    "bigquery": 757,
+    "compute": 687,
+    "sql": 604,
+    "security-command-center": 482,
+    "memorystore": 470,
+    "network-connectivity": 401,
+    "dialogflow": 381,
+    "spanner": 369,
+    "workflows": 346,
+    "database-migration": 325,
+    "pubsub": 310,
+    "storage": 309,
+    "composer": 306,
+    "firestore": 292,
+    "vision": 273,
+    "run": 271,
+    "nodejs": 264,
+    "backup-disaster-recovery": 250,
+    "healthcare-api": 239,
+    "iam": 238,
+    "sensitive-data-protection": 232,
+    "generative-ai-app-builder": 229,
+    "load-balancing": 222
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "/deep-learning-vm/docs",
+      "deep learning vm images",
+      "deep learning containers",
+      "/deep-learning-containers/docs"
+    ],
+    "getting started / quickstart": [
+      "/docs/get-started",
+      "get started with google cloud"
+    ],
+    "guides / how-to": [
+      "general authentication guides"
+    ],
+    "api reference": [
+      "api gateway",
+      "transcoder api",
+      "live stream api",
+      "app optimize api"
+    ],
+    "changelog / release notes": [
+      "/release-notes",
+      "/docs/whats-new",
+      "what's new in documentation",
+      "recent product release notes"
+    ],
+    "migration / upgrade": [
+      "migrate",
+      "/database-migration/docs",
+      "database migration service"
+    ],
+    "security": [
+      "security-command-center",
+      "software supply chain security",
+      "/software-supply-chain-security/docs"
+    ],
+    "cli reference": [
+      "google cloud cli"
+    ],
+    "sdk / client libraries": [
+      "sdk",
+      "/sdk/docs",
+      "/sdk/gcloud",
+      "google cloud sdk overview"
+    ],
+    "configuration / settings": [
+      "config connector",
+      "/config-connector/docs"
+    ],
+    "community / support": [
+      "/support/docs"
+    ],
+    "integrations": [
+      "integration connectors",
+      "application integration",
+      "/integration-connectors/docs",
+      "/application-integration/docs"
+    ],
+    "concepts / architecture": [
+      "architecture",
+      "neural architecture search",
+      "/gemini-enterprise-agent-platform/machine-learning/training/neural-architecture-search/overview"
+    ],
+    "deployment / production": [
+      "/deploy/docs",
+      "cloud deploy",
+      "deployment-manager",
+      "/deployment-manager/docs"
+    ],
+    "videos": [
+      "video stitcher api",
+      "/video-stitcher/docs",
+      "video intelligence api",
+      "/video-intelligence/docs"
+    ],
+    "pricing / limits": [
+      "cloud quotas",
+      "/docs/quotas"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://cloud.google.com/docs",
+      "h1": "",
+      "h2": [
+        "Discover",
+        "Get started",
+        "Documentation spotlight",
+        "SDKs, languages, frameworks, and tools",
+        "Explore technology areas",
+        "Explore cross-product tools"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/release-notes",
+      "h1": "Google Cloud release notes Stay organized with collections Save and categorize c",
+      "h2": [
+        "August 19, 2026",
+        "August 18, 2026",
+        "581.0.0 (2026-08-18)",
+        "August 17, 2026",
+        "August 16, 2026",
+        "August 15, 2026",
+        "August 14, 2026",
+        "August 13, 2026",
+        "August 12, 2026",
+        "August 11, 2026",
+        "August 10, 2026",
+        "August 09, 2026",
+        "August 08, 2026",
+        "August 07, 2026",
+        "August 06, 2026",
+        "August 05, 2026",
+        "August 04, 2026",
+        "August 03, 2026",
+        "August 02, 2026",
+        "August 01, 2026"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/rust",
+      "h1": "Rust documentation",
+      "h2": [
+        "Documentation resources",
+        "Related resources"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/gemini-enterprise-agent-platform",
+      "h1": "Gemini Enterprise Agent Platform Stay organized with collections Save and catego",
+      "h2": [
+        "Everything you need to buildproduction-ready agents",
+        "Built for developers,designed for enterprise",
+        "Learn more about Agent Platform"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/data-studio",
+      "h1": "Data Studio",
+      "h2": [
+        "Key features",
+        "Documentation and resources"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/gemini/docs",
+      "h1": "Gemini for Google Cloud documentation",
+      "h2": [
+        "Documentation resources"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/support/docs",
+      "h1": "Cloud Customer Care documentation",
+      "h2": [
+        "Documentation resources",
+        "Related videos"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/identity/docs",
+      "h1": "Cloud Identity documentation",
+      "h2": [
+        "Documentation resources",
+        "Related videos"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/identity-platform/docs",
+      "h1": "Identity Platform documentation",
+      "h2": [
+        "Documentation resources",
+        "Related videos"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/managed-microsoft-ad/docs",
+      "h1": "Managed Service for Microsoft Active Directory documentation",
+      "h2": [
+        "Documentation resources",
+        "Related videos"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/marketplace/docs",
+      "h1": "Google Cloud Marketplace documentation",
+      "h2": [
+        "Documentation resources"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/service-catalog/docs",
+      "h1": "Service Catalog documentation",
+      "h2": [
+        "Documentation resources",
+        "Related videos"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/service-usage/docs",
+      "h1": "Service Usage documentation",
+      "h2": [
+        "Documentation resources"
+      ]
+    },
+    {
+      "url": "https://cloud.google.com/hub/docs",
+      "h1": "Cloud Hub documentation",
+      "h2": [
+        "Documentation resources"
+      ]
+    }
+  ]
+}

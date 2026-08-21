@@ -1,0 +1,500 @@
+{
+  "name": "Angular Documentation",
+  "source_url": "https://angular.dev/overview",
+  "category": "Frontend framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 1596,
+  "landing_nav": [
+    {
+      "text": "Docs",
+      "path": "/docs"
+    },
+    {
+      "text": "Tutorials",
+      "path": "/tutorials"
+    },
+    {
+      "text": "Playground",
+      "path": "/playground"
+    },
+    {
+      "text": "Reference",
+      "path": "/reference"
+    },
+    {
+      "text": "What is Angular?",
+      "path": "/overview"
+    },
+    {
+      "text": "Installation",
+      "path": "/installation"
+    },
+    {
+      "text": "Start coding! 🚀",
+      "path": "/tutorials/learn-angular"
+    },
+    {
+      "text": "Drag and drop",
+      "path": "/guide/drag-drop"
+    },
+    {
+      "text": "Get Started",
+      "path": "/ai"
+    },
+    {
+      "text": "LLM prompts and AI IDE setup",
+      "path": "/ai/develop-with-ai"
+    },
+    {
+      "text": "Agent Skills New",
+      "path": "/ai/agent-skills"
+    },
+    {
+      "text": "Angular CLI MCP Server setup",
+      "path": "/ai/mcp"
+    },
+    {
+      "text": "Angular AI Tutor",
+      "path": "/ai/ai-tutor"
+    },
+    {
+      "text": "Design Patterns",
+      "path": "/ai/design-patterns"
+    },
+    {
+      "text": "WebMCP New",
+      "path": "/ai/webmcp"
+    },
+    {
+      "text": "Language Service",
+      "path": "/tools/language-service"
+    },
+    {
+      "text": "Style Guide",
+      "path": "/style-guide"
+    },
+    {
+      "text": "Security",
+      "path": "/best-practices/security"
+    },
+    {
+      "text": "Accessibility",
+      "path": "/best-practices/a11y"
+    },
+    {
+      "text": "Unhandled errors in Angular",
+      "path": "/best-practices/error-handling"
+    },
+    {
+      "text": "Keeping up-to-date",
+      "path": "/update"
+    },
+    {
+      "text": "Angular v22 Release New",
+      "path": "/events/v22"
+    },
+    {
+      "text": "Angular v21 Release",
+      "path": "/events/v21"
+    },
+    {
+      "text": "NgModules",
+      "path": "/guide/ngmodules/overview"
+    },
+    {
+      "text": "Web workers",
+      "path": "/ecosystem/web-workers"
+    },
+    {
+      "text": "Custom build pipeline",
+      "path": "/ecosystem/custom-build-pipeline"
+    },
+    {
+      "text": "Tailwind",
+      "path": "/guide/tailwind"
+    },
+    {
+      "text": "Essentials An overview of what it's like to use Angular",
+      "path": "/essentials"
+    },
+    {
+      "text": "Tutorials Step-by-step instructions in your browser",
+      "path": "/tutorials"
+    },
+    {
+      "text": "Read Angular's roadmap",
+      "path": "/roadmap"
+    },
+    {
+      "text": "Try out our playground",
+      "path": "/playground"
+    },
+    {
+      "text": "Learn with tutorials",
+      "path": "/tutorials"
+    },
+    {
+      "text": "Reference our APIs",
+      "path": "/api"
+    },
+    {
+      "text": "Press Kit",
+      "path": "/press-kit"
+    },
+    {
+      "text": "Roadmap",
+      "path": "/roadmap"
+    },
+    {
+      "text": "MIT-style License",
+      "path": "/license"
+    }
+  ],
+  "url_sections": {
+    "api": 1119,
+    "guide": 181,
+    "tutorials": 64,
+    "errors": 60,
+    "cli": 46,
+    "tools": 25,
+    "reference": 21,
+    "extended-diagnostics": 17,
+    "best-practices": 14,
+    "ecosystem": 13,
+    "essentials": 7,
+    "https:": 7,
+    "events": 2,
+    "agent-skills": 1,
+    "ai-tutor": 1,
+    "design-patterns": 1,
+    "develop-with-ai": 1,
+    "mcp": 1,
+    "webmcp": 1,
+    "docs": 1,
+    "hmr": 1,
+    "installation": 1,
+    "license": 1,
+    "overview": 1,
+    "playground": 1,
+    "press-kit": 1,
+    "roadmap": 1,
+    "signal-forms": 1,
+    "style-guide": 1,
+    "update": 1,
+    "update-guide": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorials",
+      "/tutorials",
+      "learn with tutorials",
+      "/tutorials/learn-angular"
+    ],
+    "getting started / quickstart": [
+      "get started"
+    ],
+    "guides / how-to": [
+      "guide",
+      "style-guide",
+      "style guide",
+      "update-guide"
+    ],
+    "api reference": [
+      "api",
+      "/api",
+      "reference",
+      "/reference"
+    ],
+    "troubleshooting / errors": [
+      "errors",
+      "extended-diagnostics",
+      "unhandled errors in angular",
+      "/best-practices/error-handling"
+    ],
+    "security": [
+      "security",
+      "/best-practices/security"
+    ],
+    "cli reference": [
+      "cli",
+      "angular cli mcp server setup"
+    ],
+    "best practices": [
+      "best-practices",
+      "/best-practices/a11y",
+      "/best-practices/security",
+      "/best-practices/error-handling"
+    ],
+    "playground / sandbox": [
+      "playground",
+      "/playground",
+      "try out our playground"
+    ],
+    "roadmap": [
+      "roadmap",
+      "/roadmap",
+      "read angular's roadmap"
+    ],
+    "accessibility": [
+      "accessibility",
+      "/best-practices/a11y"
+    ],
+    "versioned docs": [
+      "/events/v21",
+      "/events/v22"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://angular.dev/tutorials",
+      "h1": "Tutorials",
+      "h2": []
+    },
+    {
+      "url": "https://angular.dev/playground",
+      "h1": "Angular Playground",
+      "h2": []
+    },
+    {
+      "url": "https://angular.dev/overview",
+      "h1": "What is Angular?",
+      "h2": [
+        "On this page",
+        "Features that power your development",
+        "Develop applications faster than ever",
+        "Ship with confidence",
+        "Works at any scale",
+        "Open-source first",
+        "A thriving community",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/installation",
+      "h1": "Installation",
+      "h2": [
+        "On this page",
+        "Play Online",
+        "Set up a new project locally",
+        "Next steps",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/ai",
+      "h1": "Build with AI",
+      "h2": [
+        "On this page",
+        "Getting Started",
+        "Best Practices",
+        "Next steps",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/style-guide",
+      "h1": "Angular coding style guide",
+      "h2": [
+        "On this page",
+        "Introduction",
+        "Naming",
+        "Project structure",
+        "Dependency injection",
+        "Components and directives",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/update",
+      "h1": "Keeping your Angular projects up-to-date",
+      "h2": [
+        "On this page",
+        "Getting notified of new releases",
+        "Learning about new features",
+        "Checking your version of Angular",
+        "Finding the current version of Angular",
+        "Updating your environment and apps",
+        "Resource summary",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/essentials",
+      "h1": "Essentials",
+      "h2": [
+        "On this page",
+        "Interested in Angular?",
+        "Next Step",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/roadmap",
+      "h1": "Angular Roadmap",
+      "h2": [
+        "On this page",
+        "Explore modern Angular",
+        "Improving the AI experience for Angular Developers",
+        "Improving the Angular developer experience",
+        "Completed projects",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/api",
+      "h1": "API Reference",
+      "h2": [
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/press-kit",
+      "h1": "Angular Press Kit",
+      "h2": [
+        "On this page",
+        "Press and Media",
+        "Adapting the logo",
+        "Deprecated logos",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/license",
+      "h1": "The MIT License",
+      "h2": [
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/guide/drag-drop",
+      "h1": "Drag and drop",
+      "h2": [
+        "On this page",
+        "Overview",
+        "Before you start",
+        "Create draggable elements",
+        "Create a list of reorderable draggable elements",
+        "Transfer draggable elements between lists",
+        "Attach data",
+        "Dragging customizations",
+        "Sorting customizations",
+        "Customize animations",
+        "Styling",
+        "Dragging in a scrollable container",
+        "Integrations with other components",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/ai/develop-with-ai",
+      "h1": "LLM prompts and AI IDE setup",
+      "h2": [
+        "On this page",
+        "Custom Prompts and System Instructions",
+        "Rules Files",
+        "Angular CLI MCP Server setup",
+        "Providing Context with llms.txt",
+        "Web Codegen Scorer",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/ai/agent-skills",
+      "h1": "Agent Skills",
+      "h2": [
+        "On this page",
+        "Available Skills",
+        "Using Agent Skills",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/ai/mcp",
+      "h1": "Angular CLI MCP Server",
+      "h2": [
+        "On this page",
+        "Get Started",
+        "Available Tools (Default)",
+        "Common Workflows",
+        "Command Options",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/ai/ai-tutor",
+      "h1": "Angular AI Tutor",
+      "h2": [
+        "On this page",
+        "Get Started",
+        "Using the AI Tutor",
+        "How It Works: The Learning Cycle",
+        "Features & Commands",
+        "Troubleshooting",
+        "Your Learning Journey: The Phased Path",
+        "A Note on AI & Feedback",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    },
+    {
+      "url": "https://angular.dev/ai/design-patterns",
+      "h1": "Design patterns for AI SDKs and signal APIs",
+      "h2": [
+        "On this page",
+        "Triggering requests with signals",
+        "Preparing LLM data for templates",
+        "Performance and user experience",
+        "AI patterns in action: streaming chat responses",
+        "Social Media",
+        "Community",
+        "Resources",
+        "Community translations"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Alfred",
+  "product_url": "https://www.alfredapp.com/",
+  "evidence_status": "partial",
+  "upstream_owner": "Alfred App",
+  "captured_at": "2026-08-16T23:27:18Z",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=3mg5jA4uBH8",
+      "media_kind": "video-mp4",
+      "width": 960,
+      "height": 540,
+      "duration_seconds": 18.0,
+      "frame_count": 270,
+      "bytes": 386200,
+      "sha256": "90872930b67f1d11392d4ac5383975a686afbb6d87bd635ff9119b77ad678df2",
+      "capture_method": "Downloaded from the product publisher’s official video channel with yt-dlp, then excerpted and transcoded to H.264 without synthesized frames.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "Entry state: Invoke Alfred",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 0.5s (mean abs diff 1.8398/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 472118,
+      "sha256": "92a4ba06f21826367c19745e43a20f3efaa2cd8b436ab3b0f762e9946cb39fa8",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.5,
+        "mean_abs_diff": 1.8398,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Invocation state: Enter a query",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 3.5s (mean abs diff 1.8438/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 472220,
+      "sha256": "c54ee5012745daac24da957e473b0744abc44571c71e729cd9beff92204752d5",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 3.5,
+        "mean_abs_diff": 1.8438,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Focused intermediate state: Browse the focused results",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 8.5s (mean abs diff 2/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 210805,
+      "sha256": "0909f5f138c507ef174f0ed3b1383f70adbbddfcf887b48a33d2c7fda2e30b1e",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 8.5,
+        "mean_abs_diff": 2.0,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Committed transition: Open the relevant action or workflow",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/motion.mp4 at 12s (mean abs diff 1.7773/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 278644,
+      "sha256": "e6ab2785c07606e901a54a80c086ba73b296dca76d5336f7be0896ef586cf157",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 12.0,
+        "mean_abs_diff": 1.7773,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "First-success result: Observe the resulting item or action surface",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/motion.mp4 at 15.5s (mean abs diff 1.9219/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 219044,
+      "sha256": "f33e920d41915b5c79adc792acca5db39b1d12a58cd9dd545bca7bf734f6007e",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 15.5,
+        "mean_abs_diff": 1.9219,
+        "sampled_frames": 36
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Invoke Alfred",
+      "response": "Alfred exposes the entry surface visible in the retained motion.",
+      "feedback": "The first state establishes the active surface before manipulation.",
+      "cancellation": "Stopping here leaves the product unchanged.",
+      "failure": "The goal is not yet complete in the entry state.",
+      "recovery": "Enter a query.",
+      "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Enter a query",
+      "response": "A target control, item, document, or workspace becomes the active context.",
+      "feedback": "The next retained state visibly differs and identifies the active path.",
+      "cancellation": "Focus can remain on the previous context without committing.",
+      "failure": "An unintended target would leave the desired result unavailable.",
+      "recovery": "Move focus to the intended visible target and continue.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Browse the focused results",
+      "response": "The recording advances into the product’s intermediate working state.",
+      "feedback": "Content, controls, or selection context changes in place.",
+      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+      "failure": "Stopping at this state produces no completion evidence.",
+      "recovery": "Open the relevant action or workflow.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Open the relevant action or workflow",
+      "response": "The selected operation crosses from preparation into a committed transition.",
+      "feedback": "The fourth state records the immediate product response.",
+      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+      "failure": "Without confirmation, the fifth-state result does not appear.",
+      "recovery": "Repeat the intended selection and confirm it.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+    },
+    {
+      "name": "Completion feedback",
+      "trigger": "Observe the resulting item or action surface",
+      "response": "The recording reaches the first meaningful result for “Find and act on an item with Alfred”.",
+      "feedback": "The fifth local frame is the offline completion evidence.",
+      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+      "failure": "Absence of the fifth state means the journey is incomplete.",
+      "recovery": "Replay the recorded sequence from the entry state.",
+      "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Cancellation and backtracking",
+      "trigger": "Leave the path before the committed transition.",
+      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+      "failure": "Exiting early does not produce completion evidence.",
+      "recovery": "Re-enter through state 2 and continue to state 4.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s; media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Failure boundary",
+      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+      "feedback": "No fifth-state visual is present before commitment.",
+      "cancellation": "The actor may abandon the incomplete path without claiming success.",
+      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s; contrasted with media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Recovery",
+      "trigger": "Resume from the last valid intermediate state.",
+      "response": "The same visible action sequence advances to the retained result.",
+      "feedback": "State 5 supplies positive completion feedback after state 4.",
+      "cancellation": "The actor can still stop before replaying confirmation.",
+      "failure": "A replay that never reaches state 5 remains incomplete.",
+      "recovery": "Replay state 4 and verify state 5.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s; media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning Alfred user",
+    "goal": "Find and act on an item with Alfred",
+    "prerequisites": [
+      "Alfred available on macOS or the official recording environment",
+      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Invoke Alfred",
+        "system_response": "Alfred advances to the entry state retained in state 1.",
+        "state": "Entry state: Invoke Alfred",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+      },
+      {
+        "index": 2,
+        "user_action": "Enter a query",
+        "system_response": "Alfred advances to the invocation state retained in state 2.",
+        "state": "Invocation state: Enter a query",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+      },
+      {
+        "index": 3,
+        "user_action": "Browse the focused results",
+        "system_response": "Alfred advances to the focused intermediate state retained in state 3.",
+        "state": "Focused intermediate state: Browse the focused results",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+      },
+      {
+        "index": 4,
+        "user_action": "Open the relevant action or workflow",
+        "system_response": "Alfred advances to the committed transition retained in state 4.",
+        "state": "Committed transition: Open the relevant action or workflow",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+      },
+      {
+        "index": 5,
+        "user_action": "Observe the resulting item or action surface",
+        "system_response": "Alfred advances to the first-success result retained in state 5.",
+        "state": "First-success result: Observe the resulting item or action surface",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    ],
+    "failure_route": [
+      "Stop at the third retained state before confirmation; the meaningful result is absent.",
+      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+    ],
+    "recovery_route": [
+      "Return to the second retained state and restore the intended focus or selection.",
+      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+    ],
+    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+  },
+  "accessibility": {
+    "observations": [
+      "Active focus or selection is conveyed by a visible change between retained states.",
+      "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown.",
+      "The five extracted frames provide a nonanimated way to inspect the same sequence."
+    ],
+    "unknowns": [
+      "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
+      "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
+      "The product’s Reduce Motion behavior and contrast preferences are not demonstrated."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

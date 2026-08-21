@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921626,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"yq authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: yq\r\n"]
+[0.55,"o","cli-ref$ yq --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","yq 0.0.0\r\n"]
+[2.2,"o","cli-ref$ yq --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","usage: yq [options] <jq filter> [input file...]\r\n          [jq_filter] [files ...]\r\n\r\nyq: Command-line YAML processor - jq wrapper for YAML documents\r\n\r\nyq transcodes YAML documents to JSON and passes them to jq.\r\nSee https://github.com/kislyuk/yq for more information.\r\n\r\npositional arguments:\r\n  jq_filter\r\n  files\r\n\r\noptions:\r\n  -h, --help            show this help message and exit\r\n"]
+[5.1,"o","cli-ref$ yq --definitely-invalid-option /dev/null 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","jq: Unknown option --definitely-invalid-option\r\nUse jq --help for help with command-line options,\r\nor see the jq manpage, or online docs  at https://jqlang.github.io/jq\r\n[exit status 2]\r\n"]
+[7.1,"o","cli-ref$ yq --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ yq --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","usage: yq [options] <jq filter> [input file...]\r\n          [jq_filter] [files ...]\r\n\r\nyq: Command-line YAML processor - jq wrapper for YAML documents\r\n"]

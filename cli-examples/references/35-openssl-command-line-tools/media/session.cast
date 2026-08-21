@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921625,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"OpenSSL command-line tools authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: OpenSSL command-line tools\r\n"]
+[0.55,"o","cli-ref$ openssl version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)\r\n"]
+[2.2,"o","cli-ref$ openssl help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","help:\r\n\r\nStandard commands\r\nasn1parse         ca                ciphers           cmp               \r\ncms               crl               crl2pkcs7         dgst              \r\ndhparam           dsa               dsaparam          ec                \r\necparam           enc               engine            errstr            \r\nfipsinstall       gendsa            genpkey           genrsa            \r\nhelp              info              kdf               list              \r\nmac               nseq              ocsp              passwd            \r\npkcs12            pkcs7             pkcs8             pkey              \r\npkeyparam         pkeyutl           prime             rand              \r\nrehash            req               rsa               rsautl            \r\ns_client          s_server          s_time            sess_id           \r\n"]
+[5.1,"o","cli-ref$ openssl --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","Invalid command '--definitely-invalid-option'; type \"help\" for a list.\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ openssl --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ openssl help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","help:\r\n\r\nStandard commands\r\nasn1parse         ca                ciphers           cmp               \r\n"]

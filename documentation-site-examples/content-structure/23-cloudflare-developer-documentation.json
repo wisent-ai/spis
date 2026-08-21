@@ -1,0 +1,694 @@
+{
+  "name": "Cloudflare Developer Documentation",
+  "source_url": "https://developers.cloudflare.com/",
+  "category": "Edge platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 8290,
+  "landing_nav": [
+    {
+      "text": "Docs",
+      "path": "/"
+    },
+    {
+      "text": "Directory",
+      "path": "/directory/"
+    },
+    {
+      "text": "API",
+      "path": "/api/"
+    },
+    {
+      "text": "SDKs",
+      "path": "/fundamentals/api/reference/sdks/"
+    },
+    {
+      "text": "Changelog",
+      "path": "/changelog/"
+    },
+    {
+      "text": "Overview",
+      "path": "/"
+    },
+    {
+      "text": "Agent Setup",
+      "path": "/agent-setup/"
+    },
+    {
+      "text": "Learning paths",
+      "path": "/resources/"
+    },
+    {
+      "text": "Use cases",
+      "path": "/use-cases/"
+    },
+    {
+      "text": "Reference architecture",
+      "path": "/reference-architecture/"
+    },
+    {
+      "text": "API reference",
+      "path": "/api/"
+    },
+    {
+      "text": "Terraform",
+      "path": "/terraform/"
+    },
+    {
+      "text": "Pulumi",
+      "path": "/pulumi/"
+    },
+    {
+      "text": "Support",
+      "path": "/support/"
+    },
+    {
+      "text": "Workers",
+      "path": "/workers/"
+    },
+    {
+      "text": "Containers",
+      "path": "/containers/"
+    },
+    {
+      "text": "Durable Objects",
+      "path": "/durable-objects/"
+    },
+    {
+      "text": "Queues",
+      "path": "/queues/"
+    },
+    {
+      "text": "Workflows",
+      "path": "/workflows/"
+    },
+    {
+      "text": "Flagship",
+      "path": "/flagship/"
+    },
+    {
+      "text": "Browser Run",
+      "path": "/browser-run/"
+    },
+    {
+      "text": "Workers VPC",
+      "path": "/workers-vpc/"
+    },
+    {
+      "text": "Cloudflare for Platforms",
+      "path": "/cloudflare-for-platforms/"
+    },
+    {
+      "text": "Email Service",
+      "path": "/email-service/"
+    },
+    {
+      "text": "Models",
+      "path": "/ai/models/"
+    },
+    {
+      "text": "Workers AI",
+      "path": "/workers-ai/"
+    },
+    {
+      "text": "AI Gateway",
+      "path": "/ai-gateway/"
+    },
+    {
+      "text": "Agents",
+      "path": "/agents/"
+    },
+    {
+      "text": "Agent Memory",
+      "path": "/agent-memory/"
+    },
+    {
+      "text": "Wallets",
+      "path": "/wallets/"
+    },
+    {
+      "text": "Sandbox SDK",
+      "path": "/sandbox/"
+    },
+    {
+      "text": "Vectorize",
+      "path": "/vectorize/"
+    },
+    {
+      "text": "AI Search",
+      "path": "/ai-search/"
+    },
+    {
+      "text": "AI Crawl Control",
+      "path": "/ai-crawl-control/"
+    },
+    {
+      "text": "R2",
+      "path": "/r2/"
+    },
+    {
+      "text": "R2 Data Catalog",
+      "path": "/r2-data-catalog/"
+    },
+    {
+      "text": "R2 SQL",
+      "path": "/r2-sql/"
+    },
+    {
+      "text": "Pipelines",
+      "path": "/pipelines/"
+    },
+    {
+      "text": "D1",
+      "path": "/d1/"
+    },
+    {
+      "text": "KV",
+      "path": "/kv/"
+    },
+    {
+      "text": "Hyperdrive",
+      "path": "/hyperdrive/"
+    },
+    {
+      "text": "Images",
+      "path": "/images/"
+    },
+    {
+      "text": "Stream",
+      "path": "/stream/"
+    },
+    {
+      "text": "Realtime",
+      "path": "/realtime/"
+    },
+    {
+      "text": "WAF",
+      "path": "/waf/"
+    },
+    {
+      "text": "DDoS Protection",
+      "path": "/ddos-protection/"
+    },
+    {
+      "text": "SSL/TLS",
+      "path": "/ssl/"
+    },
+    {
+      "text": "Bots",
+      "path": "/bots/"
+    },
+    {
+      "text": "API Shield",
+      "path": "/api-shield/"
+    },
+    {
+      "text": "Page Shield",
+      "path": "/page-shield/"
+    },
+    {
+      "text": "Turnstile",
+      "path": "/turnstile/"
+    },
+    {
+      "text": "Security Center",
+      "path": "/security-center/"
+    },
+    {
+      "text": "Overview",
+      "path": "/cloudflare-one/"
+    },
+    {
+      "text": "Insights & Logs",
+      "path": "/cloudflare-one/insights/"
+    },
+    {
+      "text": "Team & Resources",
+      "path": "/cloudflare-one/team-and-resources/"
+    },
+    {
+      "text": "Networks",
+      "path": "/cloudflare-one/networks/"
+    },
+    {
+      "text": "Access controls",
+      "path": "/cloudflare-one/access-controls/"
+    },
+    {
+      "text": "Traffic policies",
+      "path": "/cloudflare-one/traffic-policies/"
+    },
+    {
+      "text": "Cloud & SaaS findings",
+      "path": "/cloudflare-one/cloud-and-saas-findings/"
+    },
+    {
+      "text": "Email security",
+      "path": "/cloudflare-one/email-security/"
+    },
+    {
+      "text": "Data loss prevention",
+      "path": "/cloudflare-one/data-loss-prevention/"
+    },
+    {
+      "text": "Browser isolation",
+      "path": "/cloudflare-one/remote-browser-isolation/"
+    },
+    {
+      "text": "Reusable components",
+      "path": "/cloudflare-one/reusable-components/"
+    },
+    {
+      "text": "Integrations",
+      "path": "/cloudflare-one/integrations/"
+    },
+    {
+      "text": "DNS",
+      "path": "/dns/"
+    },
+    {
+      "text": "1.1.1.1",
+      "path": "/1.1.1.1/"
+    },
+    {
+      "text": "Registrar",
+      "path": "/registrar/"
+    },
+    {
+      "text": "Email Routing",
+      "path": "/email-service/"
+    },
+    {
+      "text": "DMARC Management",
+      "path": "/dmarc-management/"
+    },
+    {
+      "text": "Tunnel",
+      "path": "/tunnel/"
+    },
+    {
+      "text": "Mesh",
+      "path": "/mesh/"
+    },
+    {
+      "text": "Magic Transit",
+      "path": "/magic-transit/"
+    },
+    {
+      "text": "Magic WAN",
+      "path": "/cloudflare-wan/"
+    },
+    {
+      "text": "Network Interconnect",
+      "path": "/network-interconnect/"
+    },
+    {
+      "text": "Spectrum",
+      "path": "/spectrum/"
+    },
+    {
+      "text": "BYOIP",
+      "path": "/byoip/"
+    },
+    {
+      "text": "Cache",
+      "path": "/cache/"
+    },
+    {
+      "text": "Speed",
+      "path": "/speed/"
+    },
+    {
+      "text": "Load Balancing",
+      "path": "/load-balancing/"
+    },
+    {
+      "text": "Waiting Room",
+      "path": "/waiting-room/"
+    },
+    {
+      "text": "Argo Smart Routing",
+      "path": "/argo-smart-routing/"
+    },
+    {
+      "text": "Zaraz",
+      "path": "/zaraz/"
+    },
+    {
+      "text": "Analytics",
+      "path": "/analytics/"
+    },
+    {
+      "text": "Web Analytics",
+      "path": "/web-analytics/"
+    },
+    {
+      "text": "Logs",
+      "path": "/logs/"
+    },
+    {
+      "text": "Log Explorer",
+      "path": "/log-explorer/"
+    },
+    {
+      "text": "Health Checks",
+      "path": "/health-checks/"
+    },
+    {
+      "text": "Get started",
+      "path": "/fundamentals/get-started/"
+    },
+    {
+      "text": "Create your first Worker",
+      "path": "/workers/get-started/guide/"
+    },
+    {
+      "text": "Browse available models",
+      "path": "/workers-ai/models/"
+    },
+    {
+      "text": "Get started with D1",
+      "path": "/d1/get-started/"
+    },
+    {
+      "text": "Get started with Images",
+      "path": "/images/get-started/introduction/"
+    },
+    {
+      "text": "All agents",
+      "path": "/agent-setup/"
+    },
+    {
+      "text": "View Changelog",
+      "path": "/changelog/"
+    },
+    {
+      "text": "Explore Directory",
+      "path": "/directory/"
+    },
+    {
+      "text": "Style guide",
+      "path": "/style-guide/"
+    },
+    {
+      "text": "Documentation",
+      "path": "/"
+    },
+    {
+      "text": "Cloudflare Docs",
+      "path": "/"
+    }
+  ],
+  "url_sections": {
+    "changelog": 1387,
+    "cloudflare-one": 732,
+    "realtime": 716,
+    "workers": 423,
+    "learning-paths": 322,
+    "models": 229,
+    "ruleset-engine": 217,
+    "rules": 187,
+    "waf": 166,
+    "ddos-protection": 152,
+    "workers-ai": 145,
+    "ssl": 137,
+    "dns": 136,
+    "fundamentals": 134,
+    "agents": 125,
+    "pages": 123,
+    "support": 120,
+    "cloudflare-wan": 110,
+    "logs": 105,
+    "analytics": 102,
+    "ai-gateway": 94,
+    "cloudflare-for-platforms": 88,
+    "cache": 87,
+    "ai-search": 85,
+    "r2": 83,
+    "reference-architecture": 80,
+    "sandbox": 80,
+    "images": 66,
+    "stream": 64,
+    "hyperdrive": 63,
+    "load-balancing": 62,
+    "use-cases": 59,
+    "durable-objects": 55,
+    "d1": 54,
+    "bots": 50,
+    "email-service": 50,
+    "zaraz": 50,
+    "browser-run": 49,
+    "magic-transit": 45,
+    "turnstile": 45
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "learning paths",
+      "learning-paths"
+    ],
+    "getting started / quickstart": [
+      "get started",
+      "/d1/get-started/",
+      "get started with d1",
+      "get started with images"
+    ],
+    "guides / how-to": [
+      "style guide",
+      "/style-guide/",
+      "/workers/get-started/guide/"
+    ],
+    "api reference": [
+      "api",
+      "/api/",
+      "api shield",
+      "/api-shield/"
+    ],
+    "changelog / release notes": [
+      "changelog",
+      "/changelog/",
+      "view changelog"
+    ],
+    "security": [
+      "email security",
+      "security center",
+      "/security-center/",
+      "/cloudflare-one/email-security/"
+    ],
+    "sdk / client libraries": [
+      "sdks",
+      "sandbox sdk",
+      "/fundamentals/api/reference/sdks/"
+    ],
+    "community / support": [
+      "support",
+      "/support/"
+    ],
+    "playground / sandbox": [
+      "sandbox",
+      "/sandbox/",
+      "sandbox sdk"
+    ],
+    "integrations": [
+      "integrations",
+      "/cloudflare-one/integrations/"
+    ],
+    "concepts / architecture": [
+      "reference architecture",
+      "reference-architecture",
+      "/reference-architecture/"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://developers.cloudflare.com/directory/",
+      "h1": "Directory",
+      "h2": []
+    },
+    {
+      "url": "https://developers.cloudflare.com/api/",
+      "h1": "API Reference",
+      "h2": []
+    },
+    {
+      "url": "https://developers.cloudflare.com/changelog/",
+      "h1": "Changelog",
+      "h2": [
+        "Cloudflare One Client for Windows (version 2026.7.1343.0)",
+        "Cloudflare One Client for macOS (version 2026.7.1343.0)",
+        "Cloudflare One Client for Linux (version 2026.7.1343.0)",
+        "Get 50% off GPT-5.6 Sol through AI Gateway",
+        "Configure origin application settings for Cloudflare Tunnel in the dashboard",
+        "Post-quantum key exchange for MX deployments",
+        "Load balancing analytics now filters by pool name",
+        "New `us` jurisdiction for R2",
+        "WAF Release - 2026-08-17",
+        "WAF Release - Scheduled changes for 2026-08-24",
+        "Qwen 3.8 27B now available on Workers AI",
+        "WebSocket reporting now includes full connection data transfer",
+        "DeepSeek V4 Flash and Pro now available on Workers AI",
+        "You can now enable Access on a Worker or all Workers at once",
+        "Data localization support for Artifacts",
+        "Detect and control software package downloads with package registry security",
+        "Control Realtime SFU DataChannel delivery",
+        "Oracle Cloud Infrastructure Object Storage support in Cloud Connector",
+        "Certificate Transparency Monitoring is now Generally Available",
+        "Block emails by content with blocked content rules"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/agent-setup/",
+      "h1": "Agent setup",
+      "h2": [
+        "Pick your agent",
+        "Compare agents",
+        "Understanding agents"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/resources/",
+      "h1": "Resources",
+      "h2": []
+    },
+    {
+      "url": "https://developers.cloudflare.com/use-cases/",
+      "h1": "Use cases",
+      "h2": [
+        "Build something new",
+        "Secure and accelerate your applications",
+        "More resources",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/reference-architecture/",
+      "h1": "Reference Architectures",
+      "h2": [
+        "More resources",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/terraform/",
+      "h1": "Cloudflare Terraform provider",
+      "h2": [
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/pulumi/",
+      "h1": "Pulumi",
+      "h2": [
+        "Features",
+        "Related products",
+        "More resources",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/support/",
+      "h1": "Support",
+      "h2": [
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/workers/",
+      "h1": "Cloudflare Workers",
+      "h2": [
+        "Build with Workers",
+        "Integrate with Workers",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/containers/",
+      "h1": "Containers",
+      "h2": [
+        "Next steps",
+        "More resources",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/durable-objects/",
+      "h1": "Cloudflare Durable Objects",
+      "h2": [
+        "Features",
+        "Related products",
+        "More resources",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/queues/",
+      "h1": "Cloudflare Queues",
+      "h2": [
+        "Features",
+        "Related products",
+        "More resources",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/workflows/",
+      "h1": "Cloudflare Workflows",
+      "h2": [
+        "Example",
+        "Features",
+        "Related products",
+        "More resources",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/flagship/",
+      "h1": "Cloudflare Flagship",
+      "h2": [
+        "Features",
+        "Related products",
+        "More resources",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/browser-run/",
+      "h1": "Browser Run",
+      "h2": [
+        "Use cases",
+        "Integration methods",
+        "Key features",
+        "Related products",
+        "More resources",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/workers-vpc/",
+      "h1": "Cloudflare Workers VPC",
+      "h2": [
+        "Use cases",
+        "Related products",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/cloudflare-for-platforms/",
+      "h1": "Cloudflare for Platforms",
+      "h2": [
+        "Deploy your own platform",
+        "Features",
+        "On this page"
+      ]
+    },
+    {
+      "url": "https://developers.cloudflare.com/email-service/",
+      "h1": "Cloudflare Email Service",
+      "h2": [
+        "Features",
+        "Related products",
+        "More resources",
+        "On this page"
+      ]
+    }
+  ]
+}

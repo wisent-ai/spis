@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921622,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"GitHub CLI (gh) authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: GitHub CLI (gh)\r\n"]
+[0.55,"o","cli-ref$ gh --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","gh version 2.97.0 (2026-07-31)\r\nhttps://github.com/cli/cli/releases/tag/v2.97.0\r\n"]
+[2.2,"o","cli-ref$ gh help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","Work seamlessly with GitHub from the command line.\r\n\r\nUSAGE\r\n  gh <command> <subcommand> [flags]\r\n\r\nCORE COMMANDS\r\n  auth:          Authenticate gh and git with GitHub\r\n  browse:        Open repositories, issues, pull requests, and more in the browser\r\n  codespace:     Connect to and manage codespaces\r\n  discussion:    Work with GitHub Discussions (preview)\r\n  gist:          Manage gists\r\n  issue:         Manage issues\r\n  org:           Manage organizations\r\n  pr:            Manage pull requests\r\n"]
+[5.1,"o","cli-ref$ gh --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","unknown flag: --definitely-invalid-option\r\n\r\nUsage:  gh <command> <subcommand> [flags]\r\n\r\nAvailable commands:\r\n  agent-task\r\n  alias\r\n  api\r\n  attestation\r\n  auth\r\n  browse\r\n  cache\r\n  co\r\n  codespace\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ gh --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ gh help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","Work seamlessly with GitHub from the command line.\r\n\r\nUSAGE\r\n  gh <command> <subcommand> [flags]\r\n"]

@@ -1,0 +1,5081 @@
+{
+  "schema": "wisent.example-catalog.v2",
+  "catalog": "tui-examples",
+  "title": "TUI examples",
+  "description": "Full-screen terminal interfaces with keyboard-first interaction.",
+  "curated_at": "2026-08-16",
+  "count": 50,
+  "examples": [
+    {
+      "name": "lazygit",
+      "source_url": "https://github.com/jesseduffield/lazygit",
+      "category": "Git and developer workflows",
+      "selection_note": "Study the tabbed repository panels, context-sensitive key hints, staged-file selection, and persistent operation status.",
+      "visual": {
+        "source_page_url": "https://github.com/jesseduffield/lazygit",
+        "source_image_url": "https://raw.githubusercontent.com/jesseduffield/lazygit/assets/tuple.png",
+        "local_path": "images/01-lazygit.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 788,
+        "original_width": 1920,
+        "original_height": 1080,
+        "bytes": 30850,
+        "sha256": "7ce6e62acb1dbe5e78fbc8861e48cd90b5362aa47b9a1b31da2e84c8e0c0c74d",
+        "source_hint": "Tuple"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "7ce6e62acb1dbe5e78fbc8861e48cd90b5362aa47b9a1b31da2e84c8e0c0c74d",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.895,
+              "width": 1.0,
+              "height": 0.105
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.483,
+              "height": 0.895
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.483,
+              "y": 0.0,
+              "width": 0.517,
+              "height": 0.895
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.123,
+              "strength": 0.886
+            },
+            {
+              "position": 0.242,
+              "strength": 0.983
+            },
+            {
+              "position": 0.339,
+              "strength": 0.78
+            },
+            {
+              "position": 0.483,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.314,
+              "strength": 0.665
+            },
+            {
+              "position": 0.467,
+              "strength": 1.0
+            },
+            {
+              "position": 0.641,
+              "strength": 0.871
+            },
+            {
+              "position": 0.895,
+              "strength": 0.915
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Tig",
+      "source_url": "https://github.com/jonas/tig",
+      "category": "Git and developer workflows",
+      "selection_note": "Study its commit graph, split diff view, incremental search, and configurable keyboard bindings within terminal dimensions.",
+      "visual": {
+        "source_page_url": "https://github.com/jonas/tig",
+        "source_image_url": "https://opengraph.githubassets.com/a6839f5ffdefa47b9a9952cebb327d2838bc486595d7bb878a83f33a5b18f115/jonas/tig",
+        "local_path": "images/02-tig.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 15980,
+        "sha256": "c2afe857c76d687f2b33e54365f1779c9880e5550aa7256d6a80fa04d4861a21",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c2afe857c76d687f2b33e54365f1779c9880e5550aa7256d6a80fa04d4861a21",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.198
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.198,
+              "width": 0.311,
+              "height": 0.671
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.311,
+              "y": 0.198,
+              "width": 0.689,
+              "height": 0.671
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.13,
+              "strength": 1.0
+            },
+            {
+              "position": 0.208,
+              "strength": 0.641
+            },
+            {
+              "position": 0.311,
+              "strength": 0.921
+            },
+            {
+              "position": 0.93,
+              "strength": 0.638
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.198,
+              "strength": 0.707
+            },
+            {
+              "position": 0.382,
+              "strength": 1.0
+            },
+            {
+              "position": 0.771,
+              "strength": 0.761
+            },
+            {
+              "position": 0.869,
+              "strength": 0.823
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "GitUI",
+      "source_url": "https://github.com/gitui-org/gitui",
+      "category": "Git and developer workflows",
+      "selection_note": "Study focus movement across status, log, and diff panels, plus modal shortcuts for staging selected hunks.",
+      "visual": {
+        "source_page_url": "https://github.com/gitui-org/gitui",
+        "source_image_url": "https://repository-images.githubusercontent.com/247725846/86707e00-e9f5-11ea-92b0-b7d526afa90f",
+        "local_path": "images/03-gitui.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1000,
+        "height": 600,
+        "original_width": 1000,
+        "original_height": 600,
+        "bytes": 11426,
+        "sha256": "6063f4188dcbdd6ef5a4e75e8912d92be6da93f6c64c95050c5c448bdbae6da7",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "6063f4188dcbdd6ef5a4e75e8912d92be6da93f6c64c95050c5c448bdbae6da7",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.417,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.417,
+              "y": 0.0,
+              "width": 0.583,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.417,
+              "strength": 1.0
+            },
+            {
+              "position": 0.606,
+              "strength": 0.762
+            },
+            {
+              "position": 0.74,
+              "strength": 0.742
+            },
+            {
+              "position": 0.822,
+              "strength": 0.911
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.331,
+              "strength": 1.0
+            },
+            {
+              "position": 0.439,
+              "strength": 0.327
+            },
+            {
+              "position": 0.646,
+              "strength": 0.973
+            },
+            {
+              "position": 0.752,
+              "strength": 0.275
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Gitu",
+      "source_url": "https://github.com/altsem/gitu",
+      "category": "Git and developer workflows",
+      "selection_note": "Study the keyboard-led status interface, selectable change lists, contextual actions, and compact branch information.",
+      "visual": {
+        "source_page_url": "https://github.com/altsem/gitu",
+        "source_image_url": "https://raw.githubusercontent.com/altsem/gitu/master/vhs/rec.gif",
+        "local_path": "images/04-gitu.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 800,
+        "original_width": 1200,
+        "original_height": 800,
+        "bytes": 57224,
+        "sha256": "415f4e42f824e9b448662bee7d288bc9650988d1cbde61a3f246f6b009bf8cc4",
+        "source_hint": "img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "415f4e42f824e9b448662bee7d288bc9650988d1cbde61a3f246f6b009bf8cc4",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.178
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.178,
+              "width": 0.256,
+              "height": 0.822
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.256,
+              "y": 0.178,
+              "width": 0.744,
+              "height": 0.822
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.113,
+              "strength": 1.0
+            },
+            {
+              "position": 0.256,
+              "strength": 0.988
+            },
+            {
+              "position": 0.34,
+              "strength": 0.896
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.08,
+              "strength": 0.883
+            },
+            {
+              "position": 0.178,
+              "strength": 0.983
+            },
+            {
+              "position": 0.29,
+              "strength": 1.0
+            },
+            {
+              "position": 0.623,
+              "strength": 0.985
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "GitHub CLI Dashboard",
+      "source_url": "https://github.com/dlvhdr/gh-dash",
+      "category": "Git and developer workflows",
+      "selection_note": "Study configurable pull-request panels, query-backed filtering, preview panes, and shortcut discovery in a dense dashboard.",
+      "visual": {
+        "source_page_url": "https://github.com/dlvhdr/gh-dash",
+        "source_image_url": "https://raw.githubusercontent.com/dlvhdr/gh-dash/main/docs/src/assets/overview.gif",
+        "local_path": "images/05-github-cli-dashboard.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 700,
+        "original_width": 1600,
+        "original_height": 800,
+        "bytes": 50174,
+        "sha256": "f385eae8cb292445f2ab75a639977eaa99b0a2decae17d7911184c1f8af9642b",
+        "source_hint": "img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "f385eae8cb292445f2ab75a639977eaa99b0a2decae17d7911184c1f8af9642b",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.087
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.087,
+              "width": 0.679,
+              "height": 0.913
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.679,
+              "y": 0.087,
+              "width": 0.321,
+              "height": 0.913
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.089,
+              "strength": 0.859
+            },
+            {
+              "position": 0.176,
+              "strength": 0.692
+            },
+            {
+              "position": 0.679,
+              "strength": 1.0
+            },
+            {
+              "position": 0.764,
+              "strength": 0.676
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.087,
+              "strength": 1.0
+            },
+            {
+              "position": 0.3,
+              "strength": 0.613
+            },
+            {
+              "position": 0.438,
+              "strength": 0.659
+            },
+            {
+              "position": 0.527,
+              "strength": 0.637
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "lazydocker",
+      "source_url": "https://github.com/jesseduffield/lazydocker",
+      "category": "Containers",
+      "selection_note": "Study navigation among container, image, volume, and log panels with contextual commands and live status updates.",
+      "visual": {
+        "source_page_url": "https://github.com/jesseduffield/lazydocker",
+        "source_image_url": "https://raw.githubusercontent.com/jesseduffield/lazydocker/master/assets/tuple.png",
+        "local_path": "images/06-lazydocker.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 788,
+        "original_width": 1920,
+        "original_height": 1080,
+        "bytes": 30850,
+        "sha256": "7ce6e62acb1dbe5e78fbc8861e48cd90b5362aa47b9a1b31da2e84c8e0c0c74d",
+        "source_hint": "Tuple"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "7ce6e62acb1dbe5e78fbc8861e48cd90b5362aa47b9a1b31da2e84c8e0c0c74d",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.895,
+              "width": 1.0,
+              "height": 0.105
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.483,
+              "height": 0.895
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.483,
+              "y": 0.0,
+              "width": 0.517,
+              "height": 0.895
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.123,
+              "strength": 0.886
+            },
+            {
+              "position": 0.242,
+              "strength": 0.983
+            },
+            {
+              "position": 0.339,
+              "strength": 0.78
+            },
+            {
+              "position": 0.483,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.314,
+              "strength": 0.665
+            },
+            {
+              "position": 0.467,
+              "strength": 1.0
+            },
+            {
+              "position": 0.641,
+              "strength": 0.871
+            },
+            {
+              "position": 0.895,
+              "strength": 0.915
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "ctop",
+      "source_url": "https://github.com/bcicen/ctop",
+      "category": "Containers",
+      "selection_note": "Study the sortable container table, resource sparklines, selection behavior, and drill-down controls under narrow widths.",
+      "visual": {
+        "source_page_url": "https://github.com/bcicen/ctop",
+        "source_image_url": "https://opengraph.githubassets.com/185ae8a44149f7a80b116a216826a949d0a61a338b9a5abdbee7991347dc8b66/bcicen/ctop",
+        "local_path": "images/07-ctop.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 19524,
+        "sha256": "b832c2c5cd628097521935515548f9b76726daeb011e2140784c709c4a34cc9e",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b832c2c5cd628097521935515548f9b76726daeb011e2140784c709c4a34cc9e",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.361,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.361,
+              "y": 0.0,
+              "width": 0.639,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.079,
+              "strength": 0.734
+            },
+            {
+              "position": 0.361,
+              "strength": 0.622
+            },
+            {
+              "position": 0.768,
+              "strength": 0.68
+            },
+            {
+              "position": 0.93,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.267,
+              "strength": 0.666
+            },
+            {
+              "position": 0.382,
+              "strength": 1.0
+            },
+            {
+              "position": 0.771,
+              "strength": 0.507
+            },
+            {
+              "position": 0.869,
+              "strength": 0.565
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Dry",
+      "source_url": "https://github.com/moncho/dry",
+      "category": "Containers",
+      "selection_note": "Study its Docker object lists, screen-specific keyboard maps, selectable rows, and command feedback in a full-screen shell.",
+      "visual": {
+        "source_page_url": "https://github.com/moncho/dry",
+        "source_image_url": "https://asciinema.org/a/35825.png",
+        "local_path": "images/08-dry.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 424,
+        "original_width": 3083,
+        "original_height": 934,
+        "bytes": 54340,
+        "sha256": "9c1ed299be1aaf3ea289f632bc5d08292760bf0f54e646bb12fb2008c03c3556",
+        "source_hint": "embedded image URL"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "9c1ed299be1aaf3ea289f632bc5d08292760bf0f54e646bb12fb2008c03c3556",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.934,
+              "width": 1.0,
+              "height": 0.066
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.609,
+              "height": 0.934
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.609,
+              "y": 0.0,
+              "width": 0.391,
+              "height": 0.934
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.21,
+              "strength": 0.896
+            },
+            {
+              "position": 0.381,
+              "strength": 0.893
+            },
+            {
+              "position": 0.5,
+              "strength": 0.988
+            },
+            {
+              "position": 0.609,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.403,
+              "strength": 0.856
+            },
+            {
+              "position": 0.484,
+              "strength": 0.614
+            },
+            {
+              "position": 0.934,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Dive",
+      "source_url": "https://github.com/wagoodman/dive",
+      "category": "Containers",
+      "selection_note": "Study synchronized image-layer and filesystem panels, efficiency summaries, filtering, and selection-driven detail updates.",
+      "visual": {
+        "source_page_url": "https://github.com/wagoodman/dive",
+        "source_image_url": "https://raw.githubusercontent.com/wagoodman/dive/main/.data/demo.gif",
+        "local_path": "images/09-dive.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 874,
+        "original_width": 1734,
+        "original_height": 1083,
+        "bytes": 8858,
+        "sha256": "1308724eef9818b884fce42d6497d207325906d07e3da209ebd21c125e3af848",
+        "source_hint": "Image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1308724eef9818b884fce42d6497d207325906d07e3da209ebd21c125e3af848",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.078
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.078,
+              "width": 0.366,
+              "height": 0.922
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.366,
+              "y": 0.078,
+              "width": 0.634,
+              "height": 0.922
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.06,
+              "strength": 1.0
+            },
+            {
+              "position": 0.143,
+              "strength": 0.707
+            },
+            {
+              "position": 0.233,
+              "strength": 0.538
+            },
+            {
+              "position": 0.366,
+              "strength": 0.68
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.078,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Oxker",
+      "source_url": "https://github.com/mrjackwills/oxker",
+      "category": "Containers",
+      "selection_note": "Study live container status, log and statistics panels, multi-select actions, and adaptable layouts for terminal constraints.",
+      "visual": {
+        "source_page_url": "https://github.com/mrjackwills/oxker",
+        "source_image_url": "https://raw.githubusercontent.com/mrjackwills/oxker/main/.github/screenshot_01.png",
+        "local_path": "images/10-oxker.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 767,
+        "original_width": 1524,
+        "original_height": 835,
+        "bytes": 178150,
+        "sha256": "92e2084e5d1c73dc5c3cec33e600a7240d35be22ab9909bd5496e47665d2ff1e",
+        "source_hint": "embedded image URL"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "92e2084e5d1c73dc5c3cec33e600a7240d35be22ab9909bd5496e47665d2ff1e",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.336,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.336,
+              "y": 0.0,
+              "width": 0.664,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.092,
+              "strength": 0.667
+            },
+            {
+              "position": 0.2,
+              "strength": 0.778
+            },
+            {
+              "position": 0.336,
+              "strength": 1.0
+            },
+            {
+              "position": 0.626,
+              "strength": 0.873
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.231,
+              "strength": 0.894
+            },
+            {
+              "position": 0.493,
+              "strength": 0.429
+            },
+            {
+              "position": 0.665,
+              "strength": 0.422
+            },
+            {
+              "position": 0.748,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "high",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "K9s",
+      "source_url": "https://github.com/derailed/k9s",
+      "category": "Kubernetes",
+      "selection_note": "Study resource-table navigation, command mode, namespace and label filtering, live status indicators, and contextual shortcuts.",
+      "visual": {
+        "source_page_url": "https://github.com/derailed/k9s",
+        "source_image_url": "https://raw.githubusercontent.com/derailed/k9s/master/assets/screen_logs.png",
+        "local_path": "images/11-k9s.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1137,
+        "height": 565,
+        "original_width": 1137,
+        "original_height": 565,
+        "bytes": 101044,
+        "sha256": "fec67b7c48d10117eb9bfad019915ec69371aeda6f737ba6ef01206553378680",
+        "source_hint": "img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "fec67b7c48d10117eb9bfad019915ec69371aeda6f737ba6ef01206553378680",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.922,
+              "width": 1.0,
+              "height": 0.078
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.414,
+              "height": 0.922
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.414,
+              "y": 0.0,
+              "width": 0.586,
+              "height": 0.922
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.098,
+              "strength": 0.993
+            },
+            {
+              "position": 0.224,
+              "strength": 1.0
+            },
+            {
+              "position": 0.414,
+              "strength": 0.911
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.242,
+              "strength": 0.791
+            },
+            {
+              "position": 0.333,
+              "strength": 0.564
+            },
+            {
+              "position": 0.468,
+              "strength": 0.566
+            },
+            {
+              "position": 0.922,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "high",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "KDash",
+      "source_url": "https://github.com/kdash-rs/kdash",
+      "category": "Kubernetes",
+      "selection_note": "Study the cluster overview cards, resource tabs, searchable tables, and detail panes arranged within a terminal dashboard.",
+      "visual": {
+        "source_page_url": "https://github.com/kdash-rs/kdash",
+        "source_image_url": "https://raw.githubusercontent.com/kdash-rs/kdash/main/screenshots/ui.gif",
+        "local_path": "images/12-kdash.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1281,
+        "height": 608,
+        "original_width": 1281,
+        "original_height": 608,
+        "bytes": 1534,
+        "sha256": "be394afd1bb6c3c03cbba258f5160b61757f7c6ef1e5cb110099b6f263bfef4b",
+        "source_hint": "UI"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "be394afd1bb6c3c03cbba258f5160b61757f7c6ef1e5cb110099b6f263bfef4b",
+        "orientation": "landscape",
+        "layout_model": "command-output",
+        "panel_summary": "Single command-and-output flow without a stable secondary panel.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.075
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "command and output flow",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.075,
+              "width": 1.0,
+              "height": 0.925
+            },
+            "evidence": "terminal-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [],
+          "horizontal": [
+            {
+              "position": 0.075,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Kubebox",
+      "source_url": "https://github.com/astefanutti/kubebox",
+      "category": "Kubernetes",
+      "selection_note": "Study cluster-context switching, pod selection, container logs, and resource monitoring presented through nested terminal views.",
+      "visual": {
+        "source_page_url": "https://github.com/astefanutti/kubebox",
+        "source_image_url": "https://repository-images.githubusercontent.com/74155531/79eb4100-cb7e-11ea-9e61-4ebe082afa4b",
+        "local_path": "images/13-kubebox.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 875,
+        "original_width": 2209,
+        "original_height": 1380,
+        "bytes": 167044,
+        "sha256": "8a100a50c1301d8162a39fab898bd24709df0e96d48d0ae8b8ce47faef49ca7c",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "8a100a50c1301d8162a39fab898bd24709df0e96d48d0ae8b8ce47faef49ca7c",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.08
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.858,
+              "width": 1.0,
+              "height": 0.142
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.08,
+              "width": 0.501,
+              "height": 0.778
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.501,
+              "y": 0.08,
+              "width": 0.499,
+              "height": 0.778
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.134,
+              "strength": 0.936
+            },
+            {
+              "position": 0.388,
+              "strength": 0.955
+            },
+            {
+              "position": 0.501,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.08,
+              "strength": 0.609
+            },
+            {
+              "position": 0.485,
+              "strength": 1.0
+            },
+            {
+              "position": 0.599,
+              "strength": 0.627
+            },
+            {
+              "position": 0.858,
+              "strength": 0.652
+            }
+          ]
+        },
+        "visual_density": "high",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "htop",
+      "source_url": "https://github.com/htop-dev/htop",
+      "category": "System monitoring",
+      "selection_note": "Study the configurable meter header, sortable process table, tree mode, incremental filtering, and function-key action map.",
+      "visual": {
+        "source_page_url": "https://github.com/htop-dev/htop",
+        "source_image_url": "https://raw.githubusercontent.com/htop-dev/htop/main/docs/images/screenshot.png",
+        "local_path": "images/14-htop.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 975,
+        "height": 515,
+        "original_width": 975,
+        "original_height": 515,
+        "bytes": 54922,
+        "sha256": "10082d011d491ca74bda0c5aabf926b9cd33c7174b35a0c63b28f9c8f756dd61",
+        "source_hint": "Screenshot of htop"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "10082d011d491ca74bda0c5aabf926b9cd33c7174b35a0c63b28f9c8f756dd61",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.531,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.531,
+              "y": 0.0,
+              "width": 0.469,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.226,
+              "strength": 0.641
+            },
+            {
+              "position": 0.439,
+              "strength": 0.612
+            },
+            {
+              "position": 0.531,
+              "strength": 1.0
+            },
+            {
+              "position": 0.61,
+              "strength": 0.639
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.392,
+              "strength": 1.0
+            },
+            {
+              "position": 0.522,
+              "strength": 0.629
+            },
+            {
+              "position": 0.615,
+              "strength": 0.55
+            },
+            {
+              "position": 0.697,
+              "strength": 0.643
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "btop",
+      "source_url": "https://github.com/aristocratos/btop",
+      "category": "System monitoring",
+      "selection_note": "Study responsive CPU, memory, disk, network, and process panels with mouse support and persistent selection state.",
+      "visual": {
+        "source_page_url": "https://github.com/aristocratos/btop",
+        "source_image_url": "https://raw.githubusercontent.com/aristocratos/btop/main/Img/normal.png",
+        "local_path": "images/15-btop.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1045,
+        "height": 658,
+        "original_width": 1045,
+        "original_height": 658,
+        "bytes": 95014,
+        "sha256": "7af461c7c2f8c1ca0d1e20631495b4fb0056d344450c7af979aa568f59a11269",
+        "source_hint": "Screenshot 1"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "7af461c7c2f8c1ca0d1e20631495b4fb0056d344450c7af979aa568f59a11269",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.446,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.446,
+              "y": 0.0,
+              "width": 0.554,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.248,
+              "strength": 0.821
+            },
+            {
+              "position": 0.446,
+              "strength": 0.961
+            },
+            {
+              "position": 0.787,
+              "strength": 0.978
+            },
+            {
+              "position": 0.898,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.328,
+              "strength": 1.0
+            },
+            {
+              "position": 0.549,
+              "strength": 0.685
+            },
+            {
+              "position": 0.624,
+              "strength": 0.502
+            },
+            {
+              "position": 0.746,
+              "strength": 0.505
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "bottom",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "category": "System monitoring",
+      "selection_note": "Study zoomable monitoring widgets, keyboard focus across panels, process search, sorting, and layout behavior at small sizes.",
+      "visual": {
+        "source_page_url": "https://github.com/ClementTsang/bottom",
+        "source_image_url": "https://opengraph.githubassets.com/4bbcc9142dd2a007adc04b86a62d098d4512835cb5ebda0d1dc2d2ecba568c98/ClementTsang/bottom",
+        "local_path": "images/16-bottom.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 25302,
+        "sha256": "2155bf513bd21742e1aaeff702eb52700cbbf7013ac051a2c9f9cd6e98a815de",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "2155bf513bd21742e1aaeff702eb52700cbbf7013ac051a2c9f9cd6e98a815de",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.198
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.198,
+              "width": 0.277,
+              "height": 0.671
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.277,
+              "y": 0.198,
+              "width": 0.723,
+              "height": 0.671
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.07,
+              "strength": 1.0
+            },
+            {
+              "position": 0.178,
+              "strength": 0.85
+            },
+            {
+              "position": 0.277,
+              "strength": 0.813
+            },
+            {
+              "position": 0.358,
+              "strength": 0.685
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.198,
+              "strength": 0.792
+            },
+            {
+              "position": 0.542,
+              "strength": 1.0
+            },
+            {
+              "position": 0.622,
+              "strength": 0.709
+            },
+            {
+              "position": 0.869,
+              "strength": 0.882
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Glances",
+      "source_url": "https://github.com/nicolargo/glances",
+      "category": "System monitoring",
+      "selection_note": "Study threshold-colored status, adaptive information sections, process filtering, and dense cross-platform metrics presentation.",
+      "visual": {
+        "source_page_url": "https://github.com/nicolargo/glances",
+        "source_image_url": "https://raw.githubusercontent.com/nicolargo/glances/develop/docs/_static/screenshot-web.png",
+        "local_path": "images/17-glances.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 783,
+        "original_width": 1917,
+        "original_height": 1072,
+        "bytes": 151278,
+        "sha256": "96d1f27b63187a9af15bb0c634c08db299b6da1f32924636504c81b10e79628d",
+        "source_hint": "./docs/_static/screenshot-web.png"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "96d1f27b63187a9af15bb0c634c08db299b6da1f32924636504c81b10e79628d",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.493,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.493,
+              "y": 0.0,
+              "width": 0.507,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.303,
+              "strength": 0.801
+            },
+            {
+              "position": 0.393,
+              "strength": 0.914
+            },
+            {
+              "position": 0.493,
+              "strength": 1.0
+            },
+            {
+              "position": 0.589,
+              "strength": 0.893
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.36,
+              "strength": 0.847
+            },
+            {
+              "position": 0.477,
+              "strength": 0.878
+            },
+            {
+              "position": 0.575,
+              "strength": 1.0
+            },
+            {
+              "position": 0.692,
+              "strength": 0.915
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Zenith",
+      "source_url": "https://github.com/bvaisvil/zenith",
+      "category": "System monitoring",
+      "selection_note": "Study chart time windows, process-table selection, resource summaries, and keyboard control of a continuously updating display.",
+      "visual": {
+        "source_page_url": "https://github.com/bvaisvil/zenith",
+        "source_image_url": "https://raw.githubusercontent.com/bvaisvil/zenith/master/assets/zenith_screenshot.png",
+        "local_path": "images/18-zenith.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 978,
+        "original_width": 1797,
+        "original_height": 1255,
+        "bytes": 105098,
+        "sha256": "d71741d1b45396aed9e9e2e4026246b66a27013f44ef5cbac186251d48f45513",
+        "source_hint": "Running zenith on alacritty on MacOS"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d71741d1b45396aed9e9e2e4026246b66a27013f44ef5cbac186251d48f45513",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.827,
+              "width": 1.0,
+              "height": 0.173
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.397,
+              "height": 0.827
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.397,
+              "y": 0.0,
+              "width": 0.603,
+              "height": 0.827
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.239,
+              "strength": 1.0
+            },
+            {
+              "position": 0.321,
+              "strength": 0.464
+            },
+            {
+              "position": 0.397,
+              "strength": 0.544
+            },
+            {
+              "position": 0.528,
+              "strength": 0.44
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.307,
+              "strength": 0.92
+            },
+            {
+              "position": 0.515,
+              "strength": 0.976
+            },
+            {
+              "position": 0.747,
+              "strength": 1.0
+            },
+            {
+              "position": 0.827,
+              "strength": 0.658
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "nvitop",
+      "source_url": "https://github.com/XuehaiPan/nvitop",
+      "category": "System monitoring",
+      "selection_note": "Study GPU and process panels, tree and environment drill-downs, row selection, and live status under rapid refresh.",
+      "visual": {
+        "source_page_url": "https://github.com/XuehaiPan/nvitop",
+        "source_image_url": "https://user-images.githubusercontent.com/16078332/117765250-41793880-b260-11eb-8a1b-9c32868a46d4.png",
+        "local_path": "images/19-nvitop.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 855,
+        "original_width": 1920,
+        "original_height": 1173,
+        "bytes": 141448,
+        "sha256": "c7c96c15c66b239dba74701f9deb4922a2e42708b113d0e5ca022b43414bd1d4",
+        "source_hint": "Screenshot"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c7c96c15c66b239dba74701f9deb4922a2e42708b113d0e5ca022b43414bd1d4",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.144
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.144,
+              "width": 0.5,
+              "height": 0.856
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.5,
+              "y": 0.144,
+              "width": 0.5,
+              "height": 0.856
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.136,
+              "strength": 0.492
+            },
+            {
+              "position": 0.231,
+              "strength": 0.584
+            },
+            {
+              "position": 0.5,
+              "strength": 1.0
+            },
+            {
+              "position": 0.827,
+              "strength": 0.446
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.144,
+              "strength": 0.992
+            },
+            {
+              "position": 0.222,
+              "strength": 0.92
+            },
+            {
+              "position": 0.527,
+              "strength": 0.927
+            },
+            {
+              "position": 0.618,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "NVTOP",
+      "source_url": "https://github.com/Syllo/nvtop",
+      "category": "System monitoring",
+      "selection_note": "Study multi-device utilization graphs, process tables, configurable fields, and color-coded status in limited terminal space.",
+      "visual": {
+        "source_page_url": "https://github.com/Syllo/nvtop",
+        "source_image_url": "https://raw.githubusercontent.com/Syllo/nvtop/master/screenshot/NVTOP_ex1.png",
+        "local_path": "images/20-nvtop.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 541,
+        "original_width": 1402,
+        "original_height": 542,
+        "bytes": 50526,
+        "sha256": "601e2c46aacb300c6844c789acd111d778f31448b6347a7680cd9156d668f645",
+        "source_hint": "NVTOP interface"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "601e2c46aacb300c6844c789acd111d778f31448b6347a7680cd9156d668f645",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.115
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.885,
+              "width": 1.0,
+              "height": 0.115
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.115,
+              "width": 0.589,
+              "height": 0.77
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.589,
+              "y": 0.115,
+              "width": 0.411,
+              "height": 0.77
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.139,
+              "strength": 0.345
+            },
+            {
+              "position": 0.327,
+              "strength": 0.497
+            },
+            {
+              "position": 0.589,
+              "strength": 1.0
+            },
+            {
+              "position": 0.796,
+              "strength": 0.432
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.115,
+              "strength": 1.0
+            },
+            {
+              "position": 0.713,
+              "strength": 0.965
+            },
+            {
+              "position": 0.793,
+              "strength": 0.386
+            },
+            {
+              "position": 0.885,
+              "strength": 0.412
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Ranger",
+      "source_url": "https://github.com/ranger/ranger",
+      "category": "File management",
+      "selection_note": "Study Miller-column navigation, preview generation, marks, command mode, and Vim-style keyboard maps for filesystem traversal.",
+      "visual": {
+        "source_page_url": "https://github.com/ranger/ranger",
+        "source_image_url": "https://raw.githubusercontent.com/ranger/ranger-assets/master/screenshots/twopane.png",
+        "local_path": "images/21-ranger.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 563,
+        "height": 319,
+        "original_width": 563,
+        "original_height": 319,
+        "bytes": 39288,
+        "sha256": "5a1c70718bb74a84a08333b71c64c056bd959d608284328d9aea0a9a315cdef3",
+        "source_hint": "two panes"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5a1c70718bb74a84a08333b71c64c056bd959d608284328d9aea0a9a315cdef3",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.172
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.809,
+              "width": 1.0,
+              "height": 0.191
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.172,
+              "width": 0.462,
+              "height": 0.637
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.462,
+              "y": 0.172,
+              "width": 0.538,
+              "height": 0.637
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.059,
+              "strength": 0.78
+            },
+            {
+              "position": 0.462,
+              "strength": 1.0
+            },
+            {
+              "position": 0.538,
+              "strength": 0.599
+            },
+            {
+              "position": 0.929,
+              "strength": 0.618
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.172,
+              "strength": 1.0
+            },
+            {
+              "position": 0.564,
+              "strength": 0.965
+            },
+            {
+              "position": 0.702,
+              "strength": 0.993
+            },
+            {
+              "position": 0.809,
+              "strength": 0.853
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "lf",
+      "source_url": "https://github.com/gokcehan/lf",
+      "category": "File management",
+      "selection_note": "Study its three-pane browser, selection and tagging model, command-line prompt, previews, and user-defined key mappings.",
+      "visual": {
+        "source_page_url": "https://github.com/gokcehan/lf",
+        "source_image_url": "https://private-user-images.githubusercontent.com/20520590/418432709-9ff42a21-19dd-42fa-8407-5d055aa9d561.png",
+        "source_image_url_state": "gone",
+        "source_image_url_checked_at": "2026-08-19",
+        "source_image_url_note": "The captured GitHub attachment URL expired; the local image remains hash-verified evidence.",
+        "local_path": "images/22-lf.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1223,
+        "height": 527,
+        "original_width": 1223,
+        "original_height": 527,
+        "bytes": 39672,
+        "sha256": "22793428718c215e4164204af8a146c041ed0828745dcc53780eb511d74bfc6c",
+        "source_hint": "image-preview"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "22793428718c215e4164204af8a146c041ed0828745dcc53780eb511d74bfc6c",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.791,
+              "width": 1.0,
+              "height": 0.209
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.732,
+              "height": 0.791
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.732,
+              "y": 0.0,
+              "width": 0.268,
+              "height": 0.791
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.2,
+              "strength": 1.0
+            },
+            {
+              "position": 0.732,
+              "strength": 0.614
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.791,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "nnn",
+      "source_url": "https://github.com/jarun/nnn",
+      "category": "File management",
+      "selection_note": "Study context tabs, filter-as-you-type navigation, selection queues, plugin invocation, and minimal status presentation.",
+      "visual": {
+        "source_page_url": "https://github.com/jarun/nnn",
+        "source_image_url": "https://private-user-images.githubusercontent.com/5959286/511817901-a8ee4689-1552-4fb1-997e-b16fe8ef5086.jpeg",
+        "source_image_url_state": "gone",
+        "source_image_url_checked_at": "2026-08-19",
+        "source_image_url_note": "The captured GitHub attachment URL expired; the local image remains hash-verified evidence.",
+        "local_path": "images/23-nnn.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 788,
+        "original_width": 1536,
+        "original_height": 864,
+        "bytes": 31540,
+        "sha256": "71e45a70bdc9091137ca5bc9976de910d8bfda1d5d885639076248b5709c126d",
+        "source_hint": "img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "71e45a70bdc9091137ca5bc9976de910d8bfda1d5d885639076248b5709c126d",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.193
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.193,
+              "width": 0.497,
+              "height": 0.807
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.497,
+              "y": 0.193,
+              "width": 0.503,
+              "height": 0.807
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.06,
+              "strength": 0.198
+            },
+            {
+              "position": 0.409,
+              "strength": 0.153
+            },
+            {
+              "position": 0.497,
+              "strength": 1.0
+            },
+            {
+              "position": 0.584,
+              "strength": 0.176
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.193,
+              "strength": 0.764
+            },
+            {
+              "position": 0.335,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Yazi",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "category": "File management",
+      "selection_note": "Study asynchronous previews, multi-column navigation, visual selection, searchable lists, and key-hint feedback during operations.",
+      "visual": {
+        "source_page_url": "https://github.com/sxyazi/yazi",
+        "source_image_url": "https://repository-images.githubusercontent.com/663900193/c1f495b1-8d69-4dba-a7e3-dbfde3a817f6",
+        "local_path": "images/24-yazi.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 759,
+        "original_width": 2620,
+        "original_height": 1420,
+        "bytes": 155120,
+        "sha256": "2e169bf9a26fbb798d3e1992126d3f6ba24d15eee4b28c67d508f64223af19ce",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "2e169bf9a26fbb798d3e1992126d3f6ba24d15eee4b28c67d508f64223af19ce",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.16
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.887,
+              "width": 1.0,
+              "height": 0.113
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.16,
+              "width": 0.621,
+              "height": 0.727
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.621,
+              "y": 0.16,
+              "width": 0.379,
+              "height": 0.727
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.148,
+              "strength": 1.0
+            },
+            {
+              "position": 0.271,
+              "strength": 0.731
+            },
+            {
+              "position": 0.621,
+              "strength": 0.966
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.066,
+              "strength": 0.385
+            },
+            {
+              "position": 0.16,
+              "strength": 1.0
+            },
+            {
+              "position": 0.51,
+              "strength": 0.484
+            },
+            {
+              "position": 0.887,
+              "strength": 0.845
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Broot",
+      "source_url": "https://github.com/Canop/broot",
+      "category": "File management",
+      "selection_note": "Study fuzzy path filtering, tree pruning, selected-file previews, verb shortcuts, and terminal-aware handling of huge directories.",
+      "visual": {
+        "source_page_url": "https://github.com/Canop/broot",
+        "source_image_url": "https://raw.githubusercontent.com/Canop/broot/main/website/src/img/20241027-cows.png",
+        "local_path": "images/25-broot.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1127,
+        "height": 664,
+        "original_width": 1127,
+        "original_height": 664,
+        "bytes": 176364,
+        "sha256": "43bd6004767d1ac93de15b10a9e3fd04f6c2c9c9e88071d51195786713a8e6c3",
+        "source_hint": "cows"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "43bd6004767d1ac93de15b10a9e3fd04f6c2c9c9e88071d51195786713a8e6c3",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.149
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.87,
+              "width": 1.0,
+              "height": 0.13
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.149,
+              "width": 0.424,
+              "height": 0.721
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.424,
+              "y": 0.149,
+              "width": 0.576,
+              "height": 0.721
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.424,
+              "strength": 1.0
+            },
+            {
+              "position": 0.72,
+              "strength": 0.929
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.149,
+              "strength": 0.888
+            },
+            {
+              "position": 0.383,
+              "strength": 0.813
+            },
+            {
+              "position": 0.87,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "high",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Vifm",
+      "source_url": "https://github.com/vifm/vifm",
+      "category": "File management",
+      "selection_note": "Study dual-pane file operations, visual selection, command-line mode, configurable mappings, and persistent directory state.",
+      "visual": {
+        "source_page_url": "https://github.com/vifm/vifm",
+        "source_image_url": "https://raw.githubusercontent.com/vifm/vifm/master/data/graphics/screenshot.png",
+        "local_path": "images/26-vifm.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 773,
+        "original_width": 1909,
+        "original_height": 1054,
+        "bytes": 97830,
+        "sha256": "298b0295f5680861a4f6a905114fdee36d104e40e1fb151a1f0da4811f654466",
+        "source_hint": "Screenshot"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "298b0295f5680861a4f6a905114fdee36d104e40e1fb151a1f0da4811f654466",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.938,
+              "width": 1.0,
+              "height": 0.062
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.734,
+              "height": 0.938
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.734,
+              "y": 0.0,
+              "width": 0.266,
+              "height": 0.938
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.106,
+              "strength": 1.0
+            },
+            {
+              "position": 0.197,
+              "strength": 0.762
+            },
+            {
+              "position": 0.734,
+              "strength": 0.649
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.314,
+              "strength": 1.0
+            },
+            {
+              "position": 0.608,
+              "strength": 0.354
+            },
+            {
+              "position": 0.704,
+              "strength": 0.274
+            },
+            {
+              "position": 0.938,
+              "strength": 0.35
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Midnight Commander",
+      "source_url": "https://github.com/MidnightCommander/mc",
+      "category": "File management",
+      "selection_note": "Study dual-pane navigation, function-key affordances, menus, dialogs, and progress feedback designed for varied terminal capabilities.",
+      "visual": {
+        "source_page_url": "https://github.com/MidnightCommander/mc",
+        "source_image_url": "https://opengraph.githubassets.com/1bd13600b4feacd61bfd3456f76eb118e71a37f90c132937fc8da0143aa6a257/MidnightCommander/mc",
+        "local_path": "images/27-midnight-commander.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 22618,
+        "sha256": "b012d3a0f67d74ebfb983cc2c622c929bbefa3b080ba773270dfdb49ab237136",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b012d3a0f67d74ebfb983cc2c622c929bbefa3b080ba773270dfdb49ab237136",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.33,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.33,
+              "y": 0.0,
+              "width": 0.67,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.118,
+              "strength": 1.0
+            },
+            {
+              "position": 0.33,
+              "strength": 0.63
+            },
+            {
+              "position": 0.671,
+              "strength": 0.612
+            },
+            {
+              "position": 0.797,
+              "strength": 0.719
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.267,
+              "strength": 1.0
+            },
+            {
+              "position": 0.542,
+              "strength": 0.809
+            },
+            {
+              "position": 0.771,
+              "strength": 0.693
+            },
+            {
+              "position": 0.869,
+              "strength": 0.806
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "xplr",
+      "source_url": "https://github.com/sayanarijit/xplr",
+      "category": "File management",
+      "selection_note": "Study its programmable mode system, keyboard routing, selection state, dynamic tables, and customizable help and status bars.",
+      "visual": {
+        "source_page_url": "https://github.com/sayanarijit/xplr",
+        "source_image_url": "https://repository-images.githubusercontent.com/342030057/a6705e2c-2146-40a4-92e3-e025ab71fc91",
+        "local_path": "images/28-xplr.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 630,
+        "original_width": 1200,
+        "original_height": 630,
+        "bytes": 59964,
+        "sha256": "844ea2d298edfd76b4f9c2ae2a6a4cca3190899e8b26e07fa2f50cd5e9d21eb4",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "844ea2d298edfd76b4f9c2ae2a6a4cca3190899e8b26e07fa2f50cd5e9d21eb4",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.082
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.905,
+              "width": 1.0,
+              "height": 0.095
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.082,
+              "width": 0.614,
+              "height": 0.823
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.614,
+              "y": 0.082,
+              "width": 0.386,
+              "height": 0.823
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.141,
+              "strength": 1.0
+            },
+            {
+              "position": 0.437,
+              "strength": 0.799
+            },
+            {
+              "position": 0.614,
+              "strength": 0.848
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.082,
+              "strength": 1.0
+            },
+            {
+              "position": 0.463,
+              "strength": 0.611
+            },
+            {
+              "position": 0.744,
+              "strength": 0.61
+            },
+            {
+              "position": 0.905,
+              "strength": 0.617
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Superfile",
+      "source_url": "https://github.com/yorukot/superfile",
+      "category": "File management",
+      "selection_note": "Study multi-panel directory browsing, clipboard and selection indicators, searchable navigation, and responsive terminal layout.",
+      "visual": {
+        "source_page_url": "https://github.com/yorukot/superfile",
+        "source_image_url": "https://repository-images.githubusercontent.com/774468912/855a6a21-013e-4024-b987-6f6ed18fca95",
+        "local_path": "images/29-superfile.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 39934,
+        "sha256": "e2b596dcd816b372020df9ce0c2e79bfe922ef56fceb3d0a4138ebd12ac72183",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "e2b596dcd816b372020df9ce0c2e79bfe922ef56fceb3d0a4138ebd12ac72183",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.544,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.544,
+              "y": 0.0,
+              "width": 0.456,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.134,
+              "strength": 0.685
+            },
+            {
+              "position": 0.217,
+              "strength": 0.863
+            },
+            {
+              "position": 0.381,
+              "strength": 0.945
+            },
+            {
+              "position": 0.544,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.282,
+              "strength": 0.395
+            },
+            {
+              "position": 0.451,
+              "strength": 1.0
+            },
+            {
+              "position": 0.6,
+              "strength": 0.339
+            },
+            {
+              "position": 0.722,
+              "strength": 0.299
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Rainfrog",
+      "source_url": "https://github.com/achristmascarl/rainfrog",
+      "category": "Databases",
+      "selection_note": "Study connection and schema navigation, query-editor focus, tabular result selection, and query status within a terminal workspace.",
+      "visual": {
+        "source_page_url": "https://github.com/achristmascarl/rainfrog",
+        "source_image_url": "https://raw.githubusercontent.com/achristmascarl/rainfrog/main/vhs/demo.gif",
+        "local_path": "images/30-rainfrog.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 778,
+        "original_width": 1800,
+        "original_height": 1000,
+        "bytes": 2142,
+        "sha256": "a46d41ceb105e2554bb03a49fb261aa24945ba2ce4a45e47573379d72540ad4d",
+        "source_hint": "rainfrog demo"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "a46d41ceb105e2554bb03a49fb261aa24945ba2ce4a45e47573379d72540ad4d",
+        "orientation": "landscape",
+        "layout_model": "command-output",
+        "panel_summary": "Single command-and-output flow without a stable secondary panel.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.06
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "command and output flow",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.06,
+              "width": 1.0,
+              "height": 0.94
+            },
+            "evidence": "terminal-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [],
+          "horizontal": [
+            {
+              "position": 0.06,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Harlequin",
+      "source_url": "https://github.com/tconbeer/harlequin",
+      "category": "Databases",
+      "selection_note": "Study the SQL editor, data catalog, results pane, keyboard focus model, and layout adaptation for different terminal widths.",
+      "visual": {
+        "source_page_url": "https://github.com/tconbeer/harlequin",
+        "source_image_url": "https://repository-images.githubusercontent.com/635393461/d22cbf6e-f150-4774-bccd-caa728cb8921",
+        "local_path": "images/31-harlequin.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 960,
+        "height": 540,
+        "original_width": 960,
+        "original_height": 540,
+        "bytes": 18130,
+        "sha256": "34cd2aa259c46f6e5d8ba09b950fed57b066f05166d2597e6d38c6920eaf6bc6",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "34cd2aa259c46f6e5d8ba09b950fed57b066f05166d2597e6d38c6920eaf6bc6",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.314,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.314,
+              "y": 0.0,
+              "width": 0.686,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.17,
+              "strength": 1.0
+            },
+            {
+              "position": 0.314,
+              "strength": 0.876
+            },
+            {
+              "position": 0.592,
+              "strength": 0.817
+            },
+            {
+              "position": 0.784,
+              "strength": 0.795
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.328,
+              "strength": 0.535
+            },
+            {
+              "position": 0.462,
+              "strength": 1.0
+            },
+            {
+              "position": 0.642,
+              "strength": 0.65
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Termdbms",
+      "source_url": "https://github.com/mathaou/termdbms",
+      "category": "Databases",
+      "selection_note": "Study database-object browsing, editable query areas, tabular results, and shortcut-driven panel switching in a full-screen interface.",
+      "visual": {
+        "source_page_url": "https://github.com/mathaou/termdbms",
+        "source_image_url": "https://opengraph.githubassets.com/b434ed436d995d23f1386d1ac9119b3bbe8c62134b66060d58777251e5004ecc/mathaou/termdbms",
+        "local_path": "images/32-termdbms.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 26240,
+        "sha256": "b916a0598cb3f9c9517cfacf20a619a8cf949f4de79d8aa2af657bae240aed67",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b916a0598cb3f9c9517cfacf20a619a8cf949f4de79d8aa2af657bae240aed67",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.313,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.313,
+              "y": 0.0,
+              "width": 0.687,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.071,
+              "strength": 0.887
+            },
+            {
+              "position": 0.196,
+              "strength": 1.0
+            },
+            {
+              "position": 0.313,
+              "strength": 0.912
+            },
+            {
+              "position": 0.849,
+              "strength": 0.886
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.267,
+              "strength": 0.661
+            },
+            {
+              "position": 0.427,
+              "strength": 0.919
+            },
+            {
+              "position": 0.542,
+              "strength": 1.0
+            },
+            {
+              "position": 0.869,
+              "strength": 0.881
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "iredis",
+      "source_url": "https://github.com/laixintao/iredis",
+      "category": "Databases",
+      "selection_note": "Study interactive completion, syntax-aware command entry, bottom status information, paging, and searchable Redis command history.",
+      "visual": {
+        "source_page_url": "https://github.com/laixintao/iredis",
+        "source_image_url": "https://repository-images.githubusercontent.com/166371259/01262100-5bac-11ea-9c1b-b0e7d08c0b47",
+        "local_path": "images/33-iredis.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1317,
+        "height": 1000,
+        "original_width": 2026,
+        "original_height": 1538,
+        "bytes": 40624,
+        "sha256": "6dbb673d82a3196d4d2adaaed1df9b7bc4f30f18b9dc27a7d2dd97324e3182e5",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "6dbb673d82a3196d4d2adaaed1df9b7bc4f30f18b9dc27a7d2dd97324e3182e5",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.079
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.902,
+              "width": 1.0,
+              "height": 0.098
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.079,
+              "width": 0.264,
+              "height": 0.823
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.264,
+              "y": 0.079,
+              "width": 0.736,
+              "height": 0.823
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.064,
+              "strength": 1.0
+            },
+            {
+              "position": 0.151,
+              "strength": 0.743
+            },
+            {
+              "position": 0.264,
+              "strength": 0.793
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.079,
+              "strength": 1.0
+            },
+            {
+              "position": 0.309,
+              "strength": 0.191
+            },
+            {
+              "position": 0.681,
+              "strength": 0.303
+            },
+            {
+              "position": 0.902,
+              "strength": 0.763
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "NeoMutt",
+      "source_url": "https://github.com/neomutt/neomutt",
+      "category": "Mail",
+      "selection_note": "Study mailbox and message indexes, threaded selection, search patterns, status lines, and extensive keyboard-map customization.",
+      "visual": {
+        "source_page_url": "https://github.com/neomutt/neomutt",
+        "source_image_url": "https://opengraph.githubassets.com/37699cfa77e7fac2b9b45a051f28ba94e1b404a9c0148e5c0d44e1181891b82d/neomutt/neomutt",
+        "local_path": "images/34-neomutt.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 22988,
+        "sha256": "3f3b46a3bd83769d5cade7a3479bd45b17c0e032dc714a6fde0c8b2583a8e408",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "3f3b46a3bd83769d5cade7a3479bd45b17c0e032dc714a6fde0c8b2583a8e408",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.198
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.198,
+              "width": 0.318,
+              "height": 0.671
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.318,
+              "y": 0.198,
+              "width": 0.682,
+              "height": 0.671
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.15,
+              "strength": 0.668
+            },
+            {
+              "position": 0.318,
+              "strength": 0.735
+            },
+            {
+              "position": 0.784,
+              "strength": 1.0
+            },
+            {
+              "position": 0.894,
+              "strength": 0.644
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.198,
+              "strength": 1.0
+            },
+            {
+              "position": 0.382,
+              "strength": 0.632
+            },
+            {
+              "position": 0.462,
+              "strength": 0.9
+            },
+            {
+              "position": 0.869,
+              "strength": 0.766
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "aerc",
+      "source_url": "https://github.com/rjarry/aerc",
+      "category": "Mail",
+      "selection_note": "Study account, folder, message-list, viewer, and composer tabs with modal key bindings and asynchronous status feedback.",
+      "visual": {
+        "source_page_url": "https://github.com/rjarry/aerc",
+        "source_image_url": "https://opengraph.githubassets.com/14bff0c199af128607c9825c374ae4c30efee65af50c5dc1664e1227c3f5384c/rjarry/aerc",
+        "local_path": "images/35-aerc.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 36008,
+        "sha256": "7580d4be04a66a4aca39cb3aba295a85d9c5f4436c5d37dbf4f7d78ee58bee48",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "7580d4be04a66a4aca39cb3aba295a85d9c5f4436c5d37dbf4f7d78ee58bee48",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.198
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.198,
+              "width": 0.341,
+              "height": 0.802
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.341,
+              "y": 0.198,
+              "width": 0.659,
+              "height": 0.802
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.079,
+              "strength": 0.771
+            },
+            {
+              "position": 0.341,
+              "strength": 0.728
+            },
+            {
+              "position": 0.768,
+              "strength": 0.878
+            },
+            {
+              "position": 0.93,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.198,
+              "strength": 0.453
+            },
+            {
+              "position": 0.382,
+              "strength": 0.841
+            },
+            {
+              "position": 0.462,
+              "strength": 1.0
+            },
+            {
+              "position": 0.542,
+              "strength": 0.819
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "alot",
+      "source_url": "https://github.com/pazz/alot",
+      "category": "Mail",
+      "selection_note": "Study tagged-message workflows, thread buffers, command prompts, searchable mail views, and keyboard-driven buffer management.",
+      "visual": {
+        "source_page_url": "https://github.com/pazz/alot",
+        "source_image_url": "https://opengraph.githubassets.com/097b4bf9688b37c8041b114f0287194d185faff49fa2aa43617e1c4c35d40678/pazz/alot",
+        "local_path": "images/36-alot.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 16814,
+        "sha256": "f648d832329a5cf992283546eaa7e4839e7d57de315d44b26ff200e7bdc34808",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "f648d832329a5cf992283546eaa7e4839e7d57de315d44b26ff200e7bdc34808",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.771,
+              "width": 1.0,
+              "height": 0.229
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.281,
+              "height": 0.771
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.281,
+              "y": 0.0,
+              "width": 0.719,
+              "height": 0.771
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.132,
+              "strength": 1.0
+            },
+            {
+              "position": 0.281,
+              "strength": 0.931
+            },
+            {
+              "position": 0.818,
+              "strength": 0.639
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.267,
+              "strength": 1.0
+            },
+            {
+              "position": 0.382,
+              "strength": 0.936
+            },
+            {
+              "position": 0.771,
+              "strength": 0.78
+            },
+            {
+              "position": 0.869,
+              "strength": 0.78
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "meli",
+      "source_url": "https://github.com/meli/meli",
+      "category": "Mail",
+      "selection_note": "Study multi-pane mailbox views, conversation threading, account status, search, and configurable shortcuts across terminal sizes.",
+      "visual": {
+        "source_page_url": "https://github.com/meli/meli",
+        "source_image_url": "https://raw.githubusercontent.com/meli/meli/master/meli/docs/screenshots/compact.webp",
+        "local_path": "images/37-meli.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 824,
+        "original_width": 1592,
+        "original_height": 937,
+        "bytes": 292976,
+        "sha256": "3c013b82b37ff7d6224ae9971d04174330a1103cd5192f250433a5401e86e439",
+        "source_hint": "Compact main view screenshot compact main view screenshot"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "3c013b82b37ff7d6224ae9971d04174330a1103cd5192f250433a5401e86e439",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.077
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.077,
+              "width": 0.561,
+              "height": 0.923
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.561,
+              "y": 0.077,
+              "width": 0.439,
+              "height": 0.923
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.157,
+              "strength": 1.0
+            },
+            {
+              "position": 0.251,
+              "strength": 0.94
+            },
+            {
+              "position": 0.561,
+              "strength": 0.956
+            },
+            {
+              "position": 0.648,
+              "strength": 0.817
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.077,
+              "strength": 0.906
+            },
+            {
+              "position": 0.228,
+              "strength": 0.913
+            },
+            {
+              "position": 0.319,
+              "strength": 0.83
+            },
+            {
+              "position": 0.545,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "high",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Himalaya",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "category": "Mail",
+      "selection_note": "Study its terminal mail interface, account and folder state, message selection, search, and keyboard-oriented composition flow.",
+      "visual": {
+        "source_page_url": "https://github.com/pimalaya/himalaya",
+        "source_image_url": "https://raw.githubusercontent.com/pimalaya/himalaya/master/screenshot.jpeg",
+        "local_path": "images/38-himalaya.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 310,
+        "original_width": 1513,
+        "original_height": 335,
+        "bytes": 67906,
+        "sha256": "c7883ad9b0800687523eb3bdde5865b0628d97727eb322140155ab6fb0c6af19",
+        "source_hint": "screenshot"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c7883ad9b0800687523eb3bdde5865b0628d97727eb322140155ab6fb0c6af19",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.146
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.804,
+              "width": 1.0,
+              "height": 0.196
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.146,
+              "width": 0.59,
+              "height": 0.658
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.59,
+              "y": 0.146,
+              "width": 0.41,
+              "height": 0.658
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.122,
+              "strength": 0.954
+            },
+            {
+              "position": 0.59,
+              "strength": 1.0
+            },
+            {
+              "position": 0.797,
+              "strength": 0.776
+            },
+            {
+              "position": 0.932,
+              "strength": 0.524
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.146,
+              "strength": 1.0
+            },
+            {
+              "position": 0.241,
+              "strength": 0.515
+            },
+            {
+              "position": 0.563,
+              "strength": 0.504
+            },
+            {
+              "position": 0.804,
+              "strength": 0.533
+            }
+          ]
+        },
+        "visual_density": "high",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "musikcube",
+      "source_url": "https://github.com/clangen/musikcube",
+      "category": "Music",
+      "selection_note": "Study library and queue navigation, persistent playback status, search, and shortcut-led control across compact terminal panels.",
+      "visual": {
+        "source_page_url": "https://github.com/clangen/musikcube",
+        "source_image_url": "https://raw.githubusercontent.com/clangen/clangen-projects-static/master/musikcube/screenshots/windows.png",
+        "local_path": "images/39-musikcube.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 810,
+        "height": 518,
+        "original_width": 810,
+        "original_height": 518,
+        "bytes": 58088,
+        "sha256": "76ac0b6c0974c4264cc2467e12fce3a9372cdf529828419237a0b75262430b2b",
+        "source_hint": "windows screenshot"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "76ac0b6c0974c4264cc2467e12fce3a9372cdf529828419237a0b75262430b2b",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.075
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.909,
+              "width": 1.0,
+              "height": 0.091
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.075,
+              "width": 0.336,
+              "height": 0.834
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.336,
+              "y": 0.075,
+              "width": 0.664,
+              "height": 0.834
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.095,
+              "strength": 0.46
+            },
+            {
+              "position": 0.243,
+              "strength": 1.0
+            },
+            {
+              "position": 0.336,
+              "strength": 0.456
+            },
+            {
+              "position": 0.841,
+              "strength": 0.57
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.075,
+              "strength": 0.758
+            },
+            {
+              "position": 0.544,
+              "strength": 0.532
+            },
+            {
+              "position": 0.813,
+              "strength": 0.292
+            },
+            {
+              "position": 0.909,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "rmpc",
+      "source_url": "https://github.com/mierak/rmpc",
+      "category": "Music",
+      "selection_note": "Study configurable MPD panes, queue selection, filter and search interactions, progress status, and user-defined key bindings.",
+      "visual": {
+        "source_page_url": "https://github.com/mierak/rmpc",
+        "source_image_url": "https://repository-images.githubusercontent.com/771115174/816489e6-b398-4207-9dcd-259926d3a6c4",
+        "local_path": "images/40-rmpc.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 782,
+        "original_width": 1444,
+        "original_height": 807,
+        "bytes": 132216,
+        "sha256": "eb9d2682e6d43d7f450f00953dbc2f082dedd96b2c083afa9a386fce87d3fd97",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "eb9d2682e6d43d7f450f00953dbc2f082dedd96b2c083afa9a386fce87d3fd97",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.199
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.907,
+              "width": 1.0,
+              "height": 0.093
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.199,
+              "width": 0.394,
+              "height": 0.708
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.394,
+              "y": 0.199,
+              "width": 0.606,
+              "height": 0.708
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.151,
+              "strength": 0.886
+            },
+            {
+              "position": 0.252,
+              "strength": 0.833
+            },
+            {
+              "position": 0.394,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.117,
+              "strength": 0.988
+            },
+            {
+              "position": 0.199,
+              "strength": 1.0
+            },
+            {
+              "position": 0.497,
+              "strength": 0.767
+            },
+            {
+              "position": 0.907,
+              "strength": 0.943
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "ncmpcpp",
+      "source_url": "https://github.com/ncmpcpp/ncmpcpp",
+      "category": "Music",
+      "selection_note": "Study switchable library, playlist, search, lyrics, and visualizer screens with selection state and configurable keyboard maps.",
+      "visual": {
+        "source_page_url": "https://github.com/ncmpcpp/ncmpcpp",
+        "source_image_url": "https://opengraph.githubassets.com/90091761c7f1211065a61138f77c408fd730e652eb89762e9c35b7e69c00ceff/ncmpcpp/ncmpcpp",
+        "local_path": "images/41-ncmpcpp.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 19792,
+        "sha256": "cc1e901a11d5a4e8a4f81f9c74e2469b57cb99c6fbe9f880fd3d3d1f0be2287c",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "cc1e901a11d5a4e8a4f81f9c74e2469b57cb99c6fbe9f880fd3d3d1f0be2287c",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.339,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.339,
+              "y": 0.0,
+              "width": 0.661,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.07,
+              "strength": 0.925
+            },
+            {
+              "position": 0.214,
+              "strength": 0.89
+            },
+            {
+              "position": 0.339,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.358,
+              "strength": 0.605
+            },
+            {
+              "position": 0.542,
+              "strength": 1.0
+            },
+            {
+              "position": 0.771,
+              "strength": 0.618
+            },
+            {
+              "position": 0.869,
+              "strength": 0.818
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "spotify-player",
+      "source_url": "https://github.com/aome510/spotify-player",
+      "category": "Music",
+      "selection_note": "Study searchable Spotify lists, device and playback controls, queue state, and key-driven navigation among terminal views.",
+      "visual": {
+        "source_page_url": "https://github.com/aome510/spotify-player",
+        "source_image_url": "https://opengraph.githubassets.com/e83651295a81e70bef3011de00f9c69e0bb6e8de6b81a4d86d00b214fe874523/aome510/spotify-player",
+        "local_path": "images/42-spotify-player.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 25866,
+        "sha256": "55e676316d0319a9aff8b14db7fea849ceeeb9d3414e57ad19a9b589c7fee262",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "55e676316d0319a9aff8b14db7fea849ceeeb9d3414e57ad19a9b589c7fee262",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.198
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.198,
+              "width": 0.307,
+              "height": 0.671
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.307,
+              "y": 0.198,
+              "width": 0.693,
+              "height": 0.671
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.112,
+              "strength": 1.0
+            },
+            {
+              "position": 0.307,
+              "strength": 0.639
+            },
+            {
+              "position": 0.768,
+              "strength": 0.741
+            },
+            {
+              "position": 0.93,
+              "strength": 0.684
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.198,
+              "strength": 0.894
+            },
+            {
+              "position": 0.542,
+              "strength": 1.0
+            },
+            {
+              "position": 0.771,
+              "strength": 0.554
+            },
+            {
+              "position": 0.869,
+              "strength": 0.563
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Termusic",
+      "source_url": "https://github.com/tramhao/termusic",
+      "category": "Music",
+      "selection_note": "Study library, playlist, podcast, and playback panels with focus switching, search, selection, and persistent progress information.",
+      "visual": {
+        "source_page_url": "https://github.com/tramhao/termusic",
+        "source_image_url": "https://raw.githubusercontent.com/tramhao/termusic/master/screenshots/main.png",
+        "local_path": "images/43-termusic.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 875,
+        "original_width": 1920,
+        "original_height": 1200,
+        "bytes": 179910,
+        "sha256": "efdec83a5ae008c56184073f8d1a30b2580dc7b8720bcef6f8e8fb7d298b76f3",
+        "source_hint": "Main view"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "efdec83a5ae008c56184073f8d1a30b2580dc7b8720bcef6f8e8fb7d298b76f3",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.153
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.773,
+              "width": 1.0,
+              "height": 0.227
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.153,
+              "width": 0.342,
+              "height": 0.62
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.342,
+              "y": 0.153,
+              "width": 0.658,
+              "height": 0.62
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.091,
+              "strength": 0.719
+            },
+            {
+              "position": 0.342,
+              "strength": 1.0
+            },
+            {
+              "position": 0.583,
+              "strength": 0.678
+            },
+            {
+              "position": 0.763,
+              "strength": 0.602
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.153,
+              "strength": 0.319
+            },
+            {
+              "position": 0.49,
+              "strength": 0.37
+            },
+            {
+              "position": 0.773,
+              "strength": 1.0
+            },
+            {
+              "position": 0.87,
+              "strength": 0.495
+            }
+          ]
+        },
+        "visual_density": "high",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "bandwhich",
+      "source_url": "https://github.com/imsnif/bandwhich",
+      "category": "Networking",
+      "selection_note": "Study continuously refreshed connection tables, grouping by process and address, sorting, and bandwidth status at constrained widths.",
+      "visual": {
+        "source_page_url": "https://github.com/imsnif/bandwhich",
+        "source_image_url": "https://raw.githubusercontent.com/imsnif/bandwhich/main/res/demo.gif",
+        "local_path": "images/44-bandwhich.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 737,
+        "original_width": 1572,
+        "original_height": 828,
+        "bytes": 115676,
+        "sha256": "9617c785357a90672565c7aa88d47cd1579e71dc1336404fd1b8d15e14f11c95",
+        "source_hint": "demo"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "9617c785357a90672565c7aa88d47cd1579e71dc1336404fd1b8d15e14f11c95",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.816,
+              "width": 1.0,
+              "height": 0.184
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.493,
+              "height": 0.816
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.493,
+              "y": 0.0,
+              "width": 0.507,
+              "height": 0.816
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.069,
+              "strength": 0.561
+            },
+            {
+              "position": 0.493,
+              "strength": 0.922
+            },
+            {
+              "position": 0.622,
+              "strength": 0.728
+            },
+            {
+              "position": 0.842,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.483,
+              "strength": 1.0
+            },
+            {
+              "position": 0.57,
+              "strength": 0.284
+            },
+            {
+              "position": 0.816,
+              "strength": 0.24
+            },
+            {
+              "position": 0.899,
+              "strength": 0.232
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Termshark",
+      "source_url": "https://github.com/gcla/termshark",
+      "category": "Networking",
+      "selection_note": "Study synchronized packet list, protocol tree, and byte panes plus capture filters, search, selection, and stream reassembly.",
+      "visual": {
+        "source_page_url": "https://github.com/gcla/termshark",
+        "source_image_url": "https://repository-images.githubusercontent.com/182353393/c7b1e202-a5c7-420a-9b15-594728f70cb2",
+        "local_path": "images/45-termshark.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1280,
+        "height": 640,
+        "original_width": 1280,
+        "original_height": 640,
+        "bytes": 62836,
+        "sha256": "0f056c3277df413e70f26aee2f2da43c18d5bcdb110830ecd5f8f5606f13a922",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "0f056c3277df413e70f26aee2f2da43c18d5bcdb110830ecd5f8f5606f13a922",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.144
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.789,
+              "width": 1.0,
+              "height": 0.211
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.144,
+              "width": 0.261,
+              "height": 0.645
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.261,
+              "y": 0.144,
+              "width": 0.739,
+              "height": 0.645
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.261,
+              "strength": 1.0
+            },
+            {
+              "position": 0.36,
+              "strength": 0.288
+            },
+            {
+              "position": 0.649,
+              "strength": 0.294
+            },
+            {
+              "position": 0.731,
+              "strength": 0.996
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.144,
+              "strength": 0.993
+            },
+            {
+              "position": 0.262,
+              "strength": 0.78
+            },
+            {
+              "position": 0.709,
+              "strength": 0.784
+            },
+            {
+              "position": 0.789,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Trippy",
+      "source_url": "https://github.com/fujiapple852/trippy",
+      "category": "Networking",
+      "selection_note": "Study live hop tables, charts, adjustable tracing parameters, row selection, and keyboard-controlled views for unstable networks.",
+      "visual": {
+        "source_page_url": "https://github.com/fujiapple852/trippy",
+        "source_image_url": "https://repository-images.githubusercontent.com/474961035/4c1fb8ed-f085-4c39-8258-574cc65063ec",
+        "local_path": "images/46-trippy.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1280,
+        "height": 640,
+        "original_width": 1280,
+        "original_height": 640,
+        "bytes": 22112,
+        "sha256": "e143c83f14ac2eb41aeb8e4b3f18cadb9359aede46be669e858ecd036573e072",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "e143c83f14ac2eb41aeb8e4b3f18cadb9359aede46be669e858ecd036573e072",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.516,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.516,
+              "y": 0.0,
+              "width": 0.484,
+              "height": 1.0
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.308,
+              "strength": 0.998
+            },
+            {
+              "position": 0.438,
+              "strength": 0.735
+            },
+            {
+              "position": 0.516,
+              "strength": 1.0
+            },
+            {
+              "position": 0.62,
+              "strength": 0.942
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.442,
+              "strength": 1.0
+            },
+            {
+              "position": 0.613,
+              "strength": 0.504
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "gping",
+      "source_url": "https://github.com/orf/gping",
+      "category": "Networking",
+      "selection_note": "Study scrolling latency graphs, multiple-host status, color and symbol encoding, and graceful presentation in narrow terminals.",
+      "visual": {
+        "source_page_url": "https://github.com/orf/gping",
+        "source_image_url": "https://raw.githubusercontent.com/orf/gping/master/images/readme-example.gif",
+        "local_path": "images/47-gping.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1400,
+        "height": 751,
+        "original_width": 1411,
+        "original_height": 757,
+        "bytes": 42526,
+        "sha256": "263a53bed60dd957a8ac694635857f86f15f1ef7473eed8bb1697f528e07ef12",
+        "source_hint": "img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "263a53bed60dd957a8ac694635857f86f15f1ef7473eed8bb1697f528e07ef12",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.079
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.845,
+              "width": 1.0,
+              "height": 0.155
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.079,
+              "width": 0.451,
+              "height": 0.766
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.451,
+              "y": 0.079,
+              "width": 0.549,
+              "height": 0.766
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.091,
+              "strength": 0.814
+            },
+            {
+              "position": 0.181,
+              "strength": 0.757
+            },
+            {
+              "position": 0.451,
+              "strength": 1.0
+            },
+            {
+              "position": 0.546,
+              "strength": 0.895
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.079,
+              "strength": 1.0
+            },
+            {
+              "position": 0.166,
+              "strength": 0.385
+            },
+            {
+              "position": 0.501,
+              "strength": 0.387
+            },
+            {
+              "position": 0.845,
+              "strength": 0.374
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Impala",
+      "source_url": "https://github.com/pythops/impala",
+      "category": "Networking",
+      "selection_note": "Study Wi-Fi network scanning, sortable selection lists, connection dialogs, status feedback, and keyboard-only device management.",
+      "visual": {
+        "source_page_url": "https://github.com/pythops/impala",
+        "source_image_url": "https://private-user-images.githubusercontent.com/57548585/502253762-55c800ff-d0aa-4454-aa6b-3990833ce530.gif",
+        "source_image_url_state": "gone",
+        "source_image_url_checked_at": "2026-08-19",
+        "source_image_url_note": "The captured GitHub attachment URL expired; the local image remains hash-verified evidence.",
+        "local_path": "images/48-impala.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1137,
+        "height": 1000,
+        "original_width": 1289,
+        "original_height": 1134,
+        "bytes": 34716,
+        "sha256": "4e06d0c538f3007b804cd7755e1cf2c72a4bfe96a715c3805b0326d8109fe1a4",
+        "source_hint": "img"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "4e06d0c538f3007b804cd7755e1cf2c72a4bfe96a715c3805b0326d8109fe1a4",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.093
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.846,
+              "width": 1.0,
+              "height": 0.154
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.093,
+              "width": 0.553,
+              "height": 0.753
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.553,
+              "y": 0.093,
+              "width": 0.447,
+              "height": 0.753
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.111,
+              "strength": 0.831
+            },
+            {
+              "position": 0.553,
+              "strength": 0.896
+            },
+            {
+              "position": 0.929,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.093,
+              "strength": 0.452
+            },
+            {
+              "position": 0.439,
+              "strength": 1.0
+            },
+            {
+              "position": 0.846,
+              "strength": 0.961
+            },
+            {
+              "position": 0.934,
+              "strength": 0.881
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "taskwarrior-tui",
+      "source_url": "https://github.com/kdheepak/taskwarrior-tui",
+      "category": "Tasks",
+      "selection_note": "Study task-table filtering, detail panes, selection and modification shortcuts, context changes, and persistent synchronization status.",
+      "visual": {
+        "source_page_url": "https://github.com/kdheepak/taskwarrior-tui",
+        "source_image_url": "https://opengraph.githubassets.com/fe8aac2bf03d67718dc83579af050ecd0edfb8c19cebe401c6be5215d0b3470c/kdheepak/taskwarrior-tui",
+        "local_path": "images/49-taskwarrior-tui.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 31034,
+        "sha256": "17821843bac4c12bbe296f7ad102f75ac500f7baef137055e8e95914d67b7e8c",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "17821843bac4c12bbe296f7ad102f75ac500f7baef137055e8e95914d67b7e8c",
+        "orientation": "landscape",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "status/action bar",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.329,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.329,
+              "y": 0.0,
+              "width": 0.671,
+              "height": 0.869
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.134,
+              "strength": 1.0
+            },
+            {
+              "position": 0.329,
+              "strength": 0.768
+            },
+            {
+              "position": 0.768,
+              "strength": 0.876
+            },
+            {
+              "position": 0.93,
+              "strength": 0.911
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.267,
+              "strength": 0.492
+            },
+            {
+              "position": 0.427,
+              "strength": 0.845
+            },
+            {
+              "position": 0.542,
+              "strength": 1.0
+            },
+            {
+              "position": 0.869,
+              "strength": 0.639
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Dooit",
+      "source_url": "https://github.com/kraanzu/dooit",
+      "category": "Tasks",
+      "selection_note": "Study nested task lists, workspace panels, keyboard-based editing and reordering, search, and visible completion state.",
+      "visual": {
+        "source_page_url": "https://github.com/kraanzu/dooit",
+        "source_image_url": "https://raw.githubusercontent.com/dooit-org/dooit/main/imgs/config1.png",
+        "local_path": "images/50-dooit.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 581,
+        "height": 1000,
+        "original_width": 2000,
+        "original_height": 3440,
+        "bytes": 25440,
+        "sha256": "5737e9da67ade2b7eba2de18e05c65a588bb8163528fc1c4b9af098b0f9ef873",
+        "source_hint": "Preview 1"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5737e9da67ade2b7eba2de18e05c65a588bb8163528fc1c4b9af098b0f9ef873",
+        "orientation": "portrait",
+        "layout_model": "split-terminal",
+        "panel_summary": "Two side-by-side terminal work areas with shared command context.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.09
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "primary terminal pane",
+            "position": "leading",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.09,
+              "width": 0.296,
+              "height": 0.91
+            },
+            "evidence": "measured separator in terminal image"
+          },
+          {
+            "role": "secondary terminal pane",
+            "position": "trailing",
+            "bounds": {
+              "x": 0.296,
+              "y": 0.09,
+              "width": 0.704,
+              "height": 0.91
+            },
+            "evidence": "measured separator in terminal image"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.21,
+              "strength": 1.0
+            },
+            {
+              "position": 0.296,
+              "strength": 0.271
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.09,
+              "strength": 0.312
+            },
+            {
+              "position": 0.336,
+              "strength": 0.862
+            },
+            {
+              "position": 0.453,
+              "strength": 0.355
+            },
+            {
+              "position": 0.631,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    }
+  ],
+  "visual_count": 50,
+  "structure_count": 50
+}

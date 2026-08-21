@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Cloudflare Zero Trust — setup",
+  "product_url": "https://developers.cloudflare.com/cloudflare-one/setup/",
+  "evidence_status": "partial",
+  "upstream_owner": "Cloudflare, Inc.",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=Lxp-LYbKwiY",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 352,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 250717,
+      "sha256": "e3f78de7c5da1cc2cbda80d29378760205e519ccfc6c1b5413ab5e7030285c8a",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "team created",
+      "local_path": "media/state-01-team-created.png",
+      "source_motion_path": "media/official-recording.mp4#t=4.497",
+      "width": 640,
+      "height": 352,
+      "bytes": 133461,
+      "sha256": "2e4e59612dde1c9bf7bceaae9873c45a8f1a605685805a111fd5ea18d23657ab",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.0,
+        "mean_abs_diff": 23.6914,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "identity connected",
+      "local_path": "media/state-02-identity-connected.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 16.5s (mean abs diff 0.3203/255)",
+      "width": 640,
+      "height": 352,
+      "bytes": 73555,
+      "sha256": "53db14cc44cacfe086d795a720ab440911378442535bf9c21e753d779d61bcce",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 16.5,
+        "mean_abs_diff": 0.3203,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "target added",
+      "local_path": "media/state-03-target-added.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 0.2383/255)",
+      "width": 640,
+      "height": 352,
+      "bytes": 41610,
+      "sha256": "4923cdc2a0eed815e4dbd3c9ed20aa4bd9a56bea1979a1ffc04281741aedb5be",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 35.0,
+        "mean_abs_diff": 0.2383,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "policy active",
+      "local_path": "media/state-04-policy-active.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 54.5s (mean abs diff 0.2969/255)",
+      "width": 640,
+      "height": 352,
+      "bytes": 75446,
+      "sha256": "26809f0a7b3d3e0e1c70a36a431782603ad0168cb8f0bf100027676794dddd59",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 54.5,
+        "mean_abs_diff": 0.2969,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "access challenge",
+      "local_path": "media/state-05-access-challenge.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 0.4727/255)",
+      "width": 640,
+      "height": 352,
+      "bytes": 53032,
+      "sha256": "807efda3c4dfc3e3f88f947d9db7ea3ee301c5f7cf5d874f8f8c68e3c46e4e43",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.5,
+        "mean_abs_diff": 0.4727,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "access granted",
+      "local_path": "media/state-06-access-granted.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 81s (mean abs diff 0.5078/255)",
+      "width": 640,
+      "height": 352,
+      "bytes": 68226,
+      "sha256": "097913cd3ec8b5b7033374f0db49ca7d96425703783b93dfe79a4da5aeedaaae",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 81.0,
+        "mean_abs_diff": 0.5078,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Open Zero Trust and create the team context",
+      "response": "Cloudflare records the organization or team name",
+      "feedback": "The retained team created state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-team-created.png @ 4.50s; https://developers.cloudflare.com/cloudflare-one/setup/"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Choose plan and configure the identity provider",
+      "response": "Cloudflare displays the enabled authentication method",
+      "feedback": "The recording advances to identity connected and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-team-created.png @ 4.50s; media/state-02-identity-connected.png @ 19.79s; https://developers.cloudflare.com/cloudflare-one/setup/"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Add an application or network target",
+      "response": "Cloudflare opens access policy configuration",
+      "feedback": "The navigation result is visible as target added.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-identity-connected.png @ 19.79s; media/state-03-target-added.png @ 35.07s; https://developers.cloudflare.com/cloudflare-one/setup/"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Define an allow policy and save it",
+      "response": "Cloudflare shows the effective policy",
+      "feedback": "The official recording shows the confirmed policy active state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-target-added.png @ 35.07s; media/state-04-policy-active.png @ 50.36s; https://developers.cloudflare.com/cloudflare-one/setup/"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-identity-connected.png @ 19.79s; media/state-03-target-added.png @ 35.07s; media/state-04-policy-active.png @ 50.36s; https://developers.cloudflare.com/cloudflare-one/setup/"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Enroll a device or open the protected application",
+      "response": "Cloudflare presents authentication and device checks",
+      "feedback": "Progress is observable as the distinct access challenge state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-policy-active.png @ 50.36s; media/state-05-access-challenge.png @ 65.65s; https://developers.cloudflare.com/cloudflare-one/setup/"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-target-added.png @ 35.07s; media/state-04-policy-active.png @ 50.36s; media/state-05-access-challenge.png @ 65.65s; https://developers.cloudflare.com/cloudflare-one/setup/"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Authenticate as an allowed user",
+      "response": "The protected resource opens, proving first Zero Trust success",
+      "feedback": "The retained access granted state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-access-challenge.png @ 65.65s; media/state-06-access-granted.png @ 80.94s; https://developers.cloudflare.com/cloudflare-one/setup/"
+    }
+  ],
+  "journey": {
+    "actor": "Cloudflare Zero Trust administrator",
+    "goal": "create protected access and confirm the first authorized connection",
+    "prerequisites": [
+      "Cloudflare account and domain or application",
+      "identity-provider access"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open Zero Trust and create the team context",
+        "system_response": "Cloudflare records the organization or team name",
+        "state": "team created",
+        "evidence": "media/state-01-team-created.png; media/official-recording.mp4#t=4.497; https://developers.cloudflare.com/cloudflare-one/setup/"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose plan and configure the identity provider",
+        "system_response": "Cloudflare displays the enabled authentication method",
+        "state": "identity connected",
+        "evidence": "media/state-02-identity-connected.png; media/official-recording.mp4#t=19.785; https://developers.cloudflare.com/cloudflare-one/setup/"
+      },
+      {
+        "index": 3,
+        "user_action": "Add an application or network target",
+        "system_response": "Cloudflare opens access policy configuration",
+        "state": "target added",
+        "evidence": "media/state-03-target-added.png; media/official-recording.mp4#t=35.074; https://developers.cloudflare.com/cloudflare-one/setup/"
+      },
+      {
+        "index": 4,
+        "user_action": "Define an allow policy and save it",
+        "system_response": "Cloudflare shows the effective policy",
+        "state": "policy active",
+        "evidence": "media/state-04-policy-active.png; media/official-recording.mp4#t=50.362; https://developers.cloudflare.com/cloudflare-one/setup/"
+      },
+      {
+        "index": 5,
+        "user_action": "Enroll a device or open the protected application",
+        "system_response": "Cloudflare presents authentication and device checks",
+        "state": "access challenge",
+        "evidence": "media/state-05-access-challenge.png; media/official-recording.mp4#t=65.651; https://developers.cloudflare.com/cloudflare-one/setup/"
+      },
+      {
+        "index": 6,
+        "user_action": "Authenticate as an allowed user",
+        "system_response": "The protected resource opens, proving first Zero Trust success",
+        "state": "access granted",
+        "evidence": "media/state-06-access-granted.png; media/official-recording.mp4#t=80.940; https://developers.cloudflare.com/cloudflare-one/setup/"
+      }
+    ],
+    "failure_route": [
+      "At identity connected or target added, invalid, expired, denied, or missing required input leaves the flow short of access granted; evidence: media/state-02-identity-connected.png, media/state-03-target-added.png, and https://developers.cloudflare.com/cloudflare-one/setup/.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-target-added.png through media/state-05-access-challenge.png."
+    ],
+    "recovery_route": [
+      "Return to the retained identity connected or target added requirement, correct or resend the blocking input, and resubmit; evidence: https://developers.cloudflare.com/cloudflare-one/setup/.",
+      "Continue through the same terminal action until access granted is visible in media/state-06-access-granted.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "access granted retained at media/state-06-access-granted.png and media/official-recording.mp4#t=80.940; source https://developers.cloudflare.com/cloudflare-one/setup/"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-team-created.png and media/state-02-identity-connected.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-target-added.png and media/state-04-policy-active.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

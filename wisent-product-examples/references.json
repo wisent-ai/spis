@@ -1,0 +1,80 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "wisent-product-examples",
+  "generated_at": "2026-08-19",
+  "reference_count": 10,
+  "complete_count": 10,
+  "partial_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "Stado",
+      "path": "references/01-stado/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    },
+    {
+      "index": 2,
+      "name": "Skarbiec",
+      "path": "references/02-skarbiec/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    },
+    {
+      "index": 3,
+      "name": "Weles",
+      "path": "references/03-weles/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    },
+    {
+      "index": 4,
+      "name": "Jeden",
+      "path": "references/04-jeden/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    },
+    {
+      "index": 5,
+      "name": "Probierz",
+      "path": "references/05-probierz/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    },
+    {
+      "index": 6,
+      "name": "Oko (oko-cli)",
+      "path": "references/06-oko-cli/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    },
+    {
+      "index": 7,
+      "name": "Singularity",
+      "path": "references/07-singularity/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    },
+    {
+      "index": 8,
+      "name": "Tama (tama-cli)",
+      "path": "references/08-tama/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    },
+    {
+      "index": 9,
+      "name": "Transcript Lake",
+      "path": "references/09-transcript-lake/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    },
+    {
+      "index": 10,
+      "name": "Transcript Label Trainer",
+      "path": "references/10-transcript-label-trainer/reference.json",
+      "evidence_status": "complete",
+      "evidence_gap_count": 0
+    }
+  ]
+}

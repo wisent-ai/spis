@@ -1,0 +1,307 @@
+{
+  "name": "MDN Web Docs",
+  "source_url": "https://developer.mozilla.org/en-US/docs/Web",
+  "category": "Web platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "scoped sitemap (/docs/Web)",
+  "inventory_url_count": 54594,
+  "landing_nav": [
+    {
+      "text": "MDN",
+      "path": "/en-US/"
+    },
+    {
+      "text": "Web developer guides",
+      "path": "/en-US/docs/MDN/Guides"
+    },
+    {
+      "text": "Tutorials for Web developers",
+      "path": "/en-US/docs/MDN/Tutorials"
+    },
+    {
+      "text": "Accessibility",
+      "path": "/en-US/docs/Web/Accessibility"
+    },
+    {
+      "text": "Performance",
+      "path": "/en-US/docs/Web/Performance"
+    },
+    {
+      "text": "Privacy",
+      "path": "/en-US/docs/Web/Privacy"
+    },
+    {
+      "text": "Security",
+      "path": "/en-US/docs/Web/Security"
+    },
+    {
+      "text": "Glossary",
+      "path": "/en-US/docs/Glossary"
+    },
+    {
+      "text": "Web APIs",
+      "path": "/en-US/docs/Web/API"
+    },
+    {
+      "text": "HTML",
+      "path": "/en-US/docs/Web/HTML"
+    },
+    {
+      "text": "CSS",
+      "path": "/en-US/docs/Web/CSS"
+    },
+    {
+      "text": "JavaScript",
+      "path": "/en-US/docs/Web/JavaScript"
+    },
+    {
+      "text": "WebAssembly",
+      "path": "/en-US/docs/WebAssembly"
+    },
+    {
+      "text": "HTTP",
+      "path": "/en-US/docs/Web/HTTP"
+    },
+    {
+      "text": "Media",
+      "path": "/en-US/docs/Web/Media"
+    },
+    {
+      "text": "SVG",
+      "path": "/en-US/docs/Web/SVG"
+    },
+    {
+      "text": "MathML",
+      "path": "/en-US/docs/Web/MathML"
+    },
+    {
+      "text": "URI",
+      "path": "/en-US/docs/Web/URI"
+    },
+    {
+      "text": "WebDriver",
+      "path": "/en-US/docs/Web/WebDriver"
+    },
+    {
+      "text": "Web Extensions",
+      "path": "/en-US/docs/Mozilla/Add-ons/WebExtensions"
+    },
+    {
+      "text": "Web App Manifests",
+      "path": "/en-US/docs/Web/Progressive_web_apps/Manifest"
+    },
+    {
+      "text": "Progressive Web Apps (PWAs)",
+      "path": "/en-US/docs/Web/Progressive_web_apps"
+    },
+    {
+      "text": "OpenSearch",
+      "path": "/en-US/docs/Web/XML/Guides/OpenSearch"
+    },
+    {
+      "text": "XML",
+      "path": "/en-US/docs/Web/XML"
+    },
+    {
+      "text": "Document Object Model",
+      "path": "/en-US/docs/Web/API/Document_Object_Model"
+    },
+    {
+      "text": "XSLT",
+      "path": "/en-US/docs/Web/XML/XSLT"
+    },
+    {
+      "text": "XML",
+      "path": "/en-US/docs/Web/XML/Guides/XML_introduction"
+    },
+    {
+      "text": "XPath",
+      "path": "/en-US/docs/Web/XML/XPath"
+    },
+    {
+      "text": "EXSLT",
+      "path": "/en-US/docs/Web/XML/EXSLT"
+    },
+    {
+      "text": "Privacy on the web",
+      "path": "/en-US/docs/Web/Privacy"
+    },
+    {
+      "text": "Progressive web apps",
+      "path": "/en-US/docs/Web/Progressive_web_apps"
+    },
+    {
+      "text": "URIs",
+      "path": "/en-US/docs/Web/URI"
+    },
+    {
+      "text": "MDN Your blueprint for a better internet.",
+      "path": "/"
+    },
+    {
+      "text": "About",
+      "path": "/en-US/about"
+    },
+    {
+      "text": "Blog",
+      "path": "/en-US/blog/"
+    },
+    {
+      "text": "Advertise with us",
+      "path": "/en-US/advertising"
+    },
+    {
+      "text": "MDN Plus",
+      "path": "/en-US/plus"
+    },
+    {
+      "text": "MDN Community",
+      "path": "/en-US/community"
+    },
+    {
+      "text": "Community resources",
+      "path": "/en-US/docs/MDN/Community"
+    },
+    {
+      "text": "Writing guidelines",
+      "path": "/en-US/docs/MDN/Writing_guidelines"
+    },
+    {
+      "text": "MDN Discord",
+      "path": "/discord"
+    },
+    {
+      "text": "Web technologies",
+      "path": "/en-US/docs/Web"
+    },
+    {
+      "text": "Learn web development",
+      "path": "/en-US/docs/Learn_web_development"
+    },
+    {
+      "text": "Guides",
+      "path": "/en-US/docs/MDN/Guides"
+    },
+    {
+      "text": "Tutorials",
+      "path": "/en-US/docs/MDN/Tutorials"
+    }
+  ],
+  "url_sections": {
+    "docs": 54594
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorials",
+      "learn web development",
+      "/en-us/docs/mdn/tutorials",
+      "tutorials for web developers"
+    ],
+    "guides / how-to": [
+      "guides",
+      "web developer guides",
+      "/en-us/docs/mdn/guides",
+      "/en-us/docs/web/xml/guides/opensearch"
+    ],
+    "api reference": [
+      "/en-us/docs/web/api",
+      "/en-us/docs/web/api/document_object_model"
+    ],
+    "security": [
+      "security",
+      "/en-us/docs/web/security"
+    ],
+    "glossary / definitions": [
+      "glossary",
+      "/en-us/docs/glossary"
+    ],
+    "community / support": [
+      "/discord",
+      "community",
+      "mdn discord",
+      "mdn community"
+    ],
+    "accessibility": [
+      "accessibility",
+      "/en-us/docs/web/accessibility"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://developer.mozilla.org/en-US/",
+      "h1": "Resources for Developers, by Developers",
+      "h2": [
+        "Featured articles",
+        "Latest news",
+        "Recent contributions",
+        "Contributor Spotlight"
+      ]
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/about",
+      "h1": "About MDN",
+      "h2": [
+        "Who we are",
+        "Global impact",
+        "Join us in building a better web"
+      ]
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/advertising",
+      "h1": "Tell it better",
+      "h2": [
+        "Join MDN's Privacy-First Ad Journey",
+        "Our offering",
+        "Our audience",
+        "Partner with us"
+      ]
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/community",
+      "h1": "MDN Community",
+      "h2": [
+        "MDN's community powers the web",
+        "Meet our contributors",
+        "Contributor spotlight",
+        "Learn how to get started",
+        "Join us in shaping a better web",
+        "Help us fix open issues",
+        "Join the conversation",
+        "Licensing and reuse"
+      ]
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Glossary",
+      "h1": "Glossary of web terms",
+      "h2": [
+        "Help improve MDN"
+      ]
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/blog/",
+      "h1": "Blog it better",
+      "h2": [
+        "Introducing the MDN MCP server",
+        "Under the hood of MDN's new frontend",
+        "Image formats: Codecs and compression tools",
+        "A beginner-friendly guide to view transitions in CSS",
+        "Launching MDN's new front end",
+        "Image formats: Pixel data from encoders to decoders",
+        "Celebrating 20 years of MDN",
+        "Image formats: Color models for humans and devices",
+        "Default styles for h1 elements are changing",
+        "Implications of Global Privacy Control",
+        "JavaScript Temporal is coming",
+        "Fix your website's Largest Contentful Paint by optimizing image loading",
+        "MDN 2024 content projects",
+        "A new learning experience on MDN",
+        "Countdown to the holidays with daily coding challenges",
+        "Monitoring and optimizing website performance",
+        "How to land your first developer job",
+        "Introducing the new MDN Community page",
+        "Fixing your website's JavaScript performance",
+        "Get back to school! Supercharge your learning with MDN and Scrimba"
+      ]
+    }
+  ]
+}

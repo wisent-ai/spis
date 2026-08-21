@@ -1,0 +1,407 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Tama (tama-cli)",
+  "product_url": "https://github.com/wisent-ai/hooks-rotator",
+  "evidence_status": "complete",
+  "upstream_owner": "Wisent (wisent-ai)",
+  "wisent_product": true,
+  "repository": "wisent-ai/hooks-rotator",
+  "captured_at": "2026-08-19T23:21:52+00:00",
+  "capture_host": {
+    "os": "macOS",
+    "os_version": "26.4.1",
+    "os_build": "25E253",
+    "arch": "arm64",
+    "kernel": "Darwin 25.4.0",
+    "shell": "/bin/bash",
+    "terminal": "pseudo-terminal, 100x32, TERM=xterm-256color"
+  },
+  "installed": {
+    "binary": "tama",
+    "resolved_path": "/Users/lukaszbartoszcze/.nvm/versions/node/v22.20.0/bin/tama",
+    "version_command": "tama --version",
+    "version_output": "tama <command>",
+    "version_exit_status": 2,
+    "version_flag_supported": false
+  },
+  "motion": [
+    {
+      "local_path": "media/session.cast",
+      "source_url": "https://github.com/wisent-ai/hooks-rotator",
+      "media_kind": "terminal-cast",
+      "width": 100,
+      "height": 32,
+      "duration_seconds": 3.155,
+      "frame_count": 164,
+      "bytes": 10355,
+      "sha256": "51846bedc0ca86b805364025cd83a610b57758d1818949bda9f4f099f0d169b3",
+      "capture_method": "Real local run of the installed product on this workstation: `tama` resolved to /Users/lukaszbartoszcze/.nvm/versions/node/v22.20.0/bin/tama and driven through a real pseudo-terminal (PTY) on macOS 26.4.1 (25E253) arm64, recorded as an asciinema v2 terminal cast with the timings of the run. The session issued only read-only commands — version form, top-level help, one subcommand help surface, one deliberately invalid flag, Ctrl-C on an unsubmitted line, the recovering help, and the same help with NO_COLOR=1 — from an empty scratch working directory. No host was contacted, no credential minted, no vault written, no job submitted and no service restarted.",
+      "recording_environment": "/bin/bash --norc --noprofile -i on a 100x32 PTY, TERM=xterm-256color, PAGER=cat, cwd=/Users/lukaszbartoszcze/.stado/work/wisent-capture/run/tama",
+      "declared_media_kind": "asciinema-v2-terminal-cast",
+      "measured": true,
+      "measurement_method": "asciinema-v2 header and event stream",
+      "provenance_class": "local-product-run"
+    }
+  ],
+  "states": [
+    {
+      "name": "version-identity",
+      "local_path": "media/01-version-identity.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'version identity' step (event 20, t=0.216877 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 20,
+      "cast_timestamp_seconds": 0.216877,
+      "width": 924,
+      "height": 728,
+      "bytes": 56377,
+      "sha256": "7156c1b9c47db4ea8898674e6b2d6c9ff2ed30cffa992a11e124d7b170abce9d"
+    },
+    {
+      "name": "help-surface",
+      "local_path": "media/02-help-surface.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'top-level help surface' step (event 34, t=0.63774 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 34,
+      "cast_timestamp_seconds": 0.63774,
+      "width": 924,
+      "height": 728,
+      "bytes": 74207,
+      "sha256": "b46d26b2df5ec8d81947dfa4833597df5e8e2cc46304986088d56dd3c5803703"
+    },
+    {
+      "name": "subcommand-help",
+      "local_path": "media/03-subcommand-help.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'subcommand help surface' step (event 59, t=1.05838 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 59,
+      "cast_timestamp_seconds": 1.058375,
+      "width": 924,
+      "height": 728,
+      "bytes": 87629,
+      "sha256": "067b661e79aaf228b636c075b53ee70c401c76178a21a62d3a3362ff39e47304"
+    },
+    {
+      "name": "refusal",
+      "local_path": "media/04-refusal.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'refusal after the invalid flag' step (event 91, t=1.48143 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 91,
+      "cast_timestamp_seconds": 1.481434,
+      "width": 924,
+      "height": 728,
+      "bytes": 76064,
+      "sha256": "f9e2da508035618aba1f5bf1f0e9a4bd0676f85e1176e4e4c040e87be622d091"
+    },
+    {
+      "name": "recovery",
+      "local_path": "media/05-recovery.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'recovered help after the refusal' step (event 129, t=2.73583 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 129,
+      "cast_timestamp_seconds": 2.735825,
+      "width": 924,
+      "height": 728,
+      "bytes": 76158,
+      "sha256": "255ba9b11423533bc2ad40bf8bf4034fa280240466f366a3524d5c96da98a0fa"
+    }
+  ],
+  "interactions": [
+    {
+      "name": "command entry",
+      "trigger": "Type `tama --version` at the `wisent-ref$` prompt and press Enter.",
+      "response": "Tama (tama-cli) starts from /Users/lukaszbartoszcze/.nvm/versions/node/v22.20.0/bin/tama and writes to the pseudo-terminal.",
+      "feedback": "tama <command>",
+      "cancellation": "Ctrl-C on the unsubmitted `tama --wisent-reference-probe` line discarded it and restored the prompt; nothing was submitted.",
+      "failure": "`tama --wisent-reference-probe` reaches the same parser and is refused with status 2.",
+      "recovery": "Re-enter `tama --help`.",
+      "evidence": "media/session.cast at 0.000123–0.216605 s; observed exit 2; media/01-version-identity.png"
+    },
+    {
+      "name": "version identity",
+      "trigger": "Ask the installed binary what it is with `tama --version`.",
+      "response": "Tama (tama-cli) has no version flag: it refuses the option with status 2 and answers with its usage surface instead.",
+      "feedback": "tama <command>",
+      "cancellation": "The version form returns on its own; Ctrl-C is available at the prompt.",
+      "failure": "The version request itself is the failure: exit 2.",
+      "recovery": "Read the identity out of `tama --help` instead.",
+      "evidence": "media/session.cast at 0.000123–0.216605 s; observed exit 2; media/01-version-identity.png"
+    },
+    {
+      "name": "help discovery",
+      "trigger": "Run `tama --help`.",
+      "response": "Tama (tama-cli) prints 16 lines of its own top-level help, widest line 115 characters.",
+      "feedback": "tama <command>",
+      "cancellation": "The stream is short enough to complete; the prompt stays interruptible.",
+      "failure": "A misspelled flag on the same surface is refused with status 2.",
+      "recovery": "Re-run `tama --help`.",
+      "evidence": "media/session.cast at 0.422193–0.637498 s; observed exit 0; media/02-help-surface.png"
+    },
+    {
+      "name": "subcommand surface",
+      "trigger": "Run `tama install-plan --help`.",
+      "response": "Tama ignores a trailing `--help` and executes the subcommand; `install-plan` only reports the paths an install would touch, so nothing is written.",
+      "feedback": "archive: /Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/hooks-rotator",
+      "cancellation": "Ctrl-C at the prompt abandons the request before submission.",
+      "failure": "This path returned 0; failure is shown by the invalid flag instead.",
+      "recovery": "Return to `tama --help` for the documented grammar.",
+      "evidence": "media/session.cast at 0.84119–1.05795 s; observed exit 0; media/03-subcommand-help.png"
+    },
+    {
+      "name": "invalid flag refusal",
+      "trigger": "Run `tama --wisent-reference-probe`.",
+      "response": "Tama (tama-cli) refuses the unknown option and returns status 2.",
+      "feedback": "tama <command>",
+      "cancellation": "The refusal returns immediately; no cancellation was required.",
+      "failure": "Observed status 2.",
+      "recovery": "The refusal names the next action ('<command>'); running `tama --help` recovers.",
+      "evidence": "media/session.cast at 1.26667–1.48119 s; observed exit 2; media/04-refusal.png"
+    },
+    {
+      "name": "exit status reporting",
+      "trigger": "After each command the recorded shell prints `printf \"exit-status=%s\\n\" \"$?\"`.",
+      "response": "The real status of the preceding product invocation appears in the cast as text.",
+      "feedback": "exit-status=2 after the version form, exit-status=2 after the invalid flag.",
+      "cancellation": "The status line is a shell builtin write; there is nothing to cancel.",
+      "failure": "A missing status line would mean the prompt never returned; every step reported one.",
+      "recovery": "Not applicable: the status is evidence, not an action.",
+      "evidence": "media/session.cast at 0.216605–0.216605 s and after every other command"
+    },
+    {
+      "name": "cancellation",
+      "trigger": "Type `tama --wisent-reference-probe` and press Ctrl-C instead of Enter.",
+      "response": "The pending line is discarded and the prompt returns; the product never ran.",
+      "feedback": "A fresh prompt follows the interrupt in the cast.",
+      "cancellation": "Ctrl-C is the observed cancellation mechanism for unsubmitted input.",
+      "failure": "The typed command is abandoned on purpose rather than executed.",
+      "recovery": "Submit `tama --help` at the restored prompt.",
+      "evidence": "media/session.cast at 1.69155–2.52164 s"
+    },
+    {
+      "name": "recovery",
+      "trigger": "After the refusal and the cancellation, run `tama --help` again.",
+      "response": "The same installed binary prints valid help and returns status 0.",
+      "feedback": "tama <command>",
+      "cancellation": "The recovery can itself be interrupted with Ctrl-C at the prompt.",
+      "failure": "Repeating `tama --wisent-reference-probe` reproduces status 2.",
+      "recovery": "The valid help form completes the first-success journey.",
+      "evidence": "media/session.cast at 2.52167–2.73532 s; observed exit 0; media/05-recovery.png"
+    },
+    {
+      "name": "color-free equivalence",
+      "trigger": "Run `NO_COLOR=1 tama --help`.",
+      "response": "The same help text is printed with the same line count (16 lines).",
+      "feedback": "0 ANSI colour sequences in the default run, 0 with NO_COLOR=1.",
+      "cancellation": "Ctrl-C at the prompt applies here as to any other command.",
+      "failure": "No failure on this path; it is a measurement of the same success route.",
+      "recovery": "Not applicable.",
+      "evidence": "media/session.cast at 2.94287–3.15468 s; observed exit 0"
+    }
+  ],
+  "journey": {
+    "actor": "An operator who has just found this Wisent binary on the PATH and wants to know what it is, what it can do, and what it refuses — before pointing it at anything real.",
+    "goal": "Get the first meaningful Tama (tama-cli) result, read its own description of its grammar, see a real refusal, cancel a pending command safely, and recover — without touching a host, a vault, a queue or a credential.",
+    "prerequisites": [
+      "Tama (tama-cli) installed on this workstation at /Users/lukaszbartoszcze/.nvm/versions/node/v22.20.0/bin/tama (from wisent-ai/hooks-rotator)",
+      "An empty scratch working directory (/Users/lukaszbartoszcze/.stado/work/wisent-capture/run/tama) with no project or product state in it",
+      "A pseudo-terminal at 100x32 with TERM=xterm-256color, PAGER=cat and NO_COLOR unset",
+      "macOS 26.4.1 (25E253) arm64"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the recorded pseudo-terminal at `wisent-ref$` in an empty scratch directory.",
+        "system_response": "A clean prompt appears; no project, credential, host or queue target is selected.",
+        "state": "ready prompt",
+        "evidence": "media/session.cast at 0–0.000123 s"
+      },
+      {
+        "index": 2,
+        "user_action": "Run `tama --version`.",
+        "system_response": "Tama (tama-cli) refuses the version flag with status 2 and prints `tama <command>`.",
+        "state": "version identity",
+        "evidence": "media/session.cast at 0.000123–0.216605 s; observed exit 2; media/01-version-identity.png"
+      },
+      {
+        "index": 3,
+        "user_action": "Run `tama --help`.",
+        "system_response": "16 lines of the product's own top-level help are printed.",
+        "state": "top-level help surface",
+        "evidence": "media/session.cast at 0.422193–0.637498 s; observed exit 0; media/02-help-surface.png"
+      },
+      {
+        "index": 4,
+        "user_action": "Run `tama install-plan --help`.",
+        "system_response": "Tama ignores a trailing `--help` and executes the subcommand; `install-plan` only reports the paths an install would touch, so nothing is written.",
+        "state": "subcommand help surface",
+        "evidence": "media/session.cast at 0.84119–1.05795 s; observed exit 0; media/03-subcommand-help.png"
+      },
+      {
+        "index": 5,
+        "user_action": "Run `tama --wisent-reference-probe`.",
+        "system_response": "The option is refused: `tama <command>`, status 2.",
+        "state": "observed refusal",
+        "evidence": "media/session.cast at 1.26667–1.48119 s; observed exit 2; media/04-refusal.png"
+      },
+      {
+        "index": 6,
+        "user_action": "Type `tama --wisent-reference-probe` again and press Ctrl-C before Enter.",
+        "system_response": "The unsubmitted line is discarded and the prompt returns; nothing ran.",
+        "state": "cancelled pending command",
+        "evidence": "media/session.cast at 1.69155–2.52164 s"
+      },
+      {
+        "index": 7,
+        "user_action": "Run `tama --help` again.",
+        "system_response": "Valid help is printed again with status 0: first success is recovered.",
+        "state": "recovered first success",
+        "evidence": "media/session.cast at 2.52167–2.73532 s; observed exit 0; media/05-recovery.png"
+      },
+      {
+        "index": 8,
+        "user_action": "Run `NO_COLOR=1 tama --help`.",
+        "system_response": "The same help text appears with colour removed, so no state was carried by colour.",
+        "state": "colour-free help",
+        "evidence": "media/session.cast at 2.94287–3.15468 s; observed exit 0"
+      }
+    ],
+    "failure_route": [
+      "Run `tama --wisent-reference-probe`.",
+      "tama <command>",
+      "Observe status 2 printed by the recorded shell, and the prompt restored."
+    ],
+    "recovery_route": [
+      "Run `tama --help`.",
+      "tama <command>",
+      "Observe status 0 and the prompt returned with nothing changed on disk."
+    ],
+    "completion_evidence": "media/session.cast at 2.52167–2.73532 s plus media/05-recovery.png: the same installed binary answers again after the refusal and the cancellation. The whole 3.155 s session is local and replayable with `asciinema play media/session.cast`."
+  },
+  "motion_analysis": {
+    "trigger": "Enter pressed on each typed command in the recorded pseudo-terminal session; the seventh keystroke sequence is Ctrl-C instead of Enter.",
+    "start_state": "An empty `wisent-ref$` prompt in /Users/lukaszbartoszcze/.stado/work/wisent-capture/run/tama with no product state, no credential and no target selected.",
+    "end_state": "The prompt restored after `NO_COLOR=1 tama --help`, with the shell's own `exit-status=` line as the last product-related output.",
+    "continuity": "One append-only text stream: no screen clear and no cursor addressing appear anywhere in the cast, so every state reached stays visible above the next one and the whole journey can be read as one scroll.",
+    "timing_class": "sub-second",
+    "timing_description": "The six submitted commands each completed between 0.212 s and 0.217 s; the other pauses are the recorder typing and the deliberate Ctrl-C pause.",
+    "interruption_or_reversal": "Ctrl-C at 1.69155 s on the unsubmitted `tama --wisent-reference-probe` line: the line was discarded and the prompt returned, and the product never ran.",
+    "feedback": "Completion is signalled twice: the prompt returns, and the recorded shell prints `exit-status=N` for the command that just ran, so success and refusal are distinguishable in the text alone.",
+    "reduced_motion_equivalent": "There is no animation to reduce. The cast is text appended in order; the five PNGs carry the same content statically, and the raw `.cast` file can be read as JSON without playback."
+  },
+  "accessibility": {
+    "measured": true,
+    "measurement_method": "Measured from this run: SGR sequences counted in the raw PTY bytes, the same help command run again with NO_COLOR=1 and the two ANSI-stripped texts compared, the refusal text searched for a named next action, and the widest help line counted against 80 columns.",
+    "observations": [
+      "Colour: with TERM=xterm-256color on a real pseudo-terminal and NO_COLOR unset, `tama --help` emitted 0 ANSI SGR sequences, so this product does not colour its help output.",
+      "NO_COLOR: `NO_COLOR=1 tama --help` printed 16 lines with 0 SGR sequences; the ANSI-stripped text of the two runs is byte-identical, so every state the help communicates survives without colour.",
+      "Refusal wording: the refusal for `tama --wisent-reference-probe` names the next action ('<command>') in the same output.",
+      "Terminal width: the widest line of `tama --help` is 115 characters, so the help does not fit an 80-column terminal and will wrap.",
+      "Input: the whole recorded journey is keyboard-only — typed commands, Enter and one Ctrl-C — and every state is emitted as selectable terminal text, not as a drawn widget.",
+      "State without colour: success and refusal differ by exit status in the cast (0 against 2), which the shell prints as text."
+    ],
+    "measurements": {
+      "help_command": "tama --help",
+      "help_sgr_sequences": 0,
+      "colours_help_output": false,
+      "no_color_command": "NO_COLOR=1 tama --help",
+      "no_color_sgr_sequences": 0,
+      "no_color_text_identical": true,
+      "help_line_count": 16,
+      "help_max_line_width": 115,
+      "help_fits_80_columns": false,
+      "refusal_command": "tama --wisent-reference-probe",
+      "refusal_exit_status": 2,
+      "refusal_names_next_action": true,
+      "refusal_next_action_phrase": "<command>",
+      "cancel_echoed_interrupt": false,
+      "cancel_prompt_restored": true,
+      "screen_cleared": false,
+      "cursor_addressed": false
+    },
+    "unknowns": [
+      "Screen-reader behaviour was not observed: no screen reader was attached to this PTY.",
+      "Colour contrast of any emitted colours was not measured, and no WCAG or terminal-accessibility audit was performed.",
+      "Behaviour in a terminal narrower than 80 columns was not observed; only the emitted line widths were measured.",
+      "High-contrast themes, non-UTF-8 locales and alternative fonts were not exercised.",
+      "Authenticated and target-selected paths were deliberately not run, so nothing here describes the product's accessibility once a host, vault, queue or credential is involved."
+    ]
+  },
+  "observed_commands": [
+    {
+      "step": "version",
+      "label": "version identity",
+      "command": "tama --version",
+      "exit_status": 2,
+      "started_at": 0.000123,
+      "ended_at": 0.216605,
+      "line_count": 16,
+      "max_line_width": 115,
+      "first_line": "tama <command>"
+    },
+    {
+      "step": "help",
+      "label": "top-level help",
+      "command": "tama --help",
+      "exit_status": 0,
+      "started_at": 0.422193,
+      "ended_at": 0.637498,
+      "line_count": 16,
+      "max_line_width": 115,
+      "first_line": "tama <command>"
+    },
+    {
+      "step": "subcommand-help",
+      "label": "subcommand help surface",
+      "command": "tama install-plan --help",
+      "exit_status": 0,
+      "started_at": 0.84119,
+      "ended_at": 1.057948,
+      "line_count": 8,
+      "max_line_width": 112,
+      "first_line": "archive: /Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/hooks-rotator"
+    },
+    {
+      "step": "invalid-flag",
+      "label": "invalid flag refusal",
+      "command": "tama --wisent-reference-probe",
+      "exit_status": 2,
+      "started_at": 1.266674,
+      "ended_at": 1.48119,
+      "line_count": 16,
+      "max_line_width": 115,
+      "first_line": "tama <command>"
+    },
+    {
+      "step": "cancellation",
+      "label": "Ctrl-C on an unsubmitted line",
+      "command": "tama --wisent-reference-probe",
+      "exit_status": null,
+      "started_at": 1.691547,
+      "ended_at": 2.521641,
+      "line_count": 0,
+      "max_line_width": 0,
+      "first_line": ""
+    },
+    {
+      "step": "recovery-help",
+      "label": "recovery help",
+      "command": "tama --help",
+      "exit_status": 0,
+      "started_at": 2.521669,
+      "ended_at": 2.735324,
+      "line_count": 16,
+      "max_line_width": 115,
+      "first_line": "tama <command>"
+    },
+    {
+      "step": "no-color-help",
+      "label": "help with NO_COLOR=1",
+      "command": "NO_COLOR=1 tama --help",
+      "exit_status": 0,
+      "started_at": 2.942866,
+      "ended_at": 3.15468,
+      "line_count": 16,
+      "max_line_width": 115,
+      "first_line": "tama <command>"
+    }
+  ],
+  "evidence_gaps": [],
+  "measured_at": "2026-08-19",
+  "motion_provenance": [
+    "local-product-run"
+  ]
+}

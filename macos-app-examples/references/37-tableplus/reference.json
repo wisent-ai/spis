@@ -1,0 +1,279 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "TablePlus",
+  "product_url": "https://tableplus.com/download/",
+  "evidence_status": "partial",
+  "upstream_owner": "CK Data Tech real-product recording; TablePlus Inc.",
+  "captured_at": "2026-08-16T23:27:18Z",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=6WDnuMvqe_U",
+      "media_kind": "video-mp4",
+      "width": 960,
+      "height": 624,
+      "duration_seconds": 18.0,
+      "frame_count": 270,
+      "bytes": 63415,
+      "sha256": "0343c5efdd80892334600e4dd3cfac53fb103671a95546ad8f3e3887c6bae5d8",
+      "capture_method": "Downloaded as a real-product tutorial recording with yt-dlp, then excerpted and transcoded to H.264 without synthesized frames.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "MySQL Connection dialog, User field focused and empty: Name \"MySQL_DB\", Tag \"local\", Host/IP and Port showing only their \"127.0.0.1\" and \"3306\" placeholders, SSL mode PREFERRED",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 0.5s (mean abs diff 1.5234/255)",
+      "width": 960,
+      "height": 624,
+      "bytes": 143252,
+      "sha256": "78f6447e7a4c6a01ccefbed8de2582d326563b798af027107ff51788e88f0019",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.5,
+        "mean_abs_diff": 1.5234,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Same dialog mid-typing in the User field: \"roo\" entered, Password still showing its \"password\" placeholder",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 4.5s (mean abs diff 1.5469/255)",
+      "width": 960,
+      "height": 624,
+      "bytes": 142157,
+      "sha256": "19914ede3036c27555589122df93b761f93826e3b54508dc09f8a5b6a0244ab3",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 1.5469,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "User committed as \"root\", focus moved to Password: three masked dots entered (13 px of ink in the field)",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 7.5s (mean abs diff 1.5391/255)",
+      "width": 960,
+      "height": 624,
+      "bytes": 143446,
+      "sha256": "9157f64fe1306f22beddd9dc5ceba7f000a60959e7a92cb0f90450ee8af136f2",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 7.5,
+        "mean_abs_diff": 1.5391,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Password filled to eleven masked dots, I-beam pointer inside the field; every other field unchanged from state 3",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/motion.mp4 at 9.5s (mean abs diff 1.5352/255)",
+      "width": 960,
+      "height": 624,
+      "bytes": 144677,
+      "sha256": "10123868fbd7a50c5280513da0cc216d6efb1e9e62a8f7f0be8fd525295d1e36",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 9.5,
+        "mean_abs_diff": 1.5352,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Same \"root\" user and eleven-dot password as state 4 (0.029/255 mean abs diff between the two PNGs); only the pointer moved, from inside the field to an arrow above it",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/motion.mp4 at 12s (mean abs diff 1.5469/255)",
+      "width": 960,
+      "height": 624,
+      "bytes": 145478,
+      "sha256": "8680f559eb6211cac5812b9fd8bb544aa496bdda637129af3b64930d1418ddc1",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 12.0,
+        "mean_abs_diff": 1.5469,
+        "sampled_frames": 36
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Open TablePlus",
+      "response": "TablePlus exposes the entry surface visible in the retained motion.",
+      "feedback": "The first state establishes the active surface before manipulation.",
+      "cancellation": "Stopping here leaves the product unchanged.",
+      "failure": "The goal is not yet complete in the entry state.",
+      "recovery": "Choose or create a connection.",
+      "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Choose or create a connection",
+      "response": "A target control, item, document, or workspace becomes the active context.",
+      "feedback": "The next retained state visibly differs and identifies the active path.",
+      "cancellation": "Focus can remain on the previous context without committing.",
+      "failure": "An unintended target would leave the desired result unavailable.",
+      "recovery": "Move focus to the intended visible target and continue.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Connect to the database",
+      "response": "The recording advances into the product’s intermediate working state.",
+      "feedback": "Content, controls, or selection context changes in place.",
+      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+      "failure": "Stopping at this state produces no completion evidence.",
+      "recovery": "Select a table or query context.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Select a table or query context",
+      "response": "The selected operation crosses from preparation into a committed transition.",
+      "feedback": "The fourth state records the immediate product response.",
+      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+      "failure": "Without confirmation, the fifth-state result does not appear.",
+      "recovery": "Repeat the intended selection and confirm it.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+    },
+    {
+      "name": "Completion feedback",
+      "trigger": "Observe database rows or query results",
+      "response": "The recording reaches the first meaningful result for “Open and inspect a database in TablePlus”.",
+      "feedback": "The fifth local frame is the offline completion evidence.",
+      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+      "failure": "Absence of the fifth state means the journey is incomplete.",
+      "recovery": "Replay the recorded sequence from the entry state.",
+      "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Cancellation and backtracking",
+      "trigger": "Leave the path before the committed transition.",
+      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+      "failure": "Exiting early does not produce completion evidence.",
+      "recovery": "Re-enter through state 2 and continue to state 4.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s; media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Failure boundary",
+      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+      "feedback": "No fifth-state visual is present before commitment.",
+      "cancellation": "The actor may abandon the incomplete path without claiming success.",
+      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s; contrasted with media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Recovery",
+      "trigger": "Resume from the last valid intermediate state.",
+      "response": "The same visible action sequence advances to the retained result.",
+      "feedback": "State 5 supplies positive completion feedback after state 4.",
+      "cancellation": "The actor can still stop before replaying confirmation.",
+      "failure": "A replay that never reaches state 5 remains incomplete.",
+      "recovery": "Replay state 4 and verify state 5.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s; media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning TablePlus user",
+    "goal": "Open and inspect a database in TablePlus",
+    "prerequisites": [
+      "TablePlus available on macOS or the official recording environment",
+      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open TablePlus",
+        "system_response": "TablePlus advances to the entry state retained in state 1.",
+        "state": "Entry state: Open TablePlus",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose or create a connection",
+        "system_response": "TablePlus advances to the invocation state retained in state 2.",
+        "state": "Invocation state: Choose or create a connection",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+      },
+      {
+        "index": 3,
+        "user_action": "Connect to the database",
+        "system_response": "TablePlus advances to the focused intermediate state retained in state 3.",
+        "state": "Focused intermediate state: Connect to the database",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+      },
+      {
+        "index": 4,
+        "user_action": "Select a table or query context",
+        "system_response": "TablePlus advances to the committed transition retained in state 4.",
+        "state": "Committed transition: Select a table or query context",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+      },
+      {
+        "index": 5,
+        "user_action": "Observe database rows or query results",
+        "system_response": "TablePlus advances to the first-success result retained in state 5.",
+        "state": "First-success result: Observe database rows or query results",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    ],
+    "failure_route": [
+      "Stop at the third retained state before confirmation; the meaningful result is absent.",
+      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+    ],
+    "recovery_route": [
+      "Return to the second retained state and restore the intended focus or selection.",
+      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+    ],
+    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+  },
+  "accessibility": {
+    "observations": [
+      "Every control in the MySQL Connection dialog carries a text label to its left — Name, Status color, Host/IP, Port, SNI routing, User, Password, Database, SSL mode, SSL keys — and the action buttons read \"Over SSH\", \"Save\", \"Test\" and \"Connect\"; the six Status color swatches are the only unlabeled controls in the dialog.",
+      "Contrast measured from media/state-01.png: the trial notice \"You are using the free trial\" in a 110×14 px crop at x=28,y=168 is #CEAD7A on the #E9E5E2 sidebar, a WCAG contrast ratio of 1.7:1 by the sRGB relative-luminance formula — the lowest-contrast text in the frame.",
+      "The only focus indicator anywhere in the clip is a rounded blue ring around one field; measured on media/state-03.png the ring is #9FAFDE in a 120×4 px crop at x=340,y=261 against the #F3F7FB field interior, a ratio of 2.02:1, while the unfocused Database field two rows down is a flat #F7F7F7 underline (same-size crop at x=340,y=295).",
+      "Filled versus empty is carried by text colour alone: \"127.0.0.1\", \"3306\", \"server name indication\", \"user name\", \"password\" and \"database name\" are grey placeholders while the typed \"MySQL_DB\" and \"root\" are near-black; no asterisk, badge or required-field marker appears.",
+      "No keyboard shortcut or key equivalent is printed in any of the 270 frames; the sidebar buttons \"Backup database…\", \"Restore database…\" and \"Create connection…\" show an icon plus a text label, and the menu bar reads TablePlus, File, Edit, View, Tools, Connection, Plugins, Navigate, Window, Help."
+    ],
+    "unknowns": [
+      "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
+      "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
+      "The product’s Reduce Motion behavior and contrast preferences are not demonstrated.",
+      "The Connect button is never activated in the 18s clip, so no connection error, success message or status announcement is shown.",
+      "Whether the Password field offers a reveal toggle cannot be seen: no eye icon or equivalent appears beside it in any frame."
+    ]
+  },
+  "motion_analysis": {
+    "trigger": "Typing into the MySQL Connection dialog. No pointer press, ripple or pressed button state is visible; the pointer only drifts across the dialog, and the changes are the caret moving between fields and characters appearing, so keystrokes are inferred from the text that appears rather than from any visible key or click indicator.",
+    "start_state": "The MySQL Connection dialog at 0.0s with the Port field focused (blue ring around the \"3306\" placeholder) and a small blue password-manager badge under it; only Name \"MySQL_DB\" and Tag \"local\" are filled, every other field shows its grey placeholder.",
+    "end_state": "The same dialog at 17.9s with User \"root\" and an eleven-dot masked Password, focus now on the still-empty Database field; the Connect button was never pressed and no connection, table list or result grid appears in the clip.",
+    "continuity": "One continuous take of the same window at 15fps, 270 frames: the dialog never moves or redraws wholesale, 267 of 269 frame deltas are below 0.2/255 and the mean per-frame change is 0.01/255, so nothing but small text regions changes.",
+    "timing_class": "continuous",
+    "interruption_or_reversal": null,
+    "feedback": "The only feedback is the text itself plus the blue focus ring moving between fields: the largest per-frame change in the whole clip is 0.5/255 at 16.6s (focus arriving on the Database field), then 0.21/255 at 0.33s (focus leaving Port for User) and 0.2/255 at 6.53s; no progress bar, spinner, validation message or status badge appears at any point.",
+    "reduced_motion_equivalent": null
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis missing interruption_or_reversal, reduced_motion_equivalent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19",
+  "original_product_url": "https://tableplus.com/"
+}

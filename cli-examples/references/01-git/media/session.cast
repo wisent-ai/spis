@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921622,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Git authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Git\r\n"]
+[0.55,"o","cli-ref$ git --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","git version 2.50.1 (Apple Git-155)\r\n"]
+[2.2,"o","cli-ref$ git help -a 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","See 'git help <command>' to read about a specific subcommand\r\n\r\nMain Porcelain Commands\r\n   add                     Add file contents to the index\r\n   am                      Apply a series of patches from a mailbox\r\n   archive                 Create an archive of files from a named tree\r\n   backfill                Download missing objects in a partial clone\r\n   bisect                  Use binary search to find the commit that introduced a bug\r\n   branch                  List, create, or delete branches\r\n   bundle                  Move objects and refs by archive\r\n   checkout                Switch branches or restore working tree files\r\n   cherry-pick             Apply the changes introduced by some existing commits\r\n   citool                  Graphical alternative to git-commit\r\n   clean                   Remove untracked files from the working tree\r\n"]
+[5.1,"o","cli-ref$ git --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","unknown option: --definitely-invalid-option\r\nusage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]\r\n           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\r\n           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--no-lazy-fetch]\r\n           [--no-optional-locks] [--no-advice] [--bare] [--git-dir=<path>]\r\n           [--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]\r\n           <command> [<args>]\r\n[exit status 129]\r\n"]
+[7.1,"o","cli-ref$ git --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ git help -a 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","See 'git help <command>' to read about a specific subcommand\r\n\r\nMain Porcelain Commands\r\n   add                     Add file contents to the index\r\n"]

@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Microsoft 365 — setup wizard",
+  "product_url": "https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide",
+  "evidence_status": "partial",
+  "upstream_owner": "Microsoft Corporation",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=um6I7IosARc",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 331697,
+      "sha256": "1b18aa89303c62b32ea0e10455d03bef12b5e45b24d79d7a699e20b070f68ba9",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "setup entry",
+      "local_path": "media/state-01-setup-entry.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 4.5s (mean abs diff 1.9922/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 4540,
+      "sha256": "16493ae91c19b251f33af85e874b02a195d11d2e6770fd5d5d25abaed6bcf084",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 1.9922,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "domain pending",
+      "local_path": "media/state-02-domain-pending.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.0391/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 35366,
+      "sha256": "35762545aece86b63e30b9d9cb27ac112da9ebd1c9898c12e0eac85126c4987b",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 19.5,
+        "mean_abs_diff": 1.0391,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "domain verified",
+      "local_path": "media/state-03-domain-verified.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 35.5s (mean abs diff 1.8711/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 22067,
+      "sha256": "fe58b258773ec4d6cd88c9c1503a87ecc2f635876c4586cee7a43a120b8de85c",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 35.5,
+        "mean_abs_diff": 1.8711,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "users provisioned",
+      "local_path": "media/state-04-users-provisioned.png",
+      "source_motion_path": "media/official-recording.mp4#t=50.362",
+      "width": 640,
+      "height": 360,
+      "bytes": 61102,
+      "sha256": "8b0aa7388740c2957ce000c71b60a7751a5eb60b8d2fdfa863780925de536ad4",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 50.0,
+        "mean_abs_diff": 15.1797,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "services configured",
+      "local_path": "media/state-05-services-configured.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 1.543/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 44147,
+      "sha256": "18bf7a84bc14a6fd0de663d751f662cae45095f779873db18abf6d5f7d7b5521",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.5,
+        "mean_abs_diff": 1.543,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "first user success",
+      "local_path": "media/state-06-first-user-success.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 80.5s (mean abs diff 1.7383/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 30164,
+      "sha256": "ed6e05172fac97a7431946423b6db45ee5735a910f5c5c0f155443f136a1bdf5",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 80.5,
+        "mean_abs_diff": 1.7383,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Sign in as tenant administrator and open setup",
+      "response": "Microsoft 365 presents the guided setup checklist",
+      "feedback": "The retained setup entry state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-setup-entry.png @ 4.50s; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Add the organization domain",
+      "response": "The admin center provides domain verification records",
+      "feedback": "The recording advances to domain pending and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-setup-entry.png @ 4.50s; media/state-02-domain-pending.png @ 19.79s; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Publish the requested DNS record",
+      "response": "Microsoft verifies ownership and advances service configuration",
+      "feedback": "The navigation result is visible as domain verified.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-domain-pending.png @ 19.79s; media/state-03-domain-verified.png @ 35.07s; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Create users and assign licenses",
+      "response": "The admin center shows active licensed identities",
+      "feedback": "The official recording shows the confirmed users provisioned state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-domain-verified.png @ 35.07s; media/state-04-users-provisioned.png @ 50.36s; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-domain-pending.png @ 19.79s; media/state-03-domain-verified.png @ 35.07s; media/state-04-users-provisioned.png @ 50.36s; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Apply recommended app, mail, and security settings",
+      "response": "Microsoft marks setup tasks complete",
+      "feedback": "Progress is observable as the distinct services configured state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-users-provisioned.png @ 50.36s; media/state-05-services-configured.png @ 65.65s; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-domain-verified.png @ 35.07s; media/state-04-users-provisioned.png @ 50.36s; media/state-05-services-configured.png @ 65.65s; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Sign in as the provisioned user and open a service",
+      "response": "The service loads under the managed identity, proving first tenant success",
+      "feedback": "The retained first user success state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-services-configured.png @ 65.65s; media/state-06-first-user-success.png @ 80.94s; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+    }
+  ],
+  "journey": {
+    "actor": "Microsoft 365 tenant administrator",
+    "goal": "complete tenant setup and provision the first user",
+    "prerequisites": [
+      "Microsoft 365 subscription",
+      "domain and DNS access"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Sign in as tenant administrator and open setup",
+        "system_response": "Microsoft 365 presents the guided setup checklist",
+        "state": "setup entry",
+        "evidence": "media/state-01-setup-entry.png; media/official-recording.mp4#t=4.497; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+      },
+      {
+        "index": 2,
+        "user_action": "Add the organization domain",
+        "system_response": "The admin center provides domain verification records",
+        "state": "domain pending",
+        "evidence": "media/state-02-domain-pending.png; media/official-recording.mp4#t=19.785; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+      },
+      {
+        "index": 3,
+        "user_action": "Publish the requested DNS record",
+        "system_response": "Microsoft verifies ownership and advances service configuration",
+        "state": "domain verified",
+        "evidence": "media/state-03-domain-verified.png; media/official-recording.mp4#t=35.074; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+      },
+      {
+        "index": 4,
+        "user_action": "Create users and assign licenses",
+        "system_response": "The admin center shows active licensed identities",
+        "state": "users provisioned",
+        "evidence": "media/state-04-users-provisioned.png; media/official-recording.mp4#t=50.362; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+      },
+      {
+        "index": 5,
+        "user_action": "Apply recommended app, mail, and security settings",
+        "system_response": "Microsoft marks setup tasks complete",
+        "state": "services configured",
+        "evidence": "media/state-05-services-configured.png; media/official-recording.mp4#t=65.651; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+      },
+      {
+        "index": 6,
+        "user_action": "Sign in as the provisioned user and open a service",
+        "system_response": "The service loads under the managed identity, proving first tenant success",
+        "state": "first user success",
+        "evidence": "media/state-06-first-user-success.png; media/official-recording.mp4#t=80.940; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+      }
+    ],
+    "failure_route": [
+      "At domain pending or domain verified, invalid, expired, denied, or missing required input leaves the flow short of first user success; evidence: media/state-02-domain-pending.png, media/state-03-domain-verified.png, and https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-domain-verified.png through media/state-05-services-configured.png."
+    ],
+    "recovery_route": [
+      "Return to the retained domain pending or domain verified requirement, correct or resend the blocking input, and resubmit; evidence: https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide.",
+      "Continue through the same terminal action until first user success is visible in media/state-06-first-user-success.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "first user success retained at media/state-06-first-user-success.png and media/official-recording.mp4#t=80.940; source https://learn.microsoft.com/en-us/microsoft-365/admin/setup/setup-business-basic?view=o365-worldwide"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-setup-entry.png and media/state-02-domain-pending.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-domain-verified.png and media/state-04-users-provisioned.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

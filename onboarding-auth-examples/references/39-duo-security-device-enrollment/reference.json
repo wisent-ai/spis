@@ -1,0 +1,288 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Duo Security — device enrollment",
+  "product_url": "https://guide.duo.com/enrollment",
+  "evidence_status": "partial",
+  "upstream_owner": "Cisco Systems, Inc. / Duo Security",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=HDU35vn0SS0",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 29.933,
+      "frame_count": 449,
+      "bytes": 261066,
+      "sha256": "9863c4d6f8d71153ae444edbff205ede93f23d66e8fc8dfb8123ba3196bd9727",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "enrollment entry",
+      "local_path": "media/state-01-enrollment-entry.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 0.5s (mean abs diff 9.9062/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 79027,
+      "sha256": "5ed323937d138c975f1dd4a6da1a6d1d7fa63ddcffc05265043c28e37997ae8b",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.5,
+        "mean_abs_diff": 9.9062,
+        "sampled_frames": 60
+      }
+    },
+    {
+      "name": "method selected",
+      "local_path": "media/state-02-method-selected.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 6.5s (mean abs diff 2.1211/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 99971,
+      "sha256": "f2cf2fc2a15adfbfe0bb5de26065e57f8b6e1b3155f5a66329c75066ca4711d8",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 6.5,
+        "mean_abs_diff": 2.1211,
+        "sampled_frames": 60
+      }
+    },
+    {
+      "name": "device identity",
+      "local_path": "media/state-03-device-identity.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 11.5s (mean abs diff 1.8164/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 121701,
+      "sha256": "9a58a05badf2fb97e59297698499302639dba3197dc8d44db094cc464d88cf2d",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 11.5,
+        "mean_abs_diff": 1.8164,
+        "sampled_frames": 60
+      }
+    },
+    {
+      "name": "authenticator ready",
+      "local_path": "media/state-04-authenticator-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 16.5s (mean abs diff 1.7227/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 103272,
+      "sha256": "ae656ad48fbd43d9c8bcc604a67378bba50ec9bc32e25288fe620d66d179f08a",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 16.5,
+        "mean_abs_diff": 1.7227,
+        "sampled_frames": 60
+      }
+    },
+    {
+      "name": "device enrolled",
+      "local_path": "media/state-05-device-enrolled.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 22s (mean abs diff 1.7422/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 99624,
+      "sha256": "96e88a7c3ba5293558a15b0a47770616a67ffc6e917bc53aa06d585cbe34320c",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 22.0,
+        "mean_abs_diff": 1.7422,
+        "sampled_frames": 60
+      }
+    },
+    {
+      "name": "first approval",
+      "local_path": "media/state-06-first-approval.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 27s (mean abs diff 1.7617/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 88375,
+      "sha256": "b27106caf796b64409a020d934f0cb391deeb3053a47123e88942478b3858ff7",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 27.0,
+        "mean_abs_diff": 1.7617,
+        "sampled_frames": 60
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Open the Duo enrollment link after primary sign-in",
+      "response": "Duo shows the organization enrollment welcome state",
+      "feedback": "The retained enrollment entry state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-enrollment-entry.png @ 1.50s; https://guide.duo.com/enrollment"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Choose the device or authenticator type",
+      "response": "Duo displays method-specific setup",
+      "feedback": "The recording advances to method selected and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-enrollment-entry.png @ 1.50s; media/state-02-method-selected.png @ 6.59s; https://guide.duo.com/enrollment"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Enter and verify the phone number when required",
+      "response": "Duo confirms ownership or advances to activation",
+      "feedback": "The navigation result is visible as device identity.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-method-selected.png @ 6.59s; media/state-03-device-identity.png @ 11.67s; https://guide.duo.com/enrollment"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Install Duo Mobile or prepare the selected authenticator",
+      "response": "Duo presents activation instructions",
+      "feedback": "The official recording shows the confirmed authenticator ready state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-device-identity.png @ 11.67s; media/state-04-authenticator-ready.png @ 16.76s; https://guide.duo.com/enrollment"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-method-selected.png @ 6.59s; media/state-03-device-identity.png @ 11.67s; media/state-04-authenticator-ready.png @ 16.76s; https://guide.duo.com/enrollment"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Scan the activation code or complete key registration",
+      "response": "Duo marks the device activated",
+      "feedback": "Progress is observable as the distinct device enrolled state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-authenticator-ready.png @ 16.76s; media/state-05-device-enrolled.png @ 21.85s; https://guide.duo.com/enrollment"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-device-identity.png @ 11.67s; media/state-04-authenticator-ready.png @ 16.76s; media/state-05-device-enrolled.png @ 21.85s; https://guide.duo.com/enrollment"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Approve the test challenge",
+      "response": "Duo confirms successful authentication, proving enrollment success",
+      "feedback": "The retained first approval state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-device-enrolled.png @ 21.85s; media/state-06-first-approval.png @ 26.94s; https://guide.duo.com/enrollment"
+    }
+  ],
+  "journey": {
+    "actor": "employee enrolling in Duo",
+    "goal": "activate an authenticator and pass the first Duo challenge",
+    "prerequisites": [
+      "organization enrollment link",
+      "supported phone or security key"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the Duo enrollment link after primary sign-in",
+        "system_response": "Duo shows the organization enrollment welcome state",
+        "state": "enrollment entry",
+        "evidence": "media/state-01-enrollment-entry.png; media/official-recording.mp4#t=1.497; https://guide.duo.com/enrollment"
+      },
+      {
+        "index": 2,
+        "user_action": "Choose the device or authenticator type",
+        "system_response": "Duo displays method-specific setup",
+        "state": "method selected",
+        "evidence": "media/state-02-method-selected.png; media/official-recording.mp4#t=6.585; https://guide.duo.com/enrollment"
+      },
+      {
+        "index": 3,
+        "user_action": "Enter and verify the phone number when required",
+        "system_response": "Duo confirms ownership or advances to activation",
+        "state": "device identity",
+        "evidence": "media/state-03-device-identity.png; media/official-recording.mp4#t=11.674; https://guide.duo.com/enrollment"
+      },
+      {
+        "index": 4,
+        "user_action": "Install Duo Mobile or prepare the selected authenticator",
+        "system_response": "Duo presents activation instructions",
+        "state": "authenticator ready",
+        "evidence": "media/state-04-authenticator-ready.png; media/official-recording.mp4#t=16.762; https://guide.duo.com/enrollment"
+      },
+      {
+        "index": 5,
+        "user_action": "Scan the activation code or complete key registration",
+        "system_response": "Duo marks the device activated",
+        "state": "device enrolled",
+        "evidence": "media/state-05-device-enrolled.png; media/official-recording.mp4#t=21.851; https://guide.duo.com/enrollment"
+      },
+      {
+        "index": 6,
+        "user_action": "Approve the test challenge",
+        "system_response": "Duo confirms successful authentication, proving enrollment success",
+        "state": "first approval",
+        "evidence": "media/state-06-first-approval.png; media/official-recording.mp4#t=26.940; https://guide.duo.com/enrollment"
+      }
+    ],
+    "failure_route": [
+      "At method selected or device identity, invalid, expired, denied, or missing required input leaves the flow short of first approval; evidence: media/state-02-method-selected.png, media/state-03-device-identity.png, and https://guide.duo.com/enrollment.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-device-identity.png through media/state-05-device-enrolled.png."
+    ],
+    "recovery_route": [
+      "Return to the retained method selected or device identity requirement, correct or resend the blocking input, and resubmit; evidence: https://guide.duo.com/enrollment.",
+      "Continue through the same terminal action until first approval is visible in media/state-06-first-approval.png and the motion at 26.940s."
+    ],
+    "completion_evidence": "first approval retained at media/state-06-first-approval.png and media/official-recording.mp4#t=26.940; source https://guide.duo.com/enrollment"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-enrollment-entry.png and media/state-02-method-selected.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-device-identity.png and media/state-04-authenticator-ready.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

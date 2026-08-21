@@ -1,0 +1,276 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Grafana Explore",
+  "product_url": "https://grafana.com/docs/grafana/latest/explore/",
+  "evidence_status": "partial",
+  "upstream_owner": "Grafana",
+  "captured_at": "2026-08-16T23:30:33Z",
+  "motion": [
+    {
+      "local_path": "media/journey.mp4",
+      "source_url": "https://www.youtube.com/watch?v=a3uB1C2oHA4&t=32s",
+      "media_kind": "video-mp4",
+      "width": 256,
+      "height": 144,
+      "duration_seconds": 11.97,
+      "frame_count": 287,
+      "bytes": 19394,
+      "sha256": "aa09f46ad9869b96c6e3db8ddf3b620c0ec18a993d5c2055039e33e161f247ae",
+      "capture_method": "Downloaded the upstream-published YouTube video through the Cobalt media gateway, then transcoded a continuous 12-second excerpt beginning at source timestamp 32s; no frames were synthesized",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "results loaded, wide green count histogram, first results tab active",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/journey.mp4 at 0.5s (mean abs diff 1.6719/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 22694,
+      "sha256": "4f55e864b025963027b9682440af1a25d2950c19fa57f9113251bc0e5c98cf09",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.5,
+        "mean_abs_diff": 1.6719,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "value dropdown open over the histogram, one row highlighted",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/journey.mp4 at 3.5s (mean abs diff 1.668/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 23660,
+      "sha256": "d934b8ee22dc002061d5f215086110c19f39fc1d8ddcf80099e13ecb87855b76",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 3.5,
+        "mean_abs_diff": 1.668,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "dropdown scrolled to its lower group, pointer over the chart",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/journey.mp4 at 5s (mean abs diff 1.6445/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 24012,
+      "sha256": "2e144353b40671bb02c837d68570cf89694dcbe4ec44926c427e0655026f7479",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 5.0,
+        "mean_abs_diff": 1.6445,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "dropdown dismissed, base panel layout restored",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/journey.mp4 at 7s (mean abs diff 1.6758/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 23309,
+      "sha256": "328309cba7786895c81f2e25c413e33ceb2465a8624f51f97ca1b14245f277ac",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 7.0,
+        "mean_abs_diff": 1.6758,
+        "sampled_frames": 24
+      }
+    },
+    {
+      "name": "second results tab active, spike chart widened, percentage cards below",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/journey.mp4 at 11s (mean abs diff 1.8164/255)",
+      "width": 256,
+      "height": 144,
+      "bytes": 24401,
+      "sha256": "c6302fa328908af3c0d5931141138f32c1d3ec159b5d8a4126a5b41990cf04ff",
+      "source_match": {
+        "motion_path": "media/journey.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 11.0,
+        "mean_abs_diff": 1.8164,
+        "sampled_frames": 24
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "open evidence",
+      "trigger": "Open the local motion asset at its beginning.",
+      "response": "The evidence viewer presents the upstream product demonstration at the selected investigation segment.",
+      "feedback": "The first retained frame establishes product and viewer context.",
+      "cancellation": "Close the player or leave it at the initial frame.",
+      "failure": "A missing or unreadable asset prevents the product state from appearing.",
+      "recovery": "Reopen the hash-verified local asset.",
+      "evidence": "media/journey.mp4 and media/state-01.png"
+    },
+    {
+      "name": "start playback",
+      "trigger": "Activate play.",
+      "response": "The playhead advances through authentic upstream product motion.",
+      "feedback": "Successive product-rendered states replace the ready frame.",
+      "cancellation": "Pause returns control without discarding the current position.",
+      "failure": "Playback can remain on the ready frame when interrupted.",
+      "recovery": "Activate play again.",
+      "evidence": "media/journey.mp4, opening segment through media/state-02.png"
+    },
+    {
+      "name": "focus or select",
+      "trigger": "Follow the source recording as its pointer or focus changes the visible evidence surface.",
+      "response": "The product binds a selected summary, row, finding, span, report item, or visual mark to more specific evidence.",
+      "feedback": "The retained overview and paused-detail states visibly differ.",
+      "cancellation": "Pause before accepting the changed selection.",
+      "failure": "A transient frame can make the selected target ambiguous.",
+      "recovery": "Step backward and replay the transition.",
+      "evidence": "media/state-02.png and media/state-03.png"
+    },
+    {
+      "name": "pause for inspection",
+      "trigger": "Pause at the retained detail state.",
+      "response": "Motion stops while the selected product evidence remains visible.",
+      "feedback": "The paused frame is retained as media/state-03.png.",
+      "cancellation": "Resume immediately without seeking.",
+      "failure": "The evidence flow is intentionally interrupted at the paused state.",
+      "recovery": "Resume playback from the same playhead position.",
+      "evidence": "media/journey.mp4 and media/state-03.png"
+    },
+    {
+      "name": "resume after interruption",
+      "trigger": "Activate play after the pause.",
+      "response": "The source journey continues from the retained detail.",
+      "feedback": "The subsequent deeper-evidence frame appears.",
+      "cancellation": "Pause again.",
+      "failure": "Resumption may not advance when the player remains paused.",
+      "recovery": "Activate play and confirm the next visible frame.",
+      "evidence": "media/state-03.png to media/state-04.png"
+    },
+    {
+      "name": "navigate forward",
+      "trigger": "Seek forward within the local recording.",
+      "response": "The viewer reveals a later product state without changing evidence provenance.",
+      "feedback": "The playhead and visible product content advance together.",
+      "cancellation": "Seek back to the prior retained frame.",
+      "failure": "An over-large seek can skip the intended intermediate state.",
+      "recovery": "Use the retained state images or seek backward.",
+      "evidence": "media/journey.mp4 and media/state-04.png"
+    },
+    {
+      "name": "backtrack",
+      "trigger": "Seek backward or return to an earlier retained state.",
+      "response": "The prior evidence context is restored.",
+      "feedback": "The same earlier frame can be compared with the later state.",
+      "cancellation": "Resume forward playback.",
+      "failure": "A viewer without precise seeking can land between documented states.",
+      "recovery": "Open the corresponding local state image directly.",
+      "evidence": "media/state-02.png, media/state-03.png, and media/state-04.png"
+    },
+    {
+      "name": "confirm completion",
+      "trigger": "Continue to the retained completion point.",
+      "response": "A later, more specific product evidence state is visible.",
+      "feedback": "media/state-05.png records the completion evidence.",
+      "cancellation": "Return to any earlier state without altering the source asset.",
+      "failure": "Stopping early leaves the summary claim unsupported by the final retained state.",
+      "recovery": "Resume or seek to the completion frame.",
+      "evidence": "media/journey.mp4 and media/state-05.png"
+    }
+  ],
+  "journey": {
+    "actor": "A reviewer validating a summary claim against product-native evidence",
+    "goal": "Study the split-view query workflow, where synchronized time ranges and raw query results support side-by-side evidence comparison.",
+    "prerequisites": [
+      "A local media player capable of the recorded format",
+      "The numbered state images in this reference directory",
+      "No network connection is required after capture"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the local evidence recording.",
+        "system_response": "The authentic upstream demonstration is ready at the chosen investigation segment.",
+        "state": "results loaded, wide green count histogram, first results tab active",
+        "evidence": "media/state-01.png"
+      },
+      {
+        "index": 2,
+        "user_action": "Start playback and orient to the report or evidence surface.",
+        "system_response": "The product moves from its summary context toward an inspectable evidence view.",
+        "state": "value dropdown open over the histogram, one row highlighted",
+        "evidence": "media/state-02.png"
+      },
+      {
+        "index": 3,
+        "user_action": "Pause when the selected detail becomes visible.",
+        "system_response": "The viewer freezes the product-native state for inspection.",
+        "state": "dropdown scrolled to its lower group, pointer over the chart",
+        "evidence": "media/state-03.png"
+      },
+      {
+        "index": 4,
+        "user_action": "Resume and navigate farther into the recorded investigation.",
+        "system_response": "A later product state reveals deeper or differently scoped evidence.",
+        "state": "dropdown dismissed, base panel layout restored",
+        "evidence": "media/state-04.png"
+      },
+      {
+        "index": 5,
+        "user_action": "Continue to the retained completion point.",
+        "system_response": "The source journey leaves a final visible state that supports the investigation outcome.",
+        "state": "second results tab active, spike chart widened, percentage cards below",
+        "evidence": "media/state-05.png"
+      }
+    ],
+    "failure_route": [
+      "Playback is paused or a seek skips the intended evidence transition.",
+      "The reviewer does not treat the interrupted or skipped state as completed evidence."
+    ],
+    "recovery_route": [
+      "Resume from the paused position or seek backward.",
+      "Use the retained state images to re-establish context, then continue to media/state-05.png."
+    ],
+    "completion_evidence": "media/journey.mp4 together with media/state-05.png"
+  },
+  "motion_analysis": {
+    "trigger": "Pointer interaction inside the recording: the value control in the query row is opened at about 3s, and at about 8.2s the active results tab changes from the first to the second.",
+    "start_state": "media/state-01.png at 0.5s: a wide green count histogram across the left, red spike and blue line panels stacked at the right, the first results tab underlined.",
+    "end_state": "media/state-05.png at 11s: the second results tab underlined, the red spike chart widened across the left, the green histogram compacted into the top right, and a grid of cards below, each with one red and one green bar and a printed percentage.",
+    "continuity": "Continuous inside one page. The top bar, the query row and the tab strip stay in place while the dropdown overlays the chart and while the panels below are replaced; at 12 fps the panel replacement is complete between the 8.167s and 8.250s frames with no intermediate blend, and the cards underneath fill in over roughly the following 0.3s.",
+    "timing_class": "sub-second",
+    "interruption_or_reversal": "Reversal is shown: the dropdown that is open at 4s and 5s is gone by 7s and the view underneath matches media/state-01.png, so dismissing the list restores the previous state.",
+    "feedback": "The active results tab carries an orange underline, the run control in the query row stays a filled blue button, and while the list is open one of its rows is lighter than its neighbours.",
+    "reduced_motion_equivalent": "The result of the transition survives without motion: media/state-05.png alone carries the moved tab underline, the new panel arrangement and the printed percentages, so nothing readable only during the animation is needed to reach the outcome."
+  },
+  "accessibility": {
+    "observations": [
+      "The active results tab is marked by an orange underline that is present in every retained still, on the first tab in media/state-01.png through media/state-04.png and on the second tab in media/state-05.png, so the change of tab is legible without seeing the transition.",
+      "Contrast measured from media/state-01.png: the dominant page colour is #131619 and the histogram fill is #699667, a ratio of 5.33:1 by the WCAG relative-luminance formula over the frame's eight-colour histogram.",
+      "Each card in media/state-05.png pairs a red and a green bar with a printed percentage (99.34%, 99.34%, 98.79%, 93.95%), so the value is carried by text and not by bar colour alone.",
+      "Five discrete local states cover the whole recorded sequence, giving a nonanimated inspection path through it."
+    ],
+    "unknowns": [
+      "The source recording does not expose the product accessibility tree, screen-reader announcements, or exact focus order.",
+      "Reduced-motion behavior inside the recorded product is not established by this visual evidence.",
+      "Audio narration and caption quality were not used as evidence in this reference.",
+      "Whether the icon-only controls at the right end of the query row carry text labels cannot be read from a 256x144 frame."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

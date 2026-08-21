@@ -1,0 +1,380 @@
+{
+  "name": "Swift Documentation",
+  "source_url": "https://www.swift.org/documentation/",
+  "category": "Programming language documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 475,
+  "landing_nav": [
+    {
+      "text": "Docs",
+      "path": "/documentation/"
+    },
+    {
+      "text": "Community",
+      "path": "/community/"
+    },
+    {
+      "text": "Packages",
+      "path": "/packages/"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog/"
+    },
+    {
+      "text": "Install (6.3.3)",
+      "path": "/install"
+    },
+    {
+      "text": "Getting started guide",
+      "path": "/getting-started/"
+    },
+    {
+      "text": "Language Reference",
+      "path": "/documentation/tspl/"
+    },
+    {
+      "text": "API Design Guidelines",
+      "path": "/documentation/api-design-guidelines/"
+    },
+    {
+      "text": "Standard Library",
+      "path": "/documentation/standard-library/"
+    },
+    {
+      "text": "Core Libraries",
+      "path": "/documentation/core-libraries/"
+    },
+    {
+      "text": "Package Manager",
+      "path": "/documentation/package-manager/"
+    },
+    {
+      "text": "REPL & Debugger",
+      "path": "/documentation/lldb/"
+    },
+    {
+      "text": "About Swift",
+      "path": "/about/"
+    },
+    {
+      "text": "Swift on Server",
+      "path": "/documentation/server/"
+    },
+    {
+      "text": "Mixing Swift and C++",
+      "path": "/documentation/cxx-interop/"
+    },
+    {
+      "text": "Value and Reference types",
+      "path": "/documentation/articles/value-and-reference-types.html"
+    },
+    {
+      "text": "DocC",
+      "path": "/documentation/docc/"
+    },
+    {
+      "text": "Enabling Complete Concurrency Checking",
+      "path": "/documentation/concurrency/"
+    },
+    {
+      "text": "Getting Started with the Static Linux SDK",
+      "path": "/documentation/articles/static-linux-getting-started.html"
+    },
+    {
+      "text": "Getting Started with the Swift SDK for Android",
+      "path": "/documentation/articles/swift-sdk-for-android-getting-started.html"
+    },
+    {
+      "text": "Getting Started with Swift SDKs for WebAssembly",
+      "path": "/documentation/articles/wasm-getting-started.html"
+    },
+    {
+      "text": "Getting Started with Swift on VS Code",
+      "path": "/documentation/articles/getting-started-with-vscode-swift.html"
+    },
+    {
+      "text": "Swift Evolution",
+      "path": "/swift-evolution/"
+    },
+    {
+      "text": "Source Code",
+      "path": "/documentation/source-code/"
+    },
+    {
+      "text": "Continuous Integration",
+      "path": "/documentation/continuous-integration/"
+    },
+    {
+      "text": "Source Compatibility",
+      "path": "/documentation/source-compatibility/"
+    },
+    {
+      "text": "Compiler Architecture",
+      "path": "/documentation/swift-compiler/"
+    },
+    {
+      "text": "Monthly Non-Darwin Swift Releases",
+      "path": "/documentation/monthly-non-darwin-release/"
+    },
+    {
+      "text": "Install",
+      "path": "/install/"
+    },
+    {
+      "text": "Visual Studio Code",
+      "path": "/documentation/articles/getting-started-with-vscode-swift.html"
+    },
+    {
+      "text": "Emacs",
+      "path": "/documentation/articles/zero-to-swift-emacs.html"
+    },
+    {
+      "text": "Neovim",
+      "path": "/documentation/articles/zero-to-swift-nvim.html"
+    },
+    {
+      "text": "Cursor",
+      "path": "/documentation/articles/getting-started-with-cursor-swift.html"
+    },
+    {
+      "text": "Overview",
+      "path": "/community/"
+    },
+    {
+      "text": "Diversity",
+      "path": "/diversity/"
+    },
+    {
+      "text": "Mentorship",
+      "path": "/mentorship/"
+    },
+    {
+      "text": "Contributing",
+      "path": "/contributing/"
+    },
+    {
+      "text": "Code of Conduct",
+      "path": "/code-of-conduct/"
+    },
+    {
+      "text": "License",
+      "path": "/legal/license.html"
+    },
+    {
+      "text": "Security",
+      "path": "/support/security.html"
+    },
+    {
+      "text": "API",
+      "path": "/openapi"
+    }
+  ],
+  "url_sections": {
+    "blog": 172,
+    "api": 80,
+    "documentation": 52,
+    "packages": 31,
+    "install": 28,
+    "server": 20,
+    "sswg": 7,
+    "getting-started": 6,
+    "assets": 5,
+    "download": 4,
+    "get-started": 4,
+    "community": 2,
+    "keys": 2,
+    "migration-guide-swift3": 2,
+    "404.html": 1,
+    "500.html": 1,
+    "about": 1,
+    "android-workgroup": 1,
+    "blog-post-contributions": 1,
+    "build-and-packaging-workgroup": 1,
+    "code-of-conduct": 1,
+    "compiler-stdlib": 1,
+    "continuous-integration": 1,
+    "contributing": 1,
+    "contributor-experience-workgroup": 1,
+    "core-libraries": 1,
+    "cxx-interop-workgroup": 1,
+    "diversity": 1,
+    "documentation-workgroup": 1,
+    "ecosystem-steering-group": 1,
+    "foundation-workgroup": 1,
+    "gsoc2019": 1,
+    "gsoc2020": 1,
+    "gsoc2021": 1,
+    "gsoc2022": 1,
+    "gsoc2023": 1,
+    "gsoc2024": 1,
+    "gsoc2025": 1,
+    "gsoc2026": 1,
+    "language-steering-group": 1
+  },
+  "content_kinds": {
+    "getting started / quickstart": [
+      "get-started",
+      "getting-started",
+      "/getting-started/",
+      "getting started guide"
+    ],
+    "guides / how-to": [
+      "getting started guide",
+      "migration-guide-swift3"
+    ],
+    "api reference": [
+      "api",
+      "language reference",
+      "api design guidelines",
+      "value and reference types"
+    ],
+    "changelog / release notes": [
+      "monthly non-darwin swift releases"
+    ],
+    "migration / upgrade": [
+      "migration-guide-swift3"
+    ],
+    "security": [
+      "security",
+      "/support/security.html"
+    ],
+    "sdk / client libraries": [
+      "core libraries",
+      "core-libraries",
+      "/documentation/core-libraries/",
+      "getting started with the static linux sdk"
+    ],
+    "community / support": [
+      "community",
+      "/community/",
+      "/support/security.html"
+    ],
+    "playground / sandbox": [
+      "repl & debugger"
+    ],
+    "integrations": [
+      "continuous integration",
+      "continuous-integration",
+      "/documentation/continuous-integration/"
+    ],
+    "concepts / architecture": [
+      "compiler architecture"
+    ],
+    "contributing": [
+      "contributing",
+      "/contributing/",
+      "blog-post-contributions",
+      "contributor-experience-workgroup"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://www.swift.org/openapi",
+      "h1": "",
+      "h2": [
+        "Browsable API documentation",
+        "Downloadable OpenAPI documents",
+        "Generating a client in Swift",
+        "Tools using the Swift.org APIs"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/documentation/",
+      "h1": "",
+      "h2": [
+        "Overview",
+        "Articles",
+        "Contributing"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/community/",
+      "h1": "",
+      "h2": [
+        "Community",
+        "Explore the forums",
+        "How we work",
+        "Contribute to Swift",
+        "Follow Swift"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/packages/",
+      "h1": "",
+      "h2": [
+        "Package Ecosystem",
+        "Create Your Own",
+        "Advanced Search"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/blog/",
+      "h1": "",
+      "h2": [
+        "Latest Swift News"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/getting-started/",
+      "h1": "",
+      "h2": [
+        "Installing Swift",
+        "Using Swift",
+        "Go Further"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/about/",
+      "h1": "",
+      "h2": [
+        "Tools",
+        "Features",
+        "Platform Support",
+        "Swift.org and Open Source"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/diversity/",
+      "h1": "",
+      "h2": [
+        "Mission",
+        "Workgroup",
+        "Community Groups",
+        "Events",
+        "Community-focused blog on Swift.org",
+        "Community Participation"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/mentorship/",
+      "h1": "",
+      "h2": [
+        "Current Program",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/contributing/",
+      "h1": "",
+      "h2": [
+        "Answering Questions",
+        "Reporting Bugs",
+        "Triaging Bugs",
+        "Website and Blog Post Contributions",
+        "Swift Evolution",
+        "Good First Issues",
+        "Contributing Code"
+      ]
+    },
+    {
+      "url": "https://www.swift.org/support/security.html",
+      "h1": "",
+      "h2": [
+        "Security Process",
+        "Security Updates"
+      ]
+    }
+  ]
+}

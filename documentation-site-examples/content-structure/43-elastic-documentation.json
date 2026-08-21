@@ -1,0 +1,284 @@
+{
+  "name": "Elastic Documentation",
+  "source_url": "https://www.elastic.co/docs",
+  "category": "Search and observability documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "scoped sitemap (/docs)",
+  "inventory_url_count": 13742,
+  "landing_nav": [
+    {
+      "text": "Docs",
+      "path": "/docs/"
+    },
+    {
+      "text": "Release notes",
+      "path": "/docs/release-notes"
+    },
+    {
+      "text": "Troubleshoot",
+      "path": "/docs/troubleshoot"
+    },
+    {
+      "text": "Reference",
+      "path": "/docs/reference"
+    },
+    {
+      "text": "upgrade guide",
+      "path": "/docs/deploy-manage/upgrade"
+    },
+    {
+      "text": "Elastic Fundamentals",
+      "path": "/docs/get-started"
+    },
+    {
+      "text": "Learn more",
+      "path": "/docs/explore-analyze/ai-features/agent-skills"
+    },
+    {
+      "text": "9.0+ (latest 9.5.1) docs",
+      "path": "/docs/solutions/search"
+    },
+    {
+      "text": "Previous versions",
+      "path": "/guide/en/elasticsearch/reference/index.html"
+    },
+    {
+      "text": "9.0+ (latest 9.5.1) docs",
+      "path": "/docs/solutions/observability"
+    },
+    {
+      "text": "Previous versions",
+      "path": "/guide/en/observability/index.html"
+    },
+    {
+      "text": "9.0+ (latest 9.5.1) docs",
+      "path": "/docs/solutions/security"
+    },
+    {
+      "text": "Previous versions",
+      "path": "/guide/en/security/index.html"
+    },
+    {
+      "text": "View docs",
+      "path": "/docs/manage-data"
+    },
+    {
+      "text": "View docs",
+      "path": "/docs/explore-analyze"
+    },
+    {
+      "text": "View docs",
+      "path": "/docs/deploy-manage"
+    },
+    {
+      "text": "View docs",
+      "path": "/docs/cloud-account"
+    },
+    {
+      "text": "View docs",
+      "path": "/docs/api"
+    },
+    {
+      "text": "View docs",
+      "path": "/docs/reference/elasticsearch-clients"
+    },
+    {
+      "text": "View docs",
+      "path": "/docs/reference/opentelemetry"
+    },
+    {
+      "text": "View docs",
+      "path": "/docs/reference/query-languages"
+    },
+    {
+      "text": "View all reference docs",
+      "path": "/docs/reference"
+    },
+    {
+      "text": "View release notes",
+      "path": "/docs/release-notes"
+    },
+    {
+      "text": "View extend and contribute docs",
+      "path": "/docs/extend"
+    },
+    {
+      "text": "View troubleshooting docs",
+      "path": "/docs/troubleshoot"
+    },
+    {
+      "text": "View previous versions",
+      "path": "/guide"
+    },
+    {
+      "text": "Register now",
+      "path": "/events/elasticon"
+    },
+    {
+      "text": "Trademarks",
+      "path": "/legal/trademarks"
+    },
+    {
+      "text": "Terms of Use",
+      "path": "/legal/terms-of-use"
+    },
+    {
+      "text": "Privacy",
+      "path": "/legal/privacy-statement"
+    },
+    {
+      "text": "Sitemap",
+      "path": "/sitemap"
+    }
+  ],
+  "url_sections": {
+    "docs": 13727,
+    "guide": 15
+  },
+  "content_kinds": {
+    "examples / samples": [
+      "demo-gallery"
+    ],
+    "tutorials / learn": [
+      "learn",
+      "training",
+      "learn more"
+    ],
+    "getting started / quickstart": [
+      "getting-started",
+      "/docs/get-started"
+    ],
+    "guides / how-to": [
+      "guide",
+      "/guide",
+      "upgrade guide",
+      "/guide/en/security/index.html"
+    ],
+    "api reference": [
+      "/docs/api",
+      "reference",
+      "/docs/reference",
+      "view all reference docs"
+    ],
+    "changelog / release notes": [
+      "release notes",
+      "view release notes",
+      "/docs/release-notes"
+    ],
+    "troubleshooting / errors": [
+      "troubleshoot",
+      "/docs/troubleshoot",
+      "view troubleshooting docs"
+    ],
+    "migration / upgrade": [
+      "upgrade guide",
+      "/docs/deploy-manage/upgrade"
+    ],
+    "security": [
+      "security",
+      "/docs/solutions/security",
+      "/guide/en/security/index.html"
+    ],
+    "community / support": [
+      "support",
+      "community"
+    ],
+    "deployment / production": [
+      "/docs/deploy-manage",
+      "/docs/deploy-manage/upgrade"
+    ],
+    "videos": [
+      "videos",
+      "webinars"
+    ],
+    "contributing": [
+      "view extend and contribute docs"
+    ],
+    "pricing / limits": [
+      "pricing"
+    ],
+    "versioned docs": [
+      "previous versions",
+      "view previous versions"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://www.elastic.co/guide",
+      "h1": "Elastic Docs",
+      "h2": [
+        "Browse all docs",
+        "Search",
+        "Observability: APM, Logs, Metrics, and Uptime",
+        "Security",
+        "Elastic Stack",
+        "Ingest: Add your data",
+        "Cloud: Provision, Manage, and Monitor the Elastic Stack",
+        "Archive",
+        "Free Elastic training",
+        "Need help?"
+      ]
+    },
+    {
+      "url": "https://www.elastic.co/sitemap",
+      "h1": "Elastic Sitemap",
+      "h2": [
+        "Beats",
+        "Community",
+        "Elastic Cloud",
+        "Company",
+        "Compliance & Security",
+        "Search",
+        "FAQ",
+        "Elastic (ELK) Stack",
+        "Observability",
+        "Industries",
+        "Social",
+        "Security",
+        "Support",
+        "Elastic Stack Subscriptions",
+        "Key Topics",
+        "Training",
+        "Blogs",
+        "OpenSearch vs. Elasticsearch",
+        "Splunk Replacement",
+        "Documentation"
+      ]
+    },
+    {
+      "url": "https://www.elastic.co/docs/",
+      "h1": "Elastic Docs",
+      "h2": [
+        "Solutions and use cases",
+        "How-to guides",
+        "Reference",
+        "Product resources",
+        "Welcome to our community of developers",
+        "Looking for more?"
+      ]
+    },
+    {
+      "url": "https://www.elastic.co/events/elasticon",
+      "h1": "forge the future",
+      "h2": [
+        "MAKE ALL YOUR DATA AN AI ADVANTAGE AT ELASTIC{ON}",
+        "JOIN US IN A CITY NEAR YOU",
+        "THE WORLD RUNS ON ELASTIC. COME SEE HOW.",
+        "LET'S FORGE THE FUTURE",
+        "forge the future",
+        "forge the future",
+        "forge the future",
+        "forge the future",
+        "forge the future",
+        "forge the future"
+      ]
+    },
+    {
+      "url": "https://www.elastic.co/legal/trademarks",
+      "h1": "Trademarks",
+      "h2": [
+        "Guidelines for using Elasticsearch trademarks and service marks"
+      ]
+    }
+  ]
+}

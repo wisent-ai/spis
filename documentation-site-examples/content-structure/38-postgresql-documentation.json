@@ -1,0 +1,267 @@
+{
+  "name": "PostgreSQL Documentation",
+  "source_url": "https://www.postgresql.org/docs/",
+  "category": "Database documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "scoped sitemap (/docs/current /docs/17)",
+  "inventory_url_count": 2299,
+  "landing_nav": [
+    {
+      "text": "Home",
+      "path": "/"
+    },
+    {
+      "text": "About",
+      "path": "/about/"
+    },
+    {
+      "text": "Download",
+      "path": "/download/"
+    },
+    {
+      "text": "Documentation",
+      "path": "/docs/"
+    },
+    {
+      "text": "Community",
+      "path": "/community/"
+    },
+    {
+      "text": "Developers",
+      "path": "/developer/"
+    },
+    {
+      "text": "Support",
+      "path": "/support/"
+    },
+    {
+      "text": "Donate",
+      "path": "/about/donate/"
+    },
+    {
+      "text": "Your account",
+      "path": "/account/"
+    },
+    {
+      "text": "PostgreSQL 18.6, 17.11, 16.15, 15.19, 14.24 and 19 Beta 3 Released!",
+      "path": "/about/news/postgresql-186-1711-1615-1519-1424-and-19-beta-3-released-3365/"
+    },
+    {
+      "text": "Manuals",
+      "path": "/docs/"
+    },
+    {
+      "text": "Archive",
+      "path": "/docs/manuals/archive/"
+    },
+    {
+      "text": "Release Notes",
+      "path": "/docs/release/"
+    },
+    {
+      "text": "Books",
+      "path": "/docs/books/"
+    },
+    {
+      "text": "Tutorials & Other Resources",
+      "path": "/docs/online-resources/"
+    },
+    {
+      "text": "FAQ",
+      "path": "/docs/faq/"
+    },
+    {
+      "text": "View the manual",
+      "path": "/docs/current/"
+    },
+    {
+      "text": "19 beta",
+      "path": "/docs/19/index.html"
+    },
+    {
+      "text": "A4 PDF",
+      "path": "/files/documentation/pdf/19/postgresql-19-A4.pdf"
+    },
+    {
+      "text": "US PDF",
+      "path": "/files/documentation/pdf/19/postgresql-19-US.pdf"
+    },
+    {
+      "text": "18",
+      "path": "/docs/18/index.html"
+    },
+    {
+      "text": "Current",
+      "path": "/docs/current/index.html"
+    },
+    {
+      "text": "A4 PDF",
+      "path": "/files/documentation/pdf/18/postgresql-18-A4.pdf"
+    },
+    {
+      "text": "US PDF",
+      "path": "/files/documentation/pdf/18/postgresql-18-US.pdf"
+    },
+    {
+      "text": "17",
+      "path": "/docs/17/index.html"
+    },
+    {
+      "text": "A4 PDF",
+      "path": "/files/documentation/pdf/17/postgresql-17-A4.pdf"
+    },
+    {
+      "text": "US PDF",
+      "path": "/files/documentation/pdf/17/postgresql-17-US.pdf"
+    },
+    {
+      "text": "16",
+      "path": "/docs/16/index.html"
+    },
+    {
+      "text": "A4 PDF",
+      "path": "/files/documentation/pdf/16/postgresql-16-A4.pdf"
+    },
+    {
+      "text": "US PDF",
+      "path": "/files/documentation/pdf/16/postgresql-16-US.pdf"
+    },
+    {
+      "text": "15",
+      "path": "/docs/15/index.html"
+    },
+    {
+      "text": "A4 PDF",
+      "path": "/files/documentation/pdf/15/postgresql-15-A4.pdf"
+    },
+    {
+      "text": "US PDF",
+      "path": "/files/documentation/pdf/15/postgresql-15-US.pdf"
+    },
+    {
+      "text": "14",
+      "path": "/docs/14/index.html"
+    },
+    {
+      "text": "A4 PDF",
+      "path": "/files/documentation/pdf/14/postgresql-14-A4.pdf"
+    },
+    {
+      "text": "US PDF",
+      "path": "/files/documentation/pdf/14/postgresql-14-US.pdf"
+    },
+    {
+      "text": "Development snapshot",
+      "path": "/docs/devel/index.html"
+    },
+    {
+      "text": "Policies",
+      "path": "/about/policies/"
+    },
+    {
+      "text": "Code of Conduct",
+      "path": "/about/policies/coc/"
+    },
+    {
+      "text": "About PostgreSQL",
+      "path": "/about/"
+    },
+    {
+      "text": "Contact",
+      "path": "/about/contact/"
+    }
+  ],
+  "url_sections": {
+    "docs": 2299
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "tutorials & other resources"
+    ],
+    "changelog / release notes": [
+      "release notes"
+    ],
+    "faq": [
+      "faq",
+      "/docs/faq/"
+    ],
+    "community / support": [
+      "support",
+      "community",
+      "/support/",
+      "/community/"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://www.postgresql.org/about/",
+      "h1": "About",
+      "h2": [
+        "Quick Links",
+        "What is PostgreSQL?",
+        "Why use PostgreSQL?",
+        "Any questions?",
+        "Our users us",
+        "What's a database project without statistics?"
+      ]
+    },
+    {
+      "url": "https://www.postgresql.org/download/",
+      "h1": "Downloads",
+      "h2": [
+        "Quick Links",
+        "PostgreSQL Downloads",
+        "Additional Software",
+        "File Browser"
+      ]
+    },
+    {
+      "url": "https://www.postgresql.org/docs/",
+      "h1": "Documentation",
+      "h2": [
+        "Quick Links",
+        "Manuals",
+        "Translated Manuals"
+      ]
+    },
+    {
+      "url": "https://www.postgresql.org/community/",
+      "h1": "Community",
+      "h2": [
+        "Quick Links",
+        "Planet PostgreSQL",
+        "External Resources"
+      ]
+    },
+    {
+      "url": "https://www.postgresql.org/developer/",
+      "h1": "Developers",
+      "h2": [
+        "Quick Links",
+        "Who are we?",
+        "What will you find here?",
+        "How to get involved",
+        "What is a CommitFest?",
+        "Google Summer of Code Program"
+      ]
+    },
+    {
+      "url": "https://www.postgresql.org/support/",
+      "h1": "Support",
+      "h2": [
+        "Quick Links",
+        "Third Party Resources",
+        "Bug Reporting",
+        "Security Vulnerability Reporting"
+      ]
+    },
+    {
+      "url": "https://www.postgresql.org/account/",
+      "h1": "Sign in",
+      "h2": [
+        "Community account sign-in",
+        "Third party sign in"
+      ]
+    }
+  ]
+}

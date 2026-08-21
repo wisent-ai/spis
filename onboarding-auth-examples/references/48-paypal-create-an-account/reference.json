@@ -1,0 +1,289 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "PayPal — create an account",
+  "product_url": "https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315",
+  "evidence_status": "partial",
+  "upstream_owner": "PayPal, Inc.",
+  "captured_at": "2026-08-16T23:25:10Z",
+  "motion": [
+    {
+      "local_path": "media/official-recording.mp4",
+      "source_url": "https://www.youtube.com/watch?v=pzubfbvi5Ns",
+      "media_kind": "video-mp4",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 89.933,
+      "frame_count": 1349,
+      "bytes": 781293,
+      "sha256": "b09905026f3603aaa9c5a02606999b67b988351cf94f436faa71b8e81c5f3b18",
+      "capture_method": "official YouTube video downloaded through opt-in Cobalt instance https://dog.kittycat.boo; visual-only transcode to H.264 at 15 fps, at most 90 seconds, no synthesized frames",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "account type",
+      "local_path": "media/state-01-account-type.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 2s (mean abs diff 9.7461/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 38926,
+      "sha256": "3dffc2335294e752190af7ca22424ed2b1f5f25159c17338108ee030a5fbb3ea",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.0,
+        "mean_abs_diff": 9.7461,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "contact verified",
+      "local_path": "media/state-02-contact-verified.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.8242/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 52832,
+      "sha256": "2d049fd25d54cce36bb9f8b38de1f60160815ffdaae2599b6f4bacbda0099264",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 19.5,
+        "mean_abs_diff": 1.8242,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "account created",
+      "local_path": "media/state-03-account-created.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 38.5s (mean abs diff 1.7148/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 127648,
+      "sha256": "d32a79507e089755888be46321bcdf5d9b44ba8ffaec728a8faf8aebdf40bfbc",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 38.5,
+        "mean_abs_diff": 1.7148,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "funding ready",
+      "local_path": "media/state-04-funding-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 51.5s (mean abs diff 1.4492/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 93064,
+      "sha256": "020f552560b0ec931e1042fd0cb3513dd047c92a1eea69b9a58a98c83a3d8930",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 51.5,
+        "mean_abs_diff": 1.4492,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "account ready",
+      "local_path": "media/state-05-account-ready.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 2.0898/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 81575,
+      "sha256": "d83515912a7f6f7349ca3cc970c4c60b42cc619bca3a99821ad11f96c040da19",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 65.5,
+        "mean_abs_diff": 2.0898,
+        "sampled_frames": 180
+      }
+    },
+    {
+      "name": "first transaction",
+      "local_path": "media/state-06-first-transaction.png",
+      "source_motion_path": "frame of media/official-recording.mp4 at 79.5s (mean abs diff 1.6797/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 73752,
+      "sha256": "52b3079cfebdecdc8e8682d6f500a91103a2d2feb03392c4ca4c036e61bd34b3",
+      "source_match": {
+        "motion_path": "media/official-recording.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 79.5,
+        "mean_abs_diff": 1.6797,
+        "sampled_frames": 180
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "primary input",
+      "trigger": "Choose Sign up and personal or business account",
+      "response": "PayPal opens the appropriate identity form",
+      "feedback": "The retained account type state makes the available next action visible.",
+      "cancellation": "Closing or leaving before submission produces no completion claim.",
+      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+      "recovery": "Restore the prerequisite and repeat the same entry action.",
+      "evidence": "media/state-01-account-type.png @ 4.50s; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+    },
+    {
+      "name": "focus and selection",
+      "trigger": "Enter phone or email and complete the verification challenge",
+      "response": "PayPal accepts the verified contact channel",
+      "feedback": "The recording advances to contact verified and retains the selected context.",
+      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+      "recovery": "Correct, resend, or reselect and submit again.",
+      "evidence": "media/state-01-account-type.png @ 4.50s; media/state-02-contact-verified.png @ 19.79s; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+    },
+    {
+      "name": "navigation",
+      "trigger": "Create credentials and enter required identity details",
+      "response": "PayPal creates the account profile",
+      "feedback": "The navigation result is visible as account created.",
+      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+      "evidence": "media/state-02-contact-verified.png @ 19.79s; media/state-03-account-created.png @ 35.07s; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "Link or confirm a card or bank when required",
+      "response": "PayPal records the funding method",
+      "feedback": "The official recording shows the confirmed funding ready state.",
+      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+      "evidence": "media/state-03-account-created.png @ 35.07s; media/state-04-funding-ready.png @ 50.36s; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+    },
+    {
+      "name": "cancellation and backtracking",
+      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+      "cancellation": "This interaction is the observed cancellation boundary.",
+      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+      "evidence": "media/state-02-contact-verified.png @ 19.79s; media/state-03-account-created.png @ 35.07s; media/state-04-funding-ready.png @ 50.36s; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+    },
+    {
+      "name": "progress feedback",
+      "trigger": "Review the account summary and security prompts",
+      "response": "PayPal exposes send, receive, and payment controls",
+      "feedback": "Progress is observable as the distinct account ready state.",
+      "cancellation": "Leaving during feedback does not count as completion.",
+      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+      "recovery": "Wait for durable feedback or use the product's retry route.",
+      "evidence": "media/state-04-funding-ready.png @ 50.36s; media/state-05-account-ready.png @ 65.65s; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+    },
+    {
+      "name": "failure",
+      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+      "cancellation": "The user can leave without a false success state.",
+      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+      "evidence": "media/state-03-account-created.png @ 35.07s; media/state-04-funding-ready.png @ 50.36s; media/state-05-account-ready.png @ 65.65s; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+    },
+    {
+      "name": "recovery and completion",
+      "trigger": "Complete a supported payment or transfer action",
+      "response": "PayPal records the transaction state, proving first money-movement success",
+      "feedback": "The retained first transaction state is the completion evidence.",
+      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+      "evidence": "media/state-05-account-ready.png @ 65.65s; media/state-06-first-transaction.png @ 80.94s; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+    }
+  ],
+  "journey": {
+    "actor": "new PayPal customer",
+    "goal": "verify an account and complete the first money action",
+    "prerequisites": [
+      "email and phone",
+      "personal or business account decision",
+      "funding method when required"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Choose Sign up and personal or business account",
+        "system_response": "PayPal opens the appropriate identity form",
+        "state": "account type",
+        "evidence": "media/state-01-account-type.png; media/official-recording.mp4#t=4.497; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+      },
+      {
+        "index": 2,
+        "user_action": "Enter phone or email and complete the verification challenge",
+        "system_response": "PayPal accepts the verified contact channel",
+        "state": "contact verified",
+        "evidence": "media/state-02-contact-verified.png; media/official-recording.mp4#t=19.785; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+      },
+      {
+        "index": 3,
+        "user_action": "Create credentials and enter required identity details",
+        "system_response": "PayPal creates the account profile",
+        "state": "account created",
+        "evidence": "media/state-03-account-created.png; media/official-recording.mp4#t=35.074; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+      },
+      {
+        "index": 4,
+        "user_action": "Link or confirm a card or bank when required",
+        "system_response": "PayPal records the funding method",
+        "state": "funding ready",
+        "evidence": "media/state-04-funding-ready.png; media/official-recording.mp4#t=50.362; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+      },
+      {
+        "index": 5,
+        "user_action": "Review the account summary and security prompts",
+        "system_response": "PayPal exposes send, receive, and payment controls",
+        "state": "account ready",
+        "evidence": "media/state-05-account-ready.png; media/official-recording.mp4#t=65.651; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+      },
+      {
+        "index": 6,
+        "user_action": "Complete a supported payment or transfer action",
+        "system_response": "PayPal records the transaction state, proving first money-movement success",
+        "state": "first transaction",
+        "evidence": "media/state-06-first-transaction.png; media/official-recording.mp4#t=80.940; https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+      }
+    ],
+    "failure_route": [
+      "At contact verified or account created, invalid, expired, denied, or missing required input leaves the flow short of first transaction; evidence: media/state-02-contact-verified.png, media/state-03-account-created.png, and https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315.",
+      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-account-created.png through media/state-05-account-ready.png."
+    ],
+    "recovery_route": [
+      "Return to the retained contact verified or account created requirement, correct or resend the blocking input, and resubmit; evidence: https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315.",
+      "Continue through the same terminal action until first transaction is visible in media/state-06-first-transaction.png and the motion at 80.940s."
+    ],
+    "completion_evidence": "first transaction retained at media/state-06-first-transaction.png and media/official-recording.mp4#t=80.940; source https://www.paypal.com/us/cshelp/article/how-do-i-open-a-paypal-account-help315"
+  },
+  "accessibility": {
+    "observations": [
+      "Visual observation from media/state-01-account-type.png and media/state-02-contact-verified.png: the current task is presented with persistent on-screen text rather than motion alone.",
+      "Visual observation from media/state-03-account-created.png and media/state-04-funding-ready.png: primary choices remain spatially associated with their current setup context.",
+      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    ],
+    "unknowns": [
+      "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
+      "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
+      "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
+      "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

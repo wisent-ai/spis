@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921624,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"AWS CLI authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: AWS CLI\r\n"]
+[0.55,"o","cli-ref$ aws --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","aws-cli/2.27.37 Python/3.13.13 Darwin/25.4.0 source/arm64\r\n"]
+[2.2,"o","cli-ref$ aws help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","AWS()                                                                    AWS()\r\n\r\nNNAAMMEE\r\n       aws -\r\n\r\nDDEESSCCRRIIPPTTIIOONN\r\n       The AWS Command Line Interface is a unified tool to manage your AWS\r\n       services.\r\n\r\nSSYYNNOOPPSSIISS\r\n\r\n          aws [options] <command> <subcommand> [parameters]\r\n\r\n       Use _a_w_s _c_o_m_m_a_n_d _h_e_l_p for information on a specific command. Use _a_w_s\r\n"]
+[5.1,"o","cli-ref$ aws --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","usage: aws [options] <command> <subcommand> [<subcommand> ...] [parameters]\r\nTo see help text, you can run:\r\n\r\n  aws help\r\n  aws <command> help\r\n  aws <command> <subcommand> help\r\n\r\naws: error: the following arguments are required: command\r\n[exit status 252]\r\n"]
+[7.1,"o","cli-ref$ aws --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ aws help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","AWS()                                                                    AWS()\r\n\r\nNNAAMMEE\r\n       aws -\r\n"]

@@ -1,0 +1,264 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Dash",
+  "product_url": "https://kapeli.com/dash",
+  "evidence_status": "partial",
+  "upstream_owner": "Kapeli / Dash",
+  "captured_at": "2026-08-16T23:27:18Z",
+  "motion": [
+    {
+      "local_path": "media/motion.mp4",
+      "source_url": "https://www.youtube.com/watch?v=nwMfx8h0kdQ",
+      "media_kind": "video-mp4",
+      "width": 960,
+      "height": 540,
+      "duration_seconds": 18.0,
+      "frame_count": 270,
+      "bytes": 205602,
+      "sha256": "bee84010491d629a74123d4792db2ed7c5b5b5451637ae6d11ddb27d98f58b69",
+      "capture_method": "Downloaded from the product publisher’s official video channel with yt-dlp, then excerpted and transcoded to H.264 without synthesized frames.",
+      "declared_media_kind": "video-mp4",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "upstream-owner-media"
+    }
+  ],
+  "states": [
+    {
+      "name": "Entry state: Focus Dash search",
+      "local_path": "media/state-01.png",
+      "source_motion_path": "frame of media/motion.mp4 at 2s (mean abs diff 1.7148/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 268767,
+      "sha256": "6e4f6dedc22b8d1edea56cc848dcb8d6af169ad72f13ebcccbf94cd4d5a54924",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 2.0,
+        "mean_abs_diff": 1.7148,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Invocation state: Type a symbol or API query",
+      "local_path": "media/state-02.png",
+      "source_motion_path": "frame of media/motion.mp4 at 4.5s (mean abs diff 1.6953/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 287069,
+      "sha256": "4703ea1bed47d8327388a7b85c9b414744e77d975a2e67134fd697fa1a93642b",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 1.6953,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Focused intermediate state: Review matching docset results",
+      "local_path": "media/state-03.png",
+      "source_motion_path": "frame of media/motion.mp4 at 9s (mean abs diff 2.8594/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 281321,
+      "sha256": "e7e3804e9b7454d1f89fc1656311384d13b30666299c769b0db42727d7b81785",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 9.0,
+        "mean_abs_diff": 2.8594,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "Committed transition: Choose a class or symbol",
+      "local_path": "media/state-04.png",
+      "source_motion_path": "frame of media/motion.mp4 at 13s (mean abs diff 1.7188/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 210822,
+      "sha256": "adbcb7c76dcb0ba35e0594ee7fb5df491f1c3576abad0666545ef1ab53d69bad",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 13.0,
+        "mean_abs_diff": 1.7188,
+        "sampled_frames": 36
+      }
+    },
+    {
+      "name": "First-success result: Observe its documentation page",
+      "local_path": "media/state-05.png",
+      "source_motion_path": "frame of media/motion.mp4 at 15.5s (mean abs diff 0.6992/255)",
+      "width": 960,
+      "height": 540,
+      "bytes": 104937,
+      "sha256": "2df366b912fe2271e1e0511e9db5a6e09fd148088980448036904d6750ac66dd",
+      "source_match": {
+        "motion_path": "media/motion.mp4",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 15.5,
+        "mean_abs_diff": 0.6992,
+        "sampled_frames": 36
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Primary input",
+      "trigger": "Focus Dash search",
+      "response": "Dash exposes the entry surface visible in the retained motion.",
+      "feedback": "The first state establishes the active surface before manipulation.",
+      "cancellation": "Stopping here leaves the product unchanged.",
+      "failure": "The goal is not yet complete in the entry state.",
+      "recovery": "Type a symbol or API query.",
+      "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+    },
+    {
+      "name": "Focus and selection",
+      "trigger": "Type a symbol or API query",
+      "response": "A target control, item, document, or workspace becomes the active context.",
+      "feedback": "The next retained state visibly differs and identifies the active path.",
+      "cancellation": "Focus can remain on the previous context without committing.",
+      "failure": "An unintended target would leave the desired result unavailable.",
+      "recovery": "Move focus to the intended visible target and continue.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+    },
+    {
+      "name": "Navigation",
+      "trigger": "Review matching docset results",
+      "response": "The recording advances into the product’s intermediate working state.",
+      "feedback": "Content, controls, or selection context changes in place.",
+      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+      "failure": "Stopping at this state produces no completion evidence.",
+      "recovery": "Choose a class or symbol.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Confirmation",
+      "trigger": "Choose a class or symbol",
+      "response": "The selected operation crosses from preparation into a committed transition.",
+      "feedback": "The fourth state records the immediate product response.",
+      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+      "failure": "Without confirmation, the fifth-state result does not appear.",
+      "recovery": "Repeat the intended selection and confirm it.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+    },
+    {
+      "name": "Completion feedback",
+      "trigger": "Observe its documentation page",
+      "response": "The recording reaches the first meaningful result for “Find API documentation”.",
+      "feedback": "The fifth local frame is the offline completion evidence.",
+      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+      "failure": "Absence of the fifth state means the journey is incomplete.",
+      "recovery": "Replay the recorded sequence from the entry state.",
+      "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Cancellation and backtracking",
+      "trigger": "Leave the path before the committed transition.",
+      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+      "failure": "Exiting early does not produce completion evidence.",
+      "recovery": "Re-enter through state 2 and continue to state 4.",
+      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s; media/state-03.png extracted from media/motion.mp4 at 8.64s"
+    },
+    {
+      "name": "Failure boundary",
+      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+      "feedback": "No fifth-state visual is present before commitment.",
+      "cancellation": "The actor may abandon the incomplete path without claiming success.",
+      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s; contrasted with media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    },
+    {
+      "name": "Recovery",
+      "trigger": "Resume from the last valid intermediate state.",
+      "response": "The same visible action sequence advances to the retained result.",
+      "feedback": "State 5 supplies positive completion feedback after state 4.",
+      "cancellation": "The actor can still stop before replaying confirmation.",
+      "failure": "A replay that never reaches state 5 remains incomplete.",
+      "recovery": "Replay state 4 and verify state 5.",
+      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s; media/state-05.png extracted from media/motion.mp4 at 15.84s"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time or returning Dash user",
+    "goal": "Find API documentation",
+    "prerequisites": [
+      "Dash available on macOS or the official recording environment",
+      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Focus Dash search",
+        "system_response": "Dash advances to the entry state retained in state 1.",
+        "state": "Entry state: Focus Dash search",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+      },
+      {
+        "index": 2,
+        "user_action": "Type a symbol or API query",
+        "system_response": "Dash advances to the invocation state retained in state 2.",
+        "state": "Invocation state: Type a symbol or API query",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+      },
+      {
+        "index": 3,
+        "user_action": "Review matching docset results",
+        "system_response": "Dash advances to the focused intermediate state retained in state 3.",
+        "state": "Focused intermediate state: Review matching docset results",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+      },
+      {
+        "index": 4,
+        "user_action": "Choose a class or symbol",
+        "system_response": "Dash advances to the committed transition retained in state 4.",
+        "state": "Committed transition: Choose a class or symbol",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+      },
+      {
+        "index": 5,
+        "user_action": "Observe its documentation page",
+        "system_response": "Dash advances to the first-success result retained in state 5.",
+        "state": "First-success result: Observe its documentation page",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    ],
+    "failure_route": [
+      "Stop at the third retained state before confirmation; the meaningful result is absent.",
+      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+    ],
+    "recovery_route": [
+      "Return to the second retained state and restore the intended focus or selection.",
+      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+    ],
+    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+  },
+  "accessibility": {
+    "observations": [
+      "Active focus or selection is conveyed by a visible change between retained states.",
+      "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown.",
+      "The five extracted frames provide a nonanimated way to inspect the same sequence."
+    ],
+    "unknowns": [
+      "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
+      "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
+      "The product’s Reduce Motion behavior and contrast preferences are not demonstrated."
+    ]
+  },
+  "motion_provenance": [
+    "upstream-owner-media"
+  ],
+  "evidence_gaps": [
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

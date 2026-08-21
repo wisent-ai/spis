@@ -1,0 +1,515 @@
+{
+  "name": "MongoDB Documentation",
+  "source_url": "https://www.mongodb.com/docs/",
+  "category": "Database documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "scoped sitemap (/docs)",
+  "inventory_url_count": 24292,
+  "landing_nav": [
+    {
+      "text": "AtlasBuild and scale with an AI-ready platform",
+      "path": "/atlas"
+    },
+    {
+      "text": "DatabaseDeploy a multi-cloud database",
+      "path": "/products/platform/atlas-database"
+    },
+    {
+      "text": "SearchDeliver engaging search experiences",
+      "path": "/products/platform/atlas-search"
+    },
+    {
+      "text": "Vector SearchDesign intelligent apps with gen AI",
+      "path": "/products/platform/atlas-vector-search"
+    },
+    {
+      "text": "Stream ProcessingIntegrate MongoDB and Kafka",
+      "path": "/products/platform/atlas-stream-processing"
+    },
+    {
+      "text": "Enterprise AdvancedRun and manage MongoDB yourself",
+      "path": "/products/self-managed/enterprise-advanced"
+    },
+    {
+      "text": "Community EditionDevelop locally with MongoDB",
+      "path": "/products/self-managed/community-edition"
+    },
+    {
+      "text": "CompassWork with MongoDB data in a GUI",
+      "path": "/products/tools/compass"
+    },
+    {
+      "text": "Relational MigratorMigrate to MongoDB with confidence",
+      "path": "/products/tools/relational-migrator"
+    },
+    {
+      "text": "View All ProductsExplore our full developer suitearrow-right",
+      "path": "/products"
+    },
+    {
+      "text": "MongoDB 8.0Our fastest version everarrow-right",
+      "path": "/products/updates/version-release"
+    },
+    {
+      "text": "Sign Up",
+      "path": "/cloud/atlas/register"
+    },
+    {
+      "text": "Download",
+      "path": "/try/download/enterprise"
+    },
+    {
+      "text": "Download",
+      "path": "/try/download/community"
+    },
+    {
+      "text": "Atlas DocumentationGet started using Atlas",
+      "path": "/docs/atlas/"
+    },
+    {
+      "text": "Server DocumentationLearn to use MongoDB",
+      "path": "/docs/manual/"
+    },
+    {
+      "text": "Tools and ConnectorsLearn how to connect to MongoDB",
+      "path": "/docs/tools-and-connectors/"
+    },
+    {
+      "text": "MongoDB DriversUse drivers and libraries for MongoDB",
+      "path": "/docs/drivers/"
+    },
+    {
+      "text": "Resources HubGet help building the next big thing with MongoDBarrow-right",
+      "path": "/resources"
+    },
+    {
+      "text": "CommunityJoin a global community of developers",
+      "path": "/community/"
+    },
+    {
+      "text": "Events and WebinarsFind an event or webinar near you",
+      "path": "/events"
+    },
+    {
+      "text": "Artificial Intelligence",
+      "path": "/solutions/use-cases/artificial-intelligence"
+    },
+    {
+      "text": "Modernization",
+      "path": "/solutions/use-cases/modernize"
+    },
+    {
+      "text": "Payments",
+      "path": "/solutions/use-cases/payments"
+    },
+    {
+      "text": "Serverless Development",
+      "path": "/solutions/use-cases/serverless"
+    },
+    {
+      "text": "Gaming",
+      "path": "/solutions/use-cases/gaming"
+    },
+    {
+      "text": "Intelligent Search",
+      "path": "/solutions/use-cases/intelligent-search"
+    },
+    {
+      "text": "Edge and Mobile",
+      "path": "/solutions/use-cases/edge-and-mobile"
+    },
+    {
+      "text": "Financial Services",
+      "path": "/solutions/industries/financial-services"
+    },
+    {
+      "text": "Telecommunications",
+      "path": "/solutions/industries/telecommunications"
+    },
+    {
+      "text": "Healthcare",
+      "path": "/solutions/industries/healthcare"
+    },
+    {
+      "text": "Retail",
+      "path": "/solutions/industries/retail"
+    },
+    {
+      "text": "Public Sector",
+      "path": "/solutions/industries/public-sector"
+    },
+    {
+      "text": "Manufacturing",
+      "path": "/solutions/industries/manufacturing"
+    },
+    {
+      "text": "Learn morearrow-right",
+      "path": "/services/consulting/ai-applications-program"
+    },
+    {
+      "text": "Learn morearrow-right",
+      "path": "/solutions/startups"
+    },
+    {
+      "text": "See Storiesarrow-right",
+      "path": "/solutions/customer-case-studies"
+    },
+    {
+      "text": "CareersStart your next adventure",
+      "path": "/company/careers"
+    },
+    {
+      "text": "BlogRead articles and announcements",
+      "path": "/blog"
+    },
+    {
+      "text": "NewsroomRead press releases and news stories",
+      "path": "/company/newsroom"
+    },
+    {
+      "text": "PartnersLearn about our partner ecosystem",
+      "path": "/company/partners"
+    },
+    {
+      "text": "LeadershipMeet our executive team",
+      "path": "/company/leadership"
+    },
+    {
+      "text": "CompanyLearn more about who we are",
+      "path": "/company"
+    },
+    {
+      "text": "Connect with an expertarrow-right",
+      "path": "/company/contact"
+    },
+    {
+      "text": "Pricing",
+      "path": "/pricing"
+    },
+    {
+      "text": "Support",
+      "path": "/services/support"
+    },
+    {
+      "text": "Get Started",
+      "path": "/cloud/atlas/register"
+    },
+    {
+      "text": "Get Started",
+      "path": "/docs/get-started/"
+    },
+    {
+      "text": "Deployment",
+      "path": "/docs/deployment/"
+    },
+    {
+      "text": "Development",
+      "path": "/docs/development/"
+    },
+    {
+      "text": "Management",
+      "path": "/docs/management/"
+    },
+    {
+      "text": "Client Libraries",
+      "path": "/docs/drivers/"
+    },
+    {
+      "text": "Tools",
+      "path": "/docs/tools-and-connectors/"
+    },
+    {
+      "text": "Atlas Architecture Center",
+      "path": "/docs/atlas/architecture/current/"
+    },
+    {
+      "text": "Careers",
+      "path": "/careers"
+    },
+    {
+      "text": "Legal",
+      "path": "/legal"
+    },
+    {
+      "text": "Privacy Policy",
+      "path": "/legal/privacy/privacy-policy"
+    },
+    {
+      "text": "Security Information",
+      "path": "/company/contact/mongodb-vulnerability-disclosure-policy"
+    },
+    {
+      "text": "Trust Center",
+      "path": "/products/platform/trust"
+    },
+    {
+      "text": "Connect with Us",
+      "path": "/company/contact/social-media-hub"
+    },
+    {
+      "text": "Contact Us",
+      "path": "/company/contact"
+    },
+    {
+      "text": "Customer Support",
+      "path": "/services/support"
+    },
+    {
+      "text": "MongoDB Atlas",
+      "path": "/cloud/atlas/register"
+    },
+    {
+      "text": "Enterprise Advanced",
+      "path": "/try/download/enterprise"
+    },
+    {
+      "text": "Community Edition",
+      "path": "/try/download/community"
+    },
+    {
+      "text": "Vector Databases",
+      "path": "/resources/basics/databases/vector-databases"
+    },
+    {
+      "text": "NoSQL Databases",
+      "path": "/resources/basics/databases/nosql-explained"
+    },
+    {
+      "text": "Document Databases",
+      "path": "/resources/basics/databases/document-databases"
+    },
+    {
+      "text": "RAG Database",
+      "path": "/resources/basics/artificial-intelligence/retrieval-augmented-generation"
+    },
+    {
+      "text": "ACID Transactions",
+      "path": "/resources/basics/databases/acid-transactions"
+    },
+    {
+      "text": "MERN Stack",
+      "path": "/resources/languages/mern-stack"
+    },
+    {
+      "text": "MEAN Stack",
+      "path": "/resources/languages/mean-stack"
+    }
+  ],
+  "url_sections": {
+    "docs": 24292
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "learn morearrow-right",
+      "companylearn more about who we are",
+      "server documentationlearn to use mongodb",
+      "partnerslearn about our partner ecosystem"
+    ],
+    "getting started / quickstart": [
+      "get started",
+      "/docs/get-started/",
+      "atlas documentationget started using atlas"
+    ],
+    "guides / how-to": [
+      "tools and connectorslearn how to connect to mongodb"
+    ],
+    "changelog / release notes": [
+      "/products/updates/version-release",
+      "newsroomread press releases and news stories"
+    ],
+    "migration / upgrade": [
+      "/products/tools/relational-migrator",
+      "relational migratormigrate to mongodb with confidence",
+      "migrating-parse-with-microsoft-azure-and-mongodb-cloud-manager"
+    ],
+    "security": [
+      "security information",
+      "/company/contact/mongodb-vulnerability-disclosure-policy"
+    ],
+    "sdk / client libraries": [
+      "client libraries",
+      "mongodb driversuse drivers and libraries for mongodb"
+    ],
+    "community / support": [
+      "support",
+      "community",
+      "/community/",
+      "customer support"
+    ],
+    "integrations": [
+      "stream processingintegrate mongodb and kafka"
+    ],
+    "concepts / architecture": [
+      "atlas architecture center",
+      "/docs/atlas/architecture/current/"
+    ],
+    "deployment / production": [
+      "deployment",
+      "/docs/deployment/",
+      "databasedeploy a multi-cloud database"
+    ],
+    "videos": [
+      "events and webinarsfind an event or webinar near you"
+    ],
+    "pricing / limits": [
+      "pricing",
+      "/pricing"
+    ],
+    "accessibility": [
+      "accessibility"
+    ],
+    "versioned docs": [
+      "/products/updates/version-release",
+      "mongodb 8.0our fastest version everarrow-right"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://www.mongodb.com/atlas",
+      "h1": ".css-17iqwpm{background-color:transparent;color:#00684A;}MongoDB Atlas.The moder",
+      "h2": [
+        "Built for the way builders work with data",
+        "Build faster with a suite of integrated data services"
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/products",
+      "h1": "Products",
+      "h2": [
+        "The world's most popular document database",
+        "Level Up Your MongoDB Skills",
+        "Run MongoDB anywhere",
+        "Explore MongoDB offerings",
+        "MongoDB Products FAQ",
+        "FAQ",
+        "Try MongoDB Today"
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/blog",
+      "h1": "MongoDB Blog",
+      "h2": [
+        "10 Years of MongoDB Atlas: Built for What’s Next"
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/company",
+      "h1": "About MongoDB",
+      "h2": [
+        "Our journey",
+        "Leadership commitment",
+        "Guided by our values",
+        "What we do",
+        "Together, there’s nothing we can’t build",
+        "Learn more about MongoDB"
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/pricing",
+      "h1": "MongoDB Pricing",
+      "h2": [
+        "MongoDB Atlas",
+        "Need help figuring out your monthly costs?",
+        "Customize your deployment with tools & services",
+        "Questions about pricing?",
+        "MongoDB Enterprise Advanced",
+        "Questions about pricing?",
+        "Customize your deployment with tools & services",
+        "Free Cluster",
+        "Dedicated Cluster",
+        "Flex Cluster",
+        "Atlas SQL Interface",
+        "Atlas Data Lake",
+        "FAQ",
+        "Ready to get started?",
+        "Legacy Regions",
+        "Atlas Charts",
+        "Atlas Data Federation",
+        "App Services",
+        "MongoDB Search on Atlas",
+        "Stream Processors"
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/careers",
+      "h1": "Together, there’s nothing we can’t build",
+      "h2": [
+        "Life at MongoDB",
+        "Meet our teams at MongoDB",
+        "Working models",
+        "In-Office",
+        "Flexible",
+        "Fully remote",
+        "Customer-facing remote",
+        "Our approach to hybrid work",
+        "Guided by our values",
+        "Think Big, Go Far",
+        "Build Together",
+        "Embrace the Power of Differences",
+        "Make it Matter",
+        "Own What You Do",
+        "Be Intellectually Honest",
+        "Our Benefits",
+        "Students & Graduates",
+        "Inclusion",
+        "Culture blog",
+        "Building a Culture of Growth: SVP Simon Eid on MongoDB’s Massive Opportunity in "
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/legal",
+      "h1": "Legal",
+      "h2": [
+        "Website Terms of Use",
+        "Acceptable Use Policy",
+        "Trademark Standards for Use",
+        "Privacy Hub",
+        "Privacy Policy",
+        "Data Privacy Framework Statement",
+        "Law Enforcement Information Request",
+        "Modern Slavery Statement",
+        "Digital Services Act Information"
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/solutions/startups",
+      "h1": ".css-616z0a{background-color:transparent;color:#00ed64;}Build, scale, and succee",
+      "h2": [
+        "MongoDB for Startups companies represent more than $200 billion in combined valu",
+        "A program tailored for every stage of your startup’s journey",
+        "Build smarter, scale faster with our expanded program",
+        "Why startups choose MongoDB",
+        "Hear directly from founders",
+        "Supercharge your stack with Voyage AI",
+        "Build AI You Can Trust. Build AI That Scales. Build on MongoDB",
+        "Partner with MongoDB for Startups",
+        "Frequently asked questions",
+        "FAQ"
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/services/support",
+      "h1": "Get Started with .css-616z0a{background-color:transparent;color:#00ed64;}MongoDB",
+      "h2": [
+        "Subscriptions and add-ons",
+        "References",
+        "For Giant Ideas"
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/try/download/enterprise",
+      "h1": "MongoDB Enterprise Server Download",
+      "h2": [
+        "Try MongoDB Enterprise Advanced"
+      ]
+    },
+    {
+      "url": "https://www.mongodb.com/docs/atlas/",
+      "h1": "MongoDB Atlas: Multi-Cloud Database Service",
+      "h2": [
+        "Build with MongoDB on AWS, Azure, and Google Cloud",
+        "Go Further with Atlas"
+      ]
+    }
+  ]
+}

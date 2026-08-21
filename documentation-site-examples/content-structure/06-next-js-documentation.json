@@ -1,0 +1,934 @@
+{
+  "name": "Next.js Documentation",
+  "source_url": "https://nextjs.org/docs",
+  "category": "Web framework documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 723,
+  "landing_nav": [
+    {
+      "text": "Showcase",
+      "path": "/showcase"
+    },
+    {
+      "text": "Docs",
+      "path": "/docs"
+    },
+    {
+      "text": "Blog",
+      "path": "/blog"
+    },
+    {
+      "text": "Learn",
+      "path": "/learn"
+    },
+    {
+      "text": "Getting Started",
+      "path": "/docs/app/getting-started"
+    },
+    {
+      "text": "Installation",
+      "path": "/docs/app/getting-started/installation"
+    },
+    {
+      "text": "Project Structure",
+      "path": "/docs/app/getting-started/project-structure"
+    },
+    {
+      "text": "Layouts and Pages",
+      "path": "/docs/app/getting-started/layouts-and-pages"
+    },
+    {
+      "text": "Linking and Navigating",
+      "path": "/docs/app/getting-started/linking-and-navigating"
+    },
+    {
+      "text": "Server and Client Components",
+      "path": "/docs/app/getting-started/server-and-client-components"
+    },
+    {
+      "text": "Fetching Data",
+      "path": "/docs/app/getting-started/fetching-data"
+    },
+    {
+      "text": "Mutating Data",
+      "path": "/docs/app/getting-started/mutating-data"
+    },
+    {
+      "text": "Caching",
+      "path": "/docs/app/getting-started/caching"
+    },
+    {
+      "text": "Revalidating",
+      "path": "/docs/app/getting-started/revalidating"
+    },
+    {
+      "text": "Error Handling",
+      "path": "/docs/app/getting-started/error-handling"
+    },
+    {
+      "text": "CSS",
+      "path": "/docs/app/getting-started/css"
+    },
+    {
+      "text": "Image Optimization",
+      "path": "/docs/app/getting-started/images"
+    },
+    {
+      "text": "Font Optimization",
+      "path": "/docs/app/getting-started/fonts"
+    },
+    {
+      "text": "Metadata and OG images",
+      "path": "/docs/app/getting-started/metadata-and-og-images"
+    },
+    {
+      "text": "Route Handlers",
+      "path": "/docs/app/getting-started/route-handlers"
+    },
+    {
+      "text": "Proxy",
+      "path": "/docs/app/getting-started/proxy"
+    },
+    {
+      "text": "Deploying",
+      "path": "/docs/app/getting-started/deploying"
+    },
+    {
+      "text": "Upgrading",
+      "path": "/docs/app/getting-started/upgrading"
+    },
+    {
+      "text": "Guides",
+      "path": "/docs/app/guides"
+    },
+    {
+      "text": "Adopting Partial Prefetching",
+      "path": "/docs/app/guides/adopting-partial-prefetching"
+    },
+    {
+      "text": "AI Coding Agents",
+      "path": "/docs/app/guides/ai-agents"
+    },
+    {
+      "text": "Analytics",
+      "path": "/docs/app/guides/analytics"
+    },
+    {
+      "text": "Authentication",
+      "path": "/docs/app/guides/authentication"
+    },
+    {
+      "text": "Authentication with Cache Components",
+      "path": "/docs/app/guides/authentication-with-cache-components"
+    },
+    {
+      "text": "Backend for Frontend",
+      "path": "/docs/app/guides/backend-for-frontend"
+    },
+    {
+      "text": "Building",
+      "path": "/docs/app/guides/building"
+    },
+    {
+      "text": "Caching (Previous Model)",
+      "path": "/docs/app/guides/caching-without-cache-components"
+    },
+    {
+      "text": "CDN Caching",
+      "path": "/docs/app/guides/cdn-caching"
+    },
+    {
+      "text": "CI Build Caching",
+      "path": "/docs/app/guides/ci-build-caching"
+    },
+    {
+      "text": "Client-side data fetching",
+      "path": "/docs/app/guides/client-side-data-fetching"
+    },
+    {
+      "text": "SWR",
+      "path": "/docs/app/guides/client-side-data-fetching/swr"
+    },
+    {
+      "text": "TanStack Query",
+      "path": "/docs/app/guides/client-side-data-fetching/tanstack-query"
+    },
+    {
+      "text": "Content Security Policy",
+      "path": "/docs/app/guides/content-security-policy"
+    },
+    {
+      "text": "CSS-in-JS",
+      "path": "/docs/app/guides/css-in-js"
+    },
+    {
+      "text": "Custom Server",
+      "path": "/docs/app/guides/custom-server"
+    },
+    {
+      "text": "Data Security",
+      "path": "/docs/app/guides/data-security"
+    },
+    {
+      "text": "Debugging",
+      "path": "/docs/app/guides/debugging"
+    },
+    {
+      "text": "Deploying to Platforms",
+      "path": "/docs/app/guides/deploying-to-platforms"
+    },
+    {
+      "text": "Draft Mode",
+      "path": "/docs/app/guides/draft-mode"
+    },
+    {
+      "text": "Environment Variables",
+      "path": "/docs/app/guides/environment-variables"
+    },
+    {
+      "text": "Forms",
+      "path": "/docs/app/guides/forms"
+    },
+    {
+      "text": "How Revalidation Works",
+      "path": "/docs/app/guides/how-revalidation-works"
+    },
+    {
+      "text": "ISR",
+      "path": "/docs/app/guides/incremental-static-regeneration"
+    },
+    {
+      "text": "ISR with Cache Components",
+      "path": "/docs/app/guides/incremental-static-regeneration-cache-components"
+    },
+    {
+      "text": "Instant navigation",
+      "path": "/docs/app/guides/instant-navigation"
+    },
+    {
+      "text": "Instrumentation",
+      "path": "/docs/app/guides/instrumentation"
+    },
+    {
+      "text": "Interactive apps",
+      "path": "/docs/app/guides/interactive-apps"
+    },
+    {
+      "text": "Internationalization",
+      "path": "/docs/app/guides/internationalization"
+    },
+    {
+      "text": "JSON-LD",
+      "path": "/docs/app/guides/json-ld"
+    },
+    {
+      "text": "Lazy Loading",
+      "path": "/docs/app/guides/lazy-loading"
+    },
+    {
+      "text": "Development Environment",
+      "path": "/docs/app/guides/local-development"
+    },
+    {
+      "text": "Next.js MCP Server",
+      "path": "/docs/app/guides/mcp"
+    },
+    {
+      "text": "MDX",
+      "path": "/docs/app/guides/mdx"
+    },
+    {
+      "text": "Memory Usage",
+      "path": "/docs/app/guides/memory-usage"
+    },
+    {
+      "text": "Migrating",
+      "path": "/docs/app/guides/migrating"
+    },
+    {
+      "text": "App Router",
+      "path": "/docs/app/guides/migrating/app-router-migration"
+    },
+    {
+      "text": "Create React App",
+      "path": "/docs/app/guides/migrating/from-create-react-app"
+    },
+    {
+      "text": "Vite",
+      "path": "/docs/app/guides/migrating/from-vite"
+    },
+    {
+      "text": "Migrating to Cache Components",
+      "path": "/docs/app/guides/migrating-to-cache-components"
+    },
+    {
+      "text": "Multi-tenant",
+      "path": "/docs/app/guides/multi-tenant"
+    },
+    {
+      "text": "Multi-zones",
+      "path": "/docs/app/guides/multi-zones"
+    },
+    {
+      "text": "Offline support",
+      "path": "/docs/app/guides/offline-support"
+    },
+    {
+      "text": "OpenTelemetry",
+      "path": "/docs/app/guides/open-telemetry"
+    },
+    {
+      "text": "Optimizing prefetching",
+      "path": "/docs/app/guides/optimizing-prefetching"
+    },
+    {
+      "text": "Package Bundling",
+      "path": "/docs/app/guides/package-bundling"
+    },
+    {
+      "text": "PPR Platform Guide",
+      "path": "/docs/app/guides/ppr-platform-guide"
+    },
+    {
+      "text": "Prefetching",
+      "path": "/docs/app/guides/prefetching"
+    },
+    {
+      "text": "Preserving UI state",
+      "path": "/docs/app/guides/preserving-ui-state"
+    },
+    {
+      "text": "Preventing Flash",
+      "path": "/docs/app/guides/preventing-flash-before-hydration"
+    },
+    {
+      "text": "Production",
+      "path": "/docs/app/guides/production-checklist"
+    },
+    {
+      "text": "PWAs",
+      "path": "/docs/app/guides/progressive-web-apps"
+    },
+    {
+      "text": "Public pages",
+      "path": "/docs/app/guides/public-static-pages"
+    },
+    {
+      "text": "Redirecting",
+      "path": "/docs/app/guides/redirecting"
+    },
+    {
+      "text": "Rendering Philosophy",
+      "path": "/docs/app/guides/rendering-philosophy"
+    },
+    {
+      "text": "Sass",
+      "path": "/docs/app/guides/sass"
+    },
+    {
+      "text": "Scripts",
+      "path": "/docs/app/guides/scripts"
+    },
+    {
+      "text": "Self-Hosting",
+      "path": "/docs/app/guides/self-hosting"
+    },
+    {
+      "text": "Server Actions",
+      "path": "/docs/app/guides/server-actions"
+    },
+    {
+      "text": "Server and Client Boundary",
+      "path": "/docs/app/guides/server-and-client-boundary"
+    },
+    {
+      "text": "SPAs",
+      "path": "/docs/app/guides/single-page-applications"
+    },
+    {
+      "text": "Static Exports",
+      "path": "/docs/app/guides/static-exports"
+    },
+    {
+      "text": "Streaming",
+      "path": "/docs/app/guides/streaming"
+    },
+    {
+      "text": "Tailwind CSS v3",
+      "path": "/docs/app/guides/tailwind-v3-css"
+    },
+    {
+      "text": "Testing",
+      "path": "/docs/app/guides/testing"
+    },
+    {
+      "text": "Cypress",
+      "path": "/docs/app/guides/testing/cypress"
+    },
+    {
+      "text": "Jest",
+      "path": "/docs/app/guides/testing/jest"
+    },
+    {
+      "text": "Playwright",
+      "path": "/docs/app/guides/testing/playwright"
+    },
+    {
+      "text": "Vitest",
+      "path": "/docs/app/guides/testing/vitest"
+    },
+    {
+      "text": "Third Party Libraries",
+      "path": "/docs/app/guides/third-party-libraries"
+    },
+    {
+      "text": "Upgrading",
+      "path": "/docs/app/guides/upgrading"
+    },
+    {
+      "text": "Codemods",
+      "path": "/docs/app/guides/upgrading/codemods"
+    },
+    {
+      "text": "Version 14",
+      "path": "/docs/app/guides/upgrading/version-14"
+    },
+    {
+      "text": "Version 15",
+      "path": "/docs/app/guides/upgrading/version-15"
+    },
+    {
+      "text": "Version 16",
+      "path": "/docs/app/guides/upgrading/version-16"
+    },
+    {
+      "text": "Videos",
+      "path": "/docs/app/guides/videos"
+    },
+    {
+      "text": "View transitions",
+      "path": "/docs/app/guides/view-transitions"
+    },
+    {
+      "text": "API Reference",
+      "path": "/docs/app/api-reference"
+    },
+    {
+      "text": "Directives",
+      "path": "/docs/app/api-reference/directives"
+    },
+    {
+      "text": "use cache",
+      "path": "/docs/app/api-reference/directives/use-cache"
+    },
+    {
+      "text": "use cache: private",
+      "path": "/docs/app/api-reference/directives/use-cache-private"
+    },
+    {
+      "text": "use cache: remote",
+      "path": "/docs/app/api-reference/directives/use-cache-remote"
+    },
+    {
+      "text": "use client",
+      "path": "/docs/app/api-reference/directives/use-client"
+    },
+    {
+      "text": "use server",
+      "path": "/docs/app/api-reference/directives/use-server"
+    },
+    {
+      "text": "Components",
+      "path": "/docs/app/api-reference/components"
+    },
+    {
+      "text": "Font",
+      "path": "/docs/app/api-reference/components/font"
+    },
+    {
+      "text": "Form Component",
+      "path": "/docs/app/api-reference/components/form"
+    },
+    {
+      "text": "Image Component",
+      "path": "/docs/app/api-reference/components/image"
+    },
+    {
+      "text": "Link Component",
+      "path": "/docs/app/api-reference/components/link"
+    },
+    {
+      "text": "Script Component",
+      "path": "/docs/app/api-reference/components/script"
+    },
+    {
+      "text": "File-system conventions",
+      "path": "/docs/app/api-reference/file-conventions"
+    },
+    {
+      "text": "default.js",
+      "path": "/docs/app/api-reference/file-conventions/default"
+    },
+    {
+      "text": "Dynamic Segments",
+      "path": "/docs/app/api-reference/file-conventions/dynamic-routes"
+    },
+    {
+      "text": "error.js",
+      "path": "/docs/app/api-reference/file-conventions/error"
+    },
+    {
+      "text": "forbidden.js",
+      "path": "/docs/app/api-reference/file-conventions/forbidden"
+    },
+    {
+      "text": "instrumentation.js",
+      "path": "/docs/app/api-reference/file-conventions/instrumentation"
+    },
+    {
+      "text": "instrumentation-client.js",
+      "path": "/docs/app/api-reference/file-conventions/instrumentation-client"
+    },
+    {
+      "text": "Intercepting Routes",
+      "path": "/docs/app/api-reference/file-conventions/intercepting-routes"
+    },
+    {
+      "text": "layout.js",
+      "path": "/docs/app/api-reference/file-conventions/layout"
+    },
+    {
+      "text": "loading.js",
+      "path": "/docs/app/api-reference/file-conventions/loading"
+    },
+    {
+      "text": "mdx-components.js",
+      "path": "/docs/app/api-reference/file-conventions/mdx-components"
+    },
+    {
+      "text": "not-found.js",
+      "path": "/docs/app/api-reference/file-conventions/not-found"
+    },
+    {
+      "text": "page.js",
+      "path": "/docs/app/api-reference/file-conventions/page"
+    },
+    {
+      "text": "Parallel Routes",
+      "path": "/docs/app/api-reference/file-conventions/parallel-routes"
+    },
+    {
+      "text": "proxy.js",
+      "path": "/docs/app/api-reference/file-conventions/proxy"
+    },
+    {
+      "text": "public",
+      "path": "/docs/app/api-reference/file-conventions/public-folder"
+    },
+    {
+      "text": "route.js",
+      "path": "/docs/app/api-reference/file-conventions/route"
+    },
+    {
+      "text": "Route Groups",
+      "path": "/docs/app/api-reference/file-conventions/route-groups"
+    },
+    {
+      "text": "src",
+      "path": "/docs/app/api-reference/file-conventions/src-folder"
+    },
+    {
+      "text": "template.js",
+      "path": "/docs/app/api-reference/file-conventions/template"
+    },
+    {
+      "text": "unauthorized.js",
+      "path": "/docs/app/api-reference/file-conventions/unauthorized"
+    },
+    {
+      "text": "Metadata Files",
+      "path": "/docs/app/api-reference/file-conventions/metadata"
+    },
+    {
+      "text": "favicon, icon, and apple-icon",
+      "path": "/docs/app/api-reference/file-conventions/metadata/app-icons"
+    },
+    {
+      "text": "manifest.json",
+      "path": "/docs/app/api-reference/file-conventions/metadata/manifest"
+    },
+    {
+      "text": "opengraph-image and twitter-image",
+      "path": "/docs/app/api-reference/file-conventions/metadata/opengraph-image"
+    },
+    {
+      "text": "robots.txt",
+      "path": "/docs/app/api-reference/file-conventions/metadata/robots"
+    },
+    {
+      "text": "sitemap.xml",
+      "path": "/docs/app/api-reference/file-conventions/metadata/sitemap"
+    },
+    {
+      "text": "Route Segment Config",
+      "path": "/docs/app/api-reference/file-conventions/route-segment-config"
+    },
+    {
+      "text": "dynamicParams",
+      "path": "/docs/app/api-reference/file-conventions/route-segment-config/dynamicParams"
+    },
+    {
+      "text": "instant",
+      "path": "/docs/app/api-reference/file-conventions/route-segment-config/instant"
+    },
+    {
+      "text": "maxDuration",
+      "path": "/docs/app/api-reference/file-conventions/route-segment-config/maxDuration"
+    },
+    {
+      "text": "preferredRegion (deprecated)",
+      "path": "/docs/app/api-reference/file-conventions/route-segment-config/preferredRegion"
+    },
+    {
+      "text": "prefetch",
+      "path": "/docs/app/api-reference/file-conventions/route-segment-config/prefetch"
+    },
+    {
+      "text": "runtime",
+      "path": "/docs/app/api-reference/file-conventions/route-segment-config/runtime"
+    },
+    {
+      "text": "Functions",
+      "path": "/docs/app/api-reference/functions"
+    },
+    {
+      "text": "after",
+      "path": "/docs/app/api-reference/functions/after"
+    },
+    {
+      "text": "cacheLife",
+      "path": "/docs/app/api-reference/functions/cacheLife"
+    },
+    {
+      "text": "cacheTag",
+      "path": "/docs/app/api-reference/functions/cacheTag"
+    },
+    {
+      "text": "catchError",
+      "path": "/docs/app/api-reference/functions/catchError"
+    },
+    {
+      "text": "connection",
+      "path": "/docs/app/api-reference/functions/connection"
+    },
+    {
+      "text": "cookies",
+      "path": "/docs/app/api-reference/functions/cookies"
+    },
+    {
+      "text": "draftMode",
+      "path": "/docs/app/api-reference/functions/draft-mode"
+    },
+    {
+      "text": "fetch",
+      "path": "/docs/app/api-reference/functions/fetch"
+    },
+    {
+      "text": "forbidden",
+      "path": "/docs/app/api-reference/functions/forbidden"
+    },
+    {
+      "text": "generateImageMetadata",
+      "path": "/docs/app/api-reference/functions/generate-image-metadata"
+    },
+    {
+      "text": "generateMetadata",
+      "path": "/docs/app/api-reference/functions/generate-metadata"
+    },
+    {
+      "text": "generateSitemaps",
+      "path": "/docs/app/api-reference/functions/generate-sitemaps"
+    },
+    {
+      "text": "generateStaticParams",
+      "path": "/docs/app/api-reference/functions/generate-static-params"
+    },
+    {
+      "text": "generateViewport",
+      "path": "/docs/app/api-reference/functions/generate-viewport"
+    },
+    {
+      "text": "headers",
+      "path": "/docs/app/api-reference/functions/headers"
+    },
+    {
+      "text": "ImageResponse",
+      "path": "/docs/app/api-reference/functions/image-response"
+    },
+    {
+      "text": "io",
+      "path": "/docs/app/api-reference/functions/io"
+    },
+    {
+      "text": "NextRequest",
+      "path": "/docs/app/api-reference/functions/next-request"
+    },
+    {
+      "text": "NextResponse",
+      "path": "/docs/app/api-reference/functions/next-response"
+    },
+    {
+      "text": "root-params",
+      "path": "/docs/app/api-reference/functions/next-root-params"
+    },
+    {
+      "text": "notFound",
+      "path": "/docs/app/api-reference/functions/not-found"
+    },
+    {
+      "text": "permanentRedirect",
+      "path": "/docs/app/api-reference/functions/permanentRedirect"
+    },
+    {
+      "text": "redirect",
+      "path": "/docs/app/api-reference/functions/redirect"
+    },
+    {
+      "text": "refresh",
+      "path": "/docs/app/api-reference/functions/refresh"
+    },
+    {
+      "text": "revalidatePath",
+      "path": "/docs/app/api-reference/functions/revalidatePath"
+    },
+    {
+      "text": "revalidateTag",
+      "path": "/docs/app/api-reference/functions/revalidateTag"
+    },
+    {
+      "text": "unauthorized",
+      "path": "/docs/app/api-reference/functions/unauthorized"
+    },
+    {
+      "text": "unstable_cache",
+      "path": "/docs/app/api-reference/functions/unstable_cache"
+    },
+    {
+      "text": "unstable_noStore",
+      "path": "/docs/app/api-reference/functions/unstable_noStore"
+    },
+    {
+      "text": "unstable_rethrow",
+      "path": "/docs/app/api-reference/functions/unstable_rethrow"
+    },
+    {
+      "text": "updateTag",
+      "path": "/docs/app/api-reference/functions/updateTag"
+    },
+    {
+      "text": "useLinkStatus",
+      "path": "/docs/app/api-reference/functions/use-link-status"
+    },
+    {
+      "text": "useOffline",
+      "path": "/docs/app/api-reference/functions/use-offline"
+    },
+    {
+      "text": "useParams",
+      "path": "/docs/app/api-reference/functions/use-params"
+    },
+    {
+      "text": "usePathname",
+      "path": "/docs/app/api-reference/functions/use-pathname"
+    },
+    {
+      "text": "useReportWebVitals",
+      "path": "/docs/app/api-reference/functions/use-report-web-vitals"
+    },
+    {
+      "text": "useRouter",
+      "path": "/docs/app/api-reference/functions/use-router"
+    },
+    {
+      "text": "useSearchParams",
+      "path": "/docs/app/api-reference/functions/use-search-params"
+    },
+    {
+      "text": "useSelectedLayoutSegment",
+      "path": "/docs/app/api-reference/functions/use-selected-layout-segment"
+    },
+    {
+      "text": "useSelectedLayoutSegments",
+      "path": "/docs/app/api-reference/functions/use-selected-layout-segments"
+    },
+    {
+      "text": "userAgent",
+      "path": "/docs/app/api-reference/functions/userAgent"
+    },
+    {
+      "text": "Configuration",
+      "path": "/docs/app/api-reference/config"
+    },
+    {
+      "text": "next.config.js",
+      "path": "/docs/app/api-reference/config/next-config-js"
+    },
+    {
+      "text": "adapterPath",
+      "path": "/docs/app/api-reference/config/next-config-js/adapterPath"
+    },
+    {
+      "text": "allowedDevOrigins",
+      "path": "/docs/app/api-reference/config/next-config-js/allowedDevOrigins"
+    },
+    {
+      "text": "appDir",
+      "path": "/docs/app/api-reference/config/next-config-js/appDir"
+    },
+    {
+      "text": "assetPrefix",
+      "path": "/docs/app/api-reference/config/next-config-js/assetPrefix"
+    },
+    {
+      "text": "authInterrupts",
+      "path": "/docs/app/api-reference/config/next-config-js/authInterrupts"
+    },
+    {
+      "text": "basePath",
+      "path": "/docs/app/api-reference/config/next-config-js/basePath"
+    },
+    {
+      "text": "cacheComponents",
+      "path": "/docs/app/api-reference/config/next-config-js/cacheComponents"
+    },
+    {
+      "text": "cacheHandlers",
+      "path": "/docs/app/api-reference/config/next-config-js/cacheHandlers"
+    }
+  ],
+  "url_sections": {
+    "docs": 502,
+    "learn": 113,
+    "blog": 74,
+    "conf": 25,
+    "ecosystem-working-group": 1,
+    "evals": 1,
+    "support-policy": 1,
+    "team": 1,
+    "telemetry": 1,
+    "governance": 1,
+    "showcase": 1,
+    "nights": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "learn",
+      "/learn"
+    ],
+    "getting started / quickstart": [
+      "getting started",
+      "/docs/app/getting-started",
+      "/docs/app/getting-started/css",
+      "/docs/app/getting-started/fonts"
+    ],
+    "guides / how-to": [
+      "guides",
+      "/docs/app/guides",
+      "ppr platform guide",
+      "/docs/app/guides/mcp"
+    ],
+    "api reference": [
+      "api reference",
+      "/docs/app/api-reference",
+      "/docs/app/api-reference/config",
+      "/docs/app/api-reference/functions"
+    ],
+    "troubleshooting / errors": [
+      "error.js",
+      "debugging",
+      "catcherror",
+      "error handling"
+    ],
+    "migration / upgrade": [
+      "upgrading",
+      "migrating",
+      "/docs/app/guides/migrating",
+      "/docs/app/guides/upgrading"
+    ],
+    "security": [
+      "data security",
+      "content security policy",
+      "/docs/app/guides/data-security",
+      "/docs/app/guides/content-security-policy"
+    ],
+    "sdk / client libraries": [
+      "third party libraries",
+      "/docs/app/guides/third-party-libraries"
+    ],
+    "configuration / settings": [
+      "configuration",
+      "next.config.js",
+      "route segment config",
+      "/docs/app/api-reference/config"
+    ],
+    "community / support": [
+      "support-policy",
+      "offline support",
+      "/docs/app/guides/offline-support"
+    ],
+    "deployment / production": [
+      "deploying",
+      "production",
+      "self-hosting",
+      "deploying to platforms"
+    ],
+    "videos": [
+      "videos",
+      "/docs/app/guides/videos"
+    ],
+    "versioned docs": [
+      "version 14",
+      "version 16",
+      "version 15",
+      "/docs/app/guides/upgrading/version-15"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://nextjs.org/showcase",
+      "h1": "The web framework for when it matters",
+      "h2": [
+        "Meet thousands of beautiful websites built with Next.js by Vercel",
+        "Build like the best",
+        "A powerful framework for building high-performance, server rendered web applicat"
+      ]
+    },
+    {
+      "url": "https://nextjs.org/docs",
+      "h1": "Next.js Docs",
+      "h2": [
+        "What is Next.js?",
+        "How to use the docs",
+        "App Router and Pages Router",
+        "Pre-requisite knowledge",
+        "Accessibility",
+        "Join our Community",
+        "Next Steps"
+      ]
+    },
+    {
+      "url": "https://nextjs.org/blog",
+      "h1": "The latest Next.js news",
+      "h2": []
+    },
+    {
+      "url": "https://nextjs.org/learn",
+      "h1": "Start building with Next.js",
+      "h2": [
+        "How does the course work?",
+        "What will I learn?"
+      ]
+    }
+  ]
+}

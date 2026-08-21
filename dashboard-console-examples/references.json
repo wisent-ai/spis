@@ -1,0 +1,361 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "dashboard-console-examples",
+  "generated_at": "2026-08-16",
+  "reference_count": 50,
+  "complete_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "AWS Management Console",
+      "path": "references/01-aws-management-console/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 2,
+      "name": "Microsoft Azure Portal",
+      "path": "references/02-microsoft-azure-portal/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 3,
+      "name": "Google Cloud Console",
+      "path": "references/03-google-cloud-console/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 4,
+      "name": "Cloudflare Dashboard",
+      "path": "references/04-cloudflare-dashboard/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 5,
+      "name": "DigitalOcean Cloud Control Panel",
+      "path": "references/05-digitalocean-cloud-control-panel/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 6,
+      "name": "Vercel Dashboard",
+      "path": "references/06-vercel-dashboard/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 7,
+      "name": "Netlify Team Dashboard",
+      "path": "references/07-netlify-team-dashboard/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 8,
+      "name": "Kubernetes Dashboard",
+      "path": "references/08-kubernetes-dashboard/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 9,
+      "name": "SUSE Rancher",
+      "path": "references/09-suse-rancher/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 10,
+      "name": "Portainer",
+      "path": "references/10-portainer/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 11,
+      "name": "Datadog Dashboards",
+      "path": "references/11-datadog-dashboards/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 12,
+      "name": "Grafana Dashboards",
+      "path": "references/12-grafana-dashboards/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 13,
+      "name": "New Relic Dashboards",
+      "path": "references/13-new-relic-dashboards/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 14,
+      "name": "Splunk Observability Cloud",
+      "path": "references/14-splunk-observability-cloud/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 15,
+      "name": "Kibana Dashboards",
+      "path": "references/15-kibana-dashboards/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 16,
+      "name": "Sentry Issues",
+      "path": "references/16-sentry-issues/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 17,
+      "name": "Honeycomb Query and Investigate",
+      "path": "references/17-honeycomb-query-and-investigate/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 18,
+      "name": "Dynatrace Dashboards and Notebooks",
+      "path": "references/18-dynatrace-dashboards-and-notebooks/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 19,
+      "name": "PagerDuty Incidents",
+      "path": "references/19-pagerduty-incidents/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 20,
+      "name": "incident.io Incident Management",
+      "path": "references/20-incident-io-incident-management/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 21,
+      "name": "GitHub Actions Workflow Monitoring",
+      "path": "references/21-github-actions-workflow-monitoring/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 22,
+      "name": "GitLab CI/CD Pipelines",
+      "path": "references/22-gitlab-ci-cd-pipelines/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 23,
+      "name": "CircleCI Pipelines",
+      "path": "references/23-circleci-pipelines/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 24,
+      "name": "Buildkite Pipelines",
+      "path": "references/24-buildkite-pipelines/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 25,
+      "name": "Jenkins Blue Ocean Dashboard",
+      "path": "references/25-jenkins-blue-ocean-dashboard/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 26,
+      "name": "Argo CD",
+      "path": "references/26-argo-cd/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 27,
+      "name": "Harness Continuous Delivery",
+      "path": "references/27-harness-continuous-delivery/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 28,
+      "name": "JetBrains TeamCity",
+      "path": "references/28-jetbrains-teamcity/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 29,
+      "name": "Azure Pipelines",
+      "path": "references/29-azure-pipelines/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 30,
+      "name": "Zendesk Agent Workspace",
+      "path": "references/30-zendesk-agent-workspace/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 31,
+      "name": "Intercom Inbox",
+      "path": "references/31-intercom-inbox/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 32,
+      "name": "Freshdesk Omnichannel",
+      "path": "references/32-freshdesk-omnichannel/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 33,
+      "name": "Salesforce Service Cloud",
+      "path": "references/33-salesforce-service-cloud/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 34,
+      "name": "Jira Service Management Queues",
+      "path": "references/34-jira-service-management-queues/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 35,
+      "name": "Retool Apps",
+      "path": "references/35-retool-apps/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 36,
+      "name": "Appsmith Internal Tools",
+      "path": "references/36-appsmith-internal-tools/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 37,
+      "name": "ToolJet",
+      "path": "references/37-tooljet/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 38,
+      "name": "Budibase",
+      "path": "references/38-budibase/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 39,
+      "name": "Superblocks",
+      "path": "references/39-superblocks/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 40,
+      "name": "Stripe Dashboard",
+      "path": "references/40-stripe-dashboard/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 41,
+      "name": "Shopify Analytics and Reports",
+      "path": "references/41-shopify-analytics-and-reports/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 42,
+      "name": "Xero Accounting Dashboard",
+      "path": "references/42-xero-accounting-dashboard/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 43,
+      "name": "Metabase Dashboards",
+      "path": "references/43-metabase-dashboards/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 44,
+      "name": "Looker Dashboards",
+      "path": "references/44-looker-dashboards/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 45,
+      "name": "Tableau Dashboards",
+      "path": "references/45-tableau-dashboards/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 46,
+      "name": "Microsoft Power BI Dashboards",
+      "path": "references/46-microsoft-power-bi-dashboards/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 47,
+      "name": "Amplitude Analytics Charts",
+      "path": "references/47-amplitude-analytics-charts/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 48,
+      "name": "Mixpanel Reports",
+      "path": "references/48-mixpanel-reports/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 49,
+      "name": "Okta Admin Console",
+      "path": "references/49-okta-admin-console/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 50,
+      "name": "Google Admin Console",
+      "path": "references/50-google-admin-console/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    }
+  ],
+  "measured_at": "2026-08-19",
+  "partial_count": 50
+}

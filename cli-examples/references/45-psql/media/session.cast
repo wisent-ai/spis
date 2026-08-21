@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921627,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"psql authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: psql\r\n"]
+[0.55,"o","cli-ref$ psql --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","psql (PostgreSQL) 16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)\r\n"]
+[2.2,"o","cli-ref$ psql --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","psql is the PostgreSQL interactive terminal.\r\n\r\nUsage:\r\n  psql [OPTION]... [DBNAME [USERNAME]]\r\n\r\nGeneral options:\r\n  -c, --command=COMMAND    run only single command (SQL or internal) and exit\r\n  -d, --dbname=DBNAME      database name to connect to (default: \"lukaszbartoszcze\")\r\n  -f, --file=FILENAME      execute commands from file, then exit\r\n  -l, --list               list available databases, then exit\r\n  -v, --set=, --variable=NAME=VALUE\r\n                           set psql variable NAME to VALUE\r\n                           (e.g., -v ON_ERROR_STOP=1)\r\n  -V, --version            output version information, then exit\r\n"]
+[5.1,"o","cli-ref$ psql --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","/usr/lib/postgresql/16/bin/psql: unrecognized option '--definitely-invalid-option'\r\npsql: hint: Try \"psql --help\" for more information.\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ psql --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ psql --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","psql is the PostgreSQL interactive terminal.\r\n\r\nUsage:\r\n  psql [OPTION]... [DBNAME [USERNAME]]\r\n"]

@@ -1,0 +1,258 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Postman",
+  "product_url": "https://www.postman.com/downloads/",
+  "evidence_status": "partial",
+  "upstream_owner": "Postman",
+  "captured_at": "2026-08-17T00:26:06.356925Z",
+  "motion": [
+    {
+      "local_path": "media/motion.webm",
+      "source_url": "https://www.youtube.com/watch?v=jCe2wg1ulus",
+      "media_kind": "video-webm",
+      "width": 640,
+      "height": 360,
+      "duration_seconds": 8.0,
+      "frame_count": 96,
+      "bytes": 53321,
+      "sha256": "25a09fdc5d9bcc28e663e2eac6a02ddc46e78df378a882e1541be4613a513089",
+      "capture_method": "Weles browser recording on Stado-selected charless-mac-mini; cited source played in a patched Chromium isolation context; local clip transcoded without synthesized frames",
+      "source_title": "Postman product recording",
+      "declared_media_kind": "video-webm",
+      "measured": true,
+      "measurement_method": "ffprobe -count_frames",
+      "provenance_class": "local-browser-recording"
+    }
+  ],
+  "states": [
+    {
+      "name": "launch and task context",
+      "local_path": "media/state-1.png",
+      "source_motion_path": "frame of media/motion.webm at 0s (mean abs diff 1.5078/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 228205,
+      "sha256": "2fa08477d221ac850a7cf09313ffd801ca4d23388daa506fb0d249cfb7f2b571",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 0.0,
+        "mean_abs_diff": 1.5078,
+        "sampled_frames": 16
+      }
+    },
+    {
+      "name": "focused primary-action state",
+      "local_path": "media/state-2.png",
+      "source_motion_path": "frame of media/motion.webm at 4.5s (mean abs diff 1.6016/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 134503,
+      "sha256": "c5e517a42ba8f54ffd161c77743f2e9c23c99ccd7c48f4f60c75084ee63d2a3b",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.5,
+        "mean_abs_diff": 1.6016,
+        "sampled_frames": 16
+      }
+    },
+    {
+      "name": "first-success result",
+      "local_path": "media/state-3.png",
+      "source_motion_path": "frame of media/motion.webm at 4s (mean abs diff 1.625/255)",
+      "width": 640,
+      "height": 360,
+      "bytes": 134701,
+      "sha256": "72c244ad55dc18f7d143dd3ca294ecd7928312e563d1433a1abaed4b0621cf88",
+      "source_match": {
+        "motion_path": "media/motion.webm",
+        "method": "16x16 grayscale mean-absolute-difference frame search",
+        "timestamp_seconds": 4.0,
+        "mean_abs_diff": 1.625,
+        "sampled_frames": 16
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "name": "launch/open",
+      "trigger": "launch and choose a workspace",
+      "response": "The product exposes its initial task context.",
+      "feedback": "The main window and available next action become visible.",
+      "cancellation": "Closing or backing out returns to the prior operating-system context without completing the task.",
+      "failure": "The start surface or prerequisite is unavailable.",
+      "recovery": "Relaunch and restore the prerequisite, then return to the start surface.",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "primary input",
+      "trigger": "focus the URL or request editor",
+      "response": "The central editor, composer, canvas, address field, or selection control accepts input.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "the request cannot resolve or returns an error",
+      "recovery": "correct the target or environment, resend, and inspect the updated response",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "focus/selection",
+      "trigger": "create or select a request",
+      "response": "The chosen workspace, item, or tool receives a visible selected state.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "the request cannot resolve or returns an error",
+      "recovery": "correct the target or environment, resend, and inspect the updated response",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "navigation",
+      "trigger": "create or select a request",
+      "response": "The adjacent content region updates while persistent navigation remains available.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "the request cannot resolve or returns an error",
+      "recovery": "correct the target or environment, resend, and inspect the updated response",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "confirmation",
+      "trigger": "invoke Send",
+      "response": "The requested operation advances to a processing or completed state.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "the request cannot resolve or returns an error",
+      "recovery": "correct the target or environment, resend, and inspect the updated response",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "cancellation/backtracking",
+      "trigger": "invoke the visible back, close, cancel, or prior-selection route before confirmation",
+      "response": "The transient surface closes and the last stable state returns.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "the request cannot resolve or returns an error",
+      "recovery": "correct the target or environment, resend, and inspect the updated response",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "failure feedback",
+      "trigger": "submit the observed task with an unavailable target or invalid prerequisite",
+      "response": "The result does not advance and the affected control or status region carries failure feedback.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "the request cannot resolve or returns an error",
+      "recovery": "correct the target or environment, resend, and inspect the updated response",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    },
+    {
+      "name": "recovery",
+      "trigger": "correct the target or environment, resend, and inspect the updated response",
+      "response": "The same primary action can be re-entered and reaches the result state.",
+      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+      "failure": "the request cannot resolve or returns an error",
+      "recovery": "correct the target or environment, resend, and inspect the updated response",
+      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+    }
+  ],
+  "journey": {
+    "actor": "A first-time desktop user with access to the prerequisite local files, service, device, or workspace shown in the recording.",
+    "goal": "send a first request and inspect its response",
+    "prerequisites": [
+      "The desktop application is installed or its authentic product recording is available.",
+      "Any local file, workspace, service, engine, device, or account required by the shown path is available."
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "launch and choose a workspace",
+        "system_response": "The product window establishes the available task context.",
+        "state": "start surface",
+        "evidence": "media/motion.webm and media/state-1.png"
+      },
+      {
+        "index": 2,
+        "user_action": "create or select a request",
+        "system_response": "The selected target becomes persistent and its content is exposed.",
+        "state": "workspace or source selected",
+        "evidence": "media/motion.webm and media/state-1.png"
+      },
+      {
+        "index": 3,
+        "user_action": "focus the URL or request editor",
+        "system_response": "The primary control accepts focus and exposes editable or actionable state.",
+        "state": "primary input focused",
+        "evidence": "media/motion.webm and media/state-2.png"
+      },
+      {
+        "index": 4,
+        "user_action": "enter the request target",
+        "system_response": "The task-specific input is visible and ready for commitment.",
+        "state": "action ready for confirmation",
+        "evidence": "media/motion.webm and media/state-2.png"
+      },
+      {
+        "index": 5,
+        "user_action": "invoke Send",
+        "system_response": "The product acknowledges the command and transitions without a detached interstitial.",
+        "state": "operation in progress",
+        "evidence": "media/motion.webm and media/state-2.png"
+      },
+      {
+        "index": 6,
+        "user_action": "observe the response panel and status",
+        "system_response": "The resulting content, status, playback, transfer, document, or response is visibly present.",
+        "state": "first meaningful result",
+        "evidence": "media/motion.webm and media/state-3.png"
+      }
+    ],
+    "failure_route": [
+      "Attempt the task while the request cannot resolve or returns an error.",
+      "Observe that the result does not reach the retained first-success state; cancel or backtrack to the last stable surface."
+    ],
+    "recovery_route": [
+      "correct the target or environment, resend, and inspect the updated response.",
+      "Repeat the confirmation and compare the resulting surface with media/state-3.png."
+    ],
+    "completion_evidence": "The final portion of media/motion.webm and media/state-3.png retain the visible first meaningful result for send a first request and inspect its response."
+  },
+  "accessibility": {
+    "observations": [
+      "Selection and completion are represented by persistent spatial or content changes in the retained frames, not described solely by color.",
+      "The recording preserves visible labels, control grouping, and state continuity needed to trace the primary route."
+    ],
+    "unknowns": [
+      "Screen-reader names, role announcements, and live-region output were not exposed by the visual recording.",
+      "Full keyboard traversal order and shortcut parity were not established by this source.",
+      "Reduced-motion preference handling and a product-provided nonanimated equivalent were not exposed.",
+      "Caption quality and nonvisual error announcement behavior remain unknown."
+    ]
+  },
+  "motion_analysis": {
+    "trigger": "invoke Send",
+    "start_state": "focused, task-ready state retained in media/state-2.png",
+    "end_state": "first meaningful result retained in media/state-3.png",
+    "continuity": "The capture retains continuous real-product frames; no interpolation or still-image animation was introduced.",
+    "timing_class": "one-to-three-seconds",
+    "feedback": "Selection persistence, content replacement, status change, transport progress, or result appearance carries completion feedback.",
+    "reduced_motion_equivalent": "Unknown; use the retained end-state frame as the documented nonanimated reference, not as evidence that the product supplies one.",
+    "interruption_or_reversal": "The visible back, cancel, close, or prior selection returns to the last stable task state; mid-transition interruption semantics beyond the capture remain unknown.",
+    "timing_description": "direct-manipulation feedback followed by a short product transition"
+  },
+  "provenance_notes": {
+    "catalog_source_page": "https://www.postman.com/downloads/",
+    "source_recording_owner": "Postman",
+    "capture_host": "charless-mac-mini",
+    "capture_system": "Weles via Stado",
+    "transformation": "Only temporal clipping, scaling, frame-rate normalization, and still extraction from authentic motion; no generated or interpolated content."
+  },
+  "motion_provenance": [
+    "local-browser-recording"
+  ],
+  "evidence_gaps": [
+    "fewer than three accessibility observations",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-19"
+}

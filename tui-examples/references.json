@@ -1,0 +1,361 @@
+{
+  "schema": "wisent.full-reference-catalog.v2",
+  "catalog": "tui-examples",
+  "generated_at": "2026-08-16",
+  "reference_count": 50,
+  "complete_count": 0,
+  "references": [
+    {
+      "index": 1,
+      "name": "lazygit",
+      "path": "references/01-lazygit/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 2,
+      "name": "Tig",
+      "path": "references/02-tig/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 3,
+      "name": "GitUI",
+      "path": "references/03-gitui/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 4,
+      "name": "Gitu",
+      "path": "references/04-gitu/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 5,
+      "name": "GitHub CLI Dashboard",
+      "path": "references/05-github-cli-dashboard/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 6,
+      "name": "lazydocker",
+      "path": "references/06-lazydocker/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 7,
+      "name": "ctop",
+      "path": "references/07-ctop/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 8,
+      "name": "Dry",
+      "path": "references/08-dry/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 9,
+      "name": "Dive",
+      "path": "references/09-dive/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 10,
+      "name": "Oxker",
+      "path": "references/10-oxker/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 11,
+      "name": "K9s",
+      "path": "references/11-k9s/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 12,
+      "name": "KDash",
+      "path": "references/12-kdash/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 13,
+      "name": "Kubebox",
+      "path": "references/13-kubebox/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 14,
+      "name": "htop",
+      "path": "references/14-htop/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 15,
+      "name": "btop",
+      "path": "references/15-btop/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 16,
+      "name": "bottom",
+      "path": "references/16-bottom/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 17,
+      "name": "Glances",
+      "path": "references/17-glances/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 18,
+      "name": "Zenith",
+      "path": "references/18-zenith/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 19,
+      "name": "nvitop",
+      "path": "references/19-nvitop/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 20,
+      "name": "NVTOP",
+      "path": "references/20-nvtop/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 21,
+      "name": "Ranger",
+      "path": "references/21-ranger/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 22,
+      "name": "lf",
+      "path": "references/22-lf/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 23,
+      "name": "nnn",
+      "path": "references/23-nnn/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 24,
+      "name": "Yazi",
+      "path": "references/24-yazi/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 25,
+      "name": "Broot",
+      "path": "references/25-broot/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 26,
+      "name": "Vifm",
+      "path": "references/26-vifm/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 27,
+      "name": "Midnight Commander",
+      "path": "references/27-midnight-commander/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 1
+    },
+    {
+      "index": 28,
+      "name": "xplr",
+      "path": "references/28-xplr/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 29,
+      "name": "Superfile",
+      "path": "references/29-superfile/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 30,
+      "name": "Rainfrog",
+      "path": "references/30-rainfrog/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 31,
+      "name": "Harlequin",
+      "path": "references/31-harlequin/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 32,
+      "name": "Termdbms",
+      "path": "references/32-termdbms/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 33,
+      "name": "iredis",
+      "path": "references/33-iredis/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 34,
+      "name": "NeoMutt",
+      "path": "references/34-neomutt/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 35,
+      "name": "aerc",
+      "path": "references/35-aerc/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 36,
+      "name": "alot",
+      "path": "references/36-alot/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 37,
+      "name": "meli",
+      "path": "references/37-meli/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 38,
+      "name": "Himalaya",
+      "path": "references/38-himalaya/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 39,
+      "name": "musikcube",
+      "path": "references/39-musikcube/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 40,
+      "name": "rmpc",
+      "path": "references/40-rmpc/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 41,
+      "name": "ncmpcpp",
+      "path": "references/41-ncmpcpp/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 42,
+      "name": "spotify-player",
+      "path": "references/42-spotify-player/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 43,
+      "name": "Termusic",
+      "path": "references/43-termusic/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 44,
+      "name": "bandwhich",
+      "path": "references/44-bandwhich/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 45,
+      "name": "Termshark",
+      "path": "references/45-termshark/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 46,
+      "name": "Trippy",
+      "path": "references/46-trippy/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 47,
+      "name": "gping",
+      "path": "references/47-gping/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 48,
+      "name": "Impala",
+      "path": "references/48-impala/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 49,
+      "name": "taskwarrior-tui",
+      "path": "references/49-taskwarrior-tui/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    },
+    {
+      "index": 50,
+      "name": "Dooit",
+      "path": "references/50-dooit/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 2
+    }
+  ],
+  "measured_at": "2026-08-19",
+  "partial_count": 50
+}

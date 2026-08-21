@@ -1,0 +1,385 @@
+{
+  "name": "Supabase Documentation",
+  "source_url": "https://supabase.com/docs",
+  "category": "Backend platform documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "robots.txt sitemap / sitemap.xml",
+  "inventory_url_count": 3336,
+  "landing_nav": [
+    {
+      "text": "DOCS",
+      "path": "/docs"
+    },
+    {
+      "text": "Start",
+      "path": "/docs/guides/getting-started"
+    },
+    {
+      "text": "React",
+      "path": "/docs/guides/getting-started/quickstarts/reactjs"
+    },
+    {
+      "text": "Next.js",
+      "path": "/docs/guides/getting-started/quickstarts/nextjs"
+    },
+    {
+      "text": "TanStack Start",
+      "path": "/docs/guides/getting-started/quickstarts/tanstack"
+    },
+    {
+      "text": "Astro",
+      "path": "/docs/guides/getting-started/quickstarts/astrojs"
+    },
+    {
+      "text": "Vue",
+      "path": "/docs/guides/getting-started/quickstarts/vue"
+    },
+    {
+      "text": "Nuxt",
+      "path": "/docs/guides/getting-started/quickstarts/nuxtjs"
+    },
+    {
+      "text": "SvelteKit",
+      "path": "/docs/guides/getting-started/quickstarts/sveltekit"
+    },
+    {
+      "text": "SolidJS",
+      "path": "/docs/guides/getting-started/quickstarts/solidjs"
+    },
+    {
+      "text": "RedwoodJS",
+      "path": "/docs/guides/getting-started/quickstarts/redwoodjs"
+    },
+    {
+      "text": "Refine",
+      "path": "/docs/guides/getting-started/quickstarts/refine"
+    },
+    {
+      "text": "Hono",
+      "path": "/docs/guides/getting-started/quickstarts/hono"
+    },
+    {
+      "text": "iOS Swift",
+      "path": "/docs/guides/getting-started/quickstarts/ios-swiftui"
+    },
+    {
+      "text": "Android Kotlin",
+      "path": "/docs/guides/getting-started/quickstarts/kotlin"
+    },
+    {
+      "text": "Expo React Native",
+      "path": "/docs/guides/getting-started/quickstarts/expo-react-native"
+    },
+    {
+      "text": "Flutter",
+      "path": "/docs/guides/getting-started/quickstarts/flutter"
+    },
+    {
+      "text": "Python",
+      "path": "/docs/guides/getting-started/quickstarts/flask"
+    },
+    {
+      "text": "Laravel",
+      "path": "/docs/guides/getting-started/quickstarts/laravel"
+    },
+    {
+      "text": "Ruby on Rails",
+      "path": "/docs/guides/getting-started/quickstarts/ruby-on-rails"
+    },
+    {
+      "text": "AI & Vectors",
+      "path": "/docs/guides/ai"
+    },
+    {
+      "text": "Cron",
+      "path": "/docs/guides/cron"
+    },
+    {
+      "text": "Queues",
+      "path": "/docs/guides/queues"
+    },
+    {
+      "text": "Data REST API",
+      "path": "/docs/guides/api"
+    },
+    {
+      "text": "GraphQL API",
+      "path": "/docs/guides/graphql"
+    },
+    {
+      "text": "JavaScript",
+      "path": "/docs/reference/javascript/introduction"
+    },
+    {
+      "text": "Flutter",
+      "path": "/docs/reference/dart/introduction"
+    },
+    {
+      "text": "Python",
+      "path": "/docs/reference/python/introduction"
+    },
+    {
+      "text": "C#",
+      "path": "/docs/reference/csharp/introduction"
+    },
+    {
+      "text": "Swift",
+      "path": "/docs/reference/swift/introduction"
+    },
+    {
+      "text": "Kotlin",
+      "path": "/docs/reference/kotlin/introduction"
+    },
+    {
+      "text": "Explore more resources about /guides/resourcesExplore more resources",
+      "path": "/docs/guides/resources"
+    },
+    {
+      "text": "Amazon RDS",
+      "path": "/docs/guides/platform/migrating-to-supabase/amazon-rds"
+    },
+    {
+      "text": "Auth0",
+      "path": "/docs/guides/platform/migrating-to-supabase/auth0"
+    },
+    {
+      "text": "Firebase Auth",
+      "path": "/docs/guides/platform/migrating-to-supabase/firebase-auth"
+    },
+    {
+      "text": "Firebase Storage",
+      "path": "/docs/guides/platform/migrating-to-supabase/firebase-storage"
+    },
+    {
+      "text": "Firestore Data",
+      "path": "/docs/guides/platform/migrating-to-supabase/firestore-data"
+    },
+    {
+      "text": "Heroku",
+      "path": "/docs/guides/platform/migrating-to-supabase/heroku"
+    },
+    {
+      "text": "MSSQL",
+      "path": "/docs/guides/platform/migrating-to-supabase/mssql"
+    },
+    {
+      "text": "MySQL",
+      "path": "/docs/guides/platform/migrating-to-supabase/mysql"
+    },
+    {
+      "text": "Neon",
+      "path": "/docs/guides/platform/migrating-to-supabase/neon"
+    },
+    {
+      "text": "Postgres",
+      "path": "/docs/guides/platform/migrating-to-supabase/postgres"
+    },
+    {
+      "text": "Render",
+      "path": "/docs/guides/platform/migrating-to-supabase/render"
+    },
+    {
+      "text": "Vercel Postgres",
+      "path": "/docs/guides/platform/migrating-to-supabase/vercel-postgres"
+    },
+    {
+      "text": "AI toolsDevelop with Supabase AI-first using plugins, MCP, and skills.",
+      "path": "/docs/guides/ai-tools"
+    },
+    {
+      "text": "Platform guidesLearn more about the tools and services powering Supabase.",
+      "path": "/docs/guides/platform"
+    },
+    {
+      "text": "Supabase CLIUse the CLI to develop, manage and deploy your projects.",
+      "path": "/docs/reference/cli/introduction"
+    },
+    {
+      "text": "Management APIManage your Supabase projects and organizations.",
+      "path": "/docs/reference/api/introduction"
+    },
+    {
+      "text": "IntegrationsExplore a variety of integrations from Supabase partners.",
+      "path": "/docs/guides/integrations"
+    },
+    {
+      "text": "More on self-hosting about /guides/self-hostingMore on self-hosting",
+      "path": "/docs/guides/self-hosting"
+    },
+    {
+      "text": "Auth",
+      "path": "/docs/reference/self-hosting-auth/introduction"
+    },
+    {
+      "text": "Realtime",
+      "path": "/docs/reference/self-hosting-realtime/introduction"
+    },
+    {
+      "text": "Storage",
+      "path": "/docs/reference/self-hosting-storage/introduction"
+    },
+    {
+      "text": "Analytics",
+      "path": "/docs/reference/self-hosting-analytics/introduction"
+    },
+    {
+      "text": "Contact support",
+      "path": "/support"
+    },
+    {
+      "text": "See Changelog",
+      "path": "/changelog"
+    },
+    {
+      "text": "© Supabase Inc",
+      "path": "/"
+    },
+    {
+      "text": "Open Source",
+      "path": "/open-source"
+    },
+    {
+      "text": "SupaSquad",
+      "path": "/supasquad"
+    }
+  ],
+  "url_sections": {
+    "docs": 2575,
+    "blog": 420,
+    "changelog": 141,
+    "features": 80,
+    "customers": 43,
+    "solutions": 18,
+    "events": 13,
+    "launch-week": 9,
+    "legal": 6,
+    "alternatives": 3,
+    "modules": 3,
+    "open-source": 2,
+    "opt-out": 2,
+    "assistant": 1,
+    "aup": 1,
+    "aws-reinvent-2025": 1,
+    "beta": 1,
+    "brand-assets": 1,
+    "careers": 1,
+    "company": 1,
+    "contact-us": 1,
+    "contact": 1,
+    "enterprise-terms": 1,
+    "nextjs": 1,
+    "partners": 1,
+    "privacy": 1,
+    "security": 1,
+    "sla": 1,
+    "state-of-startups-2025": 1,
+    "support-policy": 1,
+    "support": 1,
+    "terms": 1
+  },
+  "content_kinds": {
+    "tutorials / learn": [
+      "platform guideslearn more about the tools and services powering supabase."
+    ],
+    "getting started / quickstart": [
+      "/docs/guides/getting-started",
+      "/docs/guides/getting-started/quickstarts/vue",
+      "/docs/guides/getting-started/quickstarts/hono",
+      "/docs/guides/getting-started/quickstarts/flask"
+    ],
+    "guides / how-to": [
+      "/docs/guides/ai",
+      "/docs/guides/api",
+      "/docs/guides/cron",
+      "/docs/guides/queues"
+    ],
+    "api reference": [
+      "graphql api",
+      "data rest api",
+      "/docs/guides/api",
+      "/docs/reference/cli/introduction"
+    ],
+    "changelog / release notes": [
+      "changelog",
+      "/changelog",
+      "see changelog"
+    ],
+    "migration / upgrade": [
+      "/docs/guides/platform/migrating-to-supabase/neon",
+      "/docs/guides/platform/migrating-to-supabase/mysql",
+      "/docs/guides/platform/migrating-to-supabase/mssql",
+      "/docs/guides/platform/migrating-to-supabase/auth0"
+    ],
+    "security": [
+      "security"
+    ],
+    "cli reference": [
+      "/docs/reference/cli/introduction",
+      "supabase cliuse the cli to develop, manage and deploy your projects."
+    ],
+    "community / support": [
+      "support",
+      "/support",
+      "support-policy",
+      "contact support"
+    ],
+    "integrations": [
+      "/docs/guides/integrations",
+      "integrationsexplore a variety of integrations from supabase partners."
+    ],
+    "deployment / production": [
+      "/docs/guides/self-hosting",
+      "/docs/reference/self-hosting-auth/introduction",
+      "/docs/reference/self-hosting-storage/introduction",
+      "/docs/reference/self-hosting-realtime/introduction"
+    ]
+  },
+  "page_anatomy": [
+    {
+      "url": "https://supabase.com/docs",
+      "h1": "Supabase Documentation",
+      "h2": [
+        "Connect a framework",
+        "Build your backend",
+        "Extend your database",
+        "Use a client library",
+        "Migrate to Supabase",
+        "Explore more",
+        "Self-host Supabase"
+      ]
+    },
+    {
+      "url": "https://supabase.com/support",
+      "h1": "Support",
+      "h2": [
+        "Community support",
+        "Issues",
+        "Feature requests",
+        "Can’t find what you’re looking for?",
+        "Footer"
+      ]
+    },
+    {
+      "url": "https://supabase.com/changelog",
+      "h1": "Changelog",
+      "h2": [
+        "How Do I Know if This Impacts Me?#",
+        "What Should I Do?#",
+        "Accessing Nested Fields#",
+        "Timeline#",
+        "Learn More#",
+        "Build in a weekend, scale to millions",
+        "Footer"
+      ]
+    },
+    {
+      "url": "https://supabase.com/open-source",
+      "h1": "Open Source Community",
+      "h2": [
+        "Sponsored Projects",
+        "Build in a weekend, scale to millions",
+        "Footer"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4797 @@
+{
+  "schema": "wisent.example-catalog.v2",
+  "catalog": "android-app-examples",
+  "title": "Android app examples",
+  "description": "Native Android phone, tablet, foldable, and wearable interfaces.",
+  "curated_at": "2026-08-16",
+  "count": 50,
+  "examples": [
+    {
+      "name": "Google Keep",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.keep",
+      "category": "Productivity",
+      "selection_note": "Study the note-card grid, color and label organization, checklist transformation, and floating action button for rapid capture.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.keep",
+        "source_image_url": "https://play-lh.googleusercontent.com/kjQ5dCxfKLD_zoRqux5WplwTcWgnCKkcMMnzDN7knl7fDcAkBiF3_nMxIhvfid_sDQZXnvFcPhtBUV6CLDt3hg=w1052-h592",
+        "local_path": "images/01-google-keep.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1052,
+        "height": 592,
+        "original_width": 1052,
+        "original_height": 592,
+        "bytes": 44050,
+        "sha256": "39ac4df31c33e40086280be3977e842afae72700c05b406714130ef70963d426",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "39ac4df31c33e40086280be3977e842afae72700c05b406714130ef70963d426",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.215
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.838,
+              "width": 1.0,
+              "height": 0.162
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.215,
+              "width": 1.0,
+              "height": 0.623
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.166,
+              "strength": 1.0
+            },
+            {
+              "position": 0.387,
+              "strength": 0.504
+            },
+            {
+              "position": 0.514,
+              "strength": 0.606
+            },
+            {
+              "position": 0.832,
+              "strength": 0.923
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.215,
+              "strength": 1.0
+            },
+            {
+              "position": 0.336,
+              "strength": 0.421
+            },
+            {
+              "position": 0.646,
+              "strength": 0.412
+            },
+            {
+              "position": 0.838,
+              "strength": 0.452
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Todoist",
+      "source_url": "https://play.google.com/store/apps/details?id=com.todoist",
+      "category": "Productivity",
+      "selection_note": "Study quick task entry with inline dates and priorities, plus swipe actions that expose scheduling and completion controls.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.todoist",
+        "source_image_url": "https://play-lh.googleusercontent.com/Gge2cnWAFpI8Snm41RaOIgiNfcNl1mVfMlzvHhkQSbKcegvGMm_dbp_aGDeT_PXIki0dHvt9j2tmynZz5pOYC6w=w1052-h592",
+        "local_path": "images/02-todoist.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 789,
+        "height": 592,
+        "original_width": 789,
+        "original_height": 592,
+        "bytes": 25876,
+        "sha256": "27baa651db2ee823590c87e5a3599f1d390280ca65aaee29b975d4910e04cf8e",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "27baa651db2ee823590c87e5a3599f1d390280ca65aaee29b975d4910e04cf8e",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.909,
+              "width": 1.0,
+              "height": 0.091
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.789
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.275,
+              "strength": 1.0
+            },
+            {
+              "position": 0.357,
+              "strength": 0.641
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.302,
+              "strength": 0.336
+            },
+            {
+              "position": 0.387,
+              "strength": 0.394
+            },
+            {
+              "position": 0.568,
+              "strength": 0.405
+            },
+            {
+              "position": 0.909,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Notion",
+      "source_url": "https://play.google.com/store/apps/details?id=notion.id",
+      "category": "Productivity",
+      "selection_note": "Study the mobile block editor, slash-command insertion, nested page navigation, and adaptation of dense workspaces to a narrow screen.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=notion.id",
+        "source_image_url": "https://play-lh.googleusercontent.com/oRlLXgugaEQwBZky-psvZuaPpJr-56kS6AhZULtHi2n_96qHj27EpE3OZqJtzBG2WoWxvb13OlN33DsWjHG5qQ=w1052-h592",
+        "local_path": "images/03-notion.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 11640,
+        "sha256": "0e5a97f255f02ad809dac44d358675e60b23a5c6a9469720cb68420674fa5e7f",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "0e5a97f255f02ad809dac44d358675e60b23a5c6a9469720cb68420674fa5e7f",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.159
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.907,
+              "width": 1.0,
+              "height": 0.093
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.159,
+              "width": 1.0,
+              "height": 0.748
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.114,
+              "strength": 1.0
+            },
+            {
+              "position": 0.216,
+              "strength": 0.97
+            },
+            {
+              "position": 0.883,
+              "strength": 0.978
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.159,
+              "strength": 1.0
+            },
+            {
+              "position": 0.24,
+              "strength": 0.66
+            },
+            {
+              "position": 0.608,
+              "strength": 0.713
+            },
+            {
+              "position": 0.907,
+              "strength": 0.601
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Trello",
+      "source_url": "https://play.google.com/store/apps/details?id=com.trello",
+      "category": "Productivity",
+      "selection_note": "Study horizontal board navigation and drag-and-drop cards across lists, with card details presented as a focused editing surface.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.trello",
+        "source_image_url": "https://play-lh.googleusercontent.com/pbbPEDsdmCUmEeWSm_qzkKuIAsJzPUwe--ak7MjFXT-WxdIR63EJ9IK6cYuynrICnAgBIVu0Efx_5fG5O5fiXw=w1052-h592",
+        "local_path": "images/04-trello.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 790,
+        "height": 592,
+        "original_width": 790,
+        "original_height": 592,
+        "bytes": 24300,
+        "sha256": "e3e353f1c9d4d1e9687f96bc499d1a588ff01c0f1a98ffa85aa3d31b5af76e33",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "e3e353f1c9d4d1e9687f96bc499d1a588ff01c0f1a98ffa85aa3d31b5af76e33",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.081
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.796,
+              "width": 1.0,
+              "height": 0.204
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.081,
+              "width": 1.0,
+              "height": 0.715
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.462,
+              "strength": 1.0
+            },
+            {
+              "position": 0.608,
+              "strength": 0.731
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.081,
+              "strength": 1.0
+            },
+            {
+              "position": 0.414,
+              "strength": 0.787
+            },
+            {
+              "position": 0.677,
+              "strength": 0.702
+            },
+            {
+              "position": 0.796,
+              "strength": 0.707
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Microsoft 365 Copilot",
+      "source_url": "https://play.google.com/store/apps/details?id=com.microsoft.office.officehubrow",
+      "category": "Productivity",
+      "selection_note": "Study the unified document hub, prominent create action, file-type switching, and progressive disclosure across multiple productivity tools.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.microsoft.office.officehubrow",
+        "source_image_url": "https://play-lh.googleusercontent.com/dq5TBOyIdEEXJkJADfH07pPh8afZhR6kCTdfNd511qa5dl0nGM9wnlRSHqFa9glAtUBk-LIwsDcTdgKgsbLYdAA=w600-h300-pc0xffffff-pd",
+        "local_path": "images/05-microsoft-365-copilot.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 600,
+        "height": 300,
+        "original_width": 600,
+        "original_height": 300,
+        "bytes": 4396,
+        "sha256": "cddc292a45183250bdd35d4c80c368f0d4a6c279d5bf8c4115f6d129a0f30a89",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "cddc292a45183250bdd35d4c80c368f0d4a6c279d5bf8c4115f6d129a0f30a89",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.167
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.813,
+              "width": 1.0,
+              "height": 0.187
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.167,
+              "width": 1.0,
+              "height": 0.646
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.508,
+              "strength": 0.683
+            },
+            {
+              "position": 0.597,
+              "strength": 0.282
+            },
+            {
+              "position": 0.672,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.167,
+              "strength": 0.334
+            },
+            {
+              "position": 0.327,
+              "strength": 0.345
+            },
+            {
+              "position": 0.61,
+              "strength": 0.818
+            },
+            {
+              "position": 0.813,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Google Calendar",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.calendar",
+      "category": "Productivity",
+      "selection_note": "Study switching among schedule, day, week, and month views, plus event creation through a compact expanding action menu.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.calendar",
+        "source_image_url": "https://play-lh.googleusercontent.com/3xXvwU6WfThgL9yWLfujdUguh7KEBrm7VMXTekh4cY9jYu7qQryTqvMNSd4rW-1v_olfgt9oXOvklBMtCQdd=w1052-h592",
+        "local_path": "images/06-google-calendar.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 842,
+        "height": 592,
+        "original_width": 842,
+        "original_height": 592,
+        "bytes": 30884,
+        "sha256": "1042d60f4b301c2e3450c93b9b3df084f9fd6ebd9ed77df8d71ad39c7314c407",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1042d60f4b301c2e3450c93b9b3df084f9fd6ebd9ed77df8d71ad39c7314c407",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.091
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.91,
+              "width": 1.0,
+              "height": 0.09
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.091,
+              "width": 1.0,
+              "height": 0.819
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.214,
+              "strength": 0.953
+            },
+            {
+              "position": 0.329,
+              "strength": 0.309
+            },
+            {
+              "position": 0.55,
+              "strength": 0.404
+            },
+            {
+              "position": 0.785,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.091,
+              "strength": 0.664
+            },
+            {
+              "position": 0.304,
+              "strength": 1.0
+            },
+            {
+              "position": 0.522,
+              "strength": 0.434
+            },
+            {
+              "position": 0.91,
+              "strength": 0.306
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "TickTick",
+      "source_url": "https://play.google.com/store/apps/details?id=com.ticktick.task",
+      "category": "Productivity",
+      "selection_note": "Study the combined task-and-calendar model, smart-list navigation, date parsing, and habit progress presented beside ordinary to-dos.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.ticktick.task",
+        "source_image_url": "https://play-lh.googleusercontent.com/Bz_e2cAifUFmBA-5obm02cCe2N3Z9l8GAqJ-G5q6B9gjEV5GZAbGtX5IaepEPoQ3Tiloa8PHJoQXTU9KNUxb5w=w1052-h592",
+        "local_path": "images/07-ticktick.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 761,
+        "height": 592,
+        "original_width": 761,
+        "original_height": 592,
+        "bytes": 13172,
+        "sha256": "60cc95a64720596bf062d76208198f37ea0f984f36f8305dadde57e0fa66deb8",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "60cc95a64720596bf062d76208198f37ea0f984f36f8305dadde57e0fa66deb8",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.198
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.198,
+              "width": 1.0,
+              "height": 0.802
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.209,
+              "strength": 1.0
+            },
+            {
+              "position": 0.319,
+              "strength": 0.493
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.198,
+              "strength": 1.0
+            },
+            {
+              "position": 0.331,
+              "strength": 0.651
+            },
+            {
+              "position": 0.519,
+              "strength": 0.604
+            },
+            {
+              "position": 0.649,
+              "strength": 0.572
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Evernote",
+      "source_url": "https://play.google.com/store/apps/details?id=com.evernote",
+      "category": "Productivity",
+      "selection_note": "Study notebook and tag navigation, mixed-media note composition, and the creation menu for scans, tasks, text, and attachments.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.evernote",
+        "source_image_url": "https://play-lh.googleusercontent.com/lK7KyZyJnlSKzOsjptlqzNdgwInVANgbfMKk3puSXfZs0B_2q6nVO_sIRRHYmHpzPpKYz4NzToMnmDg7M8XhhA=w1052-h592",
+        "local_path": "images/08-evernote.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 22760,
+        "sha256": "5637a48e9f08585105b9928ae8904c0ea8dccbedee10d8d606d6d49906c94414",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5637a48e9f08585105b9928ae8904c0ea8dccbedee10d8d606d6d49906c94414",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.926,
+              "width": 1.0,
+              "height": 0.074
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.806
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.231,
+              "strength": 0.836
+            },
+            {
+              "position": 0.309,
+              "strength": 0.929
+            },
+            {
+              "position": 0.637,
+              "strength": 0.851
+            },
+            {
+              "position": 0.796,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.12,
+              "strength": 1.0
+            },
+            {
+              "position": 0.48,
+              "strength": 0.702
+            },
+            {
+              "position": 0.688,
+              "strength": 0.63
+            },
+            {
+              "position": 0.926,
+              "strength": 0.708
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "WhatsApp Messenger",
+      "source_url": "https://play.google.com/store/apps/details?id=com.whatsapp",
+      "category": "Communication",
+      "selection_note": "Study the chat list, attachment sheet, voice-message recording gesture, message status indicators, and media-rich conversation layout.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.whatsapp",
+        "source_image_url": "https://play-lh.googleusercontent.com/GQF4h3VL-kklOrVS_f1QRAJJZa2zQyVNcFbKdOIkvI_Pcu1op0Sy3uiryiTxpdcCDs7vEDA9eq0eWbxo0fx_wc8=w1052-h592",
+        "local_path": "images/09-whatsapp-messenger.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 14814,
+        "sha256": "b0f3e91fb5f7eb9c3ccab74d21ec9120ca1a3866e4c83cca5b82ec3de23697f3",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b0f3e91fb5f7eb9c3ccab74d21ec9120ca1a3866e4c83cca5b82ec3de23697f3",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.894,
+              "width": 1.0,
+              "height": 0.106
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.774
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.147,
+              "strength": 0.973
+            },
+            {
+              "position": 0.348,
+              "strength": 0.302
+            },
+            {
+              "position": 0.853,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.324,
+              "strength": 1.0
+            },
+            {
+              "position": 0.613,
+              "strength": 0.429
+            },
+            {
+              "position": 0.73,
+              "strength": 0.311
+            },
+            {
+              "position": 0.894,
+              "strength": 0.447
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Signal Private Messenger",
+      "source_url": "https://play.google.com/store/apps/details?id=org.thoughtcrime.securesms",
+      "category": "Communication",
+      "selection_note": "Study privacy status communication, disappearing-message controls, secure-call transitions, and restrained metadata in the conversation view.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=org.thoughtcrime.securesms",
+        "source_image_url": "https://play-lh.googleusercontent.com/KzCr5NKG2kI4gNzbtdGTGEUqKL70zSnNXK8jAM7npBq51oGCQEnwO5ydyC98-l5kOcDhXzTMdIg9MCoR46ysc44=w1052-h592",
+        "local_path": "images/10-signal-private-messenger.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 15294,
+        "sha256": "3258c8d85d9e21953a9a8aae0fcfd3ae0d37a478668a14f9aef6edc9a2d53a62",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "3258c8d85d9e21953a9a8aae0fcfd3ae0d37a478668a14f9aef6edc9a2d53a62",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.139
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.841,
+              "width": 1.0,
+              "height": 0.159
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.139,
+              "width": 1.0,
+              "height": 0.702
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.207,
+              "strength": 0.994
+            },
+            {
+              "position": 0.793,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.139,
+              "strength": 0.909
+            },
+            {
+              "position": 0.28,
+              "strength": 1.0
+            },
+            {
+              "position": 0.841,
+              "strength": 0.328
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Telegram",
+      "source_url": "https://play.google.com/store/apps/details?id=org.telegram.messenger",
+      "category": "Communication",
+      "selection_note": "Study the navigation drawer, chat folders, pinned conversations, message action menu, and scalable presentation of channels and groups.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=org.telegram.messenger",
+        "source_image_url": "https://play-lh.googleusercontent.com/39tMyMaUKrIIH2FohvJvvFeaKVdyQiRmGZjgdd65gNt7cwJ7VSzKPbaLZ2ddawBT2VbXSG4-uwzNYWaJ7XJcGQ=w1052-h592",
+        "local_path": "images/11-telegram.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 833,
+        "height": 592,
+        "original_width": 833,
+        "original_height": 592,
+        "bytes": 45906,
+        "sha256": "05d83ddd99c093a9433e7debabbe06eb674bd06cc9eb0c9e94dd11ca0ef2c541",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "05d83ddd99c093a9433e7debabbe06eb674bd06cc9eb0c9e94dd11ca0ef2c541",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.193
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.887,
+              "width": 1.0,
+              "height": 0.113
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.193,
+              "width": 1.0,
+              "height": 0.694
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.119,
+              "strength": 1.0
+            },
+            {
+              "position": 0.37,
+              "strength": 0.808
+            },
+            {
+              "position": 0.451,
+              "strength": 0.883
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.193,
+              "strength": 1.0
+            },
+            {
+              "position": 0.296,
+              "strength": 0.719
+            },
+            {
+              "position": 0.387,
+              "strength": 0.409
+            },
+            {
+              "position": 0.887,
+              "strength": 0.628
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Slack",
+      "source_url": "https://play.google.com/store/apps/details?id=com.Slack",
+      "category": "Communication",
+      "selection_note": "Study workspace switching, channel and thread hierarchy, mention badges, and the message composer’s integration of files and shortcuts.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.Slack",
+        "source_image_url": "https://play-lh.googleusercontent.com/nIIs_bLz3utva7RvsivwWldFA--qY9w7dfOR6Bpj1u3yJihZoveJeVqIvipygNz_dtNVfW81HEYWQEBQrLGXEMo=w1052-h592",
+        "local_path": "images/12-slack.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 18438,
+        "sha256": "641c05e3f2d98ec1ae550336328752fd360ebe08dad4dcbd0dfb9d35f0551063",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "641c05e3f2d98ec1ae550336328752fd360ebe08dad4dcbd0dfb9d35f0551063",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.155
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.155,
+              "width": 1.0,
+              "height": 0.845
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.195,
+              "strength": 1.0
+            },
+            {
+              "position": 0.408,
+              "strength": 0.39
+            },
+            {
+              "position": 0.799,
+              "strength": 0.966
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.155,
+              "strength": 0.885
+            },
+            {
+              "position": 0.255,
+              "strength": 0.689
+            },
+            {
+              "position": 0.397,
+              "strength": 1.0
+            },
+            {
+              "position": 0.66,
+              "strength": 0.477
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Discord",
+      "source_url": "https://play.google.com/store/apps/details?id=com.discord",
+      "category": "Communication",
+      "selection_note": "Study server and channel hierarchy, persistent voice-room state, member presence, and transitions between text, voice, and media contexts.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.discord",
+        "source_image_url": "https://play-lh.googleusercontent.com/14UQX6a3mmXsazVjXag6AK8zZtgqtiRwpc_HGLgA62vpJOpGvbI4LqOoJpjESLgOI0Pjl_eiBC5RmiQDhRiarg=w1052-h592",
+        "local_path": "images/13-discord.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1052,
+        "height": 592,
+        "original_width": 1052,
+        "original_height": 592,
+        "bytes": 34048,
+        "sha256": "51829802fabaa067432a7442c856a73e02f7b55e2c206bd2849cf1ff1212fa79",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "51829802fabaa067432a7442c856a73e02f7b55e2c206bd2849cf1ff1212fa79",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.083
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.913,
+              "width": 1.0,
+              "height": 0.087
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.083,
+              "width": 1.0,
+              "height": 0.83
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.456,
+              "strength": 1.0
+            },
+            {
+              "position": 0.712,
+              "strength": 0.942
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.083,
+              "strength": 0.878
+            },
+            {
+              "position": 0.484,
+              "strength": 1.0
+            },
+            {
+              "position": 0.581,
+              "strength": 0.8
+            },
+            {
+              "position": 0.913,
+              "strength": 0.884
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Google Messages",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.messaging",
+      "category": "Communication",
+      "selection_note": "Study conversation search, RCS delivery state, contact chips, attachment selection, and Material-style message composition and reactions.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.messaging",
+        "source_image_url": "https://play-lh.googleusercontent.com/rfIFss1XxvDWltHw0NFkWbSnR65UglrN16c4qCqXiHyR-oXte6WSOq16a687_EXH67BnFs1BuadPrB9fqkfJ8w=w1052-h592",
+        "local_path": "images/14-google-messages.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 592,
+        "height": 592,
+        "original_width": 592,
+        "original_height": 592,
+        "bytes": 14380,
+        "sha256": "becf0cfc0ba9086bffd631d8a7d3fc37607561ac4881a6b43858aee18445e839",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "becf0cfc0ba9086bffd631d8a7d3fc37607561ac4881a6b43858aee18445e839",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.218
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.791,
+              "width": 1.0,
+              "height": 0.209
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.218,
+              "width": 1.0,
+              "height": 0.573
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.14,
+              "strength": 0.833
+            },
+            {
+              "position": 0.245,
+              "strength": 0.981
+            },
+            {
+              "position": 0.456,
+              "strength": 0.869
+            },
+            {
+              "position": 0.549,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.218,
+              "strength": 0.817
+            },
+            {
+              "position": 0.598,
+              "strength": 0.965
+            },
+            {
+              "position": 0.791,
+              "strength": 1.0
+            },
+            {
+              "position": 0.889,
+              "strength": 0.691
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Zoom Workplace",
+      "source_url": "https://play.google.com/store/apps/details?id=us.zoom.videomeetings",
+      "category": "Communication",
+      "selection_note": "Study pre-join device checks, in-call control visibility, participant management, and bottom-sheet handling of secondary meeting actions.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=us.zoom.videomeetings",
+        "source_image_url": "https://play-lh.googleusercontent.com/XIK3b8QIPzMAJej-ev7x3XSowzDsItFen4c85CZkAaaWB0EZtJ5Is-sRexgLc9m-CCVwiSqYGEhrPnqxcNelaA=w1052-h592",
+        "local_path": "images/15-zoom-workplace.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1052,
+        "height": 592,
+        "original_width": 1052,
+        "original_height": 592,
+        "bytes": 43220,
+        "sha256": "d91444bc41f3565e751353527cf7d1e3805bad6614d8e7ab40c3780d91c87493",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d91444bc41f3565e751353527cf7d1e3805bad6614d8e7ab40c3780d91c87493",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.836,
+              "width": 1.0,
+              "height": 0.164
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.716
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.122,
+              "strength": 0.886
+            },
+            {
+              "position": 0.239,
+              "strength": 1.0
+            },
+            {
+              "position": 0.354,
+              "strength": 0.896
+            },
+            {
+              "position": 0.771,
+              "strength": 0.857
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.267,
+              "strength": 0.594
+            },
+            {
+              "position": 0.354,
+              "strength": 0.654
+            },
+            {
+              "position": 0.508,
+              "strength": 1.0
+            },
+            {
+              "position": 0.836,
+              "strength": 0.849
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Google Wallet",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel",
+      "category": "Finance",
+      "selection_note": "Study the stacked card carousel, tap-to-pay readiness cues, pass grouping, and concise transaction details for glanceable use.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel",
+        "source_image_url": "https://play-lh.googleusercontent.com/J5zf7ramLDU5pwFKHGZdNJW9Mr5SqSb6WZulzwNzMekYgIpT9cYRekasUvw7-AETwQVdhGnlrtXUGAOSLxKXoA=w1052-h592",
+        "local_path": "images/16-google-wallet.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 480,
+        "height": 480,
+        "original_width": 480,
+        "original_height": 480,
+        "bytes": 3294,
+        "sha256": "6aac5695dc208a99c64724a5ee6937cc7ecabdcb7457c41fe05e3135998d99aa",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "6aac5695dc208a99c64724a5ee6937cc7ecabdcb7457c41fe05e3135998d99aa",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.275,
+              "strength": 0.645
+            },
+            {
+              "position": 0.537,
+              "strength": 1.0
+            },
+            {
+              "position": 0.619,
+              "strength": 0.673
+            },
+            {
+              "position": 0.738,
+              "strength": 0.883
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.529,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "PayPal",
+      "source_url": "https://play.google.com/store/apps/details?id=com.paypal.android.p2pmobile",
+      "category": "Finance",
+      "selection_note": "Study send-and-request flows, recipient selection, amount entry, confirmation states, and the activity feed’s transaction-status hierarchy.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.paypal.android.p2pmobile",
+        "source_image_url": "https://play-lh.googleusercontent.com/qyMHWp5U-sjDoKv0W6mwc9HqUgB5AX-Ify4_oSq_dseCdUdZeTBkYNmjdE5EvgF3K_FKAUhZuNeXmswythav=w1052-h592",
+        "local_path": "images/17-paypal.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 16690,
+        "sha256": "76a335c8d44ed06c7669085ba8dc901a10f4c333537c913fb268081f77d26ae5",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "76a335c8d44ed06c7669085ba8dc901a10f4c333537c913fb268081f77d26ae5",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.093
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.9,
+              "width": 1.0,
+              "height": 0.1
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.093,
+              "width": 1.0,
+              "height": 0.807
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.132,
+              "strength": 1.0
+            },
+            {
+              "position": 0.562,
+              "strength": 0.427
+            },
+            {
+              "position": 0.862,
+              "strength": 0.879
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.093,
+              "strength": 0.648
+            },
+            {
+              "position": 0.326,
+              "strength": 1.0
+            },
+            {
+              "position": 0.613,
+              "strength": 0.996
+            },
+            {
+              "position": 0.9,
+              "strength": 0.657
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Wise",
+      "source_url": "https://play.google.com/store/apps/details?id=com.transferwise.android",
+      "category": "Finance",
+      "selection_note": "Study multi-currency account cards and the transfer quote, which separates amount, fee, exchange rate, and recipient outcome before confirmation.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.transferwise.android",
+        "source_image_url": "https://play-lh.googleusercontent.com/SAJFjtmMowh2K95KIbpdKopdL65stPInc6dx5dtVbZBEK2d0FBqPRJp_RKHmjyU4MXddPr49lzed653GxaE4bg=w1052-h592",
+        "local_path": "images/18-wise.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 785,
+        "height": 592,
+        "original_width": 785,
+        "original_height": 592,
+        "bytes": 22852,
+        "sha256": "50c5db5d341f99ac9f68b70a7804f65e8b6767e5237ff24b5b81bb8573c4d47b",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "50c5db5d341f99ac9f68b70a7804f65e8b6767e5237ff24b5b81bb8573c4d47b",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.117
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.818,
+              "width": 1.0,
+              "height": 0.182
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.117,
+              "width": 1.0,
+              "height": 0.701
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.315,
+              "strength": 0.895
+            },
+            {
+              "position": 0.401,
+              "strength": 0.276
+            },
+            {
+              "position": 0.55,
+              "strength": 0.287
+            },
+            {
+              "position": 0.682,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.117,
+              "strength": 0.824
+            },
+            {
+              "position": 0.248,
+              "strength": 1.0
+            },
+            {
+              "position": 0.605,
+              "strength": 0.341
+            },
+            {
+              "position": 0.818,
+              "strength": 0.7
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Revolut",
+      "source_url": "https://play.google.com/store/apps/details?id=com.revolut.revolut",
+      "category": "Finance",
+      "selection_note": "Study the modular account dashboard, currency switching, analytics drill-down, and progressive confirmation used for financial actions.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.revolut.revolut",
+        "source_image_url": "https://play-lh.googleusercontent.com/BrgNUcFuoZMMlAatA-i0IJ4mVItOW1QQiNhweaDAJ6nr9sRoikG2wwTyU-K2ZhQGzab_0IbQCUoZhkGaqgTJ=w1052-h592",
+        "local_path": "images/19-revolut.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 23568,
+        "sha256": "e5bcbdf1150ffc4b94ec329d12f56ec779922bb0b74512fec82cde9d9fea5e68",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "e5bcbdf1150ffc4b94ec329d12f56ec779922bb0b74512fec82cde9d9fea5e68",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.176
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.922,
+              "width": 1.0,
+              "height": 0.078
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.176,
+              "width": 1.0,
+              "height": 0.746
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.27,
+              "strength": 0.873
+            },
+            {
+              "position": 0.357,
+              "strength": 0.896
+            },
+            {
+              "position": 0.517,
+              "strength": 1.0
+            },
+            {
+              "position": 0.691,
+              "strength": 0.861
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.081,
+              "strength": 0.491
+            },
+            {
+              "position": 0.176,
+              "strength": 0.685
+            },
+            {
+              "position": 0.841,
+              "strength": 0.55
+            },
+            {
+              "position": 0.922,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Splitwise",
+      "source_url": "https://play.google.com/store/apps/details?id=com.Splitwise.SplitwiseMobile",
+      "category": "Finance",
+      "selection_note": "Study group expense entry, payer and participant allocation, running-balance summaries, and the simplified settle-up interaction.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.Splitwise.SplitwiseMobile",
+        "source_image_url": "https://play-lh.googleusercontent.com/0H4UbwiIienhLb6jn_zs7wZ06Oqw2DtqZmoUw6puac1F5ZalD_Jja14N7gGk1seq78403uGUvdmtiVxqckMw=w600-h300-pc0xffffff-pd",
+        "local_path": "images/20-splitwise.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 600,
+        "height": 300,
+        "original_width": 600,
+        "original_height": 300,
+        "bytes": 3218,
+        "sha256": "c4807a65eb131dc7740f9132e1f2b1a59fc2fd8a65a4d7e08006846cc8f8db28",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c4807a65eb131dc7740f9132e1f2b1a59fc2fd8a65a4d7e08006846cc8f8db28",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.793,
+              "width": 1.0,
+              "height": 0.207
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.673
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.248,
+              "strength": 0.844
+            },
+            {
+              "position": 0.348,
+              "strength": 0.451
+            },
+            {
+              "position": 0.648,
+              "strength": 0.68
+            },
+            {
+              "position": 0.747,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.793,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "YNAB",
+      "source_url": "https://play.google.com/store/apps/details?id=com.youneedabudget.evergreen.app",
+      "category": "Finance",
+      "selection_note": "Study category-based budget allocation and the relationship among assigned, activity, and available amounts in a compact ledger interface.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.youneedabudget.evergreen.app",
+        "source_image_url": "https://play-lh.googleusercontent.com/B-20P5ziluGBqL2aZa9zGEWWK0E6SaQlklNJWz2yVowdhQRFvkc6HuRnoOtiQGCqGkR0Vbqyxx3UTiPFDMnj-kU=w1052-h592",
+        "local_path": "images/21-ynab.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 27962,
+        "sha256": "5ee68b86a2da2a3185716374ce1219da0bbfd5531acb3ab321796d044451587a",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5ee68b86a2da2a3185716374ce1219da0bbfd5531acb3ab321796d044451587a",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.093
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.912,
+              "width": 1.0,
+              "height": 0.088
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.093,
+              "width": 1.0,
+              "height": 0.819
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.282,
+              "strength": 0.886
+            },
+            {
+              "position": 0.492,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.093,
+              "strength": 1.0
+            },
+            {
+              "position": 0.49,
+              "strength": 0.475
+            },
+            {
+              "position": 0.787,
+              "strength": 0.421
+            },
+            {
+              "position": 0.912,
+              "strength": 0.489
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Fitbit",
+      "source_url": "https://play.google.com/store/apps/details?id=com.fitbit.FitbitMobile",
+      "category": "Health and fitness",
+      "selection_note": "Study the Today dashboard’s metric cards, goal progress, trend drill-down, and prioritization of frequently checked health signals.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.fitbit.FitbitMobile",
+        "source_image_url": "https://play-lh.googleusercontent.com/ysz7HI7jAZ3V3sbC5v18uon_GKlRIZVrCfPNfjVBGoH13wx7dgtfJEKaGZZv4sv9z7OesFnDDgyPmWGhMRBrZg=w1052-h592",
+        "local_path": "images/22-fitbit.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 480,
+        "height": 480,
+        "original_width": 480,
+        "original_height": 480,
+        "bytes": 11132,
+        "sha256": "c21ba48fb64ce9bd6b9349653f4f257db6392ce366e0ac4b70234819681e63fb",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c21ba48fb64ce9bd6b9349653f4f257db6392ce366e0ac4b70234819681e63fb",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.892,
+              "width": 1.0,
+              "height": 0.108
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.772
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.285,
+              "strength": 1.0
+            },
+            {
+              "position": 0.371,
+              "strength": 0.814
+            },
+            {
+              "position": 0.467,
+              "strength": 0.584
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.252,
+              "strength": 0.639
+            },
+            {
+              "position": 0.467,
+              "strength": 0.478
+            },
+            {
+              "position": 0.565,
+              "strength": 1.0
+            },
+            {
+              "position": 0.892,
+              "strength": 0.499
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Google Fit",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.fitness",
+      "category": "Health and fitness",
+      "selection_note": "Study the activity rings, journal timeline, metric detail charts, and visual linkage between daily movement and longer-term goals.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.fitness",
+        "source_image_url": "https://play-lh.googleusercontent.com/sb0nMtxa6T7pVdBZ3K3VDJx3Ta4ItMriHirV9y_FETbOSz79bleqcMrWIL6KyQuCfQ_SL_61yxfMEtvuWSgYMQ=w1052-h592",
+        "local_path": "images/23-google-fit.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 480,
+        "height": 480,
+        "original_width": 480,
+        "original_height": 480,
+        "bytes": 22070,
+        "sha256": "1a48151ac6625c5fb2074590fd5306c0203c844d7cb7c1a16ce377471e5aeba0",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "1a48151ac6625c5fb2074590fd5306c0203c844d7cb7c1a16ce377471e5aeba0",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.146
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.908,
+              "width": 1.0,
+              "height": 0.092
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.146,
+              "width": 1.0,
+              "height": 0.762
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.073,
+              "strength": 0.735
+            },
+            {
+              "position": 0.367,
+              "strength": 0.58
+            },
+            {
+              "position": 0.908,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.146,
+              "strength": 0.983
+            },
+            {
+              "position": 0.644,
+              "strength": 0.824
+            },
+            {
+              "position": 0.908,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Strava",
+      "source_url": "https://play.google.com/store/apps/details?id=com.strava",
+      "category": "Health and fitness",
+      "selection_note": "Study the activity recording screen, map-and-stat hierarchy, segment summaries, and transition from live tracking to a shareable result.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.strava",
+        "source_image_url": "https://play-lh.googleusercontent.com/A6tzOmAEAZMirzO_o7ddyHn_100dCu9z5FeApDZkCTjqG2eX8dao08sA2I1XXx0aoqZIeoWzMwXS7naTnJDpnTU=w1052-h592",
+        "local_path": "images/24-strava.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 17530,
+        "sha256": "3b4a0559dd76de6f213b3d7cb7e90ab8bff9c77499dfe1d7b72695070df7cbe0",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "3b4a0559dd76de6f213b3d7cb7e90ab8bff9c77499dfe1d7b72695070df7cbe0",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.184
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.934,
+              "width": 1.0,
+              "height": 0.066
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.184,
+              "width": 1.0,
+              "height": 0.75
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.177,
+              "strength": 0.918
+            },
+            {
+              "position": 0.808,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.073,
+              "strength": 0.644
+            },
+            {
+              "position": 0.184,
+              "strength": 0.904
+            },
+            {
+              "position": 0.424,
+              "strength": 0.64
+            },
+            {
+              "position": 0.934,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "MyFitnessPal",
+      "source_url": "https://play.google.com/store/apps/details?id=com.myfitnesspal.android",
+      "category": "Health and fitness",
+      "selection_note": "Study the meal-section diary, food search and quantity entry, remaining-calorie calculation, and macro breakdown after logging.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.myfitnesspal.android",
+        "source_image_url": "https://play-lh.googleusercontent.com/nhLBwLmYbu7MAyVsCI1oq784Qg1NxfbPEPWbP6Z_nFN54wa-xPSQG4bzKGVDHkG4UBM7tfchq71pDwq41jpw=w1052-h592",
+        "local_path": "images/25-myfitnesspal.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 444,
+        "height": 592,
+        "original_width": 444,
+        "original_height": 592,
+        "bytes": 29356,
+        "sha256": "22b93b92354e46ef4c98ca667894ead8d8ca4107d874fb324f96046fb07cbe85",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "22b93b92354e46ef4c98ca667894ead8d8ca4107d874fb324f96046fb07cbe85",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.145
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.856,
+              "width": 1.0,
+              "height": 0.144
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.145,
+              "width": 1.0,
+              "height": 0.711
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.142,
+              "strength": 0.938
+            },
+            {
+              "position": 0.243,
+              "strength": 0.902
+            },
+            {
+              "position": 0.417,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.145,
+              "strength": 0.526
+            },
+            {
+              "position": 0.235,
+              "strength": 0.575
+            },
+            {
+              "position": 0.688,
+              "strength": 0.472
+            },
+            {
+              "position": 0.856,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Medisafe",
+      "source_url": "https://play.google.com/store/apps/details?id=com.medisafe.android.client",
+      "category": "Health and fitness",
+      "selection_note": "Study the pillbox timeline, medication reminder actions, taken-or-skipped states, and adherence history communicated through a calendar.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.medisafe.android.client",
+        "source_image_url": "https://play-lh.googleusercontent.com/-0W7fO4ubiE-GwSbJ3lGDjkfUPXLl1Z2jqNafei-f-Ldwioa7AM_ieXAg4ijFQwpP2DT9-8Wr2aLQxETGsIry2A=w1052-h592",
+        "local_path": "images/26-medisafe.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 16836,
+        "sha256": "dbd90b54815442d8be6826854022bd62bbbabaf936284a4e485dcc68d8acbcfb",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "dbd90b54815442d8be6826854022bd62bbbabaf936284a4e485dcc68d8acbcfb",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.938,
+              "width": 1.0,
+              "height": 0.062
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.818
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.123,
+              "strength": 1.0
+            },
+            {
+              "position": 0.24,
+              "strength": 0.959
+            },
+            {
+              "position": 0.937,
+              "strength": 0.669
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.319,
+              "strength": 0.443
+            },
+            {
+              "position": 0.49,
+              "strength": 1.0
+            },
+            {
+              "position": 0.596,
+              "strength": 0.449
+            },
+            {
+              "position": 0.938,
+              "strength": 0.957
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Calm",
+      "source_url": "https://play.google.com/store/apps/details?id=com.calm.android",
+      "category": "Health and wellness",
+      "selection_note": "Study content discovery by intent, session-duration choices, the low-distraction audio player, and continuity cues for multi-day programs.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.calm.android",
+        "source_image_url": "https://play-lh.googleusercontent.com/IK-0gwvAj9RG09PoHRWaNIKlhJQkVKf_1A_tTl0ajRx3fMXAYjzuR67YXPaRTSYw_lCcB5rhSdZC-FPuMQf-rQ=w1052-h592",
+        "local_path": "images/27-calm.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1052,
+        "height": 592,
+        "original_width": 1052,
+        "original_height": 592,
+        "bytes": 41412,
+        "sha256": "808be5d23a7c40bc899a2ca1da7fe35215b26a3c09129f041c362beec9186517",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "808be5d23a7c40bc899a2ca1da7fe35215b26a3c09129f041c362beec9186517",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.826,
+              "width": 1.0,
+              "height": 0.174
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.706
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.086,
+              "strength": 1.0
+            },
+            {
+              "position": 0.436,
+              "strength": 0.326
+            },
+            {
+              "position": 0.652,
+              "strength": 0.395
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.561,
+              "strength": 0.302
+            },
+            {
+              "position": 0.664,
+              "strength": 0.288
+            },
+            {
+              "position": 0.826,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Adobe Lightroom",
+      "source_url": "https://play.google.com/store/apps/details?id=com.adobe.lrmobile",
+      "category": "Creativity",
+      "selection_note": "Study the bottom editing tool rail, parameter sliders, selective masks, and press-and-hold comparison between edited and original images.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.adobe.lrmobile",
+        "source_image_url": "https://play-lh.googleusercontent.com/C1ed9OGD87CSppc4RIWRaa6GnIPkmEmyDbncBHTPOwAXHDLhKbmYR5WDa0hs1of-kDTHsREO-DidpUj9PQwP-w=w1052-h592",
+        "local_path": "images/28-adobe-lightroom.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 768,
+        "height": 592,
+        "original_width": 768,
+        "original_height": 592,
+        "bytes": 45586,
+        "sha256": "77802b9a40d90c6237bf2a3f4d50a3851bb5fec56b0a483246380da6c41b73e4",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "77802b9a40d90c6237bf2a3f4d50a3851bb5fec56b0a483246380da6c41b73e4",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.182
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.819,
+              "width": 1.0,
+              "height": 0.181
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.182,
+              "width": 1.0,
+              "height": 0.637
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.436,
+              "strength": 0.557
+            },
+            {
+              "position": 0.512,
+              "strength": 1.0
+            },
+            {
+              "position": 0.634,
+              "strength": 0.571
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.105,
+              "strength": 0.361
+            },
+            {
+              "position": 0.182,
+              "strength": 1.0
+            },
+            {
+              "position": 0.662,
+              "strength": 0.294
+            },
+            {
+              "position": 0.819,
+              "strength": 0.436
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Canva",
+      "source_url": "https://play.google.com/store/apps/details?id=com.canva.editor",
+      "category": "Creativity",
+      "selection_note": "Study template-first discovery, object selection on a touch canvas, contextual editing controls, and layer manipulation on a small screen.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.canva.editor",
+        "source_image_url": "https://play-lh.googleusercontent.com/PCPams6EHimFl-UQvJ4SNKp5RHNRz5oakkCCGKhCdKoUx-RMSO6AHkZLZk3s1VJgb8IIlBBCDmwk3rZOz4dT=w1052-h592",
+        "local_path": "images/29-canva.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1052,
+        "height": 592,
+        "original_width": 1052,
+        "original_height": 592,
+        "bytes": 62692,
+        "sha256": "30b1119b2e4029fe5d8280b014dfcce6c2018e1136ae916eb7c454c6e6c19d11",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "30b1119b2e4029fe5d8280b014dfcce6c2018e1136ae916eb7c454c6e6c19d11",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.179,
+              "strength": 0.867
+            },
+            {
+              "position": 0.343,
+              "strength": 0.641
+            },
+            {
+              "position": 0.504,
+              "strength": 0.592
+            },
+            {
+              "position": 0.764,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.263,
+              "strength": 0.547
+            },
+            {
+              "position": 0.368,
+              "strength": 0.812
+            },
+            {
+              "position": 0.543,
+              "strength": 0.317
+            },
+            {
+              "position": 0.708,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Sketchbook",
+      "source_url": "https://play.google.com/store/apps/details?id=com.adsk.sketchbook",
+      "category": "Creativity",
+      "selection_note": "Study the full-screen canvas, radial tool access, stylus-oriented controls, gesture navigation, and compact layer management.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.adsk.sketchbook",
+        "source_image_url": "https://play-lh.googleusercontent.com/6wSx5JR1QDH9RJx1-XOmqsVqujdfk4wzfvz_7ffDZtQT1NbVH5zoW32mYjscxjIt_6ay8nNPp43ybVt55YfR84c=w1052-h592",
+        "local_path": "images/30-sketchbook.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1052,
+        "height": 592,
+        "original_width": 1052,
+        "original_height": 592,
+        "bytes": 73978,
+        "sha256": "90d44d01bc8d64ac737f9ffbc1c62eaba1a903219e65113c4d0d08e56f8adb7a",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "90d44d01bc8d64ac737f9ffbc1c62eaba1a903219e65113c4d0d08e56f8adb7a",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.125
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.125,
+              "width": 1.0,
+              "height": 0.875
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.126,
+              "strength": 0.513
+            },
+            {
+              "position": 0.351,
+              "strength": 1.0
+            },
+            {
+              "position": 0.5,
+              "strength": 0.592
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.125,
+              "strength": 1.0
+            },
+            {
+              "position": 0.375,
+              "strength": 0.432
+            },
+            {
+              "position": 0.453,
+              "strength": 0.392
+            },
+            {
+              "position": 0.694,
+              "strength": 0.338
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "CapCut",
+      "source_url": "https://play.google.com/store/apps/details?id=com.lemon.lvoverseas",
+      "category": "Creativity",
+      "selection_note": "Study the touch-driven multitrack timeline, clip trimming handles, playhead behavior, and contextual tool sets for selected media.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.lemon.lvoverseas",
+        "source_image_url": "https://play-lh.googleusercontent.com/1_0auVJ6lxphCTdJOmlEebem2jpQdq6mswK1ET7d6UBPs1Fr2tcb1QaSixCu9sktfbmEBrqvbwkXYO1DXdlHxA=w1052-h592",
+        "local_path": "images/31-capcut.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1052,
+        "height": 592,
+        "original_width": 1052,
+        "original_height": 592,
+        "bytes": 104828,
+        "sha256": "5ba65f989862668b4e2e84a855ca16c090a9048e7b2d75399320ef34616e0e7c",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "5ba65f989862668b4e2e84a855ca16c090a9048e7b2d75399320ef34616e0e7c",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.095
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.897,
+              "width": 1.0,
+              "height": 0.103
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.095,
+              "width": 1.0,
+              "height": 0.802
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.167,
+              "strength": 0.657
+            },
+            {
+              "position": 0.29,
+              "strength": 1.0
+            },
+            {
+              "position": 0.753,
+              "strength": 0.439
+            },
+            {
+              "position": 0.83,
+              "strength": 0.647
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.095,
+              "strength": 0.579
+            },
+            {
+              "position": 0.245,
+              "strength": 0.906
+            },
+            {
+              "position": 0.8,
+              "strength": 0.444
+            },
+            {
+              "position": 0.897,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "BandLab",
+      "source_url": "https://play.google.com/store/apps/details?id=com.bandlab.bandlab",
+      "category": "Creativity",
+      "selection_note": "Study mobile multitrack recording, track-arm and mute states, waveform editing, and the transition between arrangement and mixer views.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.bandlab.bandlab",
+        "source_image_url": "https://play-lh.googleusercontent.com/nJLSdrbmtiGRJWxufHg3dbfHUpoEhjr8xFrCGTS0C9dPJe0zzeHydKqVKFVGfvAWf79_0na9Lw-IWv2GZOpG=w1052-h592",
+        "local_path": "images/32-bandlab.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1052,
+        "height": 592,
+        "original_width": 1052,
+        "original_height": 592,
+        "bytes": 36006,
+        "sha256": "3ab79166afc4c23cb3b290b28a2e5c1a478a71e15bb16e4697a0555f0976628b",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "3ab79166afc4c23cb3b290b28a2e5c1a478a71e15bb16e4697a0555f0976628b",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.089
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.089,
+              "width": 1.0,
+              "height": 0.911
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.133,
+              "strength": 1.0
+            },
+            {
+              "position": 0.279,
+              "strength": 0.676
+            },
+            {
+              "position": 0.389,
+              "strength": 0.616
+            },
+            {
+              "position": 0.853,
+              "strength": 0.749
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.089,
+              "strength": 0.789
+            },
+            {
+              "position": 0.251,
+              "strength": 1.0
+            },
+            {
+              "position": 0.379,
+              "strength": 0.997
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Snapseed",
+      "source_url": "https://play.google.com/store/apps/details?id=com.niksoftware.snapseed",
+      "category": "Creativity",
+      "selection_note": "Study vertical tool selection paired with horizontal parameter adjustment, the edit stack, selective controls, and before-and-after gestures.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.niksoftware.snapseed",
+        "source_image_url": "https://play-lh.googleusercontent.com/zVuCmfYKAWXj1WlLDVqnaur2UjLxN78gs4meDsKrDKArUyPScJfSjAjFWI_TRL48l3Ox84KhgW42KDZHR9foYwE=w1052-h592",
+        "local_path": "images/33-snapseed.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 31048,
+        "sha256": "045c26891d5f23b53c54e1b1ad90a5700a3b30f484f3a5a4bd889170347e23cd",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "045c26891d5f23b53c54e1b1ad90a5700a3b30f484f3a5a4bd889170347e23cd",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.081
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.818,
+              "width": 1.0,
+              "height": 0.182
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.081,
+              "width": 1.0,
+              "height": 0.737
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.303,
+              "strength": 1.0
+            },
+            {
+              "position": 0.384,
+              "strength": 0.976
+            },
+            {
+              "position": 0.604,
+              "strength": 0.767
+            },
+            {
+              "position": 0.724,
+              "strength": 0.741
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.081,
+              "strength": 1.0
+            },
+            {
+              "position": 0.177,
+              "strength": 0.605
+            },
+            {
+              "position": 0.258,
+              "strength": 0.676
+            },
+            {
+              "position": 0.818,
+              "strength": 0.496
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Files by Google",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.nbu.files",
+      "category": "Utilities",
+      "selection_note": "Study file browsing by semantic category, storage-cleanup recommendations, selection mode, and the separation of browse, clean, and share tasks.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.nbu.files",
+        "source_image_url": "https://play-lh.googleusercontent.com/cjyFg0ABFwOFdLf1GsCGRvOoAANqCnIsFCgwGe8g-FPVaQ5STxoqZAKQOph44Hlx-gO0GMx8AZC9AY1VUBiO=w600-h300-pc0xffffff-pd",
+        "local_path": "images/34-files-by-google.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 600,
+        "height": 300,
+        "original_width": 600,
+        "original_height": 300,
+        "bytes": 2128,
+        "sha256": "da8b9da03dc52a084d2bf79e8925157d142093c3824b1050c132e2a458a4d203",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "da8b9da03dc52a084d2bf79e8925157d142093c3824b1050c132e2a458a4d203",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.77,
+              "width": 1.0,
+              "height": 0.23
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.65
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.327,
+              "strength": 1.0
+            },
+            {
+              "position": 0.67,
+              "strength": 0.934
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.287,
+              "strength": 0.271
+            },
+            {
+              "position": 0.77,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Bitwarden Password Manager",
+      "source_url": "https://play.google.com/store/apps/details?id=com.x8bit.bitwarden",
+      "category": "Utilities",
+      "selection_note": "Study vault search and type filters, credential detail hierarchy, password generation, and Android autofill handoff between apps.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.x8bit.bitwarden",
+        "source_image_url": "https://play-lh.googleusercontent.com/CMTlm6MBF6ohMl4Hkq0kjIM_VRJQMBTKbEhqwXWU6ahS0_XDdRVz1hSTdolys6WkG_dFkWLg6bZKFeEgmlMjKQ=w1052-h592",
+        "local_path": "images/35-bitwarden-password-manager.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 15884,
+        "sha256": "ed0607732166220eda80f946e69da28fc7aad0ea219333c88cdfaeefe92abd98",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "ed0607732166220eda80f946e69da28fc7aad0ea219333c88cdfaeefe92abd98",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.206
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.938,
+              "width": 1.0,
+              "height": 0.062
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.206,
+              "width": 1.0,
+              "height": 0.732
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.075,
+              "strength": 1.0
+            },
+            {
+              "position": 0.153,
+              "strength": 0.351
+            },
+            {
+              "position": 0.685,
+              "strength": 0.954
+            },
+            {
+              "position": 0.802,
+              "strength": 0.818
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.076,
+              "strength": 0.835
+            },
+            {
+              "position": 0.206,
+              "strength": 1.0
+            },
+            {
+              "position": 0.816,
+              "strength": 0.661
+            },
+            {
+              "position": 0.938,
+              "strength": 0.716
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "1Password",
+      "source_url": "https://play.google.com/store/apps/details?id=com.onepassword.android",
+      "category": "Utilities",
+      "selection_note": "Study collection and vault navigation, item detail structure, favorite and tag organization, and system-integrated autofill prompts.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.onepassword.android",
+        "source_image_url": "https://play-lh.googleusercontent.com/85_1LNuF0TlrYchrfzxIB-nwl7gB1AyQ-Xm9cFbP9ZkCiI9YNJsWhiknJuMtrCSd-nt_YxMZrP_mL1VqCWvB=w1052-h592",
+        "local_path": "images/36-1password.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 444,
+        "height": 592,
+        "original_width": 444,
+        "original_height": 592,
+        "bytes": 16256,
+        "sha256": "104603f227e15b4a86a13caaead3c52d82958f7b5db3f9d1a59b2a164b9ac709",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "104603f227e15b4a86a13caaead3c52d82958f7b5db3f9d1a59b2a164b9ac709",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.189
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.907,
+              "width": 1.0,
+              "height": 0.093
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.189,
+              "width": 1.0,
+              "height": 0.718
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.241,
+              "strength": 1.0
+            },
+            {
+              "position": 0.748,
+              "strength": 0.893
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.189,
+              "strength": 0.825
+            },
+            {
+              "position": 0.28,
+              "strength": 1.0
+            },
+            {
+              "position": 0.556,
+              "strength": 0.894
+            },
+            {
+              "position": 0.907,
+              "strength": 0.955
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Google Translate",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.translate",
+      "category": "Utilities",
+      "selection_note": "Study bidirectional language selection, instant mode switching among text, camera, voice, and conversation, and offline-language status.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.translate",
+        "source_image_url": "https://play-lh.googleusercontent.com/aiLa_lmFfFuFrtGattZWeDndqWnKwgJWCYwjQGKxRaBqON_zRkHd8dr0ROV7r0sbxXGQHKXdL56zbWJloWTasw=w1052-h592",
+        "local_path": "images/37-google-translate.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 416,
+        "height": 592,
+        "original_width": 416,
+        "original_height": 592,
+        "bytes": 18744,
+        "sha256": "e0606818a10ed43ad570378a4e4129ff5acd54c42caba222d8352ae820ae637c",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "e0606818a10ed43ad570378a4e4129ff5acd54c42caba222d8352ae820ae637c",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.191
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.191,
+              "width": 1.0,
+              "height": 0.809
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.113,
+              "strength": 1.0
+            },
+            {
+              "position": 0.882,
+              "strength": 0.975
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.086,
+              "strength": 0.472
+            },
+            {
+              "position": 0.191,
+              "strength": 1.0
+            },
+            {
+              "position": 0.323,
+              "strength": 0.184
+            },
+            {
+              "position": 0.436,
+              "strength": 0.189
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "AccuWeather",
+      "source_url": "https://play.google.com/store/apps/details?id=com.accuweather.android",
+      "category": "Utilities",
+      "selection_note": "Study the hourly forecast timeline, severe-weather prominence, radar layer controls, and progressive detail from current conditions to future days.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.accuweather.android",
+        "source_image_url": "https://play-lh.googleusercontent.com/anxA0gstJkJZzVjuA43LmJUeP-w0M49xluq-v3GAzbm3n_w8YD1qpYWGqPppGNYnzv1ruLQNLBAiqbN-t8C3=w1052-h592",
+        "local_path": "images/38-accuweather.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 444,
+        "height": 592,
+        "original_width": 444,
+        "original_height": 592,
+        "bytes": 24326,
+        "sha256": "09142d5a9a3349ba90786a1e07092b9e0b04443daa483b77352af7fef8a87d37",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "09142d5a9a3349ba90786a1e07092b9e0b04443daa483b77352af7fef8a87d37",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.916,
+              "width": 1.0,
+              "height": 0.084
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.796
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.306,
+              "strength": 0.934
+            },
+            {
+              "position": 0.459,
+              "strength": 1.0
+            },
+            {
+              "position": 0.572,
+              "strength": 0.859
+            },
+            {
+              "position": 0.696,
+              "strength": 0.907
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.262,
+              "strength": 1.0
+            },
+            {
+              "position": 0.497,
+              "strength": 0.783
+            },
+            {
+              "position": 0.704,
+              "strength": 0.643
+            },
+            {
+              "position": 0.916,
+              "strength": 0.618
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Spotify",
+      "source_url": "https://play.google.com/store/apps/details?id=com.spotify.music",
+      "category": "Media",
+      "selection_note": "Study the persistent mini-player, expansion to Now Playing, queue management, device handoff, and dense personalized content shelves.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.spotify.music",
+        "source_image_url": "https://play-lh.googleusercontent.com/woHezfX1sXXqfmd6wopeoBM-PfDHDxHL9qBmOsNAR1XcqHI1EykpX7KjJE1tRjx7HCBqKHvmcngqtpRodZZFkw=w1052-h592",
+        "local_path": "images/39-spotify.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 790,
+        "height": 592,
+        "original_width": 790,
+        "original_height": 592,
+        "bytes": 35704,
+        "sha256": "44c2612b38248e58fd4eb5d8f546aebc358d338ba3d53a44ee737ae1b763dcde",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "44c2612b38248e58fd4eb5d8f546aebc358d338ba3d53a44ee737ae1b763dcde",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.922,
+              "width": 1.0,
+              "height": 0.078
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.802
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.171,
+              "strength": 0.954
+            },
+            {
+              "position": 0.404,
+              "strength": 0.728
+            },
+            {
+              "position": 0.561,
+              "strength": 0.723
+            },
+            {
+              "position": 0.829,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.248,
+              "strength": 1.0
+            },
+            {
+              "position": 0.686,
+              "strength": 0.548
+            },
+            {
+              "position": 0.806,
+              "strength": 0.546
+            },
+            {
+              "position": 0.922,
+              "strength": 0.712
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "YouTube",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.youtube",
+      "category": "Media",
+      "selection_note": "Study player minimization, portrait-to-landscape transitions, expandable descriptions, comment sheets, and continuity while browsing recommendations.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.youtube",
+        "source_image_url": "https://play-lh.googleusercontent.com/QNmuZQc9I6Zbe3mWnSr0hycnENqGFCI5p3yE29Hkxtf22T0IWS6zTrpxULLyyjWpB7ONAXDsDQXnXcVWokl3eg=w600-h300-pc0xffffff-pd",
+        "local_path": "images/40-youtube.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 600,
+        "height": 300,
+        "original_width": 600,
+        "original_height": 300,
+        "bytes": 2282,
+        "sha256": "f1b7d502a0cd72ca7b26ec25fb5f8d0c905df2944f447fc0cc7a05afbb83733f",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "f1b7d502a0cd72ca7b26ec25fb5f8d0c905df2944f447fc0cc7a05afbb83733f",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.88
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.328,
+              "strength": 1.0
+            },
+            {
+              "position": 0.465,
+              "strength": 0.798
+            },
+            {
+              "position": 0.668,
+              "strength": 0.988
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.26,
+              "strength": 0.995
+            },
+            {
+              "position": 0.733,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "YouTube Music",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.youtube.music",
+      "category": "Media",
+      "selection_note": "Study the mini-player-to-full-player transition, swipe navigation, queue and lyrics panels, and audio-versus-video mode switching.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.youtube.music",
+        "source_image_url": "https://play-lh.googleusercontent.com/bqvU82C3OB9zThGomm1hCHy-LKsQRW7Ya-LzveukI35QYgvWGrUSOgTPK6BlNPdpIGZCybjckEQ_CXDfv6V1lg=w1052-h592",
+        "local_path": "images/41-youtube-music.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 370,
+        "height": 592,
+        "original_width": 370,
+        "original_height": 592,
+        "bytes": 9926,
+        "sha256": "de6a1a7946461aaf48a9ce48d059919b9f21aa3a40bb4aea9015eebfc908b9eb",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "de6a1a7946461aaf48a9ce48d059919b9f21aa3a40bb4aea9015eebfc908b9eb",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.204
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.848,
+              "width": 1.0,
+              "height": 0.152
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.204,
+              "width": 1.0,
+              "height": 0.644
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.124,
+              "strength": 0.545
+            },
+            {
+              "position": 0.292,
+              "strength": 0.171
+            },
+            {
+              "position": 0.87,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.091,
+              "strength": 0.276
+            },
+            {
+              "position": 0.204,
+              "strength": 1.0
+            },
+            {
+              "position": 0.848,
+              "strength": 0.163
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Pocket Casts",
+      "source_url": "https://play.google.com/store/apps/details?id=au.com.shiftyjelly.pocketcasts",
+      "category": "Media",
+      "selection_note": "Study podcast filters, episode state indicators, the Up Next queue, playback-speed controls, and chapter-aware listening navigation.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=au.com.shiftyjelly.pocketcasts",
+        "source_image_url": "https://play-lh.googleusercontent.com/TODnVuev1KCsZicT1vrB21AEd3DD_MWVXpuH959Bs0MVIK5RKBPAXbTx1LcvrPMa874ZT9MKidkartRu9AyC=w1052-h592",
+        "local_path": "images/42-pocket-casts.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 592,
+        "height": 592,
+        "original_width": 592,
+        "original_height": 592,
+        "bytes": 17812,
+        "sha256": "b177bf417e7109d7971f1ad844fd8c404d581c51320847b4e85d7b30f03df511",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "b177bf417e7109d7971f1ad844fd8c404d581c51320847b4e85d7b30f03df511",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.816,
+              "width": 1.0,
+              "height": 0.184
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.696
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.438,
+              "strength": 1.0
+            },
+            {
+              "position": 0.517,
+              "strength": 0.827
+            },
+            {
+              "position": 0.623,
+              "strength": 0.664
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.529,
+              "strength": 1.0
+            },
+            {
+              "position": 0.816,
+              "strength": 0.665
+            },
+            {
+              "position": 0.916,
+              "strength": 0.582
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "VLC for Android",
+      "source_url": "https://play.google.com/store/apps/details?id=org.videolan.vlc",
+      "category": "Media",
+      "selection_note": "Study folder-based media browsing, codec-agnostic playback states, subtitle controls, and screen gestures for brightness, volume, and seeking.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=org.videolan.vlc",
+        "source_image_url": "https://play-lh.googleusercontent.com/xS-pQOPyzoylxV-LwfYt_NnY9PmsXEz6K4sWOGbZorBMqgjXQpeQJehj4RYDYqhO2UZqlTh_fB-qCle_aNYKb8M=w1052-h592",
+        "local_path": "images/43-vlc-for-android.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1052,
+        "height": 592,
+        "original_width": 1052,
+        "original_height": 592,
+        "bytes": 36880,
+        "sha256": "00c401bb95c93007bc15d42d068827fa93e051724ee1a05ab2eae51e7f9fcc0d",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "00c401bb95c93007bc15d42d068827fa93e051724ee1a05ab2eae51e7f9fcc0d",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.121
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.937,
+              "width": 1.0,
+              "height": 0.063
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.121,
+              "width": 1.0,
+              "height": 0.816
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.124,
+              "strength": 0.97
+            },
+            {
+              "position": 0.393,
+              "strength": 0.292
+            },
+            {
+              "position": 0.516,
+              "strength": 0.353
+            },
+            {
+              "position": 0.873,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.121,
+              "strength": 0.57
+            },
+            {
+              "position": 0.273,
+              "strength": 1.0
+            },
+            {
+              "position": 0.937,
+              "strength": 0.973
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Netflix",
+      "source_url": "https://play.google.com/store/apps/details?id=com.netflix.mediaclient",
+      "category": "Media",
+      "selection_note": "Study profile selection, horizontally scrolling content shelves, title detail overlays, download-state communication, and episode progression.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.netflix.mediaclient",
+        "source_image_url": "https://play-lh.googleusercontent.com/jMZalpxGxmyEw6wCBU-ly1aNRGrf2J7ry6oRPjBCId36tyOP5TEBbZXyEBDGtu7C73Fo_FfE-9ZnZn6J3cmQIg=w1052-h592",
+        "local_path": "images/44-netflix.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 790,
+        "height": 592,
+        "original_width": 790,
+        "original_height": 592,
+        "bytes": 38338,
+        "sha256": "ce18293a69b66ccfaccde7b09b273aeab9bbd8a4c225495a024a6c84df2061a3",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "ce18293a69b66ccfaccde7b09b273aeab9bbd8a4c225495a024a6c84df2061a3",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.076
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.076,
+              "width": 1.0,
+              "height": 0.924
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.354,
+              "strength": 1.0
+            },
+            {
+              "position": 0.487,
+              "strength": 0.944
+            },
+            {
+              "position": 0.578,
+              "strength": 0.902
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.076,
+              "strength": 1.0
+            },
+            {
+              "position": 0.238,
+              "strength": 0.638
+            },
+            {
+              "position": 0.601,
+              "strength": 0.443
+            },
+            {
+              "position": 0.715,
+              "strength": 0.536
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Google Maps",
+      "source_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.maps",
+      "category": "Navigation",
+      "selection_note": "Study map-plus-bottom-sheet composition, place result cards, transport-mode comparison, and turn-by-turn guidance with glanceable maneuver cues.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.google.android.apps.maps",
+        "source_image_url": "https://play-lh.googleusercontent.com/3fSavY69Zuf3Bu5qWrHwbiRFuZb0blHycrafLSgpeaKeQ_wBtKP-Bhi2wiuLlGqkmsznLAIe33ClOdFXUOSn=w1052-h592",
+        "local_path": "images/45-google-maps.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 370,
+        "height": 592,
+        "original_width": 370,
+        "original_height": 592,
+        "bytes": 26978,
+        "sha256": "194785e3e21554d547f83674aa05aa881b3fd1d9e55d475bad70cdc0ff571ee7",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "194785e3e21554d547f83674aa05aa881b3fd1d9e55d475bad70cdc0ff571ee7",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.147
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.147,
+              "width": 1.0,
+              "height": 0.853
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.065,
+              "strength": 0.931
+            },
+            {
+              "position": 0.551,
+              "strength": 0.47
+            },
+            {
+              "position": 0.93,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.147,
+              "strength": 0.527
+            },
+            {
+              "position": 0.282,
+              "strength": 1.0
+            },
+            {
+              "position": 0.363,
+              "strength": 0.449
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Waze Navigation & Live Traffic",
+      "source_url": "https://play.google.com/store/apps/details?id=com.waze",
+      "category": "Navigation",
+      "selection_note": "Study driver-focused incident reporting, large touch targets, route alternatives, and the prioritization of immediate hazards during guidance.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.waze",
+        "source_image_url": "https://play-lh.googleusercontent.com/IDiPY6n3HBZDSHpU9O3bnZ39Cjx6ccQ-g2FZD1WVhuYnEEZzSurWk1Iu2AA9bDcFpwbYu9fDEsU-feUm1j3D=w1052-h592",
+        "local_path": "images/46-waze-navigation-live-traffic.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 370,
+        "height": 592,
+        "original_width": 370,
+        "original_height": 592,
+        "bytes": 17650,
+        "sha256": "bc9fc582b132fe057fd1b3676296b7279a511bfeb49b72fe48cc030ff667f86a",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "bc9fc582b132fe057fd1b3676296b7279a511bfeb49b72fe48cc030ff667f86a",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.189
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.189,
+              "width": 1.0,
+              "height": 0.811
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.078,
+              "strength": 0.969
+            },
+            {
+              "position": 0.505,
+              "strength": 0.442
+            },
+            {
+              "position": 0.916,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.069,
+              "strength": 0.419
+            },
+            {
+              "position": 0.189,
+              "strength": 0.633
+            },
+            {
+              "position": 0.274,
+              "strength": 1.0
+            },
+            {
+              "position": 0.505,
+              "strength": 0.475
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Citymapper",
+      "source_url": "https://play.google.com/store/apps/details?id=com.citymapper.app.release",
+      "category": "Navigation",
+      "selection_note": "Study multimodal route comparison, departure-time emphasis, disruption messaging, and step-by-step transit instructions across transport systems.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.citymapper.app.release",
+        "source_image_url": "https://play-lh.googleusercontent.com/A54yNRpe_P0u3_stP6YvlNJz1K1N4pC7-vzyq_HoqBVGEfC1S7EA9pnleZf_ocSVtvofX7ufsYwLb6XxVO0JRw=w1052-h592",
+        "local_path": "images/47-citymapper.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 592,
+        "height": 592,
+        "original_width": 592,
+        "original_height": 592,
+        "bytes": 52620,
+        "sha256": "d9d8fe630d113f74e8fa3b23b0191037b0c3e4063aa942292db127745aa983a3",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "d9d8fe630d113f74e8fa3b23b0191037b0c3e4063aa942292db127745aa983a3",
+        "orientation": "square",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.196
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.792,
+              "width": 1.0,
+              "height": 0.208
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.196,
+              "width": 1.0,
+              "height": 0.596
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.096,
+              "strength": 1.0
+            },
+            {
+              "position": 0.172,
+              "strength": 0.679
+            },
+            {
+              "position": 0.755,
+              "strength": 0.705
+            },
+            {
+              "position": 0.934,
+              "strength": 0.807
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.093,
+              "strength": 0.9
+            },
+            {
+              "position": 0.196,
+              "strength": 0.928
+            },
+            {
+              "position": 0.336,
+              "strength": 0.966
+            },
+            {
+              "position": 0.792,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "komoot",
+      "source_url": "https://play.google.com/store/apps/details?id=de.komoot.android",
+      "category": "Navigation",
+      "selection_note": "Study route planning by activity type, surface and elevation summaries, waypoint editing, and offline map-state communication.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=de.komoot.android",
+        "source_image_url": "https://play-lh.googleusercontent.com/Eahbb5M-uVV9e4GiC48oI74D9F2fDbcf_Ysz8VQFfnEOsOdvqAMHI_7PHv-52J2yAMFgDLveczzwMksi8GiT8Q=w1052-h592",
+        "local_path": "images/48-komoot.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 333,
+        "height": 592,
+        "original_width": 333,
+        "original_height": 592,
+        "bytes": 14440,
+        "sha256": "c85c9d58706e53ab4313c6202510e0e2d93f7512a1fab3a0fc5912e4ad599aa8",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c85c9d58706e53ab4313c6202510e0e2d93f7512a1fab3a0fc5912e4ad599aa8",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.804,
+              "width": 1.0,
+              "height": 0.196
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.684
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.324,
+              "strength": 1.0
+            },
+            {
+              "position": 0.517,
+              "strength": 0.602
+            },
+            {
+              "position": 0.661,
+              "strength": 0.716
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.228,
+              "strength": 0.683
+            },
+            {
+              "position": 0.454,
+              "strength": 1.0
+            },
+            {
+              "position": 0.549,
+              "strength": 0.743
+            },
+            {
+              "position": 0.804,
+              "strength": 0.625
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "GitHub",
+      "source_url": "https://play.google.com/store/apps/details?id=com.github.android",
+      "category": "Developer tools",
+      "selection_note": "Study repository and notification navigation, issue and pull-request timelines, code-diff presentation, and compact review actions on mobile.",
+      "visual": {
+        "source_page_url": "https://play.google.com/store/apps/details?id=com.github.android",
+        "source_image_url": "https://play-lh.googleusercontent.com/OecGv-z9tVf0dE7JYLEEjge7dOwDBIeE-GOZKn_hsdl4AOo5dZZSIACUrW6qk_bFsEfN_SQHGfPYqhaZWUIcNYA=w1052-h592",
+        "local_path": "images/49-github.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 266,
+        "height": 592,
+        "original_width": 266,
+        "original_height": 592,
+        "bytes": 8988,
+        "sha256": "f506545685f49bf2fda45de0d0480c2b8041177748bed78e28c1b18872a81ec9",
+        "source_hint": "Screenshot image  T75of B5GQxf"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "f506545685f49bf2fda45de0d0480c2b8041177748bed78e28c1b18872a81ec9",
+        "orientation": "portrait",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.12
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.799,
+              "width": 1.0,
+              "height": 0.201
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.12,
+              "width": 1.0,
+              "height": 0.679
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.109,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.245,
+              "strength": 0.499
+            },
+            {
+              "position": 0.424,
+              "strength": 0.728
+            },
+            {
+              "position": 0.561,
+              "strength": 0.594
+            },
+            {
+              "position": 0.799,
+              "strength": 1.0
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "name": "Termux",
+      "source_url": "https://github.com/termux/termux-app",
+      "category": "Developer tools",
+      "selection_note": "Study terminal session switching, the extra-keys row, long-press command actions, and integration of desktop-style shell work with Android input.",
+      "visual": {
+        "source_page_url": "https://github.com/termux/termux-app",
+        "source_image_url": "https://opengraph.githubassets.com/f008f288ea500a0bdd3f7e2e84e395e2aa2752bdf44929a9d3ec548de2e161f6/termux/termux-app",
+        "local_path": "images/50-termux.webp",
+        "capture_kind": "official-source-image",
+        "captured_at": "2026-08-16",
+        "format": "webp",
+        "width": 1200,
+        "height": 600,
+        "original_width": 1200,
+        "original_height": 600,
+        "bytes": 23132,
+        "sha256": "ad7e8c1f295cddad6b69266d85439ee99ecc50b4187ed998a88719b771a33180",
+        "source_hint": "twitter:image"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "ad7e8c1f295cddad6b69266d85439ee99ecc50b4187ed998a88719b771a33180",
+        "orientation": "landscape",
+        "layout_model": "mobile-single-column",
+        "panel_summary": "Single-column mobile hierarchy with top context and a vertically scrolling primary surface.",
+        "regions": [
+          {
+            "role": "toolbar/header",
+            "position": "top",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 0.198
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "bottom navigation/action area",
+            "position": "bottom",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.869,
+              "width": 1.0,
+              "height": 0.131
+            },
+            "evidence": "measured horizontal separator"
+          },
+          {
+            "role": "scrolling content or app screen",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.198,
+              "width": 1.0,
+              "height": 0.671
+            },
+            "evidence": "mobile-family catalog"
+          }
+        ],
+        "detected_separators": {
+          "vertical": [
+            {
+              "position": 0.132,
+              "strength": 0.581
+            },
+            {
+              "position": 0.327,
+              "strength": 0.55
+            },
+            {
+              "position": 0.767,
+              "strength": 0.941
+            },
+            {
+              "position": 0.931,
+              "strength": 1.0
+            }
+          ],
+          "horizontal": [
+            {
+              "position": 0.198,
+              "strength": 0.674
+            },
+            {
+              "position": 0.382,
+              "strength": 0.633
+            },
+            {
+              "position": 0.462,
+              "strength": 1.0
+            },
+            {
+              "position": 0.869,
+              "strength": 0.517
+            }
+          ]
+        },
+        "visual_density": "low",
+        "confidence": "medium"
+      }
+    }
+  ],
+  "visual_count": 50,
+  "structure_count": 50
+}

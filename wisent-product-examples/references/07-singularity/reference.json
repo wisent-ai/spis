@@ -1,0 +1,407 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Singularity",
+  "product_url": "https://github.com/wisent-ai/singularity",
+  "evidence_status": "complete",
+  "upstream_owner": "Wisent (wisent-ai)",
+  "wisent_product": true,
+  "repository": "wisent-ai/singularity",
+  "captured_at": "2026-08-19T23:21:45+00:00",
+  "capture_host": {
+    "os": "macOS",
+    "os_version": "26.4.1",
+    "os_build": "25E253",
+    "arch": "arm64",
+    "kernel": "Darwin 25.4.0",
+    "shell": "/bin/bash",
+    "terminal": "pseudo-terminal, 100x32, TERM=xterm-256color"
+  },
+  "installed": {
+    "binary": "singularity",
+    "resolved_path": "/Library/Frameworks/Python.framework/Versions/3.12/bin/singularity",
+    "version_command": "singularity --version",
+    "version_output": "<coroutine object main at 0x100d0e740>",
+    "version_exit_status": 1,
+    "version_flag_supported": false
+  },
+  "motion": [
+    {
+      "local_path": "media/session.cast",
+      "source_url": "https://github.com/wisent-ai/singularity",
+      "media_kind": "terminal-cast",
+      "width": 100,
+      "height": 32,
+      "duration_seconds": 113.372,
+      "frame_count": 147,
+      "bytes": 5054,
+      "sha256": "7e7bcd0c8ec73d0efb0a42f918c05f4557e137824293fc569589d77a92618932",
+      "capture_method": "Real local run of the installed product on this workstation: `singularity` resolved to /Library/Frameworks/Python.framework/Versions/3.12/bin/singularity and driven through a real pseudo-terminal (PTY) on macOS 26.4.1 (25E253) arm64, recorded as an asciinema v2 terminal cast with the timings of the run. The session issued only read-only commands — version form, top-level help, one subcommand help surface, one deliberately invalid flag, Ctrl-C on an unsubmitted line, the recovering help, and the same help with NO_COLOR=1 — from an empty scratch working directory. No host was contacted, no credential minted, no vault written, no job submitted and no service restarted.",
+      "recording_environment": "/bin/bash --norc --noprofile -i on a 100x32 PTY, TERM=xterm-256color, PAGER=cat, cwd=/Users/lukaszbartoszcze/.stado/work/wisent-capture/run/singularity",
+      "declared_media_kind": "asciinema-v2-terminal-cast",
+      "measured": true,
+      "measurement_method": "asciinema-v2 header and event stream",
+      "provenance_class": "local-product-run"
+    }
+  ],
+  "states": [
+    {
+      "name": "version-identity",
+      "local_path": "media/01-version-identity.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'version identity' step (event 15, t=14.2271 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 15,
+      "cast_timestamp_seconds": 14.227067,
+      "width": 924,
+      "height": 728,
+      "bytes": 20424,
+      "sha256": "915eb00ad3dca82e8361ff59b614a99f31e8af5eb0354b7bcfa3deb4e4fb0123"
+    },
+    {
+      "name": "help-surface",
+      "local_path": "media/02-help-surface.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'top-level help surface' step (event 37, t=34.2087 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 37,
+      "cast_timestamp_seconds": 34.208693,
+      "width": 924,
+      "height": 728,
+      "bytes": 36167,
+      "sha256": "fb4df4e7b368fdfe1b2e8d9d332df7b75e385b637fe4505e65aa2d4a12cf0680"
+    },
+    {
+      "name": "subcommand-help",
+      "local_path": "media/03-subcommand-help.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'subcommand help surface' step (event 67, t=55.2597 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 67,
+      "cast_timestamp_seconds": 55.2597,
+      "width": 924,
+      "height": 728,
+      "bytes": 51967,
+      "sha256": "8001a4fc227ecc53c48009dc9057b5ab6048fceefac037521d012c29d2468f0b"
+    },
+    {
+      "name": "refusal",
+      "local_path": "media/04-refusal.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'refusal after the invalid flag' step (event 94, t=77.9838 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 94,
+      "cast_timestamp_seconds": 77.983817,
+      "width": 924,
+      "height": 728,
+      "bytes": 68027,
+      "sha256": "f6caed5698158db2ae7538bc8c0deaf8ac2a7cb7d77c1f1cbed151417ae49acf"
+    },
+    {
+      "name": "recovery",
+      "local_path": "media/05-recovery.png",
+      "source_motion_path": "Deterministic Pillow render of media/session.cast replayed to the end of the 'recovered help after the refusal' step (event 132, t=98.4095 s): the cast's own ANSI-stripped text, wrapped at 100 columns, last 32 rows, Menlo 15px. It is a render of the cast at that named point, not a separate capture, and re-rendering the same cast produces the same bytes.",
+      "cast_event_index": 132,
+      "cast_timestamp_seconds": 98.409544,
+      "width": 924,
+      "height": 728,
+      "bytes": 86177,
+      "sha256": "0f6075e32cfea10475923d3824b40bed0779cee89d2a2294513cee23c87832b2"
+    }
+  ],
+  "interactions": [
+    {
+      "name": "command entry",
+      "trigger": "Type `singularity --version` at the `wisent-ref$` prompt and press Enter.",
+      "response": "Singularity starts from /Library/Frameworks/Python.framework/Versions/3.12/bin/singularity and writes to the pseudo-terminal.",
+      "feedback": "<coroutine object main at 0x100d0e740>",
+      "cancellation": "Ctrl-C on the unsubmitted `singularity --wisent-reference-probe` line discarded it and restored the prompt; nothing was submitted.",
+      "failure": "`singularity --wisent-reference-probe` reaches the same parser and is refused with status 1.",
+      "recovery": "Re-enter `singularity --help`.",
+      "evidence": "media/session.cast at 0.000387–14.2265 s; observed exit 1; media/01-version-identity.png"
+    },
+    {
+      "name": "version identity",
+      "trigger": "Ask the installed binary what it is with `singularity --version`.",
+      "response": "Singularity has no version flag: it refuses the option with status 1 and answers with its usage surface instead.",
+      "feedback": "<coroutine object main at 0x100d0e740>",
+      "cancellation": "The version form returns on its own; Ctrl-C is available at the prompt.",
+      "failure": "The version request itself is the failure: exit 1.",
+      "recovery": "Read the identity out of `singularity --help` instead.",
+      "evidence": "media/session.cast at 0.000387–14.2265 s; observed exit 1; media/01-version-identity.png"
+    },
+    {
+      "name": "help discovery",
+      "trigger": "Run `singularity --help`.",
+      "response": "Singularity prints 3 lines of its own top-level help, widest line 73 characters.",
+      "feedback": "<coroutine object main at 0x102fda740>",
+      "cancellation": "The stream is short enough to complete; the prompt stays interruptible.",
+      "failure": "A misspelled flag on the same surface is refused with status 1.",
+      "recovery": "Re-run `singularity --help`.",
+      "evidence": "media/session.cast at 14.4367–34.2084 s; observed exit 1; media/02-help-surface.png"
+    },
+    {
+      "name": "subcommand surface",
+      "trigger": "Run `singularity onboarding --help`.",
+      "response": "argparse gives every subcommand its own help; `onboarding` is the only one.",
+      "feedback": "<coroutine object main at 0x101322740>",
+      "cancellation": "Ctrl-C at the prompt abandons the request before submission.",
+      "failure": "Observed exit 1 on this path.",
+      "recovery": "Return to `singularity --help` for the documented grammar.",
+      "evidence": "media/session.cast at 34.4141–55.2593 s; observed exit 1; media/03-subcommand-help.png"
+    },
+    {
+      "name": "invalid flag refusal",
+      "trigger": "Run `singularity --wisent-reference-probe`.",
+      "response": "Singularity refuses the unknown option and returns status 1.",
+      "feedback": "<coroutine object main at 0x105152740>",
+      "cancellation": "The refusal returns immediately; no cancellation was required.",
+      "failure": "Observed status 1.",
+      "recovery": "The refusal names no next action; `singularity --help` recovers anyway.",
+      "evidence": "media/session.cast at 55.4673–77.9833 s; observed exit 1; media/04-refusal.png"
+    },
+    {
+      "name": "exit status reporting",
+      "trigger": "After each command the recorded shell prints `printf \"exit-status=%s\\n\" \"$?\"`.",
+      "response": "The real status of the preceding product invocation appears in the cast as text.",
+      "feedback": "exit-status=1 after the version form, exit-status=1 after the invalid flag.",
+      "cancellation": "The status line is a shell builtin write; there is nothing to cancel.",
+      "failure": "A missing status line would mean the prompt never returned; every step reported one.",
+      "recovery": "Not applicable: the status is evidence, not an action.",
+      "evidence": "media/session.cast at 14.2265–14.2265 s and after every other command"
+    },
+    {
+      "name": "cancellation",
+      "trigger": "Type `singularity --wisent-reference-probe` and press Ctrl-C instead of Enter.",
+      "response": "The pending line is discarded and the prompt returns; the product never ran.",
+      "feedback": "A fresh prompt follows the interrupt in the cast.",
+      "cancellation": "Ctrl-C is the observed cancellation mechanism for unsubmitted input.",
+      "failure": "The typed command is abandoned on purpose rather than executed.",
+      "recovery": "Submit `singularity --help` at the restored prompt.",
+      "evidence": "media/session.cast at 78.1939–79.0159 s"
+    },
+    {
+      "name": "recovery",
+      "trigger": "After the refusal and the cancellation, run `singularity --help` again.",
+      "response": "The same installed binary prints valid help and returns status 1.",
+      "feedback": "<coroutine object main at 0x10287a740>",
+      "cancellation": "The recovery can itself be interrupted with Ctrl-C at the prompt.",
+      "failure": "Repeating `singularity --wisent-reference-probe` reproduces status 1.",
+      "recovery": "The valid help form completes the first-success journey.",
+      "evidence": "media/session.cast at 79.0159–98.4093 s; observed exit 1; media/05-recovery.png"
+    },
+    {
+      "name": "color-free equivalence",
+      "trigger": "Run `NO_COLOR=1 singularity --help`.",
+      "response": "The help text differs from the colored run once color is removed (3 lines).",
+      "feedback": "0 ANSI colour sequences in the default run, 0 with NO_COLOR=1.",
+      "cancellation": "Ctrl-C at the prompt applies here as to any other command.",
+      "failure": "No failure on this path; it is a measurement of the same success route.",
+      "recovery": "Not applicable.",
+      "evidence": "media/session.cast at 98.6185–113.371 s; observed exit 1"
+    }
+  ],
+  "journey": {
+    "actor": "An operator who has just found this Wisent binary on the PATH and wants to know what it is, what it can do, and what it refuses — before pointing it at anything real.",
+    "goal": "Get the first meaningful Singularity result, read its own description of its grammar, see a real refusal, cancel a pending command safely, and recover — without touching a host, a vault, a queue or a credential.",
+    "prerequisites": [
+      "Singularity installed on this workstation at /Library/Frameworks/Python.framework/Versions/3.12/bin/singularity (from wisent-ai/singularity)",
+      "An empty scratch working directory (/Users/lukaszbartoszcze/.stado/work/wisent-capture/run/singularity) with no project or product state in it",
+      "A pseudo-terminal at 100x32 with TERM=xterm-256color, PAGER=cat and NO_COLOR unset",
+      "macOS 26.4.1 (25E253) arm64"
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "user_action": "Open the recorded pseudo-terminal at `wisent-ref$` in an empty scratch directory.",
+        "system_response": "A clean prompt appears; no project, credential, host or queue target is selected.",
+        "state": "ready prompt",
+        "evidence": "media/session.cast at 0–0.000387 s"
+      },
+      {
+        "index": 2,
+        "user_action": "Run `singularity --version`.",
+        "system_response": "Singularity refuses the version flag with status 1 and prints `<coroutine object main at 0x100d0e740>`.",
+        "state": "version identity",
+        "evidence": "media/session.cast at 0.000387–14.2265 s; observed exit 1; media/01-version-identity.png"
+      },
+      {
+        "index": 3,
+        "user_action": "Run `singularity --help`.",
+        "system_response": "3 lines of the product's own top-level help are printed.",
+        "state": "top-level help surface",
+        "evidence": "media/session.cast at 14.4367–34.2084 s; observed exit 1; media/02-help-surface.png"
+      },
+      {
+        "index": 4,
+        "user_action": "Run `singularity onboarding --help`.",
+        "system_response": "argparse gives every subcommand its own help; `onboarding` is the only one.",
+        "state": "subcommand help surface",
+        "evidence": "media/session.cast at 34.4141–55.2593 s; observed exit 1; media/03-subcommand-help.png"
+      },
+      {
+        "index": 5,
+        "user_action": "Run `singularity --wisent-reference-probe`.",
+        "system_response": "The option is refused: `<coroutine object main at 0x105152740>`, status 1.",
+        "state": "observed refusal",
+        "evidence": "media/session.cast at 55.4673–77.9833 s; observed exit 1; media/04-refusal.png"
+      },
+      {
+        "index": 6,
+        "user_action": "Type `singularity --wisent-reference-probe` again and press Ctrl-C before Enter.",
+        "system_response": "The unsubmitted line is discarded and the prompt returns; nothing ran.",
+        "state": "cancelled pending command",
+        "evidence": "media/session.cast at 78.1939–79.0159 s"
+      },
+      {
+        "index": 7,
+        "user_action": "Run `singularity --help` again.",
+        "system_response": "Valid help is printed again with status 1: first success is recovered.",
+        "state": "recovered first success",
+        "evidence": "media/session.cast at 79.0159–98.4093 s; observed exit 1; media/05-recovery.png"
+      },
+      {
+        "index": 8,
+        "user_action": "Run `NO_COLOR=1 singularity --help`.",
+        "system_response": "The help text changes once colour is removed, which is recorded as a difference, not a claim of parity.",
+        "state": "colour-free help",
+        "evidence": "media/session.cast at 98.6185–113.371 s; observed exit 1"
+      }
+    ],
+    "failure_route": [
+      "Run `singularity --wisent-reference-probe`.",
+      "<coroutine object main at 0x105152740>",
+      "Observe status 1 printed by the recorded shell, and the prompt restored."
+    ],
+    "recovery_route": [
+      "Run `singularity --help`.",
+      "<coroutine object main at 0x10287a740>",
+      "Observe status 1 and the prompt returned with nothing changed on disk."
+    ],
+    "completion_evidence": "media/session.cast at 79.0159–98.4093 s plus media/05-recovery.png: the same installed binary answers again after the refusal and the cancellation. The whole 113.372 s session is local and replayable with `asciinema play media/session.cast`."
+  },
+  "motion_analysis": {
+    "trigger": "Enter pressed on each typed command in the recorded pseudo-terminal session; the seventh keystroke sequence is Ctrl-C instead of Enter.",
+    "start_state": "An empty `wisent-ref$` prompt in /Users/lukaszbartoszcze/.stado/work/wisent-capture/run/singularity with no product state, no credential and no target selected.",
+    "end_state": "The prompt restored after `NO_COLOR=1 singularity --help`, with the shell's own `exit-status=` line as the last product-related output.",
+    "continuity": "One append-only text stream: no screen clear and no cursor addressing appear anywhere in the cast, so every state reached stays visible above the next one and the whole journey can be read as one scroll.",
+    "timing_class": "multi-second",
+    "timing_description": "The six submitted commands each completed between 14.226 s and 22.516 s; the other pauses are the recorder typing and the deliberate Ctrl-C pause.",
+    "interruption_or_reversal": "Ctrl-C at 78.1939 s on the unsubmitted `singularity --wisent-reference-probe` line: the line was discarded and the prompt returned, and the product never ran.",
+    "feedback": "Completion is signalled twice: the prompt returns, and the recorded shell prints `exit-status=N` for the command that just ran, so success and refusal are distinguishable in the text alone.",
+    "reduced_motion_equivalent": "There is no animation to reduce. The cast is text appended in order; the five PNGs carry the same content statically, and the raw `.cast` file can be read as JSON without playback."
+  },
+  "accessibility": {
+    "measured": true,
+    "measurement_method": "Measured from this run: SGR sequences counted in the raw PTY bytes, the same help command run again with NO_COLOR=1 and the two ANSI-stripped texts compared, the refusal text searched for a named next action, and the widest help line counted against 80 columns.",
+    "observations": [
+      "Colour: with TERM=xterm-256color on a real pseudo-terminal and NO_COLOR unset, `singularity --help` emitted 0 ANSI SGR sequences, so this product does not colour its help output.",
+      "NO_COLOR: `NO_COLOR=1 singularity --help` printed 3 lines with 0 SGR sequences; the ANSI-stripped text of the two runs is not identical, so the two runs are recorded as different rather than equivalent.",
+      "Refusal wording: the refusal for `singularity --wisent-reference-probe` does not name a next action anywhere in its output.",
+      "Terminal width: the widest line of `singularity --help` is 73 characters, so the help fits an 80-column terminal without wrapping.",
+      "Input: the whole recorded journey is keyboard-only — typed commands, Enter and one Ctrl-C — and every state is emitted as selectable terminal text, not as a drawn widget.",
+      "State without colour: success and refusal differ by exit status in the cast (1 against 1), which the shell prints as text."
+    ],
+    "measurements": {
+      "help_command": "singularity --help",
+      "help_sgr_sequences": 0,
+      "colours_help_output": false,
+      "no_color_command": "NO_COLOR=1 singularity --help",
+      "no_color_sgr_sequences": 0,
+      "no_color_text_identical": false,
+      "help_line_count": 3,
+      "help_max_line_width": 73,
+      "help_fits_80_columns": true,
+      "refusal_command": "singularity --wisent-reference-probe",
+      "refusal_exit_status": 1,
+      "refusal_names_next_action": false,
+      "refusal_next_action_phrase": null,
+      "cancel_echoed_interrupt": false,
+      "cancel_prompt_restored": true,
+      "screen_cleared": false,
+      "cursor_addressed": false
+    },
+    "unknowns": [
+      "Screen-reader behaviour was not observed: no screen reader was attached to this PTY.",
+      "Colour contrast of any emitted colours was not measured, and no WCAG or terminal-accessibility audit was performed.",
+      "Behaviour in a terminal narrower than 80 columns was not observed; only the emitted line widths were measured.",
+      "High-contrast themes, non-UTF-8 locales and alternative fonts were not exercised.",
+      "Authenticated and target-selected paths were deliberately not run, so nothing here describes the product's accessibility once a host, vault, queue or credential is involved."
+    ]
+  },
+  "observed_commands": [
+    {
+      "step": "version",
+      "label": "version identity",
+      "command": "singularity --version",
+      "exit_status": 1,
+      "started_at": 0.000387,
+      "ended_at": 14.226485,
+      "line_count": 3,
+      "max_line_width": 73,
+      "first_line": "<coroutine object main at 0x100d0e740>"
+    },
+    {
+      "step": "help",
+      "label": "top-level help",
+      "command": "singularity --help",
+      "exit_status": 1,
+      "started_at": 14.436746,
+      "ended_at": 34.208403,
+      "line_count": 3,
+      "max_line_width": 73,
+      "first_line": "<coroutine object main at 0x102fda740>"
+    },
+    {
+      "step": "subcommand-help",
+      "label": "subcommand help surface",
+      "command": "singularity onboarding --help",
+      "exit_status": 1,
+      "started_at": 34.41412,
+      "ended_at": 55.259272,
+      "line_count": 3,
+      "max_line_width": 73,
+      "first_line": "<coroutine object main at 0x101322740>"
+    },
+    {
+      "step": "invalid-flag",
+      "label": "invalid flag refusal",
+      "command": "singularity --wisent-reference-probe",
+      "exit_status": 1,
+      "started_at": 55.467297,
+      "ended_at": 77.983318,
+      "line_count": 3,
+      "max_line_width": 73,
+      "first_line": "<coroutine object main at 0x105152740>"
+    },
+    {
+      "step": "cancellation",
+      "label": "Ctrl-C on an unsubmitted line",
+      "command": "singularity --wisent-reference-probe",
+      "exit_status": null,
+      "started_at": 78.193947,
+      "ended_at": 79.015882,
+      "line_count": 0,
+      "max_line_width": 0,
+      "first_line": ""
+    },
+    {
+      "step": "recovery-help",
+      "label": "recovery help",
+      "command": "singularity --help",
+      "exit_status": 1,
+      "started_at": 79.015911,
+      "ended_at": 98.409279,
+      "line_count": 3,
+      "max_line_width": 73,
+      "first_line": "<coroutine object main at 0x10287a740>"
+    },
+    {
+      "step": "no-color-help",
+      "label": "help with NO_COLOR=1",
+      "command": "NO_COLOR=1 singularity --help",
+      "exit_status": 1,
+      "started_at": 98.618488,
+      "ended_at": 113.371357,
+      "line_count": 3,
+      "max_line_width": 73,
+      "first_line": "<coroutine object main at 0x1032f6740>"
+    }
+  ],
+  "evidence_gaps": [],
+  "measured_at": "2026-08-19",
+  "motion_provenance": [
+    "local-product-run"
+  ]
+}

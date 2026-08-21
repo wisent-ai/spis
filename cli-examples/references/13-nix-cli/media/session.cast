@@ -1,0 +1,12 @@
+{"version":2,"width":100,"height":30,"timestamp":1786921623,"env":{"SHELL":"/bin/bash","TERM":"xterm-256color"},"title":"Nix CLI authentic CLI first-success"}
+[0.0,"o","\u001b[2J\u001b[H"]
+[0.1,"o","Authentic first-success recording: Nix CLI\r\n"]
+[0.55,"o","cli-ref$ nix --version 2>&1 | sed -n '1,14p'\r\n"]
+[0.85,"o","nix (Nix) 2.35.2\r\n"]
+[2.2,"o","cli-ref$ nix --help 2>&1 | sed -n '1,14p'\r\n"]
+[2.55,"o","  \u2502 Warning \r\n  \u2502 This program is experimental and its interface is\r\n  \u2502 subject to change.\r\n\r\nName\r\n\r\nnix - a tool for reproducible and declarative configuration\r\nmanagement\r\n\r\nSynopsis\r\n\r\nnix [option...] subcommand\r\n\r\nwhere subcommand is one of the following:\r\n"]
+[5.1,"o","cli-ref$ nix --definitely-invalid-option 2>&1 | sed -n '1,14p'\r\n"]
+[5.45,"o","error: unrecognised flag '--definitely-invalid-option'\r\nTry 'nix --help' for more information.\r\n[exit status 1]\r\n"]
+[7.1,"o","cli-ref$ nix --help\r\n[recorder observation: Ctrl-C before Enter; pending input discarded]\r\ncli-ref$ \r\n"]
+[8.1,"o","cli-ref$ nix --help 2>&1 | sed -n '1,14p'\r\n"]
+[8.45,"o","  \u2502 Warning \r\n  \u2502 This program is experimental and its interface is\r\n  \u2502 subject to change.\r\n\r\n"]

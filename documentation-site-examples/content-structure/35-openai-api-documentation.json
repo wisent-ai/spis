@@ -1,0 +1,249 @@
+{
+  "name": "OpenAI API Documentation",
+  "source_url": "https://platform.openai.com/docs/overview",
+  "category": "AI API documentation",
+  "captured_at": "2026-08-19",
+  "inventory_source": "developers.openai.com sitemap (platform docs are JS-only)",
+  "inventory_url_count": 1105,
+  "landing_nav": [],
+  "url_sections": {
+    "api": 595,
+    "cookbook": 321,
+    "showcase": 44,
+    "plugins": 30,
+    "blog": 28,
+    "ads": 22,
+    "commerce": 18,
+    "learn": 16,
+    "resources": 16,
+    "community": 6,
+    "tracks": 4,
+    "workspace-agents": 3,
+    "chatgpt": 1
+  },
+  "content_kinds": {},
+  "page_anatomy": [
+    {
+      "url": "https://developers.openai.com/ads/",
+      "h1": "Ads",
+      "h2": [
+        "Search the ChatGPT docs",
+        "Build with ChatGPT Ads",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/blog/",
+      "h1": "OpenAI Developer Blog",
+      "h2": [
+        "Search developer resources",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/chatgpt/",
+      "h1": "Build for ChatGPT",
+      "h2": [
+        "Search the ChatGPT docs",
+        "Resources",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/commerce/",
+      "h1": "Agentic Commerce Protocol",
+      "h2": [
+        "Search the ChatGPT docs",
+        "Build with the Agentic Commerce Protocol",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/community/",
+      "h1": "Community",
+      "h2": [
+        "Search developer resources",
+        "Choose your path",
+        "Programs",
+        "Join our next meetup",
+        "What builders are making and sharing",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/cookbook/",
+      "h1": "",
+      "h2": [
+        "Search developer resources"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/learn/",
+      "h1": "Get inspired and build",
+      "h2": [
+        "Search developer resources",
+        "Learning tracks",
+        "Demo apps",
+        "Videos",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/plugins/",
+      "h1": "Plugins",
+      "h2": [
+        "Search the ChatGPT docs",
+        "Get started",
+        "Explore the docs",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/showcase/",
+      "h1": "Showcase",
+      "h2": [
+        "Search developer resources",
+        "All projects",
+        "Photobooth Demo",
+        "OpenAI.fm",
+        "Realtime Solar System",
+        "Chatkit.world",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/tracks/",
+      "h1": "Learning tracks",
+      "h2": [
+        "Search developer resources",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/workspace-agents/",
+      "h1": "Workspace Agents",
+      "h2": [
+        "Search the ChatGPT docs",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/api/docs/",
+      "h1": "API Platform",
+      "h2": [
+        "Search the API docs",
+        "Developer quickstart",
+        "Build paths",
+        "Models",
+        "Start building",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/",
+      "h1": "Bring your ideas to life.",
+      "h2": [
+        "Search the docs",
+        "Explore ideas.",
+        "Get work done.",
+        "Build anything.",
+        "What will you do with ChatGPT?",
+        "What’s new in ChatGPT and Codex",
+        "Find earlier work with Computer History",
+        "Resources",
+        "Community",
+        "Updates",
+        "GPT-5.6: Lower prices and faster speeds.",
+        "Codex use cases",
+        "Showcase",
+        "Featured",
+        "GPT Image 2 for image generation and editing",
+        "Blog posts",
+        "Cookbooks",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/ads/api-overview/",
+      "h1": "Overview",
+      "h2": [
+        "Search the ChatGPT docs",
+        "Authentication",
+        "Endpoints",
+        "Object statuses",
+        "Rate limits",
+        "OpenAPI spec",
+        "Changelog",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/ads/api-partner-setup/",
+      "h1": "API Partner Setup",
+      "h2": [
+        "Search the ChatGPT docs",
+        "Before you begin",
+        "1. Confirm account access",
+        "2. Add a brand favicon",
+        "3. Configure conversions",
+        "4. Create campaigns and ads",
+        "Next steps",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/ads/api-quickstart/",
+      "h1": "Quickstart",
+      "h2": [
+        "Search the ChatGPT docs",
+        "Ad Structure",
+        "1. Confirm access to your ad account",
+        "2. Upload a creative asset",
+        "3. Create a campaign",
+        "4. Create an ad group",
+        "5. Create an ad",
+        "6. Retrieve insights",
+        "Next steps",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/ads/api-reference/ad-account/",
+      "h1": "Ad Account",
+      "h2": [
+        "Search the ChatGPT docs",
+        "Update account brand metadata",
+        "Get ad account metadata",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/ads/api-reference/ad-groups/",
+      "h1": "Ad Groups",
+      "h2": [
+        "Search the ChatGPT docs",
+        "List ad groups",
+        "Create an ad group",
+        "Retrieve an ad group",
+        "Update an ad group",
+        "Change state with dedicated actions",
+        "Docs agent"
+      ]
+    },
+    {
+      "url": "https://developers.openai.com/ads/api-reference/ads/",
+      "h1": "Ads",
+      "h2": [
+        "Search the ChatGPT docs",
+        "List ads",
+        "Create an ad",
+        "Retrieve an ad",
+        "Update an ad",
+        "Review status",
+        "Preview an ad",
+        "Change state with dedicated actions",
+        "Docs agent"
+      ]
+    }
+  ]
+}
