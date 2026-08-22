@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "product": "spis",
+  "releases": true,
+  "version_source": {
+    "kind": "regex",
+    "path": "bin/spis",
+    "pattern": "(?m)^\\s*print\\(\"spis (?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)\"\\)\\s*$"
+  },
+  "platforms": {
+    "darwin-arm64": {
+      "runner_platform": "darwin-arm64",
+      "quality": [],
+      "build": {
+        "argv": ["sh", "scripts/build-release.sh"]
+      },
+      "stage": {
+        ".wisent-output/release/spis-darwin-arm64.tar.gz": "release/spis-darwin-arm64.tar.gz",
+        ".wisent-output/release/spis-darwin-arm64.tar.gz.sha256": "release/spis-darwin-arm64.tar.gz.sha256"
+      }
+    }
+  },
+  "promotion": {
+    "channels": ["stable"],
+    "reconcile": false
+  },
+  "inputs": {},
+  "deliveries": []
+}
