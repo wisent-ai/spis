@@ -85,3 +85,32 @@ A type is complete only when:
 ## Acceptance check
 
 Choose any numbered example, open its directory without network access, play the motion asset, follow the five-or-more-state first-success sequence, and trace every interaction and recovery claim to that evidence. If that cannot be done, the reference is incomplete.
+
+## Family: landing pages
+
+A landing-page reference records one marketing page as a *measured surface*,
+not as a picture. The 2026-08-21 removal of the previous landing catalog is the
+precedent: fifty first-viewport screenshots read once by a model, with counts
+quoted from a single pass, were not evidence and were deleted rather than
+repaired.
+
+A landing record must have:
+
+1. **Captures at all three review widths** — 390 × 844, 768 × 1024, and
+   1440 × 1000 — taken in the same session through Weles on a Stado-selected
+   host (`local-browser-recording`), or, when the owner publishes a complete,
+   official responsive set, `upstream-owner-media` with every width present.
+2. **DOM snapshot with computed styles** for each width. Line counts, colors,
+   type sizes, and element boundaries are read from the page, never inferred
+   from a picture. A screenshot without the DOM is a gap named in the record.
+3. **First-viewport observations** limited to fields that survive a two-pass
+   reliability check (agreement ≥ 70%). Headline line counts and visual-crop
+   judgments are not recordable fields.
+4. **Section inventory below the fold**, each section named with its evidence
+   source; sections nobody captured stay in `evidence_gaps`, never in prose.
+5. **Motion evidence** per the general floor when the page animates anything.
+6. **Provenance and hashes** per the general floor.
+
+What a landing record deliberately does not contain: quality verdicts, taste
+rankings, or conversion claims. Spis measures what is on the page; whether it
+is good is an interpretation that lives in `product-guidelines`.

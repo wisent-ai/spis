@@ -1,0 +1,13 @@
+{
+  "schema": "wisent.reference-catalog.v1",
+  "slug": "landing-examples",
+  "title": "Landing page examples",
+  "description": "Measured landing-page surfaces: captures at three review widths with DOM snapshots, per the family section of the evidence contract.",
+  "status": "scaffolded",
+  "records": [],
+  "evidence_gaps": [
+    "no records captured yet; the previous catalog was removed on 2026-08-21 for unverifiable single-pass observations",
+    "capture tooling through Weles on a Stado-selected host not yet built for this family"
+  ],
+  "contract_section": "full-reference-contract.md#family-landing-pages"
+}
