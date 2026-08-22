@@ -8,6 +8,7 @@ things every tool expects: the working directory is the repository root and
 the exit code is the tool's exit code.
 
 Usage:
+  spis guidelines       derive a DRAFT guideline doc from a catalog
   spis type add              add a product-type catalog (landing-page, readme, …)
   spis type edit             retitle, redescribe, restage, or rename a type
   spis type remove           delete a product-type catalog (--force for non-empty)
@@ -33,6 +34,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 COMMANDS = {
+    "guidelines": "guidelines.py",
     "reference": "reference-record.py",
     "type": "catalog-type.py",
     "capture": "capture-wisent-references.py",
@@ -45,6 +47,7 @@ COMMANDS = {
     "catalogs": "generate-example-catalogs.py",
     "drift": "check-upstream-drift.py",
 }
+
 
 
 ROOT = Path(__file__).resolve().parent.parent
