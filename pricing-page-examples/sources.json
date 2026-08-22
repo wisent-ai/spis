@@ -1,0 +1,13 @@
+{
+  "schema": "wisent.example-catalog.v2",
+  "catalog": "pricing-page-examples",
+  "slug": "pricing-page-examples",
+  "title": "Pricing & plans examples",
+  "description": "Product pricing and plan-comparison pages.",
+  "status": "scaffolded",
+  "curated_at": "2026-08-22",
+  "count": 0,
+  "examples": [],
+  "visual_count": 0,
+  "structure_count": 0
+}

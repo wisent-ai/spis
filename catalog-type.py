@@ -87,7 +87,21 @@ def cmd_add(args: argparse.Namespace) -> None:
     }
     save_sources(directory, sources)
     (directory / "references.json").write_text(
-        json.dumps({"schema": "wisent.full-product-reference.index.v1", "records": []}, indent=2) + "\n"
+        json.dumps(
+            {
+                "schema": "wisent.full-reference-catalog.v2",
+                "catalog": slug,
+                "generated_at": __import__("datetime")
+                    .datetime.now(__import__("datetime").timezone.utc)
+                    .isoformat(timespec="seconds"),
+                "reference_count": 0,
+                "complete_count": 0,
+                "partial_count": 0,
+                "references": [],
+            },
+            indent=2,
+        )
+        + "\n"
     )
     regenerate()
     print(f"added {directory.name} ({args.title}); scaffolded with zero records")

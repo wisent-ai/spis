@@ -4,7 +4,7 @@ A shared evidence library for choosing complete interaction models before produc
 
 Motion evidence is labelled by how it was obtained, because the difference matters: 221 of 664 assets are a product driven on our own machines, the rest are recordings the product's owner published. A record still missing evidence is `partial` and carries the missing items in its own `evidence_gaps`; nothing is called complete on the strength of a marketing clip.
 
-**Catalogs:** 14  
+**Catalogs:** 15  
 **Screenshots:** 650  
 **Structural analyses:** 650  
 **Records:** 650 (0 with no remaining gap, 650 partial)  
@@ -26,6 +26,7 @@ Motion evidence is labelled by how it was obtained, because the difference matte
 | [Design system examples](design-system-examples/full-reference.md) | <a href="design-system-examples/README.md"><img src="design-system-examples/images/01-material-design-3.webp" alt="Design system examples representative interface reference" width="260"></a> | Public design systems and platform human-interface guidance. | [0 complete / 50 partial](design-system-examples/references.json) | 48 owner-published media, 2 browser driven here |
 | [Report and evidence examples](report-evidence-examples/full-reference.md) | <a href="report-evidence-examples/README.md"><img src="report-evidence-examples/images/01-grafana-explore.webp" alt="Report and evidence examples representative interface reference" width="260"></a> | Reports, findings, traces, comparisons, and evidence viewers. | [0 complete / 50 partial](report-evidence-examples/references.json) | 50 owner-published media |
 | [Landing page examples](landing-page-examples/full-reference.md) | — | Measured landing-page surfaces: captures at three review widths with DOM snapshots, per the family section of the evidence contract (full-reference-contract.md). | [0 complete / 0 partial](landing-page-examples/references.json) | scaffolded, no records yet |
+| [Pricing & plans examples](pricing-page-examples/full-reference.md) | — | Product pricing and plan-comparison pages. | [0 complete / 0 partial](pricing-page-examples/references.json) | scaffolded, no records yet |
 
 Open a numbered per-product record for its motion evidence, named states, observed first-success journey, interactions, recovery, accessibility, and provenance. Read the family synthesis only after the underlying records.
 

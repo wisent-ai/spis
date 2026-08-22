@@ -1,7 +1,7 @@
 {
   "schema": "wisent.example-catalog.v2",
   "generated_at": "2026-08-22",
-  "catalog_count": 14,
+  "catalog_count": 15,
   "example_count": 650,
   "image_count": 650,
   "structure_count": 650,
@@ -249,6 +249,21 @@
       "readme": "landing-page-examples/README.md",
       "full_reference": "landing-page-examples/full-reference.md",
       "full_reference_source": "landing-page-examples/references.json"
+    },
+    {
+      "slug": "pricing-page-examples",
+      "title": "Pricing & plans examples",
+      "description": "Product pricing and plan-comparison pages.",
+      "count": 0,
+      "image_count": 0,
+      "structure_count": 0,
+      "complete_record_count": 0,
+      "partial_record_count": 0,
+      "measured_provenance": {},
+      "source": "pricing-page-examples/sources.json",
+      "readme": "pricing-page-examples/README.md",
+      "full_reference": "pricing-page-examples/full-reference.md",
+      "full_reference_source": "pricing-page-examples/references.json"
     }
   ]
 }

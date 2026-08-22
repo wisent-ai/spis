@@ -11,6 +11,9 @@ Usage:
   spis type add              add a product-type catalog (landing-page, readme, …)
   spis type edit             retitle, redescribe, restage, or rename a type
   spis type remove           delete a product-type catalog (--force for non-empty)
+  spis reference add         scaffold one numbered record in a catalog (partial until measured)
+  spis reference get         print a record's example entry and full reference.json
+  spis reference remove      delete one record (--force when it carries evidence)
   spis capture               capture own-product references (installed binaries)
   spis audit-accessibility   accessibility audit of captured references
   spis collect-images        attributable official imagery with provenance
@@ -25,12 +28,12 @@ Usage:
 from __future__ import annotations
 
 import importlib.util
-import runpy
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 COMMANDS = {
+    "reference": "reference-record.py",
     "type": "catalog-type.py",
     "capture": "capture-wisent-references.py",
     "audit-accessibility": "audit-reference-accessibility.py",
@@ -40,7 +43,9 @@ COMMANDS = {
     "analyze-readmes": "analyze-readme-examples.py",
     "verify": "verify-reference-evidence.py",
     "catalogs": "generate-example-catalogs.py",
+    "drift": "check-upstream-drift.py",
 }
+
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -61,6 +66,7 @@ def usage() -> str:
 
 
 COMMENTS = {
+    "reference": "add, get, or remove a numbered reference record",
     "type": "add, edit, or remove a product-type catalog",
     "capture": "capture own-product references from installed binaries",
     "audit-accessibility": "audit captured references for accessibility evidence",
