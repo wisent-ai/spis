@@ -8,6 +8,9 @@ things every tool expects: the working directory is the repository root and
 the exit code is the tool's exit code.
 
 Usage:
+  spis type add              add a product-type catalog (landing-page, readme, …)
+  spis type edit             retitle, redescribe, restage, or rename a type
+  spis type remove           delete a product-type catalog (--force for non-empty)
   spis capture               capture own-product references (installed binaries)
   spis audit-accessibility   accessibility audit of captured references
   spis collect-images        attributable official imagery with provenance
@@ -27,8 +30,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-
 COMMANDS = {
+    "type": "catalog-type.py",
     "capture": "capture-wisent-references.py",
     "audit-accessibility": "audit-reference-accessibility.py",
     "collect-images": "collect-example-images.py",
@@ -37,7 +40,6 @@ COMMANDS = {
     "analyze-readmes": "analyze-readme-examples.py",
     "verify": "verify-reference-evidence.py",
     "catalogs": "generate-example-catalogs.py",
-    "drift": "check-upstream-drift.py",
 }
 
 ROOT = Path(__file__).resolve().parent.parent

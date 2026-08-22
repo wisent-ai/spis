@@ -297,7 +297,34 @@ def load_catalog(slug: str) -> dict:
         raise ContractError(f"{source_path}: catalog must equal directory name")
 
     examples = catalog.get("examples")
-    if not isinstance(examples, list) or not examples:
+    if not isinstance(examples, list):
+        raise ContractError(f"{source_path}: examples must be a list")
+    if not examples and catalog.get("status") == "scaffolded":
+        # A scaffolded catalog is an intentional empty shell: the contract
+        # requires records before they are indexed, so an empty type renders
+        # with zero counts and its named evidence gaps.
+        return {
+            "catalog": slug,
+            "slug": slug,
+            "title": catalog.get("title", slug),
+            "description": catalog.get("description", ""),
+            "count": 0,
+            "image_count": 0,
+            "structure_count": 0,
+            "complete_record_count": 0,
+            "partial_record_count": 0,
+            "visual_count": 0,
+            "structure_count": 0,
+            "curated_at": catalog.get("curated_at", "unknown"),
+            "measured_provenance": {},
+            "full_reference_catalog": {"measured_provenance": {}, "complete_count": 0, "partial_count": 0, "locally_driven_count": 0, "measured_gap_total": 0, "reference_count": 0},
+            "source": f"{slug}/sources.json",
+            "readme": f"{slug}/README.md",
+            "full_reference": f"{slug}/full-reference.md",
+            "full_reference_source": f"{slug}/references.json",
+            "scaffolded": True,
+            "examples": [],
+        }
         raise ContractError(f"{source_path}: no examples")
     for key in ("count", "visual_count", "structure_count"):
         if catalog.get(key) != len(examples):
@@ -489,6 +516,14 @@ def render_index(catalogs: list[dict]) -> str:
     ]
     for catalog in catalogs:
         index = catalog["full_reference_catalog"]
+        if catalog.get("scaffolded") or not catalog["examples"]:
+            rows.append(
+                f'| [{escape_cell(catalog["title"])}]({catalog["catalog"]}/full-reference.md) | — '
+                f'| {escape_cell(catalog["description"])} '
+                f'| [{index["complete_count"]} complete / {index["partial_count"]} partial]'
+                f'({catalog["catalog"]}/references.json) | scaffolded, no records yet |'
+            )
+            continue
         example = catalog["examples"][0]
         image = (
             f'<a href="{catalog["catalog"]}/README.md"><img src="{catalog["catalog"]}/'

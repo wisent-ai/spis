@@ -1,0 +1,13 @@
+{
+  "schema": "wisent.example-catalog.v2",
+  "catalog": "landing-page-examples",
+  "slug": "landing-page-examples",
+  "title": "Landing page examples",
+  "description": "Measured landing-page surfaces: captures at three review widths with DOM snapshots, per the family section of the evidence contract (full-reference-contract.md).",
+  "status": "scaffolded",
+  "curated_at": "2026-08-22",
+  "count": 0,
+  "examples": [],
+  "visual_count": 0,
+  "structure_count": 0
+}

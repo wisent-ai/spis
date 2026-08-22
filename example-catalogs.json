@@ -1,7 +1,7 @@
 {
   "schema": "wisent.example-catalog.v2",
-  "generated_at": "2026-08-16",
-  "catalog_count": 13,
+  "generated_at": "2026-08-22",
+  "catalog_count": 14,
   "example_count": 650,
   "image_count": 650,
   "structure_count": 650,
@@ -234,6 +234,21 @@
       "readme": "report-evidence-examples/README.md",
       "full_reference": "report-evidence-examples/full-reference.md",
       "full_reference_source": "report-evidence-examples/references.json"
+    },
+    {
+      "slug": "landing-page-examples",
+      "title": "Landing page examples",
+      "description": "Measured landing-page surfaces: captures at three review widths with DOM snapshots, per the family section of the evidence contract (full-reference-contract.md).",
+      "count": 0,
+      "image_count": 0,
+      "structure_count": 0,
+      "complete_record_count": 0,
+      "partial_record_count": 0,
+      "measured_provenance": {},
+      "source": "landing-page-examples/sources.json",
+      "readme": "landing-page-examples/README.md",
+      "full_reference": "landing-page-examples/full-reference.md",
+      "full_reference_source": "landing-page-examples/references.json"
     }
   ]
 }

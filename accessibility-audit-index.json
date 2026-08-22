@@ -1,0 +1,29 @@
+{
+  "schema": "wisent.accessibility-audit-index.v1",
+  "generated_at": "2026-08-22T06:11:11Z",
+  "batch": "accessibility-20260822t061111z",
+  "target": "charless-mac-mini",
+  "plan": "/Users/lukaszbartoszcze/.stado/work/accessibility-audit-plans/accessibility-20260822t061111z.json",
+  "totals": {
+    "planned": 1,
+    "complete": 0,
+    "failed": 0,
+    "pending": 1
+  },
+  "records": [
+    {
+      "id": "cli-examples/01-git",
+      "catalog": "cli-examples",
+      "index": 1,
+      "name": "Git",
+      "site_slug": "01-git",
+      "source_url": "https://git-scm.com/docs/git",
+      "status": "pending",
+      "artifact_prefix": "stado://weles-captures/accessibility-20260822t061111z/cli-examples/01-git/accessibility/",
+      "raw_path": null,
+      "summary_path": null,
+      "reason": "stado host weles-capture charless-mac-mini --plan /Users/lukaszbartoszcze/.stado/work/accessibility-audit-plans/accessibility-20260822t061111z.json --json: Error: capture 1 axis must be one of composition, interaction, reactivity, state-change, subpage"
+    }
+  ],
+  "verifier_errors": []
+}
