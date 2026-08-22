@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "product": "spis",
+  "version": "1.0.0",
+  "repo": "/Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis",
+  "surfaces": {
+    "cli": {
+      "declared": true,
+      "binary": "/Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis/bin/spis",
+      "ok": true,
+      "version": "1.0.0",
+      "commands": [
+        "analyze-readmes",
+        "analyze-structures",
+        "audit-accessibility",
+        "capture",
+        "catalogs",
+        "collect-images",
+        "drift",
+        "sync-readmes",
+        "verify"
+      ]
+    },
+    "api": {
+      "declared": false
+    },
+    "config": {
+      "declared": false
+    },
+    "changelog": {
+      "declared": false
+    },
+    "limits": {
+      "declared": false
+    }
+  },
+  "docs": {},
+  "requiredKinds": [
+    "overview",
+    "quick-start",
+    "cli-reference"
+  ],
+  "problems": []
+}

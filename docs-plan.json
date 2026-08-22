@@ -1,0 +1,195 @@
+{
+  "product": "spis",
+  "version": "1.0.0",
+  "sources": {
+    "reference-help": {
+      "kind": "command",
+      "location": "spis --help"
+    },
+    "reference-version": {
+      "kind": "command",
+      "location": "spis --version"
+    },
+    "contract": {
+      "kind": "file",
+      "location": "full-reference-contract.md"
+    },
+    "pipeline-doc": {
+      "kind": "file",
+      "location": "docs/pipeline.md"
+    }
+  },
+  "terms": [
+    {
+      "term": "record",
+      "definedOn": "overview"
+    },
+    {
+      "term": "provenance class",
+      "definedOn": "overview"
+    },
+    {
+      "term": "evidence gap",
+      "definedOn": "overview"
+    },
+    {
+      "term": "catalog",
+      "definedOn": "overview"
+    },
+    {
+      "term": "corpus",
+      "definedOn": "overview"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "overview",
+      "nav": "Overview",
+      "group": "Getting started",
+      "kind": "overview",
+      "title": "Spis overview",
+      "description": "What Spis is and how every record earns its place in the corpus.",
+      "sections": [
+        {
+          "title": "What Spis is",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "claim": {
+                "source": "reference-help",
+                "evidence": "usage: spis <command> [tool flags]"
+              },
+              "text": "Spis is an evidence-grade reference corpus: 700 records across 13 interface families, each carrying its source, hashes, provenance class, and measured state."
+            },
+            {
+              "type": "paragraph",
+              "claim": {
+                "source": "contract",
+                "evidence": "Per-example completion floor"
+              },
+              "text": "A record exists only with its evidence. A missing observation is recorded as an evidence gap and is never promoted into prose."
+            }
+          ]
+        },
+        {
+          "title": "Words this documentation uses",
+          "blocks": [
+            {
+              "type": "bullets",
+              "claim": {
+                "source": "contract",
+                "evidence": "provenance class"
+              },
+              "items": [
+                "`record` \u2014 one measured reference: media, source URL, hashes, provenance class, and status.",
+                "`provenance class` \u2014 how the media was obtained: `local-product-run`, `local-browser-run`, or `upstream-owner-media`.",
+                "`evidence gap` \u2014 something the corpus does not know, recorded instead of guessed.",
+                "`catalog` \u2014 one family of records, such as web-app-examples or cli-examples."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "quick-start",
+      "nav": "Quick start",
+      "group": "Getting started",
+      "kind": "quick-start",
+      "title": "Quick start",
+      "description": "Clone the corpus and run your first command in under a minute.",
+      "sections": [
+        {
+          "title": "Run the CLI",
+          "blocks": [
+            {
+              "type": "code",
+              "code": {
+                "label": "clone and run the consistency gate",
+                "code": "$ git clone https://github.com/wisent-ai/spis && cd spis\n$ bin/spis\n$ bin/spis catalogs --check"
+              },
+              "claim": {
+                "source": "reference-version",
+                "evidence": "reference 1.0.0"
+              }
+            },
+            {
+              "type": "paragraph",
+              "claim": {
+                "source": "pipeline-doc",
+                "evidence": "capture \u2500\u2500\u25ba collect-images \u2500\u2500\u25ba verify \u2500\u2500\u25ba catalogs"
+              },
+              "text": "`collect-images` and `analyze-structures` need Pillow; every other command runs on the Python standard library."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "cli-reference",
+      "nav": "CLI reference",
+      "group": "Reference",
+      "kind": "cli-reference",
+      "title": "CLI reference",
+      "description": "Every `reference` command and what it owns.",
+      "sections": [
+        {
+          "title": "Commands",
+          "blocks": [
+            {
+              "type": "table",
+              "claim": {
+                "source": "reference-help",
+                "evidence": "usage: spis <command> [tool flags]"
+              },
+              "table": {
+                "columns": [
+                  "command",
+                  "owns"
+                ],
+                "rows": [
+                  [
+                    "capture",
+                    "own-product references from installed binaries"
+                  ],
+                  [
+                    "audit-accessibility",
+                    "accessibility audit of captured references"
+                  ],
+                  [
+                    "collect-images",
+                    "attributable official imagery"
+                  ],
+                  [
+                    "analyze-structures",
+                    "panel and layout analysis"
+                  ],
+                  [
+                    "sync-readmes",
+                    "upstream README snapshots refresh"
+                  ],
+                  [
+                    "analyze-readmes",
+                    "README corpus structural analysis"
+                  ],
+                  [
+                    "verify",
+                    "rewrite records to what the bytes prove"
+                  ],
+                  [
+                    "catalogs",
+                    "regenerate the index; refuses disagreement"
+                  ],
+                  [
+                    "drift",
+                    "upstream README and URL drift report"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

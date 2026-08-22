@@ -1,0 +1,5 @@
+{
+  "product": "spis",
+  "binary": "bin/spis",
+  "configDoc": "docs/pipeline.md"
+}

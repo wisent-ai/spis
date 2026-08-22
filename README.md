@@ -18,10 +18,10 @@ This repository owns the data and the machinery that produces it.
 One entry point for every tool; flags pass through unchanged:
 
 ```bash
-bin/reference capture --list          # what own-product capture can run here
-bin/reference verify --apply          # rewrite records to what the bytes prove
-bin/reference catalogs --check        # consistency gate over index and records
-bin/reference drift --strict          # non-zero exit on upstream drift (CI)
+bin/spis capture --list          # what own-product capture can run here
+bin/spis verify --apply          # rewrite records to what the bytes prove
+bin/spis catalogs --check        # consistency gate over index and records
+bin/spis drift --strict          # non-zero exit on upstream drift (CI)
 ```
 
 The full flow, stage by stage, is in [`docs/pipeline.md`](docs/pipeline.md).
@@ -45,7 +45,7 @@ The full flow, stage by stage, is in [`docs/pipeline.md`](docs/pipeline.md).
 | `check-upstream-drift.py` | upstream README and URL drift report (report stays private) |
 | `generate-example-catalogs.py` | renders catalogs from records; refuses disagreement |
 | `sync-readme-examples.py` / `analyze-readme-examples.py` | README corpus refresh and structural analysis |
-| `bin/reference` | one CLI over all tools; flags pass through |
+| `bin/spis` | one CLI over all tools; flags pass through |
 | `docs/pipeline.md` | the capture → verify → catalogs flow |
 | `docs/takedown.md` | content rights and takedown policy |
 | `LICENSE` | Apache-2.0 |

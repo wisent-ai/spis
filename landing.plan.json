@@ -33,9 +33,9 @@
       "claimRefs": [2],
       "artifact": {
         "type": "terminal",
-        "caption": "`bin/reference catalogs --check` over the generated index",
+        "caption": "`bin/spis catalogs --check` over the generated index",
         "lines": [
-          "$ bin/reference catalogs --check",
+          "$ bin/spis catalogs --check",
           "index: 13 catalogs, 700 records",
           "provenance: upstream-owner-media 700",
           "complete: 10 · partial: 690",

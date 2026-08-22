@@ -37,7 +37,7 @@
     }
   ],
   "requiredProof": [
-    "terminal transcript of bin/reference catalogs --check passing over the generated index"
+    "terminal transcript of bin/spis catalogs --check passing over the generated index"
   ],
   "brand": {
     "canonicalAssets": [
