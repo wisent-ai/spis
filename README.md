@@ -1,18 +1,17 @@
-# reference-engine
+# Spis
 
-An open-source reference corpus for people building interfaces: the evidence
-contract, capture and verification tooling, and measured example catalogs —
-700 records across 13 third-party interface families, every record with its
-source, hashes, and provenance class.
+**Spis** — the evidence-grade reference corpus for people building interfaces.
+700 records across 13 interface families, every record with its source, hashes,
+provenance class, and measured state. Where other libraries show you screenshots,
+Spis shows you what can be proven about them.
+
+Licensed Apache-2.0. Own-product captures and operational monitoring metadata
+live in a private companion repository and are intentionally not here.
 
 Guidelines that interpret this data live in
 [`wisent-ai/product-guidelines`](https://github.com/wisent-ai/product-guidelines).
-This repository owns the data and the machinery that produces it. It answers one
-question: what do we actually know about how good interfaces look and behave,
-and how do we know it.
+This repository owns the data and the machinery that produces it.
 
-Own-product captures and operational monitoring metadata live in a private
-companion repository and are intentionally not here.
 
 ## Command line
 
