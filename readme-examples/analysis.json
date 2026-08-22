@@ -9,7 +9,7 @@
     "median_words": 944.0,
     "p25_words": 531.25,
     "p75_words": 1800.75,
-    "p90_words": 4031.0,
+    "p90_words": 4028.3,
     "shortest_lines": 17,
     "longest_lines": 941,
     "median_headings": 11.0,
@@ -384,7 +384,7 @@
     {
       "file": "10-n8n-io-n8n.md",
       "lines": 73,
-      "words": 622,
+      "words": 623,
       "headings": 11,
       "first_heading": "n8n – The Platform for AI Agents and Workflow Automation",
       "badges": false,
@@ -1428,7 +1428,7 @@
     {
       "file": "46-oven-sh-bun.md",
       "lines": 446,
-      "words": 3993,
+      "words": 3990,
       "headings": 18,
       "first_heading": "[Read the docs →](https://bun.com/docs)",
       "badges": true,

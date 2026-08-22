@@ -1,14 +1,14 @@
 {
   "schema": "wisent.example-catalog.v2",
-  "generated_at": "2026-08-19",
-  "catalog_count": 15,
-  "example_count": 710,
-  "image_count": 710,
-  "structure_count": 710,
-  "record_count": 710,
-  "complete_record_count": 10,
-  "partial_record_count": 700,
-  "locally_driven_motion_count": 231,
+  "generated_at": "2026-08-16",
+  "catalog_count": 13,
+  "example_count": 650,
+  "image_count": 650,
+  "structure_count": 650,
+  "record_count": 650,
+  "complete_record_count": 0,
+  "partial_record_count": 650,
+  "locally_driven_motion_count": 221,
   "catalogs": [
     {
       "slug": "ios-app-examples",
@@ -234,38 +234,6 @@
       "readme": "report-evidence-examples/README.md",
       "full_reference": "report-evidence-examples/full-reference.md",
       "full_reference_source": "report-evidence-examples/references.json"
-    },
-    {
-      "slug": "wisent-product-examples",
-      "title": "Wisent product examples",
-      "description": "The Wisent products with a runnable CLI on the capture host, each measured by running it: version form, top-level help, one subcommand help surface, one invalid flag, a Ctrl-C on an unsubmitted line, the recovering help, and the same help with NO_COLOR=1.",
-      "count": 10,
-      "image_count": 10,
-      "structure_count": 10,
-      "complete_record_count": 10,
-      "partial_record_count": 0,
-      "measured_provenance": {
-        "local-product-run": 10
-      },
-      "source": "wisent-product-examples/sources.json",
-      "readme": "wisent-product-examples/README.md",
-      "full_reference": "wisent-product-examples/full-reference.md",
-      "full_reference_source": "wisent-product-examples/references.json"
-    },
-    {
-      "slug": "landing-page-examples",
-      "title": "Landing page examples",
-      "description": "First-view landing-page evidence, with the planned interaction, reactivity, state-change and subpage capture set kept visible until it exists.",
-      "count": 50,
-      "image_count": 50,
-      "structure_count": 50,
-      "complete_record_count": 0,
-      "partial_record_count": 50,
-      "measured_provenance": {},
-      "source": "landing-page-examples/sources.json",
-      "readme": "landing-page-examples/README.md",
-      "full_reference": "landing-page-examples/full-reference.md",
-      "full_reference_source": "landing-page-examples/references.json"
     }
   ]
 }

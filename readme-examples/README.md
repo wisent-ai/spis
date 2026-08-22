@@ -4,7 +4,7 @@ Fifty verbatim README snapshots from established open-source repositories. This 
 
 The snapshots remain the work of their respective projects and are governed by each source repository's license. Review patterns; do not copy project names, artwork, badges, or claims. Relative images and links may only render correctly in the upstream repository.
 
-Captured from GitHub on `2026-08-19`. `sources.json` records the README blob SHA, upstream URL, repository license identifier, and capture-time metadata for every file. Run `../sync-readme-examples.py` to refresh the catalog.
+Captured from GitHub on `2026-08-21`. `sources.json` records the README blob SHA, upstream URL, repository license identifier, and capture-time metadata for every file. Run `../sync-readme-examples.py` to refresh the catalog.
 Derived guidance: [README Best Practices](../readme-best-practices.md). Generated measurements: [analysis.json](analysis.json).
 
 | # | Repository | Category | Snapshot | Source | License |

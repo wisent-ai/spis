@@ -1,6 +1,6 @@
 {
   "schema": "wisent.readme-examples",
-  "captured_at": "2026-08-19",
+  "captured_at": "2026-08-21",
   "count": 50,
   "sources": [
     {
@@ -12,9 +12,9 @@
       "repository_url": "https://github.com/sindresorhus/awesome",
       "default_branch": "main",
       "license_spdx": "CC0-1.0",
-      "stars_at_capture": 497823,
+      "stars_at_capture": 498624,
       "readme_path": "readme.md",
-      "readme_blob_sha": "e64820519c89f94db3483d8aa27c6a81f384b751",
+      "readme_blob_sha": "ed7fb1bf7344e1e268c171eb532149c36ded92fa",
       "readme_url": "https://github.com/sindresorhus/awesome/blob/main/readme.md"
     },
     {
@@ -26,7 +26,7 @@
       "repository_url": "https://github.com/react/react",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 247426,
+      "stars_at_capture": 247493,
       "readme_path": "README.md",
       "readme_blob_sha": "88f8e827b0255cf639043c83833c7a0c40ec0991",
       "readme_url": "https://github.com/react/react/blob/main/README.md"
@@ -40,7 +40,7 @@
       "repository_url": "https://github.com/vuejs/core",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 54220,
+      "stars_at_capture": 54230,
       "readme_path": "README.md",
       "readme_blob_sha": "1a2519dcbff3b5abdb98171b5684c61e986eef9d",
       "readme_url": "https://github.com/vuejs/core/blob/main/README.md"
@@ -54,7 +54,7 @@
       "repository_url": "https://github.com/sveltejs/svelte",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 87977,
+      "stars_at_capture": 87970,
       "readme_path": "README.md",
       "readme_blob_sha": "7ea71647521ae850fd0933665f94760806ac5b29",
       "readme_url": "https://github.com/sveltejs/svelte/blob/main/README.md"
@@ -68,7 +68,7 @@
       "repository_url": "https://github.com/vercel/next.js",
       "default_branch": "canary",
       "license_spdx": "MIT",
-      "stars_at_capture": 141871,
+      "stars_at_capture": 141879,
       "readme_path": "readme.md",
       "readme_blob_sha": "58e152b8b2f0a5b442f990e78ed791bceb23da3b",
       "readme_url": "https://github.com/vercel/next.js/blob/canary/readme.md"
@@ -82,7 +82,7 @@
       "repository_url": "https://github.com/vitejs/vite",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 82413,
+      "stars_at_capture": 82450,
       "readme_path": "README.md",
       "readme_blob_sha": "069c468a98123f873f4626f6fb5a666389cdfb45",
       "readme_url": "https://github.com/vitejs/vite/blob/main/README.md"
@@ -96,7 +96,7 @@
       "repository_url": "https://github.com/tailwindlabs/tailwindcss",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 97287,
+      "stars_at_capture": 97292,
       "readme_path": "README.md",
       "readme_blob_sha": "5f532607d00a72faf633c2c1d613c9369fe27c35",
       "readme_url": "https://github.com/tailwindlabs/tailwindcss/blob/main/README.md"
@@ -110,7 +110,7 @@
       "repository_url": "https://github.com/shadcn-ui/ui",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 121661,
+      "stars_at_capture": 121794,
       "readme_path": "README.md",
       "readme_blob_sha": "35657b37e0ef00aa7b477896d51a8fd0d5af8f49",
       "readme_url": "https://github.com/shadcn-ui/ui/blob/main/README.md"
@@ -124,7 +124,7 @@
       "repository_url": "https://github.com/supabase/supabase",
       "default_branch": "master",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 108172,
+      "stars_at_capture": 108243,
       "readme_path": "README.md",
       "readme_blob_sha": "0b5a5e6f4556ca4e99f0980192cc15587083c3c6",
       "readme_url": "https://github.com/supabase/supabase/blob/master/README.md"
@@ -138,9 +138,9 @@
       "repository_url": "https://github.com/n8n-io/n8n",
       "default_branch": "master",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 201217,
+      "stars_at_capture": 201536,
       "readme_path": "README.md",
-      "readme_blob_sha": "9388f9c1890644151c8fb444657d3a37e5ce8165",
+      "readme_blob_sha": "21909fae00cbad4f18af84d2948752445051a915",
       "readme_url": "https://github.com/n8n-io/n8n/blob/master/README.md"
     },
     {
@@ -152,7 +152,7 @@
       "repository_url": "https://github.com/hoppscotch/hoppscotch",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 80059,
+      "stars_at_capture": 80073,
       "readme_path": "README.md",
       "readme_blob_sha": "ffe946ee471221c8ff23601d1067e4a4fb88687b",
       "readme_url": "https://github.com/hoppscotch/hoppscotch/blob/main/README.md"
@@ -166,7 +166,7 @@
       "repository_url": "https://github.com/AppFlowy-IO/AppFlowy",
       "default_branch": "main",
       "license_spdx": "AGPL-3.0",
-      "stars_at_capture": 75747,
+      "stars_at_capture": 75818,
       "readme_path": "README.md",
       "readme_blob_sha": "e5d68967564db60b843ecea535b70e57a4f5d969",
       "readme_url": "https://github.com/AppFlowy-IO/AppFlowy/blob/main/README.md"
@@ -180,7 +180,7 @@
       "repository_url": "https://github.com/rustdesk/rustdesk",
       "default_branch": "master",
       "license_spdx": "AGPL-3.0",
-      "stars_at_capture": 121274,
+      "stars_at_capture": 121437,
       "readme_path": "README.md",
       "readme_blob_sha": "08f3f9d57519e840c09bbb788c3f4a2e370487b5",
       "readme_url": "https://github.com/rustdesk/rustdesk/blob/master/README.md"
@@ -194,7 +194,7 @@
       "repository_url": "https://github.com/calcom/cal.diy",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 47812,
+      "stars_at_capture": 47856,
       "readme_path": "README.md",
       "readme_blob_sha": "4bfd00c01597ecb1fbd76bcaff5d018c7b61b7bd",
       "readme_url": "https://github.com/calcom/cal.diy/blob/main/README.md"
@@ -208,7 +208,7 @@
       "repository_url": "https://github.com/directus/directus",
       "default_branch": "main",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 37474,
+      "stars_at_capture": 37450,
       "readme_path": "readme.md",
       "readme_blob_sha": "c882a0e4b4ee3d7cb4e7dbb46df12b1f2b683fe8",
       "readme_url": "https://github.com/directus/directus/blob/main/readme.md"
@@ -222,7 +222,7 @@
       "repository_url": "https://github.com/strapi/strapi",
       "default_branch": "develop",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 72969,
+      "stars_at_capture": 72992,
       "readme_path": "README.md",
       "readme_blob_sha": "421efc02367efeb7ca69fd5dc7afece91cbe9433",
       "readme_url": "https://github.com/strapi/strapi/blob/develop/README.md"
@@ -236,7 +236,7 @@
       "repository_url": "https://github.com/pocketbase/pocketbase",
       "default_branch": "master",
       "license_spdx": "MIT",
-      "stars_at_capture": 60736,
+      "stars_at_capture": 60764,
       "readme_path": "README.md",
       "readme_blob_sha": "dc4b8fd3441ff91bcb8c1640b81c1e503a988559",
       "readme_url": "https://github.com/pocketbase/pocketbase/blob/master/README.md"
@@ -250,7 +250,7 @@
       "repository_url": "https://github.com/immich-app/immich",
       "default_branch": "main",
       "license_spdx": "AGPL-3.0",
-      "stars_at_capture": 111850,
+      "stars_at_capture": 112266,
       "readme_path": "README.md",
       "readme_blob_sha": "02ae01857e52955e07cdb4d83a3d8f1d45e29e53",
       "readme_url": "https://github.com/immich-app/immich/blob/main/README.md"
@@ -264,7 +264,7 @@
       "repository_url": "https://github.com/home-assistant/core",
       "default_branch": "dev",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 89986,
+      "stars_at_capture": 90030,
       "readme_path": "README.rst",
       "readme_blob_sha": "85c632f7eb1d1861911c735077699c29840ff728",
       "readme_url": "https://github.com/home-assistant/core/blob/dev/README.rst"
@@ -278,7 +278,7 @@
       "repository_url": "https://github.com/mattermost/mattermost",
       "default_branch": "master",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 38844,
+      "stars_at_capture": 38869,
       "readme_path": "README.md",
       "readme_blob_sha": "448f0f269a0c92f441527fe51704e3827696d190",
       "readme_url": "https://github.com/mattermost/mattermost/blob/master/README.md"
@@ -292,7 +292,7 @@
       "repository_url": "https://github.com/RocketChat/Rocket.Chat",
       "default_branch": "develop",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 46006,
+      "stars_at_capture": 46016,
       "readme_path": "README.md",
       "readme_blob_sha": "84109f3b1b39bb78f0574bda1763139c4f9a415e",
       "readme_url": "https://github.com/RocketChat/Rocket.Chat/blob/develop/README.md"
@@ -306,7 +306,7 @@
       "repository_url": "https://github.com/grafana/grafana",
       "default_branch": "main",
       "license_spdx": "AGPL-3.0",
-      "stars_at_capture": 76315,
+      "stars_at_capture": 76336,
       "readme_path": "README.md",
       "readme_blob_sha": "7b768e029f8ad89feae45d31bce9a57d42d9cf5c",
       "readme_url": "https://github.com/grafana/grafana/blob/main/README.md"
@@ -320,7 +320,7 @@
       "repository_url": "https://github.com/prometheus/prometheus",
       "default_branch": "main",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 65757,
+      "stars_at_capture": 65770,
       "readme_path": "README.md",
       "readme_blob_sha": "4298c68b1228bc3ca60e7711d377228f0bcd074d",
       "readme_url": "https://github.com/prometheus/prometheus/blob/main/README.md"
@@ -334,7 +334,7 @@
       "repository_url": "https://github.com/kubernetes/kubernetes",
       "default_branch": "master",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 124607,
+      "stars_at_capture": 124751,
       "readme_path": "README.md",
       "readme_blob_sha": "99925863b3441f0e5d161584aa60abc07db21d25",
       "readme_url": "https://github.com/kubernetes/kubernetes/blob/master/README.md"
@@ -348,7 +348,7 @@
       "repository_url": "https://github.com/hashicorp/terraform",
       "default_branch": "main",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 49491,
+      "stars_at_capture": 49505,
       "readme_path": "README.md",
       "readme_blob_sha": "ab40c4ef409feaf4e25fc1473f00f896717cc667",
       "readme_url": "https://github.com/hashicorp/terraform/blob/main/README.md"
@@ -362,7 +362,7 @@
       "repository_url": "https://github.com/ansible/ansible",
       "default_branch": "devel",
       "license_spdx": "GPL-3.0",
-      "stars_at_capture": 70375,
+      "stars_at_capture": 70429,
       "readme_path": "README.md",
       "readme_blob_sha": "ed464e118bf451b1274cee7994d0b66f1774c632",
       "readme_url": "https://github.com/ansible/ansible/blob/devel/README.md"
@@ -376,7 +376,7 @@
       "repository_url": "https://github.com/docker/compose",
       "default_branch": "main",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 38047,
+      "stars_at_capture": 38042,
       "readme_path": "README.md",
       "readme_blob_sha": "3481dfc76569bdd26730fc760f885cfa1b3836b3",
       "readme_url": "https://github.com/docker/compose/blob/main/README.md"
@@ -390,7 +390,7 @@
       "repository_url": "https://github.com/localstack/localstack",
       "default_branch": "main",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 65145,
+      "stars_at_capture": 65146,
       "readme_path": "README.md",
       "readme_blob_sha": "0d78c2be49085191d6c09cba2cf3d441498d6094",
       "readme_url": "https://github.com/localstack/localstack/blob/main/README.md"
@@ -404,7 +404,7 @@
       "repository_url": "https://github.com/minio/minio",
       "default_branch": "master",
       "license_spdx": "AGPL-3.0",
-      "stars_at_capture": 61386,
+      "stars_at_capture": 61381,
       "readme_path": "README.md",
       "readme_blob_sha": "84e49277432b54d5e84de2a5be59c75950746d37",
       "readme_url": "https://github.com/minio/minio/blob/master/README.md"
@@ -418,7 +418,7 @@
       "repository_url": "https://github.com/redis/redis",
       "default_branch": "unstable",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 76046,
+      "stars_at_capture": 76070,
       "readme_path": "README.md",
       "readme_blob_sha": "0bc4d0bb9d0cc8677c4dd6228cf3d8365e2d6e27",
       "readme_url": "https://github.com/redis/redis/blob/unstable/README.md"
@@ -432,7 +432,7 @@
       "repository_url": "https://github.com/duckdb/duckdb",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 40442,
+      "stars_at_capture": 40516,
       "readme_path": "README.md",
       "readme_blob_sha": "62a575f9e8e82d1bbbba89ce140b3803af28fdbe",
       "readme_url": "https://github.com/duckdb/duckdb/blob/main/README.md"
@@ -446,7 +446,7 @@
       "repository_url": "https://github.com/ClickHouse/ClickHouse",
       "default_branch": "master",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 49344,
+      "stars_at_capture": 49386,
       "readme_path": "README.md",
       "readme_blob_sha": "559af847f03d12712b4b8421586301fb0c116ea3",
       "readme_url": "https://github.com/ClickHouse/ClickHouse/blob/master/README.md"
@@ -460,7 +460,7 @@
       "repository_url": "https://github.com/qdrant/qdrant",
       "default_branch": "master",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 34065,
+      "stars_at_capture": 34117,
       "readme_path": "README.md",
       "readme_blob_sha": "cf4c1c5213148ed9d6388654f9d3e75b06504bc9",
       "readme_url": "https://github.com/qdrant/qdrant/blob/master/README.md"
@@ -474,7 +474,7 @@
       "repository_url": "https://github.com/milvus-io/milvus",
       "default_branch": "master",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 45700,
+      "stars_at_capture": 45728,
       "readme_path": "README.md",
       "readme_blob_sha": "fd07f01107c1ddfa1605e1e70b730b909820928a",
       "readme_url": "https://github.com/milvus-io/milvus/blob/master/README.md"
@@ -488,7 +488,7 @@
       "repository_url": "https://github.com/ollama/ollama",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 178983,
+      "stars_at_capture": 179125,
       "readme_path": "README.md",
       "readme_blob_sha": "e511fbe3fd3e73fc6d7cfb5393d827cf70f0a2f6",
       "readme_url": "https://github.com/ollama/ollama/blob/main/README.md"
@@ -502,7 +502,7 @@
       "repository_url": "https://github.com/ggml-org/llama.cpp",
       "default_branch": "master",
       "license_spdx": "MIT",
-      "stars_at_capture": 124728,
+      "stars_at_capture": 125032,
       "readme_path": "README.md",
       "readme_blob_sha": "85726c8c08dda4f0eaf4de0993bfbb7e9b28c371",
       "readme_url": "https://github.com/ggml-org/llama.cpp/blob/master/README.md"
@@ -516,7 +516,7 @@
       "repository_url": "https://github.com/vllm-project/vllm",
       "default_branch": "main",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 89470,
+      "stars_at_capture": 89651,
       "readme_path": "README.md",
       "readme_blob_sha": "ca31a8cce94d828b38dbb9d206c12e4c69a92052",
       "readme_url": "https://github.com/vllm-project/vllm/blob/main/README.md"
@@ -530,7 +530,7 @@
       "repository_url": "https://github.com/huggingface/transformers",
       "default_branch": "main",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 164269,
+      "stars_at_capture": 164316,
       "readme_path": "README.md",
       "readme_blob_sha": "730084a5a55486821a1d600d8084beb9069f805b",
       "readme_url": "https://github.com/huggingface/transformers/blob/main/README.md"
@@ -544,7 +544,7 @@
       "repository_url": "https://github.com/fastapi/fastapi",
       "default_branch": "master",
       "license_spdx": "MIT",
-      "stars_at_capture": 101711,
+      "stars_at_capture": 101742,
       "readme_path": "README.md",
       "readme_blob_sha": "bd7e9e96b015b92f219c596710c96a89068488c8",
       "readme_url": "https://github.com/fastapi/fastapi/blob/master/README.md"
@@ -558,7 +558,7 @@
       "repository_url": "https://github.com/pydantic/pydantic",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 28569,
+      "stars_at_capture": 28585,
       "readme_path": "README.md",
       "readme_blob_sha": "76725494305186a6ff5d3936ac3dd8b7a45341e7",
       "readme_url": "https://github.com/pydantic/pydantic/blob/main/README.md"
@@ -572,7 +572,7 @@
       "repository_url": "https://github.com/astral-sh/uv",
       "default_branch": "main",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 88892,
+      "stars_at_capture": 88956,
       "readme_path": "README.md",
       "readme_blob_sha": "66caaf9ccc62add8c63de8e71184c9b7677377ad",
       "readme_url": "https://github.com/astral-sh/uv/blob/main/README.md"
@@ -586,9 +586,9 @@
       "repository_url": "https://github.com/astral-sh/ruff",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 49257,
+      "stars_at_capture": 49271,
       "readme_path": "README.md",
-      "readme_blob_sha": "cb9190655f822613cf95a826ceaba2e47ff75822",
+      "readme_blob_sha": "a290544d52901bb3aba7dbfc6a63d7c09b408844",
       "readme_url": "https://github.com/astral-sh/ruff/blob/main/README.md"
     },
     {
@@ -600,7 +600,7 @@
       "repository_url": "https://github.com/pytest-dev/pytest",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 14429,
+      "stars_at_capture": 14436,
       "readme_path": "README.rst",
       "readme_blob_sha": "253db05370e6add96414d95afe2d40483b7dd392",
       "readme_url": "https://github.com/pytest-dev/pytest/blob/main/README.rst"
@@ -614,7 +614,7 @@
       "repository_url": "https://github.com/psf/requests",
       "default_branch": "main",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 54242,
+      "stars_at_capture": 54247,
       "readme_path": "README.md",
       "readme_blob_sha": "4e5c44555c02f127cd0cca2efa8b22716c78ee23",
       "readme_url": "https://github.com/psf/requests/blob/main/README.md"
@@ -628,7 +628,7 @@
       "repository_url": "https://github.com/denoland/deno",
       "default_branch": "main",
       "license_spdx": "MIT",
-      "stars_at_capture": 108263,
+      "stars_at_capture": 108269,
       "readme_path": "README.md",
       "readme_blob_sha": "8173eb951062916cc112a8fb7c0e120b1c945975",
       "readme_url": "https://github.com/denoland/deno/blob/main/README.md"
@@ -642,9 +642,9 @@
       "repository_url": "https://github.com/oven-sh/bun",
       "default_branch": "main",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 95469,
+      "stars_at_capture": 95551,
       "readme_path": "README.md",
-      "readme_blob_sha": "3344866c99bb03ceda3189783590f1323d61a425",
+      "readme_blob_sha": "c507cc5dec62f46701657ed856bd69d5c3529607",
       "readme_url": "https://github.com/oven-sh/bun/blob/main/README.md"
     },
     {
@@ -656,7 +656,7 @@
       "repository_url": "https://github.com/neovim/neovim",
       "default_branch": "master",
       "license_spdx": "NOASSERTION",
-      "stars_at_capture": 101870,
+      "stars_at_capture": 101899,
       "readme_path": "README.md",
       "readme_blob_sha": "e92d0961d7307a7e539b68d5b5ba840727000e00",
       "readme_url": "https://github.com/neovim/neovim/blob/master/README.md"
@@ -670,7 +670,7 @@
       "repository_url": "https://github.com/helix-editor/helix",
       "default_branch": "master",
       "license_spdx": "MPL-2.0",
-      "stars_at_capture": 45885,
+      "stars_at_capture": 45903,
       "readme_path": "README.md",
       "readme_blob_sha": "c1beb780a8b7515c791aceac992b391a039fa4a7",
       "readme_url": "https://github.com/helix-editor/helix/blob/master/README.md"
@@ -684,7 +684,7 @@
       "repository_url": "https://github.com/BurntSushi/ripgrep",
       "default_branch": "master",
       "license_spdx": "Unlicense",
-      "stars_at_capture": 67413,
+      "stars_at_capture": 67477,
       "readme_path": "README.md",
       "readme_blob_sha": "54a7158a564faae22988da41efb1ef279e06fe5e",
       "readme_url": "https://github.com/BurntSushi/ripgrep/blob/master/README.md"
@@ -698,7 +698,7 @@
       "repository_url": "https://github.com/sharkdp/bat",
       "default_branch": "master",
       "license_spdx": "Apache-2.0",
-      "stars_at_capture": 60219,
+      "stars_at_capture": 60228,
       "readme_path": "README.md",
       "readme_blob_sha": "8826d4e0dc8189ec247d96a18f9c5df057b5bcc7",
       "readme_url": "https://github.com/sharkdp/bat/blob/master/README.md"

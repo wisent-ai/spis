@@ -2,13 +2,13 @@
 
 A shared evidence library for choosing complete interaction models before product implementation. Each family pairs a curated visual field and measured panel anatomy with per-product records of motion, states, journey, interactions, recovery, accessibility, and provenance.
 
-Motion evidence is labelled by how it was obtained, because the difference matters: 231 of 674 assets are a product driven on our own machines, the rest are recordings the product's owner published. A record still missing evidence is `partial` and carries the missing items in its own `evidence_gaps`; nothing is called complete on the strength of a marketing clip.
+Motion evidence is labelled by how it was obtained, because the difference matters: 221 of 664 assets are a product driven on our own machines, the rest are recordings the product's owner published. A record still missing evidence is `partial` and carries the missing items in its own `evidence_gaps`; nothing is called complete on the strength of a marketing clip.
 
-**Catalogs:** 15  
-**Screenshots:** 710  
-**Structural analyses:** 710  
-**Records:** 710 (10 with no remaining gap, 700 partial)  
-**Motion assets:** 674 (443 owner-published media, 148 browser driven here, 83 product run here)
+**Catalogs:** 13  
+**Screenshots:** 650  
+**Structural analyses:** 650  
+**Records:** 650 (0 with no remaining gap, 650 partial)  
+**Motion assets:** 664 (443 owner-published media, 148 browser driven here, 73 product run here)
 
 | Reference family | Representative screen | Scope | Records | Motion provenance |
 |---|---|---|---|---|
@@ -25,8 +25,6 @@ Motion evidence is labelled by how it was obtained, because the difference matte
 | [App store listing examples](app-store-listing-examples/full-reference.md) | <a href="app-store-listing-examples/README.md"><img src="app-store-listing-examples/images/01-duolingo-language-lessons-apple-app-store.webp" alt="App store listing examples representative interface reference" width="260"></a> | Apple App Store and Google Play listings with strong product presentation. | [0 complete / 50 partial](app-store-listing-examples/references.json) | 50 browser driven here, 14 owner-published media |
 | [Design system examples](design-system-examples/full-reference.md) | <a href="design-system-examples/README.md"><img src="design-system-examples/images/01-material-design-3.webp" alt="Design system examples representative interface reference" width="260"></a> | Public design systems and platform human-interface guidance. | [0 complete / 50 partial](design-system-examples/references.json) | 48 owner-published media, 2 browser driven here |
 | [Report and evidence examples](report-evidence-examples/full-reference.md) | <a href="report-evidence-examples/README.md"><img src="report-evidence-examples/images/01-grafana-explore.webp" alt="Report and evidence examples representative interface reference" width="260"></a> | Reports, findings, traces, comparisons, and evidence viewers. | [0 complete / 50 partial](report-evidence-examples/references.json) | 50 owner-published media |
-| [Wisent product examples](wisent-product-examples/full-reference.md) | <a href="wisent-product-examples/README.md"><img src="wisent-product-examples/references/01-stado/media/02-help-surface.png" alt="Wisent product examples representative interface reference" width="260"></a> | The Wisent products with a runnable CLI on the capture host, each measured by running it: version form, top-level help, one subcommand help surface, one invalid flag, a Ctrl-C on an unsubmitted line, the recovering help, and the same help with NO_COLOR=1. | [10 complete / 0 partial](wisent-product-examples/references.json) | 10 product run here |
-| [Landing page examples](landing-page-examples/full-reference.md) | <a href="landing-page-examples/README.md"><img src="landing-page-examples/screenshots/01-trysoar.jpg" alt="Landing page examples representative interface reference" width="260"></a> | First-view landing-page evidence, with the planned interaction, reactivity, state-change and subpage capture set kept visible until it exists. | [0 complete / 50 partial](landing-page-examples/references.json) | no measured motion |
 
 Open a numbered per-product record for its motion evidence, named states, observed first-success journey, interactions, recovery, accessibility, and provenance. Read the family synthesis only after the underlying records.
 
