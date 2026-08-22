@@ -55,12 +55,13 @@ def usage() -> str:
     lines += [
         "",
         "Each command passes its flags straight through to the underlying tool;",
-        "`reference <command> --help` shows that tool's own options.",
+        "`spis <command> --help` shows that tool's own options.",
     ]
     return "\n".join(lines)
 
 
 COMMENTS = {
+    "type": "add, edit, or remove a product-type catalog",
     "capture": "capture own-product references from installed binaries",
     "audit-accessibility": "audit captured references for accessibility evidence",
     "collect-images": "collect attributable official imagery",
