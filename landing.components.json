@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "product": "Spis",
+  "decidedBy": "Lukasz Bartoszcze (operator instruction, session 2026-08-21)",
+  "components": [
+    {
+      "id": "landing.header",
+      "export": "LandingHeader",
+      "zone": "chrome",
+      "description": "Product header with wordmark, navigation destinations, and an optional primary-action link.",
+      "content": "site.product, site.nav, site.primaryAction",
+      "status": "required",
+      "reason": "standard page chrome; the operator approved a conventional header"
+    },
+    {
+      "id": "landing.hero",
+      "export": "LandingHero",
+      "zone": "thesis",
+      "description": "First-viewport component with headline plus optional eyebrow, subhead, actions, commitment note, and factual attribute row.",
+      "content": "plan.hero, site.primaryAction, site.secondaryAction, site.commitment",
+      "status": "required",
+      "reason": "the first screen must name Spis, its promise, and the browse action"
+    },
+    {
+      "id": "landing.recognition",
+      "export": "LandingRecognition",
+      "zone": "recognition",
+      "description": "Problem-recognition section that describes the visitor's current failure modes using claims approved in the product brief.",
+      "content": "recognition section heading, lede, and 2-4 items",
+      "status": "optional",
+      "reason": "one short problem statement helps a cold visitor; the operator approved it"
+    },
+    {
+      "id": "landing.mechanism",
+      "export": "LandingMechanism",
+      "zone": "mechanism",
+      "description": "Ordered explanation of how the product creates the promised outcome, with three to five concrete steps.",
+      "content": "mechanism section heading, lede, and numbered items",
+      "status": "excluded",
+      "reason": "no step-by-step mechanism to explain; the pipeline docs cover it"
+    },
+    {
+      "id": "landing.proof",
+      "export": "LandingProof",
+      "zone": "proof",
+      "description": "Evidence section rendering a real terminal transcript, code sample, or factual table backed by the brief's required proof.",
+      "content": "proof section heading, lede, and artifact",
+      "status": "recommended",
+      "reason": "a terminal run of `reference catalogs --check` is the honest artifact for a corpus product"
+    },
+    {
+      "id": "landing.objection",
+      "export": "LandingObjection",
+      "zone": "objection",
+      "description": "Question-and-answer section that resolves adoption, authorization, compatibility, pricing, or risk objections supported by approved claims.",
+      "content": "objection section heading and 3-5 question-answer items",
+      "status": "excluded",
+      "reason": "rights questions are answered by the takedown policy link in the footer"
+    },
+    {
+      "id": "landing.decision",
+      "export": "LandingDecision",
+      "zone": "decision",
+      "description": "Closing decision section that restates the value after proof and repeats the same approved primary action without introducing a new promise.",
+      "content": "decision heading, lede, site.primaryAction, site.commitment",
+      "status": "optional",
+      "reason": "one closing repeat of the browse action after the proof"
+    },
+    {
+      "id": "landing.footer",
+      "export": "LandingFooter",
+      "zone": "chrome",
+      "description": "Product footer with the approved product description and canonical legal, source, documentation, and community links.",
+      "content": "site.product, site.description, site.footer",
+      "status": "required",
+      "reason": "standard page chrome; links to contract, policy, and license"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "siteName": "Spis",
+  "domain": "https://spis.wisent.com",
+  "repository": "https://github.com/wisent-ai/spis",
+  "sourceUrl": "https://github.com/wisent-ai/spis",
+  "docsUrl": "https://github.com/wisent-ai/spis/tree/main/docs",
+  "discordUrl": "https://discord.gg/qRjpkthq54",
+  "ogImageAlt": "Spis by Wisent — the evidence-grade reference corpus for people building interfaces",
+  "navLinks": [
+    { "label": "Contract", "href": "https://github.com/wisent-ai/spis/blob/main/full-reference-contract.md" },
+    { "label": "Pipeline", "href": "https://github.com/wisent-ai/spis/blob/main/docs/pipeline.md" },
+    { "label": "Source", "href": "https://github.com/wisent-ai/spis" }
+  ],
+  "footerLinks": [
+    { "label": "Evidence contract", "href": "https://github.com/wisent-ai/spis/blob/main/full-reference-contract.md" },
+    { "label": "Pipeline", "href": "https://github.com/wisent-ai/spis/blob/main/docs/pipeline.md" },
+    { "label": "Takedown policy", "href": "https://github.com/wisent-ai/spis/blob/main/docs/takedown.md" },
+    { "label": "Desktop app", "href": "https://github.com/wisent-ai/spis-desktop" },
+    { "label": "Issues", "href": "https://github.com/wisent-ai/spis/issues" },
+    { "label": "License (Apache-2.0)", "href": "https://github.com/wisent-ai/spis/blob/main/LICENSE" },
+    { "label": "Wisent", "href": "https://wisent.ai" }
+  ],
+  "commitment": null
+}
