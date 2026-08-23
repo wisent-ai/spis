@@ -9,6 +9,7 @@ the exit code is the tool's exit code.
 
 Usage:
   spis guidelines       derive a DRAFT guideline doc from a catalog
+  spis discover        crawl-free discovery: rank pages behind a start URL
   spis type add              add a product-type catalog (landing-page, readme, …)
   spis type edit             retitle, redescribe, restage, or rename a type
   spis type remove           delete a product-type catalog (--force for non-empty)
@@ -34,6 +35,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 COMMANDS = {
+    "discover": "discover.py",
     "guidelines": "guidelines.py",
     "reference": "reference-record.py",
     "type": "catalog-type.py",
@@ -70,6 +72,7 @@ def usage() -> str:
 
 COMMENTS = {
     "reference": "add, get, or remove a numbered reference record",
+    "discover": "discover important pages behind a start URL and scaffold records",
     "type": "add, edit, or remove a product-type catalog",
     "capture": "capture own-product references from installed binaries",
     "audit-accessibility": "audit captured references for accessibility evidence",

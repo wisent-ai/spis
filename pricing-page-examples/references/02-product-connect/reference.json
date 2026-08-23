@@ -1,0 +1,30 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Product — connect",
+  "product_url": "https://stripe.com/connect",
+  "evidence_status": "partial",
+  "upstream_owner": "stripe.com",
+  "captured_at": "2026-08-22",
+  "motion": [],
+  "states": [],
+  "interactions": [],
+  "journey": {},
+  "accessibility": {
+    "measured": false,
+    "observations": [],
+    "unknowns": [
+      "everything; no audit exists yet"
+    ]
+  },
+  "motion_provenance": [],
+  "evidence_gaps": [
+    "motion evidence absent",
+    "first-success sequence not recorded",
+    "state visuals below the three-state floor",
+    "interaction map absent",
+    "user journey not recorded",
+    "motion analysis absent",
+    "accessibility never measured against the product"
+  ],
+  "measured_at": "2026-08-23T00:40:45+00:00"
+}

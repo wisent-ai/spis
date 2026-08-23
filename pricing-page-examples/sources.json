@@ -6,8 +6,239 @@
   "description": "Product pricing and plan-comparison pages.",
   "status": "scaffolded",
   "curated_at": "2026-08-22",
-  "count": 0,
-  "examples": [],
-  "visual_count": 0,
-  "structure_count": 0
+  "count": 5,
+  "examples": [
+    {
+      "name": "Docs — capital",
+      "source_url": "https://stripe.com/capital",
+      "category": "docs",
+      "selection_note": "auto-discovered from https://stripe.com/pricing; family docs",
+      "visual": {
+        "source_page_url": "https://stripe.com/capital",
+        "source_image_url": "stripe.com",
+        "local_path": "images/01-docs-capital.png",
+        "capture_kind": "provided-file",
+        "captured_at": "2026-08-22",
+        "format": "png",
+        "width": 1400,
+        "height": 1166,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 405836,
+        "sha256": "c2fd8bf95db6b4c507437d93f819037e560e0df799f23b722b41b18b0fdb5bc8"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "c2fd8bf95db6b4c507437d93f819037e560e0df799f23b722b41b18b0fdb5bc8",
+        "orientation": "landscape",
+        "layout_model": "unanalyzed-scaffold",
+        "panel_summary": "Scaffold region covering the full overview image; run analyze-structures to replace it.",
+        "detected_separators": {
+          "vertical": [],
+          "horizontal": []
+        },
+        "visual_density": "unknown",
+        "confidence": "low",
+        "regions": [
+          {
+            "role": "full frame",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            },
+            "evidence": "placeholder bounds over the whole scaffolded image"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Product — connect",
+      "source_url": "https://stripe.com/connect",
+      "category": "product",
+      "selection_note": "auto-discovered from https://stripe.com/pricing; family product",
+      "visual": {
+        "source_page_url": "https://stripe.com/connect",
+        "source_image_url": "stripe.com",
+        "local_path": "images/02-product-connect.png",
+        "capture_kind": "provided-file",
+        "captured_at": "2026-08-22",
+        "format": "png",
+        "width": 1400,
+        "height": 1166,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 319205,
+        "sha256": "91ab5556286ec576973f7ef453e7dbfd43e96b92765081bb456aabe206fc03a6"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "91ab5556286ec576973f7ef453e7dbfd43e96b92765081bb456aabe206fc03a6",
+        "orientation": "landscape",
+        "layout_model": "unanalyzed-scaffold",
+        "panel_summary": "Scaffold region covering the full overview image; run analyze-structures to replace it.",
+        "detected_separators": {
+          "vertical": [],
+          "horizontal": []
+        },
+        "visual_density": "unknown",
+        "confidence": "low",
+        "regions": [
+          {
+            "role": "full frame",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            },
+            "evidence": "placeholder bounds over the whole scaffolded image"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Signup — atlas",
+      "source_url": "https://stripe.com/atlas",
+      "category": "signup",
+      "selection_note": "auto-discovered from https://stripe.com/pricing; family signup",
+      "visual": {
+        "source_page_url": "https://stripe.com/atlas",
+        "source_image_url": "stripe.com",
+        "local_path": "images/03-signup-atlas.png",
+        "capture_kind": "provided-file",
+        "captured_at": "2026-08-22",
+        "format": "png",
+        "width": 1400,
+        "height": 1166,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 285899,
+        "sha256": "8d363ac334973f3ec2e1dee53942142d6f2ad14b168f09e44973322f2084bfd2"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "8d363ac334973f3ec2e1dee53942142d6f2ad14b168f09e44973322f2084bfd2",
+        "orientation": "landscape",
+        "layout_model": "unanalyzed-scaffold",
+        "panel_summary": "Scaffold region covering the full overview image; run analyze-structures to replace it.",
+        "detected_separators": {
+          "vertical": [],
+          "horizontal": []
+        },
+        "visual_density": "unknown",
+        "confidence": "low",
+        "regions": [
+          {
+            "role": "full frame",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            },
+            "evidence": "placeholder bounds over the whole scaffolded image"
+          }
+        ]
+      }
+    },
+    {
+      "name": "About — customers",
+      "source_url": "https://stripe.com/customers",
+      "category": "about",
+      "selection_note": "auto-discovered from https://stripe.com/pricing; family about",
+      "visual": {
+        "source_page_url": "https://stripe.com/customers",
+        "source_image_url": "stripe.com",
+        "local_path": "images/04-about-customers.png",
+        "capture_kind": "provided-file",
+        "captured_at": "2026-08-22",
+        "format": "png",
+        "width": 1400,
+        "height": 1166,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 1096738,
+        "sha256": "bf7993a8b22557715c5e28e2fc1ef8b13321bc3129b345b6894da911d7fb0813"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "bf7993a8b22557715c5e28e2fc1ef8b13321bc3129b345b6894da911d7fb0813",
+        "orientation": "landscape",
+        "layout_model": "unanalyzed-scaffold",
+        "panel_summary": "Scaffold region covering the full overview image; run analyze-structures to replace it.",
+        "detected_separators": {
+          "vertical": [],
+          "horizontal": []
+        },
+        "visual_density": "unknown",
+        "confidence": "low",
+        "regions": [
+          {
+            "role": "full frame",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            },
+            "evidence": "placeholder bounds over the whole scaffolded image"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Pricing — support-plans",
+      "source_url": "https://stripe.com/support-plans",
+      "category": "pricing",
+      "selection_note": "auto-discovered from https://stripe.com/pricing; family pricing",
+      "visual": {
+        "source_page_url": "https://stripe.com/support-plans",
+        "source_image_url": "stripe.com",
+        "local_path": "images/05-pricing-support-plans.png",
+        "capture_kind": "provided-file",
+        "captured_at": "2026-08-22",
+        "format": "png",
+        "width": 1400,
+        "height": 1166,
+        "original_width": 1400,
+        "original_height": 1166,
+        "bytes": 430401,
+        "sha256": "11df04540292d1341ef0e6ae6e65f0840ebd792ff9afb52390be51a6467f6676"
+      },
+      "interface_structure": {
+        "analysis_kind": "deterministic-image-layout-v1",
+        "image_sha256": "11df04540292d1341ef0e6ae6e65f0840ebd792ff9afb52390be51a6467f6676",
+        "orientation": "landscape",
+        "layout_model": "unanalyzed-scaffold",
+        "panel_summary": "Scaffold region covering the full overview image; run analyze-structures to replace it.",
+        "detected_separators": {
+          "vertical": [],
+          "horizontal": []
+        },
+        "visual_density": "unknown",
+        "confidence": "low",
+        "regions": [
+          {
+            "role": "full frame",
+            "position": "center",
+            "bounds": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1.0,
+              "height": 1.0
+            },
+            "evidence": "placeholder bounds over the whole scaffolded image"
+          }
+        ]
+      }
+    }
+  ],
+  "visual_count": 5,
+  "structure_count": 5
 }

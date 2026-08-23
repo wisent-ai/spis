@@ -1,10 +1,46 @@
 {
   "schema": "wisent.full-reference-catalog.v2",
   "catalog": "pricing-page-examples",
-  "generated_at": "2026-08-22T17:09:17+00:00",
-  "reference_count": 0,
+  "generated_at": "2026-08-23T00:40:50+00:00",
+  "reference_count": 5,
   "complete_count": 0,
-  "partial_count": 0,
-  "references": [],
-  "measured_at": "2026-08-22T17:09:17+00:00"
+  "partial_count": 5,
+  "references": [
+    {
+      "index": 1,
+      "name": "Docs — capital",
+      "path": "references/01-docs-capital/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 7
+    },
+    {
+      "index": 2,
+      "name": "Product — connect",
+      "path": "references/02-product-connect/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 7
+    },
+    {
+      "index": 3,
+      "name": "Signup — atlas",
+      "path": "references/03-signup-atlas/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 7
+    },
+    {
+      "index": 4,
+      "name": "About — customers",
+      "path": "references/04-about-customers/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 7
+    },
+    {
+      "index": 5,
+      "name": "Pricing — support-plans",
+      "path": "references/05-pricing-support-plans/reference.json",
+      "evidence_status": "partial",
+      "evidence_gap_count": 7
+    }
+  ],
+  "measured_at": "2026-08-23T00:40:50+00:00"
 }

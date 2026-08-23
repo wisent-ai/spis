@@ -193,7 +193,9 @@ def cmd_add(args) -> None:
         "accessibility never measured against the product",
     ]
     now = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
-    record_dir = directory / Path(entry["path"]).parent
+    record_dir = directory / "references" / slug
+    record_dir.mkdir(parents=True, exist_ok=True)
+    (record_dir / "media").mkdir(exist_ok=True)
     record = {
         "schema": "wisent.full-product-reference.v2",
         "name": args.name,
