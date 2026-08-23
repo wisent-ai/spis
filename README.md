@@ -50,6 +50,12 @@ The full flow, stage by stage, is in [`docs/pipeline.md`](docs/pipeline.md).
 | `docs/takedown.md` | content rights and takedown policy |
 | `LICENSE` | Apache-2.0 |
 
+## Credential recovery
+
+Before declaring any credential unavailable: search transcript-lake for it,
+then check .env and config files in the product repo. See
+[docs/credential-recovery-rule.md](docs/credential-recovery-rule.md).
+
 ## Rules
 1. A record exists only with its evidence: source URL, hashes, provenance class, and retained bytes where required by the contract.
 2. A missing observation is recorded as an evidence gap, never promoted into prose.
