@@ -1,7 +1,6 @@
 pub mod commands;
 
 use anyhow::{bail, Context, Result};
-use parking_lot::Mutex;
 use std::time::Duration;
 
 pub const USER_AGENT: &str =
