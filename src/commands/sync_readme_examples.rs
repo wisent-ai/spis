@@ -13,61 +13,27 @@ use std::process::Command;
 
 const API_UA: &str = "wisent-product-guidelines-readme-curation";
 
-/// Deliberately broad: product pages, libraries, CLIs, infrastructure,
-/// databases, developer tools, and AI systems expose different effective
-/// README patterns.
-const SOURCES: &[(&str, &str)] = &[
-    ("sindresorhus/awesome", "curation"),
-    ("facebook/react", "framework"),
-    ("vuejs/core", "framework"),
-    ("sveltejs/svelte", "framework"),
-    ("vercel/next.js", "framework"),
-    ("vitejs/vite", "tooling"),
-    ("tailwindlabs/tailwindcss", "tooling"),
-    ("shadcn-ui/ui", "design-system"),
-    ("supabase/supabase", "platform"),
-    ("n8n-io/n8n", "automation"),
-    ("hoppscotch/hoppscotch", "developer-tool"),
-    ("AppFlowy-IO/AppFlowy", "application"),
-    ("rustdesk/rustdesk", "application"),
-    ("calcom/cal.com", "application"),
-    ("directus/directus", "platform"),
-    ("strapi/strapi", "platform"),
-    ("pocketbase/pocketbase", "backend"),
-    ("immich-app/immich", "application"),
-    ("home-assistant/core", "platform"),
-    ("mattermost/mattermost", "application"),
-    ("RocketChat/Rocket.Chat", "application"),
-    ("grafana/grafana", "observability"),
-    ("prometheus/prometheus", "observability"),
-    ("kubernetes/kubernetes", "infrastructure"),
-    ("hashicorp/terraform", "infrastructure"),
-    ("ansible/ansible", "infrastructure"),
-    ("docker/compose", "infrastructure"),
-    ("localstack/localstack", "developer-tool"),
-    ("minio/minio", "storage"),
-    ("redis/redis", "database"),
-    ("duckdb/duckdb", "database"),
-    ("ClickHouse/ClickHouse", "database"),
-    ("qdrant/qdrant", "database"),
-    ("milvus-io/milvus", "database"),
-    ("ollama/ollama", "ai-infrastructure"),
-    ("ggml-org/llama.cpp", "ai-infrastructure"),
-    ("vllm-project/vllm", "ai-infrastructure"),
-    ("huggingface/transformers", "ai-library"),
-    ("fastapi/fastapi", "library"),
-    ("pydantic/pydantic", "library"),
-    ("astral-sh/uv", "tooling"),
-    ("astral-sh/ruff", "tooling"),
-    ("pytest-dev/pytest", "tooling"),
-    ("psf/requests", "library"),
-    ("denoland/deno", "runtime"),
-    ("oven-sh/bun", "runtime"),
-    ("neovim/neovim", "developer-tool"),
-    ("helix-editor/helix", "developer-tool"),
-    ("BurntSushi/ripgrep", "cli"),
-    ("sharkdp/bat", "cli"),
-];
+const DEFINITION_PATH: &str = "readme-examples/scrape-definition.json";
+
+/// Load the declarative scrape definition (what to capture, from which repos).
+fn load_definition() -> Result<Vec<(usize, String, String)>> {
+    let raw = std::fs::read_to_string(DEFINITION_PATH)
+        .with_context(|| format!("read {}", DEFINITION_PATH))?;
+    let doc: Value = serde_json::from_str(&raw)
+        .with_context(|| format!("parse {}", DEFINITION_PATH))?;
+    let records = doc["records"]
+        .as_array()
+        .context("scrape-definition lacks records array")?;
+    let mut out = Vec::new();
+    for rec in records {
+        let number = rec["number"].as_u64().context("record lacks number")? as usize;
+        let repo = rec["repo"].as_str().context("record lacks repo")?.to_string();
+        let category = rec["category"].as_str().unwrap_or_default().to_string();
+        out.push((number, repo, category));
+    }
+    out.sort();
+    Ok(out)
+}
 
 fn output_dir() -> PathBuf {
     PathBuf::from("readme-examples")
@@ -271,19 +237,18 @@ fn base64_decode(input: &str) -> Result<Vec<u8>> {
 }
 
 pub fn run(_rest: &[String]) -> Result<()> {
+    let sources = load_definition()?;
     let repos: std::collections::HashSet<&str> =
-        SOURCES.iter().map(|(repo, _)| *repo).collect();
-    if repos.len() != SOURCES.len() {
+        sources.iter().map(|(_, repo, _)| repo.as_str()).collect();
+    if repos.len() != sources.len() {
         bail!("The curated source list contains a duplicate repository");
     }
 
     let token = github_token()?;
-    let mut fetched: Vec<(usize, Value, String)> = Vec::with_capacity(SOURCES.len());
-    for (offset, (repo, category)) in SOURCES.iter().enumerate() {
-        // Python enumerates from int(bool(SOURCES)) == 1.
-        let number = offset + 1;
-        let result = fetch_source(number, repo, category, &token)?;
-        fetched.push((number, result.entry, result.content));
+    let mut fetched: Vec<(usize, Value, String)> = Vec::with_capacity(sources.len());
+    for (number, repo, category) in &sources {
+        let result = fetch_source(*number, repo, category, &token)?;
+        fetched.push((*number, result.entry, result.content));
     }
     fetched.sort_by_key(|(number, _, _)| *number);
     let entries: Vec<Value> = fetched.iter().map(|(_, e, _)| e.clone()).collect();
