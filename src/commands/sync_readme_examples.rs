@@ -294,6 +294,34 @@ pub fn run(_rest: &[String]) -> Result<()> {
         output.join("README.md"),
         render_index(&entries, &captured_at),
     )?;
+
+    // Scrape-run record: one auditable object per execution.
+    let definition_hash = crate::sha256_hex(std::fs::read(DEFINITION_PATH).unwrap_or_default().as_slice());
+    let tool_sha = std::process::Command::new("git")
+        .args(["rev-parse", "--short", "HEAD"])
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+        .unwrap_or_default();
+    let run_record = json!({
+        "schema": "wisent.scrape-run.v1",
+        "tool": "spis sync-readme-examples",
+        "tool_commit": tool_sha,
+        "definition_path": DEFINITION_PATH,
+        "definition_sha256": definition_hash,
+        "started_at": captured_at,
+        "finished_at": crate::now_iso_utc(),
+        "records_attempted": sources.len(),
+        "records_succeeded": fetched.len(),
+        "records_failed": 0,
+    });
+    std::fs::write(
+        output.join("scrape-run.json"),
+        serde_json::to_string_pretty(&run_record)? + "\n",
+    )?;
+
     println!("Wrote {} README snapshots to {}", entries.len(), output.display());
     Ok(())
 }
