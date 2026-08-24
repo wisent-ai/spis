@@ -23,16 +23,21 @@ Every operation streams NDJSON (Content-Type: application/x-ndjson):
 Endpoints:
 
     GET  /v1/health
+    GET  /v1/docs-status        — docs corpus progress snapshot (JSON document)
+    POST /v1/docs-search        {"query": "...", "site": "...", "limit": 25}
+    POST /v1/docs-show          {"site": "...", "url": "..."}
     POST /v1/catalogs-check     {} — consistency gate over index and records
     POST /v1/drift              {} — upstream README and URL drift report
     POST /v1/verify             {} — measure stored evidence (dry run)
-    POST /v1/capture-plan       {} — what own-product capture can run here
+    POST /v1/capture-dry-run    {"catalog": "landing-page-examples"}
     POST /v1/guidelines         {"slug": "landing-page-examples"}
     POST /v1/reference-add      {"slug", "name", "sourceUrl", "category",
                                  "selectionNote", "visual"}
     POST /v1/reference-remove   {"slug", "number": 3, "force": true}
 
-Standard library only; no third-party dependencies.
+The three docs endpoints answer with the JSON document the subcommand
+prints, unchanged; the rest stream NDJSON. Standard library only; no
+third-party dependencies.
 """
 
 from __future__ import annotations
@@ -88,8 +93,27 @@ def operation_argv(name: str, body: dict) -> list[str]:
         return ["check-upstream-drift"]
     if name == "verify":
         return ["verify-reference-evidence"]
-    if name == "capture-plan":
-        return ["capture-wisent-references", "--list"]
+    if name == "capture-dry-run":
+        catalog = require_text(body, "catalog", "a capture plan requires a catalog slug")
+        return ["capture-widths", catalog, "--dry-run"]
+    if name == "docs-status":
+        return ["docs-corpus", "status"]
+    if name == "docs-search":
+        query = require_text(body, "query", "searching the docs corpus requires a query")
+        argv = ["docs-corpus", "search", "--query", query]
+        site = body.get("site")
+        if isinstance(site, str) and site.strip():
+            argv += ["--site", site.strip()]
+        limit = body.get("limit")
+        if limit is not None:
+            if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1:
+                raise bad_request("a docs search limit must be a positive number")
+            argv += ["--limit", str(limit)]
+        return argv
+    if name == "docs-show":
+        site = require_text(body, "site", "reading a docs page requires a site slug")
+        url = require_text(body, "url", "reading a docs page requires its URL")
+        return ["docs-corpus", "show", "--site", site, "--url", url]
     if name == "guidelines":
         slug = require_text(body, "slug", "deriving guidelines requires a catalog slug")
         return ["guidelines", slug]
@@ -129,6 +153,27 @@ def refusal_sentence(stderr_text: str) -> str:
     if sentence.startswith("error: "):
         sentence = sentence[len("error: "):]
     return sentence
+
+
+# Endpoints that answer with the subcommand's JSON document instead of a stream.
+JSON_ENDPOINTS = {"docs-status", "docs-search", "docs-show"}
+
+
+def run_json(name: str, body: dict) -> bytes:
+    """Run a docs subcommand and return its stdout — the JSON document it
+    prints — unchanged. A refusal becomes a {"error": sentence} envelope."""
+    argv = operation_argv(name, body)
+    binary = spis_binary()
+    with JOB_LOCK:
+        completed = subprocess.run(
+            [str(binary), *argv],
+            cwd=ROOT,
+            capture_output=True,
+        )
+    if completed.returncode != 0:
+        raise ServeError(
+            500, refusal_sentence(completed.stderr.decode("utf-8", "replace")))
+    return completed.stdout
 
 
 def stream_job(handler: "Handler", name: str, body: dict) -> None:
@@ -208,6 +253,13 @@ class Handler(BaseHTTPRequestHandler):
     def send_failure(self, error: ServeError) -> None:
         self.send_document(error.status, {"error": str(error)})
 
+    def send_raw_json(self, payload: bytes) -> None:
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(payload)))
+        self.end_headers()
+        self.wfile.write(payload)
+
     def read_body(self) -> dict:
         length = int(self.headers.get("Content-Length") or 0)
         if length > MAX_BODY_BYTES:
@@ -224,10 +276,15 @@ class Handler(BaseHTTPRequestHandler):
         return body
 
     def do_GET(self) -> None:
-        if self.path == "/v1/health":
-            self.send_document(200, {"status": "ok"})
-        else:
-            self.send_failure(ServeError(404, f"unknown endpoint: GET {self.path}"))
+        try:
+            if self.path == "/v1/health":
+                self.send_document(200, {"status": "ok"})
+            elif self.path == "/v1/docs-status":
+                self.send_raw_json(run_json("docs-status", {}))
+            else:
+                raise ServeError(404, f"unknown endpoint: GET {self.path}")
+        except ServeError as error:
+            self.send_failure(error)
 
     def do_POST(self) -> None:
         try:
@@ -237,7 +294,10 @@ class Handler(BaseHTTPRequestHandler):
             if not name or "/" in name:
                 raise ServeError(404, f"unknown endpoint: POST {self.path}")
             body = self.read_body()
-            stream_job(self, name, body)
+            if name in JSON_ENDPOINTS:
+                self.send_raw_json(run_json(name, body))
+            else:
+                stream_job(self, name, body)
         except ServeError as error:
             self.send_failure(error)
         except BrokenPipeError:
