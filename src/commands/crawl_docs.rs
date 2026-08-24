@@ -523,6 +523,30 @@ pub fn run(rest: &[String]) -> Result<()> {
             }));
         }
     }
+    // Scrape-run record: one auditable object per execution.
+    let definition_path = structure_dir.join("full-text-manifest.json");
+    let definition_hash = lib::sha256_hex(&std::fs::read(&definition_path).unwrap_or_default());
+    let tool_sha = std::process::Command::new("git")
+        .args(["rev-parse", "--short", "HEAD"])
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+        .unwrap_or_default();
+    let total_seen: usize = results.iter().map(|r| r["seen"].as_u64().unwrap_or(0) as usize).sum();
+    let run_record = json!({
+        "schema": "wisent.crawl-run.v1",
+        "tool": "spis crawl-docs",
+        "tool_commit": tool_sha,
+        "started_at": lib::now_iso_utc(),
+        "sites": chosen.len(),
+        "urls_pending_at_start": total_pending,
+        "urls_seen_after": total_seen,
+    });
+    let manifest_run = structure_dir.join("crawl-run.json");
+    std::fs::write(&manifest_run, serde_json::to_string_pretty(&run_record)? + "\n")?;
+
     println!("{}", serde_json::to_string_pretty(&results)?);
     Ok(())
 }
