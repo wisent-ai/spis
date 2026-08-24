@@ -1,0 +1,1 @@
+/Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis/target/release/libspis.rlib: /Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis/src/commands/crawl_docs.rs /Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis/src/commands/mod.rs /Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis/src/lib.rs

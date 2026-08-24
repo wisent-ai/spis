@@ -1,0 +1,10 @@
+/Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis/target/debug/deps/ravif-1bfd0f0a5972dd57.d: /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/lib.rs /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/av1encoder.rs /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/error.rs /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/dirtyalpha.rs
+
+/Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis/target/debug/deps/libravif-1bfd0f0a5972dd57.rlib: /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/lib.rs /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/av1encoder.rs /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/error.rs /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/dirtyalpha.rs
+
+/Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis/target/debug/deps/libravif-1bfd0f0a5972dd57.rmeta: /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/lib.rs /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/av1encoder.rs /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/error.rs /Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/dirtyalpha.rs
+
+/Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/lib.rs:
+/Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/av1encoder.rs:
+/Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/error.rs:
+/Users/lukaszbartoszcze/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ravif-0.13.0/src/dirtyalpha.rs:
