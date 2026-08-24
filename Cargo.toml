@@ -1,0 +1,22 @@
+[package]
+name = "spis"
+version = "0.1.0"
+edition = "2021"
+description = "Evidence-grade reference corpus tooling (Rust port of the former Python scripts)"
+license = "Apache-2.0"
+
+[[bin]]
+name = "spis"
+path = "src/main.rs"
+
+[dependencies]
+ureq = { version = "2", features = ["gzip"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+flate2 = "1"
+sha2 = "0.10"
+anyhow = "1"
+parking_lot = "0.12"
+
+[profile.release]
+strip = true
