@@ -1,75 +1,54 @@
-# The Reference Pipeline
+# Reference pipeline
 
-How a reference record comes to exist, in order. Every stage is one `reference`
-command; the underlying tool keeps its own flags and passes them through.
+Spis has three related lanes: interface evidence, README research, and documentation full text.
 
+```text
+catalog/record scaffold
+        |
+        +--> acquire owner media or real product/browser capture
+        |        +--> analyze-example-structures
+        |        +--> audit-reference-accessibility
+        |
+        +--> verify-reference-evidence [--apply]
+        +--> generate-example-catalogs [--check]
+        +--> check-upstream-drift
+
+sync-readme-examples --> analyze-readme-examples --> guidelines
+crawl-docs --> docs-corpus {status,search,show}
 ```
-capture ──► collect-images ──► verify ──► catalogs
-   │              │
-   │              └──► analyze-structures
-   └──► audit-accessibility
 
-sync-readmes ──► analyze-readmes        (README corpus, separate lane)
-drift                                    (upstream monitoring, any time)
-```
+## 1. Select and scaffold
 
-## 1. Capture — `reference capture`
+`catalog-type` creates or edits a `*-examples` family. `reference-record add` introduces one selected product with source/category/rationale and a measured overview image. New records are partial and list what has not been observed.
 
-Own products only. The tool runs the installed binaries on this workstation
-through a real pseudo-terminal and keeps the recording. Flags: `--list`,
-`--product <name>`, `--catalog-only`.
+## 2. Acquire authentic evidence
 
-Third-party products are never captured here; their records cite
-owner-published media or a Weles-driven browser run on a Stado host, and the
-provenance class in the record states which.
+Use owner-published material for third-party products, local Weles browser recording for browser evidence, or `capture-wisent-references` for real installed Wisent CLIs. `collect-example-images` acquires qualifying interface imagery; `capture-widths` and `audit-reference-accessibility` submit Weles work through Stado rather than direct SSH.
 
-## 2. Collect imagery — `reference collect-images`
+Acquisition method and provenance class must agree. Retain bytes under the record, not merely a remote URL.
 
-Acquires official imagery for third-party records, recording dimensions,
-hashes, provenance, and capture method. A retained vendor video is never
-recorded as a local run.
+## 3. Analyze
 
-## 3. Analyze — `reference analyze-structures`
+`analyze-example-structures [catalog ...]` deterministically writes image layout regions, separators, density, and confidence into `sources.json`. It writes `structure-analysis-failures.json` while unresolved entries remain.
 
-Deterministic panel regions, layout model, separators, density, and confidence
-from every stored overview image. Runs after imagery exists.
+`audit-reference-accessibility` plans, submits, polls, retrieves, verifies, and merges Weles axe results. Planning refusal exits 2; execution or retrieval failure exits 3. `--dry-run` stops after validating and writing the plan.
 
-## 4. Accessibility — `reference audit-accessibility`
+## 4. Measure
 
-Audits captured references for accessibility evidence. Records move to
-`complete` only when this stage has no failed or pending findings.
+`verify-reference-evidence` re-probes retained media, hashes, dimensions, durations, provenance, state matches, journey/interactions, motion analysis, and accessibility. Without `--apply` it is a report only. With `--apply` it rewrites records and matching reference-index statuses to what the bytes prove.
 
-## 5. Verify — `reference verify`
+## 5. Gate and render
 
-The honesty gate. Re-probes media kinds, durations, frame counts, hashes, and
-provenance classes from the retained bytes, then rewrites each record to what
-the files actually prove. `--apply` writes the corrections; without it the run
-is a dry report.
+`generate-example-catalogs --check` validates without writing. Without `--check`, the same validation precedes rendering every catalog `README.md` plus `example-catalogs.json` and `example-catalogs.md`. A partial record is valid only when its gaps are explicit and consistent.
 
-## 6. Regenerate catalogs — `reference catalogs`
+## 6. Monitor drift
 
-Renders `example-catalogs.json` and the catalog pages from the records. This
-is the consistency gate: it refuses to render when the index, records, and
-files disagree, and it always prints measured numbers (complete/partial,
-provenance mix), never intentions.
+`check-upstream-drift` always verifies local media. Unless `--skip-network` is used, it also checks README blob SHAs and recorded URLs, distinguishing reachable, gone, guarded, and unresolved sources. `--strict` exits 1 if any drift exists. `--write-report` creates `upstream-drift.json`, which operational policy may keep private.
 
-## Separate lane — the README corpus
+## README research lane
 
-- `reference sync-readmes` refreshes the fifty verbatim upstream README
-  snapshots and their blob SHAs.
-- `reference analyze-readmes` regenerates the structural analysis
-  (`readme-examples/analysis.json`) behind the README guidance.
+`sync-readme-examples` refreshes curated GitHub snapshots using `gh auth token`, then writes source metadata, the index, and `scrape-run.json`. It ignores every argument: even `--help` executes the refresh. `analyze-readme-examples` deterministically writes `readme-examples/analysis.json`. `guidelines <catalog>` drafts counted observations for human review; interpretation remains outside Spis.
 
-## Upstream monitoring — `reference drift`
+## Documentation full-text lane
 
-Rechecks local hashes, current upstream README blobs, and every recorded URL.
-Distinguishes a dead source from an authenticated, rate-limited, or
-bot-guarded one. `--strict` turns any drift into a non-zero exit for CI use.
-
-## Rules that do not bend
-
-1. A record exists only with its evidence: source URL, hashes, provenance
-   class, retained bytes where the contract requires them.
-2. A missing observation is recorded as an evidence gap, never promoted into
-   prose.
-3. Interpretation lives in `wisent-ai/product-guidelines`, never here.
+`crawl-docs` resolves sitemap/override inventories, obeys robots rules, and writes resumable local archives. `docs-corpus` exposes read-only JSON status, search, and exact-page lookup.

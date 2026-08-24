@@ -2,10 +2,11 @@
 
 A catalog is complete only when every one of its examples has an authentic, inspectable product reference. Fifty unrelated still images plus a type-level essay are not fifty full references.
 
-Two tools enforce this contract and share its definitions in [`reference_contract.py`](reference_contract.py):
+Two Rust subcommands enforce this contract and share its definitions in
+[`src/commands/reference_contract.rs`](src/commands/reference_contract.rs):
 
-- [`verify-reference-evidence.py`](verify-reference-evidence.py) measures every record against the files beside it — ffprobe for video and animation, the asciinema header and event stream for casts, SHA-256 and byte counts for everything, and a 16x16 grayscale frame search that proves which timestamp of the motion a state frame came from. It writes the measurement back into the record, names every missing item in `evidence_gaps`, and sets `evidence_status` from that list alone.
-- [`generate-example-catalogs.py`](generate-example-catalogs.py) refuses to render a catalog whose index, records, and files disagree, and renders the measured counts instead of the intended ones.
+- `spis verify-reference-evidence` measures every record against the files beside it — ffprobe for video and animation, the asciinema header and event stream for casts, SHA-256 and byte counts for everything, and a 16x16 grayscale frame search that proves which timestamp of the motion a state frame came from. With `--apply` it writes the measurement back into the record, names every missing item in `evidence_gaps`, and sets `evidence_status` from that list alone; without `--apply` it writes nothing.
+- `spis generate-example-catalogs` refuses to render a catalog whose index, records, and files disagree, and renders the measured counts instead of the intended ones. `--check` validates without writing.
 
 `evidence_status` is therefore never an opinion: `complete` means `evidence_gaps` is empty, `partial` means the record itself lists what is still missing.
 
@@ -27,7 +28,7 @@ The first three are admissible evidence, in that order of strength. What is not 
 Every example must have:
 
 1. **Motion evidence:** at least one local animated asset — GIF, animated WebP, MP4, WebM, or terminal cast — showing the real product, measured at 0.2 seconds or longer with at least two frames. A still image recorded as motion, a link to a static page, prose describing motion, or animation synthesized from stills does not qualify. `media_kind` is one of `video-mp4`, `video-webm`, `animated-gif`, `animated-webp`, `terminal-cast`, and it comes from the container, not from the filename and not from what the author typed.
-2. **Onboarding or first-success sequence:** the actual product-native onboarding when one exists; otherwise the real first-run path from launch through the first meaningful result. The sequence must expose at least five observable states.
+2. **Onboarding or first-success sequence:** the actual product-native onboarding when one exists; otherwise the real first-run path from launch through the first meaningful result. The journey must expose at least five ordered observable steps.
 3. **State visuals:** at least three distinct product states, retained as local frames or screenshots and tied to the motion source or recording.
 4. **Interaction map:** primary input, focus/selection, navigation, confirmation, cancellation/backtracking, feedback, failure, and recovery as actually observed.
 5. **User journey:** actor, prerequisite, ordered user actions, system responses, intermediate states, failure route, recovery route, and completion evidence.
@@ -77,7 +78,7 @@ Every `reference.json` records:
 A type is complete only when:
 
 - every example satisfies the per-example floor;
-- all local media resolve and match their recorded hashes (`check-upstream-drift.py` re-verifies this, and also reports which upstream sources have since moved or died);
+- all local media resolve and match their recorded hashes (`spis check-upstream-drift` re-verifies this, and also reports which upstream sources have since moved or died);
 - every journey and motion statement points to observable evidence;
 - the type synthesis cites the records and identifies recurring patterns, disagreements, and applicability boundaries;
 - an example with missing evidence keeps the type partial, with the shortfall visible in `references.json` rather than described in prose.
