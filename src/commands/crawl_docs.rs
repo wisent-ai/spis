@@ -1,17 +1,20 @@
-//! `spis crawl-docs` — full-text crawl of the 50-reference documentation set.
+//! `spis crawl-docs` — PARALLEL full-text crawler for the 50-reference set.
 //!
-//! Reads documentation-site-examples/content-structure/<NN-slug>.json,
-//! resolves page URLs per site (robots sitemaps, sitemap indexes, llms.txt,
-//! or recorded landing navigation), fetches politely, extracts readable
-//! text, and appends gzipped JSONL under ~/.spis/docs-corpus/<slug>/.
-//! Resumable via state.json; nothing here talks to a model.
+//! One global work queue across all sites; a worker pool pulls from it so
+//! every host is crawled simultaneously while each single host stays
+//! rate-limited by its own token bucket (`--host-delay`). Per-site gzipped
+//! JSONL files have exactly one writer thread each; the shared done-map is
+//! flushed to state.json periodically and at the end. Resumable.
 
 use crate as lib;
+use parking_lot::Mutex;
 use anyhow::{bail, Context, Result};
 use serde_json::json;
 use std::collections::HashMap;
 use std::io::Write;
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Arc;
 
 struct Override {
     sitemaps: &'static [&'static str],
@@ -68,106 +71,19 @@ fn overrides() -> HashMap<&'static str, Override> {
     ])
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
 struct SiteMeta {
     name: String,
     source_url: String,
     #[serde(default)]
     inventory_source: String,
     #[serde(default)]
-    landing_nav: Vec<LandingNav>,
+    landing_nav: Vec<LandingNavItem>,
 }
 
-#[derive(serde::Deserialize)]
-struct LandingNav {
+#[derive(serde::Deserialize, Clone)]
+struct LandingNavItem {
     path: String,
-}
-
-struct Args {
-    site: Option<String>,
-    all: bool,
-    exclude: Vec<String>,
-    max_pages: usize,
-    delay: f64,
-    refresh: bool,
-}
-
-pub fn run(rest: &[String]) -> Result<()> {
-    let mut args = Args {
-        site: None,
-        all: false,
-        exclude: Vec::new(),
-        max_pages: 0,
-        delay: 1.0,
-        refresh: false,
-    };
-    let mut i = 0;
-    while i < rest.len() {
-        match rest[i].as_str() {
-            "--site" => {
-                i += 1;
-                args.site = Some(rest.get(i).context("--site needs a value")?.clone());
-            }
-            "--all" => args.all = true,
-            "--exclude" => {
-                i += 1;
-                args.exclude.push(rest.get(i).context("--exclude needs a value")?.clone());
-            }
-            "--max-pages" => {
-                i += 1;
-                args.max_pages = rest.get(i).context("--max-pages needs a value")?.parse()?;
-            }
-            "--delay" => {
-                i += 1;
-                args.delay = rest.get(i).context("--delay needs a value")?.parse()?;
-            }
-            "--refresh" => args.refresh = true,
-            other => bail!("unknown argument: {other}"),
-        }
-        i += 1;
-    }
-    if args.site.is_none() && !args.all {
-        bail!("pass --site <NN-slug> or --all");
-    }
-
-    let structure_dir = PathBuf::from("documentation-site-examples/content-structure");
-    let mut slugs: Vec<String> = std::fs::read_dir(&structure_dir)?
-        .filter_map(|e| e.ok())
-        .map(|e| e.file_name().to_string_lossy().to_string())
-        .filter(|f| f.ends_with(".json"))
-        .map(|f| f.trim_end_matches(".json").to_string())
-        .collect();
-    slugs.sort();
-
-    let chosen: Vec<String> = match &args.site {
-        Some(s) => vec![s.clone()],
-        None => slugs.iter().filter(|s| !args.exclude.contains(s)).cloned().collect(),
-    };
-    for c in &chosen {
-        if !slugs.contains(c) {
-            bail!("unknown site: {c}");
-        }
-    }
-
-    let map = overrides();
-    let mut results: Vec<serde_json::Value> = Vec::new();
-    for slug in &chosen {
-        let meta_path = structure_dir.join(format!("{slug}.json"));
-        let meta: SiteMeta = lib::read_json(meta_path.to_str().unwrap())?;
-        match crawl_site(slug, &meta, &map, &args) {
-            Ok(r) => match serde_json::to_value(&r) {
-                Ok(v) => results.push(v),
-                Err(e) => anyhow::bail!("serialize crawl result: {e}"),
-            },
-            Err(e) => {
-                eprintln!("[fatal] {slug}: {e:#}");
-                results.push(json!({"slug": slug, "error": format!("{e:#}")}));
-                break;
-            }
-        }
-    }
-    println!("{}", serde_json::to_string_pretty(&results)?);
-    Ok(())
 }
 
 struct SiteRules {
@@ -203,9 +119,9 @@ fn resolve_urls(
     delay: f64,
 ) -> Vec<(String, Option<String>)> {
     let base = &meta.source_url;
-    let (origin, _) = lib::split_url(base);
+    let origin = lib::origin_of(base);
     let mut urls: Vec<(String, Option<String>)> = Vec::new();
-    let mut visited_sources: Vec<String> = Vec::new();
+    let mut visited: Vec<String> = Vec::new();
 
     let mut queue: Vec<String> = Vec::new();
     queue.extend(rules.sitemaps.clone());
@@ -231,14 +147,13 @@ fn resolve_urls(
     queue.extend(rules.llms.clone());
 
     while let Some(src) = queue.pop() {
-        if visited_sources.contains(&src) || visited_sources.len() > 64 {
+        if visited.contains(&src) || visited.len() > 96 {
             continue;
         }
-        visited_sources.push(src.clone());
+        visited.push(src.clone());
         if !lib::robots_allows(&src) {
             continue;
         }
-        eprintln!("  sitemap source: {src}");
         match lib::http_get_with_retry(&src, 2) {
             Ok((_, body)) => {
                 let payload = body;
@@ -256,12 +171,7 @@ fn resolve_urls(
                                 let after = &rest[close + 2..];
                                 if let Some(endq) = after.find(')') {
                                     let link = after[..endq].to_string();
-                                    let joined = if link.starts_with("http") {
-                                        link
-                                    } else {
-                                        format!("{origin}{link}")
-                                    };
-                                    urls.push((joined, None));
+                                    urls.push((if link.starts_with("http") { link } else { format!("{origin}{link}") }, None));
                                 }
                             }
                         }
@@ -296,130 +206,328 @@ fn resolve_urls(
     deduped
 }
 
+// ---------- parallel fetch engine ----------
+
+struct HostGate {
+    next_allowed: Mutex<HashMap<String, std::time::Instant>>,
+    host_delay: f64,
+}
+
+impl HostGate {
+    fn new(host_delay: f64) -> Self {
+        Self { next_allowed: Mutex::new(HashMap::new()), host_delay }
+    }
+
+    /// Block until this host's next slot, then reserve it.
+    fn wait_turn(&self, url: &str) {
+        loop {
+            let now = std::time::Instant::now();
+            let host = lib::origin_of(url);
+            let mut slots = self.next_allowed.lock();
+            let slot = slots.entry(host).or_insert(now);
+            if *slot <= now {
+                *slot = now + std::time::Duration::from_secs_f64(self.host_delay);
+                return;
+            }
+            let wait = *slot - now;
+            drop(slots);
+            std::thread::sleep(wait);
+        }
+    }
+}
+
+struct SiteJob {
+    slug: String,
+    out_path: PathBuf,
+    state_path: PathBuf,
+    targets: Vec<(String, Option<String>)>,
+    done: HashMap<String, serde_json::Value>,
+}
+
+struct Shared {
+    queue: Mutex<std::vec::IntoIter<(String, String, Option<String>)>>,
+    done: Mutex<HashMap<String, HashMap<String, serde_json::Value>>>,
+    writers: Mutex<HashMap<String, std::sync::mpsc::Sender<String>>>,
+    gate: HostGate,
+    fetched: AtomicUsize,
+    stop: std::sync::atomic::AtomicBool,
+}
+
+pub fn run(rest: &[String]) -> Result<()> {
+    let mut site: Option<String> = None;
+    let mut all = false;
+    let mut exclude: Vec<String> = Vec::new();
+    let mut workers: usize = 64;
+    let mut host_delay: f64 = 0.3;
+
+    let mut i = 0;
+    while i < rest.len() {
+        match rest[i].as_str() {
+            "--site" => {
+                i += 1;
+                site = Some(rest.get(i).context("--site needs a value")?.clone());
+            }
+            "--all" => all = true,
+            "--exclude" => {
+                i += 1;
+                exclude.push(rest.get(i).context("--exclude needs a value")?.clone());
+            }
+            "--workers" => {
+                i += 1;
+                workers = rest.get(i).context("--workers needs a value")?.parse()?;
+            }
+            "--host-delay" => {
+                i += 1;
+                host_delay = rest.get(i).context("--host-delay needs a value")?.parse()?;
+            }
+            "--refresh" => {}
+            other => bail!("unknown argument: {other}"),
+        }
+        i += 1;
+    }
+    if site.is_none() && !all {
+        bail!("pass --site <NN-slug> or --all");
+    }
+
+    let structure_dir = PathBuf::from("documentation-site-examples/content-structure");
+    let mut slugs: Vec<String> = std::fs::read_dir(&structure_dir)?
+        .filter_map(|e| e.ok())
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .filter(|f| f.ends_with(".json"))
+        .map(|f| f.trim_end_matches(".json").to_string())
+        .filter(|f| f != "full-text-manifest")
+        .collect();
+    slugs.sort();
+
+    let chosen: Vec<String> = match &site {
+        Some(s) => vec![s.clone()],
+        None => slugs.iter().filter(|s| !exclude.contains(s)).cloned().collect(),
+    };
+    for c in &chosen {
+        if !slugs.contains(c) {
+            bail!("unknown site: {c}");
+        }
+    }
+
+    let map = overrides();
+
+    // Phase 1 (sequential): resolve inventories and load prior state.
+    let mut jobs: Vec<SiteJob> = Vec::new();
+    let mut pending_total = 0usize;
+    for slug in &chosen {
+        let meta: SiteMeta =
+            lib::read_json(structure_dir.join(format!("{slug}.json")).to_str().unwrap())?;
+        let dir = data_dir(slug);
+        std::fs::create_dir_all(&dir)?;
+        let state_path = dir.join("state.json");
+        let done: HashMap<String, serde_json::Value> = if !state_path.exists() {
+            HashMap::new()
+        } else {
+            lib::read_json(state_path.to_str().unwrap())?
+        };
+        eprintln!(
+            "[{}] {slug}: resolving URL inventory ({})",
+            lib::now_iso_utc(),
+            meta.inventory_source
+        );
+        let rules = site_rules(slug, &meta, &map);
+        let targets = resolve_urls(slug, &meta, &rules, 0.25);
+        eprintln!("[{}] {slug}: {} candidate URLs", lib::now_iso_utc(), targets.len());
+        pending_total += targets.len();
+        jobs.push(SiteJob {
+            slug: slug.clone(),
+            out_path: dir.join("pages.jsonl.gz"),
+            state_path,
+            targets,
+            done,
+        });
+    }
+
+    // Phase 2: flat queue across sites.
+    let mut queue: Vec<(String, String, Option<String>)> = Vec::new();
+    for job in &jobs {
+        for (url, lm) in &job.targets {
+            let h = lib::sha256_hex(url.as_bytes())[..16].to_string();
+            if job.done.contains_key(&h) {
+                continue;
+            }
+            queue.push((job.slug.clone(), url.clone(), lm.clone()));
+        }
+    }
+    queue.reverse(); // pop() takes from the end; restore original order
+    let total_pending = queue.len();
+    eprintln!(
+        "[{}] queue ready: {total_pending} URLs across {} sites; workers={workers} host-delay={host_delay}s",
+        lib::now_iso_utc(),
+        chosen.len()
+    );
+
+    // One writer thread per site keeps each gz single-stream.
+    let (tx_map, rxs): (Vec<_>, Vec<_>) = jobs
+        .iter()
+        .map(|j| {
+            let (tx, rx) = std::sync::mpsc::channel::<String>();
+            ((j.slug.clone(), tx), rx)
+        })
+        .unzip();
+    let writer_handles: Vec<_> = jobs
+        .iter()
+        .zip(rxs)
+        .map(|(job, rx)| {
+            let rx = parking_lot::Mutex::new(rx);
+            let path = job.out_path.clone();
+            std::thread::spawn(move || -> Result<()> {
+                let append = path.exists();
+                let file = std::fs::OpenOptions::new().create(true).append(true).open(&path)?;
+                let mut enc = flate2::write::GzEncoder::new(file, flate2::Compression::default());
+                loop {
+                    match rx.lock().try_recv() {
+                        Ok(line) => writeln!(enc, "{line}")?,
+                        Err(std::sync::mpsc::TryRecvError::Empty) => {
+                            std::thread::sleep(std::time::Duration::from_millis(25));
+                        }
+                        Err(std::sync::mpsc::TryRecvError::Disconnected) => break,
+                    }
+                }
+                enc.finish()?;
+                Ok(())
+            })
+        })
+        .collect();
+
+
+    let shared = Arc::new(Shared {
+        queue: Mutex::new(queue.into_iter()),
+        done: Mutex::new(jobs.iter().map(|j| (j.slug.clone(), j.done.clone())).collect()),
+        writers: Mutex::new(tx_map.into_iter().collect()),
+        gate: HostGate::new(host_delay),
+        fetched: AtomicUsize::new(0),
+        stop: std::sync::atomic::AtomicBool::new(false),
+    });
+
+    // Periodic state flusher so long runs are resumable after crashes.
+    {
+        let flusher_shared = Arc::clone(&shared);
+        let flusher_jobs_state: Vec<(String, PathBuf)> =
+            jobs.iter().map(|j| (j.slug.clone(), j.state_path.clone())).collect();
+        std::thread::spawn(move || loop {
+            if flusher_shared.stop.load(std::sync::atomic::Ordering::Relaxed) {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_secs(10));
+            let snapshot = flusher_shared.done.lock();
+            for (slug, path) in &flusher_jobs_state {
+                if let Some(dm) = snapshot.get(slug) {
+                    let tmp = path.with_extension("json.tmp");
+                    if std::fs::write(&tmp, serde_json::to_string_pretty(dm).unwrap_or_default())
+                        .is_ok()
+                    {
+                        let _ = std::fs::rename(&tmp, path);
+                    }
+                }
+            }
+        });
+    }
+
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            let shared = Arc::clone(&shared);
+            scope.spawn(move || loop {
+                let (slug, url, lastmod) = {
+                    let mut q = shared.queue.lock();
+                    match q.next() {
+                        Some(t) => t,
+                        None => break,
+                    }
+                };
+                if !lib::robots_allows(&url) {
+                    continue;
+                }
+                shared.gate.wait_turn(&url);
+                let h = lib::sha256_hex(url.as_bytes())[..16].to_string();
+                match lib::http_get_with_retry(&url, 2) {
+                    Ok((status, body)) => {
+                        let head = body.chars().take(4096).collect::<String>().to_lowercase();
+                        let looks_html = head.contains("<html") || head.contains("<title");
+                        let (text, title) = if looks_html {
+                            lib::extract_text(&body)
+                        } else {
+                            (String::new(), String::new())
+                        };
+                        let brace_density = if text.is_empty() {
+                            0.0
+                        } else {
+                            text.matches('{').count() as f64 * 100.0 / text.len() as f64
+                        };
+                        let quality = if brace_density > 1.0 { "css_js_noise" } else { "ok" };
+                        let rec = json!({
+                            "url": url,
+                            "fetched_at": lib::now_iso_utc(),
+                            "status": status,
+                            "quality": quality,
+                            "sha256": lib::sha256_hex(body.as_bytes()),
+                            "bytes": body.len(),
+                            "title": (!title.is_empty()).then_some(title),
+                            "text": (quality == "ok").then_some(text),
+                            "lastmod": lastmod,
+                        });
+                        if let Ok(line) = serde_json::to_string(&rec) {
+                            let writers = shared.writers.lock();
+                            if let Some(tx) = writers.get(&slug) {
+                                let _ = tx.send(line);
+                            }
+                        }
+                        shared.done.lock().entry(slug).or_default().insert(h, json!({"url": url, "status": status}));
+                        shared.fetched.fetch_add(1, Ordering::Relaxed);
+                    }
+                    Err(e) => {
+                        let msg = format!("{e:#}");
+                        let code = msg
+                            .split("HTTP ")
+                            .nth(1)
+                            .and_then(|r| r.split(' ').next())
+                            .and_then(|c| c.parse::<u16>().ok());
+                        let entry = match code {
+                            Some(code) => json!({"url": url, "status": code}),
+                            None => json!({"url": url, "status": "error", "detail": msg.chars().take(200).collect::<String>()}),
+                        };
+                        shared.done.lock().entry(slug).or_default().insert(h, entry);
+                    }
+                }
+            });
+        }
+    });
+    // Workers are done: drop the per-site senders so writer threads see
+    // Disconnected, drain their buffers, and finish. Then flush states.
+    shared.writers.lock().clear();
+    for h in writer_handles {
+        let _ = h.join();
+    }
+
+    let mut results = Vec::new();
+    {
+        let done_final = shared.done.lock();
+        for job in &jobs {
+            let empty = HashMap::new();
+            let dm = done_final.get(&job.slug).unwrap_or(&empty);
+            let ok_count =
+                dm.values().filter(|v| v.get("status").and_then(|s| s.as_u64()) == Some(200)).count();
+            let tmp = job.state_path.with_extension("json.tmp");
+            std::fs::write(&tmp, serde_json::to_string_pretty(dm)?)?;
+            std::fs::rename(&tmp, &job.state_path)?;
+            results.push(json!({
+                "slug": job.slug,
+                "candidates": job.targets.len(),
+                "seen": dm.len(),
+                "cumulative_ok": ok_count,
+            }));
+        }
+    }
+    println!("{}", serde_json::to_string_pretty(&results)?);
+    Ok(())
+}
+
 fn data_dir(slug: &str) -> PathBuf {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
     PathBuf::from(home).join(".spis/docs-corpus").join(slug)
-}
-
-#[derive(serde::Serialize)]
-struct CrawlResult {
-    slug: String,
-    candidates: usize,
-    fetched_this_run: usize,
-    cumulative_ok: usize,
-    seen: usize,
-}
-
-fn crawl_site(slug: &str, meta: &SiteMeta, map: &HashMap<&'static str, Override>, args: &Args) -> Result<CrawlResult> {
-    let dir = data_dir(slug);
-    std::fs::create_dir_all(&dir)?;
-    let out_path = dir.join("pages.jsonl.gz");
-    let state_path = dir.join("state.json");
-
-    let done: HashMap<String, serde_json::Value> = if args.refresh || !state_path.exists() {
-        HashMap::new()
-    } else {
-        lib::read_json(state_path.to_str().unwrap())?
-    };
-
-    eprintln!(
-        "[{}] {slug}: resolving URL inventory ({})",
-        lib::now_iso_utc(),
-        meta.inventory_source
-    );
-    let rules = site_rules(slug, meta, map);
-    let targets = resolve_urls(slug, meta, &rules, args.delay);
-    eprintln!("[{}] {slug}: {} candidate URLs", lib::now_iso_utc(), targets.len());
-
-    let append_mode = out_path.exists();
-    let file = std::fs::OpenOptions::new().create(true).append(true).open(&out_path)?;
-    let mut out = flate2::write::GzEncoder::new(file, flate2::Compression::default());
-
-    let mut done_mut = done;
-    let mut fetched = 0usize;
-    let sleep = std::time::Duration::from_secs_f64(args.delay);
-
-    for (url, lastmod) in &targets {
-        let h = lib::sha256_hex(url.as_bytes())[..16].to_string();
-        if !args.refresh && done_mut.contains_key(&h) {
-            continue;
-        }
-        if args.max_pages > 0 && fetched >= args.max_pages {
-            break;
-        }
-        if !lib::robots_allows(url) {
-            done_mut.insert(h.clone(), json!({"url": url, "status": "robots_disallowed"}));
-            continue;
-        }
-        match lib::http_get_with_retry(url, 3) {
-            Ok((status, body)) => {
-                let head = body.chars().take(4096).collect::<String>().to_lowercase();
-                let looks_html = head.contains("<html") || head.contains("<title");
-                let (text, title) = if looks_html {
-                    lib::extract_text(&body)
-                } else {
-                    (String::new(), String::new())
-                };
-                let brace_density = if text.is_empty() {
-                    0.0
-                } else {
-                    text.matches('{').count() as f64 * 100.0 / text.len() as f64
-                };
-                let quality = if brace_density > 1.0 { "css_js_noise" } else { "ok" };
-                let keep_text = quality == "ok" && !text.is_empty();
-                let rec = json!({
-                    "url": url,
-                    "fetched_at": lib::now_iso_utc(),
-                    "status": status,
-                    "quality": quality,
-                    "sha256": lib::sha256_hex(body.as_bytes()),
-                    "bytes": body.len(),
-                    "title": (!title.is_empty()).then_some(title),
-                    "text": keep_text.then_some(text),
-                    "lastmod": lastmod,
-                });
-                writeln!(out, "{rec}")?;
-                done_mut.insert(h.clone(), json!({"url": url, "status": status}));
-                fetched += 1;
-                std::thread::sleep(sleep);
-            }
-            Err(e) => {
-                let msg = format!("{e:#}");
-                let code = msg
-                    .split("HTTP ")
-                    .nth(1)
-                    .and_then(|r| r.split(' ').next())
-                    .and_then(|c| c.parse::<u16>().ok());
-                let entry = match code {
-                    Some(code) => json!({"url": url, "status": code}),
-                    None => json!({"url": url, "status": "error", "detail": msg.chars().take(200).collect::<String>()}),
-                };
-                done_mut.insert(h, entry);
-                eprintln!("  {msg}");
-            }
-        }
-        if fetched % 25 == 0 {
-            lib::write_pretty_json(state_path.to_str().unwrap(), &serde_json::to_value(&done_mut)?)?;
-        }
-    }
-    out.finish()?;
-    lib::write_pretty_json(state_path.to_str().unwrap(), &serde_json::to_value(&done_mut)?)?;
-
-    let cumulative_ok = done_mut
-        .values()
-        .filter(|v| v.get("status").and_then(|s| s.as_u64()) == Some(200))
-        .count();
-    eprintln!(
-        "[{}] {slug}: fetched this run {}; cumulative ok {cumulative_ok} of {} seen",
-        lib::now_iso_utc(),
-        fetched,
-        done_mut.len()
-    );
-    Ok(CrawlResult {
-        slug: slug.to_string(),
-        candidates: targets.len(),
-        fetched_this_run: fetched,
-        cumulative_ok,
-        seen: done_mut.len(),
-    })
 }

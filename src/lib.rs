@@ -93,31 +93,46 @@ pub fn split_url(url: &str) -> (String, String) {
 }
 
 pub fn http_get_with_retry(url: &str, tries: u32) -> Result<(u16, String)> {
-    let mut delay = 2.0f64;
+    // Some servers stream bodies slower than any sane timeout; ureq's own
+    // deadline does not always fire during body streaming, so each attempt
+    // runs under a hard join-timeout. A timed-out attempt leaks its thread
+    // until the server closes — accepted because such stragglers are rare.
+    const ATTEMPT_DEADLINE: Duration = Duration::from_secs(45);
+
     for attempt in 1..=tries {
-        let resp = ureq::get(url)
-            .timeout(Duration::from_secs(30))
-            .set("User-Agent", USER_AGENT)
-            .call();
-        match resp {
+        let url_owned = url.to_string();
+        let (tx, rx) = std::sync::mpsc::channel::<Result<(u16, String)>>();
+        std::thread::spawn(move || {
+            let resp = ureq::get(&url_owned)
+                .timeout(ATTEMPT_DEADLINE)
+                .set("User-Agent", USER_AGENT)
+                .call();
+        let result = match resp {
             Ok(r) => {
-                let status = r.status();
-                let body = r.into_string().map_err(|e| anyhow::anyhow!("body read: {e}"))?;
-                return Ok((status as u16, body));
+                let status = r.status() as u16;
+                r.into_string()
+                    .map(|body| (status, body))
+                    .map_err(|e| anyhow::anyhow!("body read: {e}"))
             }
-            Err(ureq::Error::Status(code, r)) if code == 429 || code >= 500 => {
-                if attempt == tries {
-                    bail!("HTTP {code} after {tries} attempts for {url}");
+            Err(ureq::Error::Status(code, _)) => Err(anyhow::anyhow!("HTTP {code}")),
+            Err(e) => Err(anyhow::anyhow!("{e}")),
+        };
+            let _ = tx.send(result);
+        });
+        match rx.recv_timeout(ATTEMPT_DEADLINE) {
+            Ok(Ok(pair)) => return Ok(pair),
+            Ok(Err(e)) => {
+                let msg = format!("{e:#}");
+                let retryable = ["HTTP 429", "HTTP 500", "HTTP 502", "HTTP 503", "HTTP 504"]
+                    .iter()
+                    .any(|m| msg.contains(m));
+                if retryable && attempt < tries {
+                    std::thread::sleep(Duration::from_secs(2));
+                    continue;
                 }
-                let wait = r
-                    .header("Retry-After")
-                    .and_then(|v| v.parse::<f64>().ok())
-                    .unwrap_or(delay);
-                eprintln!("  backoff {wait:.0}s after HTTP {code} for {url}");
-                std::thread::sleep(Duration::from_secs_f64(wait));
-                delay *= 2.0;
+                bail!("{msg}");
             }
-            Err(e) => return Err(e.into()),
+            Err(_) => bail!("attempt timed out after {}s: {url}", ATTEMPT_DEADLINE.as_secs()),
         }
     }
     unreachable!("retry loop always returns or bails")
