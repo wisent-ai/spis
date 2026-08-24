@@ -10,7 +10,6 @@ mod robots {
     use super::USER_AGENT;
     use parking_lot::Mutex;
     use std::collections::HashMap;
-    use std::io::Read;
     use std::time::Duration;
 
     #[derive(Clone)]
@@ -92,6 +91,20 @@ pub fn split_url(url: &str) -> (String, String) {
     }
 }
 
+/// Transparently decompress a gzipped payload (magic 1f 8b); passthrough otherwise.
+pub fn maybe_gunzip(body: &[u8]) -> Vec<u8> {
+    if body.starts_with(&[0x1f, 0x8b]) {
+        let mut out = Vec::new();
+        let mut dec = flate2::read::MultiGzDecoder::new(body);
+        if std::io::Read::read_to_end(&mut dec, &mut out).is_err() {
+            return body.to_vec();
+        }
+        out
+    } else {
+        body.to_vec()
+    }
+}
+
 pub fn http_get_with_retry(url: &str, tries: u32) -> Result<(u16, String)> {
     // Some servers stream bodies slower than any sane timeout; ureq's own
     // deadline does not always fire during body streaming, so each attempt
@@ -100,23 +113,30 @@ pub fn http_get_with_retry(url: &str, tries: u32) -> Result<(u16, String)> {
     const ATTEMPT_DEADLINE: Duration = Duration::from_secs(45);
 
     for attempt in 1..=tries {
-        let url_owned = url.to_string();
         let (tx, rx) = std::sync::mpsc::channel::<Result<(u16, String)>>();
+        let url_owned = url.to_string();
         std::thread::spawn(move || {
+            use std::io::Read as _;
             let resp = ureq::get(&url_owned)
                 .timeout(ATTEMPT_DEADLINE)
                 .set("User-Agent", USER_AGENT)
                 .call();
-        let result = match resp {
-            Ok(r) => {
-                let status = r.status() as u16;
-                r.into_string()
-                    .map(|body| (status, body))
-                    .map_err(|e| anyhow::anyhow!("body read: {e}"))
-            }
-            Err(ureq::Error::Status(code, _)) => Err(anyhow::anyhow!("HTTP {code}")),
-            Err(e) => Err(anyhow::anyhow!("{e}")),
-        };
+            let result = match resp {
+                Ok(r) => {
+                    let status = r.status() as u16;
+                    let mut body = Vec::new();
+                    let read = r
+                        .into_reader()
+                        .take(256 << 20)
+                        .read_to_end(&mut body);
+                    match read {
+                        Ok(_) => Ok((status, String::from_utf8_lossy(&body).to_string())),
+                        Err(e) => Err(anyhow::anyhow!("body read: {e}")),
+                    }
+                }
+                Err(ureq::Error::Status(code, _)) => Err(anyhow::anyhow!("HTTP {code}")),
+                Err(e) => Err(anyhow::anyhow!("{e}")),
+            };
             let _ = tx.send(result);
         });
         match rx.recv_timeout(ATTEMPT_DEADLINE) {
