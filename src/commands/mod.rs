@@ -13,6 +13,7 @@ pub mod generate_example_catalogs;
 pub mod guidelines_rs;
 pub mod reference_contract;
 pub mod reference_record;
+pub mod scrape_products;
 pub mod sync_readme_examples;
 pub mod verify_reference_evidence;
 
@@ -50,6 +51,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "analyze-example-structures" => analyze_example_structures::run(rest)?,
         "analyze-readme-examples" => analyze_readme_examples::run(rest)?,
         "guidelines" => guidelines_rs::run(rest)?,
+        "scrape-products" => scrape_products::run(rest)?,
         "sync-readme-examples" => sync_readme_examples::run(rest)?,
         "collect-example-images" => collect_example_images::run(rest)?,
         "capture-widths" => capture_widths::run(rest)?,
