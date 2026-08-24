@@ -104,17 +104,26 @@ fn extract_text(html: &str) -> (String, String) {
     let mut pos = 0usize;
     while pos < html.len() {
         match html[pos..].find('<') {
-            None => { ex.buf.push_str(&html[pos..]); pos = html.len(); }
+            None => {
+                if ex.skip_depth == 0 { ex.buf.push_str(&html[pos..]); }
+                pos = html.len();
+            }
             Some(rel) => {
                 let tag_start = pos + rel;
-                if tag_start > pos { ex.buf.push_str(&html[pos..tag_start]); ex.flush(); }
+                if ex.skip_depth == 0 && tag_start > pos {
+                    ex.buf.push_str(&html[pos..tag_start]);
+                    ex.flush();
+                }
                 match html[tag_start..].find('>') {
                     Some(gt) => {
                         let tag_src = html[tag_start + 1..tag_start + gt].trim().to_string();
                         ex.handle_tag(&tag_src);
                         pos = tag_start + gt + 1;
                     }
-                    None => { ex.buf.push_str(&html[tag_start..]); pos = html.len(); }
+                    None => {
+                        if ex.skip_depth == 0 { ex.buf.push_str(&html[tag_start..]); }
+                        pos = html.len();
+                    }
                 }
             }
         }

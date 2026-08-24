@@ -305,12 +305,12 @@ impl Extractor {
         while pos < html.len() {
             match html[pos..].find('<') {
                 None => {
-                    self.buf.push_str(&html[pos..]);
+                    if self.skip_depth == 0 { self.buf.push_str(&html[pos..]); }
                     pos = html.len();
                 }
                 Some(rel) => {
                     let tag_start = pos + rel;
-                    if tag_start > pos {
+                    if tag_start > pos && self.skip_depth == 0 {
                         self.buf.push_str(&html[pos..tag_start]);
                         self.flush_text();
                     }
