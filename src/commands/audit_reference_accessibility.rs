@@ -36,7 +36,13 @@ const DEFAULT_CATALOGS: &[&str] = &[
     "design-system-examples",
     "onboarding-auth-examples",
 ];
-const ACTION_KEYS: &[&str] = &["batch", "site_slug", "source_url", "viewport", "artifact_prefix"];
+const ACTION_KEYS: &[&str] = &[
+    "batch",
+    "site_slug",
+    "source_url",
+    "viewport",
+    "artifact_prefix",
+];
 const PLAN_KEYS: &[&str] = &["schema", "batch", "target", "captures"];
 const SUMMARY_FIELDS: &[&str] = &[
     "source_url",
@@ -125,7 +131,11 @@ fn is_relative_to(path: &Path, base: &Path) -> bool {
 }
 
 fn basename_of(key: &str) -> String {
-    key.trim_end_matches('/').rsplit('/').next().unwrap_or("").to_string()
+    key.trim_end_matches('/')
+        .rsplit('/')
+        .next()
+        .unwrap_or("")
+        .to_string()
 }
 
 fn looks_like_slug(value: &str) -> bool {
@@ -136,14 +146,16 @@ fn looks_like_slug(value: &str) -> bool {
         _ => return false,
     }
     value.chars().count() <= 81
-        && value
-            .chars()
-            .skip(1)
-            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '.' || c == '_' || c == '-')
+        && value.chars().skip(1).all(|c| {
+            c.is_ascii_lowercase() || c.is_ascii_digit() || c == '.' || c == '_' || c == '-'
+        })
 }
 
 fn is_hex64_lower(value: &str) -> bool {
-    value.len() == 64 && value.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    value.len() == 64
+        && value
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
 
 // ---------------------------------------------------------------------------
@@ -157,7 +169,11 @@ struct StrictParser<'a> {
 
 impl<'a> StrictParser<'a> {
     fn new(text: &'a str) -> Self {
-        StrictParser { text: text.as_bytes(), pos: 0, depth: 0 }
+        StrictParser {
+            text: text.as_bytes(),
+            pos: 0,
+            depth: 0,
+        }
     }
 
     fn err(&self, what: &str) -> String {
@@ -218,8 +234,10 @@ impl<'a> StrictParser<'a> {
     fn parse_number(&mut self) -> Result<Value, String> {
         let start = self.pos;
         while self.pos < self.text.len()
-            && matches!(self.text[self.pos],
-                b'-' | b'+' | b'.' | b'0'..=b'9' | b'e' | b'E')
+            && matches!(
+                self.text[self.pos],
+                b'-' | b'+' | b'.' | b'0'..=b'9' | b'e' | b'E'
+            )
         {
             self.pos += 1;
         }
@@ -279,9 +297,7 @@ impl<'a> StrictParser<'a> {
                                     if !(0xDC00..0xE000).contains(&low) {
                                         return Err(self.err("invalid low surrogate"));
                                     }
-                                    let combined = 0x10000
-                                        + ((cp - 0xD800) << 10)
-                                        + (low - 0xDC00);
+                                    let combined = 0x10000 + ((cp - 0xD800) << 10) + (low - 0xDC00);
                                     out.push(
                                         char::from_u32(combined)
                                             .ok_or_else(|| self.err("invalid surrogate pair"))?,
@@ -426,8 +442,7 @@ fn action_rows(payload: &Value, what: &str) -> Result<Vec<Value>> {
 }
 
 fn action_id(row: &Value) -> Option<String> {
-    pick(row, &["action_id", "actionId", "id", "job_id", "jobId"])
-        .map(|v| v.to_string())
+    pick(row, &["action_id", "actionId", "id", "job_id", "jobId"]).map(|v| v.to_string())
 }
 
 fn canonical_url(value: &Value, record_id: &str, field: &str) -> Result<String> {
@@ -435,13 +450,15 @@ fn canonical_url(value: &Value, record_id: &str, field: &str) -> Result<String> 
         .as_str()
         .filter(|s| !s.trim().is_empty())
         .ok_or_else(|| anyhow!("{record_id}: {field}: expected a non-empty http(s) URL"))?;
-    let (scheme, rest) = raw.split_once("://").ok_or_else(|| {
-        anyhow!("{record_id}: {field}: expected an http(s) URL, got {raw:?}")
-    })?;
+    let (scheme, rest) = raw
+        .split_once("://")
+        .ok_or_else(|| anyhow!("{record_id}: {field}: expected an http(s) URL, got {raw:?}"))?;
     if scheme != "http" && scheme != "https" {
         bail!("{record_id}: {field}: expected an http(s) URL, got {raw:?}");
     }
-    let netloc_end = rest.find(|c| c == '/' || c == '?' || c == '#').unwrap_or(rest.len());
+    let netloc_end = rest
+        .find(|c| c == '/' || c == '?' || c == '#')
+        .unwrap_or(rest.len());
     let netloc = &rest[..netloc_end];
     if netloc.is_empty() {
         bail!("{record_id}: {field}: expected an http(s) URL, got {raw:?}");
@@ -481,16 +498,15 @@ fn parse_record_selection(raw: Option<&String>) -> Result<Option<HashSet<usize>>
             Some((a, b)) => (a, Some(b)),
             None => (token, None),
         };
-        let parse_num =
-            |value: &str| -> Result<usize> {
-                if value.is_empty()
-                    || !value.bytes().all(|b| b.is_ascii_digit())
-                    || value.starts_with('0')
-                {
-                    return Err(invalid());
-                }
-                value.parse::<usize>().map_err(|_| invalid())
-            };
+        let parse_num = |value: &str| -> Result<usize> {
+            if value.is_empty()
+                || !value.bytes().all(|b| b.is_ascii_digit())
+                || value.starts_with('0')
+            {
+                return Err(invalid());
+            }
+            value.parse::<usize>().map_err(|_| invalid())
+        };
         let first = parse_num(first_s)?;
         let last = match last_s {
             Some(value) => parse_num(value)?,
@@ -520,9 +536,7 @@ fn normalize_catalog(value: &str) -> Result<String> {
         && stem
             .chars()
             .enumerate()
-            .all(|(i, c)| {
-                c.is_ascii_lowercase() || c.is_ascii_digit() || (i > 0 && c == '-')
-            })
+            .all(|(i, c)| c.is_ascii_lowercase() || c.is_ascii_digit() || (i > 0 && c == '-'))
         && stem.starts_with(|c: char| c.is_ascii_lowercase() || c.is_ascii_digit());
     if !valid {
         bail!("--catalog: invalid catalog name {value:?}");
@@ -568,7 +582,10 @@ impl Reference {
     }
 }
 
-fn load_references(catalogs: &[String], selection: Option<&HashSet<usize>>) -> Result<Vec<Reference>> {
+fn load_references(
+    catalogs: &[String],
+    selection: Option<&HashSet<usize>>,
+) -> Result<Vec<Reference>> {
     let mut references: Vec<Reference> = Vec::new();
     for catalog in catalogs {
         let catalog_dir = PathBuf::from(catalog);
@@ -578,8 +595,7 @@ fn load_references(catalogs: &[String], selection: Option<&HashSet<usize>>) -> R
         }
         let text = std::fs::read_to_string(&catalog_path)
             .with_context(|| format!("{catalog}: references.json: unreadable"))?;
-        let payload =
-            strict_json(&text, &format!("{catalog}: references.json"))?;
+        let payload = strict_json(&text, &format!("{catalog}: references.json"))?;
         let pointers = payload
             .get("references")
             .and_then(Value::as_array)
@@ -618,17 +634,14 @@ fn load_references(catalogs: &[String], selection: Option<&HashSet<usize>>) -> R
             if !is_relative_to(&resolved, &catalog_resolved)
                 || resolved.file_name().and_then(|n| n.to_str()) != Some("reference.json")
             {
-                bail!(
-                    "{record_id}: path: {relative:?} is outside the catalog reference layout"
-                );
+                bail!("{record_id}: path: {relative:?} is outside the catalog reference layout");
             }
             if !resolved.is_file() {
                 bail!("{record_id}: path: {relative:?} does not exist");
             }
             let document_text = std::fs::read_to_string(&resolved)
                 .with_context(|| format!("{record_id}: reference.json: unreadable"))?;
-            let document =
-                strict_json(&document_text, &format!("{record_id}: reference.json"))?;
+            let document = strict_json(&document_text, &format!("{record_id}: reference.json"))?;
             if !document.is_object() {
                 bail!("{record_id}: reference.json: expected an object");
             }
@@ -639,9 +652,7 @@ fn load_references(catalogs: &[String], selection: Option<&HashSet<usize>>) -> R
                 .unwrap_or_default()
                 .to_string();
             if !looks_like_slug(&slug) {
-                bail!(
-                    "{record_id}: site_slug: directory name {slug:?} is not a Weles slug"
-                );
+                bail!("{record_id}: site_slug: directory name {slug:?} is not a Weles slug");
             }
             let name = document
                 .get("name")
@@ -649,13 +660,16 @@ fn load_references(catalogs: &[String], selection: Option<&HashSet<usize>>) -> R
                 .filter(|n| !n.is_empty())
                 .ok_or_else(|| anyhow!("{record_id}: name: expected a non-empty string"))?
                 .to_string();
-            let source_field = if document.get("product_url").map(Value::is_null) == Some(false)
-            {
+            let source_field = if document.get("product_url").map(Value::is_null) == Some(false) {
                 "product_url"
             } else {
                 "source_url"
             };
-            let source_url = canonical_url(document.get(source_field).unwrap_or(&Value::Null), &record_id, source_field)?;
+            let source_url = canonical_url(
+                document.get(source_field).unwrap_or(&Value::Null),
+                &record_id,
+                source_field,
+            )?;
             references.push(Reference {
                 catalog: catalog.clone(),
                 index,
@@ -666,8 +680,7 @@ fn load_references(catalogs: &[String], selection: Option<&HashSet<usize>>) -> R
             });
         }
         if let Some(selection) = selection {
-            let mut missing: Vec<usize> =
-                selection.difference(&known).copied().collect();
+            let mut missing: Vec<usize> = selection.difference(&known).copied().collect();
             missing.sort_unstable();
             if !missing.is_empty() {
                 let joined = missing
@@ -698,8 +711,16 @@ fn stado(args: &[&str], parse_json: bool) -> Result<(Option<Value>, String)> {
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     let stderr = String::from_utf8_lossy(&output.stderr).to_string();
     if !output.status.success() {
-        let combined = if stderr.trim().is_empty() { &stdout } else { &stderr };
-        let lines: Vec<&str> = combined.lines().map(str::trim).filter(|l| !l.is_empty()).collect();
+        let combined = if stderr.trim().is_empty() {
+            &stdout
+        } else {
+            &stderr
+        };
+        let lines: Vec<&str> = combined
+            .lines()
+            .map(str::trim)
+            .filter(|l| !l.is_empty())
+            .collect();
         let said: Vec<&str> = lines
             .iter()
             .copied()
@@ -712,7 +733,12 @@ fn stado(args: &[&str], parse_json: bool) -> Result<(Option<Value>, String)> {
         let tail = if detail.is_empty() {
             format!("exit {}", output.status.code().unwrap_or(-1))
         } else {
-            detail.iter().take(4).cloned().collect::<Vec<_>>().join(" | ")
+            detail
+                .iter()
+                .take(4)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join(" | ")
         };
         bail!("stado {}: {}", args.join(" "), tail);
     }
@@ -768,7 +794,10 @@ fn validate_plan(
         bail!(
             "plan: keys must be exactly {}; got {}",
             wanted.join(", "),
-            keys.iter().map(|k| k.as_str()).collect::<Vec<_>>().join(", ")
+            keys.iter()
+                .map(|k| k.as_str())
+                .collect::<Vec<_>>()
+                .join(", ")
         );
     }
     if document.get("schema").and_then(Value::as_str) != Some(PLAN_SCHEMA) {
@@ -788,7 +817,11 @@ fn validate_plan(
         .filter(|c| !c.is_empty())
         .ok_or_else(|| anyhow!("plan: captures must be a non-empty array"))?;
     if captures.len() != expected.len() {
-        bail!("plan: expected {} actions, got {}", expected.len(), captures.len());
+        bail!(
+            "plan: expected {} actions, got {}",
+            expected.len(),
+            captures.len()
+        );
     }
     let mut prefixes: HashSet<String> = HashSet::new();
     for (position, (action, reference)) in captures.iter().zip(expected.iter()).enumerate() {
@@ -799,7 +832,9 @@ fn validate_plan(
             .ok_or_else(|| anyhow!("{label}: expected an object"))?;
         let action_keys: HashSet<&String> = action.keys().collect();
         if action_keys.len() != ACTION_KEYS.len()
-            || !ACTION_KEYS.iter().all(|key| action_keys.contains(&key.to_string()))
+            || !ACTION_KEYS
+                .iter()
+                .all(|key| action_keys.contains(&key.to_string()))
         {
             bail!("{label}: keys must be exactly {}", ACTION_KEYS.join(", "));
         }
@@ -810,9 +845,7 @@ fn validate_plan(
                 .ok_or_else(|| anyhow!("{label}: internal: missing {field}"))?;
             let got = action.get(*field).unwrap_or(&Value::Null);
             if expected_value != got {
-                bail!(
-                    "{label}: {field}: expected {expected_value}, got {got}"
-                );
+                bail!("{label}: {field}: expected {expected_value}, got {got}");
             }
         }
         let prefix = action
@@ -849,7 +882,11 @@ fn plan_path_for(plan_arg: Option<&String>, batch: &str) -> Result<PathBuf> {
     let resolved = lex_norm(Path::new(&raw));
     let work = lex_norm(&work_root());
     if !is_relative_to(&resolved, &work) {
-        bail!("--plan: {} is outside {}; plans belong under ~/.spis/work", resolved.display(), work.display());
+        bail!(
+            "--plan: {} is outside {}; plans belong under ~/.spis/work",
+            resolved.display(),
+            work.display()
+        );
     }
     Ok(resolved)
 }
@@ -869,10 +906,21 @@ fn expand_home(input: &str) -> String {
 // ---------------------------------------------------------------------------
 // Enqueue / poll / retrieve
 
-fn enqueue(target: &str, plan_path: &Path, plan: &Map<String, Value>) -> Result<(String, Vec<String>)> {
+fn enqueue(
+    target: &str,
+    plan_path: &Path,
+    plan: &Map<String, Value>,
+) -> Result<(String, Vec<String>)> {
     let plan_arg = plan_path.to_string_lossy().to_string();
     let (payload, _) = stado(
-        &["host", "weles-capture", target, "--plan", plan_arg.as_str(), "--json"],
+        &[
+            "host",
+            "weles-capture",
+            target,
+            "--plan",
+            plan_arg.as_str(),
+            "--json",
+        ],
         true,
     )?;
     let payload = payload.unwrap_or(Value::Null);
@@ -905,7 +953,10 @@ fn enqueue(target: &str, plan_path: &Path, plan: &Map<String, Value>) -> Result<
         })
         .trim_matches('"')
         .to_string();
-    let planned_batch = plan.get("batch").and_then(Value::as_str).unwrap_or_default();
+    let planned_batch = plan
+        .get("batch")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
     if returned_batch != planned_batch {
         bail!("weles-capture: batch: expected {planned_batch:?}, got {returned_batch:?}");
     }
@@ -958,16 +1009,27 @@ fn poll(
     log: &dyn Fn(&str),
 ) -> Result<std::collections::HashMap<String, Value>> {
     let terminal: HashSet<&str> = [
-        "done", "failed", "error", "cancelled", "canceled", "skipped",
+        "done",
+        "failed",
+        "error",
+        "cancelled",
+        "canceled",
+        "skipped",
     ]
     .into_iter()
     .collect();
     let deadline = Instant::now() + Duration::from_secs(timeout_seconds);
-    let mut latest: std::collections::HashMap<String, Value> =
-        std::collections::HashMap::new();
+    let mut latest: std::collections::HashMap<String, Value> = std::collections::HashMap::new();
     loop {
         let (payload, _) = stado(
-            &["host", "weles-capture-status", target, "--batch", batch, "--json"],
+            &[
+                "host",
+                "weles-capture-status",
+                target,
+                "--batch",
+                batch,
+                "--json",
+            ],
             true,
         )?;
         let payload = payload.unwrap_or(Value::Null);
@@ -1001,7 +1063,9 @@ fn poll(
             expected_ids.len()
         ));
         let all_terminal = latest.len() == expected_ids.len()
-            && latest.values().all(|row| terminal.contains(state_of(row).as_str()));
+            && latest
+                .values()
+                .all(|row| terminal.contains(state_of(row).as_str()));
         if all_terminal {
             return Ok(latest);
         }
@@ -1031,7 +1095,9 @@ fn artifact_keys(row: &Value) -> Vec<String> {
                         let holder = Value::Object(map);
                         if let Some(value) = pick(
                             &holder,
-                            &["key", "uri", "url", "artifact", "artefact", "object", "path"],
+                            &[
+                                "key", "uri", "url", "artifact", "artefact", "object", "path",
+                            ],
                         ) {
                             result.push(value.to_string().trim_matches('"').to_string());
                         }
@@ -1046,10 +1112,7 @@ fn artifact_keys(row: &Value) -> Vec<String> {
 }
 
 fn named_artifact(keys: &[String], name: &str, reference: &Reference) -> Result<String> {
-    let matches: Vec<&String> = keys
-        .iter()
-        .filter(|key| basename_of(key) == name)
-        .collect();
+    let matches: Vec<&String> = keys.iter().filter(|key| basename_of(key) == name).collect();
     if matches.len() != 1 {
         bail!(
             "{}: artifacts.{name}: expected exactly one storage object, got {}",
@@ -1061,14 +1124,20 @@ fn named_artifact(keys: &[String], name: &str, reference: &Reference) -> Result<
 }
 
 fn fetch_artifact(key: &str, destination: &Path) -> Result<()> {
-    destination.parent().map(std::fs::create_dir_all).transpose()?;
+    destination
+        .parent()
+        .map(std::fs::create_dir_all)
+        .transpose()?;
     if destination.exists() {
         std::fs::remove_file(destination)?;
     }
     let dest = destination.to_string_lossy().to_string();
     stado(&["storage", "get", key, dest.as_str()], false)?;
     if !destination.is_file() {
-        bail!("stado storage get {key}: nothing was written to {}", destination.display());
+        bail!(
+            "stado storage get {key}: nothing was written to {}",
+            destination.display()
+        );
     }
     Ok(())
 }
@@ -1081,9 +1150,12 @@ fn require_summary_field<'a>(
     field: &str,
     reference: &Reference,
 ) -> Result<&'a Value> {
-    summary
-        .get(field)
-        .ok_or_else(|| anyhow!("{}: axe-summary.json.{field}: field is missing", reference.id()))
+    summary.get(field).ok_or_else(|| {
+        anyhow!(
+            "{}: axe-summary.json.{field}: field is missing",
+            reference.id()
+        )
+    })
 }
 
 fn nonempty_text(value: &Value, field: &str, reference: &Reference) -> Result<String> {
@@ -1093,20 +1165,21 @@ fn nonempty_text(value: &Value, field: &str, reference: &Reference) -> Result<St
         .filter(|s| !s.is_empty())
         .map(str::to_string)
         .ok_or_else(|| {
-            anyhow!("{}: axe-summary.json.{field}: expected a non-empty string", reference.id())
+            anyhow!(
+                "{}: axe-summary.json.{field}: expected a non-empty string",
+                reference.id()
+            )
         })
 }
 
 fn count_field(summary: &Map<String, Value>, field: &str, reference: &Reference) -> Result<u64> {
     let value = require_summary_field(summary, field, reference)?;
-    value
-        .as_u64()
-        .ok_or_else(|| {
-            anyhow!(
-                "{}: axe-summary.json.{field}: expected a non-negative integer",
-                reference.id()
-            )
-        })
+    value.as_u64().ok_or_else(|| {
+        anyhow!(
+            "{}: axe-summary.json.{field}: expected a non-negative integer",
+            reference.id()
+        )
+    })
 }
 
 fn sha256_of(path: &Path) -> Result<String> {
@@ -1146,7 +1219,11 @@ fn validate_artifacts(
         );
     }
     for field in ["captured_at", "renderer", "weles_version", "axe_version"] {
-        nonempty_text(require_summary_field(&summary, field, reference)?, field, reference)?;
+        nonempty_text(
+            require_summary_field(&summary, field, reference)?,
+            field,
+            reference,
+        )?;
     }
     let raw_size = std::fs::metadata(raw_path)
         .map_err(|e| anyhow!("{rid}: staged axe.json: {e}"))?
@@ -1207,9 +1284,7 @@ fn validate_artifacts(
             .and_then(Value::as_u64)
             .is_some();
         if !nodes_ok {
-            bail!(
-                "{rid}: axe-summary.json.{field}.node_count: expected a non-negative integer"
-            );
+            bail!("{rid}: axe-summary.json.{field}.node_count: expected a non-negative integer");
         }
     }
     let raw_text = std::fs::read_to_string(raw_path)
@@ -1229,9 +1304,7 @@ fn validate_artifacts(
             .ok_or_else(|| anyhow!("{rid}: axe.json.{field}: expected an array"))?
             .len() as u64;
         if length != count {
-            bail!(
-                "{rid}: axe.json.{field}: has {length} entries, summary records {count}"
-            );
+            bail!("{rid}: axe.json.{field}: has {length} entries, summary records {count}");
         }
     }
     let mut summary = summary;
@@ -1264,15 +1337,27 @@ fn install_artifacts(
 }
 
 fn axe_observations(summary: &Map<String, Value>) -> Vec<String> {
-    let version = summary.get("axe_version").and_then(Value::as_str).unwrap_or("");
+    let version = summary
+        .get("axe_version")
+        .and_then(Value::as_str)
+        .unwrap_or("");
     let viewport = summary.get("viewport").cloned().unwrap_or(Value::Null);
-    let width = viewport.get("width").map(|v| v.to_string()).unwrap_or_default();
-    let height = viewport.get("height").map(|v| v.to_string()).unwrap_or_default();
+    let width = viewport
+        .get("width")
+        .map(|v| v.to_string())
+        .unwrap_or_default();
+    let height = viewport
+        .get("height")
+        .map(|v| v.to_string())
+        .unwrap_or_default();
     let dsf = viewport
         .get("device_scale_factor")
         .map(|v| v.to_string())
         .unwrap_or_default();
-    let captured_at = summary.get("captured_at").and_then(Value::as_str).unwrap_or("");
+    let captured_at = summary
+        .get("captured_at")
+        .and_then(Value::as_str)
+        .unwrap_or("");
     let mut observations = vec![format!(
         "[axe-core] axe-core {version} reported {} violation rules, {} passing rules, and {} incomplete rules against the live product at {width}x{height}@{dsf} on {captured_at}.",
         summary.get("violation_count").map(|v| v.to_string()).unwrap_or_default(),
@@ -1281,7 +1366,9 @@ fn axe_observations(summary: &Map<String, Value>) -> Vec<String> {
     )];
     if let Some(violations) = summary.get("violations").and_then(Value::as_array) {
         for violation in violations {
-            let Some(violation) = violation.as_object() else { continue };
+            let Some(violation) = violation.as_object() else {
+                continue;
+            };
             let rule = violation
                 .get("id")
                 .and_then(Value::as_str)
@@ -1329,7 +1416,11 @@ fn update_record(reference: &Reference, summary: &Map<String, Value>) -> Result<
     } else {
         "source_url"
     };
-    let current_url = canonical_url(document.get(current_field).unwrap_or(&Value::Null), &rid, current_field)?;
+    let current_url = canonical_url(
+        document.get(current_field).unwrap_or(&Value::Null),
+        &rid,
+        current_field,
+    )?;
     if current_url != reference.source_url {
         bail!(
             "{rid}: {current_field}: changed from {:?} to {current_url:?} while audit ran",
@@ -1337,8 +1428,10 @@ fn update_record(reference: &Reference, summary: &Map<String, Value>) -> Result<
         );
     }
 
-    let accessibility_missing =
-        document.get("accessibility").map(Value::is_null).unwrap_or(true);
+    let accessibility_missing = document
+        .get("accessibility")
+        .map(Value::is_null)
+        .unwrap_or(true);
     let mut accessibility: Map<String, Value> = if accessibility_missing {
         Map::new()
     } else {
@@ -1349,14 +1442,20 @@ fn update_record(reference: &Reference, summary: &Map<String, Value>) -> Result<
             .ok_or_else(|| anyhow!("{rid}: accessibility: expected an object"))?
     };
 
-    let observations_value = accessibility.get("observations").cloned().unwrap_or(Value::Array(Vec::new()));
-    let observations_list = observations_value
-        .as_array()
-        .ok_or_else(|| anyhow!("{rid}: accessibility.observations: expected an array of strings"))?;
+    let observations_value = accessibility
+        .get("observations")
+        .cloned()
+        .unwrap_or(Value::Array(Vec::new()));
+    let observations_list = observations_value.as_array().ok_or_else(|| {
+        anyhow!("{rid}: accessibility.observations: expected an array of strings")
+    })?;
     if observations_list.iter().any(|item| !item.is_string()) {
         bail!("{rid}: accessibility.observations: expected an array of strings");
     }
-    let unknowns_value = accessibility.get("unknowns").cloned().unwrap_or(Value::Array(Vec::new()));
+    let unknowns_value = accessibility
+        .get("unknowns")
+        .cloned()
+        .unwrap_or(Value::Array(Vec::new()));
     let unknowns_list = unknowns_value
         .as_array()
         .ok_or_else(|| anyhow!("{rid}: accessibility.unknowns: expected an array of strings"))?;
@@ -1377,11 +1476,13 @@ fn update_record(reference: &Reference, summary: &Map<String, Value>) -> Result<
     accessibility.insert("measured".into(), Value::Bool(true));
 
     let get_str = |key: &str| -> String {
-        summary.get(key).and_then(Value::as_str).unwrap_or_default().to_string()
+        summary
+            .get(key)
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string()
     };
-    let get_num = |key: &str| -> Value {
-        summary.get(key).cloned().unwrap_or(Value::Null)
-    };
+    let get_num = |key: &str| -> Value { summary.get(key).cloned().unwrap_or(Value::Null) };
     let measurement = json!({
         "tool": "axe-core",
         "version": get_str("axe_version"),
@@ -1416,7 +1517,10 @@ fn retrieve(
     let rid = reference.id();
     if let Some(site_slug) = row.get("site_slug").and_then(Value::as_str) {
         if site_slug != reference.slug {
-            bail!("{rid}: status.site_slug: expected {:?}, got {site_slug:?}", reference.slug);
+            bail!(
+                "{rid}: status.site_slug: expected {:?}, got {site_slug:?}",
+                reference.slug
+            );
         }
     }
     if let Some(prefix) = row.get("artifact_prefix").and_then(Value::as_str) {
@@ -1431,23 +1535,22 @@ fn retrieve(
     let keys = artifact_keys(row);
     let raw_key = named_artifact(&keys, "axe.json", reference)?;
     let summary_key = named_artifact(&keys, "axe-summary.json", reference)?;
-    let stage = staging_root().join(batch).join(&reference.catalog).join(&reference.slug);
+    let stage = staging_root()
+        .join(batch)
+        .join(&reference.catalog)
+        .join(&reference.slug);
     let raw_stage = stage.join("axe.json");
     let summary_stage = stage.join("axe-summary.json");
     fetch_artifact(&summary_key, &summary_stage)
         .map_err(|e| anyhow!("{rid}: staging.axe-summary.json: {e:#}"))?;
-    fetch_artifact(&raw_key, &raw_stage)
-        .map_err(|e| anyhow!("{rid}: staging.axe.json: {e:#}"))?;
+    fetch_artifact(&raw_key, &raw_stage).map_err(|e| anyhow!("{rid}: staging.axe.json: {e:#}"))?;
     let summary = validate_artifacts(reference, action, &raw_stage, &summary_stage)
         .map_err(|e| anyhow!("{e:#}"))?;
     let (raw_path, summary_path) = install_artifacts(reference, &raw_stage, &summary_stage)
         .map_err(|e| anyhow!("{rid}: media/accessibility: {e}"))?;
     let (raw_relative, summary_relative) =
-        update_record(reference, &summary)
-            .map_err(|e| anyhow!("{rid}: reference.json: {e:#}"))?;
-    let repo_relative = |path: &Path| -> String {
-        path.to_string_lossy().to_string()
-    };
+        update_record(reference, &summary).map_err(|e| anyhow!("{rid}: reference.json: {e:#}"))?;
+    let repo_relative = |path: &Path| -> String { path.to_string_lossy().to_string() };
     Ok(json!({
         "id": rid,
         "catalog": reference.catalog,
@@ -1532,11 +1635,20 @@ fn run_verifier(catalog: &str) -> Result<()> {
         } else {
             String::from_utf8_lossy(&output.stderr).to_string()
         };
-        let lines: Vec<&str> = combined.lines().map(str::trim).filter(|l| !l.is_empty()).collect();
+        let lines: Vec<&str> = combined
+            .lines()
+            .map(str::trim)
+            .filter(|l| !l.is_empty())
+            .collect();
         let detail = if lines.is_empty() {
             format!("exit {}", output.status.code().unwrap_or(-1))
         } else {
-            lines.iter().take(4).cloned().collect::<Vec<_>>().join(" | ")
+            lines
+                .iter()
+                .take(4)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join(" | ")
         };
         bail!("spis verify-reference-evidence --catalog {catalog}: {detail}");
     }
@@ -1673,7 +1785,10 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
 
     if dry_run {
-        println!("{}", serde_json::to_string_pretty(&Value::Object(plan.clone()))?);
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&Value::Object(plan.clone()))?
+        );
         println!(
             "dry run: planned={} complete=0 failed=0 pending={}; no host was contacted; plan={}",
             references.len(),
@@ -1683,36 +1798,41 @@ pub fn run(rest: &[String]) -> Result<()> {
         return Ok(());
     }
 
-    let captures = plan.get("captures").and_then(Value::as_array).cloned().unwrap_or_default();
+    let captures = plan
+        .get("captures")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
     let mut rows: Vec<Value> = references
         .iter()
         .zip(captures.iter())
-        .map(|(reference, capture)| {
-            initial_row(reference, capture.as_object().unwrap())
-        })
+        .map(|(reference, capture)| initial_row(reference, capture.as_object().unwrap()))
         .collect();
     let mut verifier_errors: Vec<String> = Vec::new();
 
     // ---- enqueue + poll: failures mark every row and exit 2 -------------
     let (ids, states): (Vec<String>, std::collections::HashMap<String, Value>) = {
-        let outcome: Result<(String, Vec<String>, std::collections::HashMap<String, Value>)> =
-            (|| {
-                let (enqueued_batch, ids) = enqueue(&target, &plan_path, &plan)?;
-                log(&format!(
-                    "batch {enqueued_batch}: {} {ACTION} actions enqueued",
-                    ids.len()
-                ));
-                let id_set: HashSet<String> = ids.iter().cloned().collect();
-                let states = poll(
-                    &target,
-                    &enqueued_batch,
-                    &id_set,
-                    poll_seconds,
-                    timeout_minutes * 60,
-                    &log,
-                )?;
-                Ok((enqueued_batch, ids, states))
-            })();
+        let outcome: Result<(
+            String,
+            Vec<String>,
+            std::collections::HashMap<String, Value>,
+        )> = (|| {
+            let (enqueued_batch, ids) = enqueue(&target, &plan_path, &plan)?;
+            log(&format!(
+                "batch {enqueued_batch}: {} {ACTION} actions enqueued",
+                ids.len()
+            ));
+            let id_set: HashSet<String> = ids.iter().cloned().collect();
+            let states = poll(
+                &target,
+                &enqueued_batch,
+                &id_set,
+                poll_seconds,
+                timeout_minutes * 60,
+                &log,
+            )?;
+            Ok((enqueued_batch, ids, states))
+        })();
         match outcome {
             Ok((_, ids, states)) => (ids, states),
             Err(e) => {
@@ -1722,8 +1842,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                         obj.insert("reason".into(), Value::String(reason.clone()));
                     }
                 }
-                let payload =
-                    write_index(&rows, &batch, &target, &plan_path, &verifier_errors)?;
+                let payload = write_index(&rows, &batch, &target, &plan_path, &verifier_errors)?;
                 let totals = payload.get("totals").cloned().unwrap_or(Value::Null);
                 log(&format!("error: {reason}"));
                 log(&format!("{INDEX}: {totals}"));
@@ -1767,7 +1886,10 @@ pub fn run(rest: &[String]) -> Result<()> {
                 obj.insert("status".into(), Value::String("failed".into()));
                 obj.insert("reason".into(), Value::String(exact_error.clone()));
             }
-            log(&format!("FAILED {}: action.error: {exact_error}", reference.id()));
+            log(&format!(
+                "FAILED {}: action.error: {exact_error}",
+                reference.id()
+            ));
             continue;
         }
         match retrieve(reference, &action, state_row, &batch) {
@@ -1842,7 +1964,9 @@ mod tests {
     #[test]
     fn parses_record_selection() {
         assert_eq!(parse_record_selection(None).unwrap(), None);
-        let sel = parse_record_selection(Some(&"3,5-7,10".to_string())).unwrap().unwrap();
+        let sel = parse_record_selection(Some(&"3,5-7,10".to_string()))
+            .unwrap()
+            .unwrap();
         assert_eq!(sel, HashSet::from([3, 5, 6, 7, 10]));
         assert!(parse_record_selection(Some(&"".to_string())).is_err());
         assert!(parse_record_selection(Some(&"0".to_string())).is_err());
@@ -1852,10 +1976,7 @@ mod tests {
 
     #[test]
     fn normalizes_catalog_names() {
-        assert_eq!(
-            normalize_catalog("web-app").unwrap(),
-            "web-app-examples"
-        );
+        assert_eq!(normalize_catalog("web-app").unwrap(), "web-app-examples");
         assert_eq!(
             normalize_catalog("design-system-examples").unwrap(),
             "design-system-examples"
@@ -1874,12 +1995,7 @@ mod tests {
         );
         let v = Value::String("https://example.com".into());
         assert_eq!(canonical_url(&v, "r", "f").unwrap(), "https://example.com/");
-        assert!(canonical_url(
-            &Value::String("ftp://example.com/".into()),
-            "r",
-            "f"
-        )
-        .is_err());
+        assert!(canonical_url(&Value::String("ftp://example.com/".into()), "r", "f").is_err());
         assert!(canonical_url(&Value::String("https://".into()), "r", "f").is_err());
         assert!(canonical_url(&Value::Null, "r", "f").is_err());
     }
@@ -1925,7 +2041,9 @@ mod tests {
 
         // Extra key → rejected.
         let mut bad = plan.clone();
-        bad.as_object_mut().unwrap().insert("extra".into(), Value::Null);
+        bad.as_object_mut()
+            .unwrap()
+            .insert("extra".into(), Value::Null);
         assert!(validate_plan(&bad, DEFAULT_TARGET, &[reference.clone()]).is_err());
 
         // Wrong target → rejected.

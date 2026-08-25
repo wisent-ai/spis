@@ -19,15 +19,18 @@ const DEFINITION_PATH: &str = "readme-examples/scrape-definition.json";
 fn load_definition() -> Result<Vec<(usize, String, String)>> {
     let raw = std::fs::read_to_string(DEFINITION_PATH)
         .with_context(|| format!("read {}", DEFINITION_PATH))?;
-    let doc: Value = serde_json::from_str(&raw)
-        .with_context(|| format!("parse {}", DEFINITION_PATH))?;
+    let doc: Value =
+        serde_json::from_str(&raw).with_context(|| format!("parse {}", DEFINITION_PATH))?;
     let records = doc["records"]
         .as_array()
         .context("scrape-definition lacks records array")?;
     let mut out = Vec::new();
     for rec in records {
         let number = rec["number"].as_u64().context("record lacks number")? as usize;
-        let repo = rec["repo"].as_str().context("record lacks repo")?.to_string();
+        let repo = rec["repo"]
+            .as_str()
+            .context("record lacks repo")?
+            .to_string();
         let category = rec["category"].as_str().unwrap_or_default().to_string();
         out.push((number, repo, category));
     }
@@ -51,6 +54,11 @@ fn which(name: &str) -> Option<String> {
 }
 
 fn github_token() -> Result<String> {
+    if let Ok(token) = std::env::var("GH_TOKEN") {
+        if !token.trim().is_empty() {
+            return Ok(token);
+        }
+    }
     let gh = which("gh").context("GitHub CLI is not installed")?;
     let out = Command::new(gh)
         .arg("auth")
@@ -87,7 +95,6 @@ fn get_json(url: &str, token: &str) -> Result<Value> {
     serde_json::from_str(&body).with_context(|| format!("parse JSON from {url}"))
 }
 
-
 /// pathlib.Path.suffix equivalent for a repo file path (lowercased).
 fn path_suffix(path: &str) -> String {
     let component = path.rsplit('/').next().unwrap_or(path);
@@ -102,8 +109,16 @@ struct Fetched {
     content: String,
 }
 
-fn fetch_source(index: usize, requested_repo: &str, category: &str, token: &str) -> Result<Fetched> {
-    let repo = get_json(&format!("https://api.github.com/repos/{requested_repo}"), token)?;
+fn fetch_source(
+    index: usize,
+    requested_repo: &str,
+    category: &str,
+    token: &str,
+) -> Result<Fetched> {
+    let repo = get_json(
+        &format!("https://api.github.com/repos/{requested_repo}"),
+        token,
+    )?;
     let readme = get_json(
         &format!("https://api.github.com/repos/{requested_repo}/readme"),
         token,
@@ -119,14 +134,17 @@ fn fetch_source(index: usize, requested_repo: &str, category: &str, token: &str)
         .to_string();
     let suffix = {
         let s = path_suffix(&readme_path);
-        if s.is_empty() { ".md".to_string() } else { s }
+        if s.is_empty() {
+            ".md".to_string()
+        } else {
+            s
+        }
     };
     let content_b64 = readme["content"]
         .as_str()
         .context("readme response lacks content")?;
     let content_bytes = base64_decode(content_b64)?;
-    let content =
-        String::from_utf8(content_bytes).context("readme content is not UTF-8")?;
+    let content = String::from_utf8(content_bytes).context("readme content is not UTF-8")?;
     let spdx = repo
         .pointer("/license/spdx_id")
         .and_then(|v| v.as_str())
@@ -156,7 +174,7 @@ fn render_index(entries: &[Value], captured_at: &str) -> String {
         String::new(),
         "The snapshots remain the work of their respective projects and are governed by each source repository's license. Review patterns; do not copy project names, artwork, badges, or claims. Relative images and links may only render correctly in the upstream repository.".to_string(),
         String::new(),
-        format!("Captured from GitHub on `{captured_at}`. `sources.json` records the README blob SHA, upstream URL, repository license identifier, and capture-time metadata for every file. Run `../sync-readme-examples.py` to refresh the catalog."),
+        format!("Captured from GitHub on `{captured_at}`. `sources.json` records the README blob SHA, upstream URL, repository license identifier, and capture-time metadata for every file. Run `spis sync-readme-examples --host TARGET` to refresh the catalog."),
         "Derived guidance: [README Best Practices](../readme-best-practices.md). Generated measurements: [analysis.json](analysis.json).".to_string(),
         String::new(),
         "| # | Repository | Category | Snapshot | Source | License |".to_string(),
@@ -236,7 +254,7 @@ fn base64_decode(input: &str) -> Result<Vec<u8>> {
     Ok(out)
 }
 
-pub fn run(_rest: &[String]) -> Result<()> {
+fn run_worker() -> Result<()> {
     let sources = load_definition()?;
     let repos: std::collections::HashSet<&str> =
         sources.iter().map(|(_, repo, _)| repo.as_str()).collect();
@@ -263,7 +281,9 @@ pub fn run(_rest: &[String]) -> Result<()> {
     for dir_entry in std::fs::read_dir(&output)?.filter_map(|e| e.ok()) {
         let name = dir_entry.file_name().to_string_lossy().to_string();
         let bytes = name.as_bytes();
-        if bytes.len() > 2 && bytes[0].is_ascii_digit() && bytes[1].is_ascii_digit()
+        if bytes.len() > 2
+            && bytes[0].is_ascii_digit()
+            && bytes[1].is_ascii_digit()
             && !expected.contains(name.as_str())
         {
             std::fs::remove_file(dir_entry.path())?;
@@ -296,7 +316,11 @@ pub fn run(_rest: &[String]) -> Result<()> {
     )?;
 
     // Scrape-run record: one auditable object per execution.
-    let definition_hash = crate::sha256_hex(std::fs::read(DEFINITION_PATH).unwrap_or_default().as_slice());
+    let definition_hash = crate::sha256_hex(
+        std::fs::read(DEFINITION_PATH)
+            .unwrap_or_default()
+            .as_slice(),
+    );
     let tool_sha = std::process::Command::new("git")
         .args(["rev-parse", "--short", "HEAD"])
         .current_dir(env!("CARGO_MANIFEST_DIR"))
@@ -322,7 +346,165 @@ pub fn run(_rest: &[String]) -> Result<()> {
         serde_json::to_string_pretty(&run_record)? + "\n",
     )?;
 
-    println!("Wrote {} README snapshots to {}", entries.len(), output.display());
+    println!(
+        "Wrote {} README snapshots to {}",
+        entries.len(),
+        output.display()
+    );
+    Ok(())
+}
+
+const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
+
+fn safe_component(value: &str, flag: &str) -> Result<()> {
+    if value.is_empty()
+        || !value.chars().all(|character| {
+            character.is_ascii_alphanumeric() || matches!(character, '-' | '_' | '.')
+        })
+    {
+        bail!("{flag} must contain only letters, digits, '.', '-' or '_'");
+    }
+    Ok(())
+}
+
+fn revision() -> Result<String> {
+    let output = Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .context("read Spis source revision")?;
+    let revision = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if !output.status.success()
+        || revision.len() != 40
+        || !revision.bytes().all(|byte| byte.is_ascii_hexdigit())
+    {
+        bail!("Spis checkout has no exact Git revision");
+    }
+    Ok(revision)
+}
+
+fn publish(uri: &str) -> Result<()> {
+    if !uri.starts_with("stado://spis-crawls/readme-examples/") {
+        bail!("README artifact URI is outside the Spis crawl namespace");
+    }
+    let root = output_dir();
+    let archive = root.with_extension("tar.gz");
+    let status = Command::new("stado")
+        .args(["storage", "archive"])
+        .arg(&root)
+        .arg(&archive)
+        .status()
+        .context("archive README crawl")?;
+    if !status.success() {
+        bail!("stado storage archive refused README artifacts");
+    }
+    let status = Command::new("stado")
+        .args(["storage", "put", "--if-absent", uri])
+        .arg(&archive)
+        .status()
+        .context("publish README crawl")?;
+    if !status.success() {
+        bail!("stado storage put refused README artifacts");
+    }
+    Ok(())
+}
+
+fn submit(host: &str, secret_env: &[String]) -> Result<()> {
+    safe_component(host, "--host")?;
+    for binding in secret_env {
+        let (name, item) = binding
+            .split_once('=')
+            .ok_or_else(|| anyhow::anyhow!("--secret-env must be NAME=SKARBIEC_ITEM"))?;
+        safe_component(name, "--secret-env name")?;
+        if item.is_empty()
+            || !item.chars().all(|character| {
+                character.is_ascii_alphanumeric()
+                    || matches!(character, '-' | '_' | '.' | '#' | '/' | ':')
+            })
+        {
+            bail!("--secret-env item is invalid");
+        }
+    }
+    let revision = revision()?;
+    let stamp = crate::now_iso_utc().replace(':', "-");
+    let artifact = format!("stado://spis-crawls/readme-examples/{stamp}.tar.gz");
+    let command =
+        format!("cargo run --release -- sync-readme-examples --worker --artifact-uri {artifact}");
+    let mut arguments = vec![
+        "submit".to_string(),
+        command,
+        "--pinned-host".to_string(),
+        host.to_string(),
+        "--repo".to_string(),
+        REPOSITORY.to_string(),
+        "--repo-ref".to_string(),
+        revision,
+        "--repo-workdir".to_string(),
+        "spis".to_string(),
+        "--repo-extras".to_string(),
+        String::new(),
+        "--output-uri".to_string(),
+        format!("stado://spis-crawls/readme-examples/{stamp}/job-output"),
+    ];
+    for binding in secret_env {
+        arguments.push("--secret-env".to_string());
+        arguments.push(binding.clone());
+    }
+    let output = Command::new("stado")
+        .args(arguments)
+        .output()
+        .context("submit README crawl through Stado")?;
+    if !output.status.success() {
+        bail!(
+            "Stado refused README crawl: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    print!("{}", String::from_utf8_lossy(&output.stdout));
+    Ok(())
+}
+
+pub fn run(rest: &[String]) -> Result<()> {
+    let mut host = None;
+    let mut worker = false;
+    let mut artifact_uri = None;
+    let mut secret_env = Vec::new();
+    let mut i = 0;
+    while i < rest.len() {
+        match rest[i].as_str() {
+            "--host" => {
+                i += 1;
+                host = Some(rest.get(i).context("--host needs a value")?.clone());
+            }
+            "--secret-env" => {
+                i += 1;
+                secret_env.push(rest.get(i).context("--secret-env needs a value")?.clone());
+            }
+            "--artifact-uri" => {
+                i += 1;
+                artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
+            }
+            "--worker" => worker = true,
+            "--help" | "-h" => {
+                println!("usage: spis sync-readme-examples --host TARGET [--secret-env GH_TOKEN=SKARBIEC_ITEM]\nworker mode: spis sync-readme-examples --worker --artifact-uri stado://...");
+                return Ok(());
+            }
+            value => bail!("unknown argument: {value}"),
+        }
+        i += 1;
+    }
+    if !worker {
+        return submit(
+            &host.context("--host is required; README crawls execute as pinned Stado jobs")?,
+            &secret_env,
+        );
+    }
+    if host.is_some() || !secret_env.is_empty() {
+        bail!("--host and --secret-env are coordinator-only");
+    }
+    run_worker()?;
+    if let Some(uri) = artifact_uri {
+        publish(&uri)?;
+    }
     Ok(())
 }
 
@@ -334,10 +516,7 @@ mod tests {
     fn decodes_base64() {
         assert_eq!(base64_decode("aGVsbG8=").unwrap(), b"hello".to_vec());
         // GitHub wraps content with newlines.
-        assert_eq!(
-            base64_decode("aGVs\nbG8=").unwrap(),
-            b"hello".to_vec()
-        );
+        assert_eq!(base64_decode("aGVs\nbG8=").unwrap(), b"hello".to_vec());
         assert_eq!(base64_decode("YQ==").unwrap(), b"a".to_vec());
         assert_eq!(base64_decode("YWI=").unwrap(), b"ab".to_vec());
         assert_eq!(base64_decode("YWJj").unwrap(), b"abc".to_vec());

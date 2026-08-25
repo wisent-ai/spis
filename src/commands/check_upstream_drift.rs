@@ -12,9 +12,9 @@
 
 use crate as lib;
 use anyhow::{Context, Result};
+use parking_lot::Mutex;
 use serde_json::{json, Value};
 use std::path::PathBuf;
-use parking_lot::Mutex;
 use std::process::Command;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::Duration;
@@ -148,11 +148,7 @@ fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value) {
         Err(ureq::Error::Status(code, resp)) => {
             if GUARDED_CODES.contains(&resp.status()) {
                 // HEAD refused or rate limited; try one byte.
-                match client
-                    .get(url)
-                    .set("Range", "bytes=0-0")
-                    .call()
-                {
+                match client.get(url).set("Range", "bytes=0-0").call() {
                     Ok(r) => return ("reachable", json!(r.status())),
                     Err(ureq::Error::Status(inner, _)) => {
                         if GONE_CODES.contains(&inner) {
@@ -162,7 +158,10 @@ fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value) {
                     }
                     Err(_) => {
                         // Python reported "{code} then {ExceptionName}".
-                        return ("guarded", json!(format!("{} then TransportError", resp.status())));
+                        return (
+                            "guarded",
+                            json!(format!("{} then TransportError", resp.status())),
+                        );
                     }
                 }
             }
@@ -171,10 +170,7 @@ fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value) {
             }
             ("guarded", json!(code))
         }
-        Err(e) => (
-            "unresolved",
-            json!(format!("{}", e_kind(&e))),
-        ),
+        Err(e) => ("unresolved", json!(format!("{}", e_kind(&e)))),
     }
 }
 
@@ -324,7 +320,11 @@ fn stream_sha256(path: &std::path::Path) -> Result<String> {
         }
         digest.update(&buf[..n]);
     }
-    Ok(digest.finalize().iter().map(|b| format!("{b:02x}")).collect())
+    Ok(digest
+        .finalize()
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect())
 }
 
 fn check_local_media(drift: &mut Drift) -> Result<()> {
@@ -338,7 +338,12 @@ fn check_local_media(drift: &mut Drift) -> Result<()> {
                 .map(|a| a.as_slice())
                 .unwrap_or(&[])
             {
-                let local = base.join(entry.get("local_path").and_then(|v| v.as_str()).unwrap_or(""));
+                let local = base.join(
+                    entry
+                        .get("local_path")
+                        .and_then(|v| v.as_str())
+                        .unwrap_or(""),
+                );
                 let rel = local.to_string_lossy().to_string();
                 if !local.exists() {
                     drift.media_missing.push(rel);

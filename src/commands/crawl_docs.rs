@@ -7,8 +7,8 @@
 //! flushed to state.json periodically and at the end. Resumable.
 
 use crate as lib;
-use parking_lot::Mutex;
 use anyhow::{bail, Context, Result};
+use parking_lot::Mutex;
 use serde_json::json;
 use std::collections::HashMap;
 use std::io::Write;
@@ -34,15 +34,27 @@ fn overrides() -> HashMap<&'static str, Override> {
         ),
         (
             "12-net-documentation",
-            Override { sitemaps: &[], prefixes: &["/dotnet"], llms: &[] },
+            Override {
+                sitemaps: &[],
+                prefixes: &["/dotnet"],
+                llms: &[],
+            },
         ),
         (
             "21-google-cloud-documentation",
-            Override { sitemaps: &[], prefixes: &["/docs"], llms: &[] },
+            Override {
+                sitemaps: &[],
+                prefixes: &["/docs"],
+                llms: &[],
+            },
         ),
         (
             "22-microsoft-azure-documentation",
-            Override { sitemaps: &[], prefixes: &["/azure"], llms: &[] },
+            Override {
+                sitemaps: &[],
+                prefixes: &["/azure"],
+                llms: &[],
+            },
         ),
         (
             "35-openai-api-documentation",
@@ -94,8 +106,9 @@ struct SiteRules {
 
 fn site_rules(slug: &str, meta: &SiteMeta, map: &HashMap<&'static str, Override>) -> SiteRules {
     let ov = map.get(slug);
-    let mut prefixes: Vec<String> =
-        ov.map(|o| o.prefixes.iter().map(|s| s.to_string()).collect()).unwrap_or_default();
+    let mut prefixes: Vec<String> = ov
+        .map(|o| o.prefixes.iter().map(|s| s.to_string()).collect())
+        .unwrap_or_default();
     if prefixes.is_empty() {
         if let Some(inv) = meta.inventory_source.strip_prefix("scoped sitemap (") {
             if let Some(inner) = inv.strip_suffix(')') {
@@ -107,17 +120,14 @@ fn site_rules(slug: &str, meta: &SiteMeta, map: &HashMap<&'static str, Override>
         sitemaps: ov
             .map(|o| o.sitemaps.iter().map(|s| s.to_string()).collect())
             .unwrap_or_default(),
-        llms: ov.map(|o| o.llms.iter().map(|s| s.to_string()).collect()).unwrap_or_default(),
+        llms: ov
+            .map(|o| o.llms.iter().map(|s| s.to_string()).collect())
+            .unwrap_or_default(),
         prefixes,
     }
 }
 
-fn resolve_urls(
-    slug: &str,
-    meta: &SiteMeta,
-    rules: &SiteRules,
-    delay: f64,
-) -> Vec<(String, Option<String>)> {
+fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, delay: f64) -> Vec<(String, Option<String>)> {
     let base = &meta.source_url;
     let origin = lib::origin_of(base);
     let mut urls: Vec<(String, Option<String>)> = Vec::new();
@@ -171,7 +181,14 @@ fn resolve_urls(
                                 let after = &rest[close + 2..];
                                 if let Some(endq) = after.find(')') {
                                     let link = after[..endq].to_string();
-                                    urls.push((if link.starts_with("http") { link } else { format!("{origin}{link}") }, None));
+                                    urls.push((
+                                        if link.starts_with("http") {
+                                            link
+                                        } else {
+                                            format!("{origin}{link}")
+                                        },
+                                        None,
+                                    ));
                                 }
                             }
                         }
@@ -215,7 +232,10 @@ struct HostGate {
 
 impl HostGate {
     fn new(host_delay: f64) -> Self {
-        Self { next_allowed: Mutex::new(HashMap::new()), host_delay }
+        Self {
+            next_allowed: Mutex::new(HashMap::new()),
+            host_delay,
+        }
     }
 
     /// Block until this host's next slot, then reserve it.
@@ -253,7 +273,7 @@ struct Shared {
     stop: std::sync::atomic::AtomicBool,
 }
 
-pub fn run(rest: &[String]) -> Result<()> {
+fn run_worker(rest: &[String]) -> Result<()> {
     let mut site: Option<String> = None;
     let mut all = false;
     let mut exclude: Vec<String> = Vec::new();
@@ -301,7 +321,11 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     let chosen: Vec<String> = match &site {
         Some(s) => vec![s.clone()],
-        None => slugs.iter().filter(|s| !exclude.contains(s)).cloned().collect(),
+        None => slugs
+            .iter()
+            .filter(|s| !exclude.contains(s))
+            .cloned()
+            .collect(),
     };
     for c in &chosen {
         if !slugs.contains(c) {
@@ -313,7 +337,6 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     // Phase 1 (sequential): resolve inventories and load prior state.
     let mut jobs: Vec<SiteJob> = Vec::new();
-    let mut pending_total = 0usize;
     for slug in &chosen {
         let meta: SiteMeta =
             lib::read_json(structure_dir.join(format!("{slug}.json")).to_str().unwrap())?;
@@ -326,14 +349,18 @@ pub fn run(rest: &[String]) -> Result<()> {
             lib::read_json(state_path.to_str().unwrap())?
         };
         eprintln!(
-            "[{}] {slug}: resolving URL inventory ({})",
+            "[{}] {slug} ({}): resolving URL inventory ({})",
             lib::now_iso_utc(),
+            meta.name,
             meta.inventory_source
         );
         let rules = site_rules(slug, &meta, &map);
-        let targets = resolve_urls(slug, &meta, &rules, 0.25);
-        eprintln!("[{}] {slug}: {} candidate URLs", lib::now_iso_utc(), targets.len());
-        pending_total += targets.len();
+        let targets = resolve_urls(&meta, &rules, 0.25);
+        eprintln!(
+            "[{}] {slug}: {} candidate URLs",
+            lib::now_iso_utc(),
+            targets.len()
+        );
         jobs.push(SiteJob {
             slug: slug.clone(),
             out_path: dir.join("pages.jsonl.gz"),
@@ -377,8 +404,10 @@ pub fn run(rest: &[String]) -> Result<()> {
             let rx = parking_lot::Mutex::new(rx);
             let path = job.out_path.clone();
             std::thread::spawn(move || -> Result<()> {
-                let append = path.exists();
-                let file = std::fs::OpenOptions::new().create(true).append(true).open(&path)?;
+                let file = std::fs::OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(&path)?;
                 let mut enc = flate2::write::GzEncoder::new(file, flate2::Compression::default());
                 loop {
                     match rx.lock().try_recv() {
@@ -395,10 +424,13 @@ pub fn run(rest: &[String]) -> Result<()> {
         })
         .collect();
 
-
     let shared = Arc::new(Shared {
         queue: Mutex::new(queue.into_iter()),
-        done: Mutex::new(jobs.iter().map(|j| (j.slug.clone(), j.done.clone())).collect()),
+        done: Mutex::new(
+            jobs.iter()
+                .map(|j| (j.slug.clone(), j.done.clone()))
+                .collect(),
+        ),
         writers: Mutex::new(tx_map.into_iter().collect()),
         gate: HostGate::new(host_delay),
         fetched: AtomicUsize::new(0),
@@ -408,10 +440,15 @@ pub fn run(rest: &[String]) -> Result<()> {
     // Periodic state flusher so long runs are resumable after crashes.
     {
         let flusher_shared = Arc::clone(&shared);
-        let flusher_jobs_state: Vec<(String, PathBuf)> =
-            jobs.iter().map(|j| (j.slug.clone(), j.state_path.clone())).collect();
+        let flusher_jobs_state: Vec<(String, PathBuf)> = jobs
+            .iter()
+            .map(|j| (j.slug.clone(), j.state_path.clone()))
+            .collect();
         std::thread::spawn(move || loop {
-            if flusher_shared.stop.load(std::sync::atomic::Ordering::Relaxed) {
+            if flusher_shared
+                .stop
+                .load(std::sync::atomic::Ordering::Relaxed)
+            {
                 break;
             }
             std::thread::sleep(std::time::Duration::from_secs(10));
@@ -510,8 +547,10 @@ pub fn run(rest: &[String]) -> Result<()> {
         for job in &jobs {
             let empty = HashMap::new();
             let dm = done_final.get(&job.slug).unwrap_or(&empty);
-            let ok_count =
-                dm.values().filter(|v| v.get("status").and_then(|s| s.as_u64()) == Some(200)).count();
+            let ok_count = dm
+                .values()
+                .filter(|v| v.get("status").and_then(|s| s.as_u64()) == Some(200))
+                .count();
             let tmp = job.state_path.with_extension("json.tmp");
             std::fs::write(&tmp, serde_json::to_string_pretty(dm)?)?;
             std::fs::rename(&tmp, &job.state_path)?;
@@ -534,18 +573,25 @@ pub fn run(rest: &[String]) -> Result<()> {
         .and_then(|o| String::from_utf8(o.stdout).ok())
         .map(|s| s.trim().to_string())
         .unwrap_or_default();
-    let total_seen: usize = results.iter().map(|r| r["seen"].as_u64().unwrap_or(0) as usize).sum();
+    let total_seen: usize = results
+        .iter()
+        .map(|r| r["seen"].as_u64().unwrap_or(0) as usize)
+        .sum();
     let run_record = json!({
         "schema": "wisent.crawl-run.v1",
         "tool": "spis crawl-docs",
         "tool_commit": tool_sha,
+        "definition_sha256": definition_hash,
         "started_at": lib::now_iso_utc(),
         "sites": chosen.len(),
         "urls_pending_at_start": total_pending,
         "urls_seen_after": total_seen,
     });
     let manifest_run = structure_dir.join("crawl-run.json");
-    std::fs::write(&manifest_run, serde_json::to_string_pretty(&run_record)? + "\n")?;
+    std::fs::write(
+        &manifest_run,
+        serde_json::to_string_pretty(&run_record)? + "\n",
+    )?;
 
     println!("{}", serde_json::to_string_pretty(&results)?);
     Ok(())
@@ -554,4 +600,140 @@ pub fn run(rest: &[String]) -> Result<()> {
 fn data_dir(slug: &str) -> PathBuf {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
     PathBuf::from(home).join(".spis/docs-corpus").join(slug)
+}
+
+const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
+
+fn safe_job_value(value: &str, flag: &str) -> Result<()> {
+    if value.is_empty()
+        || !value.chars().all(|character| {
+            character.is_ascii_alphanumeric() || matches!(character, '-' | '_' | '.')
+        })
+    {
+        bail!("{flag} contains characters that cannot be submitted to a worker");
+    }
+    Ok(())
+}
+
+fn source_revision() -> Result<String> {
+    let output = std::process::Command::new("git")
+        .args(["rev-parse", "HEAD"])
+        .output()
+        .context("read Spis source revision")?;
+    let revision = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if !output.status.success()
+        || revision.len() != 40
+        || !revision.bytes().all(|byte| byte.is_ascii_hexdigit())
+    {
+        bail!("Spis checkout has no exact Git revision");
+    }
+    Ok(revision)
+}
+
+fn publish_corpus(uri: &str) -> Result<()> {
+    if !uri.starts_with("stado://spis-crawls/documentation-site-examples/") {
+        bail!("documentation artifact URI is outside the Spis crawl namespace");
+    }
+    let root = PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
+        .join(".spis")
+        .join("docs-corpus");
+    let archive = root.with_extension("tar.gz");
+    let status = std::process::Command::new("stado")
+        .args(["storage", "archive"])
+        .arg(&root)
+        .arg(&archive)
+        .status()
+        .context("archive documentation corpus")?;
+    if !status.success() {
+        bail!("stado storage archive refused documentation corpus");
+    }
+    let status = std::process::Command::new("stado")
+        .args(["storage", "put", "--if-absent", uri])
+        .arg(&archive)
+        .status()
+        .context("publish documentation corpus")?;
+    if !status.success() {
+        bail!("stado storage put refused documentation corpus");
+    }
+    Ok(())
+}
+
+fn submit_worker(host: &str, arguments: &[String]) -> Result<()> {
+    safe_job_value(host, "--host")?;
+    for value in arguments {
+        safe_job_value(value, "crawl-docs argument")?;
+    }
+    let revision = source_revision()?;
+    let stamp = crate::now_iso_utc().replace(':', "-");
+    let artifact = format!("stado://spis-crawls/documentation-site-examples/{stamp}.tar.gz");
+    let command = format!(
+        "cargo run --release -- crawl-docs --worker {} --artifact-uri {}",
+        arguments.join(" "),
+        artifact
+    );
+    let output = std::process::Command::new("stado")
+        .args([
+            "submit",
+            &command,
+            "--pinned-host",
+            host,
+            "--repo",
+            REPOSITORY,
+            "--repo-ref",
+            &revision,
+            "--repo-workdir",
+            "spis",
+            "--repo-extras",
+            "",
+            "--output-uri",
+            &format!("stado://spis-crawls/documentation-site-examples/{stamp}/job-output"),
+        ])
+        .output()
+        .context("submit documentation crawl through Stado")?;
+    if !output.status.success() {
+        bail!(
+            "Stado refused documentation crawl: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    print!("{}", String::from_utf8_lossy(&output.stdout));
+    Ok(())
+}
+
+pub fn run(rest: &[String]) -> Result<()> {
+    let mut host = None;
+    let mut worker = false;
+    let mut artifact_uri = None;
+    let mut forwarded = Vec::new();
+    let mut i = 0;
+    while i < rest.len() {
+        match rest[i].as_str() {
+            "--host" => {
+                i += 1;
+                host = Some(rest.get(i).context("--host needs a value")?.clone());
+            }
+            "--worker" => worker = true,
+            "--artifact-uri" => {
+                i += 1;
+                artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
+            }
+            value => forwarded.push(value.to_string()),
+        }
+        i += 1;
+    }
+    if !worker {
+        return submit_worker(
+            &host
+                .context("--host is required; documentation crawls execute as pinned Stado jobs")?,
+            &forwarded,
+        );
+    }
+    if host.is_some() {
+        bail!("--host cannot be used with --worker");
+    }
+    run_worker(&forwarded)?;
+    if let Some(uri) = artifact_uri {
+        publish_corpus(&uri)?;
+    }
+    Ok(())
 }

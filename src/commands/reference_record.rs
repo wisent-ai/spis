@@ -61,7 +61,10 @@ fn image_dimensions(path: &Path) -> Result<(i64, i64)> {
         .output()
         .context("run sips")?;
     if !output.status.success() {
-        bail!("reference: cannot read image dimensions: {}", path.display());
+        bail!(
+            "reference: cannot read image dimensions: {}",
+            path.display()
+        );
     }
     let stdout = String::from_utf8_lossy(&output.stdout);
     let mut width = None;
@@ -76,7 +79,10 @@ fn image_dimensions(path: &Path) -> Result<(i64, i64)> {
     }
     match (width, height) {
         (Some(w), Some(h)) => Ok((w, h)),
-        _ => bail!("reference: cannot read image dimensions: {}", path.display()),
+        _ => bail!(
+            "reference: cannot read image dimensions: {}",
+            path.display()
+        ),
     }
 }
 
@@ -94,38 +100,30 @@ fn save_all(directory: &Path, sources: &mut Value, index: &mut Value) -> Result<
 
     let references = index["references"].as_array().cloned().unwrap_or_default();
     index["reference_count"] = json!(references.len());
-    index["complete_count"] = json!(
-        references
-            .iter()
-            .filter(|r| r["evidence_status"] == "complete")
-            .count()
-    );
-    index["partial_count"] = json!(
-        references
-            .iter()
-            .filter(|r| r["evidence_status"] == "partial")
-            .count()
-    );
+    index["complete_count"] = json!(references
+        .iter()
+        .filter(|r| r["evidence_status"] == "complete")
+        .count());
+    index["partial_count"] = json!(references
+        .iter()
+        .filter(|r| r["evidence_status"] == "partial")
+        .count());
     let now = lib::now_iso_utc();
     index["generated_at"] = json!(now.clone());
     index["measured_at"] = json!(now);
-    lib::write_pretty_json(
-        &directory.join("references.json").to_string_lossy(),
-        index,
-    )?;
+    lib::write_pretty_json(&directory.join("references.json").to_string_lossy(), index)?;
 
     super::reference_contract::regenerate_index()
 }
 
 /// Locate a record by 1-based number or normalized name; returns its position.
 fn find_record(directory: &Path, index: &Value, identifier: &str) -> Result<usize> {
-    let number: Option<usize> = if !identifier.is_empty()
-        && identifier.chars().all(|c| c.is_ascii_digit())
-    {
-        identifier.parse().ok()
-    } else {
-        None
-    };
+    let number: Option<usize> =
+        if !identifier.is_empty() && identifier.chars().all(|c| c.is_ascii_digit()) {
+            identifier.parse().ok()
+        } else {
+            None
+        };
     let wanted = identifier.to_lowercase();
     let references = index["references"].as_array().cloned().unwrap_or_default();
     for (position, entry) in references.iter().enumerate() {
@@ -169,9 +167,13 @@ pub fn add(args: &AddArgs) -> Result<()> {
         bail!("reference: --visual {} is not a file", args.visual);
     }
     let count_before = sources["examples"].as_array().map(Vec::len).unwrap_or(0);
-    let duplicate = sources["examples"].as_array().unwrap_or(&Vec::new()).iter().any(
-        |example| example["name"].as_str().map(|n| n.to_lowercase()) == Some(args.name.to_lowercase()),
-    );
+    let duplicate = sources["examples"]
+        .as_array()
+        .unwrap_or(&Vec::new())
+        .iter()
+        .any(|example| {
+            example["name"].as_str().map(|n| n.to_lowercase()) == Some(args.name.to_lowercase())
+        });
     if duplicate {
         bail!("reference: a record named {:?} already exists", args.name);
     }
@@ -199,7 +201,11 @@ pub fn add(args: &AddArgs) -> Result<()> {
     let digest = sha256_file(&visual_path)?;
     let today = today_iso();
 
-    let orientation = if width >= height { "landscape" } else { "portrait" };
+    let orientation = if width >= height {
+        "landscape"
+    } else {
+        "portrait"
+    };
     let structure = json!({
         "analysis_kind": "deterministic-image-layout-v1",
         "image_sha256": digest,
@@ -301,7 +307,11 @@ pub fn add(args: &AddArgs) -> Result<()> {
     save_all(&directory, &mut sources, &mut index)?;
     println!(
         "added {}/{slug}: {} ({} named gaps, status partial)",
-        directory.file_name().map(|n| n.to_string_lossy()).unwrap_or_default().into_owned(),
+        directory
+            .file_name()
+            .map(|n| n.to_string_lossy())
+            .unwrap_or_default()
+            .into_owned(),
         args.name,
         gaps.len()
     );
@@ -345,14 +355,20 @@ fn remove(catalog: &str, identifier: &str, force: bool) -> Result<()> {
     let mut sources: Value = lib::read_json(&directory.join("sources.json").to_string_lossy())?;
     let mut index: Value = lib::read_json(&directory.join("references.json").to_string_lossy())?;
     let position = find_record(&directory, &index, identifier)?;
-    let record_path =
-        directory.join(index["references"][position]["path"].as_str().unwrap_or_default());
+    let record_path = directory.join(
+        index["references"][position]["path"]
+            .as_str()
+            .unwrap_or_default(),
+    );
     let record: Value = lib::read_json(&record_path.to_string_lossy())?;
     if (truthy(&record["motion"]) || truthy(&record["journey"])) && !force {
         bail!("reference: the record carries motion or journey evidence; pass --force to delete it permanently");
     }
 
-    let record_dir = record_path.parent().map(Path::to_path_buf).unwrap_or_else(|| record_path.clone());
+    let record_dir = record_path
+        .parent()
+        .map(Path::to_path_buf)
+        .unwrap_or_else(|| record_path.clone());
     std::fs::remove_dir_all(&record_dir)
         .with_context(|| format!("remove {}", record_dir.display()))?;
     let visual_local = sources["examples"][position]["visual"]["local_path"]
@@ -382,7 +398,11 @@ fn remove(catalog: &str, identifier: &str, force: bool) -> Result<()> {
     save_all(&directory, &mut sources, &mut index)?;
     println!(
         "removed {} record {identifier}",
-        directory.file_name().map(|n| n.to_string_lossy()).unwrap_or_default().into_owned()
+        directory
+            .file_name()
+            .map(|n| n.to_string_lossy())
+            .unwrap_or_default()
+            .into_owned()
     );
     Ok(())
 }
@@ -448,7 +468,10 @@ fn require_flag(flags: &[(String, Option<String>)], name: &str) -> Result<String
 }
 
 fn optional_flag(flags: &[(String, Option<String>)], name: &str) -> Option<String> {
-    flags.iter().find(|(n, _)| n == name).and_then(|(_, v)| v.clone())
+    flags
+        .iter()
+        .find(|(n, _)| n == name)
+        .and_then(|(_, v)| v.clone())
 }
 
 fn require_positionals(positionals: &[String], names: &[&str]) -> Result<Vec<String>> {
@@ -462,12 +485,30 @@ fn require_positionals(positionals: &[String], names: &[&str]) -> Result<Vec<Str
 }
 
 const ADD_SPECS: &[FlagSpec] = &[
-    FlagSpec { name: "--name", takes_value: true },
-    FlagSpec { name: "--source-url", takes_value: true },
-    FlagSpec { name: "--category", takes_value: true },
-    FlagSpec { name: "--selection-note", takes_value: true },
-    FlagSpec { name: "--visual", takes_value: true },
-    FlagSpec { name: "--owner", takes_value: true },
+    FlagSpec {
+        name: "--name",
+        takes_value: true,
+    },
+    FlagSpec {
+        name: "--source-url",
+        takes_value: true,
+    },
+    FlagSpec {
+        name: "--category",
+        takes_value: true,
+    },
+    FlagSpec {
+        name: "--selection-note",
+        takes_value: true,
+    },
+    FlagSpec {
+        name: "--visual",
+        takes_value: true,
+    },
+    FlagSpec {
+        name: "--owner",
+        takes_value: true,
+    },
 ];
 
 /// `spis reference-record <add|get|remove> ...`
@@ -501,7 +542,10 @@ pub fn run(rest: &[String]) -> Result<()> {
             let extra_specs: &[FlagSpec] = if command == "get" {
                 &[]
             } else {
-                &[FlagSpec { name: "--force", takes_value: false }]
+                &[FlagSpec {
+                    name: "--force",
+                    takes_value: false,
+                }]
             };
             let (positionals, flags) = parse_flags(&rest[1..], &[], extra_specs)?;
             let pos = require_positionals(&positionals, &["catalog", "identifier"])?;

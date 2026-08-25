@@ -1,52 +1,71 @@
 # The Reference Pipeline
 
-How a reference record comes to exist, in order. Every stage is one `reference`
-command; the underlying tool keeps its own flags and passes them through.
+How a reference record comes to exist. Product capture happens first; evidence
+verification and catalog generation remain separate deterministic stages.
 
+```text
+real product crawler ──► retained state graph / recording
+                                │
+                                ├──► verify-reference-evidence
+                                ├──► audit-reference-accessibility
+                                └──► generate-example-catalogs
+
+sync-readme-examples ──► analyze-readme-examples
+check-upstream-drift                              (any time)
 ```
-capture ──► collect-images ──► verify ──► catalogs
-   │              │
-   │              └──► analyze-structures
-   └──► audit-accessibility
 
-sync-readmes ──► analyze-readmes        (README corpus, separate lane)
-drift                                    (upstream monitoring, any time)
-```
+## 1. Capture the real product
 
-## 1. Capture — `reference capture`
+The surface chooses the crawler:
 
-Own products only. The tool runs the installed binaries on this workstation
-through a real pseudo-terminal and keeps the recording. Flags: `--list`,
-`--product <name>`, `--catalog-only`.
+- `crawl-mobile`: installed iOS/Android app through Appium.
+- `crawl-desktop`: installed native app through Cua Driver.
+- `crawl-web`: browser product through Weles.
+- `crawl-tui`: installed terminal application inside a real PTY.
+- `crawl-cli`: installed command-line application inside a real PTY.
+- `crawl-docs`: documentation inventory and full text.
+- `sync-readme-examples`: exact upstream README blobs.
 
-Third-party products are never captured here; their records cite
-owner-published media or a Weles-driven browser run on a Stado host, and the
-provenance class in the record states which.
+The coordinator submits an exact source revision to a host selected through
+Stado. No crawler opens a browser, simulator, TUI, CLI, or desktop application
+on the coordinator workstation. TUI and CLI crawlers use isolated homes and
+fixtures; their default worker environment cannot reach the selected host's
+Docker, Kubernetes or user configuration. Login values are injected from
+Skarbiec through Stado and referenced in artifacts only by fixture name. A
+destructive journey is explored through its confirmation screen and stops
+before the final commit.
 
-## 2. Collect imagery — `reference collect-images`
+`crawl-web` covers web apps, dashboards, onboarding and authentication,
+app-store listings, design systems, reports, pricing pages, and landing pages.
+Each catalog has its own mandatory coverage contract while Weles remains the
+shared browser execution boundary. The worker waits for every Weles action and
+retains sanitized results, receipts and artifact pointers instead of treating
+queue acceptance as a completed crawl.
+
+## 2. Collect imagery — `spis collect-example-images`
 
 Acquires official imagery for third-party records, recording dimensions,
 hashes, provenance, and capture method. A retained vendor video is never
 recorded as a local run.
 
-## 3. Analyze — `reference analyze-structures`
+## 3. Analyze — `spis analyze-example-structures`
 
 Deterministic panel regions, layout model, separators, density, and confidence
 from every stored overview image. Runs after imagery exists.
 
-## 4. Accessibility — `reference audit-accessibility`
+## 4. Accessibility — `spis audit-reference-accessibility`
 
 Audits captured references for accessibility evidence. Records move to
 `complete` only when this stage has no failed or pending findings.
 
-## 5. Verify — `reference verify`
+## 5. Verify — `spis verify-reference-evidence`
 
 The honesty gate. Re-probes media kinds, durations, frame counts, hashes, and
 provenance classes from the retained bytes, then rewrites each record to what
 the files actually prove. `--apply` writes the corrections; without it the run
 is a dry report.
 
-## 6. Regenerate catalogs — `reference catalogs`
+## 6. Regenerate catalogs — `spis generate-example-catalogs`
 
 Renders `example-catalogs.json` and the catalog pages from the records. This
 is the consistency gate: it refuses to render when the index, records, and
@@ -55,12 +74,12 @@ provenance mix), never intentions.
 
 ## Separate lane — the README corpus
 
-- `reference sync-readmes` refreshes the fifty verbatim upstream README
-  snapshots and their blob SHAs.
-- `reference analyze-readmes` regenerates the structural analysis
+- `spis sync-readme-examples --host <host>` refreshes the fifty verbatim
+  upstream README snapshots and their blob SHAs through Stado.
+- `spis analyze-readme-examples` regenerates the structural analysis
   (`readme-examples/analysis.json`) behind the README guidance.
 
-## Upstream monitoring — `reference drift`
+## Upstream monitoring — `spis check-upstream-drift`
 
 Rechecks local hashes, current upstream README blobs, and every recorded URL.
 Distinguishes a dead source from an authenticated, rate-limited, or

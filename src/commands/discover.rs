@@ -18,7 +18,9 @@ use std::time::Duration;
 
 const UA: &str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) spis-discovery/1.0";
 const THUMB: &str = "https://image.thum.io/get/width/1400/crop/1000/noanimate/";
-const FAMILIES: &[&str] = &["pricing", "docs", "signup", "about", "product", "blog", "other"];
+const FAMILIES: &[&str] = &[
+    "pricing", "docs", "signup", "about", "product", "blog", "other",
+];
 
 /// GET raw bytes with the discovery User-Agent; returns (body, content type).
 fn fetch(url: &str, timeout_secs: u64) -> Result<(Vec<u8>, String)> {
@@ -39,7 +41,13 @@ fn fetch(url: &str, timeout_secs: u64) -> Result<(Vec<u8>, String)> {
 /// Length-preserving ASCII lowercase (keeps byte offsets aligned).
 fn ascii_lower(s: &str) -> String {
     s.chars()
-        .map(|c| if c.is_ascii_uppercase() { c.to_ascii_lowercase() } else { c })
+        .map(|c| {
+            if c.is_ascii_uppercase() {
+                c.to_ascii_lowercase()
+            } else {
+                c
+            }
+        })
         .collect()
 }
 
@@ -62,7 +70,10 @@ fn netloc_of(url: &str) -> &str {
         Some((_, r)) => r,
         None => return "",
     };
-    after_scheme.split(['/', '?', '#']).next().unwrap_or_default()
+    after_scheme
+        .split(['/', '?', '#'])
+        .next()
+        .unwrap_or_default()
 }
 
 fn scheme_of(url: &str) -> &str {
@@ -77,9 +88,14 @@ fn has_scheme(rel: &str) -> bool {
     match rel.find(':') {
         Some(colon) if colon > 0 => {
             let scheme = &rel[..colon];
-            scheme.chars().enumerate().all(|(i, c)| {
-                c.is_ascii_alphanumeric() || (i > 0 && "+.-".contains(c))
-            }) && scheme.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+            scheme
+                .chars()
+                .enumerate()
+                .all(|(i, c)| c.is_ascii_alphanumeric() || (i > 0 && "+.-".contains(c)))
+                && scheme
+                    .chars()
+                    .next()
+                    .is_some_and(|c| c.is_ascii_alphabetic())
         }
         _ => false,
     }
@@ -166,7 +182,9 @@ fn parse_links(html: &str) -> Links {
         if pending_href.is_some() {
             pending_text.push_str(&html[i..open]);
         }
-        let Some(close_rel) = lower[open..].find('>') else { break };
+        let Some(close_rel) = lower[open..].find('>') else {
+            break;
+        };
         let close = open + close_rel;
         let tag_body = &lower[open + 1..close];
         let is_end = tag_body.starts_with('/');
@@ -179,8 +197,10 @@ fn parse_links(html: &str) -> Links {
             if is_end {
                 // `</a>` commits the pending anchor.
                 if let Some(href) = pending_href.take() {
-                    let text: String =
-                        pending_text.split_whitespace().collect::<Vec<_>>().join(" ");
+                    let text: String = pending_text
+                        .split_whitespace()
+                        .collect::<Vec<_>>()
+                        .join(" ");
                     links.setdefault(lib::html_unescape(&href), lib::html_unescape(&text));
                 }
             } else if tag_body.ends_with('/') {
@@ -272,8 +292,14 @@ fn extract_links(start_url: &str, html_bytes: &[u8], limit: usize) -> Links {
 
 const KEYWORDS: &[(&str, &[&str])] = &[
     ("pricing", &["pricing", "plans", "plans-and-pricing"]),
-    ("docs", &["docs", "documentation", "developers", "api", "guides"]),
-    ("signup", &["sign-up", "signup", "register", "get-started", "start"]),
+    (
+        "docs",
+        &["docs", "documentation", "developers", "api", "guides"],
+    ),
+    (
+        "signup",
+        &["sign-up", "signup", "register", "get-started", "start"],
+    ),
     ("about", &["about", "company", "customers", "careers"]),
     ("product", &["product", "features", "platform", "solutions"]),
 ];
@@ -496,8 +522,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             .take(60)
             .collect();
         let tmp = std::path::PathBuf::from(format!("/tmp/{tmp_name}.png"));
-        std::fs::write(&tmp, &image_bytes)
-            .with_context(|| format!("write {}", tmp.display()))?;
+        std::fs::write(&tmp, &image_bytes).with_context(|| format!("write {}", tmp.display()))?;
         let last_segment: String = url
             .split_once("://")
             .map(|(_, r)| r)

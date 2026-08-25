@@ -37,7 +37,10 @@ pub fn container_kind(container: &str) -> Option<&'static str> {
 }
 
 pub fn is_motion_suffix(suffix: &str) -> bool {
-    matches!(suffix.to_ascii_lowercase().as_str(), ".gif" | ".webp" | ".mp4" | ".webm" | ".cast")
+    matches!(
+        suffix.to_ascii_lowercase().as_str(),
+        ".gif" | ".webp" | ".mp4" | ".webm" | ".cast"
+    )
 }
 
 pub fn is_state_suffix(suffix: &str) -> bool {
@@ -62,7 +65,8 @@ pub fn is_local_provenance(class: &str) -> bool {
 
 /// Case-insensitive substring test (the plain-keyword patterns below).
 fn ci_contains(hay: &str, needle: &str) -> bool {
-    hay.to_ascii_lowercase().contains(&needle.to_ascii_lowercase())
+    hay.to_ascii_lowercase()
+        .contains(&needle.to_ascii_lowercase())
 }
 
 /// `\b<word>\b` case-insensitive: occurrence delimited by non-word characters.
@@ -243,17 +247,12 @@ pub fn motion_analysis_alias(field: &str) -> Option<&'static str> {
 }
 
 /// Extra keys a motion analysis may carry beyond the required eight.
-pub const MOTION_ANALYSIS_OPTIONAL: &[&str] =
-    &["source_title", "evidence", "timing_description"];
+pub const MOTION_ANALYSIS_OPTIONAL: &[&str] = &["source_title", "evidence", "timing_description"];
 
 pub fn is_timing_class(value: &str) -> bool {
     matches!(
         value,
-        "instant"
-            | "sub-second"
-            | "one-to-three-seconds"
-            | "multi-second"
-            | "continuous"
+        "instant" | "sub-second" | "one-to-three-seconds" | "multi-second" | "continuous"
     )
 }
 
@@ -283,15 +282,13 @@ pub fn canonical_timing_class(value: Option<&str>) -> Option<&'static str> {
     // Return the canonical spelling with original casing semantics preserved by
     // the caller; the vocabulary itself is lowercase.
     if is_timing_class(&normalized) {
-        return Some(
-            match normalized.as_str() {
-                "instant" => "instant",
-                "sub-second" => "sub-second",
-                "one-to-three-seconds" => "one-to-three-seconds",
-                "multi-second" => "multi-second",
-                _ => "continuous",
-            },
-        );
+        return Some(match normalized.as_str() {
+            "instant" => "instant",
+            "sub-second" => "sub-second",
+            "one-to-three-seconds" => "one-to-three-seconds",
+            "multi-second" => "multi-second",
+            _ => "continuous",
+        });
     }
     TIMING_CLASS_ALIASES
         .iter()
@@ -309,8 +306,13 @@ pub const JOURNEY_FIELDS: &[&str] = &[
     "completion_evidence",
 ];
 
-pub const JOURNEY_STEP_FIELDS: &[&str] =
-    &["index", "user_action", "system_response", "state", "evidence"];
+pub const JOURNEY_STEP_FIELDS: &[&str] = &[
+    "index",
+    "user_action",
+    "system_response",
+    "state",
+    "evidence",
+];
 
 pub const RECORD_FIELDS: &[&str] = &[
     "schema",

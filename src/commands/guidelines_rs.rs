@@ -83,9 +83,8 @@ fn load_records(catalog: &str) -> (Value, Vec<Value>) {
         Err(e) => fail(&format!("{e:#}")),
     };
     let mut records = Vec::new();
-    if let Ok(index) = lib::read_json::<Value>(
-        directory.join("references.json").to_str().unwrap(),
-    ) {
+    if let Ok(index) = lib::read_json::<Value>(directory.join("references.json").to_str().unwrap())
+    {
         for entry in index
             .get("references")
             .and_then(Value::as_array)
@@ -97,9 +96,7 @@ fn load_records(catalog: &str) -> (Value, Vec<Value>) {
             };
             let record_path = directory.join(path);
             if record_path.is_file() {
-                if let Ok(record) =
-                    lib::read_json::<Value>(record_path.to_str().unwrap())
-                {
+                if let Ok(record) = lib::read_json::<Value>(record_path.to_str().unwrap()) {
                     records.push(record);
                 }
             }
@@ -138,9 +135,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--out" => {
                 i += 1;
-                out = Some(PathBuf::from(
-                    rest.get(i).context("--out needs a value")?,
-                ));
+                out = Some(PathBuf::from(rest.get(i).context("--out needs a value")?));
             }
             "--help" | "-h" => {
                 println!("usage: spis guidelines <catalog> [--out <file>]");
@@ -296,11 +291,8 @@ pub fn run(rest: &[String]) -> Result<()> {
         String::new(),
     ]);
 
-    let out = out.unwrap_or_else(|| {
-        Path::new(&catalog).join("guidelines-draft.md")
-    });
-    std::fs::write(&out, lines.join("\n"))
-        .with_context(|| format!("write {}", out.display()))?;
+    let out = out.unwrap_or_else(|| Path::new(&catalog).join("guidelines-draft.md"));
+    std::fs::write(&out, lines.join("\n")).with_context(|| format!("write {}", out.display()))?;
     println!("wrote {}", out.display());
     Ok(())
 }

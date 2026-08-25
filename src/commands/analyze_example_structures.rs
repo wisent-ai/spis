@@ -42,7 +42,11 @@ fn py_round(value: f64, digits: i32) -> f64 {
     let floor = scaled.floor();
     let fract = scaled - floor;
     let rounded = if (fract - 0.5).abs() < 1e-9 {
-        if floor % 2.0 == 0.0 { floor } else { floor + 1.0 }
+        if floor % 2.0 == 0.0 {
+            floor
+        } else {
+            floor + 1.0
+        }
     } else {
         scaled.round()
     };
@@ -94,8 +98,7 @@ fn percentile_linear(mut values: Vec<f32>, q: f64) -> f64 {
     let position = (n - 1) as f64 * q;
     let lower = position.floor() as usize;
     let upper = std::cmp::min(lower + 1, n - 1);
-    values[lower] as f64
-        + (values[upper] - values[lower]) as f64 * (position - lower as f64)
+    values[lower] as f64 + (values[upper] - values[lower]) as f64 * (position - lower as f64)
 }
 
 fn mean(values: &[f32]) -> f64 {
@@ -120,14 +123,18 @@ fn separator_positions(gray: &Gray, vertical: bool) -> Vec<Value> {
     let differences: Vec<f32> = if vertical {
         let mut diffs = Vec::with_capacity((gray.width - 1).max(0));
         for x in 0..gray.width.saturating_sub(1) {
-            let s: f32 = (0..gray.height).map(|y| (gray.at(y, x + 1) - gray.at(y, x)).abs()).sum();
+            let s: f32 = (0..gray.height)
+                .map(|y| (gray.at(y, x + 1) - gray.at(y, x)).abs())
+                .sum();
             diffs.push(s / gray.height as f32);
         }
         diffs
     } else {
         let mut diffs = Vec::with_capacity((gray.height - 1).max(0));
         for y in 0..gray.height.saturating_sub(1) {
-            let s: f32 = (0..gray.width).map(|x| (gray.at(y + 1, x) - gray.at(y, x)).abs()).sum();
+            let s: f32 = (0..gray.width)
+                .map(|x| (gray.at(y + 1, x) - gray.at(y, x)).abs())
+                .sum();
             diffs.push(s / gray.width as f32);
         }
         diffs
@@ -144,8 +151,8 @@ fn separator_positions(gray: &Gray, vertical: bool) -> Vec<Value> {
     if segment.is_empty() {
         return Vec::new();
     }
-    let threshold = percentile_linear(segment.to_vec(), 0.91)
-        .max(mean(segment) + stddev(segment) * 1.15);
+    let threshold =
+        percentile_linear(segment.to_vec(), 0.91).max(mean(segment) + stddev(segment) * 1.15);
 
     let group_gap = std::cmp::max(2, extent / 180);
     let mut groups: Vec<Vec<usize>> = Vec::new();
@@ -187,7 +194,10 @@ fn separator_positions(gray: &Gray, vertical: bool) -> Vec<Value> {
         }
     }
 
-    let maximum = selected.iter().map(|(_, s)| *s).fold(f64::NEG_INFINITY, f64::max);
+    let maximum = selected
+        .iter()
+        .map(|(_, s)| *s)
+        .fold(f64::NEG_INFINITY, f64::max);
     if !(maximum > 0.0) {
         return Vec::new();
     }
@@ -232,33 +242,87 @@ fn semantic_hints(example: &Value, catalog: &str) -> Hints {
         .to_lowercase();
 
     Hints {
-        leading: contains_any(&text, &[
-            "sidebar", "navigation", "navigator", "channel", "workspace", "repository",
-            "server", "folder", "object", "inbox", "project panel", "service switcher",
-        ]),
-        trailing: contains_any(&text, &[
-            "inspector", "detail panel", "side panel", "member list", "properties",
-            "customer context", "context panel", "request-response", "detail view",
-        ]),
-        table: contains_any(&text, &[
-            "table", "grid", "result", "list", "stream", "inventory", "queue", "timeline",
-        ]),
-        canvas: contains_any(&text, &[
-            "canvas", "editor", "document", "map", "diagram", "chart", "dashboard", "workspace",
-        ]),
+        leading: contains_any(
+            &text,
+            &[
+                "sidebar",
+                "navigation",
+                "navigator",
+                "channel",
+                "workspace",
+                "repository",
+                "server",
+                "folder",
+                "object",
+                "inbox",
+                "project panel",
+                "service switcher",
+            ],
+        ),
+        trailing: contains_any(
+            &text,
+            &[
+                "inspector",
+                "detail panel",
+                "side panel",
+                "member list",
+                "properties",
+                "customer context",
+                "context panel",
+                "request-response",
+                "detail view",
+            ],
+        ),
+        table: contains_any(
+            &text,
+            &[
+                "table",
+                "grid",
+                "result",
+                "list",
+                "stream",
+                "inventory",
+                "queue",
+                "timeline",
+            ],
+        ),
+        canvas: contains_any(
+            &text,
+            &[
+                "canvas",
+                "editor",
+                "document",
+                "map",
+                "diagram",
+                "chart",
+                "dashboard",
+                "workspace",
+            ],
+        ),
         command: matches!(catalog, "tui-examples" | "cli-examples"),
         mobile: matches!(
             catalog,
             "ios-app-examples" | "android-app-examples" | "app-store-listing-examples"
         ),
-        request_response: contains_any(&text, &[
-            "request-response", "request details", "response preview", "request and response",
-        ]),
+        request_response: contains_any(
+            &text,
+            &[
+                "request-response",
+                "request details",
+                "response preview",
+                "request and response",
+            ],
+        ),
     }
 }
 
 /// Strongest measured separator inside [lower, upper], else the fallback.
-fn choose_boundary(separators: &[Value], lower: f64, upper: f64, fallback: Option<f64>) -> Option<f64> {
+fn choose_boundary(
+    separators: &[Value],
+    lower: f64,
+    upper: f64,
+    fallback: Option<f64>,
+) -> Option<f64> {
     separators
         .iter()
         .filter_map(|item| {
@@ -294,17 +358,37 @@ fn classify_layout(
     horizontal: &[Value],
 ) -> Layout {
     let hints = semantic_hints(example, catalog);
-    let top = choose_boundary(horizontal, 0.06, 0.22, if !hints.command { Some(0.12) } else { None });
+    let top = choose_boundary(
+        horizontal,
+        0.06,
+        0.22,
+        if !hints.command { Some(0.12) } else { None },
+    );
     let bottom = choose_boundary(horizontal, 0.76, 0.94, None);
     let content_top = top.unwrap_or(0.0);
     let content_bottom = bottom.unwrap_or(1.0);
     let height = content_bottom - content_top;
 
-    let leading = choose_boundary(vertical, 0.14, 0.42, if hints.leading { Some(0.26) } else { None });
-    let trailing = choose_boundary(vertical, 0.58, 0.88, if hints.trailing { Some(0.76) } else { None });
+    let leading = choose_boundary(
+        vertical,
+        0.14,
+        0.42,
+        if hints.leading { Some(0.26) } else { None },
+    );
+    let trailing = choose_boundary(
+        vertical,
+        0.58,
+        0.88,
+        if hints.trailing { Some(0.76) } else { None },
+    );
     let mut regions: Vec<Value> = Vec::new();
     if let Some(top) = top {
-        regions.push(region("toolbar/header", "top", (0.0, 0.0, 1.0, top), "measured horizontal separator"));
+        regions.push(region(
+            "toolbar/header",
+            "top",
+            (0.0, 0.0, 1.0, top),
+            "measured horizontal separator",
+        ));
     }
     if let Some(bottom) = bottom {
         regions.push(region(
@@ -351,7 +435,12 @@ fn classify_layout(
                 region(
                     "secondary terminal pane",
                     "bottom",
-                    (0.0, horizontal_split, 1.0, content_bottom - horizontal_split),
+                    (
+                        0.0,
+                        horizontal_split,
+                        1.0,
+                        content_bottom - horizontal_split,
+                    ),
                     "measured separator in terminal image",
                 ),
             ]);
@@ -404,19 +493,34 @@ fn classify_layout(
             region(
                 "traffic request table",
                 "upper center",
-                (navigation_end, content_top, 1.0 - navigation_end, detail_top - content_top),
+                (
+                    navigation_end,
+                    content_top,
+                    1.0 - navigation_end,
+                    detail_top - content_top,
+                ),
                 "measured horizontal separator",
             ),
             region(
                 "request inspector",
                 "lower center",
-                (navigation_end, detail_top, detail_split - navigation_end, content_bottom - detail_top),
+                (
+                    navigation_end,
+                    detail_top,
+                    detail_split - navigation_end,
+                    content_bottom - detail_top,
+                ),
                 "request-response semantic cue plus measured separators",
             ),
             region(
                 "response inspector",
                 "lower trailing",
-                (detail_split, detail_top, 1.0 - detail_split, content_bottom - detail_top),
+                (
+                    detail_split,
+                    detail_top,
+                    1.0 - detail_split,
+                    content_bottom - detail_top,
+                ),
                 "request-response semantic cue plus measured separators",
             ),
         ]);
@@ -474,7 +578,11 @@ fn classify_layout(
             end = trailing;
         }
     }
-    let primary_role = if hints.table { "data table/list" } else { "primary canvas/content" };
+    let primary_role = if hints.table {
+        "data table/list"
+    } else {
+        "primary canvas/content"
+    };
     regions.push(region(
         primary_role,
         "center",
@@ -483,7 +591,11 @@ fn classify_layout(
     ));
 
     if leading.is_some() && trailing.is_some() {
-        let confidence = if hints.leading && hints.trailing { "high" } else { "medium" };
+        let confidence = if hints.leading && hints.trailing {
+            "high"
+        } else {
+            "medium"
+        };
         return (
             "sidebar-content-inspector".into(),
             "Leading navigation, central work area, and trailing detail inspector.".into(),
@@ -550,9 +662,14 @@ fn analyze(example: &Value, catalog: &str, image_path: &Path) -> Result<Value> {
     };
     let rgb = working.to_rgb8();
     let (w, h) = (rgb.width() as usize, rgb.height() as usize);
-    let mut gray = Gray { data: Vec::with_capacity(w * h), width: w, height: h };
+    let mut gray = Gray {
+        data: Vec::with_capacity(w * h),
+        width: w,
+        height: h,
+    };
     for px in rgb.pixels() {
-        gray.data.push((px[0] as f32 + px[1] as f32 + px[2] as f32) / 3.0);
+        gray.data
+            .push((px[0] as f32 + px[1] as f32 + px[2] as f32) / 3.0);
     }
 
     let vertical = separator_positions(&gray, true);
@@ -614,7 +731,11 @@ fn analyze_catalog(slug: &str) -> Result<(usize, Vec<Value>)> {
         let (name, local_path) = {
             let example = &catalog["examples"][position];
             (
-                example.get("name").and_then(Value::as_str).unwrap_or("").to_string(),
+                example
+                    .get("name")
+                    .and_then(Value::as_str)
+                    .unwrap_or("")
+                    .to_string(),
                 example
                     .get("visual")
                     .and_then(|v| v.get("local_path"))
@@ -634,9 +755,8 @@ fn analyze_catalog(slug: &str) -> Result<(usize, Vec<Value>)> {
                         }
                         count += 1;
                     }
-                    Err(error) => failures.push(
-                        json!({"index": index, "name": name, "error": format!("{error:#}")}),
-                    ),
+                    Err(error) => failures
+                        .push(json!({"index": index, "name": name, "error": format!("{error:#}")})),
                 }
             }
         }
@@ -653,7 +773,10 @@ fn analyze_catalog(slug: &str) -> Result<(usize, Vec<Value>)> {
         .with_context(|| format!("write {}", source_path.display()))?;
     let failure_path = Path::new(slug).join("structure-analysis-failures.json");
     if !failures.is_empty() {
-        std::fs::write(&failure_path, serde_json::to_string_pretty(&failures)? + "\n")?;
+        std::fs::write(
+            &failure_path,
+            serde_json::to_string_pretty(&failures)? + "\n",
+        )?;
     } else {
         let _ = std::fs::remove_file(&failure_path);
     }
@@ -669,7 +792,10 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
         requested.push(arg.clone());
     }
-    let mut unknown: Vec<&String> = requested.iter().filter(|c| !CATALOGS.contains(&c.as_str())).collect();
+    let mut unknown: Vec<&String> = requested
+        .iter()
+        .filter(|c| !CATALOGS.contains(&c.as_str()))
+        .collect();
     unknown.sort();
     if !unknown.is_empty() {
         let names: Vec<&str> = unknown.iter().map(|s| s.as_str()).collect();

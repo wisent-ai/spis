@@ -70,7 +70,9 @@ fn regenerate() {
         Ok(out) => {
             let stdout = String::from_utf8_lossy(&out.stdout);
             let stderr = String::from_utf8_lossy(&out.stderr);
-            fail(&format!("index regeneration refused the change:\n{stdout}{stderr}"));
+            fail(&format!(
+                "index regeneration refused the change:\n{stdout}{stderr}"
+            ));
         }
         Err(e) => fail(&format!("index regeneration refused the change:\n{e}")),
     }
@@ -166,8 +168,7 @@ fn cmd_add(rest: &[String]) -> Result<()> {
             "complete_count": 0,
             "partial_count": 0,
             "references": [],
-        }))?
-            + "\n",
+        }))? + "\n",
     )?;
     regenerate();
     println!(

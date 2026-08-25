@@ -12,8 +12,8 @@
 //! instead of re-encoding. No pixel decode happens here; see the module
 //! report for the resulting metadata-shape gaps.
 
-use serde_json::{json, Map, Value};
 use anyhow::{anyhow, bail, Context, Result};
+use serde_json::{json, Map, Value};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
@@ -89,7 +89,11 @@ fn fetch(url: &str, maximum: usize, accept: &str) -> Result<Fetched> {
     if data.len() > maximum {
         bail!("response exceeds {maximum} bytes");
     }
-    Ok(Fetched { data, content_type, final_url })
+    Ok(Fetched {
+        data,
+        content_type,
+        final_url,
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -130,10 +134,8 @@ fn parse_jpeg_size(data: &[u8]) -> Option<(u32, u32)> {
             continue;
         }
         let seg_len = usize::from(u16::from_be_bytes([data[i + 2], data[i + 3]]));
-        let is_sof = (0xC0..=0xCF).contains(&marker)
-            && marker != 0xC4
-            && marker != 0xC8
-            && marker != 0xCC;
+        let is_sof =
+            (0xC0..=0xCF).contains(&marker) && marker != 0xC4 && marker != 0xC8 && marker != 0xCC;
         if is_sof {
             if i + 9 > data.len() {
                 return None;
@@ -152,7 +154,8 @@ fn parse_webp_size(data: &[u8]) -> Option<(u32, u32)> {
     let mut i = 12usize;
     while i + 8 <= data.len() {
         let fourcc = &data[i..i + 4];
-        let size = u32::from_le_bytes([data[i + 4], data[i + 5], data[i + 6], data[i + 7]]) as usize;
+        let size =
+            u32::from_le_bytes([data[i + 4], data[i + 5], data[i + 6], data[i + 7]]) as usize;
         let body = &data[(i + 8).min(data.len())..];
         match fourcc {
             b"VP8X" => {
@@ -288,7 +291,11 @@ fn extract_tag_candidates(text: &str, out: &mut Vec<Candidate>, order: &mut usiz
                             url: first,
                             hint: hint.trim().to_string(),
                             order: *order,
-                            origin: if tag == "img" { "img-srcset" } else { "source-srcset" },
+                            origin: if tag == "img" {
+                                "img-srcset"
+                            } else {
+                                "source-srcset"
+                            },
                         });
                         *order += 1;
                     }
@@ -395,7 +402,9 @@ fn join_url(base: &str, reference: &str) -> Option<String> {
         let scheme = &reference[..colon];
         if !scheme.is_empty()
             && scheme.chars().next().unwrap().is_ascii_alphabetic()
-            && scheme.chars().all(|c| c.is_ascii_alphanumeric() || c == '+' || c == '.' || c == '-')
+            && scheme
+                .chars()
+                .all(|c| c.is_ascii_alphanumeric() || c == '+' || c == '.' || c == '-')
             && !reference[colon + 1..].starts_with('/')
         {
             return Some(reference.to_string());
@@ -460,7 +469,11 @@ fn clean_url(url: &str) -> String {
     let mut out = String::with_capacity(url.len());
     for byte in url.replace("&amp;", "&").bytes() {
         let ch = byte as char;
-        if ch.is_ascii_alphanumeric() || ch == '-' || ch == '_' || ch == '.' || ch == '~'
+        if ch.is_ascii_alphanumeric()
+            || ch == '-'
+            || ch == '_'
+            || ch == '.'
+            || ch == '~'
             || SAFE.contains(ch)
         {
             out.push(ch);
@@ -589,11 +602,12 @@ fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) -> Vec<Candid
     extract_css_candidates(&text, &mut raw, &mut order);
     extract_embedded_candidates(&text, &mut raw, &mut order);
 
-    let mut unique: std::collections::HashMap<String, Candidate> =
-        std::collections::HashMap::new();
+    let mut unique: std::collections::HashMap<String, Candidate> = std::collections::HashMap::new();
     let mut insert_order: Vec<String> = Vec::new();
     for candidate in raw {
-        let Some(resolved) = join_url(page_url, &candidate.url) else { continue };
+        let Some(resolved) = join_url(page_url, &candidate.url) else {
+            continue;
+        };
         let has_netloc = split_scheme(&resolved)
             .map(|(_, rest)| !rest.split('/').next().unwrap_or("").is_empty())
             .unwrap_or(false);
@@ -664,7 +678,9 @@ fn select_image(page_url: &str) -> Result<(Candidate, Probe)> {
     // The Python probed candidates on 8 threads; this port probes them
     // sequentially (same selection outcome, slower wall clock).
     for candidate in &candidates {
-        let Some(probe) = probe_candidate(candidate) else { continue };
+        let Some(probe) = probe_candidate(candidate) else {
+            continue;
+        };
         let score = image_score(candidate, probe.width, probe.height);
         if best.as_ref().map(|(s, _, _)| score > *s).unwrap_or(true) {
             best = Some((score, candidate.clone(), probe));
@@ -734,10 +750,7 @@ fn store_image(catalog_dir: &Path, index: usize, name: &str, page_url: &str) -> 
 }
 
 fn write_catalog(source_path: &Path, catalog: &Value) -> Result<()> {
-    std::fs::write(
-        source_path,
-        serde_json::to_string_pretty(catalog)? + "\n",
-    )?;
+    std::fs::write(source_path, serde_json::to_string_pretty(catalog)? + "\n")?;
     Ok(())
 }
 
@@ -761,12 +774,25 @@ fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<Value>)> {
             .ok_or_else(|| anyhow!("{slug}/sources.json: examples must be an array"))?
             .get_mut(position)
             .and_then(Value::as_object_mut)
-            .ok_or_else(|| anyhow!("{slug}/sources.json: examples[{position}] must be an object"))?;
+            .ok_or_else(|| {
+                anyhow!("{slug}/sources.json: examples[{position}] must be an object")
+            })?;
         let name = example_obj["name"].as_str().unwrap_or_default().to_string();
-        let source_url = example_obj["source_url"].as_str().unwrap_or_default().to_string();
+        let source_url = example_obj["source_url"]
+            .as_str()
+            .unwrap_or_default()
+            .to_string();
 
-        if example_obj.get("visual").map(Value::is_object).unwrap_or(false) && !replace {
-            let visual = example_obj.get_mut("visual").and_then(Value::as_object_mut).unwrap();
+        if example_obj
+            .get("visual")
+            .map(Value::is_object)
+            .unwrap_or(false)
+            && !replace
+        {
+            let visual = example_obj
+                .get_mut("visual")
+                .and_then(Value::as_object_mut)
+                .unwrap();
             visual.insert(
                 "source_page_url".to_string(),
                 Value::String(source_url.clone()),
@@ -791,9 +817,7 @@ fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<Value>)> {
         let mut attempt_urls: Vec<(String, &'static str)> =
             vec![(primary_url.clone(), "official-source-image")];
         attempt_urls.push((
-            format!(
-                "https://image.thum.io/get/width/1400/crop/1000/noanimate/{source_url}"
-            ),
+            format!("https://image.thum.io/get/width/1400/crop/1000/noanimate/{source_url}"),
             "remote-page-screenshot",
         ));
 
@@ -832,7 +856,10 @@ fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<Value>)> {
                 }));
                 println!(
                     "{slug} {index:02}/50 FAILED {name}: {}",
-                    failures.last().and_then(|f| f["error"].as_str()).unwrap_or("")
+                    failures
+                        .last()
+                        .and_then(|f| f["error"].as_str())
+                        .unwrap_or("")
                 );
             }
         }
@@ -866,7 +893,11 @@ pub fn run(rest: &[String]) -> Result<()> {
         eprintln!(
             "usage: spis collect-example-images [--replace] [catalog ...]\n\
              collect-example-images: error: unknown catalog(s): {}",
-            unknown.iter().map(|s| s.to_string()).collect::<Vec<_>>().join(", ")
+            unknown
+                .iter()
+                .map(|s| s.to_string())
+                .collect::<Vec<_>>()
+                .join(", ")
         );
         std::process::exit(2);
     }
@@ -1052,7 +1083,11 @@ mod html_tests {
         assert!(candidates.len() <= MAX_CANDIDATES);
         // All resolved URLs absolute http(s).
         for c in &candidates {
-            assert!(c.url.starts_with("https://") || c.url.starts_with("http://"), "{}", c.url);
+            assert!(
+                c.url.starts_with("https://") || c.url.starts_with("http://"),
+                "{}",
+                c.url
+            );
         }
         // Screenshot-hinting candidates outrank tracking pixels/logos.
         let urls: Vec<&str> = candidates.iter().map(|c| c.url.as_str()).collect();
@@ -1060,17 +1095,17 @@ mod html_tests {
         assert!(urls.iter().any(|u| u.contains("og.png")));
         let pixel_pos = urls.iter().position(|u| u.contains("pixel.gif"));
         if let Some(p) = pixel_pos {
-            assert!(shot_pos < p || preflight_score(&candidates[p]) > preflight_score(&candidates[shot_pos]) || true);
+            assert!(
+                shot_pos < p
+                    || preflight_score(&candidates[p]) > preflight_score(&candidates[shot_pos])
+                    || true
+            );
         }
     }
 
     #[test]
     fn direct_image_content_type_short_circuits() {
-        let cands = candidate_urls(
-            "https://example.com/x.png",
-            b"\x89PNG",
-            "image/png",
-        );
+        let cands = candidate_urls("https://example.com/x.png", b"\x89PNG", "image/png");
         assert_eq!(cands.len(), 1);
         assert_eq!(cands[0].origin, "direct");
     }

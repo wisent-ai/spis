@@ -16,18 +16,52 @@ const OUTPUT: &str = "readme-examples/analysis.json";
 
 fn section_patterns() -> Vec<(&'static str, String)> {
     vec![
-        ("installation_or_quick_start", r"(?im)^.{0,8}(install|installation|setup|getting started|quick ?start|get started)".into()),
-        ("usage_or_examples", r"(?im)^.{0,8}(usage|how to use|examples?|tutorial)".into()),
-        ("features_or_capabilities", r"(?im)^.{0,8}(features?|capabilities|what .* does)".into()),
-        ("documentation_links", r"(?im)^.{0,8}(documentation|docs|learn more)".into()),
-        ("contribution_guidance", r"(?im)^.{0,8}(contribut|development)".into()),
+        (
+            "installation_or_quick_start",
+            r"(?im)^.{0,8}(install|installation|setup|getting started|quick ?start|get started)"
+                .into(),
+        ),
+        (
+            "usage_or_examples",
+            r"(?im)^.{0,8}(usage|how to use|examples?|tutorial)".into(),
+        ),
+        (
+            "features_or_capabilities",
+            r"(?im)^.{0,8}(features?|capabilities|what .* does)".into(),
+        ),
+        (
+            "documentation_links",
+            r"(?im)^.{0,8}(documentation|docs|learn more)".into(),
+        ),
+        (
+            "contribution_guidance",
+            r"(?im)^.{0,8}(contribut|development)".into(),
+        ),
         ("license_section", r"(?im)^.{0,8}(licen[cs]e)".into()),
-        ("security_guidance", r"(?im)^.{0,8}(security|vulnerabilit)".into()),
-        ("support_or_community", r"(?im)^.{0,8}(support|help|community|getting help)".into()),
-        ("architecture_or_how_it_works", r"(?im)^.{0,8}(architecture|how it works|design|internals)".into()),
-        ("status_or_roadmap", r"(?im)^.{0,8}(status|roadmap|maturity|stability)".into()),
-        ("requirements_or_prerequisites", r"(?im)^.{0,8}(requirements?|prerequisites?|compatibility)".into()),
-        ("alternatives_or_comparison", r"(?im)^.{0,8}(alternatives?|comparison|why )".into()),
+        (
+            "security_guidance",
+            r"(?im)^.{0,8}(security|vulnerabilit)".into(),
+        ),
+        (
+            "support_or_community",
+            r"(?im)^.{0,8}(support|help|community|getting help)".into(),
+        ),
+        (
+            "architecture_or_how_it_works",
+            r"(?im)^.{0,8}(architecture|how it works|design|internals)".into(),
+        ),
+        (
+            "status_or_roadmap",
+            r"(?im)^.{0,8}(status|roadmap|maturity|stability)".into(),
+        ),
+        (
+            "requirements_or_prerequisites",
+            r"(?im)^.{0,8}(requirements?|prerequisites?|compatibility)".into(),
+        ),
+        (
+            "alternatives_or_comparison",
+            r"(?im)^.{0,8}(alternatives?|comparison|why )".into(),
+        ),
     ]
 }
 
@@ -38,7 +72,11 @@ fn py_round(value: f64, digits: i32) -> f64 {
     let floor = scaled.floor();
     let fract = scaled - floor;
     let rounded = if (fract - 0.5).abs() < 1e-9 {
-        if floor % 2.0 == 0.0 { floor } else { floor + 1.0 }
+        if floor % 2.0 == 0.0 {
+            floor
+        } else {
+            floor + 1.0
+        }
     } else {
         scaled.round()
     };
@@ -116,7 +154,10 @@ impl Patterns {
         Patterns {
             markdown_heading: Regex::new(r"(?m)^#{1,6}\s+(?P<title>.+?)\s*$").unwrap(),
             rst_underline: Regex::new(r"^[=\-~^`:#*+]{3,}$").unwrap(),
-            badge: Regex::new(r#"(?i)shields\.io|badge\.svg|actions/workflows|badge\.fury|badgen\.net|/badge/"#).unwrap(),
+            badge: Regex::new(
+                r#"(?i)shields\.io|badge\.svg|actions/workflows|badge\.fury|badgen\.net|/badge/"#,
+            )
+            .unwrap(),
             visual: Regex::new(r#"<img\b[^>]*>|!\[[^]]*\]\([^)]+\)|\.\.\s+image::\s*\S+"#).unwrap(),
             // Python `$` also matches just before a trailing newline; the extra
             // `\n\z` alternative reproduces that here exactly.
@@ -151,7 +192,10 @@ impl Patterns {
         let has_visual = self.visual.is_match(&text);
 
         let mut object = Map::new();
-        object.insert("file".into(), json!(path.file_name().unwrap().to_string_lossy()));
+        object.insert(
+            "file".into(),
+            json!(path.file_name().unwrap().to_string_lossy()),
+        );
         object.insert("lines".into(), json!(lines.len()));
         object.insert("words".into(), json!(Self::word_count(&text)));
         object.insert("headings".into(), json!(found_headings.len()));
@@ -163,11 +207,19 @@ impl Patterns {
         object.insert("visuals".into(), json!(has_visual));
         object.insert(
             "visuals_first_30_lines".into(),
-            json!(self.visual.is_match(&lines[..lines.len().min(30)].join("\n"))),
+            json!(self
+                .visual
+                .is_match(&lines[..lines.len().min(30)].join("\n"))),
         );
-        object.insert("animated_gif".into(), json!(self.animated_gif.is_match(&text)));
+        object.insert(
+            "animated_gif".into(),
+            json!(self.animated_gif.is_match(&text)),
+        );
         object.insert("video".into(), json!(self.video.is_match(&text)));
-        object.insert("code_examples".into(), json!(self.code_examples.is_match(&text)));
+        object.insert(
+            "code_examples".into(),
+            json!(self.code_examples.is_match(&text)),
+        );
         object.insert(
             "code_block_count".into(),
             json!(self.code_fence_line.find_iter(&text).count() / 2),
@@ -273,7 +325,10 @@ pub fn run(rest: &[String]) -> Result<()> {
     ];
     let mut bands_json = Map::new();
     for (name, lower, upper) in bands {
-        let count = line_values.iter().filter(|&&v| lower <= v && v <= upper).count();
+        let count = line_values
+            .iter()
+            .filter(|&&v| lower <= v && v <= upper)
+            .count();
         bands_json.insert(
             name.to_string(),
             json!({ "count": count, "share": py_share(count, total) }),

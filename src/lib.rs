@@ -24,10 +24,11 @@ mod robots {
         }
     }
 
-
     fn compute(origin: &str) -> Rules {
-        let mut rules =
-            Rules { applies_to_us: false, disallow: Vec::new() };
+        let mut rules = Rules {
+            applies_to_us: false,
+            disallow: Vec::new(),
+        };
         let url = format!("{origin}/robots.txt");
         if let Ok(resp) = ureq::get(&url)
             .timeout(Duration::from_secs(15))
@@ -71,7 +72,9 @@ mod robots {
 
 pub fn origin_of(url: &str) -> String {
     match url.split_once("://") {
-        Some((scheme, rest)) => format!("{scheme}://{}", rest.split('/').next().unwrap_or_default()),
+        Some((scheme, rest)) => {
+            format!("{scheme}://{}", rest.split('/').next().unwrap_or_default())
+        }
         None => String::new(),
     }
 }
@@ -125,10 +128,7 @@ pub fn http_get_with_retry(url: &str, tries: u32) -> Result<(u16, String)> {
                 Ok(r) => {
                     let status = r.status() as u16;
                     let mut body = Vec::new();
-                    let read = r
-                        .into_reader()
-                        .take(256 << 20)
-                        .read_to_end(&mut body);
+                    let read = r.into_reader().take(256 << 20).read_to_end(&mut body);
                     match read {
                         Ok(_) => Ok((status, String::from_utf8_lossy(&body).to_string())),
                         Err(e) => Err(anyhow::anyhow!("body read: {e}")),
@@ -152,7 +152,10 @@ pub fn http_get_with_retry(url: &str, tries: u32) -> Result<(u16, String)> {
                 }
                 bail!("{msg}");
             }
-            Err(_) => bail!("attempt timed out after {}s: {url}", ATTEMPT_DEADLINE.as_secs()),
+            Err(_) => bail!(
+                "attempt timed out after {}s: {url}",
+                ATTEMPT_DEADLINE.as_secs()
+            ),
         }
     }
     unreachable!("retry loop always returns or bails")
@@ -209,8 +212,7 @@ pub fn parse_sitemap(body: &[u8]) -> (Vec<String>, Vec<(String, Option<String>)>
 }
 
 const SKIP_TAGS: &[&str] = &[
-    "script", "style", "nav", "footer", "header", "aside", "form", "svg",
-    "noscript", "template",
+    "script", "style", "nav", "footer", "header", "aside", "form", "svg", "noscript", "template",
 ];
 
 struct Extractor {
@@ -258,7 +260,10 @@ impl Extractor {
         let lower = inner.to_ascii_lowercase();
         let closing = lower.starts_with('/');
         let bare = lower.trim_start_matches('/');
-        let name: String = bare.chars().take_while(|c| c.is_ascii_alphanumeric()).collect();
+        let name: String = bare
+            .chars()
+            .take_while(|c| c.is_ascii_alphanumeric())
+            .collect();
 
         if SKIP_TAGS.contains(&name.as_str()) {
             if closing {
@@ -275,7 +280,8 @@ impl Extractor {
         if name == "pre" {
             self.flush_text();
             self.in_pre = !closing;
-            self.out.push_str(if closing { "\n```\n" } else { "\n```\n" });
+            self.out
+                .push_str(if closing { "\n```\n" } else { "\n```\n" });
             return;
         }
         if closing || self.in_pre {
@@ -305,7 +311,9 @@ impl Extractor {
         while pos < html.len() {
             match html[pos..].find('<') {
                 None => {
-                    if self.skip_depth == 0 { self.buf.push_str(&html[pos..]); }
+                    if self.skip_depth == 0 {
+                        self.buf.push_str(&html[pos..]);
+                    }
                     pos = html.len();
                 }
                 Some(rel) => {
@@ -338,7 +346,11 @@ impl Extractor {
         while raw.contains("\n\n\n") {
             raw = raw.replace("\n\n\n", "\n\n");
         }
-        let cleaned = raw.lines().map(|l| l.trim_end()).collect::<Vec<_>>().join("\n");
+        let cleaned = raw
+            .lines()
+            .map(|l| l.trim_end())
+            .collect::<Vec<_>>()
+            .join("\n");
         (cleaned.trim().to_string(), self.title.trim().to_string())
     }
 }

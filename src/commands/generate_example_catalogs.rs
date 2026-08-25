@@ -91,8 +91,13 @@ const JOURNEY_FIELDS: &[&str] = &[
     "recovery_route",
     "completion_evidence",
 ];
-const JOURNEY_STEP_FIELDS: &[&str] =
-    &["index", "user_action", "system_response", "state", "evidence"];
+const JOURNEY_STEP_FIELDS: &[&str] = &[
+    "index",
+    "user_action",
+    "system_response",
+    "state",
+    "evidence",
+];
 
 /// Curated third-party families, in reading order, followed by catalogs of our
 /// own products. Any other directory that satisfies the contract is appended.
@@ -237,11 +242,7 @@ fn evidence_status_of(record: &Value) -> Option<&str> {
 // Validation
 // ---------------------------------------------------------------------------
 
-fn validate_motion(
-    record: &Value,
-    record_path: &str,
-    reference_dir: &Path,
-) -> Result<Vec<String>> {
+fn validate_motion(record: &Value, record_path: &str, reference_dir: &Path) -> Result<Vec<String>> {
     let motion = record.get("motion");
     let Some(motion) = motion.and_then(Value::as_array) else {
         bail!("{record_path}: motion must be a list");
@@ -340,7 +341,11 @@ fn validate_states(record: &Value, record_path: &str, reference_dir: &Path) -> R
     }
     for (position, item) in states.iter().enumerate() {
         let context = format!("{record_path}: state {}", position + 1);
-        require_nonempty(item, &["local_path", "width", "height", "bytes", "sha256"], &context)?;
+        require_nonempty(
+            item,
+            &["local_path", "width", "height", "bytes", "sha256"],
+            &context,
+        )?;
         let local_path = item.get("local_path").and_then(Value::as_str).unwrap_or("");
         let state_path = resolve_evidence_path(reference_dir, local_path, &context)?;
         if !has_suffix(&state_path, STATE_SUFFIXES) {
@@ -409,7 +414,10 @@ fn validate_behaviour(record: &Value, record_path: &str) -> Result<()> {
                     .collect();
                 let obj = match item.as_object() {
                     Some(obj) => obj,
-                    None => bail!("{record_path}: motion analysis {} is malformed", position + 1),
+                    None => bail!(
+                        "{record_path}: motion analysis {} is malformed",
+                        position + 1
+                    ),
                 };
                 let unknown: Vec<String> = obj
                     .keys()
@@ -417,7 +425,11 @@ fn validate_behaviour(record: &Value, record_path: &str) -> Result<()> {
                     .cloned()
                     .collect();
                 if !unknown.is_empty() {
-                    bail!("{record_path}: motion analysis {} has unknown fields {:?}", position + 1, unknown);
+                    bail!(
+                        "{record_path}: motion analysis {} has unknown fields {:?}",
+                        position + 1,
+                        unknown
+                    );
                 }
                 let missing: Vec<&str> = MOTION_ANALYSIS_FIELDS
                     .iter()
@@ -425,7 +437,11 @@ fn validate_behaviour(record: &Value, record_path: &str) -> Result<()> {
                     .copied()
                     .collect();
                 if !missing.is_empty() {
-                    bail!("{record_path}: motion analysis {} omits {:?}", position + 1, missing);
+                    bail!(
+                        "{record_path}: motion analysis {} omits {:?}",
+                        position + 1,
+                        missing
+                    );
                 }
                 if let Some(timing) = item.get("timing_class") {
                     if !timing.is_null() {
@@ -514,7 +530,10 @@ fn load_full_references(slug: &str, examples: &[Value]) -> Result<Value> {
         {
             bail!("{index_path_str}: reference {position} does not match sources.json");
         }
-        let entry_status = entry.get("evidence_status").and_then(Value::as_str).unwrap_or("");
+        let entry_status = entry
+            .get("evidence_status")
+            .and_then(Value::as_str)
+            .unwrap_or("");
         if !EVIDENCE_STATUSES.contains(&entry_status) {
             bail!("{index_path_str}: reference {position} has status '{entry_status}'");
         }
@@ -535,7 +554,11 @@ fn load_full_references(slug: &str, examples: &[Value]) -> Result<Value> {
         let Some(gaps) = record.get("evidence_gaps").and_then(Value::as_array) else {
             bail!("{record_path_str}: evidence_gaps must be a list, empty when nothing is missing");
         };
-        let expected = if gaps.is_empty() { "complete" } else { "partial" };
+        let expected = if gaps.is_empty() {
+            "complete"
+        } else {
+            "partial"
+        };
         if evidence_status_of(&record) != Some(expected) {
             bail!(
                 "{record_path_str}: status {} contradicts {} recorded gaps",
@@ -641,7 +664,10 @@ fn load_catalog(slug: &str) -> Result<Value> {
 
     for key in ["count", "visual_count", "structure_count"] {
         if catalog.get(key).and_then(Value::as_u64) != Some(examples.len() as u64) {
-            bail!("{source_path_str}: {key} does not match the {} examples", examples.len());
+            bail!(
+                "{source_path_str}: {key} does not match the {} examples",
+                examples.len()
+            );
         }
     }
 
@@ -664,9 +690,15 @@ fn load_catalog(slug: &str) -> Result<Value> {
             .copied()
             .collect();
         if !missing.is_empty() {
-            bail!("{source_path_str}: example {index} is missing {}", missing_list(&missing));
+            bail!(
+                "{source_path_str}: example {index} is missing {}",
+                missing_list(&missing)
+            );
         }
-        let source_url = example.get("source_url").and_then(Value::as_str).unwrap_or("");
+        let source_url = example
+            .get("source_url")
+            .and_then(Value::as_str)
+            .unwrap_or("");
         if !url_ok(source_url) {
             bail!("{source_path_str}: example {index} has an invalid URL");
         }
@@ -691,7 +723,10 @@ fn load_catalog(slug: &str) -> Result<Value> {
             "bytes",
             "sha256",
         ];
-        let capture_kind = visual.get("capture_kind").and_then(Value::as_str).unwrap_or("");
+        let capture_kind = visual
+            .get("capture_kind")
+            .and_then(Value::as_str)
+            .unwrap_or("");
         if capture_kind == "local-terminal-render" {
             visual_required.push("source_recording_path");
         } else if capture_kind != "local-browser-screenshot" {
@@ -708,7 +743,10 @@ fn load_catalog(slug: &str) -> Result<Value> {
                 missing_list(&visual_missing)
             );
         }
-        let visual_local = visual.get("local_path").and_then(Value::as_str).unwrap_or("");
+        let visual_local = visual
+            .get("local_path")
+            .and_then(Value::as_str)
+            .unwrap_or("");
         let image_path = catalog_dir.join(visual_local);
         let contained = resolve_evidence_path(catalog_dir, visual_local, &source_path_str).is_ok();
         if !contained || !image_path.is_file() {
@@ -718,8 +756,7 @@ fn load_catalog(slug: &str) -> Result<Value> {
         if Some(payload.len() as u64) != visual.get("bytes").and_then(Value::as_u64) {
             bail!("{source_path_str}: example {index} visual byte count differs");
         }
-        if Some(lib::sha256_hex(&payload).as_str())
-            != visual.get("sha256").and_then(Value::as_str)
+        if Some(lib::sha256_hex(&payload).as_str()) != visual.get("sha256").and_then(Value::as_str)
         {
             bail!("{source_path_str}: example {index} visual digest differs");
         }
@@ -764,10 +801,13 @@ fn load_catalog(slug: &str) -> Result<Value> {
         }
     }
 
-    catalog.as_object_mut().expect("catalog is an object").insert(
-        "full_reference_catalog".into(),
-        load_full_references(slug, &examples)?,
-    );
+    catalog
+        .as_object_mut()
+        .expect("catalog is an object")
+        .insert(
+            "full_reference_catalog".into(),
+            load_full_references(slug, &examples)?,
+        );
     Ok(catalog)
 }
 
@@ -801,13 +841,18 @@ fn provenance_sentence(measured_provenance: &Value) -> String {
 }
 
 fn full_reference_index<'a>(catalog: &'a Value) -> &'a Value {
-    catalog.get("full_reference_catalog").expect("attached by loader")
+    catalog
+        .get("full_reference_catalog")
+        .expect("attached by loader")
 }
 
 fn render_readme(catalog: &Value) -> Result<String> {
     let slug = catalog.get("catalog").and_then(Value::as_str).unwrap_or("");
     let title = catalog.get("title").and_then(Value::as_str).unwrap_or("");
-    let description = catalog.get("description").and_then(Value::as_str).unwrap_or("");
+    let description = catalog
+        .get("description")
+        .and_then(Value::as_str)
+        .unwrap_or("");
     let index = full_reference_index(catalog);
 
     let mut rows: Vec<String> = vec![
@@ -937,7 +982,12 @@ fn render_index(catalogs: &[Value]) -> String {
     let sum_field = |field: &str| -> usize {
         catalogs
             .iter()
-            .map(|c| full_reference_index(c).get(field).and_then(Value::as_u64).unwrap_or(0) as usize)
+            .map(|c| {
+                full_reference_index(c)
+                    .get(field)
+                    .and_then(Value::as_u64)
+                    .unwrap_or(0) as usize
+            })
             .sum()
     };
     let complete = sum_field("complete_count");

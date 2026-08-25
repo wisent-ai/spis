@@ -52,12 +52,20 @@ fn load_catalog(catalog: &str) -> CatalogData {
         Ok(v) => v,
         Err(e) => fail(&format!("read {name}/references.json: {e:#}")),
     };
-    CatalogData { directory, sources, index }
+    CatalogData {
+        directory,
+        sources,
+        index,
+    }
 }
 
 /// Returns (example, entry) for the record matching selector (None, NN, slug,
 /// or lowercased name), mirroring the Python pick().
-fn pick(sources: &Value, index: &Value, selector: Option<&str>) -> (Map<String, Value>, Map<String, Value>) {
+fn pick(
+    sources: &Value,
+    index: &Value,
+    selector: Option<&str>,
+) -> (Map<String, Value>, Map<String, Value>) {
     let examples = sources["examples"].as_array().cloned().unwrap_or_default();
     let references = index["references"].as_array().cloned().unwrap_or_default();
     for (position, example) in examples.iter().enumerate() {
@@ -84,10 +92,7 @@ fn pick(sources: &Value, index: &Value, selector: Option<&str>) -> (Map<String, 
             );
         }
     }
-    fail(&format!(
-        "record {:?} not found",
-        selector.unwrap_or("")
-    ));
+    fail(&format!("record {:?} not found", selector.unwrap_or("")));
 }
 
 fn slug_of(entry: &Map<String, Value>) -> String {
@@ -126,11 +131,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--record" => {
                 i += 1;
-                record = Some(
-                    rest.get(i)
-                        .context("--record needs a value")?
-                        .clone(),
-                );
+                record = Some(rest.get(i).context("--record needs a value")?.clone());
             }
             "--host" => {
                 i += 1;
@@ -165,7 +166,12 @@ pub fn run(rest: &[String]) -> Result<()> {
             examples
                 .into_iter()
                 .zip(references)
-                .map(|(e, r)| (e.as_object().cloned().unwrap_or_default(), r.as_object().cloned().unwrap_or_default()))
+                .map(|(e, r)| {
+                    (
+                        e.as_object().cloned().unwrap_or_default(),
+                        r.as_object().cloned().unwrap_or_default(),
+                    )
+                })
                 .collect()
         }
     };
@@ -234,7 +240,11 @@ pub fn run(rest: &[String]) -> Result<()> {
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     let stderr = String::from_utf8_lossy(&output.stderr).to_string();
 
-    if !output.status.success() && (stderr.clone() + &stdout).to_lowercase().contains("skarbiec") {
+    if !output.status.success()
+        && (stderr.clone() + &stdout)
+            .to_lowercase()
+            .contains("skarbiec")
+    {
         // This machine holds no grant for the admission token. That is the
         // designed state: enqueue on the target host instead, where the host's
         // own Skarbiec identity authorizes the batch. The pinned Stado job is
@@ -251,7 +261,12 @@ pub fn run(rest: &[String]) -> Result<()> {
         let job_script = job_dir.join(format!("spis-widths-{batch}.sh"));
         std::fs::write(&job_script, script)?;
         let submit = std::process::Command::new(&stado)
-            .args(["submit", &format!("sh {}", job_script.display()), "--pinned-host", &host])
+            .args([
+                "submit",
+                &format!("sh {}", job_script.display()),
+                "--pinned-host",
+                &host,
+            ])
             .output()
             .context("run stado submit")?;
         let sub_out = String::from_utf8_lossy(&submit.stdout).to_string();
@@ -259,10 +274,14 @@ pub fn run(rest: &[String]) -> Result<()> {
         if !submit.status.success() {
             fail(&format!(
                 "remote enqueue submission failed: {}",
-                if sub_err.trim().is_empty() { sub_out.trim() } else { sub_err.trim() }
-                    .chars()
-                    .take(300)
-                    .collect::<String>()
+                if sub_err.trim().is_empty() {
+                    sub_out.trim()
+                } else {
+                    sub_err.trim()
+                }
+                .chars()
+                .take(300)
+                .collect::<String>()
             ));
         }
         match find_batch_id(&sub_out) {
@@ -275,7 +294,11 @@ pub fn run(rest: &[String]) -> Result<()> {
         return Ok(());
     }
     if !output.status.success() {
-        let detail = if stderr.trim().is_empty() { &stdout } else { &stderr };
+        let detail = if stderr.trim().is_empty() {
+            &stdout
+        } else {
+            &stderr
+        };
         fail(&format!(
             "weles-capture refused: {}",
             detail.trim().chars().take(300).collect::<String>()
@@ -284,9 +307,14 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     // Record the batch on each touched reference so retrieval can find it.
     for (_, entry) in &selected {
-        let record_path = data.directory.join(entry["path"].as_str().unwrap_or_default());
+        let record_path = data
+            .directory
+            .join(entry["path"].as_str().unwrap_or_default());
         let mut record: Map<String, Value> =
-            crate::read_json::<serde_json::Value>(record_path.to_str().unwrap())?.as_object().cloned().unwrap_or_default();
+            crate::read_json::<serde_json::Value>(record_path.to_str().unwrap())?
+                .as_object()
+                .cloned()
+                .unwrap_or_default();
         {
             let batches = record
                 .entry("capture_batches".to_string())

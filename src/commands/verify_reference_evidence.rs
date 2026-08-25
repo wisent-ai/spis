@@ -154,8 +154,12 @@ const LOCAL_RUN_PATTERNS: &[&str] = &[
     "local run of the installed product",
 ];
 
-const LOCAL_BROWSER_PATTERNS: &[&str] =
-    &["weles", "patched chromium", "browser recording", "screencast"];
+const LOCAL_BROWSER_PATTERNS: &[&str] = &[
+    "weles",
+    "patched chromium",
+    "browser recording",
+    "screencast",
+];
 
 const UPSTREAM_PATTERNS: &[&str] = &[
     "yt-dlp",
@@ -173,7 +177,14 @@ const UPSTREAM_PATTERNS: &[&str] = &[
 ];
 
 const UPSTREAM_MEDIA_WORDS: &[&str] = &[
-    "media", "asset", "recording", "stream", "preview", "trailer", "tour", "download",
+    "media",
+    "asset",
+    "recording",
+    "stream",
+    "preview",
+    "trailer",
+    "tour",
+    "download",
 ];
 
 /// r"official[- ][\w -]*(media|asset|recording|stream|preview|trailer|tour|download)"
@@ -314,7 +325,11 @@ fn probe_cast(path: &Path) -> Result<Probe> {
         } else {
             None
         },
-        frame_count: if frames > 0 { Some(frames as i64) } else { None },
+        frame_count: if frames > 0 {
+            Some(frames as i64)
+        } else {
+            None
+        },
         error: None,
     })
 }
@@ -607,7 +622,11 @@ fn fmt_opt_num(v: Option<f64>) -> String {
 }
 
 fn entry_local_path(entry: &Map<String, Value>) -> String {
-    entry.get("local_path").and_then(|v| v.as_str()).unwrap_or("").to_string()
+    entry
+        .get("local_path")
+        .and_then(|v| v.as_str())
+        .unwrap_or("")
+        .to_string()
 }
 
 /// Frozen measurement date, kept byte-identical with the Python tool.
@@ -640,11 +659,17 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
         let local_path = entry_local_path(obj);
         let local = base.join(&local_path);
         let probe = probe_media(&local)?;
-        let declared_kind = obj.get("media_kind").and_then(|v| v.as_str()).map(str::to_string);
+        let declared_kind = obj
+            .get("media_kind")
+            .and_then(|v| v.as_str())
+            .map(str::to_string);
         let canonical = canonical_motion_kind(declared_kind.as_deref());
         obj.insert(
             "declared_media_kind".into(),
-            declared_kind.clone().map(Value::String).unwrap_or(Value::Null),
+            declared_kind
+                .clone()
+                .map(Value::String)
+                .unwrap_or(Value::Null),
         );
         if !probe.exists {
             obj.insert(
@@ -668,14 +693,30 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
         }
         obj.insert(
             "sha256".into(),
-            probe.sha256.clone().map(Value::String).unwrap_or(Value::Null),
+            probe
+                .sha256
+                .clone()
+                .map(Value::String)
+                .unwrap_or(Value::Null),
         );
-        obj.insert("bytes".into(), probe.bytes.map(|b| json!(b)).unwrap_or(Value::Null));
-        obj.insert("width".into(), probe.width.map(|w| json!(w)).unwrap_or(Value::Null));
-        obj.insert("height".into(), probe.height.map(|h| json!(h)).unwrap_or(Value::Null));
+        obj.insert(
+            "bytes".into(),
+            probe.bytes.map(|b| json!(b)).unwrap_or(Value::Null),
+        );
+        obj.insert(
+            "width".into(),
+            probe.width.map(|w| json!(w)).unwrap_or(Value::Null),
+        );
+        obj.insert(
+            "height".into(),
+            probe.height.map(|h| json!(h)).unwrap_or(Value::Null),
+        );
         obj.insert(
             "duration_seconds".into(),
-            probe.duration_seconds.map(|d| json!(d)).unwrap_or(Value::Null),
+            probe
+                .duration_seconds
+                .map(|d| json!(d))
+                .unwrap_or(Value::Null),
         );
         obj.insert(
             "frame_count".into(),
@@ -750,11 +791,24 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
         }
         obj.insert(
             "sha256".into(),
-            probe.sha256.clone().map(Value::String).unwrap_or(Value::Null),
+            probe
+                .sha256
+                .clone()
+                .map(Value::String)
+                .unwrap_or(Value::Null),
         );
-        obj.insert("bytes".into(), probe.bytes.map(|b| json!(b)).unwrap_or(Value::Null));
-        obj.insert("width".into(), probe.width.map(|w| json!(w)).unwrap_or(Value::Null));
-        obj.insert("height".into(), probe.height.map(|h| json!(h)).unwrap_or(Value::Null));
+        obj.insert(
+            "bytes".into(),
+            probe.bytes.map(|b| json!(b)).unwrap_or(Value::Null),
+        );
+        obj.insert(
+            "width".into(),
+            probe.width.map(|w| json!(w)).unwrap_or(Value::Null),
+        );
+        obj.insert(
+            "height".into(),
+            probe.height.map(|h| json!(h)).unwrap_or(Value::Null),
+        );
 
         // v1 records already used `name` and `source_motion_path`. A failed v2
         // migration introduced parallel `state_name` / `source_relationship`
@@ -864,7 +918,10 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
             .collect();
         if !missing.is_empty() {
             let name = item.get("name").and_then(|v| v.as_str()).unwrap_or("?");
-            gaps.push(format!("interaction '{name}' missing {}", missing.join(", ")));
+            gaps.push(format!(
+                "interaction '{name}' missing {}",
+                missing.join(", ")
+            ));
             break;
         }
     }
@@ -884,8 +941,7 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
                 };
                 for (alias, canonical) in MOTION_ANALYSIS_ALIASES {
                     if let Some(alias_value) = obj.remove(*alias) {
-                        obj.entry(canonical.to_string())
-                            .or_insert(alias_value);
+                        obj.entry(canonical.to_string()).or_insert(alias_value);
                     }
                 }
                 let declared_timing = obj
@@ -989,7 +1045,11 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
         );
         obj.insert(
             "evidence_status".into(),
-            json!(if gaps.is_empty() { "complete" } else { "partial" }),
+            json!(if gaps.is_empty() {
+                "complete"
+            } else {
+                "partial"
+            }),
         );
         obj.insert("measured_at".into(), json!(TODAY));
     }
@@ -1076,7 +1136,6 @@ pub fn run(rest: &[String]) -> Result<()> {
         println!("dry run: records are measured and reported, nothing is written");
     }
 
-
     let mut total = 0usize;
     let mut complete = 0usize;
     let mut gap_counter: Vec<(String, usize)> = Vec::new();
@@ -1162,7 +1221,11 @@ pub fn run(rest: &[String]) -> Result<()> {
                     if let Some(obj) = r.as_object_mut() {
                         obj.insert(
                             "evidence_status".into(),
-                            json!(if gaps.is_empty() { "complete" } else { "partial" }),
+                            json!(if gaps.is_empty() {
+                                "complete"
+                            } else {
+                                "partial"
+                            }),
                         );
                         obj.insert("evidence_gap_count".into(), json!(gaps.len()));
                     }

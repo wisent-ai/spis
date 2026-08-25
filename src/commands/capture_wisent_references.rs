@@ -326,7 +326,8 @@ fn ansi_re() -> &'static Regex {
 }
 
 fn sgr_re() -> &'static Regex {
-    static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\x1b\[[0-9;]*m").expect("sgr regex"));
+    static RE: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"\x1b\[[0-9;]*m").expect("sgr regex"));
     &RE
 }
 
@@ -506,8 +507,8 @@ fn is_executable(path: &Path) -> bool {
 }
 
 enum QuickOutcome {
-    Ran(i32, String),          // exit status, first line
-    Failed(String),            // exception type name, like the Python returned
+    Ran(i32, String), // exit status, first line
+    Failed(String),   // exception type name, like the Python returned
     Missing,
 }
 
@@ -657,8 +658,7 @@ impl Session {
                 if libc::chdir(cwd_c.as_ptr()) != 0 {
                     libc::_exit(127);
                 }
-                let mut argp: Vec<*const libc::c_char> =
-                    vec![shell_c.as_ptr()];
+                let mut argp: Vec<*const libc::c_char> = vec![shell_c.as_ptr()];
                 argp.extend(argv.iter().map(|a| a.as_ptr()));
                 argp.push(std::ptr::null());
                 let mut envp: Vec<*const libc::c_char> = env_c.iter().map(|e| e.as_ptr()).collect();
@@ -692,7 +692,11 @@ impl Session {
         let mut written = 0;
         while written < bytes.len() {
             let n = unsafe {
-                libc::write(self.fd, bytes[written..].as_ptr() as *const _, bytes.len() - written)
+                libc::write(
+                    self.fd,
+                    bytes[written..].as_ptr() as *const _,
+                    bytes.len() - written,
+                )
             };
             if n <= 0 {
                 break;
@@ -853,17 +857,26 @@ const STATE_PLAN: &[(&str, &str, &str)] = &[
         "03-subcommand-help",
         "subcommand help surface",
     ),
-    ("invalid-flag", "04-refusal", "refusal after the invalid flag"),
-    ("recovery-help", "05-recovery", "recovered help after the refusal"),
+    (
+        "invalid-flag",
+        "04-refusal",
+        "refusal after the invalid flag",
+    ),
+    (
+        "recovery-help",
+        "05-recovery",
+        "recovered help after the refusal",
+    ),
 ];
 
 fn capture(index: usize, product: &'static Product) -> Result<Run> {
-    let binary_path = resolve(product)
-        .ok_or_else(|| anyhow!("{} is not on PATH", product.binary))?;
+    let binary_path =
+        resolve(product).ok_or_else(|| anyhow!("{} is not on PATH", product.binary))?;
 
     let workdir = scratch_root().join("run").join(product.slug);
     if workdir.exists() {
-        std::fs::remove_dir_all(&workdir).with_context(|| format!("clear {}", workdir.display()))?;
+        std::fs::remove_dir_all(&workdir)
+            .with_context(|| format!("clear {}", workdir.display()))?;
     }
     std::fs::create_dir_all(&workdir)?;
 
@@ -1000,7 +1013,11 @@ fn timing_class(measured: &Value) -> String {
     let spans: Vec<f64> = STEP_PLAN
         .iter()
         .filter(|(k, _)| *k != "cancellation")
-        .map(|(k, _)| measured["steps"][*k]["elapsed_seconds"].as_f64().unwrap_or(0.0))
+        .map(|(k, _)| {
+            measured["steps"][*k]["elapsed_seconds"]
+                .as_f64()
+                .unwrap_or(0.0)
+        })
         .collect();
     let slowest = spans.iter().cloned().fold(0.0f64, f64::max);
     if slowest < 0.05 {
@@ -1018,7 +1035,11 @@ fn timing_description(measured: &Value) -> String {
     let spans: Vec<f64> = STEP_PLAN
         .iter()
         .filter(|(k, _)| *k != "cancellation")
-        .map(|(k, _)| measured["steps"][*k]["elapsed_seconds"].as_f64().unwrap_or(0.0))
+        .map(|(k, _)| {
+            measured["steps"][*k]["elapsed_seconds"]
+                .as_f64()
+                .unwrap_or(0.0)
+        })
         .collect();
     let fastest = spans.iter().cloned().fold(f64::INFINITY, f64::min);
     let slowest = spans.iter().cloned().fold(0.0f64, f64::max);
@@ -1058,18 +1079,31 @@ fn build_record(run: &Run, measured: &Value, media: &Value) -> Value {
     };
 
     let version_line = steps["version"]["first_line"].as_str().unwrap_or_default();
-    let version_ok = measured["version_flag_supported"].as_bool().unwrap_or(false);
+    let version_ok = measured["version_flag_supported"]
+        .as_bool()
+        .unwrap_or(false);
     let refusal_line = measured["refusal_first_line"].as_str().unwrap_or_default();
     let refusal_status = measured["refusal_exit_status"].as_i64();
-    let recovery_line = steps["recovery-help"]["first_line"].as_str().unwrap_or_default();
-    let invalid_cmd = steps["invalid-flag"]["command"].as_str().unwrap_or_default();
+    let recovery_line = steps["recovery-help"]["first_line"]
+        .as_str()
+        .unwrap_or_default();
+    let invalid_cmd = steps["invalid-flag"]["command"]
+        .as_str()
+        .unwrap_or_default();
 
-    let cancellation_sentence = if measured["cancel_prompt_restored"].as_bool().unwrap_or(false) {
-        format!("Ctrl-C on the unsubmitted `{invalid_cmd}` line discarded it and restored the prompt")
+    let cancellation_sentence = if measured["cancel_prompt_restored"]
+        .as_bool()
+        .unwrap_or(false)
+    {
+        format!(
+            "Ctrl-C on the unsubmitted `{invalid_cmd}` line discarded it and restored the prompt"
+        )
     } else {
         format!("Ctrl-C was sent on the unsubmitted `{invalid_cmd}` line and the session continued at the prompt")
     };
-    let phrase = measured["refusal_next_action_phrase"].as_str().unwrap_or("");
+    let phrase = measured["refusal_next_action_phrase"]
+        .as_str()
+        .unwrap_or("");
 
     let interactions = vec![
         {
@@ -1369,11 +1403,17 @@ fn build_record(run: &Run, measured: &Value, media: &Value) -> Value {
     ];
 
     let colors_help = measured["colors_help"].as_bool().unwrap_or(false);
-    let identical = measured["no_color_text_identical"].as_bool().unwrap_or(false);
-    let names_next = measured["refusal_names_next_action"].as_bool().unwrap_or(false);
+    let identical = measured["no_color_text_identical"]
+        .as_bool()
+        .unwrap_or(false);
+    let names_next = measured["refusal_names_next_action"]
+        .as_bool()
+        .unwrap_or(false);
     let fits80 = measured["help_fits_80"].as_bool().unwrap_or(false);
     let help_command = steps["help"]["command"].as_str().unwrap_or_default();
-    let nocolor_command = steps["no-color-help"]["command"].as_str().unwrap_or_default();
+    let nocolor_command = steps["no-color-help"]["command"]
+        .as_str()
+        .unwrap_or_default();
 
     let accessibility_observations = vec![
         format!(
@@ -1400,7 +1440,10 @@ fn build_record(run: &Run, measured: &Value, media: &Value) -> Value {
         format!(
             "Refusal wording: the refusal for `{invalid_cmd}` {}",
             if names_next {
-                format!("names the next action ({}) in the same output.", py_repr(phrase))
+                format!(
+                    "names the next action ({}) in the same output.",
+                    py_repr(phrase)
+                )
             } else {
                 "does not name a next action anywhere in its output.".to_string()
             }
@@ -1421,7 +1464,9 @@ fn build_record(run: &Run, measured: &Value, media: &Value) -> Value {
             "State without colour: success and refusal differ by exit status in the cast \
              ({} against {}), which the shell prints as text.",
             steps["recovery-help"]["exit_status"],
-            refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())
+            refusal_status
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "None".into())
         ),
     ];
 
@@ -1624,7 +1669,9 @@ fn digest(path: &Path) -> Result<(u64, String)> {
     let mut buf = vec![0u8; 1 << 20];
     loop {
         use std::io::Read;
-        let n = file.read(&mut buf).with_context(|| format!("read {}", path.display()))?;
+        let n = file
+            .read(&mut buf)
+            .with_context(|| format!("read {}", path.display()))?;
         if n == 0 {
             break;
         }
@@ -1765,7 +1812,11 @@ fn write_cast(path: &Path, events: &[(f64, String)], title: &str, wall_start: u6
     );
     let mut out = String::from(&header);
     for (stamp, text) in events {
-        out.push_str(&format!("[{}, \"o\", {}]\n", g(round_n(*stamp, 6)), json_str(text)));
+        out.push_str(&format!(
+            "[{}, \"o\", {}]\n",
+            g(round_n(*stamp, 6)),
+            json_str(text)
+        ));
     }
     std::fs::write(path, out).with_context(|| format!("write {}", path.display()))
 }
@@ -1797,10 +1848,7 @@ fn write_media(run: &Run, ref_dir: &Path) -> Result<Value> {
         let path = media_dir.join(format!("{filename}.png"));
         let (width, height) = render_state(&path, events, index)?;
         let (st_size, st_sha) = digest(&path)?;
-        let ts = events
-            .get(index)
-            .map(|(t, _)| *t)
-            .unwrap_or(duration);
+        let ts = events.get(index).map(|(t, _)| *t).unwrap_or(duration);
         states.push(json!({
             "label": format!("{}: {label}", run.product.name),
             "state_name": filename.split_once('-').map(|(_, rest)| rest).unwrap_or(filename),
@@ -1851,7 +1899,9 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
         product.repository,
         product.product_url,
         product.binary,
-        record["installed"]["resolved_path"].as_str().unwrap_or_default(),
+        record["installed"]["resolved_path"]
+            .as_str()
+            .unwrap_or_default(),
     ));
     a(String::new());
     a("## What was run".to_string());
@@ -1880,9 +1930,11 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
         ));
     }
     a(String::new());
-    a("Nothing else was issued. No host was contacted, no credential minted, no vault written, \
+    a(
+        "Nothing else was issued. No host was contacted, no credential minted, no vault written, \
        no job submitted, no service restarted, and no test run."
-        .to_string());
+            .to_string(),
+    );
     a(String::new());
     a("## Identity as installed today".to_string());
     a(String::new());
@@ -1891,7 +1943,13 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
         "$ {}",
         steps["version"]["command"].as_str().unwrap_or_default()
     ));
-    for line in steps["version"]["lines"].as_array().map(|v| v.as_slice()).unwrap_or(&[]).iter().take(12) {
+    for line in steps["version"]["lines"]
+        .as_array()
+        .map(|v| v.as_slice())
+        .unwrap_or(&[])
+        .iter()
+        .take(12)
+    {
         a(line.as_str().unwrap_or_default().to_string());
     }
     a(format!(
@@ -1903,7 +1961,10 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
     ));
     a("```".to_string());
     a(String::new());
-    if !measured["version_flag_supported"].as_bool().unwrap_or(false) {
+    if !measured["version_flag_supported"]
+        .as_bool()
+        .unwrap_or(false)
+    {
         a(format!(
             "{} has no version flag. The refusal above is the measurement: this product cannot be \
              asked what version it is from its own CLI.",
@@ -1916,7 +1977,9 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
     a("```".to_string());
     a(format!(
         "$ {}",
-        steps["invalid-flag"]["command"].as_str().unwrap_or_default()
+        steps["invalid-flag"]["command"]
+            .as_str()
+            .unwrap_or_default()
     ));
     for line in steps["invalid-flag"]["lines"]
         .as_array()
@@ -1938,15 +2001,24 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
     a(String::new());
     a(format!(
         "The refusal {}. `{}` then answers again with status {}.",
-        if measured["refusal_names_next_action"].as_bool().unwrap_or(false) {
+        if measured["refusal_names_next_action"]
+            .as_bool()
+            .unwrap_or(false)
+        {
             format!(
                 "names the next action ({})",
-                py_repr(measured["refusal_next_action_phrase"].as_str().unwrap_or(""))
+                py_repr(
+                    measured["refusal_next_action_phrase"]
+                        .as_str()
+                        .unwrap_or("")
+                )
             )
         } else {
             "names no next action".to_string()
         },
-        steps["recovery-help"]["command"].as_str().unwrap_or_default(),
+        steps["recovery-help"]["command"]
+            .as_str()
+            .unwrap_or_default(),
         steps["recovery-help"]["exit_status"],
     ));
     a(String::new());
@@ -1959,9 +2031,11 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
         motion["bytes"],
         motion["sha256"].as_str().unwrap_or_default().chars().take(16).collect::<String>(),
     ));
-    a("- Play it with `asciinema play media/session.cast`, or read it as JSON: one header line, \
+    a(
+        "- Play it with `asciinema play media/session.cast`, or read it as JSON: one header line, \
        then `[time, \"o\", output]` events."
-        .to_string());
+            .to_string(),
+    );
     a(String::new());
     a("## States".to_string());
     a(String::new());
@@ -1969,7 +2043,11 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
        — not a separate screenshot."
         .to_string());
     a(String::new());
-    for state in record["states"].as_array().map(|v| v.as_slice()).unwrap_or(&[]) {
+    for state in record["states"]
+        .as_array()
+        .map(|v| v.as_slice())
+        .unwrap_or(&[])
+    {
         a(format!(
             "- [`{}`]({}) — {}, cast event {} at t={} s, {}x{}, {} bytes",
             state["local_path"].as_str().unwrap_or_default(),
@@ -2007,7 +2085,11 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
     a(String::new());
     a("| # | action | response | state |".to_string());
     a("|---:|---|---|---|".to_string());
-    for step in record["journey"]["steps"].as_array().map(|v| v.as_slice()).unwrap_or(&[]) {
+    for step in record["journey"]["steps"]
+        .as_array()
+        .map(|v| v.as_slice())
+        .unwrap_or(&[])
+    {
         a(format!(
             "| {} | {} | {} | {} |",
             step["index"],
@@ -2021,11 +2103,13 @@ fn reference_readme(record: &Value, run: &Run, measured: &Value) -> String {
     a(String::new());
     a(product.selection_note.to_string());
     a(String::new());
-    a("This record evidences first-look grammar, help discoverability, refusal wording, safe \
+    a(
+        "This record evidences first-look grammar, help discoverability, refusal wording, safe \
        cancellation, recovery and colour independence. It evidences nothing about authenticated \
        behaviour, remote calls, queue submission, vault writes or destructive commands: those \
        paths were deliberately not run."
-        .to_string());
+            .to_string(),
+    );
     a(String::new());
     lines.join("\n")
 }
@@ -2041,7 +2125,10 @@ fn write_reference(run: &Run, measured: &Value) -> Result<(PathBuf, Value)> {
         ref_dir.join("reference.json"),
         serde_json::to_string_pretty(&record)? + "\n",
     )?;
-    std::fs::write(ref_dir.join("README.md"), reference_readme(&record, run, measured))?;
+    std::fs::write(
+        ref_dir.join("README.md"),
+        reference_readme(&record, run, measured),
+    )?;
     Ok((ref_dir, record))
 }
 
@@ -2059,8 +2146,8 @@ fn load_records() -> Result<Vec<(PathBuf, Value)>> {
     for dir in dirs {
         let path = dir.join("reference.json");
         let text = std::fs::read_to_string(&path)?;
-        let value = serde_json::from_str(&text)
-            .with_context(|| format!("parse {}", path.display()))?;
+        let value =
+            serde_json::from_str(&text).with_context(|| format!("parse {}", path.display()))?;
         out.push((path, value));
     }
     Ok(out)
@@ -2076,8 +2163,15 @@ fn write_sources() -> Result<Value> {
     for (path, record) in &records {
         let motion = &record["motion"][0];
         let overview = &record["states"][1];
-        let parent = path.parent().and_then(|p| p.file_name()).and_then(|n| n.to_str()).unwrap_or("");
-        let slug = parent.split_once('-').map(|(_, rest)| rest).unwrap_or(parent);
+        let parent = path
+            .parent()
+            .and_then(|p| p.file_name())
+            .and_then(|n| n.to_str())
+            .unwrap_or("");
+        let slug = parent
+            .split_once('-')
+            .map(|(_, rest)| rest)
+            .unwrap_or(parent);
         let prod = product_by_name(record["name"].as_str().unwrap_or_default());
         examples.push(json!({
             "name": record["name"].clone(),
@@ -2166,7 +2260,11 @@ fn write_index() -> Result<Value> {
     let records = load_records()?;
     let mut references = Vec::new();
     for (i, (path, record)) in records.iter().enumerate() {
-        let parent = path.parent().and_then(|p| p.file_name()).and_then(|n| n.to_str()).unwrap_or("");
+        let parent = path
+            .parent()
+            .and_then(|p| p.file_name())
+            .and_then(|n| n.to_str())
+            .unwrap_or("");
         references.push(json!({
             "index": i + 1,
             "name": record["name"].clone(),
@@ -2175,7 +2273,10 @@ fn write_index() -> Result<Value> {
             "evidence_gap_count": record.get("evidence_gaps").and_then(|g| g.as_array()).map(|a| a.len()).unwrap_or(0),
         }));
     }
-    let complete_count = references.iter().filter(|r| r["evidence_status"].as_str() == Some("complete")).count();
+    let complete_count = references
+        .iter()
+        .filter(|r| r["evidence_status"].as_str() == Some("complete"))
+        .count();
     let payload = json!({
         "schema": INDEX_SCHEMA,
         "catalog": catalog_dir().file_name().and_then(|n| n.to_str()).unwrap_or_default(),
@@ -2195,11 +2296,31 @@ fn write_index() -> Result<Value> {
 fn write_full_reference() -> Result<()> {
     let records = load_records()?;
     let total = records.len();
-    let with_version_flag = records.iter().filter(|(_, r)| r["installed"]["version_flag_supported"].as_bool().unwrap_or(false));
-    let coloured = records.iter().filter(|(_, r)| r["accessibility"]["measurements"]["colours_help_output"].as_bool().unwrap_or(false));
-    let fits80 = records.iter().filter(|(_, r)| r["accessibility"]["measurements"]["help_fits_80_columns"].as_bool().unwrap_or(false));
-    let names_next = records.iter().filter(|(_, r)| r["accessibility"]["measurements"]["refusal_names_next_action"].as_bool().unwrap_or(false));
-    let identical = records.iter().filter(|(_, r)| r["accessibility"]["measurements"]["no_color_text_identical"].as_bool().unwrap_or(false));
+    let with_version_flag = records.iter().filter(|(_, r)| {
+        r["installed"]["version_flag_supported"]
+            .as_bool()
+            .unwrap_or(false)
+    });
+    let coloured = records.iter().filter(|(_, r)| {
+        r["accessibility"]["measurements"]["colours_help_output"]
+            .as_bool()
+            .unwrap_or(false)
+    });
+    let fits80 = records.iter().filter(|(_, r)| {
+        r["accessibility"]["measurements"]["help_fits_80_columns"]
+            .as_bool()
+            .unwrap_or(false)
+    });
+    let names_next = records.iter().filter(|(_, r)| {
+        r["accessibility"]["measurements"]["refusal_names_next_action"]
+            .as_bool()
+            .unwrap_or(false)
+    });
+    let identical = records.iter().filter(|(_, r)| {
+        r["accessibility"]["measurements"]["no_color_text_identical"]
+            .as_bool()
+            .unwrap_or(false)
+    });
     let mut statuses: Vec<i64> = records
         .iter()
         .filter_map(|(_, r)| r["accessibility"]["measurements"]["refusal_exit_status"].as_i64())
@@ -2256,10 +2377,12 @@ fn write_full_reference() -> Result<()> {
          numeric code across our own products.",
         statuses.iter().map(|s| s.to_string()).collect::<Vec<_>>().join(", ")
     ));
-    a("2. **Every product recovers through its own help.** After the refusal, re-running the \
+    a(
+        "2. **Every product recovers through its own help.** After the refusal, re-running the \
        top-level help returned valid output in every record; no product needed a reset, a flag \
        order change or a restart."
-        .to_string());
+            .to_string(),
+    );
     a("3. **Cancellation before submission is safe everywhere.** Ctrl-C on a typed but unsubmitted \
        line discarded it and restored the prompt in every session, and the product never started."
         .to_string());
@@ -2306,24 +2429,41 @@ fn write_full_reference() -> Result<()> {
     a(String::new());
     a("## Applicability boundaries".to_string());
     a(String::new());
-    a("Use these records to study first-contact behaviour of our own CLIs: identity, \
+    a(
+        "Use these records to study first-contact behaviour of our own CLIs: identity, \
        discoverability, refusal wording, exit-status contracts, cancellation and recovery. Do not \
        use them as evidence of authenticated workflows, host operations, queue behaviour, \
        credential handling, browser execution, model calls or anything that requires a target. \
        Those need their own recordings, and they are not in this catalog."
-        .to_string());
+            .to_string(),
+    );
     a(String::new());
     a("## Complete record citations".to_string());
     a(String::new());
-    a("| # | Product | Repository | Evidence | Version identity as installed | Invalid exit |".to_string());
+    a(
+        "| # | Product | Repository | Evidence | Version identity as installed | Invalid exit |"
+            .to_string(),
+    );
     a("|---:|---|---|---|---|---:|".to_string());
     for (i, (path, record)) in records.iter().enumerate() {
-        let parent = path.parent().and_then(|p| p.file_name()).and_then(|n| n.to_str()).unwrap_or("");
-        let version_raw = record["installed"]["version_output"].as_str().unwrap_or_default().replace('|', "\\|");
-        let version = if !record["installed"]["version_flag_supported"].as_bool().unwrap_or(false) {
+        let parent = path
+            .parent()
+            .and_then(|p| p.file_name())
+            .and_then(|n| n.to_str())
+            .unwrap_or("");
+        let version_raw = record["installed"]["version_output"]
+            .as_str()
+            .unwrap_or_default()
+            .replace('|', "\\|");
+        let version = if !record["installed"]["version_flag_supported"]
+            .as_bool()
+            .unwrap_or(false)
+        {
             format!(
                 "_no version flag_ — `{}` refused",
-                record["installed"]["version_command"].as_str().unwrap_or_default()
+                record["installed"]["version_command"]
+                    .as_str()
+                    .unwrap_or_default()
             )
         } else {
             format!("`{version_raw}`")
@@ -2338,7 +2478,10 @@ fn write_full_reference() -> Result<()> {
         ));
     }
     a(String::new());
-    std::fs::write(catalog_dir().join("full-reference.md"), lines.join("\n") + "\n")?;
+    std::fs::write(
+        catalog_dir().join("full-reference.md"),
+        lines.join("\n") + "\n",
+    )?;
     Ok(())
 }
 
@@ -2348,10 +2491,12 @@ fn write_catalog_readme() -> Result<()> {
     let mut a = |s: String| lines.push(s);
     a("# Wisent product examples".to_string());
     a(String::new());
-    a("The reference catalog for our own products. Every other catalog here measures somebody \
+    a(
+        "The reference catalog for our own products. Every other catalog here measures somebody \
        else's product from what its owner published; this one measures Wisent products by running \
        them on this workstation and keeping the recording."
-        .to_string());
+            .to_string(),
+    );
     a(String::new());
     a(format!(
         "It holds {} records — one per Wisent product with a runnable CLI on the capture host. That \
@@ -2372,11 +2517,13 @@ fn write_catalog_readme() -> Result<()> {
          same help with `NO_COLOR=1`."
     ));
     a(String::new());
-    a("The session's own output, with the timings of the run, becomes `media/session.cast` \
+    a(
+        "The session's own output, with the timings of the run, becomes `media/session.cast` \
        (asciinema v2). The five PNGs beside it are deterministic Pillow renders of that cast's \
        text at named points in the sequence — they are renders of the recording, not separate \
        screenshots, and every record says so in `source_relationship`."
-        .to_string());
+            .to_string(),
+    );
     a(String::new());
     a("Nothing in this catalog contacted a host, minted a credential, wrote a vault, submitted a \
        job, restarted a service or ran a test."
@@ -2386,16 +2533,22 @@ fn write_catalog_readme() -> Result<()> {
     a(String::new());
     a("```sh".to_string());
     a("cd ~/Documents/CodingProjects/Wisent/product-guidelines".to_string());
-    a("./capture-wisent-references.py --list      # what is installed, and its version identity"
-        .to_string());
-    a("./capture-wisent-references.py             # re-run every product and rebuild the catalog"
-        .to_string());
+    a(
+        "./capture-wisent-references.py --list      # what is installed, and its version identity"
+            .to_string(),
+    );
+    a(
+        "./capture-wisent-references.py             # re-run every product and rebuild the catalog"
+            .to_string(),
+    );
     a("./verify-reference-evidence.py --catalog wisent-product-examples --apply".to_string());
     a("```".to_string());
     a(String::new());
-    a("Re-running is idempotent apart from timestamps and hashes: the same products, the same \
+    a(
+        "Re-running is idempotent apart from timestamps and hashes: the same products, the same \
        commands, the same five states, new timings."
-        .to_string());
+            .to_string(),
+    );
     a(String::new());
     a(format!(
         "Capture host: {}, kernel {}.",
@@ -2405,21 +2558,34 @@ fn write_catalog_readme() -> Result<()> {
     a(String::new());
     a("## The products, as installed".to_string());
     a(String::new());
-    a("| # | Product | Repository | Version identity | Cast | Invalid exit | Help fits 80 cols |"
-        .to_string());
+    a(
+        "| # | Product | Repository | Version identity | Cast | Invalid exit | Help fits 80 cols |"
+            .to_string(),
+    );
     a("|---:|---|---|---:|---:|---|".to_string());
     for (i, (path, record)) in records.iter().enumerate() {
-        let parent = path.parent().and_then(|p| p.file_name()).and_then(|n| n.to_str()).unwrap_or("");
+        let parent = path
+            .parent()
+            .and_then(|p| p.file_name())
+            .and_then(|n| n.to_str())
+            .unwrap_or("");
         let m = &record["accessibility"]["measurements"];
-        let version = if record["installed"]["version_flag_supported"].as_bool().unwrap_or(false) {
+        let version = if record["installed"]["version_flag_supported"]
+            .as_bool()
+            .unwrap_or(false)
+        {
             format!(
                 "`{}`",
-                record["installed"]["version_output"].as_str().unwrap_or_default()
+                record["installed"]["version_output"]
+                    .as_str()
+                    .unwrap_or_default()
             )
         } else {
             format!(
                 "_none_ (`{}` refused, exit {})",
-                record["installed"]["version_command"].as_str().unwrap_or_default(),
+                record["installed"]["version_command"]
+                    .as_str()
+                    .unwrap_or_default(),
                 record["installed"]["version_exit_status"],
             )
         };
@@ -2460,10 +2626,14 @@ fn write_catalog_readme() -> Result<()> {
     a(String::new());
     a("## Files".to_string());
     a(String::new());
-    a("- `sources.json` — the catalog scope, the capture host, and one entry per product."
-        .to_string());
-    a("- `references.json` — the record index, with the evidence status the verifier measured."
-        .to_string());
+    a(
+        "- `sources.json` — the catalog scope, the capture host, and one entry per product."
+            .to_string(),
+    );
+    a(
+        "- `references.json` — the record index, with the evidence status the verifier measured."
+            .to_string(),
+    );
     a("- `full-reference.md` — the synthesis across the records: what our CLIs agree and disagree on."
         .to_string());
     a("- `references/<NN-slug>/` — the per-product record, its README, its cast and its five states."
@@ -2476,10 +2646,7 @@ fn write_catalog_readme() -> Result<()> {
 // ----------------------------------------------------------------------- cli
 
 fn cmd_list() -> Result<()> {
-    println!(
-        "Wisent products on this host ({}):",
-        host_sentence()
-    );
+    println!("Wisent products on this host ({}):", host_sentence());
     println!();
     let mut found = 0usize;
     for (index, product) in PRODUCTS.iter().enumerate() {
@@ -2500,10 +2667,16 @@ fn cmd_list() -> Result<()> {
         let identity = match outcome {
             QuickOutcome::Ran(0, first) => first,
             QuickOutcome::Ran(rc, first) => {
-                format!("(no version flag; `{}` exits {rc}) {first}", product.version_cmd)
+                format!(
+                    "(no version flag; `{}` exits {rc}) {first}",
+                    product.version_cmd
+                )
             }
             QuickOutcome::Failed(tag) => {
-                format!("(no version flag; `{}` exits None) {tag}", product.version_cmd)
+                format!(
+                    "(no version flag; `{}` exits None) {tag}",
+                    product.version_cmd
+                )
             }
             QuickOutcome::Missing => unreachable!(),
         };
@@ -2540,12 +2713,14 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--list" => list = true,
             "--catalog-only" => catalog_only = true,
             "--product" => {
-                let slug = it.next().ok_or_else(|| anyhow!("--product requires a slug"))?;
+                let slug = it
+                    .next()
+                    .ok_or_else(|| anyhow!("--product requires a slug"))?;
                 wanted.push(slug.clone());
             }
-            other => bail!(
-                "unknown flag: {other} (expected --list, --product <slug>, --catalog-only)"
-            ),
+            other => {
+                bail!("unknown flag: {other} (expected --list, --product <slug>, --catalog-only)")
+            }
         }
     }
 

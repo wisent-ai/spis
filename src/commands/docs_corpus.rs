@@ -72,13 +72,17 @@ fn collect_sites() -> Result<Vec<SiteInfo>> {
     Ok(out)
 }
 
-fn open_jsonl(slug: &str) -> Result<Option<std::io::BufReader<flate2::read::MultiGzDecoder<std::fs::File>>>> {
+fn open_jsonl(
+    slug: &str,
+) -> Result<Option<std::io::BufReader<flate2::read::MultiGzDecoder<std::fs::File>>>> {
     let path = corpus_dir(slug).join("pages.jsonl.gz");
     if !path.exists() {
         return Ok(None);
     }
     let f = std::fs::File::open(&path)?;
-    Ok(Some(std::io::BufReader::new(flate2::read::MultiGzDecoder::new(f))))
+    Ok(Some(std::io::BufReader::new(
+        flate2::read::MultiGzDecoder::new(f),
+    )))
 }
 
 fn scan_site(
@@ -88,7 +92,9 @@ fn scan_site(
     limit: usize,
     hits: &mut Vec<serde_json::Value>,
 ) -> Result<usize> {
-    let Some(reader) = open_jsonl(slug)? else { return Ok(0) };
+    let Some(reader) = open_jsonl(slug)? else {
+        return Ok(0);
+    };
     let q = query.to_lowercase();
     let mut scanned = 0usize;
     let mut lines = reader.lines();
@@ -211,7 +217,9 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             println!(
                 "{}",
-                serde_json::to_string_pretty(&json!({"hits": hits, "scanned": scanned, "limit": limit}))?
+                serde_json::to_string_pretty(
+                    &json!({"hits": hits, "scanned": scanned, "limit": limit})
+                )?
             );
             Ok(())
         }
@@ -220,7 +228,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             if url_filter.is_empty() {
                 bail!("show needs --url <url>");
             }
-            let Some(mut reader) = open_jsonl(&slug)? else {
+            let Some(reader) = open_jsonl(&slug)? else {
                 bail!("no corpus file for {slug}");
             };
             let mut lines = reader.lines();
@@ -228,7 +236,9 @@ pub fn run(rest: &[String]) -> Result<()> {
                 let line = match lines.next() {
                     Some(Ok(l)) => l,
                     Some(Err(_)) | None => {
-                        bail!("url not found in the {slug} corpus (or archive still being written)");
+                        bail!(
+                            "url not found in the {slug} corpus (or archive still being written)"
+                        );
                     }
                 };
                 let Ok(rec) = serde_json::from_str::<serde_json::Value>(&line) else {
