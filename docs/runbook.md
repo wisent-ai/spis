@@ -11,13 +11,6 @@ Use this page to diagnose refusals without weakening the evidence contract. Quot
 
 Make a clean worktree or isolated temporary directory before mutation. Never use a help flag as a safety probe unless the command reference says it implements help.
 
-## `sync-readme-examples --help` refreshed snapshots
-
-**Cause:** `sync_readme_examples::run` ignores its `_rest` argument. Any invocation dispatches the GitHub refresh.
-
-**Observed result:** a retained run of `spis sync-readme-examples --help` fetched 50 README snapshots, changed tracked snapshot/index files, and created `readme-examples/scrape-run.json`.
-
-**Recovery:** preserve unrelated work, restore only the changed `readme-examples` files from version control, and remove only the newly created scrape-run if it was not intended. Do not rerun to confirm. To inspect this command, read [the CLI reference](cli-reference.md) or source.
 
 ## Record mutation reports `index regeneration refused the change`
 

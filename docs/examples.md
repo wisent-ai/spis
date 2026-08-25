@@ -32,4 +32,4 @@ Draft evidence-counted observations without changing a catalog:
 spis guidelines cli-examples --out /tmp/cli-guidelines.md
 ```
 
-Before copying any command, check its safety class in the [runbook](runbook.md) and complete signature in the [CLI reference](cli-reference.md). In particular, never probe `sync-readme-examples` with `--help`; it ignores arguments and performs the network refresh.
+Before copying any command, check its safety class in the [runbook](runbook.md) and complete signature in the [CLI reference](cli-reference.md).

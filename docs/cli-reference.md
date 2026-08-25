@@ -8,18 +8,19 @@ spis <subcommand> [flags]
 
 Top-level help exits 0. An unknown subcommand prints `unknown subcommand: NAME`, prints usage, and exits 2. A command error is printed as `error: DETAIL` and exits 1 unless the command defines a specialized exit policy.
 
-Many subcommands do not implement `--help`; an unknown flag may be rejected, and `sync-readme-examples` ignores all arguments and runs. Treat the signatures below as the authoritative interface.
+Subcommands documented with `--help` implement it without starting a crawl. Treat the signatures below as the authoritative interface.
 
 ## Corpus acquisition and query
 
 ### `crawl-docs`
 
 ```text
-spis crawl-docs (--site <NN-slug> | --all) [--exclude <slug>]...
-                [--workers <n>] [--host-delay <seconds>] [--refresh]
+spis crawl-docs --host <target> (--site <NN-slug> | --all)
+                [--exclude <slug>]... [--workers <n>]
+                [--host-delay <seconds>] [--refresh]
 ```
 
-Crawls checked-in documentation inventories into `$HOME/.spis/docs-corpus`. Defaults: 64 workers and 0.3 seconds per host. `--exclude` applies with `--all`. `--refresh` is currently parsed but has no behavioral effect. Writes page archives, resumable state, and `documentation-site-examples/content-structure/crawl-run.json`. Networked and mutating.
+Submits an exact-revision Stado job that crawls checked-in documentation inventories into the worker's `$HOME/.spis/docs-corpus`, then archives the result to Stado storage. Defaults: 64 workers and 0.3 seconds per host. `--exclude` applies with `--all`. `--refresh` is currently parsed but has no behavioral effect. Networked and mutating.
 
 ### `docs-corpus`
 
@@ -129,10 +130,11 @@ Drafts counted, evidence-linked writing observations. Default output is `<catalo
 ### `sync-readme-examples`
 
 ```text
-spis sync-readme-examples
+spis sync-readme-examples --host <target>
+                           [--secret-env GH_TOKEN=<skarbiec-item>]
 ```
 
-Accepts no meaningful flags and ignores the entire argument vector. It obtains a token from `gh auth token`, fetches each curated GitHub repository and README, deletes obsolete numbered snapshots, and writes snapshots, `sources.json`, `README.md`, and `scrape-run.json`. **Do not run `--help`: it performs the refresh.** Networked and mutating.
+Submits an exact-revision Stado job that obtains GitHub credentials from its scoped environment, fetches each curated repository and README, and archives the refreshed snapshots and metadata to Stado storage. `--help` only prints usage. Networked and mutating.
 
 ### `collect-example-images`
 

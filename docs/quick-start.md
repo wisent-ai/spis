@@ -57,4 +57,4 @@ Without `--apply`, verification is a dry run. The retained run measured all five
 - Learn the [reference pipeline](pipeline.md).
 - Use the [CLI reference](cli-reference.md) before any mutating or networked command.
 - Follow the [record lifecycle walkthrough](walkthrough-record-lifecycle.md) in an isolated directory.
-- Read the [runbook](runbook.md), especially the warning that `sync-readme-examples --help` performs a real refresh because that command ignores all arguments.
+- Read the [runbook](runbook.md) before any network or fleet operation.

@@ -1,12 +1,13 @@
 //! Real browser-product crawler dispatched through Weles on a Stado-selected host.
 //!
-//! The coordinator never launches a local browser. It writes an immutable task
-//! plan to Stado storage and submits a pinned Stado job. The worker enqueues one
+//! The coordinator never launches a local browser. It embeds an immutable task
+//! plan in an exact-revision Stado job. The worker enqueues one
 //! `generic_browser_task` per catalog record into the host-local Weles admission
 //! API; Weles owns browser identity, login capabilities, interaction recording,
 //! screenshots and receipts.
 
 use anyhow::{anyhow, bail, Context, Result};
+use base64::{engine::general_purpose::STANDARD, Engine as _};
 use serde_json::{json, Map, Value};
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -219,32 +220,11 @@ fn revision() -> Result<String> {
     Ok(revision)
 }
 
-fn put_plan(path: &Path, uri: &str) -> Result<()> {
-    let output = Command::new("stado")
-        .args([
-            "storage",
-            "put",
-            "--if-absent",
-            "--content-type",
-            "application/json",
-            uri,
-        ])
-        .arg(path)
-        .output()
-        .context("publish web crawl plan")?;
-    if !output.status.success() {
-        bail!(
-            "stado storage put refused web crawl plan: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    Ok(())
-}
 
 fn submit(
     host: &str,
     admission_url: &str,
-    plan_uri: &str,
+    plan: &Value,
     batch: &str,
     catalog: &str,
     wait_seconds: u64,
@@ -252,9 +232,9 @@ fn submit(
     safe_component(host, "--host")?;
     safe_component(batch, "batch")?;
     let revision = revision()?;
-    let remote_plan = format!("$HOME/.stado/work/{batch}.json");
+    let encoded_plan = STANDARD.encode(serde_json::to_vec(plan)?);
     let command = format!(
-        "$HOME/.stado/bin/stado storage get {plan_uri} {remote_plan} && cargo run --release -- crawl-web {catalog} --worker --plan {remote_plan} --admission-url {admission_url} --wait-seconds {wait_seconds}"
+        "cargo run --release -- crawl-web {catalog} --worker --plan-base64 '{encoded_plan}' --admission-url {admission_url} --wait-seconds {wait_seconds}"
     );
     let output = Command::new("stado")
         .args([
@@ -287,8 +267,7 @@ fn submit(
     Ok(())
 }
 
-fn enqueue(plan_path: &Path, admission_url: &str, wait_seconds: u64) -> Result<Value> {
-    let plan: Value = serde_json::from_slice(&std::fs::read(plan_path)?)?;
+fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value> {
     if plan.get("schema").and_then(Value::as_str) != Some(PLAN_SCHEMA) {
         bail!("worker plan must declare {PLAN_SCHEMA}");
     }
@@ -399,6 +378,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut record: Option<String> = None;
     let mut accounts: Option<PathBuf> = None;
     let mut plan: Option<PathBuf> = None;
+    let mut plan_base64: Option<String> = None;
     let mut worker = false;
     let mut wait_seconds = 7_200u64;
     let mut i = 0;
@@ -428,6 +408,10 @@ pub fn run(rest: &[String]) -> Result<()> {
                 i += 1;
                 plan = Some(PathBuf::from(rest.get(i).context("--plan needs a value")?));
             }
+            "--plan-base64" => {
+                i += 1;
+                plan_base64 = Some(rest.get(i).context("--plan-base64 needs a value")?.clone());
+            }
             "--wait-seconds" => {
                 i += 1;
                 wait_seconds = rest
@@ -437,7 +421,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--worker" => worker = true,
             "--help" | "-h" => {
-                println!("usage: spis crawl-web <catalog> --host TARGET --admission-url URL [--record SLUG] [--accounts FILE] [--wait-seconds N]\nworker mode: spis crawl-web <catalog> --worker --plan FILE --admission-url URL --wait-seconds N");
+                println!("usage: spis crawl-web <catalog> --host TARGET --admission-url URL [--record SLUG] [--accounts FILE] [--wait-seconds N]\nworker mode: spis crawl-web <catalog> --worker (--plan FILE | --plan-base64 DATA) --admission-url URL --wait-seconds N");
                 return Ok(());
             }
             value if value.starts_with('-') => bail!("unknown argument: {value}"),
@@ -455,11 +439,15 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
     let admission_url = admission_url.context("--admission-url is required")?;
     if worker {
-        let report = enqueue(
-            &plan.context("--worker requires --plan")?,
-            &admission_url,
-            wait_seconds,
-        )?;
+        let plan = match (plan, plan_base64) {
+            (Some(path), None) => serde_json::from_slice(&std::fs::read(path)?)?,
+            (None, Some(encoded)) => serde_json::from_slice(
+                &STANDARD.decode(encoded).context("--plan-base64 is invalid")?,
+            )?,
+            (Some(_), Some(_)) => bail!("worker accepts exactly one of --plan or --plan-base64"),
+            (None, None) => bail!("worker requires --plan or --plan-base64"),
+        };
+        let report = enqueue(&plan, &admission_url, wait_seconds)?;
         let failures = report.get("failed").and_then(Value::as_u64).unwrap_or(0);
         println!("{}", serde_json::to_string_pretty(&report)?);
         if failures > 0 {
@@ -470,8 +458,8 @@ pub fn run(rest: &[String]) -> Result<()> {
     let host = host
         .context("--host is required; web crawls execute through Weles on a pinned Stado host")?;
     safe_component(&host, "--host")?;
-    if plan.is_some() {
-        bail!("--plan is worker-only");
+    if plan.is_some() || plan_base64.is_some() {
+        bail!("--plan and --plan-base64 are worker-only");
     }
     let batch = format!(
         "spis-{catalog}-{}",
@@ -482,7 +470,12 @@ pub fn run(rest: &[String]) -> Result<()> {
     std::fs::create_dir_all(&directory)?;
     let path = directory.join(format!("{batch}.json"));
     std::fs::write(&path, serde_json::to_string_pretty(&document)? + "\n")?;
-    let uri = format!("stado://spis-crawls/plans/{batch}.json");
-    put_plan(&path, &uri)?;
-    submit(&host, &admission_url, &uri, &batch, &catalog, wait_seconds)
+    submit(
+        &host,
+        &admission_url,
+        &document,
+        &batch,
+        &catalog,
+        wait_seconds,
+    )
 }
