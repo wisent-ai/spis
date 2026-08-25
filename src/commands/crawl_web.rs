@@ -300,12 +300,19 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
                 })
             })
             .collect();
-        let response: Value = agent
+        let response = match agent
             .post(&format!("{admission_url}/v1/echo/jobs/enqueue-batch"))
             .set("Authorization", &format!("Bearer {token}"))
             .send_json(json!({"jobs": jobs}))
-            .map_err(|error| anyhow!("Weles admission refused web crawl: {error}"))?
-            .into_json()?;
+        {
+            Ok(response) => response,
+            Err(ureq::Error::Status(status, response)) => {
+                let detail = response.into_string().unwrap_or_default();
+                bail!("Weles admission refused web crawl with HTTP {status}: {detail}");
+            }
+            Err(error) => bail!("Weles admission refused web crawl: {error}"),
+        };
+        let response: Value = response.into_json()?;
         let accepted = response
             .get("job_ids")
             .and_then(Value::as_array)
@@ -314,12 +321,19 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
     }
     let deadline = Instant::now() + Duration::from_secs(wait_seconds);
     let jobs = loop {
-        let response: Value = agent
+        let response = match agent
             .post(&format!("{admission_url}/v1/echo/jobs/get-many"))
             .set("Authorization", &format!("Bearer {token}"))
             .send_json(json!({"job_ids": ids}))
-            .map_err(|error| anyhow!("read Weles crawl jobs: {error}"))?
-            .into_json()?;
+        {
+            Ok(response) => response,
+            Err(ureq::Error::Status(status, response)) => {
+                let detail = response.into_string().unwrap_or_default();
+                bail!("Weles crawl status refused with HTTP {status}: {detail}");
+            }
+            Err(error) => bail!("read Weles crawl jobs: {error}"),
+        };
+        let response: Value = response.into_json()?;
         let jobs = response
             .get("jobs")
             .and_then(Value::as_array)
