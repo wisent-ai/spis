@@ -1,20 +1,27 @@
-# The Reference Pipeline
+# Reference pipeline
 
-How a reference record comes to exist. Product capture happens first; evidence
-verification and catalog generation remain separate deterministic stages.
+Spis has three related lanes: interface evidence, README research, and documentation full text.
 
 ```text
-real product crawler ──► retained state graph / recording
-                                │
-                                ├──► verify-reference-evidence
-                                ├──► audit-reference-accessibility
-                                └──► generate-example-catalogs
+catalog/record scaffold
+        |
+        +--> real product crawler --> retained state graph / recording
+        |                               +--> analyze-example-structures
+        |                               +--> audit-reference-accessibility
+        |
+        +--> verify-reference-evidence [--apply]
+        +--> generate-example-catalogs [--check]
+        +--> check-upstream-drift
 
-sync-readme-examples ──► analyze-readme-examples
-check-upstream-drift                              (any time)
+sync-readme-examples --> analyze-readme-examples --> guidelines
+crawl-docs --> docs-corpus {status,search,show}
 ```
 
-## 1. Capture the real product
+## 1. Select and scaffold
+
+`catalog-type` creates or edits a `*-examples` family. `reference-record add` introduces one selected product with source, category, rationale, and a measured overview image. New records are partial and list what has not been observed.
+
+## 2. Acquire authentic evidence
 
 The surface chooses the crawler:
 
@@ -26,69 +33,42 @@ The surface chooses the crawler:
 - `crawl-docs`: documentation inventory and full text.
 - `sync-readme-examples`: exact upstream README blobs.
 
-The coordinator submits an exact source revision to a host selected through
-Stado. No crawler opens a browser, simulator, TUI, CLI, or desktop application
-on the coordinator workstation. TUI and CLI crawlers use isolated homes and
-fixtures; their default worker environment cannot reach the selected host's
-Docker, Kubernetes or user configuration. Login values are injected from
-Skarbiec through Stado and referenced in artifacts only by fixture name. A
-destructive journey is explored through its confirmation screen and stops
-before the final commit.
+The coordinator submits an exact source revision to a host selected through Stado. No crawler opens a browser, simulator, TUI, CLI, or desktop application on the coordinator workstation. TUI and CLI crawlers use isolated homes and fixtures; their default worker environment cannot reach the selected host's Docker, Kubernetes, or user configuration. Login values are injected from Skarbiec through Stado and referenced in artifacts only by fixture name. A destructive journey is explored through its confirmation screen and stops before the final commit.
 
-`crawl-web` covers web apps, dashboards, onboarding and authentication,
-app-store listings, design systems, reports, pricing pages, and landing pages.
-Each catalog has its own mandatory coverage contract while Weles remains the
-shared browser execution boundary. The worker waits for every Weles action and
-retains sanitized results, receipts and artifact pointers instead of treating
-queue acceptance as a completed crawl.
+`crawl-web` covers web apps, dashboards, onboarding and authentication, app-store listings, design systems, reports, pricing pages, and landing pages. Each catalog has its own mandatory coverage contract while Weles remains the shared browser execution boundary. The worker waits for every Weles action and retains sanitized results, receipts, and artifact pointers instead of treating queue acceptance as a completed crawl.
 
-## 2. Collect imagery — `spis collect-example-images`
+Owner-published material remains valid third-party evidence where the contract calls for it. `collect-example-images` acquires qualifying interface imagery; `capture-widths` and `audit-reference-accessibility` submit Weles work through Stado rather than direct SSH.
 
-Acquires official imagery for third-party records, recording dimensions,
-hashes, provenance, and capture method. A retained vendor video is never
-recorded as a local run.
+Acquisition method and provenance class must agree. Retain bytes under the record, not merely a remote URL.
 
 ## 3. Analyze — `spis analyze-example-structures`
 
-Deterministic panel regions, layout model, separators, density, and confidence
-from every stored overview image. Runs after imagery exists.
+`analyze-example-structures [catalog ...]` deterministically writes image layout regions, separators, density, and confidence into `sources.json`. It writes `structure-analysis-failures.json` while unresolved entries remain.
 
 ## 4. Accessibility — `spis audit-reference-accessibility`
 
-Audits captured references for accessibility evidence. Records move to
-`complete` only when this stage has no failed or pending findings.
+`audit-reference-accessibility` plans, submits, polls, retrieves, verifies, and merges Weles axe results. Planning refusal exits 2; execution or retrieval failure exits 3. `--dry-run` stops after validating and writing the plan.
+
 
 ## 5. Verify — `spis verify-reference-evidence`
 
-The honesty gate. Re-probes media kinds, durations, frame counts, hashes, and
-provenance classes from the retained bytes, then rewrites each record to what
-the files actually prove. `--apply` writes the corrections; without it the run
-is a dry report.
+`verify-reference-evidence` re-probes retained media, hashes, dimensions, durations, provenance, state matches, journey/interactions, motion analysis, and accessibility. Without `--apply` it is a report only. With `--apply` it rewrites records and matching reference-index statuses to what the bytes prove.
+
 
 ## 6. Regenerate catalogs — `spis generate-example-catalogs`
 
-Renders `example-catalogs.json` and the catalog pages from the records. This
-is the consistency gate: it refuses to render when the index, records, and
-files disagree, and it always prints measured numbers (complete/partial,
-provenance mix), never intentions.
+`generate-example-catalogs --check` validates without writing. Without `--check`, the same validation precedes rendering every catalog `README.md` plus `example-catalogs.json` and `example-catalogs.md`. A partial record is valid only when its gaps are explicit and consistent.
 
-## Separate lane — the README corpus
+## 7. Monitor drift
 
-- `spis sync-readme-examples --host <host>` refreshes the fifty verbatim
-  upstream README snapshots and their blob SHAs through Stado.
-- `spis analyze-readme-examples` regenerates the structural analysis
-  (`readme-examples/analysis.json`) behind the README guidance.
+`check-upstream-drift` always verifies local media. Unless `--skip-network` is used, it also checks README blob SHAs and recorded URLs, distinguishing reachable, gone, guarded, and unresolved sources. `--strict` exits 1 if any drift exists. `--write-report` creates `upstream-drift.json`, which operational policy may keep private.
 
-## Upstream monitoring — `spis check-upstream-drift`
+## README research lane
 
-Rechecks local hashes, current upstream README blobs, and every recorded URL.
-Distinguishes a dead source from an authenticated, rate-limited, or
-bot-guarded one. `--strict` turns any drift into a non-zero exit for CI use.
+- `spis sync-readme-examples --host <host>` refreshes the fifty verbatim upstream README snapshots and their blob SHAs through Stado.
+- `spis analyze-readme-examples` regenerates the structural analysis (`readme-examples/analysis.json`) behind the README guidance.
+- `spis guidelines <catalog>` drafts counted observations for human review; interpretation remains outside Spis.
 
-## Rules that do not bend
+## Documentation full-text lane
 
-1. A record exists only with its evidence: source URL, hashes, provenance
-   class, retained bytes where the contract requires them.
-2. A missing observation is recorded as an evidence gap, never promoted into
-   prose.
-3. Interpretation lives in `wisent-ai/product-guidelines`, never here.
+`crawl-docs` resolves sitemap/override inventories, obeys robots rules, and writes resumable local archives. `docs-corpus` exposes read-only JSON status, search, and exact-page lookup.
