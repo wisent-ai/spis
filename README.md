@@ -56,7 +56,6 @@ Every crawler that opens a product runs as an exact-revision job on a host expli
 | Reports and evidence | `spis crawl-web report-evidence-examples --host <host> --admission-url <url>` | interactive report via Weles |
 | Pricing pages | `spis crawl-web pricing-page-examples --host <host> --admission-url <url>` | live plan-selection surface via Weles |
 | Landing pages | `spis crawl-web landing-page-examples --host <host> --admission-url <url>` | live responsive page via Weles |
-| README files | `spis sync-readme-examples --host <host>` | exact GitHub source blobs on Stado |
 
 Mobile and desktop crawlers accept fixture files whose values can come from environment variables. `--secret-env NAME=SKARBIEC_ITEM` asks Stado to inject those values from Skarbiec without placing credentials in a command line or artifact. CLI crawls accept declared non-destructive journeys; Weles account bindings select an existing product identity. Weles crawls wait for every queued action and retain the sanitized job result, receipt, and artifact pointers. Destructive paths stop at the final confirmation and retain that state without committing it.
 
@@ -71,7 +70,6 @@ Mobile and desktop crawlers accept fixture files whose values can come from envi
 | `src/commands/crawl_tui.rs` | terminal-application PTY crawler |
 | `src/commands/crawl_cli.rs` | recursive CLI command and journey crawler |
 | `src/commands/crawl_docs.rs` | documentation inventory and full-text crawler |
-| `src/commands/sync_readme_examples.rs` | README source-blob crawler |
 | `https://spis.wisent.com/docs` | product, contributor, evidence-contract, and operations documentation; source lives in `wisent-ai/spis-landing` |
 | `example-catalogs.json` | generated cross-catalog index |
 | `*-examples/sources.json` | selected examples and their visual/structure metadata |

@@ -1,14 +1,14 @@
-//! `spis generate-example-catalogs` — render the example-catalog index and
-//! catalog pages from the measured records.
+//! `spis generate-example-catalogs` — validate measured example catalogs and
+//! write the machine-readable cross-catalog index.
 //!
-//! This generator is the gate. It refuses to render a catalog whose data
-//! contradicts the files beside it, and it renders the measured numbers rather
+//! This generator is the gate. It refuses to index a catalog whose data
+//! contradicts the files beside it, and records the measured numbers rather
 //! than an intention: how many records are complete, how many are partial, and
 //! how the motion evidence was actually obtained (a product we drove, a browser
 //! we drove, or media its owner published).
 //!
-//! Rust port of the former `generate-example-catalogs.py` together with the
-//! vocabulary it shared via `reference_contract.py`.
+//! Rust port of the validation and JSON indexing behavior from the former
+//! `generate-example-catalogs.py` pipeline.
 
 use crate as lib;
 use anyhow::{anyhow, bail, Context, Result};
@@ -654,8 +654,6 @@ fn load_catalog(slug: &str) -> Result<Value> {
                 "reference_count": 0,
             },
             "source": format!("{slug}/sources.json"),
-            "readme": format!("{slug}/README.md"),
-            "full_reference": format!("{slug}/full-reference.md"),
             "full_reference_source": format!("{slug}/references.json"),
             "scaffolded": true,
             "examples": [],
@@ -846,245 +844,7 @@ fn full_reference_index<'a>(catalog: &'a Value) -> &'a Value {
         .expect("attached by loader")
 }
 
-fn render_readme(catalog: &Value) -> Result<String> {
-    let slug = catalog.get("catalog").and_then(Value::as_str).unwrap_or("");
-    let title = catalog.get("title").and_then(Value::as_str).unwrap_or("");
-    let description = catalog
-        .get("description")
-        .and_then(Value::as_str)
-        .unwrap_or("");
-    let index = full_reference_index(catalog);
 
-    let mut rows: Vec<String> = vec![
-        format!("# {title}"),
-        String::new(),
-        description.to_string(),
-        String::new(),
-        "Each entry pairs an attributed overview image and a measured panel anatomy with a \
-         per-product record: motion evidence, named states, an observed first-success journey, \
-         interaction and recovery behavior, accessibility observations, and provenance. Every \
-         number below is measured by `verify-reference-evidence.py`, and a record that is missing \
-         evidence says so in its own `evidence_gaps`."
-            .to_string(),
-        String::new(),
-        format!("**Examples:** {}  ", catalog["count"]),
-        format!("**Images:** {}  ", catalog["visual_count"]),
-        format!("**Structural analyses:** {}  ", catalog["structure_count"]),
-        format!("**Records with no remaining gap:** {}  ", index["complete_count"]),
-        format!(
-            "**Records with named gaps:** {} ({} gaps)  ",
-            index["partial_count"], index["measured_gap_total"]
-        ),
-        format!(
-            "**Motion provenance:** {}  ",
-            provenance_sentence(&index["measured_provenance"])
-        ),
-        format!("**Curated:** {}  ", catalog["curated_at"].as_str().unwrap_or("unknown")),
-        "**Visual source data:** [`sources.json`](sources.json)  ".to_string(),
-        "**Record index:** [`references.json`](references.json)  ".to_string(),
-        "**Cross-example synthesis:** [`full-reference.md`](full-reference.md)".to_string(),
-        String::new(),
-        "| # | Reference image | Record | Motion evidence | Category | Interface structure | What to study |".to_string(),
-        "|---:|---|---|---|---|---|---|".to_string(),
-    ];
-
-    for (offset, example) in catalog["examples"]
-        .as_array()
-        .cloned()
-        .unwrap_or_default()
-        .iter()
-        .enumerate()
-    {
-        let position = offset + 1;
-        let name = escape_cell(example["name"].as_str().unwrap_or(""));
-        let url = example["source_url"].as_str().unwrap_or("");
-        let category = escape_cell(example["category"].as_str().unwrap_or(""));
-        let note = escape_cell(example["selection_note"].as_str().unwrap_or(""));
-        let visual = &example["visual"];
-        let entry = &index["references"][offset];
-        let reference_readme = Path::new(entry["path"].as_str().unwrap_or(""))
-            .with_file_name("README.md")
-            .to_string_lossy()
-            .to_string();
-        let record: Value = lib::read_json(
-            Path::new(slug)
-                .join(entry["path"].as_str().unwrap_or(""))
-                .to_str()
-                .unwrap(),
-        )?;
-        let provenance = record["motion_provenance"]
-            .as_array()
-            .cloned()
-            .unwrap_or_default()
-            .iter()
-            .map(|v| provenance_label(v.as_str().unwrap_or("")))
-            .collect::<Vec<_>>()
-            .join(", ");
-        let status = if entry["evidence_status"] == json!("complete") {
-            "no remaining gap".to_string()
-        } else {
-            format!("{} named gaps", entry["evidence_gap_count"])
-        };
-        let structure = &example["interface_structure"];
-        let image = format!(
-            "<a href=\"{url}\"><img src=\"{}\" alt=\"{name} interface reference\" width=\"220\"></a>",
-            visual["local_path"].as_str().unwrap_or("")
-        );
-        let region_text = structure["regions"]
-            .as_array()
-            .cloned()
-            .unwrap_or_default()
-            .iter()
-            .map(|item| {
-                format!(
-                    "{} ({})",
-                    item["role"].as_str().unwrap_or(""),
-                    item["position"].as_str().unwrap_or("")
-                )
-            })
-            .collect::<Vec<_>>()
-            .join("; ");
-        let anatomy = escape_cell(&format!(
-            "{}: {} Panels: {region_text}. Density: {}; confidence: {}.",
-            structure["layout_model"].as_str().unwrap_or(""),
-            structure["panel_summary"].as_str().unwrap_or(""),
-            structure["visual_density"].as_str().unwrap_or(""),
-            structure["confidence"].as_str().unwrap_or(""),
-        ));
-        rows.push(format!(
-            "| {position} | {image} | [{name}]({reference_readme}) · [official product]({url}) \
-             | {provenance}, {status} | {category} | {anatomy} | {note} |"
-        ));
-    }
-
-    rows.extend([
-        String::new(),
-        "Normalized panel bounds, detected separators, image dimensions, source-image URLs, hashes, \
-         and analysis confidence are recorded in [`sources.json`](sources.json). Media kinds, measured \
-         durations, provenance classes, and per-record gaps are in [`references.json`](references.json)."
-            .to_string(),
-        String::new(),
-        "Attribution and product ownership remain with the linked source.".to_string(),
-        String::new(),
-    ]);
-    Ok(rows.join("\n"))
-}
-
-fn render_index(catalogs: &[Value]) -> String {
-    let mut totals: BTreeMap<String, usize> = BTreeMap::new();
-    for catalog in catalogs {
-        if let Some(obj) = full_reference_index(catalog)["measured_provenance"].as_object() {
-            for (name, count) in obj {
-                *totals.entry(name.clone()).or_insert(0) += count.as_u64().unwrap_or(0) as usize;
-            }
-        }
-    }
-    let sum_field = |field: &str| -> usize {
-        catalogs
-            .iter()
-            .map(|c| {
-                full_reference_index(c)
-                    .get(field)
-                    .and_then(Value::as_u64)
-                    .unwrap_or(0) as usize
-            })
-            .sum()
-    };
-    let complete = sum_field("complete_count");
-    let partial = sum_field("partial_count");
-    let local = sum_field("locally_driven_count");
-    let motion_total: usize = totals.values().sum();
-    let totals_json = totals
-        .iter()
-        .map(|(k, v)| (k.clone(), json!(v)))
-        .collect::<Map<String, Value>>();
-    let totals_sentence = provenance_sentence(&Value::Object(totals_json));
-
-    let mut rows: Vec<String> = vec![
-        "# Product interface example catalogs".to_string(),
-        String::new(),
-        "A shared evidence library for choosing complete interaction models before product \
-         implementation. Each family pairs a curated visual field and measured panel anatomy with \
-         per-product records of motion, states, journey, interactions, recovery, accessibility, and \
-         provenance."
-            .to_string(),
-        String::new(),
-        "Motion evidence is labelled by how it was obtained, because the difference matters: ".to_string()
-            + &format!(
-                "{local} of {motion_total} assets are a product driven on our own machines, the rest are \
-                 recordings the product's owner published. A record still missing evidence is `partial` and \
-                 carries the missing items in its own `evidence_gaps`; nothing is called complete on the \
-                 strength of a marketing clip."
-            ),
-        String::new(),
-        format!("**Catalogs:** {}  ", catalogs.len()),
-        format!(
-            "**Screenshots:** {}  ",
-            catalogs
-                .iter()
-                .map(|c| c["visual_count"].as_u64().unwrap_or(0) as usize)
-                .sum::<usize>()
-        ),
-        format!(
-            "**Structural analyses:** {}  ",
-            catalogs
-                .iter()
-                .map(|c| c["structure_count"].as_u64().unwrap_or(0) as usize)
-                .sum::<usize>()
-        ),
-        format!(
-            "**Records:** {} ({complete} with no remaining gap, {partial} partial)  ",
-            complete + partial
-        ),
-        format!("**Motion assets:** {motion_total} ({totals_sentence})"),
-        String::new(),
-        "| Reference family | Representative screen | Scope | Records | Motion provenance |".to_string(),
-        "|---|---|---|---|---|".to_string(),
-    ];
-
-    for catalog in catalogs {
-        let index = full_reference_index(catalog);
-        let slug = catalog["catalog"].as_str().unwrap_or("");
-        let title = escape_cell(catalog["title"].as_str().unwrap_or(""));
-        let description = escape_cell(catalog["description"].as_str().unwrap_or(""));
-        let counts_cell = format!(
-            "[{} complete / {} partial]({slug}/references.json)",
-            index["complete_count"], index["partial_count"]
-        );
-        let scaffolded_or_empty = catalog.get("scaffolded") == Some(&json!(true))
-            || catalog["examples"]
-                .as_array()
-                .map(Vec::is_empty)
-                .unwrap_or(false);
-        if scaffolded_or_empty {
-            rows.push(format!(
-                "| [{title}]({slug}/full-reference.md) | — | {description} | {counts_cell} | scaffolded, no records yet |"
-            ));
-            continue;
-        }
-        let example = &catalog["examples"][0];
-        let image = format!(
-            "<a href=\"{slug}/README.md\"><img src=\"{slug}/{}\" alt=\"{title} representative interface reference\" width=\"260\"></a>",
-            example["visual"]["local_path"].as_str().unwrap_or("")
-        );
-        rows.push(format!(
-            "| [{title}]({slug}/full-reference.md) | {image} | {description} | {counts_cell} | {} |",
-            provenance_sentence(&index["measured_provenance"])
-        ));
-    }
-
-    rows.extend([
-        String::new(),
-        "Open a numbered per-product record for its motion evidence, named states, observed \
-         first-success journey, interactions, recovery, accessibility, and provenance. Read the \
-         family synthesis only after the underlying records."
-            .to_string(),
-        String::new(),
-        "Attribution and product ownership remain with the linked source.".to_string(),
-        String::new(),
-    ]);
-    rows.join("\n")
-}
 
 // ---------------------------------------------------------------------------
 // Entry point
@@ -1146,10 +906,6 @@ pub fn run(rest: &[String]) -> Result<()> {
         return Ok(());
     }
 
-    for catalog in &catalogs {
-        let slug = catalog["catalog"].as_str().unwrap_or("");
-        std::fs::write(Path::new(slug).join("README.md"), render_readme(catalog)?)?;
-    }
 
     let generated_at = catalogs
         .iter()
@@ -1173,8 +929,6 @@ pub fn run(rest: &[String]) -> Result<()> {
                 "partial_record_count": index["partial_count"],
                 "measured_provenance": index["measured_provenance"],
                 "source": format!("{slug}/sources.json"),
-                "readme": format!("{slug}/README.md"),
-                "full_reference": format!("{slug}/full-reference.md"),
                 "full_reference_source": format!("{slug}/references.json"),
             })
         })
@@ -1194,6 +948,5 @@ pub fn run(rest: &[String]) -> Result<()> {
         "catalogs": catalog_entries,
     });
     lib::write_pretty_json("example-catalogs.json", &index)?;
-    std::fs::write("example-catalogs.md", render_index(&catalogs))?;
     Ok(())
 }

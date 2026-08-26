@@ -1,5 +1,4 @@
 pub mod analyze_example_structures;
-pub mod analyze_readme_examples;
 pub mod audit_reference_accessibility;
 pub mod capture_widths;
 pub mod capture_wisent_references;
@@ -15,10 +14,8 @@ pub mod crawl_web;
 pub mod discover;
 pub mod docs_corpus;
 pub mod generate_example_catalogs;
-pub mod guidelines_rs;
 pub mod reference_contract;
 pub mod reference_record;
-pub mod sync_readme_examples;
 pub mod verify_reference_evidence;
 
 use anyhow::Result;
@@ -71,20 +68,11 @@ const SUBCOMMANDS: &[(&str, &str)] = &[
     ),
     (
         "generate-example-catalogs",
-        "render catalog READMEs and indexes",
+        "validate catalogs and write the JSON index",
     ),
     (
         "analyze-example-structures",
         "structural analysis of example screenshots",
-    ),
-    (
-        "analyze-readme-examples",
-        "statistical analysis of readme snapshots",
-    ),
-    ("guidelines", "draft writing guidelines for a catalog"),
-    (
-        "sync-readme-examples",
-        "refresh readme snapshots from GitHub",
     ),
     (
         "collect-example-images",
@@ -120,9 +108,6 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "catalog-type" => catalog_type::run(rest)?,
         "generate-example-catalogs" => generate_example_catalogs::run(rest)?,
         "analyze-example-structures" => analyze_example_structures::run(rest)?,
-        "analyze-readme-examples" => analyze_readme_examples::run(rest)?,
-        "guidelines" => guidelines_rs::run(rest)?,
-        "sync-readme-examples" => sync_readme_examples::run(rest)?,
         "collect-example-images" => collect_example_images::run(rest)?,
         "capture-widths" => capture_widths::run(rest)?,
         "audit-reference-accessibility" => audit_reference_accessibility::run(rest)?,

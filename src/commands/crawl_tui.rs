@@ -133,7 +133,7 @@ fn shell_quote(value: &str) -> String {
 fn prepare_fixture(fixture: &Path) -> Result<()> {
     let home = fixture.join("home");
     std::fs::create_dir_all(&home)?;
-    std::fs::write(fixture.join("README.md"), "# Spis TUI crawl fixture\n")?;
+    std::fs::write(fixture.join("seed.txt"), "Spis TUI crawl fixture\n")?;
     std::fs::write(fixture.join("tracked.txt"), "committed fixture state\n")?;
     let run_git = |arguments: &[&str]| -> Result<()> {
         let output = Command::new("git")
@@ -156,7 +156,7 @@ fn prepare_fixture(fixture: &Path) -> Result<()> {
     run_git(&["init", "--quiet"])?;
     run_git(&["config", "user.name", "Spis crawler"])?;
     run_git(&["config", "user.email", "spis-crawler@invalid"])?;
-    run_git(&["add", "README.md", "tracked.txt"])?;
+    run_git(&["add", "seed.txt", "tracked.txt"])?;
     run_git(&["commit", "--quiet", "-m", "Seed isolated crawl fixture"])?;
     std::fs::write(
         fixture.join("tracked.txt"),
