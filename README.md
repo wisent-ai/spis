@@ -4,24 +4,24 @@
 
 Spis owns the corpus data and the machinery that acquires, measures, validates, searches, and monitors it. Interpretation and prescriptive guidance belong in [`wisent-ai/product-guidelines`](https://github.com/wisent-ai/product-guidelines). Own-product captures and operational monitoring metadata may live in a private companion repository and are not published here.
 
-Licensed Apache-2.0. Third-party content remains attributable to its owners; see [the takedown policy](docs/takedown.md).
+Licensed Apache-2.0. Third-party content remains attributable to its owners; see [the takedown policy](https://spis.wisent.com/docs/takedown).
 
 ## Start here
 
-- [Quick start](docs/quick-start.md)
-- [Command-line reference](docs/cli-reference.md)
-- [Reference pipeline](docs/pipeline.md)
-- [Configuration](docs/configuration.md)
-- [Architecture](docs/architecture.md)
-- [Runbook](docs/runbook.md)
-- [Examples and executed walkthroughs](docs/examples.md)
+- [Quick start](https://spis.wisent.com/docs/quick-start)
+- [Command-line reference](https://spis.wisent.com/docs/cli-reference)
+- [Reference pipeline](https://spis.wisent.com/docs/pipeline)
+- [Configuration](https://spis.wisent.com/docs/configuration)
+- [Architecture](https://spis.wisent.com/docs/architecture)
+- [Runbook](https://spis.wisent.com/docs/runbook)
+- [Examples and executed walkthroughs](https://spis.wisent.com/docs/examples)
 
 Core concepts:
 
-- [Catalog](docs/concepts/catalog.md)
-- [Reference record](docs/concepts/reference-record.md)
-- [Evidence and completeness](docs/concepts/evidence.md)
-- [Crawled documentation corpus](docs/concepts/docs-corpus.md)
+- [Catalog](https://spis.wisent.com/docs/concept-catalog)
+- [Reference record](https://spis.wisent.com/docs/concept-reference-record)
+- [Evidence and completeness](https://spis.wisent.com/docs/concept-evidence)
+- [Crawled documentation corpus](https://spis.wisent.com/docs/concept-docs-corpus)
 
 ## Build and invoke
 
@@ -33,7 +33,7 @@ cargo build --release
 ./target/release/spis generate-example-catalogs --check
 ```
 
-The checked-in `bin/spis` and release scripts still describe the retired Python tool layout. Do not use them as the authority for the current Rust command surface. See the [runbook](docs/runbook.md#rustpython-cutover-mismatch) for the known cutover mismatches.
+The checked-in `bin/spis` and release scripts still describe the retired Python tool layout. Do not use them as the authority for the current Rust command surface. See the [runbook](https://spis.wisent.com/docs/runbook#rustpython-cutover-mismatch) for the known cutover mismatches.
 
 ## Real product crawlers
 
@@ -72,15 +72,13 @@ Mobile and desktop crawlers accept fixture files whose values can come from envi
 | `src/commands/crawl_cli.rs` | recursive CLI command and journey crawler |
 | `src/commands/crawl_docs.rs` | documentation inventory and full-text crawler |
 | `src/commands/sync_readme_examples.rs` | README source-blob crawler |
-| `full-reference-contract.md` | human-readable evidence floor for a record |
-| `example-catalogs.json` / `example-catalogs.md` | generated cross-catalog index and synthesis |
+| `https://spis.wisent.com/docs` | product, contributor, evidence-contract, and operations documentation; source lives in `wisent-ai/spis-landing` |
+| `example-catalogs.json` | generated cross-catalog index |
 | `*-examples/sources.json` | selected examples and their visual/structure metadata |
 | `*-examples/references.json` | generated per-catalog reference index |
 | `*-examples/references/*/reference.json` | evidence record for one product |
-| `readme-examples/` | curated README snapshots and source metadata |
+| `readme-examples/` | curated README source metadata and measured records |
 | `documentation-site-examples/content-structure/` | documentation-site inventory definitions |
-| `docs/` | operator and contributor corpus documentation |
-| `kronika.sync.json` | source-to-document consistency manifest |
 
 ## Non-negotiable rules
 
@@ -93,4 +91,4 @@ Mobile and desktop crawlers accept fixture files whose values can come from envi
 
 ## Status
 
-The landing-page reference set remains empty after its unverifiable predecessor was removed on 2026-08-21. `crawl-web landing-page-examples` is the real-product capture path once new records satisfying `full-reference-contract.md` are added; it does not revive the discarded model-guessed observations.
+The landing-page reference set remains empty after its unverifiable predecessor was removed on 2026-08-21. `crawl-web landing-page-examples` is the real-product capture path once new records satisfying the [evidence contract](https://spis.wisent.com/docs/evidence-contract) are added; it does not revive the discarded model-guessed observations.
