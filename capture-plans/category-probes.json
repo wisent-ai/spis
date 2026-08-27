@@ -1,0 +1,62 @@
+{
+  "schema": "wisent.weles-capture-plan.v1",
+  "batch": "category-probes-20260827",
+  "target": "charless-mac-mini",
+  "captures": [
+    {
+      "batch": "category-probes-20260827",
+      "site_slug": "weles-docs-composition",
+      "source_url": "https://weles.wisent.com/docs",
+      "axis": "composition",
+      "viewport": { "width": 1440, "height": 1000, "device_scale_factor": 1 },
+      "full_page": true,
+      "steps": [{ "op": "wait_selector", "value": "main" }],
+      "record_seconds": 0,
+      "artifact_prefix": "stado://weles-captures/category-probes-20260827/composition/"
+    },
+    {
+      "batch": "category-probes-20260827",
+      "site_slug": "weles-docs-interaction",
+      "source_url": "https://weles.wisent.com/docs",
+      "axis": "interaction",
+      "viewport": { "width": 1440, "height": 1000, "device_scale_factor": 1 },
+      "full_page": false,
+      "steps": [{ "op": "wait_selector", "value": "a" }, { "op": "hover", "value": "a" }],
+      "record_seconds": 2,
+      "artifact_prefix": "stado://weles-captures/category-probes-20260827/interaction/"
+    },
+    {
+      "batch": "category-probes-20260827",
+      "site_slug": "weles-docs-reactivity",
+      "source_url": "https://weles.wisent.com/docs",
+      "axis": "reactivity",
+      "viewport": { "width": 390, "height": 844, "device_scale_factor": 3 },
+      "full_page": false,
+      "steps": [{ "op": "wait_selector", "value": "body" }, { "op": "scroll", "value": "600" }],
+      "record_seconds": 2,
+      "artifact_prefix": "stado://weles-captures/category-probes-20260827/reactivity/"
+    },
+    {
+      "batch": "category-probes-20260827",
+      "site_slug": "weles-docs-state-change",
+      "source_url": "https://weles.wisent.com/docs",
+      "axis": "state-change",
+      "viewport": { "width": 1440, "height": 1000, "device_scale_factor": 1 },
+      "full_page": false,
+      "steps": [{ "op": "wait_selector", "value": "body" }, { "op": "press", "value": "Tab" }],
+      "record_seconds": 2,
+      "artifact_prefix": "stado://weles-captures/category-probes-20260827/state-change/"
+    },
+    {
+      "batch": "category-probes-20260827",
+      "site_slug": "weles-docs-subpage",
+      "source_url": "https://weles.wisent.com/docs",
+      "axis": "subpage",
+      "viewport": { "width": 1440, "height": 1000, "device_scale_factor": 1 },
+      "full_page": true,
+      "steps": [{ "op": "goto", "value": "https://weles.wisent.com/docs/cli" }, { "op": "wait_selector", "value": "body" }],
+      "record_seconds": 0,
+      "artifact_prefix": "stado://weles-captures/category-probes-20260827/subpage/"
+    }
+  ]
+}
