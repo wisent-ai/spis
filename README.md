@@ -9,7 +9,7 @@ Licensed Apache-2.0. Third-party content remains attributable to its owners; see
 ## Start here
 
 - [Quick start](https://spis.wisent.com/docs/quick-start)
-- [Command-line reference](https://spis.wisent.com/docs/cli-reference)
+- [Command-line reference](https://spis.wisent.com/docs/cli)
 - [Reference pipeline](https://spis.wisent.com/docs/pipeline)
 - [Configuration](https://spis.wisent.com/docs/configuration)
 - [Architecture](https://spis.wisent.com/docs/architecture)
