@@ -322,21 +322,14 @@ fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str, 
             vec!["adb", "shell", "pm", "list", "packages"],
         ],
         ("desktop", _) => vec![vec!["cua-driver", "doctor", "--json"], vec!["ls", "/Applications"]],
-        ("tui" | "cli", _) => vec![vec!["tmux", "-V"], vec!["cargo", "--version"]],
-        ("web", _) => vec![vec!["node", "--version"], vec!["curl", "--version"]],
+        ("web", _) => vec![vec!["node", "--version"], vec!["curl", "--version"], vec!["curl", "--fail", "--silent", "http://127.0.0.1:8788/healthz"]],
         ("docs", _) => vec![vec!["git", "--version"], vec!["curl", "--version"], vec!["df", "-h"]],
         _ => vec![],
     };
     let checks: Vec<Value> = commands.iter().map(|command| host_probe(host, command)).collect();
     let admission_ready = if engine == "web" {
-        url::Url::parse(admission_url).ok().and_then(|url| {
-            let host = url.host_str()?.to_string();
-            let port = url.port_or_known_default()?;
-            Some(std::net::TcpStream::connect_timeout(
-                &format!("{host}:{port}").parse().ok()?,
-                std::time::Duration::from_secs(3),
-            ).is_ok())
-        }).unwrap_or(false)
+        admission_url == "http://127.0.0.1:8788"
+            && checks.last().and_then(|check| check.get("ready")).and_then(Value::as_bool) == Some(true)
     } else {
         true
     };
