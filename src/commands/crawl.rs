@@ -218,6 +218,47 @@ fn host_for(
 }
 
 
+fn preflight_catalog(catalog: &str, selected_record: Option<&str>) -> Result<()> {
+    let root = Path::new(catalog);
+    let sources: Value = crate::read_json(root.join("sources.json").to_str().context("sources path is not UTF-8")?)
+        .with_context(|| format!("{catalog}: read source manifest"))?;
+    let examples = sources.get("examples").and_then(Value::as_array)
+        .context(format!("{catalog}: sources.json has no examples"))?;
+    let references = root.join("references");
+    let mut record_count = 0usize;
+    for entry in std::fs::read_dir(&references).with_context(|| format!("{catalog}: read references"))?.flatten() {
+        let path = entry.path().join("reference.json");
+        if !path.is_file() { continue; }
+        let record: Value = crate::read_json(path.to_str().context("reference path is not UTF-8")?)?;
+        let directory = entry.file_name().to_string_lossy().to_string();
+        if selected_record.is_some_and(|wanted| wanted != directory && directory.split_once('-').map(|(_, slug)| slug) != Some(wanted)) {
+            continue;
+        }
+        let url = record.get("product_url").and_then(Value::as_str)
+            .filter(|value| value.starts_with("https://") || value.starts_with("http://"))
+            .ok_or_else(|| anyhow!("{catalog}/{directory}: product_url must be HTTP(S)"))?;
+        let source = examples.iter().find(|example| example.get("source_url").and_then(Value::as_str) == Some(url))
+            .ok_or_else(|| anyhow!("{catalog}/{directory}: product_url is absent from sources.json"))?;
+        if catalog == "pricing-page-examples" {
+            if source.get("category").and_then(Value::as_str) != Some("pricing") {
+                bail!("{catalog}/{directory}: category must be exactly pricing");
+            }
+            let lower = url.to_ascii_lowercase();
+            if !["pricing", "plans", "plan"].iter().any(|needle| lower.contains(needle)) {
+                bail!("{catalog}/{directory}: URL does not identify a pricing/plans surface");
+            }
+        }
+        if catalog == "landing-page-examples" && source.get("category").and_then(Value::as_str) != Some("landing") {
+            bail!("{catalog}/{directory}: category must be exactly landing");
+        }
+        record_count += 1;
+    }
+    if record_count == 0 {
+        bail!("{catalog}: selected family is empty");
+    }
+    Ok(())
+}
+
 fn start(rest: &[String]) -> Result<()> {
     let mut hosts: HashMap<String, String> = HashMap::new();
     let mut admission_url = None;
@@ -251,6 +292,9 @@ fn start(rest: &[String]) -> Result<()> {
     let specs = selected_specs(&catalogs)?;
     if record.is_some() && specs.len() != 1 {
         bail!("--record requires exactly one --catalog");
+    }
+    for (catalog, _) in &specs {
+        preflight_catalog(catalog, record.as_deref())?;
     }
     let run_id = format!("crawl-{}", crate::now_iso_utc().replace(':', "-").replace('T', "-"));
     let mut entries = Vec::new();
