@@ -53,7 +53,7 @@ const SUBCOMMANDS: &[(&str, &str)] = &[
     ),
     (
         "docs-corpus",
-        "read-only JSON views over the crawled corpus",
+        "read and import immutable documentation retrieval corpora",
     ),
     ("discover", "discover important pages behind a start URL"),
     (

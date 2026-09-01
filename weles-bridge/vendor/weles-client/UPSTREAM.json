@@ -1,0 +1,15 @@
+{
+  "schema": "wisent.vendored-source.v1",
+  "package": "@wisent-ai/weles-client",
+  "repository": "https://github.com/wisent-ai/weles-client",
+  "commit": "37798a26022a040fbd0a4a4a25c99b5559d95a32",
+  "source": {
+    "path": "index.mjs",
+    "sha256": "7cdfee8ae7d7ffc831c60d01e393640bf912d95adf0b06c9dd51a737f97ccada"
+  },
+  "license": {
+    "spdx": "Apache-2.0",
+    "path": "LICENSE",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  }
+}

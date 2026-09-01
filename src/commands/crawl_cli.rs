@@ -1,16 +1,16 @@
 //! Real command-line application crawler.
 //!
-//! The coordinator submits an exact-revision Stado job to a selected host. The
-//! worker runs each installed executable inside a real tmux PTY, recursively
-//! discovers its documented subcommand tree from help output, records version,
-//! help, refusal and recovery states, and can execute explicitly declared safe
-//! journeys. Raw terminal bytes, screen states, argv and exit statuses are kept.
+//! The worker executes only exact top-level version, help, refusal, and recovery
+//! observations. Raw terminal bytes, screen states, argv, and exit statuses are
+//! kept.
 
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{bail, Context, Result};
 use regex::Regex;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
-use std::collections::{HashSet, VecDeque};
+use std::collections::BTreeMap;
+use std::ffi::OsString;
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{Duration, Instant};
@@ -25,21 +25,6 @@ struct Record {
     binary: String,
 }
 
-#[derive(Clone, serde::Deserialize)]
-struct Journey {
-    name: String,
-    argv: Vec<String>,
-    #[serde(default)]
-    stdin: Option<String>,
-    #[serde(default)]
-    destructive: bool,
-}
-
-#[derive(Default, serde::Deserialize)]
-struct JourneyDocument {
-    #[serde(default)]
-    records: std::collections::HashMap<String, Vec<Journey>>,
-}
 
 struct Invocation {
     argv: Vec<String>,
@@ -51,6 +36,7 @@ struct Invocation {
 
 fn safe_component(value: &str, flag: &str) -> Result<()> {
     if value.is_empty()
+        || matches!(value, "." | "..")
         || !value.chars().all(|character| {
             character.is_ascii_alphanumeric() || matches!(character, '-' | '_' | '.')
         })
@@ -59,6 +45,13 @@ fn safe_component(value: &str, flag: &str) -> Result<()> {
     }
     Ok(())
 }
+fn attempt_root(
+    base: &Path,
+    manifest: &super::crawl::RuntimeManifest,
+) -> Result<PathBuf> {
+    super::crawl::native_attempt_root(base, manifest)
+}
+
 
 fn revision() -> Result<String> { super::crawl::build_revision() }
 
@@ -92,7 +85,9 @@ pub(crate) fn binary_for(slug: &str) -> String {
 }
 
 fn records(selected: Option<&str>) -> Result<Vec<Record>> {
-    let directory = Path::new(CATALOG).join("references");
+    let directory = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join(CATALOG)
+        .join("references");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)?
         .filter_map(|entry| entry.ok().map(|entry| entry.path()))
         .filter(|path| path.is_dir())
@@ -126,20 +121,235 @@ fn records(selected: Option<&str>) -> Result<Vec<Record>> {
     Ok(records)
 }
 
-fn executable(name: &str) -> Option<PathBuf> {
-    std::env::var_os("PATH").and_then(|path| {
-        std::env::split_paths(&path)
-            .map(|directory| directory.join(name))
-            .find(|candidate| candidate.is_file())
-    })
+fn delivery_secret_bindings(
+    manifest: &super::crawl::RuntimeManifest,
+) -> Result<Vec<(String, String)>> {
+    let value = serde_json::to_value(manifest)?;
+    let secrets = value
+        .pointer("/delivery/secret_env")
+        .and_then(Value::as_object)
+        .context("CLI runtime manifest has no typed delivery.secret_env map")?;
+    let mut bindings = Vec::with_capacity(secrets.len());
+    for (name, reference) in secrets {
+        let reference = reference
+            .as_str()
+            .filter(|value| !value.is_empty())
+            .with_context(|| format!("CLI delivery secret reference is invalid for environment key {name:?}"))?;
+        if name.is_empty()
+            || !name
+                .chars()
+                .enumerate()
+                .all(|(index, character)| {
+                    character == '_'
+                        || character.is_ascii_alphabetic()
+                        || (index > 0 && character.is_ascii_digit())
+                })
+        {
+            bail!("CLI delivery secret binding has invalid environment key {name:?}");
+        }
+        if [
+            "PATH",
+            "HOME",
+            "XDG_CONFIG_HOME",
+            "XDG_DATA_HOME",
+            "XDG_CACHE_HOME",
+            "GIT_CONFIG_GLOBAL",
+            "GIT_CONFIG_NOSYSTEM",
+            "KUBECONFIG",
+            "DOCKER_HOST",
+            "AWS_EC2_METADATA_DISABLED",
+            "TERM",
+            "PAGER",
+            "GIT_PAGER",
+            "MANPAGER",
+            "NO_COLOR",
+            "CI",
+            "LANG",
+        ]
+        .contains(&name.as_str())
+        {
+            bail!("CLI delivery secret key {name:?} would override the isolated worker environment");
+        }
+        bindings.push((name.clone(), reference.to_string()));
+    }
+    Ok(bindings)
+}
+
+fn delivery_secret_names(manifest: &super::crawl::RuntimeManifest) -> Result<Vec<String>> {
+    Ok(delivery_secret_bindings(manifest)?
+        .into_iter()
+        .map(|(name, _)| name)
+        .collect())
+}
+
+fn isolated_environment(
+    manifest: &super::crawl::RuntimeManifest,
+    fixture: &Path,
+) -> Result<BTreeMap<OsString, OsString>> {
+    let home = fixture.join("home");
+    let mut environment = BTreeMap::new();
+    environment.insert("PATH".into(), "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin".into());
+    environment.insert("HOME".into(), home.clone().into_os_string());
+    environment.insert("XDG_CONFIG_HOME".into(), home.join(".config").into_os_string());
+    environment.insert("XDG_DATA_HOME".into(), home.join(".local/share").into_os_string());
+    environment.insert("XDG_CACHE_HOME".into(), home.join(".cache").into_os_string());
+    environment.insert("GIT_CONFIG_GLOBAL".into(), fixture.join("gitconfig").into_os_string());
+    environment.insert("GIT_CONFIG_NOSYSTEM".into(), "1".into());
+    environment.insert("KUBECONFIG".into(), fixture.join("kubeconfig").into_os_string());
+    environment.insert("DOCKER_HOST".into(), format!("unix://{}", fixture.join("docker.sock").display()).into());
+    environment.insert("AWS_EC2_METADATA_DISABLED".into(), "true".into());
+    environment.insert("TERM".into(), "xterm-256color".into());
+    environment.insert("PAGER".into(), "cat".into());
+    environment.insert("GIT_PAGER".into(), "cat".into());
+    environment.insert("MANPAGER".into(), "cat".into());
+    environment.insert("NO_COLOR".into(), "1".into());
+    environment.insert("CI".into(), "1".into());
+    environment.insert("LANG".into(), "C.UTF-8".into());
+    for name in delivery_secret_names(manifest)? {
+        let value = std::env::var_os(&name)
+            .with_context(|| format!("CLI worker did not receive manifest-bound secret environment key {name}"))?;
+        environment.insert(name.into(), value);
+    }
+    Ok(environment)
+}
+fn verify_exact_executable(
+    manifest: &super::crawl::RuntimeManifest,
+    expected_filename: &str,
+    environment: &BTreeMap<OsString, OsString>,
+) -> Result<PathBuf> {
+    let identity = manifest
+        .execution_identity
+        .as_ref()
+        .context("CLI runtime manifest has no resolved execution identity")?;
+    if identity.platform != "terminal" {
+        bail!(
+            "CLI execution identity platform differs: expected \"terminal\", observed {:?}",
+            identity.platform
+        );
+    }
+    if manifest.runtime_product.identifier != expected_filename {
+        bail!(
+            "CLI manifest product identifier differs: expected {expected_filename:?}, observed {:?}",
+            manifest.runtime_product.identifier
+        );
+    }
+    if identity.host.is_empty() {
+        bail!("CLI execution identity has no registry host alias");
+    }
+    let identity_value = serde_json::to_value(identity)?;
+    let expected_hostname = identity_value
+        .get("observed_hostname")
+        .and_then(Value::as_str)
+        .filter(|value| !value.is_empty())
+        .context("CLI execution identity has no typed observed_hostname")?;
+    let hostname = Command::new("hostname")
+        .env_clear()
+        .env("PATH", "/usr/bin:/bin")
+        .output()
+        .context("read CLI worker hostname")?;
+    if !hostname.status.success() {
+        bail!(
+            "CLI worker hostname command failed: status={}; stdout={:?}; stderr={:?}",
+            hostname.status,
+            String::from_utf8_lossy(&hostname.stdout),
+            String::from_utf8_lossy(&hostname.stderr)
+        );
+    }
+    let observed_hostname = String::from_utf8_lossy(&hostname.stdout).trim().to_string();
+    if observed_hostname != expected_hostname {
+        bail!(
+            "CLI observed hostname differs: expected {expected_hostname:?}, observed {observed_hostname:?}"
+        );
+    }
+    let configured = identity
+        .executable_path
+        .as_deref()
+        .context("CLI execution identity has no exact executable path")?;
+    let path = PathBuf::from(configured);
+    if !path.is_absolute() || !path.is_file() {
+        bail!("CLI execution identity path is not an absolute executable file: {configured}");
+    }
+    let canonical = std::fs::canonicalize(&path)
+        .with_context(|| format!("canonicalize exact CLI executable {}", path.display()))?;
+    if canonical != path {
+        bail!(
+            "CLI execution identity path is not canonical: declared {}, canonical {}",
+            path.display(),
+            canonical.display()
+        );
+    }
+    if path.file_name().and_then(|value| value.to_str()) != Some(expected_filename) {
+        bail!(
+            "CLI execution identity filename differs: expected {expected_filename}, observed {}",
+            path.display()
+        );
+    }
+    let expected_sha = identity
+        .executable_sha256
+        .as_deref()
+        .context("CLI execution identity has no executable SHA-256")?;
+    let mut file = std::fs::File::open(&path)
+        .with_context(|| format!("open exact CLI executable {}", path.display()))?;
+    let mut digest = Sha256::new();
+    let mut buffer = [0_u8; 64 * 1024];
+    loop {
+        let count = file
+            .read(&mut buffer)
+            .with_context(|| format!("hash exact CLI executable {}", path.display()))?;
+        if count == 0 {
+            break;
+        }
+        digest.update(&buffer[..count]);
+    }
+    let observed_sha = hex::encode(digest.finalize());
+    if !observed_sha.eq_ignore_ascii_case(expected_sha) {
+        bail!(
+            "CLI executable SHA-256 changed immediately before use: expected {expected_sha}, observed {observed_sha}"
+        );
+    }
+    let expected_version = identity
+        .product_version
+        .as_deref()
+        .context("CLI execution identity has no exact product version")?;
+    let mut version_command = Command::new(&path);
+    version_command
+        .arg("--version")
+        .env_clear()
+        .envs(environment);
+    let version = version_command
+        .output()
+        .with_context(|| format!("read exact CLI version from {}", path.display()))?;
+    if !version.status.success() {
+        bail!(
+            "exact CLI version command failed immediately before use: status={}; stdout={:?}; stderr={:?}",
+            version.status,
+            String::from_utf8_lossy(&version.stdout),
+            String::from_utf8_lossy(&version.stderr)
+        );
+    }
+    let observed_version = String::from_utf8_lossy(&version.stdout).trim().to_string();
+    if observed_version != expected_version {
+        bail!(
+            "CLI product version changed immediately before use: expected {expected_version:?}, observed {observed_version:?}"
+        );
+    }
+    Ok(path)
 }
 
 fn shell_quote(value: &str) -> String {
     format!("'{}'", value.replace('\'', "'\\''"))
 }
 
-fn tmux(args: &[&str], context: &str) -> Result<String> {
+fn tmux(
+    socket: &Path,
+    environment: &BTreeMap<OsString, OsString>,
+    args: &[&str],
+    context: &str,
+) -> Result<String> {
     let output = Command::new("tmux")
+        .env_clear()
+        .envs(environment)
+        .args(["-S", socket.to_string_lossy().as_ref()])
         .args(args)
         .output()
         .with_context(|| context.to_string())?;
@@ -154,19 +364,26 @@ fn tmux(args: &[&str], context: &str) -> Result<String> {
 
 struct TmuxSession {
     name: String,
+    socket: PathBuf,
+    environment: BTreeMap<OsString, OsString>,
 }
 
 impl Drop for TmuxSession {
     fn drop(&mut self) {
         let _ = Command::new("tmux")
+            .env_clear()
+            .env("PATH", "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
+            .args(["-S", self.socket.to_string_lossy().as_ref()])
             .args(["kill-session", "-t", &self.name])
-            .status();
+            .output();
     }
 }
 
-fn capture(session: &str) -> Result<String> {
+fn capture(session: &TmuxSession) -> Result<String> {
     tmux(
-        &["capture-pane", "-t", session, "-p", "-e", "-S", "-"],
+        &session.socket,
+        &session.environment,
+        &["capture-pane", "-t", &session.name, "-p", "-e", "-S", "-"],
         "capture CLI PTY",
     )
 }
@@ -180,10 +397,9 @@ fn clean_terminal(value: &str) -> String {
 }
 
 fn run_in_pty(
-    session: &str,
+    session: &TmuxSession,
     binary: &Path,
     argv: &[String],
-    stdin: Option<&str>,
     output: &Path,
     index: usize,
 ) -> Result<Invocation> {
@@ -194,17 +410,19 @@ fn run_in_pty(
         invocation.push(' ');
         invocation.push_str(&shell_quote(argument));
     }
-    if let Some(stdin) = stdin {
-        invocation = format!("printf %s {} | {invocation}", shell_quote(stdin));
-    }
+
     let command =
         format!("printf '\\n{start_marker}\\n'; {invocation}; printf '\\n{marker}%s\\n' \"$?\"");
     tmux(
-        &["send-keys", "-t", session, "-l", &command],
+        &session.socket,
+        &session.environment,
+        &["send-keys", "-t", &session.name, "-l", &command],
         "type CLI invocation",
     )?;
     tmux(
-        &["send-keys", "-t", session, "Enter"],
+        &session.socket,
+        &session.environment,
+        &["send-keys", "-t", &session.name, "Enter"],
         "submit CLI invocation",
     )?;
     let started = Instant::now();
@@ -217,7 +435,9 @@ fn run_in_pty(
         }
         if started.elapsed() >= Duration::from_secs(30) {
             let _ = tmux(
-                &["send-keys", "-t", session, "C-c"],
+                &session.socket,
+                &session.environment,
+                &["send-keys", "-t", &session.name, "C-c"],
                 "interrupt CLI timeout",
             );
             std::thread::sleep(Duration::from_millis(300));
@@ -250,46 +470,28 @@ fn run_in_pty(
     })
 }
 
-fn subcommands(help: &str) -> Vec<String> {
-    static COMMAND: std::sync::LazyLock<Regex> = std::sync::LazyLock::new(|| {
-        Regex::new(r"^\s{2,}([a-z][a-z0-9_-]*)\s{2,}\S").expect("static command regex")
-    });
-    let mut in_commands = false;
-    let mut found = Vec::new();
-    let mut seen = HashSet::new();
-    for line in help.lines() {
-        let heading = line.trim().to_ascii_lowercase();
-        if heading.ends_with("commands:") || matches!(heading.as_str(), "commands" | "subcommands:")
-        {
-            in_commands = true;
-            continue;
-        }
-        if in_commands && !line.trim().is_empty() && !line.starts_with(char::is_whitespace) {
-            in_commands = false;
-        }
-        if !in_commands {
-            continue;
-        }
-        if let Some(command) = COMMAND.captures(line).and_then(|capture| capture.get(1)) {
-            let command = command.as_str();
-            if !matches!(command, "help" | "version") && seen.insert(command.to_string()) {
-                found.push(command.to_string());
-            }
-        }
-    }
-    found
-}
 
 fn invocation_json(invocation: &Invocation, kind: &str) -> Value {
     let mut digest = Sha256::new();
     digest.update(invocation.output.as_bytes());
+    let output_sha256 = hex::encode(digest.finalize());
     json!({
         "kind": kind,
+        "delivered_input": {
+            "argv": invocation.argv,
+        },
+        "observed_state": {
+            "exit_status": invocation.exit_status,
+            "timed_out": invocation.timed_out,
+            "raw_terminal_state": invocation.state_path,
+            "rendered_output": invocation.output,
+            "rendered_output_sha256": output_sha256,
+        },
         "argv": invocation.argv,
         "exit_status": invocation.exit_status,
         "timed_out": invocation.timed_out,
         "state": invocation.state_path,
-        "output_sha256": hex::encode(digest.finalize()),
+        "output_sha256": output_sha256,
     })
 }
 
@@ -297,20 +499,7 @@ fn crawl_one(
     record: &Record,
     manifest: &super::crawl::RuntimeManifest,
     output: &Path,
-    journeys: &[Journey],
-    max_commands: usize,
-    max_depth: usize,
 ) -> Result<Value> {
-    if record.binary != manifest.runtime_product.identifier {
-        bail!("CLI binary differs from immutable runtime manifest");
-    }
-    let binary = executable(&record.binary).ok_or_else(|| {
-        anyhow!(
-            "{} ({}) is not installed on this host",
-            record.name,
-            record.binary
-        )
-    })?;
     let fixture = output.join("fixture");
     std::fs::create_dir_all(output.join("states"))?;
     std::fs::create_dir_all(&fixture)?;
@@ -325,25 +514,23 @@ fn crawl_one(
     for directory in [&home, &config, &data, &cache] {
         std::fs::create_dir_all(directory)?;
     }
-    let home_env = format!("HOME={}", home.display());
-    let config_env = format!("XDG_CONFIG_HOME={}", config.display());
-    let data_env = format!("XDG_DATA_HOME={}", data.display());
-    let cache_env = format!("XDG_CACHE_HOME={}", cache.display());
-    let git_config_env = format!("GIT_CONFIG_GLOBAL={}", fixture.join("gitconfig").display());
-    let kube_env = format!("KUBECONFIG={}", fixture.join("kubeconfig").display());
-    let docker_env = format!(
-        "DOCKER_HOST=unix://{}",
-        fixture.join("docker.sock").display()
-    );
-    let session = format!("spis-cli-{}-{}", std::process::id(), record.slug);
+    let environment = isolated_environment(manifest, &fixture)?;
+    let binary = verify_exact_executable(manifest, &record.binary, &environment)?;
+    let session_name = format!("spis-cli-{}-{}", std::process::id(), record.slug);
+    let socket = fixture.join("tmux.sock");
+    if socket.exists() {
+        std::fs::remove_file(&socket)
+            .with_context(|| format!("remove stale private CLI tmux socket {}", socket.display()))?;
+    }
     let raw = output.join("terminal.raw");
-    let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
     tmux(
+        &socket,
+        &environment,
         &[
             "new-session",
             "-d",
             "-s",
-            &session,
+            &session_name,
             "-x",
             "120",
             "-y",
@@ -351,95 +538,50 @@ fn crawl_one(
             "-c",
             fixture.to_string_lossy().as_ref(),
             "--",
-            "env",
-            &home_env,
-            &config_env,
-            &data_env,
-            &cache_env,
-            &git_config_env,
-            "GIT_CONFIG_NOSYSTEM=1",
-            &kube_env,
-            &docker_env,
-            "AWS_EC2_METADATA_DISABLED=true",
-            &shell,
+            "/bin/sh",
         ],
-        "launch CLI PTY",
+        "launch private CLI PTY",
     )?;
-    let _session_guard = TmuxSession {
-        name: session.clone(),
+    let session = TmuxSession {
+        name: session_name,
+        socket,
+        environment,
     };
     let pipe = format!("cat >> {}", shell_quote(raw.to_string_lossy().as_ref()));
-    let _ = tmux(
-        &["pipe-pane", "-t", &session, "-o", &pipe],
+    tmux(
+        &session.socket,
+        &session.environment,
+        &["pipe-pane", "-t", &session.name, "-o", &pipe],
         "record CLI terminal bytes",
-    );
-    tmux(
-        &[
-            "send-keys",
-            "-t",
-            &session,
-            "-l",
-            "export TERM=xterm-256color PAGER=cat GIT_PAGER=cat MANPAGER=cat NO_COLOR=1 CI=1",
-        ],
-        "configure CLI PTY",
-    )?;
-    tmux(
-        &["send-keys", "-t", &session, "Enter"],
-        "apply CLI environment",
     )?;
     std::thread::sleep(Duration::from_millis(200));
 
     let mut reports = Vec::new();
     let mut index = 1usize;
-    let version_candidates = [
-        vec!["--version".to_string()],
-        vec!["version".to_string()],
-        vec!["-V".to_string()],
-    ];
-    for argv in version_candidates {
-        let invocation = run_in_pty(&session, &binary, &argv, None, output, index)?;
-        index += 1;
-        let success = invocation.exit_status == Some(0) && !invocation.timed_out;
-        reports.push(invocation_json(&invocation, "version"));
-        if success {
-            break;
-        }
-    }
+    let version = run_in_pty(
+        &session,
+        &binary,
+        &["--version".to_string()],
+        output,
+        index,
+    )?;
+    index += 1;
+    reports.push(invocation_json(&version, "version"));
 
-    let mut queue = VecDeque::from([Vec::<String>::new()]);
-    let mut seen = HashSet::new();
-    while let Some(prefix) = queue.pop_front() {
-        if reports.len() >= max_commands || prefix.len() > max_depth || !seen.insert(prefix.clone())
-        {
-            continue;
-        }
-        let argv = if record.binary == "git" && prefix.is_empty() {
-            vec!["help".to_string(), "-a".to_string()]
-        } else {
-            prefix
-                .iter()
-                .cloned()
-                .chain(["--help".to_string()])
-                .collect()
-        };
-        let invocation = run_in_pty(&session, &binary, &argv, None, output, index)?;
-        index += 1;
-        let discovered = subcommands(&invocation.output);
-        reports.push(invocation_json(&invocation, "help"));
-        if prefix.len() < max_depth {
-            for command in discovered {
-                let mut child = prefix.clone();
-                child.push(command);
-                queue.push_back(child);
-            }
-        }
-    }
+    let help = run_in_pty(
+        &session,
+        &binary,
+        &["--help".to_string()],
+        output,
+        index,
+    )?;
+    index += 1;
+    reports.push(invocation_json(&help, "help"));
 
     let refusal = run_in_pty(
         &session,
         &binary,
         &["--spis-invalid-option".to_string()],
-        None,
         output,
         index,
     )?;
@@ -450,38 +592,17 @@ fn crawl_one(
         &session,
         &binary,
         &["--help".to_string()],
-        None,
         output,
         index,
     )?;
-    index += 1;
     reports.push(invocation_json(&recovery, "recovery"));
 
-    for journey in journeys {
-        if journey.destructive {
-            reports.push(json!({
-                "kind": "journey",
-                "name": journey.name,
-                "argv": journey.argv,
-                "blocked": true,
-                "reason": "destructive journeys require a non-destructive fixture variant",
-            }));
-            continue;
-        }
-        let invocation = run_in_pty(
-            &session,
-            &binary,
-            &journey.argv,
-            journey.stdin.as_deref(),
-            output,
-            index,
-        )?;
-        index += 1;
-        let mut report = invocation_json(&invocation, "journey");
-        report["name"] = json!(journey.name);
-        reports.push(report);
-    }
-    let _ = tmux(&["kill-session", "-t", &session], "close CLI PTY");
+    let _ = tmux(
+        &session.socket,
+        &session.environment,
+        &["kill-session", "-t", &session.name],
+        "close CLI PTY",
+    );
     let variant_events: Vec<Value> = reports.iter().enumerate().filter_map(|(position, invocation)| {
         let kind = invocation.get("kind").and_then(Value::as_str)?;
         let event_kind = if invocation.get("timed_out").and_then(Value::as_bool) == Some(true) {
@@ -515,8 +636,7 @@ fn crawl_one(
         "runtime_execution_identity": manifest.execution_identity,
         "terminal": {"columns": 120, "rows": 40, "term": "xterm-256color"},
         "invocations": reports,
-        "commands_crawled": seen.len(),
-        "completed_at": crate::now_iso_utc(),
+        "commands_crawled": 4,
         "evidence_observations": {
             "executed_invocations": reports,
             "variant_events": variant_events,
@@ -539,98 +659,152 @@ fn crawl_one(
     Ok(report)
 }
 
-fn publish(root: &Path, uri: &str) -> Result<()> {
-    let archive = root.with_extension("tar.gz");
-    let status = super::crawl::stado_command()
-        .args(["storage", "archive"])
-        .arg(root)
-        .arg(&archive)
-        .status()?;
-    if !status.success() {
-        bail!("stado storage archive refused CLI artifacts");
+fn hash_artifact(path: &Path) -> Result<(String, u64)> {
+    let mut file = std::fs::File::open(path)
+        .with_context(|| format!("open CLI artifact {}", path.display()))?;
+    let mut digest = Sha256::new();
+    let mut bytes = 0_u64;
+    let mut buffer = [0_u8; 64 * 1024];
+    loop {
+        let count = file
+            .read(&mut buffer)
+            .with_context(|| format!("hash CLI artifact {}", path.display()))?;
+        if count == 0 {
+            break;
+        }
+        bytes += count as u64;
+        digest.update(&buffer[..count]);
     }
-    let status = super::crawl::stado_command()
-        .args(["storage", "put", "--if-absent", uri])
-        .arg(&archive)
-        .status()?;
-    if !status.success() {
-        bail!("stado storage put refused CLI artifacts");
-    }
-    Ok(())
+    Ok((hex::encode(digest.finalize()), bytes))
 }
 
-fn publish_file(path: &Path, uri: &str) -> Result<()> {
+fn publish(root: &Path, uri: &str) -> Result<Value> {
+    let attempt_name = root
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("CLI attempt artifact root has no UTF-8 name")?;
+    let archive = root.with_file_name(format!("{attempt_name}.tar.gz"));
+    if !archive.is_file() {
+        let output = super::crawl::stado_command()
+            .args(["storage", "archive"])
+            .arg(root)
+            .arg(&archive)
+            .output()?;
+        if !output.status.success() {
+            bail!(
+                "stado storage archive refused CLI artifacts: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+        }
+    }
+    let (sha256, bytes) = hash_artifact(&archive)?;
     let output = super::crawl::stado_command()
-        .args([
-            "storage",
-            "put",
-            "--if-absent",
-            "--content-type",
-            "application/json",
-            uri,
-        ])
-        .arg(path)
+        .args(["storage", "put", "--if-absent", uri])
+        .arg(&archive)
         .output()?;
     if !output.status.success() {
         bail!(
-            "stado storage put refused CLI journeys: {}",
+            "stado storage put refused CLI artifacts: {}",
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    Ok(())
+    let readback = root.with_file_name(format!("{attempt_name}.readback.tar.gz"));
+    if readback.exists() {
+        std::fs::remove_file(&readback)?;
+    }
+    let output = super::crawl::stado_command()
+        .args(["storage", "get", uri])
+        .arg(&readback)
+        .output()?;
+    if !output.status.success() {
+        bail!(
+            "stado storage readback refused CLI artifacts: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let (observed_sha256, observed_bytes) = hash_artifact(&readback)?;
+    std::fs::remove_file(&readback)?;
+    if observed_sha256 != sha256 || observed_bytes != bytes {
+        bail!(
+            "CLI artifact readback differs: expected sha256={sha256} bytes={bytes}, observed sha256={observed_sha256} bytes={observed_bytes}"
+        );
+    }
+    Ok(json!({
+        "uri": uri,
+        "sha256": sha256,
+        "bytes": bytes,
+        "media_type": "application/gzip",
+    }))
 }
+
+fn worker_report(
+    manifest: &super::crawl::RuntimeManifest,
+    artifact: Value,
+) -> Result<Value> {
+    let value = serde_json::to_value(manifest)?;
+    let attempt = value
+        .get("attempt")
+        .and_then(Value::as_u64)
+        .context("CLI runtime manifest has no attempt for worker report")?;
+    let attempt_id = value
+        .get("attempt_id")
+        .and_then(Value::as_str)
+        .context("CLI runtime manifest has no attempt_id for worker report")?;
+    let bindings_file_sha256 = value
+        .get("bindings_file_sha256")
+        .and_then(Value::as_str)
+        .context("CLI runtime manifest has no bindings_file_sha256")?;
+    let bindings_sha256 = value
+        .get("bindings_sha256")
+        .and_then(Value::as_str)
+        .context("CLI runtime manifest has no bindings_sha256")?;
+    let execution_identity = value
+        .get("execution_identity")
+        .filter(|identity| identity.is_object())
+        .context("CLI runtime manifest has no typed execution_identity")?
+        .clone();
+    Ok(json!({
+        "schema": "wisent.native-worker-report.v1",
+        "run_id": manifest.run_id,
+        "catalog": manifest.catalog,
+        "record": manifest.record,
+        "record_key": manifest.record_key,
+        "attempt": attempt,
+        "attempt_id": attempt_id,
+        "engine": manifest.engine,
+        "state": "artifact_published",
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "reference_sha256": manifest.reference_sha256,
+        "bindings_file_sha256": bindings_file_sha256,
+        "bindings_sha256": bindings_sha256,
+        "execution_identity": execution_identity,
+        "artifact": artifact,
+    }))
+}
+
 
 struct Submission<'a> {
     host: &'a str,
     record: &'a str,
-    journeys: Option<&'a Path>,
-    secret_env: &'a [String],
-    max_commands: usize,
-    max_depth: usize,
     manifest: &'a super::crawl::RuntimeManifest,
 }
 
 fn submit(request: Submission<'_>) -> Result<()> {
     safe_component(request.host, "--host")?;
     safe_component(request.record, "--record")?;
-    for binding in request.secret_env {
-        let (name, item) = binding
-            .split_once('=')
-            .ok_or_else(|| anyhow!("--secret-env must be NAME=SKARBIEC_ITEM"))?;
-        safe_component(name, "--secret-env name")?;
-        if item.is_empty()
-            || !item.chars().all(|character| {
-                character.is_ascii_alphanumeric()
-                    || matches!(character, '-' | '_' | '.' | '#' | '/' | ':')
-            })
-        {
-            bail!("--secret-env item is invalid");
-        }
-    }
+    let _attempt_binding = attempt_root(Path::new("."), request.manifest)?;
     if revision()? != request.manifest.source_revision {
         bail!("CLI coordinator revision does not match immutable runtime manifest");
     }
     let artifact = request.manifest.artifact_uri.clone();
     let output_uri = request.manifest.output_uri.clone();
-    let mut worker = format!(
-        "cargo run --release -- crawl-cli --worker --record {} --max-commands {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
+    let worker = format!(
+        "cargo run --release -- crawl-cli --worker --record {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.record,
-        request.max_commands,
-        request.max_depth,
         artifact,
         request.manifest.encoded()?,
     );
-    if let Some(journeys) = request.journeys {
-        let uri = format!(
-            "stado://spis-crawls/{}/{}/{}/journeys.json",
-            request.manifest.run_id, CATALOG, request.manifest.record
-        );
-        publish_file(journeys, &uri)?;
-        let remote = format!("$HOME/.stado/work/{}-cli-journeys.json", request.manifest.record_key);
-        worker = format!(
-            "$HOME/.stado/bin/stado storage get {uri} {remote} && {worker} --journeys {remote}"
-        );
-    }
     let mut arguments = vec![
         "submit".to_string(),
         worker,
@@ -649,9 +823,9 @@ fn submit(request: Submission<'_>) -> Result<()> {
         "--output-uri".to_string(),
         output_uri.clone(),
     ];
-    for binding in request.secret_env {
+    for (name, reference) in delivery_secret_bindings(request.manifest)? {
         arguments.push("--secret-env".to_string());
-        arguments.push(binding.clone());
+        arguments.push(format!("{name}={reference}"));
     }
     let output = super::crawl::stado_command().args(arguments).output()?;
     if !output.status.success() {
@@ -670,13 +844,9 @@ fn submit(request: Submission<'_>) -> Result<()> {
 pub fn run(rest: &[String]) -> Result<()> {
     let mut host = None;
     let mut record = None;
-    let mut journeys = None;
-    let mut secret_env = Vec::new();
     let mut worker = false;
     let mut artifact_uri = None;
     let mut runtime_manifest_base64 = None;
-    let mut max_commands = 250usize;
-    let mut max_depth = 4usize;
     let mut i = 0;
     while i < rest.len() {
         match rest[i].as_str() {
@@ -687,27 +857,6 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--record" => {
                 i += 1;
                 record = Some(rest.get(i).context("--record needs a value")?.clone());
-            }
-            "--journeys" => {
-                i += 1;
-                journeys = Some(PathBuf::from(
-                    rest.get(i).context("--journeys needs a value")?,
-                ));
-            }
-            "--secret-env" => {
-                i += 1;
-                secret_env.push(rest.get(i).context("--secret-env needs a value")?.clone());
-            }
-            "--max-commands" => {
-                i += 1;
-                max_commands = rest
-                    .get(i)
-                    .context("--max-commands needs a value")?
-                    .parse()?;
-            }
-            "--max-depth" => {
-                i += 1;
-                max_depth = rest.get(i).context("--max-depth needs a value")?.parse()?;
             }
             "--artifact-uri" => {
                 i += 1;
@@ -720,15 +869,12 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--worker" => worker = true,
             "--help" | "-h" => {
-                println!("usage: spis crawl-cli --host TARGET --record SLUG --runtime-manifest-base64 DATA [--journeys FILE] [--secret-env NAME=SKARBIEC_ITEM] [--max-commands N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
+                println!("usage: spis crawl-cli --host TARGET --record SLUG --runtime-manifest-base64 DATA\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value => bail!("unknown argument: {value}"),
         }
         i += 1;
-    }
-    if max_commands == 0 || max_commands > 5_000 || max_depth > 16 {
-        bail!("--max-commands must be 1..5000 and --max-depth must be 0..16");
     }
     let record = record.context("--record is required for one exact per-record job")?;
     let encoded_manifest = runtime_manifest_base64
@@ -744,34 +890,24 @@ pub fn run(rest: &[String]) -> Result<()> {
         return submit(Submission {
             host: &host.context("--host is required; CLI crawls execute as pinned Stado jobs")?,
             record: &record,
-            journeys: journeys.as_deref(),
-            secret_env: &secret_env,
-            max_commands,
-            max_depth,
             manifest: &manifest,
         });
     }
-    if host.is_some() || !secret_env.is_empty() {
-        bail!("--host and --secret-env are coordinator-only");
+    if host.is_some() {
+        bail!("--host is coordinator-only");
     }
-    let journeys_document: JourneyDocument = match journeys {
-        Some(path) => serde_json::from_slice(&std::fs::read(path)?)?,
-        None => JourneyDocument::default(),
-    };
     let artifact_uri = artifact_uri.context("--artifact-uri is required in worker mode")?;
     if artifact_uri != manifest.artifact_uri {
         bail!("worker artifact URI does not match immutable runtime manifest");
     }
-    let root = Path::new("target")
-        .join("spis-cli-crawls")
-        .join(&manifest.run_id)
-        .join(&manifest.record_key);
-    std::fs::create_dir_all(&root)?;
+    let root = attempt_root(
+        &Path::new("target").join("spis-cli-crawls"),
+        &manifest,
+    )?;
     let entry = records(Some(&record))?.into_iter().next().context("runtime manifest record is absent")?;
     let output = root.join(&entry.slug);
     std::fs::create_dir_all(&output)?;
-    let declared = journeys_document.records.get(&entry.slug).map(Vec::as_slice).unwrap_or(&[]);
-    let reports = vec![match crawl_one(&entry, &manifest, &output, declared, max_commands, max_depth) {
+    let reports = vec![match crawl_one(&entry, &manifest, &output) {
         Ok(report) => report,
         Err(error) => json!({
             "slug": entry.slug,
@@ -794,16 +930,16 @@ pub fn run(rest: &[String]) -> Result<()> {
         "runtime_manifest": manifest,
         "records": reports,
         "failed": failures,
-        "completed_at": crate::now_iso_utc(),
     });
     std::fs::write(
         root.join("batch.json"),
         serde_json::to_string_pretty(&summary)? + "\n",
     )?;
-    publish(&root, &artifact_uri)?;
-    println!("{}", serde_json::to_string_pretty(&summary)?);
     if failures > 0 {
         bail!("{failures} CLI records could not be crawled");
     }
+    let artifact = publish(&root, &artifact_uri)?;
+    let worker_report = worker_report(&manifest, artifact)?;
+    println!("{}", serde_json::to_string(&worker_report)?);
     Ok(())
 }

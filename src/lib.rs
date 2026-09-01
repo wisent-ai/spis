@@ -1,4 +1,5 @@
 pub mod commands;
+pub mod weles_provenance;
 
 use anyhow::{bail, Context, Result};
 use std::time::Duration;

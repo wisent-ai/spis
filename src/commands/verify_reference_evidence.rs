@@ -13,6 +13,7 @@
 //! Ported 1:1 from verify-reference-evidence.py + reference_contract.py.
 
 use crate as lib;
+use crate::weles_provenance::VerifiedProvenanceSet;
 use anyhow::{Context, Result};
 use serde_json::{json, Map, Value};
 use std::collections::{BTreeSet, HashMap};
@@ -154,41 +155,35 @@ fn canonical_timing_class(value: Option<&str>) -> Option<String> {
 
 const UNVERIFIED_NOTE_SCHEMA: &str = "wisent.unverified-source-note.v1";
 
-/// Deliberately carries no trust state.
-///
-/// The importer may retain `wisent.weles-verified-provenance.v1` documents, but
-/// this verifier cannot call `@wisent-ai/weles-client.verifyReceipt` with an
-/// out-of-band trusted key set. Re-reading `verified`, `verifier`, `claims`,
-/// `signed_payload` or `signature` from the same mutable JSON record would not
-/// constitute verification. Until the official verifier is integrated here,
-/// both crawl and upstream provenance fail closed.
+/// Per-record cache of receipts and artifact contexts that were reverified by the
+/// pinned official Weles client. Each observation must still carry its own typed
+/// link to an exact artifact member; record-level presence never supports a value.
 #[derive(Clone, Default)]
-struct ProvenanceContext;
+struct ProvenanceContext {
+    verified: VerifiedProvenanceSet,
+}
 
 impl ProvenanceContext {
-    fn from_record(_record: &Value) -> Self {
-        Self
+    fn from_record(record: &Value, base: &Path) -> Self {
+        Self {
+            verified: VerifiedProvenanceSet::verify_record(record, base),
+        }
+    }
+
+    fn failures(&self) -> &[String] {
+        self.verified.failures()
     }
 }
 
-fn observation_supported(_value: &Value, _context: &ProvenanceContext) -> bool {
-    false
+fn observation_supported(value: &Value, context: &ProvenanceContext) -> bool {
+    context.verified.supports_value(value)
 }
 
-pub(crate) fn observation_has_verified_provenance(_record: &Value, _value: &Value) -> bool {
-    false
+
+fn provenance_class(value: &Value, context: &ProvenanceContext) -> &'static str {
+    context.verified.provenance_class(value)
 }
 
-fn provenance_class(_value: &Value, _context: &ProvenanceContext) -> &'static str {
-    "unverified-source-media"
-}
-
-pub(crate) fn measured_motion_provenance_class(
-    _record: &Value,
-    _value: &Value,
-) -> &'static str {
-    "unverified-source-media"
-}
 
 // ------------------------------------------------------------------ probes --
 
@@ -831,8 +826,13 @@ fn demote_unsupported_semantics(
 }
 fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<Vec<String>> {
     let requirements = super::reference_contract::completeness_requirements(base);
-    let provenance_context = ProvenanceContext::from_record(data);
-    let mut gaps = demote_unsupported_semantics(data, &provenance_context);
+    let provenance_context = ProvenanceContext::from_record(data, base);
+    let mut gaps: Vec<String> = provenance_context
+        .failures()
+        .iter()
+        .map(|failure| format!("Weles provenance verification failed: {failure}"))
+        .collect();
+    gaps.extend(demote_unsupported_semantics(data, &provenance_context));
 
     if let Some(obj) = data.as_object_mut() {
         obj.insert("schema".into(), json!(RECORD_SCHEMA));

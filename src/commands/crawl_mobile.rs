@@ -1,17 +1,17 @@
 //! Real iOS/Android application crawler through an Appium device endpoint.
 //!
-//! The crawler launches the installed application, replays one path per fresh
-//! session, records the screen, stores the accessibility source and screenshot,
-//! and breadth-first explores actionable controls. A destructive control may be
-//! opened once so its confirmation flow is observed, but a second destructive
-//! confirmation is retained as a blocked edge rather than committed.
+//! The crawler validates the exact returned Appium session binding and a fresh
+//! read-only runtime-readiness observation, then retains one genuinely
+//! sequential trajectory. Every delivered action is bracketed by alert,
+//! accessibility-source, and active-owner observations.
 
 use anyhow::{anyhow, bail, Context, Result};
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use regex::Regex;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
-use std::collections::{HashSet, VecDeque};
+use std::collections::HashSet;
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::Duration;
@@ -57,104 +57,24 @@ impl Platform {
 struct Record {
     slug: String,
     name: String,
-    product_url: String,
     path: PathBuf,
 }
 
-#[derive(Clone, Debug)]
-struct InputValue {
-    key: String,
-    value: String,
-}
-
-#[derive(Default)]
-struct Fixtures {
-    inputs: Vec<FixtureRule>,
-}
-
-struct FixtureRule {
-    key: String,
-    matcher: Regex,
-    value: String,
-}
-
-#[derive(serde::Deserialize)]
-struct FixtureDocument {
-    #[serde(default)]
-    inputs: Vec<FixtureSpec>,
-}
-
-#[derive(serde::Deserialize)]
-struct FixtureSpec {
-    key: String,
-    matcher: String,
-    value: Option<String>,
-    value_env: Option<String>,
-}
-
-impl Fixtures {
-    fn load(path: Option<&Path>) -> Result<Self> {
-        let Some(path) = path else {
-            return Ok(Self::default());
-        };
-        let document: FixtureDocument = serde_json::from_slice(
-            &std::fs::read(path)
-                .with_context(|| format!("read mobile input fixtures from {}", path.display()))?,
-        )
-        .with_context(|| format!("parse mobile input fixtures from {}", path.display()))?;
-        let mut inputs = Vec::new();
-        for fixture in document.inputs {
-            let value = match (fixture.value, fixture.value_env) {
-                (Some(value), None) => value,
-                (None, Some(variable)) => std::env::var(&variable).with_context(|| {
-                    format!("mobile input fixture {} needs ${variable}", fixture.key)
-                })?,
-                _ => bail!(
-                    "mobile input fixture {} must set exactly one of value or value_env",
-                    fixture.key
-                ),
-            };
-            inputs.push(FixtureRule {
-                key: fixture.key,
-                matcher: Regex::new(&fixture.matcher)
-                    .with_context(|| format!("invalid mobile input matcher {}", fixture.matcher))?,
-                value,
-            });
-        }
-        Ok(Self { inputs })
-    }
-
-    fn input_for(&self, label: &str) -> Option<InputValue> {
-        self.inputs
-            .iter()
-            .find(|fixture| fixture.matcher.is_match(label))
-            .map(|fixture| InputValue {
-                key: fixture.key.clone(),
-                value: fixture.value.clone(),
-            })
-    }
-}
 
 #[derive(Clone, Debug)]
 struct Action {
     selector: String,
     label: String,
     destructive: bool,
-    input: Option<InputValue>,
+    kind: String,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize)]
 struct PathStep {
     selector: String,
     label: String,
-    destructive: bool,
-    input: Option<InputValue>,
 }
 
-#[derive(Clone, Debug)]
-struct Pending {
-    path: Vec<PathStep>,
-}
 
 fn canonical_driver_url(value: &str) -> Result<String> {
     let parsed = url::Url::parse(value).context("--driver-url must be a URL")?;
@@ -198,12 +118,22 @@ impl Appium {
             "DELETE" => self.agent.delete(&url),
             _ => bail!("unsupported Appium method {method}"),
         };
-        let response = if let Some(body) = body {
+        let response = match if let Some(body) = body {
             request.send_json(body.clone())
         } else {
             request.call()
-        }
-        .map_err(|error| anyhow!("Appium {method} {path}: {error}"))?;
+        } {
+            Ok(response) => response,
+            Err(ureq::Error::Status(status, response)) => {
+                let diagnostic = response
+                    .into_string()
+                    .unwrap_or_else(|error| format!("<unreadable response body: {error}>"));
+                bail!("Appium {method} {path} returned HTTP {status}: {diagnostic}");
+            }
+            Err(ureq::Error::Transport(error)) => {
+                bail!("Appium {method} {path} transport failed: {error}");
+            }
+        };
         response
             .into_json()
             .map_err(|error| anyhow!("Appium {method} {path} returned invalid JSON: {error}"))
@@ -214,7 +144,7 @@ impl Appium {
         platform: Platform,
         app_id: &str,
         execution: &super::crawl::RuntimeExecutionIdentity,
-    ) -> Result<String> {
+    ) -> Result<(String, Value)> {
         let mut always = serde_json::Map::new();
         always.insert("platformName".into(), json!(platform.appium_name()));
         always.insert("appium:automationName".into(), json!(platform.automation()));
@@ -224,17 +154,26 @@ impl Appium {
         always.insert("appium:autoAcceptAlerts".into(), json!(false));
         always.insert("appium:autoDismissAlerts".into(), json!(false));
         always.insert("appium:newCommandTimeout".into(), json!(180));
-        if let Some(device_id) = &execution.device_id {
-            always.insert("appium:udid".into(), json!(device_id));
-        }
+        let device_id = execution
+            .device_id
+            .as_deref()
+            .context("mobile execution identity has no exact UDID")?;
+        always.insert("appium:udid".into(), json!(device_id));
         let payload = json!({ "capabilities": { "alwaysMatch": always } });
         let response = self.call("POST", "/session", Some(&payload))?;
-        response
+        let session = response
             .pointer("/value/sessionId")
             .or_else(|| response.get("sessionId"))
             .and_then(Value::as_str)
+            .filter(|value| !value.is_empty())
             .map(str::to_string)
-            .ok_or_else(|| anyhow!("Appium did not return a session id"))
+            .ok_or_else(|| anyhow!("Appium did not return a session id: {response}"))?;
+        let capabilities = response
+            .pointer("/value/capabilities")
+            .or_else(|| response.get("capabilities"))
+            .cloned()
+            .ok_or_else(|| anyhow!("Appium did not return session capabilities: {response}"))?;
+        Ok((session, capabilities))
     }
 
     fn source(&self, session: &str) -> Result<String> {
@@ -272,25 +211,65 @@ impl Appium {
             .decode(value)
             .context("Appium screenshot was not base64")
     }
+    fn alert_text(&self, session: &str) -> Result<Option<String>> {
+        let path = format!("/session/{session}/alert/text");
+        let response = match self.agent.get(&format!("{}{}", self.base, path)).call() {
+            Ok(response) => response,
+            Err(ureq::Error::Status(status, response)) => {
+                let body = response
+                    .into_string()
+                    .unwrap_or_else(|error| format!("<unreadable response body: {error}>"));
+                if serde_json::from_str::<Value>(&body)
+                    .ok()
+                    .and_then(|value| {
+                        value
+                            .pointer("/value/error")
+                            .and_then(Value::as_str)
+                            .map(str::to_string)
+                    })
+                    .as_deref()
+                    == Some("no such alert")
+                {
+                    return Ok(None);
+                }
+                bail!("Appium GET {path} returned HTTP {status}: {body}");
+            }
+            Err(ureq::Error::Transport(error)) => {
+                bail!("Appium GET {path} transport failed: {error}");
+            }
+        };
+        let value: Value = response
+            .into_json()
+            .context("Appium alert-text response was invalid JSON")?;
+        Ok(value
+            .get("value")
+            .and_then(Value::as_str)
+            .map(str::to_string))
+    }
 
-    fn start_recording(&self, session: &str) {
-        let _ = self.call(
+    fn start_recording(&self, session: &str) -> Result<()> {
+        self.call(
             "POST",
             &format!("/session/{session}/appium/start_recording_screen"),
             Some(&json!({"options": {"timeLimit": 180}})),
-        );
+        )?;
+        Ok(())
     }
 
-    fn stop_recording(&self, session: &str) -> Option<Vec<u8>> {
-        let response = self
-            .call(
-                "POST",
-                &format!("/session/{session}/appium/stop_recording_screen"),
-                Some(&json!({})),
-            )
-            .ok()?;
-        let encoded = response.get("value")?.as_str()?;
-        STANDARD.decode(encoded).ok()
+    fn stop_recording(&self, session: &str) -> Result<Option<Vec<u8>>> {
+        let response = self.call(
+            "POST",
+            &format!("/session/{session}/appium/stop_recording_screen"),
+            Some(&json!({})),
+        )?;
+        let Some(encoded) = response.get("value").and_then(Value::as_str) else {
+            return Ok(None);
+        };
+        Ok(Some(
+            STANDARD
+                .decode(encoded)
+                .context("Appium screen recording was not base64")?,
+        ))
     }
 
     fn element(&self, session: &str, selector: &str) -> Result<String> {
@@ -322,40 +301,6 @@ impl Appium {
         Ok(())
     }
 
-    fn input(&self, session: &str, selector: &str, text: &str) -> Result<()> {
-        let element = self.element(session, selector)?;
-        let _ = self.call(
-            "POST",
-            &format!("/session/{session}/element/{element}/clear"),
-            Some(&json!({})),
-        );
-        self.call(
-            "POST",
-            &format!("/session/{session}/element/{element}/value"),
-            Some(&json!({
-                "text": text,
-                "value": text.chars().map(|character| character.to_string()).collect::<Vec<_>>(),
-            })),
-        )?;
-        std::thread::sleep(Duration::from_millis(700));
-        Ok(())
-    }
-
-    fn restart_app(&self, session: &str, app_id: &str) -> Result<()> {
-        let payload = json!({"appId": app_id, "bundleId": app_id});
-        let _ = self.call(
-            "POST",
-            &format!("/session/{session}/appium/device/terminate_app"),
-            Some(&payload),
-        );
-        self.call(
-            "POST",
-            &format!("/session/{session}/appium/device/activate_app"),
-            Some(&payload),
-        )?;
-        std::thread::sleep(Duration::from_secs(1));
-        Ok(())
-    }
 
     fn delete_session(&self, session: &str) {
         let _ = self.call("DELETE", &format!("/session/{session}"), None);
@@ -363,7 +308,9 @@ impl Appium {
 }
 
 fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
-    let directory = Path::new(catalog).join("references");
+    let directory = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join(catalog)
+        .join("references");
     let mut entries: Vec<PathBuf> = std::fs::read_dir(&directory)
         .with_context(|| format!("read {}", directory.display()))?
         .filter_map(|entry| entry.ok().map(|entry| entry.path()))
@@ -391,12 +338,7 @@ fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
                 .and_then(Value::as_str)
                 .unwrap_or_default()
                 .to_string(),
-            product_url: document
-                .get("product_url")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_string(),
-            path,
+            path: record_path,
         });
     }
     if found.is_empty() {
@@ -438,16 +380,6 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
     Ok((bundle.to_string(), url))
 }
 
-fn android_package(record: &Record) -> Result<(String, String)> {
-    let parsed = url::Url::parse(&record.product_url).context("Android product_url is invalid")?;
-    let package = parsed
-        .query_pairs()
-        .find(|(key, _)| key == "id")
-        .map(|(_, value)| value.into_owned())
-        .filter(|value| !value.is_empty())
-        .ok_or_else(|| anyhow!("Android product_url carries no package id"))?;
-    Ok((package, record.product_url.clone()))
-}
 
 fn attribute(tag: &str, name: &str) -> Option<String> {
     let pattern = Regex::new(&format!(r#"\b{}="([^"]*)""#, regex::escape(name))).ok()?;
@@ -485,22 +417,249 @@ fn system_owner(platform: Platform, identity: &str) -> bool {
     }
 }
 
-fn assert_product_owns_surface(
+#[derive(serde::Serialize)]
+struct SurfaceObservation {
+    active_owner_before: String,
+    source: String,
+    alert_text: Option<String>,
+    active_owner_after: String,
+}
+
+impl SurfaceObservation {
+    fn refusal_reason(&self, platform: Platform, expected: &str) -> Option<String> {
+        for observed in [&self.active_owner_before, &self.active_owner_after] {
+            if observed != expected {
+                return Some(if system_owner(platform, observed) {
+                    format!(
+                        "system-owned surface {observed} replaced exact app {expected}; further input withheld"
+                    )
+                } else {
+                    format!(
+                        "other-owner surface {observed} replaced exact app {expected}; further input withheld"
+                    )
+                });
+            }
+        }
+        self.alert_text.as_ref().map(|text| {
+            format!(
+                "Appium reported an alert surface with exact text {text:?}; it was not classified or clicked"
+            )
+        })
+    }
+}
+
+fn inspect_surface(appium: &Appium, session: &str) -> Result<SurfaceObservation> {
+    let active_owner_before = appium.active_app_identity(session)?;
+    let source = appium.source(session)?;
+    let alert_text = appium.alert_text(session)?;
+    let active_owner_after = appium.active_app_identity(session)?;
+    Ok(SurfaceObservation {
+        active_owner_before,
+        source,
+        alert_text,
+        active_owner_after,
+    })
+}
+fn exact_surface_screenshot(
     appium: &Appium,
     session: &str,
     platform: Platform,
-    expected: &str,
-) -> Result<String> {
-    let observed = appium.active_app_identity(session)?;
-    if observed == expected {
-        return Ok(observed);
-    }
-    if system_owner(platform, &observed) {
+    expected_owner: &str,
+) -> Result<(Vec<u8>, String, String)> {
+    let active_owner_before = appium.active_app_identity(session)?;
+    if active_owner_before != expected_owner {
+        let owner_class = if system_owner(platform, &active_owner_before) {
+            "system-owned"
+        } else {
+            "other-owner"
+        };
         bail!(
-            "no-consent gate stopped record: system-owned surface {observed} replaced {expected}; no control was clicked"
+            "{owner_class} surface {active_owner_before:?} was active immediately before the state screenshot, not exact app {expected_owner:?}; screenshot withheld"
         );
     }
-    bail!("runtime identity changed from {expected} to unexpected owner {observed}")
+    let screenshot = appium.screenshot(session)?;
+    let active_owner_after = appium.active_app_identity(session)?;
+    if active_owner_after != expected_owner {
+        let owner_class = if system_owner(platform, &active_owner_after) {
+            "system-owned"
+        } else {
+            "other-owner"
+        };
+        bail!(
+            "{owner_class} surface {active_owner_after:?} was active immediately after the state screenshot, not exact app {expected_owner:?}; screenshot rejected"
+        );
+    }
+    Ok((screenshot, active_owner_before, active_owner_after))
+}
+
+
+fn returned_capability<'a>(
+    capabilities: &'a Value,
+    prefixed: &str,
+    alias: &str,
+) -> Result<&'a str> {
+    let prefixed_value = capabilities.get(prefixed).and_then(Value::as_str);
+    let alias_value = capabilities.get(alias).and_then(Value::as_str);
+    if let (Some(left), Some(right)) = (prefixed_value, alias_value) {
+        if left != right {
+            bail!(
+                "Appium returned conflicting scalar capabilities {prefixed}={left:?} and {alias}={right:?}"
+            );
+        }
+    }
+    prefixed_value
+        .or(alias_value)
+        .ok_or_else(|| anyhow!("Appium returned neither {prefixed} nor {alias}: {capabilities}"))
+}
+
+fn verify_session_capabilities(
+    capabilities: &Value,
+    platform: Platform,
+    app_id: &str,
+    execution: &super::crawl::RuntimeExecutionIdentity,
+) -> Result<()> {
+    let platform_name = capabilities
+        .get("platformName")
+        .and_then(Value::as_str)
+        .context("Appium returned no scalar platformName capability")?;
+    if platform_name != platform.appium_name() {
+        bail!(
+            "Appium session platform differs: expected {:?}, observed {platform_name:?}",
+            platform.appium_name()
+        );
+    }
+    let expected_udid = execution
+        .device_id
+        .as_deref()
+        .context("mobile execution identity has no exact UDID")?;
+    let observed_udid = returned_capability(capabilities, "appium:udid", "udid")?;
+    if observed_udid != expected_udid {
+        bail!(
+            "Appium session UDID differs: expected {expected_udid:?}, observed {observed_udid:?}"
+        );
+    }
+    let (prefixed, alias) = match platform {
+        Platform::Ios => ("appium:bundleId", "bundleId"),
+        Platform::Android => ("appium:appPackage", "appPackage"),
+    };
+    let observed_app = returned_capability(capabilities, prefixed, alias)?;
+    if observed_app != app_id {
+        bail!(
+            "Appium session app identity differs: expected {app_id:?}, observed {observed_app:?}"
+        );
+    }
+    Ok(())
+}
+
+fn readiness_observation(
+    manifest: &super::crawl::RuntimeManifest,
+    app_id: &str,
+) -> Result<Value> {
+    let execution = manifest
+        .execution_identity
+        .as_ref()
+        .context("mobile runtime manifest has no exact execution identity")?;
+    let expected_version = execution
+        .product_version
+        .as_deref()
+        .context("mobile execution identity has no installed product version")?;
+    let expected_sha = execution
+        .executable_sha256
+        .as_deref()
+        .context("mobile execution identity has no installed package/binary SHA-256")?;
+    let device = execution
+        .device_id
+        .as_deref()
+        .context("mobile execution identity has no exact device id")?;
+    let proof = manifest
+        .prepared_proof
+        .as_ref()
+        .context("mobile runtime manifest has no prepared-runtime proof")?;
+    let proof_value = serde_json::to_value(proof)?;
+    if proof.product_identifier != app_id
+        || proof.device_id.as_deref() != Some(device)
+        || proof.pending_permission_prompts != 0
+        || proof.pending_notification_prompts != 0
+        || !manifest.constraints.no_system_permission_prompts
+        || !manifest.constraints.no_notifications
+        || ["notification_delivery_disabled", "permission_prompt_invocation_disabled", "notification_prompt_invocation_disabled"]
+            .iter()
+            .any(|field| proof_value.get(*field).and_then(Value::as_bool) != Some(true))
+    {
+        bail!(
+            "prepared-runtime proof does not bind the exact mobile app/device with prompt invocation and notification delivery disabled"
+        );
+    }
+    let output = Command::new("stado-runtime-readiness")
+        .args([
+            "verify",
+            "--json",
+            "--product",
+            app_id,
+            "--device",
+            device,
+            "--evidence-uri",
+            &proof.evidence_uri,
+            "--evidence-sha256",
+            &proof.evidence_sha256,
+        ])
+        .output()
+        .context("run fresh mobile runtime-readiness verification")?;
+    if !output.status.success() {
+        bail!(
+            "fresh mobile runtime-readiness verification failed: status={}; stdout={:?}; stderr={:?}",
+            output.status,
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+    let observation: Value = serde_json::from_slice(&output.stdout)
+        .context("fresh mobile runtime-readiness output is not JSON")?;
+    if observation.get("ready").and_then(Value::as_bool) != Some(true)
+        || observation.get("product_identifier").and_then(Value::as_str) != Some(app_id)
+        || observation.get("device_id").and_then(Value::as_str) != Some(device)
+        || observation.get("pending_permission_prompts").and_then(Value::as_u64) != Some(0)
+        || observation.get("pending_notification_prompts").and_then(Value::as_u64) != Some(0)
+        || observation.get("evidence_sha256").and_then(Value::as_str)
+            != Some(proof.evidence_sha256.as_str())
+        || observation.get("product_version").and_then(Value::as_str)
+            != Some(expected_version)
+        || !observation
+            .get("executable_sha256")
+            .and_then(Value::as_str)
+            .is_some_and(|value| value.eq_ignore_ascii_case(expected_sha))
+        || ["notification_delivery_disabled", "permission_prompt_invocation_disabled", "notification_prompt_invocation_disabled"]
+            .iter()
+            .any(|field| observation.get(*field).and_then(Value::as_bool) != Some(true))
+    {
+        bail!("fresh mobile readiness identity/safety observation differs from the immutable manifest: {observation}");
+    }
+    Ok(observation)
+}
+
+fn action_block_reason(action: &Action) -> Option<&'static str> {
+    if potential_consent_trigger(&action.label) {
+        return Some("permission/notification-like control withheld before delivery");
+    }
+    if action.destructive {
+        return Some("destructive control withheld before delivery");
+    }
+    if action.kind.ends_with("EditText")
+        || matches!(
+            action.kind.as_str(),
+            "XCUIElementTypeTextField"
+                | "XCUIElementTypeSecureTextField"
+                | "XCUIElementTypeSearchField"
+                | "XCUIElementTypeTextView"
+        )
+    {
+        return Some("editable control withheld before delivery");
+    }
+    let label = action.label.trim().to_ascii_lowercase();
+    if matches!(label.as_str(), "back" | "cancel" | "close" | "dismiss") {
+        return None;
+    }
+    Some("control has no digest-bound journey authorization and was withheld before delivery")
 }
 
 fn potential_consent_trigger(label: &str) -> bool {
@@ -511,7 +670,7 @@ fn potential_consent_trigger(label: &str) -> bool {
     .is_match(label)
 }
 
-fn actions(source: &str, platform: Platform, fixtures: &Fixtures) -> Vec<Action> {
+fn actions(source: &str, platform: Platform) -> Vec<Action> {
     let tags = Regex::new(r"<[^!?][^>]*>").expect("static tag regex");
     let destructive = Regex::new(
         r"(?i)\b(delete|remove|erase|close account|purchase|buy|pay|send|publish|post|confirm deletion|log ?out|sign ?out)\b",
@@ -584,10 +743,10 @@ fn actions(source: &str, platform: Platform, fixtures: &Fixtures) -> Vec<Action>
         };
         if seen.insert(selector.clone()) {
             found.push(Action {
-                input: editable.then(|| fixtures.input_for(&label)).flatten(),
                 selector,
                 destructive: destructive.is_match(&label),
                 label,
+                kind,
             });
         }
     }
@@ -624,16 +783,13 @@ fn write_state(
             "path": path.iter().map(|step| json!({
                 "selector": step.selector,
                 "label": step.label,
-                "destructive": step.destructive,
-                "kind": if step.input.is_some() { "input" } else { "click" },
-                "input_fixture": step.input.as_ref().map(|input| &input.key),
+                "kind": "click",
             })).collect::<Vec<_>>(),
             "actions": actions.iter().map(|action| json!({
                 "selector": action.selector,
                 "label": action.label,
                 "destructive": action.destructive,
-                "kind": if action.input.is_some() { "input" } else { "click" },
-                "input_fixture": action.input.as_ref().map(|input| &input.key),
+                "kind": "click",
             })).collect::<Vec<_>>(),
         }))? + "\n",
     )?;
@@ -645,7 +801,6 @@ fn crawl_record(
     platform: Platform,
     record: &Record,
     manifest: &super::crawl::RuntimeManifest,
-    fixtures: &Fixtures,
     root: &Path,
     max_states: usize,
     max_depth: usize,
@@ -656,179 +811,277 @@ fn crawl_record(
         .execution_identity
         .as_ref()
         .context("mobile runtime manifest has no exact device identity")?;
+    let readiness_before = readiness_observation(manifest, &app_id)?;
     let output = root.join(&record.slug);
     std::fs::create_dir_all(&output)?;
-    let mut queue = VecDeque::from([Pending { path: Vec::new() }]);
-    let mut states = HashSet::new();
-    let mut graph = Vec::new();
-    let mut blocked = Vec::new();
-    let mut ownership_checks = 0usize;
 
-    while let Some(pending) = queue.pop_front() {
-        if states.len() >= max_states {
-            break;
-        }
-        let session = appium
-            .create_session(platform, &app_id, execution)
-            .with_context(|| format!("launch {} ({app_id})", record.name))?;
-        if let Err(error) = appium.restart_app(&session, &app_id) {
-            appium.delete_session(&session);
-            return Err(error).with_context(|| format!("restart {} ({app_id})", record.name));
-        }
-        assert_product_owns_surface(appium, &session, platform, &app_id)?;
-        ownership_checks += 1;
-        appium.start_recording(&session);
-        let replay: Result<()> = pending.path.iter().try_for_each(|step| {
-            assert_product_owns_surface(appium, &session, platform, &app_id)?;
-            ownership_checks += 1;
-            let result = match &step.input {
-                Some(input) => appium.input(&session, &step.selector, &input.value),
-                None => appium.click(&session, &step.selector),
+    let (session, capabilities) = appium
+        .create_session(platform, &app_id, execution)
+        .with_context(|| format!("launch {} ({app_id})", record.name))?;
+    let result = (|| -> Result<Value> {
+        verify_session_capabilities(&capabilities, platform, &app_id, execution)?;
+        let readiness_after = readiness_observation(manifest, &app_id)?;
+        appium.start_recording(&session)?;
+
+        let mut states = HashSet::new();
+        let mut attempted = HashSet::<String>::new();
+        let mut reported_gaps = HashSet::<String>::new();
+        let mut trajectory = Vec::<PathStep>::new();
+        let mut graph = Vec::new();
+        let mut transitions = Vec::new();
+        let mut blocked = Vec::new();
+        let mut surface_observations = 0usize;
+
+        for action_index in 0..=max_depth {
+            if states.len() >= max_states {
+                blocked.push(json!({
+                    "reason": "state limit reached on the single observed trajectory; unexplored branches remain explicit gaps",
+                    "max_states": max_states,
+                }));
+                break;
+            }
+            let current = inspect_surface(appium, &session)?;
+            surface_observations += 1;
+            if let Some(reason) = current.refusal_reason(platform, &app_id) {
+                blocked.push(json!({
+                    "delivered_input": Value::Null,
+                    "observed_surface": current,
+                    "reason": reason,
+                    "further_input_withheld": true,
+                }));
+                break;
+            }
+            let state_id = hash_text(&current.source);
+            let available = actions(&current.source, platform);
+            if states.insert(state_id.clone()) {
+                let index = states.len();
+                let (screenshot, screenshot_owner_before, screenshot_owner_after) =
+                    exact_surface_screenshot(appium, &session, platform, &app_id)?;
+                write_state(
+                    &output,
+                    index,
+                    &current.source,
+                    &screenshot,
+                    None,
+                    &trajectory,
+                    &available,
+                )?;
+                graph.push(json!({
+                    "state": state_id,
+                    "index": index,
+                    "trajectory_depth": trajectory.len(),
+                    "delivered_inputs": trajectory,
+                    "observed_state": {
+                        "active_owner_before": current.active_owner_before,
+                        "active_owner_after": current.active_owner_after,
+                        "screenshot_active_owner_before": screenshot_owner_before,
+                        "screenshot_active_owner_after": screenshot_owner_after,
+                        "alert_text": current.alert_text,
+                        "source": format!("state-{index:04}/source.xml"),
+                        "screenshot": format!("state-{index:04}/screenshot.png"),
+                    },
+                    "available_actions": available.iter().map(|action| json!({
+                        "selector": action.selector,
+                        "label": action.label,
+                        "kind": action.kind,
+                        "destructive": action.destructive,
+                        "withheld_reason": action_block_reason(action),
+                    })).collect::<Vec<_>>(),
+                }));
+            }
+
+            let mut safe = Vec::new();
+            for action in available {
+                let identity = format!("{state_id}|{}|{}", action.selector, action.label);
+                if let Some(reason) = action_block_reason(&action) {
+                    if reported_gaps.insert(identity) {
+                        blocked.push(json!({
+                            "state": state_id,
+                            "selector": action.selector,
+                            "label": action.label,
+                            "delivered_input": Value::Null,
+                            "observed_state_change": Value::Null,
+                            "reason": reason,
+                        }));
+                    }
+                } else if !attempted.contains(&identity) {
+                    safe.push((identity, action));
+                }
+            }
+            if action_index == max_depth {
+                for (_, action) in safe {
+                    blocked.push(json!({
+                        "state": state_id,
+                        "selector": action.selector,
+                        "label": action.label,
+                        "delivered_input": Value::Null,
+                        "observed_state_change": Value::Null,
+                        "reason": "trajectory depth limit reached before this independently safe branch",
+                    }));
+                }
+                break;
+            }
+            let Some((attempt_identity, selected)) = safe.first().cloned() else {
+                break;
             };
-            result.with_context(|| format!("replay {}", step.label))?;
-            assert_product_owns_surface(appium, &session, platform, &app_id)?;
-            ownership_checks += 1;
-            Ok(())
-        });
-        if let Err(error) = replay {
-            let _ = appium.stop_recording(&session);
-            appium.delete_session(&session);
-            if error.to_string().contains("no-consent gate") {
-                return Err(error);
-            }
-            blocked.push(json!({
-                "path": pending.path.iter().map(|step| &step.label).collect::<Vec<_>>(),
-                "reason": error.to_string(),
-            }));
-            continue;
-        }
-        assert_product_owns_surface(appium, &session, platform, &app_id)?;
-        ownership_checks += 1;
-        let capture = appium.source(&session).and_then(|source| {
-            let state_id = hash_text(&source);
-            if states.contains(&state_id) {
-                Ok((source, state_id, None, Vec::new()))
-            } else {
-                let screenshot = appium.screenshot(&session)?;
-                let available = actions(&source, platform, fixtures);
-                Ok((source, state_id, Some(screenshot), available))
-            }
-        });
-        let recording = appium.stop_recording(&session);
-        appium.delete_session(&session);
-        let (source, state_id, screenshot, available) = capture?;
-        let Some(screenshot) = screenshot else {
-            continue;
-        };
-        states.insert(state_id.clone());
-        let index = states.len();
-        write_state(
-            &output,
-            index,
-            &source,
-            &screenshot,
-            recording.as_deref(),
-            &pending.path,
-            &available,
-        )?;
-        graph.push(json!({
-            "state": state_id,
-            "index": index,
-            "depth": pending.path.len(),
-            "path": pending.path.iter().map(|step| &step.label).collect::<Vec<_>>(),
-            "actions": available.len(),
-            "source": format!("state-{index:04}/source.xml"),
-            "screenshot": format!("state-{index:04}/screenshot.png"),
-            "recording": recording.as_ref().filter(|bytes| !bytes.is_empty()).map(|_| format!("state-{index:04}/trajectory.mp4")),
-        }));
-        if pending.path.len() >= max_depth {
-            continue;
-        }
-        let entered_destructive_flow = pending.path.iter().any(|step| step.destructive);
-        for action in available {
-            if potential_consent_trigger(&action.label) {
-                blocked.push(json!({
-                    "state": state_id,
-                    "label": action.label,
-                    "selector": action.selector,
-                    "reason": "potential consent or notification trigger withheld before it could open a system prompt",
-                }));
-                continue;
-            }
-            if entered_destructive_flow {
-                blocked.push(json!({
-                    "state": state_id,
-                    "label": action.label,
-                    "selector": action.selector,
-                    "reason": "confirmation state retained; no control after a destructive edge is committed",
-                }));
-                continue;
-            }
-            let mut path = pending.path.clone();
-            path.push(PathStep {
-                selector: action.selector,
-                label: action.label,
-                destructive: action.destructive,
-                input: action.input,
-            });
-            queue.push_back(Pending { path });
-        }
-    }
+            attempted.insert(attempt_identity);
 
-    let report = json!({
-        "schema": "wisent.mobile-crawl-run.v1",
-        "catalog": platform.appium_name(),
-        "record": record.slug,
-        "name": record.name,
-        "record_path": record.path,
-        "app_id": app_id,
-        "app_identity_source": identity_source,
-        "source_revision": manifest.source_revision,
-        "source_input_sha256": manifest.source_input_sha256,
-        "runtime_manifest": manifest,
-        "runtime_execution_identity": execution,
-        "driver_url": appium.base,
-        "no_consent_proof": {
-            "prepared": true,
-            "active_owner_checks": ownership_checks,
-            "system_dialog_encountered": false,
-            "permission_prompt_clicked": false,
-            "notification_prompt_clicked": false
-        },
-        "input_fixtures": fixtures.inputs.len(),
-        "states": graph,
-        "states_seen": states.len(),
-        "blocked_edges": blocked,
-        "max_states": max_states,
-        "max_depth": max_depth,
-        "evidence_observations": {
-            "executed_paths": graph.iter().filter_map(|state| state.get("path").cloned()).collect::<Vec<_>>(),
-            "variant_events": [],
-            "accessibility_artifacts": graph.iter().filter_map(|state| state.get("source").cloned()).collect::<Vec<_>>(),
-            "motion_artifacts": graph.iter().filter_map(|state| state.get("recording").cloned()).collect::<Vec<_>>(),
-            "canonical_interactions": [],
-            "canonical_journey": Value::Null,
-            "canonical_accessibility": Value::Null,
-            "canonical_motion_analysis": Value::Null,
-            "gaps": [
-                "No complete trigger/response/feedback/cancellation/failure/recovery interaction set was observed.",
-                "No screen-reader, focus-order, live-region or reduced-motion variant was executed.",
-                "No semantic motion trigger, continuity, interruption or reversal observation was retained."
-            ]
-        },
-        "completed_at": crate::now_iso_utc(),
-    });
-    std::fs::write(
-        output.join("crawl.json"),
-        serde_json::to_string_pretty(&report)? + "\n",
-    )?;
-    Ok(report)
+            let before = inspect_surface(appium, &session)?;
+            surface_observations += 1;
+            if let Some(reason) = before.refusal_reason(platform, &app_id) {
+                blocked.push(json!({
+                    "state": state_id,
+                    "delivered_input": Value::Null,
+                    "observed_surface": before,
+                    "reason": reason,
+                    "further_input_withheld": true,
+                }));
+                break;
+            }
+            let Some(action) = actions(&before.source, platform)
+                .into_iter()
+                .find(|action| action.selector == selected.selector && action.label == selected.label)
+            else {
+                blocked.push(json!({
+                    "state": state_id,
+                    "selector": selected.selector,
+                    "label": selected.label,
+                    "delivered_input": Value::Null,
+                    "observed_state_change": Value::Null,
+                    "reason": "fresh pre-action source no longer exposed the selected control",
+                }));
+                continue;
+            };
+            if let Some(reason) = action_block_reason(&action) {
+                blocked.push(json!({
+                    "state": state_id,
+                    "selector": action.selector,
+                    "label": action.label,
+                    "delivered_input": Value::Null,
+                    "observed_state_change": Value::Null,
+                    "reason": reason,
+                }));
+                continue;
+            }
+            let before_hash = hash_text(&before.source);
+            appium
+                .click(&session, &action.selector)
+                .with_context(|| format!("deliver independently safe mobile action {:?}", action.label))?;
+            let after = inspect_surface(appium, &session)?;
+            surface_observations += 1;
+            let after_hash = hash_text(&after.source);
+            let changed = before_hash != after_hash;
+            transitions.push(json!({
+                "step": transitions.len() + 1,
+                "delivered_input": {
+                    "kind": "click",
+                    "selector": action.selector,
+                    "label": action.label,
+                    "driver_acknowledged": true,
+                },
+                "observed_state_change": {
+                    "changed": changed,
+                    "before_source_sha256": before_hash,
+                    "after_source_sha256": after_hash,
+                    "active_owner_before_source": before.active_owner_before,
+                    "active_owner_after_source": before.active_owner_after,
+                    "active_owner_before_post_source": after.active_owner_before,
+                    "active_owner_after_post_source": after.active_owner_after,
+                    "alert_before": before.alert_text,
+                    "alert_after": after.alert_text,
+                },
+            }));
+            trajectory.push(PathStep {
+                selector: action.selector.clone(),
+                label: action.label.clone(),
+            });
+            if let Some(reason) = after.refusal_reason(platform, &app_id) {
+                blocked.push(json!({
+                    "state": after_hash,
+                    "delivered_input": Value::Null,
+                    "observed_surface": after,
+                    "reason": reason,
+                    "further_input_withheld": true,
+                }));
+                break;
+            }
+            if changed {
+                for (_, alternative) in safe.into_iter().skip(1) {
+                    blocked.push(json!({
+                        "state": before_hash,
+                        "selector": alternative.selector,
+                        "label": alternative.label,
+                        "delivered_input": Value::Null,
+                        "observed_state_change": Value::Null,
+                        "reason": "single sequential trajectory took a different safe edge; this branch was not reset or inferred",
+                    }));
+                }
+            }
+        }
+
+        let recording = appium.stop_recording(&session)?;
+        let recording_path = recording
+            .as_deref()
+            .filter(|bytes| !bytes.is_empty())
+            .map(|bytes| {
+                let path = output.join("trajectory.mp4");
+                std::fs::write(&path, bytes)?;
+                Ok::<_, anyhow::Error>(path)
+            })
+            .transpose()?;
+        let report = json!({
+            "schema": "wisent.mobile-crawl-run.v1",
+            "catalog": platform.appium_name(),
+            "record": record.slug,
+            "name": record.name,
+            "record_path": record.path,
+            "app_id": app_id,
+            "app_identity_source": identity_source,
+            "source_revision": manifest.source_revision,
+            "source_input_sha256": manifest.source_input_sha256,
+            "runtime_manifest": manifest,
+            "runtime_execution_identity": execution,
+            "runtime_readiness_before_appium_launch": readiness_before,
+            "runtime_readiness_after_capability_verification": readiness_after,
+            "appium_session_capabilities": capabilities,
+            "driver_url": appium.base,
+            "surface_observations": surface_observations,
+            "states": graph,
+            "states_seen": states.len(),
+            "transitions": transitions,
+            "blocked_edges": blocked,
+            "max_states": max_states,
+            "max_depth": max_depth,
+            "evidence_observations": {
+                "executed_trajectory": trajectory,
+                "accessibility_artifacts": graph.iter().filter_map(|state| state.pointer("/observed_state/source").cloned()).collect::<Vec<_>>(),
+                "motion_artifacts": recording_path.iter().map(|path| path.strip_prefix(&output).unwrap_or(path)).collect::<Vec<_>>(),
+                "canonical_interactions": [],
+                "canonical_journey": Value::Null,
+                "canonical_accessibility": Value::Null,
+                "canonical_motion_analysis": Value::Null,
+                "gaps": [
+                    "Only one genuinely sequential observed trajectory was retained; alternative branches were not reset or inferred.",
+                    "Destructive, input, permission-like, notification-like, and ambiguous controls were withheld before delivery.",
+                    "Alert/source/owner observations are retained as observations; no hard-coded claim that a system dialog was absent is emitted."
+                ]
+            },
+        });
+        std::fs::write(
+            output.join("crawl.json"),
+            serde_json::to_string_pretty(&report)? + "\n",
+        )?;
+        Ok(report)
+    })();
+    appium.delete_session(&session);
+    result
 }
 
 const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
 
 fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     if value.is_empty()
+        || matches!(value, "." | "..")
         || !value.chars().all(|character| {
             character.is_ascii_alphanumeric() || matches!(character, '-' | '_' | '.' | ':')
         })
@@ -837,51 +1090,142 @@ fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     }
     Ok(())
 }
+fn attempt_root(
+    base: &Path,
+    manifest: &super::crawl::RuntimeManifest,
+) -> Result<PathBuf> {
+    super::crawl::native_attempt_root(base, manifest)
+}
+
 
 fn revision() -> Result<String> { super::crawl::build_revision() }
 
-fn publish_file(path: &Path, uri: &str) -> Result<()> {
+
+fn hash_artifact(path: &Path) -> Result<(String, u64)> {
+    let mut file = std::fs::File::open(path)
+        .with_context(|| format!("open mobile artifact {}", path.display()))?;
+    let mut digest = Sha256::new();
+    let mut bytes = 0_u64;
+    let mut buffer = [0_u8; 64 * 1024];
+    loop {
+        let count = file
+            .read(&mut buffer)
+            .with_context(|| format!("hash mobile artifact {}", path.display()))?;
+        if count == 0 {
+            break;
+        }
+        bytes += count as u64;
+        digest.update(&buffer[..count]);
+    }
+    Ok((hex::encode(digest.finalize()), bytes))
+}
+
+fn publish_artifact(root: &Path, uri: &str) -> Result<Value> {
+    let attempt_name = root
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("mobile attempt artifact root has no UTF-8 name")?;
+    let archive = root.with_file_name(format!("{attempt_name}.tar.gz"));
+    if !archive.is_file() {
+        let output = super::crawl::stado_command()
+            .args(["storage", "archive"])
+            .arg(root)
+            .arg(&archive)
+            .output()
+            .context("archive mobile crawl")?;
+        if !output.status.success() {
+            bail!(
+                "stado storage archive refused mobile crawl artifacts: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+        }
+    }
+    let (sha256, bytes) = hash_artifact(&archive)?;
     let output = super::crawl::stado_command()
-        .args([
-            "storage",
-            "put",
-            "--if-absent",
-            "--content-type",
-            "application/json",
-            uri,
-        ])
-        .arg(path)
+        .args(["storage", "put", "--if-absent", uri])
+        .arg(&archive)
         .output()
-        .context("publish mobile crawl fixture")?;
+        .context("publish mobile crawl")?;
     if !output.status.success() {
         bail!(
-            "stado storage put refused mobile crawl fixture: {}",
+            "stado storage put refused mobile crawl artifacts: {}",
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    Ok(())
+    let readback = root.with_file_name(format!("{attempt_name}.readback.tar.gz"));
+    if readback.exists() {
+        std::fs::remove_file(&readback)?;
+    }
+    let output = super::crawl::stado_command()
+        .args(["storage", "get", uri])
+        .arg(&readback)
+        .output()
+        .context("read back mobile crawl")?;
+    if !output.status.success() {
+        bail!(
+            "stado storage readback refused mobile crawl artifacts: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let (observed_sha256, observed_bytes) = hash_artifact(&readback)?;
+    std::fs::remove_file(&readback)?;
+    if observed_sha256 != sha256 || observed_bytes != bytes {
+        bail!(
+            "mobile artifact readback differs: expected sha256={sha256} bytes={bytes}, observed sha256={observed_sha256} bytes={observed_bytes}"
+        );
+    }
+    Ok(json!({
+        "uri": uri,
+        "sha256": sha256,
+        "bytes": bytes,
+        "media_type": "application/gzip",
+    }))
 }
 
-fn publish_artifact(root: &Path, uri: &str) -> Result<()> {
-    let archive = root.with_extension("tar.gz");
-    let status = super::crawl::stado_command()
-        .args(["storage", "archive"])
-        .arg(root)
-        .arg(&archive)
-        .status()
-        .context("archive mobile crawl")?;
-    if !status.success() {
-        bail!("stado storage archive refused mobile crawl artifacts");
-    }
-    let status = super::crawl::stado_command()
-        .args(["storage", "put", "--if-absent", uri])
-        .arg(&archive)
-        .status()
-        .context("publish mobile crawl")?;
-    if !status.success() {
-        bail!("stado storage put refused mobile crawl artifacts");
-    }
-    Ok(())
+fn worker_report(
+    manifest: &super::crawl::RuntimeManifest,
+    artifact: Value,
+) -> Result<Value> {
+    let value = serde_json::to_value(manifest)?;
+    let attempt = value
+        .get("attempt")
+        .and_then(Value::as_u64)
+        .context("mobile runtime manifest has no attempt for worker report")?;
+    let attempt_id = value
+        .get("attempt_id")
+        .and_then(Value::as_str)
+        .context("mobile runtime manifest has no attempt_id for worker report")?;
+    let bindings_file_sha256 = value
+        .get("bindings_file_sha256")
+        .and_then(Value::as_str)
+        .context("mobile runtime manifest has no bindings_file_sha256")?;
+    let bindings_sha256 = value
+        .get("bindings_sha256")
+        .and_then(Value::as_str)
+        .context("mobile runtime manifest has no bindings_sha256")?;
+    let execution_identity = value
+        .get("execution_identity")
+        .filter(|identity| identity.is_object())
+        .context("mobile runtime manifest has no typed execution_identity")?
+        .clone();
+    Ok(json!({
+        "schema": "wisent.native-worker-report.v1",
+        "run_id": manifest.run_id,
+        "catalog": manifest.catalog,
+        "record": manifest.record,
+        "record_key": manifest.record_key,
+        "attempt": attempt,
+        "attempt_id": attempt_id,
+        "engine": manifest.engine,
+        "state": "artifact_published",
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "reference_sha256": manifest.reference_sha256,
+        "bindings_file_sha256": bindings_file_sha256,
+        "bindings_sha256": bindings_sha256,
+        "execution_identity": execution_identity,
+        "artifact": artifact,
+    }))
 }
 
 struct MobileSubmission<'a> {
@@ -889,8 +1233,6 @@ struct MobileSubmission<'a> {
     catalog: &'a str,
     record: &'a str,
     driver_url: &'a str,
-    fixtures: Option<&'a Path>,
-    secret_env: &'a [String],
     max_states: usize,
     max_depth: usize,
     manifest: &'a super::crawl::RuntimeManifest,
@@ -901,27 +1243,14 @@ fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
     safe_job_value(request.catalog, "catalog")?;
     safe_job_value(request.record, "--record")?;
     Appium::new(request.driver_url)?;
-    for binding in request.secret_env {
-        let (name, item) = binding
-            .split_once('=')
-            .ok_or_else(|| anyhow!("--secret-env must be NAME=SKARBIEC_ITEM"))?;
-        safe_job_value(name, "--secret-env name")?;
-        if item.is_empty()
-            || !item.chars().all(|character| {
-                character.is_ascii_alphanumeric()
-                    || matches!(character, '-' | '_' | '.' | '#' | '/' | ':')
-            })
-        {
-            bail!("--secret-env item is invalid");
-        }
-    }
+    let _attempt_binding = attempt_root(Path::new("."), request.manifest)?;
     if revision()? != request.manifest.source_revision {
         bail!("mobile coordinator revision does not match immutable runtime manifest");
     }
     let encoded = request.manifest.encoded()?;
     let artifact = request.manifest.artifact_uri.clone();
     let output_uri = request.manifest.output_uri.clone();
-    let mut worker = format!(
+    let worker = format!(
         "cargo run --release -- crawl-mobile {} --worker --record {} --driver-url {} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.catalog,
         request.record,
@@ -931,18 +1260,7 @@ fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
         artifact,
         encoded,
     );
-    if let Some(fixtures) = request.fixtures {
-        let fixture_uri = format!(
-            "stado://spis-crawls/{}/{}/{}/fixtures.json",
-            request.manifest.run_id, request.catalog, request.manifest.record
-        );
-        publish_file(fixtures, &fixture_uri)?;
-        let remote = format!("$HOME/.stado/work/{}-fixtures.json", request.manifest.record_key);
-        worker = format!(
-            "$HOME/.stado/bin/stado storage get {fixture_uri} {remote} && {worker} --fixtures {remote}"
-        );
-    }
-    let mut arguments = vec![
+    let arguments = vec![
         "submit".to_string(),
         worker,
         "--run-id".to_string(),
@@ -961,10 +1279,6 @@ fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
         "--output-uri".to_string(),
         output_uri.clone(),
     ];
-    for binding in request.secret_env {
-        arguments.push("--secret-env".to_string());
-        arguments.push(binding.clone());
-    }
     let output = super::crawl::stado_command()
         .args(arguments)
         .output()
@@ -989,8 +1303,6 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut catalog: Option<String> = None;
     let mut record: Option<String> = None;
     let mut driver_url = "http://127.0.0.1:4723".to_string();
-    let mut fixtures_path: Option<PathBuf> = None;
-    let mut secret_env = Vec::new();
     let mut host: Option<String> = None;
     let mut worker = false;
     let mut artifact_uri: Option<String> = None;
@@ -1010,16 +1322,6 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--driver-url" => {
                 i += 1;
                 driver_url = rest.get(i).context("--driver-url needs a value")?.clone();
-            }
-            "--fixtures" => {
-                i += 1;
-                fixtures_path = Some(PathBuf::from(
-                    rest.get(i).context("--fixtures needs a value")?,
-                ));
-            }
-            "--secret-env" => {
-                i += 1;
-                secret_env.push(rest.get(i).context("--secret-env needs a value")?.clone());
             }
             "--host" => {
                 i += 1;
@@ -1048,7 +1350,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 output = PathBuf::from(rest.get(i).context("--output needs a value")?);
             }
             "--help" | "-h" => {
-                println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--fixtures FILE] [--secret-env NAME=SKARBIEC_ITEM] [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
+                println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value if value.starts_with('-') => bail!("unknown argument: {value}"),
@@ -1081,26 +1383,23 @@ pub fn run(rest: &[String]) -> Result<()> {
             catalog: &catalog,
             record: &record,
             driver_url: &driver_url,
-            fixtures: fixtures_path.as_deref(),
-            secret_env: &secret_env,
             max_states,
             max_depth,
             manifest: &manifest,
         });
     }
-    if host.is_some() || !secret_env.is_empty() {
-        bail!("--host and --secret-env are coordinator-only");
+    if host.is_some() {
+        bail!("--host is coordinator-only");
     }
     let artifact_uri = artifact_uri.context("--artifact-uri is required in worker mode")?;
     if artifact_uri != manifest.artifact_uri {
         bail!("worker artifact URI does not match immutable runtime manifest");
     }
     let appium = Appium::new(&driver_url)?;
-    let fixtures = Fixtures::load(fixtures_path.as_deref())?;
-    let run_root = output
-        .join(&catalog)
-        .join(&manifest.run_id)
-        .join(&manifest.record_key);
+    let run_root = attempt_root(
+        &output,
+        &manifest,
+    )?;
     std::fs::create_dir_all(&run_root)?;
     let entry = records(&catalog, Some(&record))?
         .into_iter()
@@ -1111,7 +1410,6 @@ pub fn run(rest: &[String]) -> Result<()> {
         platform,
         &entry,
         &manifest,
-        &fixtures,
         &run_root,
         max_states,
         max_depth,
@@ -1139,19 +1437,18 @@ pub fn run(rest: &[String]) -> Result<()> {
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
         "runtime_manifest": manifest,
-        "input_fixtures": fixtures.inputs.len(),
         "records": reports,
         "failed": failures,
-        "completed_at": crate::now_iso_utc(),
     });
     std::fs::write(
         run_root.join("batch.json"),
         serde_json::to_string_pretty(&summary)? + "\n",
     )?;
-    publish_artifact(&run_root, &artifact_uri)?;
-    println!("{}", serde_json::to_string_pretty(&summary)?);
     if failures > 0 {
         bail!("{failures} mobile records could not be crawled");
     }
+    let artifact = publish_artifact(&run_root, &artifact_uri)?;
+    let worker_report = worker_report(&manifest, artifact)?;
+    println!("{}", serde_json::to_string(&worker_report)?);
     Ok(())
 }

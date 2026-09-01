@@ -1,107 +1,30 @@
 //! Real native desktop application crawler through Cua Driver.
 //!
-//! Runs on the Stado-selected desktop host. Every action is based on a fresh
-//! accessibility snapshot, is addressed with that snapshot's element token,
-//! and is followed by another snapshot. Paths are replayed with fresh tokens;
-//! screenshots, trees and action recordings are retained per discovered state.
+//! Runs one strictly window-scoped, genuinely sequential trajectory on the
+//! Stado-selected host. Each action uses a token from a fresh target-window
+//! snapshot and retains the exact driver response plus a fresh observed state.
 
 use anyhow::{anyhow, bail, Context, Result};
-use regex::Regex;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
-use std::collections::{HashSet, VecDeque};
+use std::collections::HashSet;
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::time::{Duration, SystemTime};
 const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
 
 #[derive(Clone, Debug)]
 struct Record {
     slug: String,
     name: String,
-    bundle_id: String,
 }
 
-#[derive(Clone, Debug)]
-struct InputValue {
-    key: String,
-    value: String,
-}
-
-#[derive(Default)]
-struct Fixtures {
-    inputs: Vec<FixtureRule>,
-}
-
-struct FixtureRule {
-    key: String,
-    matcher: Regex,
-    value: String,
-}
-
-#[derive(serde::Deserialize)]
-struct FixtureDocument {
-    #[serde(default)]
-    inputs: Vec<FixtureSpec>,
-}
-
-#[derive(serde::Deserialize)]
-struct FixtureSpec {
-    key: String,
-    matcher: String,
-    value: Option<String>,
-    value_env: Option<String>,
-}
-
-impl Fixtures {
-    fn load(path: Option<&Path>) -> Result<Self> {
-        let Some(path) = path else {
-            return Ok(Self::default());
-        };
-        let document: FixtureDocument = serde_json::from_slice(
-            &std::fs::read(path)
-                .with_context(|| format!("read desktop input fixtures from {}", path.display()))?,
-        )
-        .with_context(|| format!("parse desktop input fixtures from {}", path.display()))?;
-        let mut inputs = Vec::new();
-        for fixture in document.inputs {
-            let value = match (fixture.value, fixture.value_env) {
-                (Some(value), None) => value,
-                (None, Some(variable)) => std::env::var(&variable).with_context(|| {
-                    format!("desktop input fixture {} needs ${variable}", fixture.key)
-                })?,
-                _ => bail!(
-                    "desktop input fixture {} must set exactly one of value or value_env",
-                    fixture.key
-                ),
-            };
-            inputs.push(FixtureRule {
-                key: fixture.key,
-                matcher: Regex::new(&fixture.matcher).with_context(|| {
-                    format!("invalid desktop input matcher {}", fixture.matcher)
-                })?,
-                value,
-            });
-        }
-        Ok(Self { inputs })
-    }
-
-    fn input_for(&self, label: &str) -> Option<InputValue> {
-        self.inputs
-            .iter()
-            .find(|fixture| fixture.matcher.is_match(label))
-            .map(|fixture| InputValue {
-                key: fixture.key.clone(),
-                value: fixture.value.clone(),
-            })
-    }
-}
 
 #[derive(Clone, Debug, serde::Serialize)]
 struct Step {
     role: String,
     label: String,
-    destructive: bool,
-    input_fixture: Option<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -110,7 +33,6 @@ struct Action {
     label: String,
     token: String,
     destructive: bool,
-    input: Option<InputValue>,
 }
 
 pub(crate) fn cua_driver_candidates() -> Vec<PathBuf> {
@@ -137,22 +59,33 @@ fn cua_driver() -> Result<PathBuf> {
 }
 
 fn call(tool: &str, payload: &Value) -> Result<Value> {
-    let output = Command::new(cua_driver()?)
-        .arg(tool)
-        .arg(serde_json::to_string(payload)?)
-        .output()
-        .with_context(|| format!("start cua-driver {tool}"))?;
+    call_with_cli_options(tool, payload, &[])
+}
+
+fn call_with_cli_options(
+    tool: &str,
+    payload: &Value,
+    options: &[&std::ffi::OsStr],
+) -> Result<Value> {
+    let mut command = Command::new(cua_driver()?);
+    command.arg(tool).arg(serde_json::to_string(payload)?);
+    command.args(options);
+    let output = super::crawl::bounded_command_output(
+        &mut command,
+        &format!("cua-driver {tool}"),
+        Duration::from_secs(30),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
-        let error = String::from_utf8_lossy(&output.stderr);
-        bail!("cua-driver {tool} failed: {}", error.trim());
+        bail!(
+            "cua-driver {tool} failed: status={}; stdout={:?}; stderr={:?}",
+            output.status,
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
     }
-    let text = String::from_utf8_lossy(&output.stdout);
-    text.lines()
-        .rev()
-        .filter_map(|line| serde_json::from_str(line).ok())
-        .next()
-        .or_else(|| serde_json::from_str(&text).ok())
-        .ok_or_else(|| anyhow!("cua-driver {tool} returned no JSON"))
+    serde_json::from_slice(&output.stdout)
+        .with_context(|| format!("cua-driver {tool} returned no exact JSON document"))
 }
 
 struct SessionGuard {
@@ -166,56 +99,83 @@ impl Drop for SessionGuard {
 }
 
 struct RecordingGuard {
+    session: String,
     active: bool,
 }
 
 impl RecordingGuard {
-    fn stop(&mut self) -> Option<Value> {
+    fn stop(&mut self) -> Option<Result<Value>> {
         if !self.active {
             return None;
         }
         self.active = false;
-        call("stop_recording", &json!({})).ok()
+        Some(call("stop_recording", &json!({"session": self.session})))
     }
 }
 
 impl Drop for RecordingGuard {
     fn drop(&mut self) {
         if self.active {
-            let _ = call("stop_recording", &json!({}));
+            let _ = call("stop_recording", &json!({"session": self.session}));
         }
     }
 }
 
 fn find_i64(value: &Value, key: &str) -> Option<i64> {
-    match value {
-        Value::Object(map) => map
-            .get(key)
-            .and_then(Value::as_i64)
-            .or_else(|| map.values().find_map(|value| find_i64(value, key))),
-        Value::Array(values) => values.iter().find_map(|value| find_i64(value, key)),
+    let object = value.as_object()?;
+    let direct = object.get(key).and_then(Value::as_i64);
+    let result = object
+        .get("result")
+        .and_then(Value::as_object)
+        .and_then(|result| result.get(key))
+        .and_then(Value::as_i64);
+    match (direct, result) {
+        (Some(left), Some(right)) if left != right => None,
+        (Some(value), _) | (_, Some(value)) => Some(value),
         _ => None,
     }
 }
 
 fn find_elements(value: &Value) -> Option<&Vec<Value>> {
-    match value {
-        Value::Object(map) => map
-            .get("elements")
-            .and_then(Value::as_array)
-            .or_else(|| map.values().find_map(find_elements)),
-        Value::Array(values) => values.iter().find_map(find_elements),
+    let object = value.as_object()?;
+    let direct = object.get("elements").and_then(Value::as_array);
+    let result = object
+        .get("result")
+        .and_then(Value::as_object)
+        .and_then(|result| result.get("elements"))
+        .and_then(Value::as_array);
+    match (direct, result) {
+        (Some(left), Some(right)) if left != right => None,
+        (Some(value), None) | (None, Some(value)) | (Some(value), Some(_)) => Some(value),
         _ => None,
     }
 }
 
 fn find_bool(value: &Value, key: &str) -> Option<bool> {
-    match value {
-        Value::Object(map) => map
-            .get(key)
-            .and_then(Value::as_bool)
-            .or_else(|| map.values().find_map(|value| find_bool(value, key))),
-        Value::Array(values) => values.iter().find_map(|value| find_bool(value, key)),
+    let object = value.as_object()?;
+    let direct = object.get(key).and_then(Value::as_bool);
+    let result = object
+        .get("result")
+        .and_then(Value::as_object)
+        .and_then(|result| result.get(key))
+        .and_then(Value::as_bool);
+    match (direct, result) {
+        (Some(left), Some(right)) if left != right => None,
+        (Some(value), _) | (_, Some(value)) => Some(value),
+        _ => None,
+    }
+}
+fn find_string<'a>(value: &'a Value, key: &str) -> Option<&'a str> {
+    let object = value.as_object()?;
+    let direct = object.get(key).and_then(Value::as_str);
+    let result = object
+        .get("result")
+        .and_then(Value::as_object)
+        .and_then(|result| result.get(key))
+        .and_then(Value::as_str);
+    match (direct, result) {
+        (Some(left), Some(right)) if left != right => None,
+        (Some(value), _) | (_, Some(value)) => Some(value),
         _ => None,
     }
 }
@@ -224,10 +184,14 @@ fn preflight() -> Result<()> {
     if std::env::consts::OS != "macos" {
         return Ok(());
     }
-    let output = Command::new(cua_driver()?)
-        .args(["permissions", "status", "--json"])
-        .output()
-        .context("read Cua Driver permission status")?;
+    let mut command = Command::new(cua_driver()?);
+    command.args(["permissions", "status", "--json"]);
+    let output = super::crawl::bounded_command_output(
+        &mut command,
+        "Cua Driver permission status",
+        Duration::from_secs(15),
+        1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "cua-driver permission status failed: {}",
@@ -252,7 +216,9 @@ fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
     if !matches!(catalog, "macos-app-examples" | "desktop-app-examples") {
         bail!("crawl-desktop accepts macos-app-examples or desktop-app-examples");
     }
-    let directory = Path::new(catalog).join("references");
+    let directory = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join(catalog)
+        .join("references");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)?
         .filter_map(|entry| entry.ok().map(|entry| entry.path()))
         .filter(|path| path.is_dir())
@@ -278,10 +244,6 @@ fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
                 .and_then(Value::as_str)
                 .unwrap_or_default()
                 .to_string(),
-            bundle_id: record.pointer("/runtime_product/bundle_id").and_then(Value::as_str)
-                .filter(|value| !value.is_empty())
-                .ok_or_else(|| anyhow!("{catalog}/{slug} has no exact runtime_product.bundle_id manifest"))?
-                .to_string(),
         });
     }
     if records.is_empty() {
@@ -291,17 +253,55 @@ fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
 }
 
 fn snapshot(session: &str, pid: i64, window_id: i64, screenshot: &Path) -> Result<Value> {
-    call(
+    if let Some(parent) = screenshot.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    match std::fs::symlink_metadata(screenshot) {
+        Ok(_) => std::fs::remove_file(screenshot)
+            .with_context(|| format!("remove stale screenshot {}", screenshot.display()))?,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
+    }
+    let started = SystemTime::now();
+    let mut response = call_with_cli_options(
         "get_window_state",
         &json!({
             "session": session,
             "pid": pid,
             "window_id": window_id,
-            "screenshot_out_file": screenshot,
             "max_elements": 4000,
             "max_depth": 40,
         }),
-    )
+        &[
+            std::ffi::OsStr::new("--screenshot-out-file"),
+            screenshot.as_os_str(),
+        ],
+    )?;
+    let metadata = std::fs::symlink_metadata(screenshot)
+        .with_context(|| format!("read fresh screenshot metadata {}", screenshot.display()))?;
+    if metadata.file_type().is_symlink()
+        || !metadata.file_type().is_file()
+        || metadata.len() == 0
+        || metadata.len() > 16 * 1024 * 1024
+        || metadata.modified().is_ok_and(|modified| modified < started)
+    {
+        bail!("Cua screenshot is not a fresh bounded regular file");
+    }
+    let bytes = std::fs::read(screenshot)?;
+    if !bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
+        bail!("Cua screenshot is not an exact PNG byte stream");
+    }
+    let evidence = json!({
+        "path": screenshot,
+        "sha256": hex::encode(Sha256::digest(&bytes)),
+        "bytes": bytes.len(),
+        "media_type": "image/png",
+    });
+    response
+        .as_object_mut()
+        .context("Cua window-state response must be an object")?
+        .insert("screenshot_evidence".into(), evidence);
+    Ok(response)
 }
 
 fn normalize(value: &str) -> String {
@@ -312,7 +312,7 @@ fn normalize(value: &str) -> String {
         .to_lowercase()
 }
 
-fn actions(snapshot: &Value, fixtures: &Fixtures) -> Vec<Action> {
+fn actions(snapshot: &Value) -> Vec<Action> {
     let roles = [
         "button",
         "link",
@@ -364,14 +364,9 @@ fn actions(snapshot: &Value, fixtures: &Fixtures) -> Vec<Action> {
         }
         let identity = format!("{}:{}", role, normalize(&label));
         if seen.insert(identity) {
-            let editable = matches!(
-                role.as_str(),
-                "textfield" | "textarea" | "searchfield" | "securetextfield"
-            );
             found.push(Action {
                 role,
                 destructive: destructive.is_match(&label),
-                input: editable.then(|| fixtures.input_for(&label)).flatten(),
                 label,
                 token,
             });
@@ -380,40 +375,23 @@ fn actions(snapshot: &Value, fixtures: &Fixtures) -> Vec<Action> {
     found
 }
 
-fn matching_action(snapshot: &Value, step: &Step, fixtures: &Fixtures) -> Option<Action> {
-    actions(snapshot, fixtures).into_iter().find(|action| {
-        action.role == step.role
-            && normalize(&action.label) == normalize(&step.label)
-            && action.input.as_ref().map(|input| &input.key) == step.input_fixture.as_ref()
+fn matching_action(snapshot: &Value, step: &Step) -> Option<Action> {
+    actions(snapshot).into_iter().find(|action| {
+        action.role == step.role && normalize(&action.label) == normalize(&step.label)
     })
 }
 
-fn apply(session: &str, pid: i64, window_id: i64, action: &Action) -> Result<()> {
-    let (tool, payload) = match &action.input {
-        Some(input) => (
-            "type_text",
-            json!({
-                "session": session,
-                "pid": pid,
-                "window_id": window_id,
-                "element_token": action.token,
-                "text": input.value,
-                "delivery_mode": "background",
-            }),
-        ),
-        None => (
-            "click",
-            json!({
-                "session": session,
-                "pid": pid,
-                "window_id": window_id,
-                "element_token": action.token,
-                "delivery_mode": "background",
-            }),
-        ),
-    };
-    call(tool, &payload)?;
-    Ok(())
+fn apply(session: &str, pid: i64, window_id: i64, action: &Action) -> Result<Value> {
+    call(
+        "click",
+        &json!({
+            "session": session,
+            "pid": pid,
+            "window_id": window_id,
+            "element_token": action.token,
+            "delivery_mode": "background",
+        }),
+    )
 }
 
 fn state_hash(snapshot: &Value) -> String {
@@ -447,12 +425,255 @@ fn state_hash(snapshot: &Value) -> String {
     digest.update(rows.join("\n").as_bytes());
     hex::encode(digest.finalize())
 }
+fn action_block_reason(action: &Action) -> Option<&'static str> {
+    if action.destructive {
+        return Some("destructive action withheld before delivery");
+    }
+    let label = normalize(&action.label);
+    if action.role == "button" && matches!(label.as_str(), "back" | "cancel" | "dismiss" | "close") {
+        return None;
+    }
+    Some("action is not independently safe navigation or cancellation and was withheld before delivery")
+}
 
-fn launch(record: &Record, session: &str) -> Result<(i64, i64)> {
+fn system_bundle(bundle: &str) -> bool {
+    [
+        "com.apple.SecurityAgent",
+        "com.apple.UserNotificationCenter",
+        "com.apple.notificationcenterui",
+        "com.apple.systempreferences",
+        "com.apple.systemsettings",
+        "com.apple.CoreAuthUI",
+    ]
+    .iter()
+    .any(|candidate| bundle == *candidate || bundle.starts_with(&format!("{candidate}.")))
+}
+fn find_active_owner(value: &Value) -> Option<&str> {
+    match value {
+        Value::Object(map) => {
+            let active = ["frontmost", "is_frontmost", "active", "is_active"]
+                .iter()
+                .any(|key| map.get(*key).and_then(Value::as_bool) == Some(true));
+            if active {
+                ["bundle_id", "bundle_identifier", "owner_bundle_id"]
+                    .iter()
+                    .find_map(|key| map.get(*key).and_then(Value::as_str))
+                    .or_else(|| map.values().find_map(find_active_owner))
+            } else {
+                map.values().find_map(find_active_owner)
+            }
+        }
+        Value::Array(values) => values.iter().find_map(find_active_owner),
+        _ => None,
+    }
+}
+
+fn global_active_owner(session: &str) -> Result<String> {
+    let apps = call("list_apps", &json!({"session": session}))?;
+    find_active_owner(&apps)
+        .map(str::to_string)
+        .ok_or_else(|| anyhow!("Cua Driver list_apps returned no exact active-owner bundle: {apps}"))
+}
+
+fn assert_target_surface(
+    snapshot: &Value,
+    expected_pid: i64,
+    expected_window: i64,
+    expected_bundle: &str,
+) -> Result<()> {
+    let observed_pid = find_i64(snapshot, "pid").context("Cua window snapshot has no owner pid")?;
+    let observed_window =
+        find_i64(snapshot, "window_id").context("Cua window snapshot has no window id")?;
+    if observed_pid != expected_pid || observed_window != expected_window {
+        bail!(
+            "Cua window ownership changed: expected pid={expected_pid} window={expected_window}, observed pid={observed_pid} window={observed_window}"
+        );
+    }
+    let observed_bundle = ["owner_bundle_id", "bundle_id", "bundle_identifier"]
+        .iter()
+        .find_map(|key| find_string(snapshot, key))
+        .context("Cua window snapshot has no exact owner bundle identifier")?;
+    if observed_bundle != expected_bundle {
+        if system_bundle(observed_bundle) {
+            bail!(
+                "system-owned dialog/surface detected for bundle {observed_bundle}; no control was delivered"
+            );
+        }
+        bail!(
+            "window owner differs from exact target bundle: expected {expected_bundle}, observed {observed_bundle}"
+        );
+    }
+    Ok(())
+}
+
+fn readiness_observation(
+    manifest: &super::crawl::RuntimeManifest,
+    product: &str,
+) -> Result<Value> {
+    let identity = manifest
+        .execution_identity
+        .as_ref()
+        .context("desktop runtime manifest has no resolved execution identity")?;
+    let proof = manifest
+        .prepared_proof
+        .as_ref()
+        .context("desktop runtime manifest has no prepared-runtime proof")?;
+    let device = identity
+        .device_id
+        .as_deref()
+        .context("desktop execution identity has no exact device id")?;
+    let proof_value = serde_json::to_value(proof)?;
+    if proof.product_identifier != product
+        || proof.device_id.as_deref() != Some(device)
+        || proof.pending_permission_prompts != 0
+        || proof.pending_notification_prompts != 0
+        || !manifest.constraints.no_system_permission_prompts
+        || !manifest.constraints.no_notifications
+        || ["notification_delivery_disabled", "permission_prompt_invocation_disabled", "notification_prompt_invocation_disabled"]
+            .iter()
+            .any(|field| proof_value.get(*field).and_then(Value::as_bool) != Some(true))
+    {
+        bail!(
+            "prepared-runtime proof does not bind the exact desktop app/device with prompt invocation and notification delivery disabled"
+        );
+    }
+    let output = Command::new("stado-runtime-readiness")
+        .args([
+            "verify",
+            "--json",
+            "--product",
+            product,
+            "--device",
+            device,
+            "--evidence-uri",
+            &proof.evidence_uri,
+            "--evidence-sha256",
+            &proof.evidence_sha256,
+        ])
+        .output()
+        .context("run fresh desktop runtime-readiness verification")?;
+    if !output.status.success() {
+        bail!(
+            "fresh desktop runtime-readiness verification failed: status={}; stdout={:?}; stderr={:?}",
+            output.status,
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+    let observation: Value = serde_json::from_slice(&output.stdout)
+        .context("fresh desktop runtime-readiness output is not JSON")?;
+    if observation.get("ready").and_then(Value::as_bool) != Some(true)
+        || observation.get("product_identifier").and_then(Value::as_str) != Some(product)
+        || observation.get("device_id").and_then(Value::as_str) != Some(device)
+        || observation.get("pending_permission_prompts").and_then(Value::as_u64) != Some(0)
+        || observation.get("pending_notification_prompts").and_then(Value::as_u64) != Some(0)
+        || ["notification_delivery_disabled", "permission_prompt_invocation_disabled", "notification_prompt_invocation_disabled"]
+            .iter()
+            .any(|field| observation.get(*field).and_then(Value::as_bool) != Some(true))
+        || observation.get("evidence_sha256").and_then(Value::as_str)
+            != Some(proof.evidence_sha256.as_str())
+    {
+        bail!("fresh desktop runtime-readiness observation did not preserve the exact prompt-disabled prepared state: {observation}");
+    }
+    Ok(observation)
+}
+
+fn verify_desktop_executable(
+    expected_bundle: &str,
+    manifest: &super::crawl::RuntimeManifest,
+) -> Result<Value> {
+    let identity = manifest
+        .execution_identity
+        .as_ref()
+        .context("desktop runtime manifest has no resolved execution identity")?;
+    let configured = identity
+        .executable_path
+        .as_deref()
+        .context("desktop execution identity has no exact executable path")?;
+    let path = Path::new(configured);
+    if !path.is_absolute() || !path.is_file() {
+        bail!("desktop execution identity path is not an absolute executable file: {configured}");
+    }
+    let contents = path
+        .parent()
+        .filter(|parent| parent.file_name().and_then(|name| name.to_str()) == Some("MacOS"))
+        .and_then(Path::parent)
+        .filter(|parent| parent.file_name().and_then(|name| name.to_str()) == Some("Contents"))
+        .context("desktop execution identity is not an exact Contents/MacOS executable")?;
+    let info = contents.join("Info.plist");
+    let metadata = |key: &str| -> Result<String> {
+        let output = Command::new("/usr/bin/plutil")
+            .args(["-extract", key, "raw", "-o", "-"])
+            .arg(&info)
+            .output()
+            .with_context(|| format!("read {key} from {}", info.display()))?;
+        if !output.status.success() {
+            bail!(
+                "read {key} from {} failed: status={}; stdout={:?}; stderr={:?}",
+                info.display(),
+                output.status,
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            );
+        }
+        Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
+    };
+    let bundle = metadata("CFBundleIdentifier")?;
+    if bundle != expected_bundle {
+        bail!(
+            "desktop executable bundle changed immediately before launch: expected {expected_bundle}, observed {bundle}"
+        );
+    }
+    let expected_version = identity
+        .product_version
+        .as_deref()
+        .context("desktop execution identity has no CFBundleShortVersionString")?;
+    let observed_version = metadata("CFBundleShortVersionString")?;
+    if observed_version != expected_version {
+        bail!(
+            "desktop product version changed immediately before launch: expected {expected_version:?}, observed {observed_version:?}"
+        );
+    }
+    let expected_sha = identity
+        .executable_sha256
+        .as_deref()
+        .context("desktop execution identity has no executable SHA-256")?;
+    let mut file = std::fs::File::open(path)
+        .with_context(|| format!("open exact desktop executable {}", path.display()))?;
+    let mut digest = Sha256::new();
+    let mut buffer = [0_u8; 64 * 1024];
+    loop {
+        let count = file
+            .read(&mut buffer)
+            .with_context(|| format!("hash exact desktop executable {}", path.display()))?;
+        if count == 0 {
+            break;
+        }
+        digest.update(&buffer[..count]);
+    }
+    let observed_sha = hex::encode(digest.finalize());
+    if !observed_sha.eq_ignore_ascii_case(expected_sha) {
+        bail!(
+            "desktop executable SHA-256 changed immediately before launch: expected {expected_sha}, observed {observed_sha}"
+        );
+    }
+    let observation = readiness_observation(manifest, expected_bundle)?;
+    if observation.get("product_version").and_then(Value::as_str) != Some(expected_version)
+        || !observation
+            .get("executable_sha256")
+            .and_then(Value::as_str)
+            .is_some_and(|value| value.eq_ignore_ascii_case(expected_sha))
+    {
+        bail!("fresh desktop readiness identity differs from the exact manifest executable: {observation}");
+    }
+    Ok(observation)
+}
+
+fn launch(record: &Record, bundle_id: &str, session: &str) -> Result<(i64, i64)> {
     let launched = call(
         "launch_app",
         &json!({
-            "bundle_id": record.bundle_id,
+            "bundle_id": bundle_id,
         }),
     )?;
     let pid = find_i64(&launched, "pid")
@@ -470,14 +691,16 @@ fn launch(record: &Record, session: &str) -> Result<(i64, i64)> {
 fn crawl_record(
     record: &Record,
     manifest: &super::crawl::RuntimeManifest,
-    fixtures: &Fixtures,
     root: &Path,
     max_states: usize,
     max_depth: usize,
 ) -> Result<Value> {
-    if record.bundle_id != manifest.runtime_product.identifier {
-        bail!("desktop record bundle id differs from immutable runtime manifest");
-    }
+    let bundle_id = manifest
+        .prepared_proof
+        .as_ref()
+        .context("desktop runtime manifest has no exact prepared product identity")?
+        .product_identifier
+        .clone();
     let session = format!("spis-{}", record.slug.replace('_', "-"));
     call(
         "start_session",
@@ -486,161 +709,327 @@ fn crawl_record(
     let _session_guard = SessionGuard {
         session: session.clone(),
     };
-    let output = root.join(&record.slug);
-    std::fs::create_dir_all(&output)?;
-    let mut queue = VecDeque::from([Vec::<Step>::new()]);
-    let mut seen_states = HashSet::new();
-    let mut graph = Vec::new();
-    let mut blocked = Vec::new();
-    let mut attempts = 0usize;
+    let session_state = call("get_session_state", &json!({"session": session}))?;
+    if find_string(&session_state, "capture_scope") != Some("window") {
+        bail!("Cua Driver did not establish the required strict window session: {session_state}");
+    }
 
-    while let Some(path) = queue.pop_front() {
+    let output = root.join(&record.slug);
+    let states_dir = output.join("states");
+    let transitions_dir = output.join("transitions");
+    let recording_dir = output.join("trajectory");
+    std::fs::create_dir_all(&states_dir)?;
+    std::fs::create_dir_all(&transitions_dir)?;
+    std::fs::create_dir_all(&recording_dir)?;
+
+    // These are deliberately the last product checks before the exact-bundle
+    // launch. No catalog display name or PATH lookup participates.
+    let readiness = verify_desktop_executable(&bundle_id, manifest)?;
+    let (pid, window_id) = launch(record, &bundle_id, &session)?;
+    call(
+        "start_recording",
+        &json!({
+            "session": session,
+            "output_dir": recording_dir,
+            "record_video": false,
+        }),
+    )?;
+    let mut recording_guard = RecordingGuard {
+        session: session.clone(),
+        active: true,
+    };
+
+    let mut trajectory = Vec::<Step>::new();
+    let mut seen_states = HashSet::new();
+    let mut attempted = HashSet::<String>::new();
+    let mut reported_gaps = HashSet::<String>::new();
+    let mut graph = Vec::new();
+    let mut transitions = Vec::new();
+    let mut blocked = Vec::new();
+
+    for action_index in 0..=max_depth {
         if seen_states.len() >= max_states {
+            blocked.push(json!({
+                "reason": "state limit reached on the single observed trajectory; unexplored branches remain explicit gaps",
+                "max_states": max_states,
+            }));
             break;
         }
-        attempts += 1;
-        let (pid, window_id) = match launch(record, &session) {
-            Ok(value) => value,
-            Err(error) => {
-                blocked.push(json!({"path": path, "reason": error.to_string()}));
-                break;
-            }
-        };
-        let recording_dir = output.join("attempts").join(format!("{attempts:04}"));
-        std::fs::create_dir_all(&recording_dir)?;
-        // Cua recordings retain full action arguments. Never record a replay
-        // path that enters a fixture value; state screenshots remain, while
-        // credentials stay out of action.json and the video.
-        let record_actions = path.iter().all(|step| step.input_fixture.is_none());
-        if record_actions {
-            call(
-                "start_recording",
-                &json!({
-                    "output_dir": recording_dir,
-                    "record_video": true,
-                }),
-            )?;
-        }
-        let mut recording_guard = RecordingGuard {
-            active: record_actions,
-        };
-        let scratch = output.join("replay.png");
-        let mut replay_failed = None;
-        for step in &path {
-            let current = snapshot(&session, pid, window_id, &scratch)?;
-            let Some(action) = matching_action(&current, step, fixtures) else {
-                replay_failed = Some(format!("could not replay {} {}", step.role, step.label));
-                break;
-            };
-            if let Err(error) = apply(&session, pid, window_id, &action) {
-                replay_failed = Some(error.to_string());
-                break;
-            }
-            if let Err(error) = snapshot(&session, pid, window_id, &scratch) {
-                replay_failed = Some(format!("verify {} {}: {error}", step.role, step.label));
-                break;
-            }
-        }
-        if let Some(reason) = replay_failed {
-            blocked.push(json!({"path": path, "reason": reason}));
-            continue;
-        }
-        let index = seen_states.len() + 1;
-        let state_dir = output.join(format!("state-{index:04}"));
-        std::fs::create_dir_all(&state_dir)?;
-        let current = snapshot(&session, pid, window_id, &state_dir.join("screenshot.png"))?;
+        let observation_path = states_dir.join(format!("observation-{:04}.png", action_index + 1));
+        let current = snapshot(&session, pid, window_id, &observation_path)?;
+        assert_target_surface(&current, pid, window_id, &bundle_id)?;
         let hash = state_hash(&current);
-        if !seen_states.insert(hash.clone()) {
-            continue;
-        }
-        let available = actions(&current, fixtures);
-        std::fs::write(
-            state_dir.join("snapshot.json"),
-            serde_json::to_string_pretty(&current)? + "\n",
-        )?;
-        let recording = recording_guard.stop();
-        let recording_retained = recording.is_some();
-        if let Some(recording) = recording {
+        let available = actions(&current);
+        if seen_states.insert(hash.clone()) {
+            let index = seen_states.len();
+            let snapshot_path = states_dir.join(format!("state-{index:04}.json"));
             std::fs::write(
-                state_dir.join("recording.json"),
-                serde_json::to_string_pretty(&recording)? + "\n",
+                &snapshot_path,
+                serde_json::to_string_pretty(&current)? + "\n",
             )?;
+            graph.push(json!({
+                "state": hash,
+                "index": index,
+                "trajectory_depth": trajectory.len(),
+                "delivered_inputs": trajectory,
+                "observed_state": {
+                    "snapshot": snapshot_path.strip_prefix(&output).unwrap_or(&snapshot_path),
+                    "screenshot": observation_path.strip_prefix(&output).unwrap_or(&observation_path),
+                },
+                "available_actions": available.iter().map(|action| json!({
+                    "role": action.role,
+                    "label": action.label,
+                    "destructive": action.destructive,
+                    "kind": "click",
+                    "withheld_reason": action_block_reason(action),
+                })).collect::<Vec<_>>(),
+            }));
         }
-        graph.push(json!({
-            "state": hash,
-            "index": index,
-            "depth": path.len(),
-            "path": path,
-            "actions": available.iter().map(|action| json!({
-                "role": action.role,
-                "label": action.label,
-                "destructive": action.destructive,
-                "kind": if action.input.is_some() { "input" } else { "click" },
-                "input_fixture": action.input.as_ref().map(|input| &input.key),
-            })).collect::<Vec<_>>(),
-            "snapshot": format!("state-{index:04}/snapshot.json"),
-            "screenshot": format!("state-{index:04}/screenshot.png"),
-            "recording": recording_retained.then(|| format!("state-{index:04}/recording.json")),
-        }));
-        if path.len() < max_depth {
-            let entered_destructive_flow = path.iter().any(|step| step.destructive);
-            for action in available {
-                if entered_destructive_flow {
+
+        let mut safe = Vec::new();
+        for action in available {
+            let identity = format!("{}|{}|{}", hash, action.role, normalize(&action.label));
+            if let Some(reason) = action_block_reason(&action) {
+                if reported_gaps.insert(identity) {
                     blocked.push(json!({
                         "state": hash,
                         "role": action.role,
                         "label": action.label,
-                        "reason": "confirmation state retained; no control after a destructive edge is committed",
+                        "delivered_input": Value::Null,
+                        "observed_state_change": Value::Null,
+                        "reason": reason,
                     }));
-                    continue;
                 }
-                let mut next = path.clone();
-                next.push(Step {
-                    role: action.role,
-                    label: action.label,
-                    destructive: action.destructive,
-                    input_fixture: action.input.as_ref().map(|input| input.key.clone()),
-                });
-                queue.push_back(next);
+            } else if !attempted.contains(&identity) {
+                safe.push((identity, action));
+            }
+        }
+        if action_index == max_depth {
+            for (_, action) in safe {
+                blocked.push(json!({
+                    "state": hash,
+                    "role": action.role,
+                    "label": action.label,
+                    "delivered_input": Value::Null,
+                    "observed_state_change": Value::Null,
+                    "reason": "trajectory depth limit reached before this independently safe branch",
+                }));
+            }
+            break;
+        }
+        let Some((attempt_identity, selected)) = safe.first().cloned() else {
+            break;
+        };
+        attempted.insert(attempt_identity);
+
+        let transition_index = transitions.len() + 1;
+        let pre_image = transitions_dir.join(format!("step-{transition_index:04}-before.png"));
+        let pre = snapshot(&session, pid, window_id, &pre_image)?;
+        assert_target_surface(&pre, pid, window_id, &bundle_id)?;
+        let active_owner_before = global_active_owner(&session)?;
+        if active_owner_before != bundle_id {
+            blocked.push(json!({
+                "state": hash,
+                "delivered_input": Value::Null,
+                "observed_state_change": Value::Null,
+                "reason": format!("fresh global observation found active owner {active_owner_before:?}, not exact target {bundle_id:?}; input withheld"),
+                "further_input_withheld": true,
+            }));
+            break;
+        }
+        let step = Step {
+            role: selected.role.clone(),
+            label: selected.label.clone(),
+        };
+        let Some(action) = matching_action(&pre, &step) else {
+            blocked.push(json!({
+                "state": hash,
+                "role": step.role,
+                "label": step.label,
+                "delivered_input": Value::Null,
+                "observed_state_change": Value::Null,
+                "reason": "fresh pre-action snapshot no longer exposed the selected token",
+            }));
+            continue;
+        };
+        if let Some(reason) = action_block_reason(&action) {
+            blocked.push(json!({
+                "state": hash,
+                "role": action.role,
+                "label": action.label,
+                "delivered_input": Value::Null,
+                "observed_state_change": Value::Null,
+                "reason": reason,
+            }));
+            continue;
+        }
+        let before_hash = state_hash(&pre);
+        let driver_response = match apply(&session, pid, window_id, &action) {
+            Ok(response) => response,
+            Err(error) => {
+                transitions.push(json!({
+                    "step": transition_index,
+                    "delivered_input": {
+                        "role": action.role,
+                        "label": action.label,
+                        "delivery_status": "unknown",
+                        "exact_driver_diagnostic": error.to_string(),
+                    },
+                    "observed_state_change": Value::Null,
+                }));
+                break;
+            }
+        };
+        let driver_effect = find_string(&driver_response, "effect")
+            .unwrap_or("missing")
+            .to_string();
+        let driver_route = find_string(&driver_response, "route")
+            .unwrap_or("missing")
+            .to_string();
+        let post_image = transitions_dir.join(format!("step-{transition_index:04}-after.png"));
+        let post = match snapshot(&session, pid, window_id, &post_image) {
+            Ok(post) => post,
+            Err(error) => {
+                transitions.push(json!({
+                    "step": transition_index,
+                    "delivered_input": {
+                        "role": action.role,
+                        "label": action.label,
+                        "driver_response": driver_response,
+                    },
+                    "observed_state_change": Value::Null,
+                    "exact_observation_diagnostic": error.to_string(),
+                }));
+                break;
+            }
+        };
+        let active_owner_after = global_active_owner(&session)?;
+        let post_snapshot = transitions_dir.join(format!("step-{transition_index:04}-after.json"));
+        std::fs::write(
+            &post_snapshot,
+            serde_json::to_string_pretty(&post)? + "\n",
+        )?;
+        if let Err(error) = assert_target_surface(&post, pid, window_id, &bundle_id) {
+            transitions.push(json!({
+                "step": transition_index,
+                "delivered_input": {
+                    "role": action.role,
+                    "label": action.label,
+                    "driver_response": driver_response,
+                },
+                "observed_state_change": {
+                    "snapshot": post_snapshot.strip_prefix(&output).unwrap_or(&post_snapshot),
+                    "screenshot": post_image.strip_prefix(&output).unwrap_or(&post_image),
+                    "exact_diagnostic": error.to_string(),
+                },
+            }));
+            blocked.push(json!({
+                "state": before_hash,
+                "reason": error.to_string(),
+                "further_input_withheld": true,
+            }));
+            break;
+        }
+        let after_hash = state_hash(&post);
+        let changed = before_hash != after_hash;
+        transitions.push(json!({
+            "step": transition_index,
+            "delivered_input": {
+                "role": action.role,
+                "label": action.label,
+                "driver_response": driver_response,
+                "inspected_effect": driver_effect,
+                "inspected_route": driver_route,
+                "global_active_owner": active_owner_before,
+            },
+            "observed_state_change": {
+                "changed": changed,
+                "before_state": before_hash,
+                "after_state": after_hash,
+                "snapshot": post_snapshot.strip_prefix(&output).unwrap_or(&post_snapshot),
+                "screenshot": post_image.strip_prefix(&output).unwrap_or(&post_image),
+                "global_active_owner": active_owner_after,
+            },
+        }));
+        trajectory.push(step);
+        if active_owner_after != bundle_id {
+            blocked.push(json!({
+                "state": after_hash,
+                "reason": format!("fresh global post-action observation found active owner {active_owner_after:?}, not exact target {bundle_id:?}; further input withheld"),
+                "further_input_withheld": true,
+            }));
+            break;
+        }
+        if driver_effect != "confirmed" {
+            blocked.push(json!({
+                "state": after_hash,
+                "role": action.role,
+                "label": action.label,
+                "reason": format!(
+                    "driver action effect was {driver_effect:?}; fresh postcondition was retained, and further input was withheld"
+                ),
+                "further_input_withheld": true,
+            }));
+            break;
+        }
+        if changed {
+            for (_, alternative) in safe.into_iter().skip(1) {
+                blocked.push(json!({
+                    "state": before_hash,
+                    "role": alternative.role,
+                    "label": alternative.label,
+                    "delivered_input": Value::Null,
+                    "observed_state_change": Value::Null,
+                    "reason": "single sequential trajectory took a different safe edge; this branch was not reset or inferred",
+                }));
             }
         }
     }
+
+    let recording = recording_guard
+        .stop()
+        .transpose()?
+        .context("Cua Driver did not return session-scoped recording metadata")?;
+    let recording_path = output.join("recording.json");
+    std::fs::write(
+        &recording_path,
+        serde_json::to_string_pretty(&recording)? + "\n",
+    )?;
     let report = json!({
         "schema": "wisent.desktop-crawl-run.v1",
         "record": record.slug,
         "name": record.name,
         "driver": "cua-driver",
-        "bundle_id": record.bundle_id,
+        "bundle_id": bundle_id,
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
         "runtime_manifest": manifest,
         "runtime_execution_identity": manifest.execution_identity,
+        "fresh_runtime_readiness_observation": readiness,
         "resource_lease": manifest.resource_lease,
-        "capture_scope": "background-window",
+        "capture_scope": "window",
+        "record_video": false,
         "fresh_snapshot_before_after_each_action": true,
-        "system_consent_requested": false,
         "states": graph,
         "states_seen": seen_states.len(),
+        "transitions": transitions,
         "blocked_edges": blocked,
         "max_states": max_states,
-        "input_fixtures": fixtures.inputs.len(),
         "max_depth": max_depth,
         "evidence_observations": {
-            "executed_paths": graph.iter().filter_map(|state| state.get("path").cloned()).collect::<Vec<_>>(),
-            "variant_events": [],
-            "accessibility_artifacts": graph.iter().filter_map(|state| state.get("snapshot").cloned()).collect::<Vec<_>>(),
-            "motion_artifacts": graph.iter().filter_map(|state| state.get("recording").cloned()).collect::<Vec<_>>(),
+            "executed_trajectory": trajectory,
+            "accessibility_artifacts": graph.iter().filter_map(|state| state.pointer("/observed_state/snapshot").cloned()).collect::<Vec<_>>(),
+            "motion_artifacts": [recording_path.strip_prefix(&output).unwrap_or(&recording_path)],
             "canonical_interactions": [],
             "canonical_journey": Value::Null,
             "canonical_accessibility": Value::Null,
             "canonical_motion_analysis": Value::Null,
             "gaps": [
-                "No complete trigger/response/feedback/cancellation/failure/recovery interaction set was observed.",
-                "No screen-reader, focus-order, live-region or reduced-motion variant was executed.",
-                "No semantic motion trigger, continuity, interruption or reversal observation was retained."
+                "Only one genuinely sequential observed trajectory was retained; alternative branches were not reset or inferred.",
+                "Destructive, input, and ambiguous controls were withheld before delivery.",
+                "No screen-reader, focus-order, live-region, or reduced-motion variant was executed."
             ]
         },
-        "completed_at": crate::now_iso_utc(),
     });
     std::fs::write(
         output.join("crawl.json"),
@@ -653,6 +1042,7 @@ fn revision() -> Result<String> { super::crawl::build_revision() }
 
 fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     if value.is_empty()
+        || matches!(value, "." | "..")
         || !value
             .chars()
             .all(|character| character.is_ascii_alphanumeric() || matches!(character, '-' | '_'))
@@ -661,35 +1051,19 @@ fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     }
     Ok(())
 }
-
-fn publish_file(path: &Path, uri: &str) -> Result<()> {
-    let output = super::crawl::stado_command()
-        .args([
-            "storage",
-            "put",
-            "--if-absent",
-            "--content-type",
-            "application/json",
-            uri,
-        ])
-        .arg(path)
-        .output()
-        .context("publish desktop crawl fixture")?;
-    if !output.status.success() {
-        bail!(
-            "stado storage put refused desktop crawl fixture: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    Ok(())
+fn attempt_root(
+    base: &Path,
+    manifest: &super::crawl::RuntimeManifest,
+) -> Result<PathBuf> {
+    super::crawl::native_attempt_root(base, manifest)
 }
+
+
 
 struct DesktopSubmission<'a> {
     host: &'a str,
     catalog: &'a str,
     record: &'a str,
-    fixtures: Option<&'a Path>,
-    secret_env: &'a [String],
     max_states: usize,
     max_depth: usize,
     manifest: &'a super::crawl::RuntimeManifest,
@@ -699,27 +1073,14 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
     safe_job_value(request.host, "--host")?;
     safe_job_value(request.catalog, "catalog")?;
     safe_job_value(request.record, "--record")?;
-    for binding in request.secret_env {
-        let (name, item) = binding
-            .split_once('=')
-            .ok_or_else(|| anyhow!("--secret-env must be NAME=SKARBIEC_ITEM"))?;
-        safe_job_value(name, "--secret-env name")?;
-        if item.is_empty()
-            || !item.chars().all(|character| {
-                character.is_ascii_alphanumeric()
-                    || matches!(character, '-' | '_' | '.' | '#' | '/' | ':')
-            })
-        {
-            bail!("--secret-env item is invalid");
-        }
-    }
+    let _attempt_binding = attempt_root(Path::new("."), request.manifest)?;
     if revision()? != request.manifest.source_revision {
         bail!("desktop coordinator revision does not match immutable runtime manifest");
     }
     let encoded = request.manifest.encoded()?;
     let artifact = request.manifest.artifact_uri.clone();
     let output_uri = request.manifest.output_uri.clone();
-    let mut command = format!(
+    let command = format!(
         "cargo run --release -- crawl-desktop {} --worker --record {} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.catalog,
         request.record,
@@ -728,18 +1089,7 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
         artifact,
         encoded,
     );
-    if let Some(fixtures) = request.fixtures {
-        let uri = format!(
-            "stado://spis-crawls/{}/{}/{}/fixtures.json",
-            request.manifest.run_id, request.catalog, request.manifest.record
-        );
-        publish_file(fixtures, &uri)?;
-        let remote = format!("$HOME/.stado/work/{}-desktop-fixtures.json", request.manifest.record_key);
-        command = format!(
-            "$HOME/.stado/bin/stado storage get {uri} {remote} && {command} --fixtures {remote}"
-        );
-    }
-    let mut arguments = vec![
+    let arguments = vec![
         "submit".to_string(),
         command,
         "--run-id".to_string(),
@@ -758,14 +1108,14 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
         "--output-uri".to_string(),
         output_uri.clone(),
     ];
-    for binding in request.secret_env {
-        arguments.push("--secret-env".to_string());
-        arguments.push(binding.clone());
-    }
-    let output = super::crawl::stado_command()
-        .args(arguments)
-        .output()
-        .context("submit desktop crawl through Stado")?;
+    let mut stado = super::crawl::stado_command();
+    stado.args(arguments);
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "submit desktop crawl through Stado",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "Stado refused desktop crawl: {}",
@@ -782,33 +1132,149 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
     )
 }
 
-fn publish_artifact(run_root: &Path, uri: &str) -> Result<()> {
-    let archive = run_root.with_extension("tar.gz");
-    let status = super::crawl::stado_command()
-        .args(["storage", "archive"])
-        .arg(run_root)
-        .arg(&archive)
-        .status()
-        .context("archive desktop crawl")?;
-    if !status.success() {
-        bail!("stado storage archive refused desktop crawl artifacts");
+fn hash_artifact(path: &Path) -> Result<(String, u64)> {
+    let mut file = std::fs::File::open(path)
+        .with_context(|| format!("open desktop artifact {}", path.display()))?;
+    let mut digest = Sha256::new();
+    let mut bytes = 0_u64;
+    let mut buffer = [0_u8; 64 * 1024];
+    loop {
+        let count = file
+            .read(&mut buffer)
+            .with_context(|| format!("hash desktop artifact {}", path.display()))?;
+        if count == 0 {
+            break;
+        }
+        bytes += count as u64;
+        digest.update(&buffer[..count]);
     }
-    let status = super::crawl::stado_command()
+    Ok((hex::encode(digest.finalize()), bytes))
+}
+
+fn publish_artifact(run_root: &Path, uri: &str) -> Result<Value> {
+    let attempt_name = run_root
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("desktop attempt artifact root has no UTF-8 name")?;
+    let archive = run_root.with_file_name(format!("{attempt_name}.tar.gz"));
+    if !archive.is_file() {
+        let mut stado = super::crawl::stado_command();
+        stado
+            .args(["storage", "archive"])
+            .arg(run_root)
+            .arg(&archive);
+        let output = super::crawl::bounded_command_output(
+            &mut stado,
+            "archive desktop crawl",
+            Duration::from_secs(120),
+            4 * 1024 * 1024,
+        )?;
+        if !output.status.success() {
+            bail!(
+                "stado storage archive refused desktop crawl artifacts: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+        }
+    }
+    let (sha256, bytes) = hash_artifact(&archive)?;
+    let mut stado = super::crawl::stado_command();
+    stado
         .args(["storage", "put", "--if-absent", uri])
-        .arg(&archive)
-        .status()
-        .context("publish desktop crawl")?;
-    if !status.success() {
-        bail!("stado storage put refused desktop crawl artifacts");
+        .arg(&archive);
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "publish desktop crawl",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
+    if !output.status.success() {
+        bail!(
+            "stado storage put refused desktop crawl artifacts: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
     }
-    Ok(())
+    let readback = run_root.with_file_name(format!("{attempt_name}.readback.tar.gz"));
+    if readback.exists() {
+        std::fs::remove_file(&readback)?;
+    }
+    let mut stado = super::crawl::stado_command();
+    stado.args(["storage", "get", uri]).arg(&readback);
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "read back desktop crawl",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
+    if !output.status.success() {
+        bail!(
+            "stado storage readback refused desktop crawl artifacts: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let (observed_sha256, observed_bytes) = hash_artifact(&readback)?;
+    std::fs::remove_file(&readback)?;
+    if observed_sha256 != sha256 || observed_bytes != bytes {
+        bail!(
+            "desktop artifact readback differs: expected sha256={sha256} bytes={bytes}, observed sha256={observed_sha256} bytes={observed_bytes}"
+        );
+    }
+    Ok(json!({
+        "uri": uri,
+        "sha256": sha256,
+        "bytes": bytes,
+        "media_type": "application/gzip",
+    }))
+}
+
+fn worker_report(
+    manifest: &super::crawl::RuntimeManifest,
+    artifact: Value,
+) -> Result<Value> {
+    let value = serde_json::to_value(manifest)?;
+    let attempt = value
+        .get("attempt")
+        .and_then(Value::as_u64)
+        .context("desktop runtime manifest has no attempt for worker report")?;
+    let attempt_id = value
+        .get("attempt_id")
+        .and_then(Value::as_str)
+        .context("desktop runtime manifest has no attempt_id for worker report")?;
+    let bindings_file_sha256 = value
+        .get("bindings_file_sha256")
+        .and_then(Value::as_str)
+        .context("desktop runtime manifest has no bindings_file_sha256")?;
+    let bindings_sha256 = value
+        .get("bindings_sha256")
+        .and_then(Value::as_str)
+        .context("desktop runtime manifest has no bindings_sha256")?;
+    let execution_identity = value
+        .get("execution_identity")
+        .filter(|identity| identity.is_object())
+        .context("desktop runtime manifest has no typed execution_identity")?
+        .clone();
+    Ok(json!({
+        "schema": "wisent.native-worker-report.v1",
+        "run_id": manifest.run_id,
+        "catalog": manifest.catalog,
+        "record": manifest.record,
+        "record_key": manifest.record_key,
+        "attempt": attempt,
+        "attempt_id": attempt_id,
+        "engine": manifest.engine,
+        "state": "artifact_published",
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "reference_sha256": manifest.reference_sha256,
+        "bindings_file_sha256": bindings_file_sha256,
+        "bindings_sha256": bindings_sha256,
+        "execution_identity": execution_identity,
+        "artifact": artifact,
+    }))
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
     let mut catalog: Option<String> = None;
     let mut record: Option<String> = None;
-    let mut fixtures_path: Option<PathBuf> = None;
-    let mut secret_env = Vec::new();
     let mut max_states = 200usize;
     let mut max_depth = 8usize;
     let mut host: Option<String> = None;
@@ -824,16 +1290,6 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--record" => {
                 i += 1;
                 record = Some(rest.get(i).context("--record needs a value")?.clone());
-            }
-            "--fixtures" => {
-                i += 1;
-                fixtures_path = Some(PathBuf::from(
-                    rest.get(i).context("--fixtures needs a value")?,
-                ));
-            }
-            "--secret-env" => {
-                i += 1;
-                secret_env.push(rest.get(i).context("--secret-env needs a value")?.clone());
             }
             "--host" => {
                 i += 1;
@@ -862,7 +1318,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 output = PathBuf::from(rest.get(i).context("--output needs a value")?);
             }
             "--help" | "-h" => {
-                println!("usage: spis crawl-desktop <macos-app-examples|desktop-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--fixtures FILE] [--secret-env NAME=SKARBIEC_ITEM] [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
+                println!("usage: spis crawl-desktop <macos-app-examples|desktop-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value if value.starts_with('-') => bail!("unknown argument: {value}"),
@@ -892,32 +1348,29 @@ pub fn run(rest: &[String]) -> Result<()> {
             host: &host,
             catalog: &catalog,
             record: &record,
-            fixtures: fixtures_path.as_deref(),
-            secret_env: &secret_env,
             max_states,
             max_depth,
             manifest: &manifest,
         });
     }
-    if host.is_some() || !secret_env.is_empty() {
-        bail!("--host and --secret-env are coordinator-only");
+    if host.is_some() {
+        bail!("--host is coordinator-only");
     }
     let artifact_uri = artifact_uri.context("--artifact-uri is required in worker mode")?;
     if artifact_uri != manifest.artifact_uri {
         bail!("worker artifact URI does not match immutable runtime manifest");
     }
     preflight()?;
-    let fixtures = Fixtures::load(fixtures_path.as_deref())?;
-    let run_root = output
-        .join(&catalog)
-        .join(&manifest.run_id)
-        .join(&manifest.record_key);
+    let run_root = attempt_root(
+        &output,
+        &manifest,
+    )?;
     std::fs::create_dir_all(&run_root)?;
     let entry = records(&catalog, Some(&record))?
         .into_iter()
         .next()
         .context("runtime manifest record is absent from catalog")?;
-    let reports = vec![match crawl_record(&entry, &manifest, &fixtures, &run_root, max_states, max_depth) {
+    let reports = vec![match crawl_record(&entry, &manifest, &run_root, max_states, max_depth) {
         Ok(report) => report,
         Err(error) => json!({
             "record": entry.slug,
@@ -939,19 +1392,18 @@ pub fn run(rest: &[String]) -> Result<()> {
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
         "runtime_manifest": manifest,
-        "input_fixtures": fixtures.inputs.len(),
         "records": reports,
         "failed": failures,
-        "completed_at": crate::now_iso_utc(),
     });
     std::fs::write(
         run_root.join("batch.json"),
         serde_json::to_string_pretty(&summary)? + "\n",
     )?;
-    publish_artifact(&run_root, &artifact_uri)?;
-    println!("{}", serde_json::to_string_pretty(&summary)?);
     if failures > 0 {
         bail!("{failures} desktop records could not be crawled");
     }
+    let artifact = publish_artifact(&run_root, &artifact_uri)?;
+    let worker_report = worker_report(&manifest, artifact)?;
+    println!("{}", serde_json::to_string(&worker_report)?);
     Ok(())
 }

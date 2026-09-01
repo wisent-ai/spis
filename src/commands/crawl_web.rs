@@ -1,21 +1,27 @@
-//! Real browser-product crawler dispatched through Weles on a Stado-selected host.
+//! One-record browser-evidence worker driven exclusively through the official Weles client.
 //!
-//! The coordinator never launches a local browser. It embeds an immutable task
-//! plan in an exact-revision Stado job. The worker enqueues one
-//! `generic_browser_task` per catalog record into the host-local Weles admission
-//! API; Weles owns browser identity, login capabilities, interaction recording,
-//! screenshots and receipts.
+//! The coordinator never launches a browser and never speaks HTTP to Weles. It pins one
+//! immutable runtime manifest into one exact-revision Stado job for exactly one catalog
+//! record. The worker submits exactly one `generic_browser_task` through the checked-in
+//! Node bridge (`weles-bridge/spis-weles-bridge.mjs`), which owns every Weles request,
+//! loads the pinned official `@wisent-ai/weles-client`, and verifies every receipt.
+//!
+//! Everything this worker retains is re-proved locally before it is published: the live
+//! service release, the signed Spis binding, the canonical official request, the
+//! receipt-bound evidence manifest bytes and every retained evidence file. The documents
+//! written here are the exact inputs of `crate::weles_provenance`, so each non-obvious
+//! check below names the verifier invariant it satisfies.
 
-use anyhow::{anyhow, bail, Context, Result};
-use base64::{engine::general_purpose::STANDARD, Engine as _};
-use serde_json::{json, Map, Value};
-use std::path::{Path, PathBuf};
+use anyhow::{bail, Context, Result};
+use serde_json::{json, Value};
+use std::collections::{BTreeMap, BTreeSet};
+use std::path::{Component, Path, PathBuf};
 use std::process::Command;
 use std::time::{Duration, Instant};
 
-const PLAN_SCHEMA: &str = "wisent.web-crawl-plan.v1";
+use crate::weles_provenance as weles;
+
 const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
-const TOKEN_ITEM: &str = "weles-admission-api#token";
 const CATALOGS: &[&str] = &[
     "web-app-examples",
     "dashboard-console-examples",
@@ -27,76 +33,164 @@ const CATALOGS: &[&str] = &[
     "landing-page-examples",
 ];
 
-fn safe_component(value: &str, name: &str) -> Result<()> {
+const REPORT_SCHEMA: &str = "wisent.web-worker-report.v1";
+const FAILURE_SCHEMA: &str = "wisent.web-worker-failure.v1";
+const OBSERVATION_SCHEMA: &str = "wisent.spis-weles-observation.v1";
+const EVIDENCE_MANIFEST_SCHEMA: &str = "weles.browser-evidence-manifest.v1";
+const OFFICIAL_REQUEST_SCHEMA: &str = "weles.task.current";
+const SERVICE_NAME: &str = "weles-admission";
+const SERVICE_CONSUMER: &str = "spis";
+const SERVICE_CAPABILITY: &str = "browser-evidence";
+const RELEASE_PREFIX: &str = "weles-worker@";
+const SCREENSHOT_KIND: &str = "screenshot";
+const ACCESSIBILITY_KIND: &str = "accessibility_tree";
+const PNG_MAGIC: &[u8] = b"\x89PNG\r\n\x1a\n";
+const MAXIMUM_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
+const BRIDGE_PATH: &str = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
+const BRIDGE_STREAM_BYTES: usize = 4 * 1024 * 1024;
+const BRIDGE_TIMEOUT: Duration = Duration::from_secs(60);
+const POLL_INTERVAL: Duration = Duration::from_secs(5);
+
+/// A typed worker failure. Every exit path carries an exact machine-readable code so the
+/// importer can distinguish an infrastructure refusal from a rejected attempt.
+struct WorkerFailure {
+    code: String,
+    message: String,
+}
+
+impl WorkerFailure {
+    fn new(code: &str, message: impl Into<String>) -> Self {
+        Self {
+            code: code.to_string(),
+            message: message.into(),
+        }
+    }
+}
+
+impl From<anyhow::Error> for WorkerFailure {
+    fn from(error: anyhow::Error) -> Self {
+        Self::new("web_worker_failed", format!("{error:#}"))
+    }
+}
+
+impl From<serde_json::Error> for WorkerFailure {
+    fn from(error: serde_json::Error) -> Self {
+        Self::new("web_worker_json_failed", error.to_string())
+    }
+}
+
+impl From<std::io::Error> for WorkerFailure {
+    fn from(error: std::io::Error) -> Self {
+        Self::new("web_worker_io_failed", error.to_string())
+    }
+}
+
+type Outcome<T> = std::result::Result<T, WorkerFailure>;
+
+fn ensure(condition: bool, code: &str, message: &str) -> Outcome<()> {
+    if condition {
+        Ok(())
+    } else {
+        Err(WorkerFailure::new(code, message))
+    }
+}
+
+/// Everything obtained before a failure, so a failed attempt still reports what it proved.
+#[derive(Default)]
+struct Collected {
+    submission: Option<weles::WelesSubmission>,
+    status: Option<weles::WelesTaskStatus>,
+    provenance: Option<weles::WelesProvenanceDocument>,
+    envelope: Option<weles::WelesAttemptEnvelope>,
+}
+
+fn is_lowercase_hex(value: &str, length: usize) -> bool {
+    value.len() == length && value.bytes().all(|byte| matches!(byte, b'0'..=b'9' | b'a'..=b'f'))
+}
+
+fn is_sha256(value: &str) -> bool {
+    is_lowercase_hex(value, 64)
+}
+
+fn is_git_revision(value: &str) -> bool {
+    is_lowercase_hex(value, 40)
+}
+
+fn is_sha256_id(value: &str) -> bool {
+    value.strip_prefix("sha256:").is_some_and(is_sha256)
+}
+
+/// `weles_provenance::is_portable_attempt_component` and the bridge's
+/// `portableAttemptComponent` accept exactly this alphabet.
+fn is_portable_component(value: &str) -> bool {
+    !value.is_empty()
+        && !matches!(value, "." | "..")
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
+}
+
+/// A retained evidence tail: `validate_evidence_inventory` refuses anything that is not a
+/// chain of `Component::Normal` portable segments.
+fn is_portable_relative(value: &str) -> bool {
+    !value.is_empty()
+        && !value.contains('\\')
+        && value.split('/').all(is_portable_component)
+        && Path::new(value)
+            .components()
+            .all(|component| matches!(component, Component::Normal(_)))
+}
+
+fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     if value.is_empty()
         || !value.chars().all(|character| {
             character.is_ascii_alphanumeric() || matches!(character, '-' | '_' | '.')
         })
     {
-        bail!("{name} must contain only letters, digits, '.', '-' or '_'");
+        bail!("{flag} contains characters that cannot be submitted to a worker");
     }
     Ok(())
 }
 
-fn canonical_admission_url(value: &str) -> Result<String> {
-    let url = url::Url::parse(value).context("--admission-url must be a URL")?;
-    let local = matches!(url.host_str(), Some("127.0.0.1" | "localhost" | "::1"));
-    if url.scheme() != "https" && !(url.scheme() == "http" && local) {
-        bail!("--admission-url must be HTTPS or loopback HTTP");
-    }
-    if !url.username().is_empty()
-        || url.password().is_some()
-        || url.query().is_some()
-        || url.fragment().is_some()
-        || !matches!(url.path(), "" | "/")
-    {
-        bail!("--admission-url may contain only scheme, host and port");
-    }
-    Ok(value.trim_end_matches('/').to_string())
+/// Mirrors `weles_provenance::validate_api_endpoint`: the exact canonical `/api/v1` base.
+fn validate_api_endpoint(value: &str) -> Outcome<()> {
+    let endpoint = url::Url::parse(value)
+        .map_err(|_| WorkerFailure::new("weles_service_endpoint_invalid", "endpoint is not a URL"))?;
+    ensure(
+        matches!(endpoint.scheme(), "http" | "https")
+            && endpoint.username().is_empty()
+            && endpoint.password().is_none()
+            && endpoint.path() == "/api/v1"
+            && endpoint.query().is_none()
+            && endpoint.fragment().is_none()
+            && endpoint.as_str() == value,
+        "weles_service_endpoint_invalid",
+        "the Weles service endpoint is not the canonical exact /api/v1 base",
+    )
 }
 
-fn record_paths(catalog: &str, selected: Option<&str>) -> Result<Vec<PathBuf>> {
-    if !CATALOGS.contains(&catalog) {
-        bail!("crawl-web accepts {}", CATALOGS.join(", "));
-    }
-    let directory = Path::new(catalog).join("references");
-    let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)
-        .with_context(|| format!("read {}", directory.display()))?
-        .filter_map(|entry| entry.ok().map(|entry| entry.path()))
-        .filter(|path| path.is_dir())
-        .collect();
-    paths.sort();
-    paths.retain(|path| {
-        let slug = path
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or_default();
-        selected.is_none_or(|wanted| {
-            wanted == slug || wanted == slug.split_once('-').map(|(_, tail)| tail).unwrap_or(slug)
-        })
-    });
-    if paths.is_empty() {
-        bail!("no matching records in {catalog}");
-    }
-    Ok(paths)
+fn same_origin(value: &str, product_url: &url::Url) -> bool {
+    url::Url::parse(value).is_ok_and(|parsed| {
+        matches!(parsed.scheme(), "http" | "https")
+            && parsed.username().is_empty()
+            && parsed.password().is_none()
+            && parsed.origin() == product_url.origin()
+    })
 }
 
-fn account_bindings(path: Option<&Path>) -> Result<Map<String, Value>> {
-    let Some(path) = path else {
-        return Ok(Map::new());
-    };
-    let document: Value = serde_json::from_slice(&std::fs::read(path)?)?;
-    if document.get("schema").and_then(Value::as_str) != Some("wisent.web-crawl-accounts.v1") {
-        bail!("account bindings must declare wisent.web-crawl-accounts.v1");
-    }
-    document
-        .get("records")
-        .and_then(Value::as_object)
-        .cloned()
-        .ok_or_else(|| anyhow!("account bindings must carry a records object"))
+fn attempt_base(binding: &weles::WelesAttemptBinding) -> String {
+    format!(
+        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
+        binding.run_id,
+        binding.catalog,
+        binding.record,
+        binding.record_key,
+        binding.attempt,
+        binding.attempt_id,
+    )
 }
 
-fn objective(catalog: &str, name: &str, goal: &str) -> String {
+fn objective(catalog: &str, name: &str, goal: &str) -> Result<String> {
     let (surface, coverage, source_guard) = match catalog {
         "web-app-examples" => (
             "browser application",
@@ -138,122 +232,86 @@ fn objective(catalog: &str, name: &str, goal: &str) -> String {
             "global navigation, product-information routes, CTA transitions, media and carousels, forms with validation and cancellation, and desktop, tablet and mobile responsive states",
             "Crawl the exact landing page named by product_url; do not substitute another vendor page, static screenshot or guessed flow.",
         ),
-        _ => unreachable!("catalog validated before objective construction"),
+        other => bail!("crawl-web has no objective for catalog {other}"),
     };
     let goal = if goal.trim().is_empty() {
         "Map the product's reachable functionality"
     } else {
         goal
     };
-    format!(
+    Ok(format!(
         "Crawl the real {surface} for {name}. {goal}. Required coverage: {coverage}. Systematically inspect every reachable non-destructive control and retain the accessibility and visual state before and after every interaction. Execute and retain distinct cancellation, failure and recovery variants only when the real product exposes them. Retain animations, transitions, loading states and the first-success result with exact browser-history event IDs and artifact URIs. Exercise keyboard focus order, live regions, a screen-reader-relevant accessibility tree and reduced-motion media preference; name any variant that could not be executed instead of inferring it. Open destructive flows only through their final confirmation screen and never commit the final destructive control. {source_guard} Finish with one machine-readable JSON object named spis_evidence. It must contain observed_url, surface_kind, visible_pricing_comparison, canonical_interactions, canonical_journey, canonical_motion_analysis, canonical_accessibility, and artifacts. Every canonical claim must cite an exact retained event ID or stado:// artifact URI; use null or an explicit gap rather than inventing evidence. For pricing pages, visible_pricing_comparison is true only after at least two visible plans or price alternatives were actually observed. For landing pages, observed_url must be the exact requested landing URL after normalization."
-    )
+    ))
 }
 
-fn make_plan(
-    catalog: &str,
-    selected: Option<&str>,
-    accounts_path: Option<&Path>,
-    batch: &str,
-) -> Result<Value> {
-    let bindings = account_bindings(accounts_path)?;
-    let source_revision = revision()?;
-    let mut tasks = Vec::new();
-    for path in record_paths(catalog, selected)? {
-        let slug = path
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or_default()
-            .to_string();
-        let record: Value = serde_json::from_slice(&std::fs::read(path.join("reference.json"))?)?;
-        let name = record
-            .get("name")
-            .and_then(Value::as_str)
-            .unwrap_or_default();
-        let url = record
-            .get("product_url")
-            .and_then(Value::as_str)
-            .filter(|value| value.starts_with("https://") || value.starts_with("http://"))
-            .ok_or_else(|| anyhow!("{slug} has no HTTP product_url"))?;
-        let goal = record
-            .pointer("/journey/goal")
-            .and_then(Value::as_str)
-            .unwrap_or_default();
-        let binding = bindings.get(&slug).and_then(Value::as_object);
-        let account_id = binding.and_then(|value| value.get("account_id")).and_then(Value::as_str).map(str::to_string);
-        let credential_refs = binding.and_then(|value| value.get("credential_refs")).cloned().unwrap_or_else(|| json!([]));
-        let action = binding.and_then(|value| value.get("action")).and_then(Value::as_str)
-            .unwrap_or("generic_browser_task");
-        let constraints = binding.and_then(|value| value.get("constraints")).cloned().unwrap_or_else(|| json!({}));
-        let objective = objective(catalog, name, goal);
-        let origin = url::Url::parse(url)?.origin().ascii_serialization();
-        let idempotency_key = crate::sha256_hex(
-            format!("{source_revision}\n{catalog}\n{slug}\n{action}\n{objective}").as_bytes()
-        );
-        tasks.push(json!({
-            "slug": slug,
-            "name": name,
-            "url": url,
-            "origin": origin,
-            "account_id": account_id,
-            "credential_refs": credential_refs,
-            "action": action,
-            "objective": objective,
-            "justification": format!("Spis evidence capture for {catalog}/{slug}"),
-            "flow_name": format!("spis:{catalog}:{slug}"),
-            "idempotency_key": idempotency_key,
-            "source_revision": source_revision,
-            "constraints": constraints,
-        }));
-    }
-    Ok(json!({
-        "schema": PLAN_SCHEMA,
-        "batch": batch,
-        "catalog": catalog,
-        "tasks": tasks,
-    }))
-}
-
-fn revision() -> Result<String> { super::crawl::build_revision() }
-
-
-fn submit(
+fn submit_worker(
     host: &str,
-    admission_url: &str,
-    plan: &Value,
-    batch: &str,
     catalog: &str,
+    record: &str,
+    manifest: &super::crawl::RuntimeManifest,
     wait_seconds: u64,
 ) -> Result<()> {
-    safe_component(host, "--host")?;
-    safe_component(batch, "batch")?;
-    let revision = revision()?;
-    let encoded_plan = STANDARD.encode(serde_json::to_vec(plan)?);
+    safe_job_value(host, "--host")?;
+    safe_job_value(record, "--record")?;
+    if super::crawl::build_revision()? != manifest.source_revision {
+        bail!("web coordinator revision does not match immutable runtime manifest");
+    }
+    let service = manifest
+        .service_identity
+        .as_ref()
+        .context("web crawls require the exact Weles service identity in the runtime manifest")?;
+    if service.active_host != host {
+        bail!(
+            "runtime manifest Weles service identity is bound to {}, not {host}",
+            service.active_host
+        );
+    }
+    if manifest.delivery.kind != "weles-service-env" {
+        bail!("web credential delivery must be weles-service-env");
+    }
+    if manifest.delivery.secret_env.len() != 2
+        || !manifest.delivery.secret_env.contains_key("WELES_TOKEN")
+        || !manifest.delivery.secret_env.contains_key("WISENT_ORGANIZATION_ID")
+    {
+        bail!("web delivery must carry exactly the WELES_TOKEN and WISENT_ORGANIZATION_ID secret references");
+    }
     let command = format!(
-        "cargo run --release -- crawl-web {catalog} --worker --plan-base64 '{encoded_plan}' --admission-url {admission_url} --wait-seconds {wait_seconds}"
+        "cargo run --release -- crawl-web {catalog} --worker --record {record} --artifact-uri {} --wait-seconds {wait_seconds} --runtime-manifest-base64 '{}'",
+        manifest.artifact_uri,
+        manifest.encoded()?,
     );
-    let output_uri = format!("stado://spis-crawls/{catalog}/{batch}/enqueue-output");
-    let output = super::crawl::stado_command()
-        .args([
-            "submit",
-            &command,
-            "--pinned-host",
-            host,
-            "--repo",
-            REPOSITORY,
-            "--repo-ref",
-            &revision,
-            "--repo-workdir",
-            "spis",
-            "--repo-extras",
-            "",
-            "--secret-env",
-            &format!("WELES_ADMISSION_TOKEN={TOKEN_ITEM}"),
-            "--output-uri",
-            &output_uri,
-        ])
-        .output()
-        .context("submit web crawl through Stado")?;
+    let mut arguments = vec![
+        "submit".to_string(),
+        command,
+        "--run-id".to_string(),
+        manifest.stado_run_id.clone(),
+        "--pinned-host".to_string(),
+        host.to_string(),
+        "--repo".to_string(),
+        REPOSITORY.to_string(),
+        "--repo-ref".to_string(),
+        manifest.source_revision.clone(),
+        "--repo-workdir".to_string(),
+        "spis".to_string(),
+        "--repo-extras".to_string(),
+        String::new(),
+        "--output-uri".to_string(),
+        manifest.output_uri.clone(),
+    ];
+    // `secret_env` is a BTreeMap, so the injected references are already in sorted key
+    // order. The values are opaque `item#field` references and are never logged.
+    for (name, reference) in &manifest.delivery.secret_env {
+        arguments.push("--secret-env".to_string());
+        arguments.push(format!("{name}={reference}"));
+    }
+    let mut stado = super::crawl::stado_command();
+    stado.args(arguments);
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "submit web crawl through Stado",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "Stado refused web crawl: {}",
@@ -264,245 +322,1203 @@ fn submit(
         catalog,
         "web",
         host,
-        None,
-        &output_uri,
+        Some(&manifest.artifact_uri),
+        &manifest.output_uri,
         &String::from_utf8_lossy(&output.stdout),
     )
 }
 
-fn persisted_weles_id(uri: &str, path: &Path, plan_hash: &str, slug: &str) -> Option<String> {
-    let output = super::crawl::stado_command().args(["storage", "get", uri]).arg(path).output().ok()?;
-    if !output.status.success() { return None; }
-    let receipt: Value = serde_json::from_slice(&std::fs::read(path).ok()?).ok()?;
-    (receipt.get("plan_sha256").and_then(Value::as_str) == Some(plan_hash)
-        && receipt.get("slug").and_then(Value::as_str) == Some(slug))
-        .then(|| receipt.get("job_id").and_then(Value::as_str).map(str::to_string))
-        .flatten()
+/// The private, never-published, never-logged bridge work area.
+struct PrivateBridge {
+    directory: PathBuf,
+    suffix: String,
+    config: PathBuf,
 }
 
-fn persist_weles_id(uri: &str, path: &Path, receipt: &Value) -> Result<()> {
-    if let Some(parent) = path.parent() { std::fs::create_dir_all(parent)?; }
-    std::fs::write(path, serde_json::to_string_pretty(receipt)? + "\n")?;
-    let output = super::crawl::stado_command()
-        .args(["storage", "put", "--if-absent", "--content-type", "application/json", uri])
-        .arg(path)
-        .output()?;
+impl PrivateBridge {
+    fn open(manifest: &super::crawl::RuntimeManifest) -> Result<Self> {
+        let home = std::env::var_os("HOME")
+            .context("HOME is required for the private Weles bridge work directory")?;
+        let directory = PathBuf::from(home)
+            .join(".stado")
+            .join("work")
+            .join("spis")
+            .join("weles-bridge");
+        std::fs::create_dir_all(&directory)?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+        }
+        let suffix = format!("{}-{}", manifest.attempt_id, std::process::id());
+        let config = directory.join(format!("config-{suffix}.json"));
+        Ok(Self {
+            directory,
+            suffix,
+            config,
+        })
+    }
+
+    fn input(&self, label: &str) -> PathBuf {
+        self.directory.join(format!("{label}-{}.json", self.suffix))
+    }
+
+    fn write_config(&self, endpoint: &str, bearer: &str, organization_id: &str) -> Outcome<()> {
+        let document = json!({
+            "schema": weles::BRIDGE_CONFIG_SCHEMA,
+            "endpoint": endpoint,
+            "bearer": bearer,
+            "organizationId": organization_id,
+        });
+        write_private(&self.config, &serde_json::to_vec(&document)?)
+    }
+
+    /// Removes the bearer token and every bridge command from the host. Called on every
+    /// exit path, successful or not.
+    fn discard(&self) {
+        let _ = std::fs::remove_file(&self.config);
+        for label in ["submit", "get", "verify"] {
+            let _ = std::fs::remove_file(self.input(label));
+        }
+    }
+}
+
+fn write_private(path: &Path, bytes: &[u8]) -> Outcome<()> {
+    use std::io::Write;
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(parent, std::fs::Permissions::from_mode(0o700))?;
+        }
+    }
+    let _ = std::fs::remove_file(path);
+    let mut options = std::fs::OpenOptions::new();
+    options.write(true).create_new(true);
+    // The bridge refuses a config that any other user could read, so the bearer is never
+    // written through a mode that has to be tightened afterwards.
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600);
+    }
+    let mut file = options.open(path)?;
+    file.write_all(bytes)?;
+    file.sync_all()?;
+    Ok(())
+}
+
+/// Content-addressed byte retention: an identical file is proof, never a rewrite.
+fn write_exact(path: &Path, bytes: &[u8]) -> Outcome<()> {
+    if std::fs::read(path).is_ok_and(|existing| existing == bytes) {
+        return Ok(());
+    }
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    std::fs::write(path, bytes)?;
+    Ok(())
+}
+
+fn bridge_error_code(stderr: &[u8]) -> String {
+    let text = String::from_utf8_lossy(stderr);
+    for line in text.lines().rev() {
+        if let Ok(document) = serde_json::from_str::<Value>(line.trim()) {
+            if let Some(code) = document.get("code").and_then(Value::as_str) {
+                if !code.trim().is_empty() {
+                    return format!("weles_bridge_{}", code.replace('-', "_"));
+                }
+            }
+        }
+    }
+    "weles_bridge_failed".to_string()
+}
+
+/// Runs the checked-in bridge with a cleared environment. The bridge owns every Weles
+/// request; this process never opens a socket to Weles.
+fn run_bridge(
+    attempt_root: &Path,
+    private: &PrivateBridge,
+    label: &str,
+    command: &Value,
+    output: Option<&Path>,
+    network: bool,
+) -> Outcome<Vec<u8>> {
+    let bridge = Path::new(env!("CARGO_MANIFEST_DIR")).join("weles-bridge");
+    let script = bridge.join("spis-weles-bridge.mjs");
+    if !script.is_file() {
+        return Err(WorkerFailure::new(
+            "weles_bridge_absent",
+            "the checked-in Weles bridge is not a regular file",
+        ));
+    }
+    let input = private.input(label);
+    write_private(&input, &serde_json::to_vec(command)?)?;
+    let mut node = Command::new("node");
+    node.arg(&script).arg("--input").arg(&input).arg("--output");
+    match output {
+        Some(path) => node.arg(path),
+        None => node.arg("-"),
+    };
+    node.current_dir(attempt_root)
+        .stdin(std::process::Stdio::null())
+        .env_clear()
+        .env("PATH", BRIDGE_PATH)
+        .env("SPIS_WELES_TRUST_FILE", bridge.join("weles-receipt-trust.json"));
+    if network {
+        node.env("SPIS_WELES_CONFIG_FILE", &private.config);
+    }
+    let result = super::crawl::bounded_command_output(
+        &mut node,
+        "run the official Weles bridge",
+        BRIDGE_TIMEOUT,
+        BRIDGE_STREAM_BYTES,
+    );
+    let _ = std::fs::remove_file(&input);
+    let result = result?;
+    if !result.status.success() {
+        // Only the typed bridge code is surfaced; bridge stderr is never echoed, so no
+        // delivered secret can reach the worker report or the Stado job log.
+        return Err(WorkerFailure::new(
+            &bridge_error_code(&result.stderr),
+            format!("the official Weles bridge refused the {label} operation"),
+        ));
+    }
+    Ok(result.stdout)
+}
+
+/// Reads back the durable, request-bound submission the bridge persisted.
+fn read_submission(path: &Path) -> Outcome<weles::WelesSubmission> {
+    let text = path.to_str().ok_or_else(|| {
+        WorkerFailure::new("web_worker_io_failed", "retained document path is not UTF-8")
+    })?;
+    Ok(crate::read_json(text)?)
+}
+
+/// Mirrors `weles_provenance::validate_service_identity`.
+fn service_identity(
+    manifest: &super::crawl::RuntimeManifest,
+) -> Outcome<weles::WelesServiceIdentity> {
+    let service = manifest.service_identity.as_ref().ok_or_else(|| {
+        WorkerFailure::new(
+            "weles_service_identity_absent",
+            "the runtime manifest carries no exact Weles service identity",
+        )
+    })?;
+    let identity = weles::WelesServiceIdentity {
+        name: service.name.clone(),
+        generation: service.generation,
+        consumer: service.consumer.clone(),
+        capability: service.capability.clone(),
+        active_host: service.active_host.clone(),
+        endpoint: service.endpoint.clone(),
+        action: service.action.clone(),
+        release_id: service.release_id.clone(),
+        source_revision: service.source_revision.clone(),
+    };
+    ensure(
+        identity.name == SERVICE_NAME
+            && identity.consumer == SERVICE_CONSUMER
+            && identity.capability == SERVICE_CAPABILITY
+            && identity.action == weles::SPIS_WELES_ACTION
+            && !identity.active_host.trim().is_empty(),
+        "weles_service_identity_invalid",
+        "the runtime manifest service identity is not the exact Weles browser-evidence identity",
+    )?;
+    ensure(
+        identity.release_id.starts_with(RELEASE_PREFIX) && identity.release_id != RELEASE_PREFIX,
+        "weles_service_identity_invalid",
+        "the Weles service release identifier is not a weles-worker@ release",
+    )?;
+    ensure(
+        is_git_revision(&identity.source_revision),
+        "weles_service_identity_invalid",
+        "the Weles service source revision is not a 40-hex git revision",
+    )?;
+    validate_api_endpoint(&identity.endpoint)?;
+    Ok(identity)
+}
+
+/// Independently reads the live release identity from the public version endpoint, so the
+/// directory copy in the runtime manifest can never stand in for the running service.
+fn confirm_service_release(identity: &weles::WelesServiceIdentity) -> Outcome<()> {
+    let url = format!("{}/version", identity.endpoint);
+    let mut curl = Command::new("curl");
+    curl.args([
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--location-trusted",
+        "--max-redirs",
+        "0",
+        "--max-time",
+        "20",
+        "-H",
+        "Accept: application/json",
+    ])
+    .arg(&url);
+    let output = super::crawl::bounded_command_output(
+        &mut curl,
+        "read the Weles service release identity",
+        Duration::from_secs(30),
+        256 * 1024,
+    )?;
     if !output.status.success() {
-        bail!("persist Weles correlation receipt {uri}: {}", String::from_utf8_lossy(&output.stderr).trim());
+        return Err(WorkerFailure::new(
+            "weles_service_release_unavailable",
+            format!(
+                "the Weles version endpoint refused the release readback: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            ),
+        ));
+    }
+    let document: Value = serde_json::from_slice(&output.stdout).map_err(|_| {
+        WorkerFailure::new(
+            "weles_service_release_mismatch",
+            "the Weles version endpoint did not return a JSON document",
+        )
+    })?;
+    let release_id = alternate(&document, "release_id", "releaseId").ok_or_else(|| {
+        WorkerFailure::new(
+            "weles_service_release_mismatch",
+            "the Weles version endpoint declares no release_id",
+        )
+    })?;
+    let source_revision =
+        alternate(&document, "source_revision", "sourceRevision").ok_or_else(|| {
+            WorkerFailure::new(
+                "weles_service_release_mismatch",
+                "the Weles version endpoint declares no source_revision",
+            )
+        })?;
+    ensure(
+        release_id == identity.release_id && source_revision == identity.source_revision,
+        "weles_service_release_mismatch",
+        "the live Weles release differs from the runtime manifest service directory",
+    )
+}
+
+fn alternate<'a>(document: &'a Value, primary: &str, secondary: &str) -> Option<&'a str> {
+    document
+        .get(primary)
+        .or_else(|| document.get(secondary))
+        .and_then(Value::as_str)
+}
+
+/// Mirrors `weles_provenance::validate_spis_binding` before the binding is ever signed.
+fn attempt_binding(
+    manifest: &super::crawl::RuntimeManifest,
+    identity: &weles::WelesServiceIdentity,
+) -> Outcome<weles::WelesAttemptBinding> {
+    let binding = weles::WelesAttemptBinding {
+        schema: weles::ATTEMPT_BINDING_SCHEMA.to_string(),
+        run_id: manifest.run_id.clone(),
+        catalog: manifest.catalog.clone(),
+        record: manifest.record.clone(),
+        record_key: manifest.record_key.clone(),
+        attempt: manifest.attempt,
+        attempt_id: manifest.attempt_id.clone(),
+        source_revision: manifest.source_revision.clone(),
+        source_input_sha256: manifest.source_input_sha256.clone(),
+        reference_sha256: manifest.reference_sha256.clone(),
+        artifact_uri: manifest.artifact_uri.clone(),
+        output_uri: manifest.output_uri.clone(),
+        service: weles::WelesAttemptBindingService {
+            name: identity.name.clone(),
+            consumer: identity.consumer.clone(),
+            capability: identity.capability.clone(),
+            directory_generation: identity.generation,
+            host: identity.active_host.clone(),
+            endpoint: identity.endpoint.clone(),
+            action: identity.action.clone(),
+            release_id: identity.release_id.clone(),
+            source_revision: identity.source_revision.clone(),
+        },
+    };
+    for component in [
+        binding.run_id.as_str(),
+        binding.catalog.as_str(),
+        binding.record.as_str(),
+        binding.attempt_id.as_str(),
+    ] {
+        ensure(
+            is_portable_component(component),
+            "web_attempt_component_invalid",
+            "an attempt coordinate is not a portable attempt URI component",
+        )?;
+    }
+    ensure(
+        binding.attempt >= 1,
+        "web_attempt_component_invalid",
+        "the attempt number must be at least one",
+    )?;
+    ensure(
+        is_sha256(&binding.record_key)
+            && is_sha256(&binding.source_input_sha256)
+            && is_sha256(&binding.reference_sha256),
+        "web_attempt_component_invalid",
+        "record key and source/reference digests must be lowercase 64-hex SHA-256",
+    )?;
+    ensure(
+        is_git_revision(&binding.source_revision),
+        "web_attempt_component_invalid",
+        "the attempt source revision is not a 40-hex git revision",
+    )?;
+    let base = attempt_base(&binding);
+    ensure(
+        binding.artifact_uri == format!("{base}/artifacts.tar.gz")
+            && binding.output_uri == format!("{base}/worker-output.log"),
+        "web_attempt_uri_invalid",
+        "the signed Spis artifact/output URIs are not the canonical attempt coordinates",
+    )?;
+    Ok(binding)
+}
+
+/// Deterministic, sorted, duplicate-free constraint vocabulary derived only from the
+/// immutable runtime constraints. `validate_request_and_evidence_manifest` runs
+/// `validate_unique_nonempty` over exactly this vector.
+fn task_constraints(
+    constraints: &super::crawl::RuntimeConstraints,
+    origin: &str,
+) -> Outcome<Vec<String>> {
+    let mut values: BTreeSet<String> = BTreeSet::new();
+    for (flag, label) in [
+        (constraints.no_first_run_consent, "no-first-run-consent"),
+        (
+            constraints.no_system_permission_prompts,
+            "no-system-permission-prompts",
+        ),
+        (constraints.no_notifications, "no-notifications"),
+        (constraints.no_purchase, "no-purchase"),
+        (
+            constraints.no_final_destructive_action,
+            "no-final-destructive-action",
+        ),
+        (constraints.headless, "headless"),
+    ] {
+        if flag {
+            values.insert(label.to_string());
+        }
+    }
+    values.insert(format!("same-origin:{origin}"));
+    let values: Vec<String> = values.into_iter().collect();
+    ensure(
+        values.iter().all(|value| !value.trim().is_empty()),
+        "web_constraints_invalid",
+        "browser task constraints must be nonempty",
+    )?;
+    Ok(values)
+}
+
+fn text<'a>(document: &'a Value, key: &str) -> Outcome<&'a str> {
+    document
+        .get(key)
+        .and_then(Value::as_str)
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "weles_evidence_manifest_invalid",
+                format!("the signed evidence manifest has no string {key}"),
+            )
+        })
+}
+
+fn storage_get(uri: &str, destination: &Path) -> Outcome<()> {
+    if let Some(parent) = destination.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    let mut stado = super::crawl::stado_command();
+    stado.args(["storage", "get", uri]).arg(destination);
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "download retained Weles evidence",
+        Duration::from_secs(300),
+        4 * 1024 * 1024,
+    )?;
+    if !output.status.success() {
+        return Err(WorkerFailure::new(
+            "weles_evidence_download_failed",
+            format!(
+                "stado storage get refused {uri}: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            ),
+        ));
     }
     Ok(())
 }
 
-fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value> {
-    if plan.get("schema").and_then(Value::as_str) != Some(PLAN_SCHEMA) {
-        bail!("worker plan must declare {PLAN_SCHEMA}");
+fn worker_report(
+    manifest: &super::crawl::RuntimeManifest,
+    state: &str,
+    artifact: Option<Value>,
+    collected: &Collected,
+    failure: Option<&WorkerFailure>,
+) -> Value {
+    json!({
+        "schema": REPORT_SCHEMA,
+        "run_id": manifest.run_id,
+        "catalog": manifest.catalog,
+        "record": manifest.record,
+        "record_key": manifest.record_key,
+        "attempt": u64::from(manifest.attempt),
+        "attempt_id": manifest.attempt_id,
+        "engine": "web",
+        "state": state,
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "reference_sha256": manifest.reference_sha256,
+        "bindings_file_sha256": manifest.bindings_file_sha256,
+        "bindings_sha256": manifest.bindings_sha256,
+        "execution_identity": serde_json::to_value(&manifest.execution_identity)
+            .unwrap_or(Value::Null),
+        "artifact": artifact.unwrap_or(Value::Null),
+        "weles_attempt_envelope": serde_json::to_value(&collected.envelope)
+            .unwrap_or(Value::Null),
+        "weles_submission": serde_json::to_value(&collected.submission).unwrap_or(Value::Null),
+        "weles_task_status": serde_json::to_value(&collected.status).unwrap_or(Value::Null),
+        "provenance_document": serde_json::to_value(&collected.provenance)
+            .unwrap_or(Value::Null),
+        "failure": failure
+            .map(|failure| json!({"code": failure.code, "message": failure.message}))
+            .unwrap_or(Value::Null),
+    })
+}
+
+fn run_worker(
+    catalog: &str,
+    record: &str,
+    manifest: &super::crawl::RuntimeManifest,
+    wait_seconds: u64,
+) -> Result<()> {
+    if catalog != manifest.catalog || record != manifest.record {
+        bail!("worker catalog/record differ from the immutable runtime manifest");
     }
-    let tasks = plan
-        .get("tasks")
-        .and_then(Value::as_array)
-        .ok_or_else(|| anyhow!("worker plan carries no tasks"))?;
-    let token = std::env::var("WELES_ADMISSION_TOKEN")
-        .context("worker needs the Stado-scoped WELES_ADMISSION_TOKEN")?;
-    let agent = ureq::AgentBuilder::new()
-        .timeout(Duration::from_secs(60))
-        .build();
-    let plan_bytes = serde_json::to_vec(plan)?;
-    let plan_hash = crate::sha256_hex(&plan_bytes);
-    let batch = plan.get("batch").and_then(Value::as_str).context("web plan has no batch")?;
-    let catalog = plan.get("catalog").and_then(Value::as_str).context("web plan has no catalog")?;
-    let receipt_root = Path::new("target").join("spis-weles-receipts").join(batch);
-    let mut ids = Vec::new();
-    let mut task_ids: Vec<(String, String)> = Vec::new();
-    for task in tasks {
-        let slug = task.get("slug").and_then(Value::as_str).context("web crawl task has no slug")?;
-        let receipt_uri = format!("stado://spis-crawls/{catalog}/{batch}/weles-receipts/{slug}.json");
-        let receipt_path = receipt_root.join(format!("{slug}.json"));
-        let id = if let Some(id) = persisted_weles_id(&receipt_uri, &receipt_path, &plan_hash, slug) {
-            id
-        } else {
-            let job = json!({
-                "account_id": task.get("account_id").cloned().unwrap_or(Value::Null),
-                "action": task.get("action").cloned().unwrap_or(Value::Null),
-                "origin": task.get("origin").cloned().unwrap_or(Value::Null),
-                "justification": task.get("justification").cloned().unwrap_or(Value::Null),
-                "credential_refs": task.get("credential_refs").cloned().unwrap_or_else(|| json!([])),
-                "idempotency_key": task.get("idempotency_key").cloned().unwrap_or(Value::Null),
-                "platform": "generic",
-                "params": {
-                    "url": task.get("url").cloned().unwrap_or(Value::Null),
-                    "objective": task.get("objective").cloned().unwrap_or(Value::Null),
-                    "flow_name": task.get("flow_name").cloned().unwrap_or(Value::Null),
-                    "client_correlation_id": task.get("idempotency_key").cloned().unwrap_or(Value::Null),
-                    "constraints": task.get("constraints").cloned().unwrap_or_else(|| json!({})),
-                    "headless": true,
-                    "browser": "chromium",
-                },
-            });
-            let response = match agent
-                .post(&format!("{admission_url}/v1/echo/jobs/enqueue-batch"))
-                .set("Authorization", &format!("Bearer {token}"))
-                .send_json(json!({"jobs": [job]}))
-            {
-                Ok(response) => response,
-                Err(ureq::Error::Status(status, response)) => {
-                    let detail = response.into_string().unwrap_or_default();
-                    bail!("Weles admission refused {slug} with HTTP {status}: {detail}");
+    let base = PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
+        .join(".spis")
+        .join("crawls");
+    let attempt_root = super::crawl::native_attempt_root(&base, manifest)?;
+    std::fs::create_dir_all(&attempt_root)?;
+    let private = PrivateBridge::open(manifest)?;
+    let mut collected = Collected::default();
+    let outcome = capture(
+        manifest,
+        wait_seconds,
+        &attempt_root,
+        &private,
+        &mut collected,
+    );
+    private.discard();
+    let failure = match outcome {
+        // A publication failure is itself a typed attempt failure, so the single mandatory
+        // report line is emitted on every path.
+        Ok(()) => {
+            match super::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri) {
+                Ok(artifact) => {
+                    let report = worker_report(
+                        manifest,
+                        "artifact_published",
+                        Some(artifact),
+                        &collected,
+                        None,
+                    );
+                    println!("{}", serde_json::to_string(&report)?);
+                    return Ok(());
                 }
-                Err(error) => bail!("Weles admission refused {slug}: {error}"),
-            };
-            let response: Value = response.into_json()?;
-            let accepted = response.get("job_ids").and_then(Value::as_array)
-                .filter(|ids| ids.len() == 1)
-                .context("single Weles enqueue returned other than one job id")?;
-            let id = accepted[0].as_str().context("Weles admission returned a non-string job id")?.to_string();
-            persist_weles_id(&receipt_uri, &receipt_path, &json!({
-                "schema": "wisent.weles-correlation-receipt.v1",
-                "batch": batch,
-                "slug": slug,
-                "flow_name": task.get("flow_name"),
-                "plan_sha256": plan_hash,
-                "idempotency_key": task.get("idempotency_key"),
-                "origin": task.get("origin"),
-                "action": task.get("action"),
-                "credential_refs": task.get("credential_refs"),
-                "job_id": id,
-                "accepted_at": crate::now_iso_utc(),
-            }))?;
-            id
-        };
-        if task_ids.iter().any(|(_, existing)| existing == &id) {
-            bail!("Weles admission returned duplicate job id {id}");
-        }
-        ids.push(json!(id));
-        task_ids.push((slug.to_string(), id));
-    }
-    let deadline = Instant::now() + Duration::from_secs(wait_seconds);
-    let jobs = loop {
-        let response = match agent
-            .post(&format!("{admission_url}/v1/echo/jobs/get-many"))
-            .set("Authorization", &format!("Bearer {token}"))
-            .send_json(json!({"job_ids": ids}))
-        {
-            Ok(response) => response,
-            Err(ureq::Error::Status(status, response)) => {
-                let detail = response.into_string().unwrap_or_default();
-                bail!("Weles crawl status refused with HTTP {status}: {detail}");
+                Err(error) => WorkerFailure::new(
+                    "attempt_archive_publication_failed",
+                    format!("{error:#}"),
+                ),
             }
-            Err(error) => bail!("read Weles crawl jobs: {error}"),
-        };
-        let response: Value = response.into_json()?;
-        let jobs = response
-            .get("jobs")
-            .and_then(Value::as_array)
-            .cloned()
-            .ok_or_else(|| anyhow!("Weles job read returned no jobs"))?;
-        let active = jobs
-            .iter()
-            .filter(|job| {
-                matches!(
-                    job.get("status").and_then(Value::as_str),
-                    Some("queued" | "running")
-                )
-            })
-            .count();
-        if active == 0 {
-            break jobs;
         }
-        if Instant::now() >= deadline {
-            break jobs;
-        }
-        std::thread::sleep(Duration::from_secs(5));
+        Err(failure) => failure,
     };
-    let active = jobs.iter().filter(|job| {
-        matches!(job.get("status").and_then(Value::as_str), Some("queued" | "running"))
-    }).count();
-    let failed = jobs
-        .iter()
-        .filter(|job| {
-            matches!(
-                job.get("status").and_then(Value::as_str),
-                Some("failed" | "rejected")
-            )
-        })
-        .count();
-    let pending_review = jobs
-        .iter()
-        .filter(|job| job.get("status").and_then(Value::as_str) == Some("pending_review"))
-        .count();
-    let mut jobs_by_id: std::collections::HashMap<&str, &Value> =
-        std::collections::HashMap::new();
-    for job in &jobs {
-        let id = job
-            .get("id")
-            .or_else(|| job.get("job_id"))
-            .and_then(Value::as_str)
-            .context("Weles status returned a job without id")?;
-        if jobs_by_id.insert(id, job).is_some() {
-            bail!("Weles status returned duplicate job id {id}");
-        }
+    let document = json!({
+        "schema": FAILURE_SCHEMA,
+        "code": failure.code,
+        "message": failure.message,
+        "run_id": manifest.run_id,
+        "catalog": manifest.catalog,
+        "record": manifest.record,
+        "attempt": u64::from(manifest.attempt),
+        "attempt_id": manifest.attempt_id,
+    });
+    if let Err(error) =
+        super::crawl::atomic_json_write(&attempt_root.join("failure.json"), &document)
+    {
+        eprintln!("web worker failure artifact could not be retained: {error:#}");
     }
-    let tasks_by_slug: std::collections::HashMap<&str, &Value> = tasks
-        .iter()
-        .map(|task| {
-            task.get("slug")
-                .and_then(Value::as_str)
-                .map(|slug| (slug, task))
-                .context("web crawl task has no slug")
-        })
-        .collect::<Result<_>>()?;
-    let records: Vec<Value> = task_ids
-        .iter()
-        .map(|(slug, id)| {
-            let task = tasks_by_slug
-                .get(slug.as_str())
-                .ok_or_else(|| anyhow!("no web crawl task matches slug {slug}"))?;
-            let job = jobs_by_id
-                .get(id.as_str())
-                .ok_or_else(|| anyhow!("Weles status omitted accepted job id {id} for {slug}"))?;
-            Ok(json!({
-                "record": slug,
-                "name": task.get("name"),
-                "job_id": id,
-                "job": job,
-                "origin": task.get("origin"),
-                "action": task.get("action"),
-                "idempotency_key": task.get("idempotency_key"),
-                "credential_refs": task.get("credential_refs"),
-            }))
-        })
-        .collect::<Result<_>>()?;
-    Ok(json!({
-        "schema": "wisent.web-crawl-run.v1",
-        "batch": plan.get("batch"),
-        "catalog": plan.get("catalog"),
-        "task_count": tasks.len(),
-        "action_ids": ids,
-        "jobs": jobs,
-        "records": records,
-        "failed": failed,
-        "pending_review": pending_review,
-        "active": active,
-        "completed_at": crate::now_iso_utc(),
-        "evidence_observations": {
-            "canonical_interactions": [],
-            "canonical_journey": Value::Null,
-            "canonical_accessibility": Value::Null,
-            "canonical_motion_analysis": Value::Null,
-            "gaps": [
-                "Canonical semantic fields remain empty unless each Weles record result carries explicit linked variant observations."
-            ]
+    let artifact = super::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri);
+    let report = worker_report(
+        manifest,
+        "failed",
+        artifact.as_ref().ok().cloned(),
+        &collected,
+        Some(&failure),
+    );
+    println!("{}", serde_json::to_string(&report)?);
+    match artifact {
+        Ok(_) => bail!("web worker failed ({}): {}", failure.code, failure.message),
+        Err(error) => bail!(
+            "web worker failed ({}): {}; the attempt archive could not be published either: {error:#}",
+            failure.code,
+            failure.message
+        ),
+    }
+}
+
+fn capture(
+    manifest: &super::crawl::RuntimeManifest,
+    wait_seconds: u64,
+    attempt_root: &Path,
+    private: &PrivateBridge,
+    collected: &mut Collected,
+) -> Outcome<()> {
+    let catalog = manifest.catalog.as_str();
+    let record = manifest.record.as_str();
+    let identity = service_identity(manifest)?;
+    confirm_service_release(&identity)?;
+    let binding = attempt_binding(manifest, &identity)?;
+    let base = attempt_base(&binding);
+
+    // `validate_request_and_evidence_manifest` binds every retained URL to the exact
+    // product URL of the current record, so the manifest URL must already be canonical.
+    let product_url = manifest.runtime_product.product_url.clone();
+    let parsed = url::Url::parse(&product_url).map_err(|_| {
+        WorkerFailure::new(
+            "web_product_url_invalid",
+            "the runtime product URL is not a URL",
+        )
+    })?;
+    ensure(
+        matches!(parsed.scheme(), "http" | "https")
+            && parsed.username().is_empty()
+            && parsed.password().is_none(),
+        "web_product_url_invalid",
+        "the runtime product URL must be HTTP(S) without credentials",
+    )?;
+    ensure(
+        parsed.as_str() == product_url,
+        "web_product_url_invalid",
+        "the runtime product URL is not in canonical serialized form",
+    )?;
+    let origin = parsed.origin().ascii_serialization();
+    ensure(
+        !origin.is_empty() && origin != "null",
+        "web_product_url_invalid",
+        "the runtime product URL has an opaque origin",
+    )?;
+    if let Some(surface) = manifest.runtime_product.surface.as_ref() {
+        ensure(
+            surface.exact_url == product_url && surface.origin == origin,
+            "web_surface_identity_mismatch",
+            "the runtime surface identity does not name the exact product URL and origin",
+        )?;
+        ensure(
+            surface
+                .allowed_actions
+                .iter()
+                .any(|action| action == weles::SPIS_WELES_ACTION),
+            "web_surface_identity_mismatch",
+            "the runtime surface identity does not allow the Spis browser action",
+        )?;
+    }
+
+    let reference_path = format!("{catalog}/references/{record}/reference.json");
+    let reference: Value = crate::read_json(&reference_path)?;
+    // The verifier re-derives the receipt origin from the record's own product_url, so an
+    // attempt whose manifest URL differs from the committed record can never verify.
+    let reference_url = reference
+        .get("product_url")
+        .and_then(Value::as_str)
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "web_reference_product_url_absent",
+                "the committed record declares no product_url",
+            )
+        })?;
+    ensure(
+        url::Url::parse(reference_url).ok().as_ref() == Some(&parsed),
+        "web_reference_product_url_mismatch",
+        "the committed record product_url differs from the runtime manifest product URL",
+    )?;
+    let name = reference.get("name").and_then(Value::as_str).unwrap_or_default();
+    let goal = reference
+        .pointer("/journey/goal")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    let objective = objective(catalog, name, goal)?;
+    let constraints = task_constraints(&manifest.constraints, &origin)?;
+
+    ensure(
+        manifest.account.mode == "anonymous-read-only-probe"
+            && manifest.account.credential_refs.is_empty(),
+        "weles_anonymous_probe_required",
+        "web crawls submit an anonymous read-only probe with no credential references",
+    )?;
+
+    // A pure function of the immutable attempt: a resubmitted identical attempt is exactly
+    // idempotent at Weles, and never creates a second task.
+    let idempotency_key = format!(
+        "spis-{}",
+        crate::sha256_hex(
+            format!(
+                "{}\0{}\0{}\0{}\0{}\0{}\0{}",
+                manifest.source_revision,
+                manifest.run_id,
+                manifest.catalog,
+                manifest.record,
+                manifest.record_key,
+                manifest.attempt,
+                manifest.attempt_id,
+            )
+            .as_bytes()
+        )
+    );
+
+    let organization_id = std::env::var("WISENT_ORGANIZATION_ID").map_err(|_| {
+        WorkerFailure::new(
+            "weles_delivery_env_absent",
+            "WISENT_ORGANIZATION_ID was not delivered to this worker",
+        )
+    })?;
+    let bearer = std::env::var("WELES_TOKEN").map_err(|_| {
+        WorkerFailure::new(
+            "weles_delivery_env_absent",
+            "WELES_TOKEN was not delivered to this worker",
+        )
+    })?;
+    ensure(
+        !organization_id.trim().is_empty() && !bearer.trim().is_empty(),
+        "weles_delivery_env_absent",
+        "the delivered Weles organization and bearer must both be nonempty",
+    )?;
+    private.write_config(&identity.endpoint, &bearer, &organization_id)?;
+
+    let identity_value = serde_json::to_value(&identity)?;
+    let input = weles::WelesOfficialTaskInput {
+        product_url: product_url.clone(),
+        objective: objective.clone(),
+        constraints: constraints.clone(),
+        spis_binding: binding.clone(),
+    };
+    let justification = format!(
+        "Spis anonymous browser-evidence capture for {catalog}/{record} attempt {} ({})",
+        manifest.attempt, manifest.attempt_id
+    );
+    // The bridge normalizes `request` to exactly these six fields and injects `schema` and
+    // `organizationId` itself before it computes the canonical request digest.
+    let submit_command = json!({
+        "schema": weles::BRIDGE_COMMAND_SCHEMA,
+        "operation": "submit",
+        "serviceIdentity": identity_value,
+        "request": {
+            "origin": origin,
+            "action": weles::SPIS_WELES_ACTION,
+            "input": serde_json::to_value(&input)?,
+            "credentialRefs": [],
+            "evidencePolicy": "full",
+            "justification": justification,
         },
-    }))
+        "idempotencyKey": idempotency_key,
+    });
+    let weles_directory = attempt_root.join("weles");
+    std::fs::create_dir_all(&weles_directory)?;
+    let submission_path = weles_directory.join("submission.json");
+    run_bridge(
+        attempt_root,
+        private,
+        "submit",
+        &submit_command,
+        Some(&submission_path),
+        true,
+    )?;
+    let submission = read_submission(&submission_path)?;
+    collected.submission = Some(submission.clone());
+    ensure(
+        submission.schema == weles::SUBMISSION_SCHEMA,
+        "weles_submission_invalid",
+        "the retained submission does not declare the typed submission schema",
+    )?;
+    ensure(
+        submission.organization_id == organization_id
+            && submission.origin == origin
+            && submission.action == weles::SPIS_WELES_ACTION,
+        "weles_submission_invalid",
+        "the retained submission task identity differs from the submitted request",
+    )?;
+    ensure(
+        submission.idempotency_key == idempotency_key,
+        "weles_submission_invalid",
+        "the retained submission carries a different idempotency key",
+    )?;
+    ensure(
+        submission.service_identity == identity,
+        "weles_submission_invalid",
+        "the retained submission service identity differs from the runtime directory",
+    )?;
+    ensure(
+        is_sha256_id(&submission.request_digest)
+            && submission.request_identity.request_digest == submission.request_digest,
+        "weles_submission_invalid",
+        "the retained submission request digest is not a bound sha256: identifier",
+    )?;
+    ensure(
+        submission.request_identity.spis_binding == binding
+            && submission.request_document.input.spis_binding == binding,
+        "weles_submission_invalid",
+        "the retained submission does not carry the exact signed Spis binding",
+    )?;
+    ensure(
+        submission.request_document.schema == OFFICIAL_REQUEST_SCHEMA
+            && submission.request_document.organization_id == organization_id
+            && submission.request_document.origin == origin
+            && submission.request_document.action == weles::SPIS_WELES_ACTION,
+        "weles_submission_invalid",
+        "the retained official request is not the canonical current Weles task",
+    )?;
+    ensure(
+        submission.request_document.credential_refs.is_empty()
+            && submission.request_document.evidence_policy == "full",
+        "weles_submission_invalid",
+        "the retained official request is not an anonymous full-evidence request",
+    )?;
+    ensure(
+        submission.request_document.input.product_url == product_url
+            && submission.request_document.input.objective == objective
+            && submission.request_document.input.constraints == constraints,
+        "weles_submission_invalid",
+        "the retained official request input differs from the submitted browser task",
+    )?;
+    ensure(
+        is_portable_component(&submission.task_id),
+        "weles_task_id_invalid",
+        "the Weles task identifier is not a portable recording component",
+    )?;
+    let weles_task_id = submission.task_id.clone();
+
+    let get_command = json!({
+        "schema": weles::BRIDGE_COMMAND_SCHEMA,
+        "operation": "get",
+        "serviceIdentity": identity_value,
+        "taskId": weles_task_id,
+        "expectedTask": {
+            "taskId": weles_task_id,
+            "organizationId": organization_id,
+            "origin": origin,
+            "action": weles::SPIS_WELES_ACTION,
+        },
+    });
+    let deadline = Instant::now() + Duration::from_secs(wait_seconds);
+    let status = loop {
+        let stdout = run_bridge(attempt_root, private, "get", &get_command, None, true)?;
+        let observed: weles::WelesTaskStatus = serde_json::from_slice(&stdout)?;
+        if observed.terminal || Instant::now() >= deadline {
+            break observed;
+        }
+        std::thread::sleep(POLL_INTERVAL);
+    };
+    super::crawl::atomic_json_write(
+        &weles_directory.join("status.json"),
+        &serde_json::to_value(&status)?,
+    )?;
+    collected.status = Some(status.clone());
+    ensure(
+        status.schema == weles::TASK_STATUS_SCHEMA,
+        "weles_status_invalid",
+        "the retained task status does not declare the typed status schema",
+    )?;
+    ensure(
+        status.task_id == weles_task_id,
+        "weles_status_invalid",
+        "the retained task status names a different Weles task",
+    )?;
+    ensure(
+        status.request_identity == submission.request_identity,
+        "weles_status_invalid",
+        "the retained task status request identity differs from the submission",
+    )?;
+    ensure(
+        status.service_identity == identity,
+        "weles_status_invalid",
+        "the retained task status service identity differs from the runtime directory",
+    )?;
+    if !status.terminal {
+        return Err(WorkerFailure::new(
+            "weles_task_not_terminal",
+            format!(
+                "Weles task {weles_task_id} was still {} after {wait_seconds}s",
+                status.status
+            ),
+        ));
+    }
+    if status.outcome.as_deref() != Some("completed") {
+        return Err(WorkerFailure::new(
+            "weles_task_not_completed",
+            format!(
+                "Weles task {weles_task_id} finished as status={} outcome={}",
+                status.status,
+                status.outcome.as_deref().unwrap_or("none")
+            ),
+        ));
+    }
+    let checkpoint = status.receipt_checkpoint.as_ref().ok_or_else(|| {
+        WorkerFailure::new(
+            "weles_receipt_checkpoint_absent",
+            "a completed Weles task must carry a freshly verified receipt checkpoint",
+        )
+    })?;
+    let result_digest = status
+        .result_digest
+        .clone()
+        .filter(|digest| is_sha256_id(digest))
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "weles_status_invalid",
+                "the completed task carries no sha256: result digest",
+            )
+        })?;
+    ensure(
+        status
+            .result_ref
+            .as_deref()
+            .is_some_and(|value| !value.trim().is_empty()),
+        "weles_status_result_ref_absent",
+        "the completed task carries no result reference",
+    )?;
+    let prefix = format!("stado://weles/recordings/{weles_task_id}/");
+    ensure(
+        status
+            .artifact_refs
+            .iter()
+            .all(|reference| reference.starts_with(&prefix)),
+        "weles_artifact_refs_foreign",
+        "a completed task artifact reference is not bound to this exact Weles recording",
+    )?;
+
+    let claims = &checkpoint.claims;
+    ensure(
+        claims.task_id == weles_task_id
+            && claims.organization_id == organization_id
+            && claims.origin == origin
+            && claims.action == weles::SPIS_WELES_ACTION
+            && claims.outcome == "completed",
+        "weles_receipt_claims_mismatch",
+        "the verified receipt claims do not name this completed task",
+    )?;
+    ensure(
+        claims.request_digest == submission.request_digest
+            && claims.result_digest == result_digest
+            && claims.spis_binding == binding,
+        "weles_receipt_claims_mismatch",
+        "the verified receipt does not sign this exact request, result and Spis binding",
+    )?;
+
+    let stado_job_id = ["STADO_JOB_ID", "STADO_MACHINE_JOB_ID", "STADO_JOB"]
+        .iter()
+        .find_map(|name| {
+            std::env::var(name)
+                .ok()
+                .filter(|value| !value.trim().is_empty())
+        })
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "stado_job_id_unavailable",
+                "the Stado job identifier was not delivered to this worker",
+            )
+        })?;
+    // `verify_attempt_binding` refuses an envelope whose outer job equals the inner task.
+    ensure(
+        stado_job_id != weles_task_id,
+        "stado_job_id_unavailable",
+        "the Stado job identifier collides with the inner Weles task identifier",
+    )?;
+
+    let recordings = attempt_root.join("recordings").join(&weles_task_id);
+    let evidence_manifest_uri = format!("{prefix}evidence-manifest.json");
+    let evidence_manifest_path = recordings.join("evidence-manifest.json");
+    storage_get(&evidence_manifest_uri, &evidence_manifest_path)?;
+    // These exact bytes are the receipt-bound artifact. Re-serializing would change the
+    // digest the receipt signed, so they are only ever copied.
+    let manifest_bytes = std::fs::read(&evidence_manifest_path)?;
+    let artifact_document_sha256 = crate::sha256_hex(&manifest_bytes);
+    let artifact_relative = format!("weles/artifacts/{artifact_document_sha256}.json");
+    write_exact(&attempt_root.join(&artifact_relative), &manifest_bytes)?;
+    ensure(
+        claims.evidence_digest == artifact_document_sha256,
+        "weles_evidence_digest_mismatch",
+        "the verified receipt evidenceDigest is not the retained evidence manifest digest",
+    )?;
+
+    let evidence: Value = serde_json::from_slice(&manifest_bytes)?;
+    ensure(
+        text(&evidence, "schema")? == EVIDENCE_MANIFEST_SCHEMA,
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest schema is unsupported",
+    )?;
+    ensure(
+        text(&evidence, "taskId")? == weles_task_id
+            && text(&evidence, "organizationId")? == claims.organization_id
+            && text(&evidence, "origin")? == claims.origin
+            && text(&evidence, "action")? == claims.action
+            && text(&evidence, "outcome")? == "completed",
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest does not name this completed task",
+    )?;
+    ensure(
+        text(&evidence, "requestDigest")? == submission.request_digest
+            && text(&evidence, "resultDigest")? == result_digest,
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest request/result digests differ from the receipt",
+    )?;
+    let signed_binding: weles::WelesAttemptBinding =
+        serde_json::from_value(evidence.get("spisBinding").cloned().unwrap_or(Value::Null))?;
+    ensure(
+        signed_binding == binding,
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest carries a different Spis binding",
+    )?;
+    let requested_url = text(&evidence, "requestedUrl")?;
+    ensure(
+        requested_url == product_url,
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest requestedUrl is not the exact product URL",
+    )?;
+    let effective_url = text(&evidence, "effectiveUrl")?.to_string();
+    let final_url = text(&evidence, "finalUrl")?.to_string();
+    ensure(
+        same_origin(&effective_url, &parsed) && same_origin(&final_url, &parsed),
+        "weles_evidence_manifest_invalid",
+        "the signed effective/final URLs are not same-origin with the product URL",
+    )?;
+
+    let entries = evidence
+        .get("evidenceInventory")
+        .and_then(Value::as_array)
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "weles_evidence_manifest_invalid",
+                "the signed evidence manifest has no evidenceInventory array",
+            )
+        })?;
+    let mut inventory: Vec<weles::WelesEvidenceInventoryEntry> = Vec::with_capacity(entries.len());
+    for entry in entries {
+        inventory.push(serde_json::from_value(entry.clone())?);
+    }
+    let screenshot_uri = format!("{prefix}artifacts/browser_evidence_final.png");
+    let accessibility_uri = format!("{prefix}artifacts/browser_evidence_accessibility_tree.txt");
+    let mut retained_paths: Vec<String> =
+        vec![format!("recordings/{weles_task_id}/evidence-manifest.json")];
+    // The uniqueness sets borrow the signed inventory, so they are scoped: the validated
+    // inventory then moves into the attempt envelope without being cloned.
+    {
+        let mut kinds: BTreeSet<&str> = BTreeSet::new();
+        let mut uris: BTreeSet<&str> = BTreeSet::new();
+        let mut total_bytes = 0_u64;
+        for entry in &inventory {
+            let relative = entry.uri.strip_prefix(&prefix).ok_or_else(|| {
+                WorkerFailure::new(
+                    "weles_evidence_uri_foreign",
+                    "an evidence inventory URI is not bound to this exact Weles task",
+                )
+            })?;
+            ensure(
+                is_portable_relative(relative),
+                "weles_evidence_uri_invalid",
+                "an evidence inventory URI is not a canonical immutable path",
+            )?;
+            let kind_matches_uri = match entry.kind.as_str() {
+                SCREENSHOT_KIND => entry.uri == screenshot_uri,
+                ACCESSIBILITY_KIND => entry.uri == accessibility_uri,
+                kind => kind
+                    .strip_prefix("artifact:")
+                    .is_some_and(|tail| tail == relative),
+            };
+            ensure(
+                kind_matches_uri && is_sha256(&entry.sha256) && entry.bytes > 0,
+                "weles_evidence_entry_invalid",
+                "an evidence inventory entry kind, digest or length is not canonical",
+            )?;
+            ensure(
+                kinds.insert(entry.kind.as_str()) && uris.insert(entry.uri.as_str()),
+                "weles_evidence_entry_duplicate",
+                "the evidence inventory repeats a kind or URI",
+            )?;
+            total_bytes = total_bytes
+                .checked_add(entry.bytes)
+                .filter(|total| *total <= MAXIMUM_EVIDENCE_BYTES)
+                .ok_or_else(|| {
+                    WorkerFailure::new(
+                        "weles_evidence_too_large",
+                        "the retained evidence inventory exceeds the total byte limit",
+                    )
+                })?;
+            let destination = recordings.join(relative);
+            storage_get(&entry.uri, &destination)?;
+            // The signed digest is never trusted on its own: the retained bytes are
+            // re-hashed exactly the way `validate_evidence_inventory` re-hashes them.
+            let bytes = std::fs::read(&destination)?;
+            ensure(
+                bytes.len() as u64 == entry.bytes && crate::sha256_hex(&bytes) == entry.sha256,
+                "weles_evidence_bytes_differ",
+                "retained evidence bytes differ from the signed inventory entry",
+            )?;
+            if entry.kind == SCREENSHOT_KIND {
+                ensure(
+                    bytes.starts_with(PNG_MAGIC),
+                    "weles_evidence_screenshot_invalid",
+                    "the retained final screenshot is not a PNG",
+                )?;
+            } else if entry.kind == ACCESSIBILITY_KIND {
+                let tree = String::from_utf8(bytes).map_err(|_| {
+                    WorkerFailure::new(
+                        "weles_evidence_accessibility_invalid",
+                        "the retained accessibility tree is not valid UTF-8",
+                    )
+                })?;
+                ensure(
+                    !tree.trim().is_empty(),
+                    "weles_evidence_accessibility_invalid",
+                    "the retained accessibility tree is empty",
+                )?;
+            }
+            retained_paths.push(format!("recordings/{weles_task_id}/{relative}"));
+        }
+        ensure(
+            kinds.contains(SCREENSHOT_KIND) && kinds.contains(ACCESSIBILITY_KIND),
+            "weles_evidence_incomplete",
+            "the evidence inventory lacks the required screenshot/accessibility_tree artifacts",
+        )?;
+    }
+    retained_paths.sort();
+
+    let mut observation: BTreeMap<&str, Value> = BTreeMap::new();
+    observation.insert("schema", json!(OBSERVATION_SCHEMA));
+    observation.insert("run_id", json!(manifest.run_id));
+    observation.insert("catalog", json!(manifest.catalog));
+    observation.insert("record", json!(manifest.record));
+    observation.insert("record_key", json!(manifest.record_key));
+    observation.insert("attempt", json!(u64::from(manifest.attempt)));
+    observation.insert("attempt_id", json!(manifest.attempt_id));
+    observation.insert("weles_task_id", json!(weles_task_id));
+    observation.insert("requested_url", json!(product_url));
+    observation.insert("effective_url", json!(effective_url));
+    observation.insert("final_url", json!(final_url));
+    observation.insert("evidence_inventory", serde_json::to_value(&inventory)?);
+    observation.insert("retained_paths", json!(retained_paths));
+    // A BTreeMap serializes in sorted key order regardless of the serde_json feature set,
+    // so these bytes and their digest are stable.
+    let observation_bytes = serde_json::to_vec(&observation)?;
+    let observation_document_sha256 = crate::sha256_hex(&observation_bytes);
+    write_exact(
+        &attempt_root.join(format!(
+            "weles/observations/{observation_document_sha256}.json"
+        )),
+        &observation_bytes,
+    )?;
+
+    let expected_claims = weles::ExpectedReceiptClaims {
+        task_id: weles_task_id.clone(),
+        organization_id: organization_id.clone(),
+        request_digest: submission.request_digest.clone(),
+        result_digest: result_digest.clone(),
+        spis_binding: binding.clone(),
+        origin: origin.clone(),
+        action: weles::SPIS_WELES_ACTION.to_string(),
+        outcome: "completed".to_string(),
+        evidence_digest: artifact_document_sha256.clone(),
+    };
+    let artifact = weles::RetainedArtifact {
+        path: artifact_relative,
+        sha256: artifact_document_sha256.clone(),
+        bytes: manifest_bytes.len() as u64,
+    };
+    // The bridge resolves `artifact.path` against its working directory, so the official
+    // client re-reads and re-digests exactly the retained bytes.
+    let verify_command = json!({
+        "schema": weles::BRIDGE_COMMAND_SCHEMA,
+        "operation": "verify",
+        "receipt": serde_json::to_value(&checkpoint.receipt)?,
+        "expectedClaims": serde_json::to_value(&expected_claims)?,
+        "artifact": serde_json::to_value(&artifact)?,
+    });
+    let stdout = run_bridge(attempt_root, private, "verify", &verify_command, None, false)?;
+    let fresh: weles::WelesProvenanceDocument = serde_json::from_slice(&stdout)?;
+    ensure(
+        fresh
+            .id
+            .strip_prefix("sha256:")
+            .is_some_and(is_sha256),
+        "weles_provenance_id_invalid",
+        "the bridge verification document has no framed sha256: identifier",
+    )?;
+    let provenance = weles::WelesProvenanceDocument {
+        schema: weles::PROVENANCE_DOCUMENT_SCHEMA.to_string(),
+        // The framed provenance id is derived by the official bridge from the receipt, the
+        // trusted key-set version and the artifact; Rust only re-checks its shape above.
+        id: fresh.id.clone(),
+        client: checkpoint.client.clone(),
+        receipt: checkpoint.receipt.clone(),
+        claims: checkpoint.claims.clone(),
+        expected_claims,
+        artifact,
+    };
+    ensure(
+        fresh == provenance,
+        "weles_provenance_mismatch",
+        "the fresh official verification differs from the assembled provenance document",
+    )?;
+    super::crawl::atomic_json_write(
+        &weles_directory.join("provenance.json"),
+        &serde_json::to_value(&provenance)?,
+    )?;
+    collected.provenance = Some(provenance);
+
+    let envelope = weles::WelesAttemptEnvelope {
+        schema: weles::ATTEMPT_ENVELOPE_SCHEMA.to_string(),
+        run_id: manifest.run_id.clone(),
+        catalog: manifest.catalog.clone(),
+        record: manifest.record.clone(),
+        record_key: manifest.record_key.clone(),
+        attempt: manifest.attempt,
+        attempt_id: manifest.attempt_id.clone(),
+        stado_job_id,
+        weles_task_id,
+        state: "completed".to_string(),
+        outcome: Some("completed".to_string()),
+        service_identity: identity,
+        source_revision: manifest.source_revision.clone(),
+        source_input_sha256: manifest.source_input_sha256.clone(),
+        reference_sha256: manifest.reference_sha256.clone(),
+        spis_binding: binding,
+        weles_request_document: submission.request_document.clone(),
+        weles_request_digest: submission.request_digest.clone(),
+        weles_result_digest: Some(result_digest),
+        requested_url: product_url,
+        final_url,
+        evidence_inventory: inventory,
+        weles_evidence_manifest_uri: evidence_manifest_uri,
+        weles_evidence_manifest_sha256: Some(artifact_document_sha256.clone()),
+        artifact_document_uri: format!("{base}/weles/artifacts/{artifact_document_sha256}.json"),
+        artifact_document_sha256: Some(artifact_document_sha256),
+        observation_document_uri: format!(
+            "{base}/weles/observations/{observation_document_sha256}.json"
+        ),
+        observation_document_sha256,
+    };
+    super::crawl::atomic_json_write(
+        &attempt_root.join("attempt-envelope.json"),
+        &serde_json::to_value(&envelope)?,
+    )?;
+    collected.envelope = Some(envelope);
+    Ok(())
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
     let mut catalog: Option<String> = None;
     let mut host: Option<String> = None;
-    let mut admission_url: Option<String> = None;
     let mut record: Option<String> = None;
-    let mut accounts: Option<PathBuf> = None;
-    let mut plan: Option<PathBuf> = None;
-    let mut plan_base64: Option<String> = None;
+    let mut runtime_manifest_base64: Option<String> = None;
+    let mut artifact_uri: Option<String> = None;
     let mut worker = false;
     let mut wait_seconds = 7_200u64;
     let mut i = 0;
@@ -512,40 +1528,33 @@ pub fn run(rest: &[String]) -> Result<()> {
                 i += 1;
                 host = Some(rest.get(i).context("--host needs a value")?.clone());
             }
-            "--admission-url" => {
-                i += 1;
-                admission_url = Some(canonical_admission_url(
-                    rest.get(i).context("--admission-url needs a value")?,
-                )?);
-            }
             "--record" => {
                 i += 1;
                 record = Some(rest.get(i).context("--record needs a value")?.clone());
             }
-            "--accounts" => {
+            "--runtime-manifest-base64" => {
                 i += 1;
-                accounts = Some(PathBuf::from(
-                    rest.get(i).context("--accounts needs a value")?,
-                ));
+                runtime_manifest_base64 = Some(
+                    rest.get(i)
+                        .context("--runtime-manifest-base64 needs a value")?
+                        .clone(),
+                );
             }
-            "--plan" => {
+            "--artifact-uri" => {
                 i += 1;
-                plan = Some(PathBuf::from(rest.get(i).context("--plan needs a value")?));
-            }
-            "--plan-base64" => {
-                i += 1;
-                plan_base64 = Some(rest.get(i).context("--plan-base64 needs a value")?.clone());
+                artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
             }
             "--wait-seconds" => {
                 i += 1;
                 wait_seconds = rest
                     .get(i)
                     .context("--wait-seconds needs a value")?
-                    .parse()?;
+                    .parse()
+                    .context("--wait-seconds must be a whole number of seconds")?;
             }
             "--worker" => worker = true,
             "--help" | "-h" => {
-                println!("usage: spis crawl-web <catalog> --host TARGET --admission-url URL [--record SLUG] [--accounts FILE] [--wait-seconds N]\nworker mode: spis crawl-web <catalog> --worker (--plan FILE | --plan-base64 DATA) --admission-url URL --wait-seconds N");
+                println!("usage: spis crawl-web <catalog> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--wait-seconds N]\nworker mode: spis crawl-web <catalog> --worker --record SLUG --artifact-uri URI --runtime-manifest-base64 DATA [--wait-seconds N]");
                 return Ok(());
             }
             value if value.starts_with('-') => bail!("unknown argument: {value}"),
@@ -561,46 +1570,29 @@ pub fn run(rest: &[String]) -> Result<()> {
     if !(30..=86_400).contains(&wait_seconds) {
         bail!("--wait-seconds must be 30..86400");
     }
-    let admission_url = admission_url.context("--admission-url is required")?;
-    if worker {
-        let plan = match (plan, plan_base64) {
-            (Some(path), None) => serde_json::from_slice(&std::fs::read(path)?)?,
-            (None, Some(encoded)) => serde_json::from_slice(
-                &STANDARD.decode(encoded).context("--plan-base64 is invalid")?,
-            )?,
-            (Some(_), Some(_)) => bail!("worker accepts exactly one of --plan or --plan-base64"),
-            (None, None) => bail!("worker requires --plan or --plan-base64"),
-        };
-        let report = enqueue(&plan, &admission_url, wait_seconds)?;
-        let failures = report.get("failed").and_then(Value::as_u64).unwrap_or(0);
-        let active = report.get("active").and_then(Value::as_u64).unwrap_or(0);
-        println!("{}", serde_json::to_string(&report)?);
-        if failures > 0 || active > 0 {
-            bail!("{failures} Weles crawl jobs failed and {active} remain active; correlation receipts were persisted for idempotent resume");
-        }
-        return Ok(());
-    }
-    let host = host
-        .context("--host is required; web crawls execute through Weles on a pinned Stado host")?;
-    safe_component(&host, "--host")?;
-    if plan.is_some() || plan_base64.is_some() {
-        bail!("--plan and --plan-base64 are worker-only");
-    }
-    let batch = format!(
-        "spis-{catalog}-{}",
-        crate::now_iso_utc().replace(':', "-").replace('T', "-")
-    );
-    let document = make_plan(&catalog, record.as_deref(), accounts.as_deref(), &batch)?;
-    let directory = Path::new("target").join("spis-crawl-plans");
-    std::fs::create_dir_all(&directory)?;
-    let path = directory.join(format!("{batch}.json"));
-    std::fs::write(&path, serde_json::to_string_pretty(&document)? + "\n")?;
-    submit(
-        &host,
-        &admission_url,
-        &document,
-        &batch,
+    let record = record.context("--record is required for one exact per-record job")?;
+    let manifest = super::crawl::decode_runtime_manifest(
+        runtime_manifest_base64
+            .as_deref()
+            .context("--runtime-manifest-base64 is required")?,
         &catalog,
-        wait_seconds,
-    )
+        "web",
+        Some(&record),
+    )?;
+    if !worker {
+        if artifact_uri.is_some() {
+            bail!("--artifact-uri is worker-only");
+        }
+        let host = host
+            .context("--host is required; web crawls execute as pinned Stado jobs")?;
+        return submit_worker(&host, &catalog, &record, &manifest, wait_seconds);
+    }
+    if host.is_some() {
+        bail!("--host is coordinator-only");
+    }
+    let artifact_uri = artifact_uri.context("--artifact-uri is required in worker mode")?;
+    if artifact_uri != manifest.artifact_uri {
+        bail!("worker artifact URI does not match immutable runtime manifest");
+    }
+    run_worker(&catalog, &record, &manifest, wait_seconds)
 }
