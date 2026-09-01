@@ -44,10 +44,6 @@ const PROVENANCE_CLASSES: &[&str] = &[
 ];
 const LOCAL_PROVENANCE: &[&str] = &["local-browser-recording", "local-product-run"];
 
-const MIN_MOTION_SECONDS: f64 = 0.2;
-const MIN_STATES: usize = 3;
-const MIN_JOURNEY_STEPS: usize = 5;
-const MIN_INTERACTIONS: usize = 8;
 
 const INTERACTION_FIELDS: &[&str] = &[
     "name",
@@ -243,6 +239,7 @@ fn evidence_status_of(record: &Value) -> Option<&str> {
 // ---------------------------------------------------------------------------
 
 fn validate_motion(record: &Value, record_path: &str, reference_dir: &Path) -> Result<Vec<String>> {
+    let requirements = super::reference_contract::completeness_requirements(reference_dir);
     let motion = record.get("motion");
     let Some(motion) = motion.and_then(Value::as_array) else {
         bail!("{record_path}: motion must be a list");
@@ -301,11 +298,13 @@ fn validate_motion(record: &Value, record_path: &str, reference_dir: &Path) -> R
             bail!("{context}: unsupported motion format");
         }
         let duration = item.get("duration_seconds").and_then(Value::as_f64);
-        let duration_ok = matches!(duration, Some(d) if d >= MIN_MOTION_SECONDS);
+        let duration_ok = matches!(duration, Some(d) if d >= requirements.min_motion_seconds);
         if !duration_ok {
             bail!(
-                "{context}: measured duration {} is below the floor",
-                python_repr(item.get("duration_seconds"))
+                "{context}: measured duration {} is below the {} profile floor {}",
+                python_repr(item.get("duration_seconds")),
+                requirements.profile,
+                requirements.min_motion_seconds
             );
         }
         if !has_suffix(&motion_path, &[".cast"]) {
@@ -333,11 +332,12 @@ fn validate_motion(record: &Value, record_path: &str, reference_dir: &Path) -> R
 }
 
 fn validate_states(record: &Value, record_path: &str, reference_dir: &Path) -> Result<()> {
+    let requirements = super::reference_contract::completeness_requirements(reference_dir);
     let Some(states) = record.get("states").and_then(Value::as_array) else {
         bail!("{record_path}: states must be a list");
     };
-    if states.len() < MIN_STATES && evidence_status_of(record) == Some("complete") {
-        bail!("{record_path}: complete evidence needs at least {MIN_STATES} local states");
+    if states.len() < requirements.min_states && evidence_status_of(record) == Some("complete") {
+        bail!("{record_path}: complete {} evidence needs at least {} local states", requirements.profile, requirements.min_states);
     }
     for (position, item) in states.iter().enumerate() {
         let context = format!("{record_path}: state {}", position + 1);
@@ -356,13 +356,16 @@ fn validate_states(record: &Value, record_path: &str, reference_dir: &Path) -> R
     Ok(())
 }
 
-fn validate_behaviour(record: &Value, record_path: &str) -> Result<()> {
+fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -> Result<()> {
+    let requirements = super::reference_contract::completeness_requirements(reference_dir);
     let Some(interactions) = record.get("interactions").and_then(Value::as_array) else {
         bail!("{record_path}: interactions must be a list");
     };
-    if interactions.len() < MIN_INTERACTIONS && evidence_status_of(record) == Some("complete") {
+    if interactions.len() < requirements.min_interactions && evidence_status_of(record) == Some("complete") {
         bail!(
-            "{record_path}: complete evidence needs at least {MIN_INTERACTIONS} observed interactions"
+            "{record_path}: complete {} evidence needs at least {} observed interactions",
+            requirements.profile,
+            requirements.min_interactions
         );
     }
     for (position, item) in interactions.iter().enumerate() {
@@ -380,10 +383,10 @@ fn validate_behaviour(record: &Value, record_path: &str) -> Result<()> {
         let steps_ok = journey
             .get("steps")
             .and_then(Value::as_array)
-            .map(|steps| steps.len() >= MIN_JOURNEY_STEPS)
+            .map(|steps| steps.len() >= requirements.min_journey_steps)
             .unwrap_or(false);
         if !steps_ok {
-            bail!("{record_path}: journey needs at least {MIN_JOURNEY_STEPS} observed steps");
+            bail!("{record_path}: {} journey needs at least {} observed steps", requirements.profile, requirements.min_journey_steps);
         }
         for (position, step) in journey["steps"].as_array().unwrap().iter().enumerate() {
             require_nonempty(
@@ -469,6 +472,15 @@ fn validate_behaviour(record: &Value, record_path: &str) -> Result<()> {
         || !unknowns.map(Value::is_array).unwrap_or(false)
     {
         bail!("{record_path}: accessibility observations and unknowns are required");
+    }
+    if evidence_status_of(record) == Some("complete") {
+        let count = observations.and_then(Value::as_array).map(Vec::len).unwrap_or(0);
+        if count < requirements.min_accessibility_observations {
+            bail!("{record_path}: complete {} evidence needs at least {} accessibility observations", requirements.profile, requirements.min_accessibility_observations);
+        }
+        if !py_truthy(accessibility.get("measured")) {
+            bail!("{record_path}: complete {} evidence must be measured against the product", requirements.profile);
+        }
     }
     Ok(())
 }
@@ -577,7 +589,7 @@ fn load_full_references(slug: &str, examples: &[Value]) -> Result<Value> {
             *provenance.entry(class).or_insert(0) += 1;
         }
         validate_states(&record, &record_path_str, reference_dir)?;
-        validate_behaviour(&record, &record_path_str)?;
+        validate_behaviour(&record, &record_path_str, reference_dir)?;
 
         *statuses.entry(expected.to_string()).or_insert(0) += 1;
         gap_total += gaps.len();

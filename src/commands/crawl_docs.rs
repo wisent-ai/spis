@@ -671,6 +671,8 @@ fn submit_worker(host: &str, arguments: &[String]) -> Result<()> {
         arguments.join(" "),
         artifact
     );
+    let output_uri =
+        format!("stado://spis-crawls/documentation-site-examples/{stamp}/job-output");
     let output = std::process::Command::new("stado")
         .args([
             "submit",
@@ -686,7 +688,7 @@ fn submit_worker(host: &str, arguments: &[String]) -> Result<()> {
             "--repo-extras",
             "",
             "--output-uri",
-            &format!("stado://spis-crawls/documentation-site-examples/{stamp}/job-output"),
+            &output_uri,
         ])
         .output()
         .context("submit documentation crawl through Stado")?;
@@ -696,8 +698,14 @@ fn submit_worker(host: &str, arguments: &[String]) -> Result<()> {
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    print!("{}", String::from_utf8_lossy(&output.stdout));
-    Ok(())
+    super::crawl::print_submission(
+        "documentation-site-examples",
+        "docs",
+        host,
+        Some(&artifact),
+        &output_uri,
+        &String::from_utf8_lossy(&output.stdout),
+    )
 }
 
 pub fn run(rest: &[String]) -> Result<()> {

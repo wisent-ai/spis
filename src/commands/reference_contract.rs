@@ -333,23 +333,47 @@ pub const RECORD_FIELDS: &[&str] = &[
 pub fn is_evidence_status(value: &str) -> bool {
     matches!(value, "complete" | "partial")
 }
+#[derive(Clone, Copy, Debug)]
+pub struct CompletenessRequirements {
+    pub profile: &'static str,
+    pub min_motion_seconds: f64,
+    pub min_states: usize,
+    pub min_journey_steps: usize,
+    pub min_interactions: usize,
+    pub min_accessibility_observations: usize,
+}
 
-/// Re-run generate-example-catalogs.py so the rendered indexes stay consistent.
+/// Return the explicit completeness profile for a catalog or a path inside it.
 ///
-/// Both mutating subcommands call this after every change, exactly as the Python
-/// scripts did. The script lives at the repository root (the working directory).
-pub fn regenerate_index() -> Result<()> {
-    let script = "generate-example-catalogs.py";
-    let output = std::process::Command::new("python3")
-        .arg(script)
-        .output()
-        .map_err(|e| anyhow::anyhow!("index regeneration refused the change:\n{e}"))?;
-    if !output.status.success() {
-        anyhow::bail!(
-            "index regeneration refused the change:\n{}{}",
-            String::from_utf8_lossy(&output.stdout),
-            String::from_utf8_lossy(&output.stderr)
-        );
+/// The concepts remain meaningful for all current families, so none receives a
+/// convenience exception. Profiles are named so a future family whose real
+/// surface cannot express a criterion must define a measurable replacement
+/// here rather than filling a global field with prose.
+pub fn completeness_requirements(path: &std::path::Path) -> CompletenessRequirements {
+    let catalog = path.components().find_map(|component| {
+        let value = component.as_os_str().to_str()?;
+        value.ends_with("-examples").then_some(value)
+    }).unwrap_or_default();
+    let profile = match catalog {
+        "cli-examples" | "tui-examples" => "terminal-product",
+        "documentation-site-examples" | "app-store-listing-examples"
+        | "pricing-page-examples" | "landing-page-examples" => "document-navigation",
+        _ => "interactive-product",
+    };
+    CompletenessRequirements {
+        profile,
+        min_motion_seconds: 0.2,
+        min_states: 3,
+        min_journey_steps: 5,
+        min_interactions: 8,
+        min_accessibility_observations: 3,
     }
-    Ok(())
+}
+
+/// Regenerate rendered catalog metadata through the compiled Rust generator.
+///
+/// Both mutating subcommands call this after every change so records and indexes
+/// cannot drift onto a second implementation path.
+pub fn regenerate_index() -> Result<()> {
+    super::generate_example_catalogs::run(&[])
 }

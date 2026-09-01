@@ -595,6 +595,7 @@ fn submit(request: Submission<'_>) -> Result<()> {
             "$HOME/.stado/bin/stado storage get {uri} {remote} && {worker} --journeys {remote}"
         );
     }
+    let output_uri = format!("stado://spis-crawls/{CATALOG}/{stamp}/job-output");
     let mut arguments = vec![
         "submit".to_string(),
         worker,
@@ -609,7 +610,7 @@ fn submit(request: Submission<'_>) -> Result<()> {
         "--repo-extras".to_string(),
         String::new(),
         "--output-uri".to_string(),
-        format!("stado://spis-crawls/{CATALOG}/{stamp}/job-output"),
+        output_uri.clone(),
     ];
     for binding in request.secret_env {
         arguments.push("--secret-env".to_string());
@@ -622,8 +623,14 @@ fn submit(request: Submission<'_>) -> Result<()> {
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    print!("{}", String::from_utf8_lossy(&output.stdout));
-    Ok(())
+    super::crawl::print_submission(
+        CATALOG,
+        "cli",
+        request.host,
+        Some(&artifact),
+        &output_uri,
+        &String::from_utf8_lossy(&output.stdout),
+    )
 }
 
 pub fn run(rest: &[String]) -> Result<()> {

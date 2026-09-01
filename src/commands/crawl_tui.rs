@@ -407,6 +407,7 @@ fn submit(
     if let Some(selected) = selected {
         worker.push_str(&format!(" --record {selected}"));
     }
+    let output_uri = format!("stado://spis-crawls/tui-examples/{stamp}/job-output");
     let output = Command::new("stado")
         .args([
             "submit",
@@ -422,7 +423,7 @@ fn submit(
             "--repo-extras",
             "",
             "--output-uri",
-            &format!("stado://spis-crawls/tui-examples/{stamp}/job-output"),
+            &output_uri,
         ])
         .output()?;
     if !output.status.success() {
@@ -431,8 +432,14 @@ fn submit(
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    print!("{}", String::from_utf8_lossy(&output.stdout));
-    Ok(())
+    super::crawl::print_submission(
+        "tui-examples",
+        "tui",
+        host,
+        Some(&artifact),
+        &output_uri,
+        &String::from_utf8_lossy(&output.stdout),
+    )
 }
 
 pub fn run(rest: &[String]) -> Result<()> {

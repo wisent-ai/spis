@@ -236,6 +236,7 @@ fn submit(
     let command = format!(
         "cargo run --release -- crawl-web {catalog} --worker --plan-base64 '{encoded_plan}' --admission-url {admission_url} --wait-seconds {wait_seconds}"
     );
+    let output_uri = format!("stado://spis-crawls/{catalog}/{batch}/enqueue-output");
     let output = Command::new("stado")
         .args([
             "submit",
@@ -253,7 +254,7 @@ fn submit(
             "--secret-env",
             &format!("WELES_ADMISSION_TOKEN={TOKEN_ITEM}"),
             "--output-uri",
-            &format!("stado://spis-crawls/{catalog}/{batch}/enqueue-output"),
+            &output_uri,
         ])
         .output()
         .context("submit web crawl through Stado")?;
@@ -263,8 +264,14 @@ fn submit(
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    print!("{}", String::from_utf8_lossy(&output.stdout));
-    Ok(())
+    super::crawl::print_submission(
+        catalog,
+        "web",
+        host,
+        None,
+        &output_uri,
+        &String::from_utf8_lossy(&output.stdout),
+    )
 }
 
 fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value> {
@@ -281,6 +288,7 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
         .timeout(Duration::from_secs(60))
         .build();
     let mut ids = Vec::new();
+    let mut task_ids: Vec<(String, String)> = Vec::new();
     for chunk in tasks.chunks(100) {
         let jobs: Vec<Value> = chunk
             .iter()
@@ -317,6 +325,26 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
             .get("job_ids")
             .and_then(Value::as_array)
             .ok_or_else(|| anyhow!("Weles admission returned no job_ids"))?;
+        if accepted.len() != chunk.len() {
+            bail!(
+                "Weles admission accepted {} ids for {} ordered tasks",
+                accepted.len(),
+                chunk.len()
+            );
+        }
+        for (task, id) in chunk.iter().zip(accepted.iter()) {
+            let slug = task
+                .get("slug")
+                .and_then(Value::as_str)
+                .context("web crawl task has no slug")?;
+            let id = id
+                .as_str()
+                .context("Weles admission returned a non-string job id")?;
+            if task_ids.iter().any(|(_, existing)| existing == id) {
+                bail!("Weles admission returned duplicate job id {id}");
+            }
+            task_ids.push((slug.to_string(), id.to_string()));
+        }
         ids.extend(accepted.iter().cloned());
     }
     let deadline = Instant::now() + Duration::from_secs(wait_seconds);
@@ -372,6 +400,44 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
         .iter()
         .filter(|job| job.get("status").and_then(Value::as_str) == Some("pending_review"))
         .count();
+    let mut jobs_by_id: std::collections::HashMap<&str, &Value> =
+        std::collections::HashMap::new();
+    for job in &jobs {
+        let id = job
+            .get("id")
+            .or_else(|| job.get("job_id"))
+            .and_then(Value::as_str)
+            .context("Weles status returned a job without id")?;
+        if jobs_by_id.insert(id, job).is_some() {
+            bail!("Weles status returned duplicate job id {id}");
+        }
+    }
+    let tasks_by_slug: std::collections::HashMap<&str, &Value> = tasks
+        .iter()
+        .map(|task| {
+            task.get("slug")
+                .and_then(Value::as_str)
+                .map(|slug| (slug, task))
+                .context("web crawl task has no slug")
+        })
+        .collect::<Result<_>>()?;
+    let records: Vec<Value> = task_ids
+        .iter()
+        .map(|(slug, id)| {
+            let task = tasks_by_slug
+                .get(slug.as_str())
+                .ok_or_else(|| anyhow!("no web crawl task matches slug {slug}"))?;
+            let job = jobs_by_id
+                .get(id.as_str())
+                .ok_or_else(|| anyhow!("Weles status omitted accepted job id {id} for {slug}"))?;
+            Ok(json!({
+                "record": slug,
+                "name": task.get("name"),
+                "job_id": id,
+                "job": job,
+            }))
+        })
+        .collect::<Result<_>>()?;
     Ok(json!({
         "schema": "wisent.web-crawl-run.v1",
         "batch": plan.get("batch"),
@@ -379,6 +445,7 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
         "task_count": tasks.len(),
         "action_ids": ids,
         "jobs": jobs,
+        "records": records,
         "failed": failed,
         "pending_review": pending_review,
         "completed_at": crate::now_iso_utc(),
@@ -463,7 +530,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         };
         let report = enqueue(&plan, &admission_url, wait_seconds)?;
         let failures = report.get("failed").and_then(Value::as_u64).unwrap_or(0);
-        println!("{}", serde_json::to_string_pretty(&report)?);
+        println!("{}", serde_json::to_string(&report)?);
         if failures > 0 {
             bail!("{failures} Weles crawl jobs failed");
         }

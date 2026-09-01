@@ -689,6 +689,10 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
             "$HOME/.stado/bin/stado storage get {uri} {remote} && {command} --fixtures {remote}"
         );
     }
+    let output_uri = format!(
+        "stado://spis-crawls/{}/{stamp}/job-output",
+        request.catalog
+    );
     let mut arguments = vec![
         "submit".to_string(),
         command,
@@ -703,7 +707,7 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
         "--repo-extras".to_string(),
         String::new(),
         "--output-uri".to_string(),
-        format!("stado://spis-crawls/{}/{stamp}/job-output", request.catalog),
+        output_uri.clone(),
     ];
     for binding in request.secret_env {
         arguments.push("--secret-env".to_string());
@@ -719,8 +723,14 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    print!("{}", String::from_utf8_lossy(&output.stdout));
-    Ok(())
+    super::crawl::print_submission(
+        request.catalog,
+        "desktop",
+        request.host,
+        Some(&artifact),
+        &output_uri,
+        &String::from_utf8_lossy(&output.stdout),
+    )
 }
 
 fn publish_artifact(run_root: &Path, uri: &str) -> Result<()> {

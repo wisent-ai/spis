@@ -53,12 +53,7 @@ fn container_kind(name: &str) -> Option<&'static str> {
     })
 }
 
-const MIN_MOTION_SECONDS: f64 = 0.2;
 const MIN_MOTION_FRAMES: i64 = 2;
-const MIN_STATES: usize = 3;
-const MIN_JOURNEY_STEPS: usize = 5;
-const MIN_INTERACTIONS: usize = 8;
-const MIN_ACCESSIBILITY_OBSERVATIONS: usize = 3;
 /// Mean abs difference, 0-255, for a proven frame match.
 const STATE_MATCH_MAX_DIFF: f64 = 12.0;
 
@@ -633,6 +628,7 @@ fn entry_local_path(entry: &Map<String, Value>) -> String {
 const TODAY: &str = "2026-08-19";
 
 fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<Vec<String>> {
+    let requirements = super::reference_contract::completeness_requirements(base);
     let mut gaps: Vec<String> = Vec::new();
 
     if let Some(obj) = data.as_object_mut() {
@@ -736,10 +732,11 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
         if is_still {
             gaps.push(format!("motion asset is a still image: {local_path}"));
         }
-        if probe.duration_seconds.unwrap_or(0.0) < MIN_MOTION_SECONDS && !is_still {
+        if probe.duration_seconds.unwrap_or(0.0) < requirements.min_motion_seconds && !is_still {
             gaps.push(format!(
-                "motion shorter than {}: {local_path} ({})",
-                fmt_g(MIN_MOTION_SECONDS),
+                "motion shorter than {} for {} profile: {local_path} ({})",
+                fmt_g(requirements.min_motion_seconds),
+                requirements.profile,
                 fmt_opt_num(probe.duration_seconds)
             ));
         }
@@ -872,8 +869,8 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
         .and_then(|v| v.as_array())
         .map(|a| a.len())
         .unwrap_or(0);
-    if states_count < MIN_STATES {
-        gaps.push(format!("fewer than {MIN_STATES} states"));
+    if states_count < requirements.min_states {
+        gaps.push(format!("fewer than {} states for {} profile", requirements.min_states, requirements.profile));
     }
 
     // ---- journey ----
@@ -883,9 +880,11 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
         .and_then(|v| v.as_array())
         .map(|a| a.len())
         .unwrap_or(0);
-    if steps_len < MIN_JOURNEY_STEPS {
+    if steps_len < requirements.min_journey_steps {
         gaps.push(format!(
-            "journey exposes fewer than {MIN_JOURNEY_STEPS} observed steps"
+            "journey exposes fewer than {} observed steps for {} profile",
+            requirements.min_journey_steps,
+            requirements.profile
         ));
     }
     for key in [
@@ -907,8 +906,8 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
         .and_then(|v| v.as_array())
         .cloned()
         .unwrap_or_default();
-    if interactions.len() < MIN_INTERACTIONS {
-        gaps.push(format!("fewer than {MIN_INTERACTIONS} mapped interactions"));
+    if interactions.len() < requirements.min_interactions {
+        gaps.push(format!("fewer than {} mapped interactions for {} profile", requirements.min_interactions, requirements.profile));
     }
     for item in &interactions {
         let missing: Vec<&str> = INTERACTION_FIELDS
@@ -1013,8 +1012,12 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
         .and_then(|v| v.as_array())
         .map(|a| a.len())
         .unwrap_or(0);
-    if observations < MIN_ACCESSIBILITY_OBSERVATIONS {
-        gaps.push("fewer than three accessibility observations".to_string());
+    if observations < requirements.min_accessibility_observations {
+        gaps.push(format!(
+            "fewer than {} accessibility observations for {} profile",
+            requirements.min_accessibility_observations,
+            requirements.profile
+        ));
     }
     if !truthy(access.get("measured")) {
         gaps.push("accessibility never measured against the product".to_string());
@@ -1144,6 +1147,8 @@ pub fn run(rest: &[String]) -> Result<()> {
         let records = records_in(&cat);
         let results: parking_lot::Mutex<Vec<(PathBuf, Vec<String>)>> =
             parking_lot::Mutex::new(Vec::new());
+        let errors: parking_lot::Mutex<Vec<(PathBuf, String)>> =
+            parking_lot::Mutex::new(Vec::new());
         let next = AtomicUsize::new(0);
         let workers = jobs.max(1).min(records.len().max(1));
         std::thread::scope(|s| {
@@ -1161,13 +1166,23 @@ pub fn run(rest: &[String]) -> Result<()> {
                     };
                     match outcome {
                         Ok(gaps) => results.lock().push((path.clone(), gaps)),
-                        Err(e) => {
-                            eprintln!("verify-reference-evidence: {}: {e:#}", path.display())
+                        Err(error) => {
+                            errors.lock().push((path.clone(), format!("{error:#}")));
                         }
                     }
                 });
             }
         });
+        let mut errors = errors.into_inner();
+        errors.sort_by(|a, b| a.0.cmp(&b.0));
+        if !errors.is_empty() {
+            let error_count = errors.len();
+            let details = errors.into_iter()
+                .map(|(path, error)| format!("{}: {error}", path.display()))
+                .collect::<Vec<_>>()
+                .join("\n");
+            anyhow::bail!("could not measure {error_count} reference record(s):\n{details}");
+        }
         let mut results = results.into_inner();
         results.sort_by(|a, b| a.0.cmp(&b.0));
 

@@ -853,6 +853,10 @@ fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
             "$HOME/.stado/bin/stado storage get {fixture_uri} {remote} && {worker} --fixtures {remote}"
         );
     }
+    let output_uri = format!(
+        "stado://spis-crawls/{}/{stamp}/job-output",
+        request.catalog
+    );
     let mut arguments = vec![
         "submit".to_string(),
         worker,
@@ -867,7 +871,7 @@ fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
         "--repo-extras".to_string(),
         String::new(),
         "--output-uri".to_string(),
-        format!("stado://spis-crawls/{}/{stamp}/job-output", request.catalog),
+        output_uri.clone(),
     ];
     for binding in request.secret_env {
         arguments.push("--secret-env".to_string());
@@ -883,8 +887,14 @@ fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    print!("{}", String::from_utf8_lossy(&output.stdout));
-    Ok(())
+    super::crawl::print_submission(
+        request.catalog,
+        "mobile",
+        request.host,
+        Some(&artifact),
+        &output_uri,
+        &String::from_utf8_lossy(&output.stdout),
+    )
 }
 
 pub fn run(rest: &[String]) -> Result<()> {

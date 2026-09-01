@@ -5,6 +5,7 @@ pub mod capture_wisent_references;
 pub mod catalog_type;
 pub mod check_upstream_drift;
 pub mod collect_example_images;
+pub mod crawl;
 pub mod crawl_cli;
 pub mod crawl_desktop;
 pub mod crawl_docs;
@@ -21,6 +22,10 @@ pub mod verify_reference_evidence;
 use anyhow::Result;
 
 const SUBCOMMANDS: &[(&str, &str)] = &[
+    (
+        "crawl",
+        "plan, submit, track, resume and import every crawler",
+    ),
     (
         "crawl-cli",
         "crawl real CLI products through a PTY on Stado",
@@ -94,6 +99,7 @@ const SUBCOMMANDS: &[(&str, &str)] = &[
 
 fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
     match name {
+        "crawl" => crawl::run(rest)?,
         "crawl-docs" => crawl_docs::run(rest)?,
         "crawl-cli" => crawl_cli::run(rest)?,
         "crawl-desktop" => crawl_desktop::run(rest)?,
