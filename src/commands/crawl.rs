@@ -393,11 +393,23 @@ fn start(rest: &[String]) -> Result<()> {
         preflight_catalog(catalog, record.as_deref())?;
     }
     let run_id = format!("crawl-{}", crate::now_iso_utc().replace(':', "-").replace('T', "-"));
+    let mut preflight_cache: HashMap<String, Value> = HashMap::new();
     let mut entries = Vec::new();
     for (catalog, engine) in specs {
         let host = host_for(catalog, engine, &hosts, &discovered_hosts)?;
         let command = engine_command(catalog, engine, &host, &admission_url, record.as_deref())?;
-        let preflight = host_preflight(catalog, engine, &host, &admission_url, record.as_deref());
+        let preflight_key = if engine == "mobile" { format!("{engine}:{catalog}:{host}") } else { format!("{engine}:{host}") };
+        let preflight = if let Some(cached) = preflight_cache.get(&preflight_key) {
+            let mut reused = cached.clone();
+            let ready = reused.get("ready").and_then(Value::as_bool).unwrap_or(false);
+            reused["catalog"] = json!(catalog);
+            reused["records"] = Value::Array(preflight_record_diagnostics(catalog, engine, record.as_deref(), ready));
+            reused
+        } else {
+            let measured = host_preflight(catalog, engine, &host, &admission_url, record.as_deref());
+            preflight_cache.insert(preflight_key, measured.clone());
+            measured
+        };
         let mut entry = json!({
             "catalog": catalog,
             "engine": engine,
