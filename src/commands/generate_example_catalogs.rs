@@ -960,5 +960,14 @@ pub fn run(rest: &[String]) -> Result<()> {
         "catalogs": catalog_entries,
     });
     lib::write_pretty_json("example-catalogs.json", &index)?;
+    let stats = json!({
+        "schema": "wisent.catalog-stats.v1",
+        "generated_at": index["generated_at"],
+        "catalog_count": index["catalog_count"],
+        "record_count": index["record_count"],
+        "complete_record_count": index["complete_record_count"],
+        "partial_record_count": index["partial_record_count"],
+    });
+    lib::write_pretty_json("catalog-stats.json", &stats)?;
     Ok(())
 }

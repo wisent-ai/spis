@@ -1,6 +1,6 @@
 # Spis
 
-**Spis** is the evidence-grade reference corpus and corpus-maintenance CLI for people building interfaces. It holds 655 records across 15 interface families. Every record ties claims to retained bytes, source URLs, hashes, provenance, observed states, interactions, journeys, motion, and accessibility evidence.
+**Spis** is the evidence-grade reference corpus and corpus-maintenance CLI for people building interfaces. It holds measured records across 15 interface families; exact counts are generated into [`catalog-stats.json`](catalog-stats.json), never maintained in this prose. Every record ties claims to retained bytes, source URLs, hashes, provenance, observed states, interactions, journeys, motion, and accessibility evidence.
 
 Spis owns the corpus data and the machinery that acquires, measures, validates, searches, and monitors it. Interpretation and prescriptive guidance belong in [`wisent-ai/product-guidelines`](https://github.com/wisent-ai/product-guidelines). Own-product captures and operational monitoring metadata may live in a private companion repository and are not published here.
 
@@ -38,6 +38,8 @@ cargo build --release
 ## Real product crawlers
 
 Every crawler that opens a product runs as an exact-revision job on a host explicitly selected through Stado; the coordinator never opens a local browser, simulator, terminal application, or native application.
+
+Use `spis crawl start` as the durable public coordinator. It preflights every selected family before the first submission, resolves engine placement through Stado, retains the exact argv and job IDs, and exposes `status`, `resume`, and `import`. Terminal successful jobs are downloaded and imported idempotently; verifier/apply and the catalog generator run after import. The surface-specific commands below are execution engines.
 
 | Product surface | Command | Real execution boundary |
 |---|---|---|
@@ -89,4 +91,4 @@ Mobile and desktop crawlers accept fixture files whose values can come from envi
 
 ## Status
 
-The landing-page reference set remains empty after its unverifiable predecessor was removed on 2026-08-21. `crawl-web landing-page-examples` is the real-product capture path once new records satisfying the [evidence contract](https://spis.wisent.com/docs/evidence-contract) are added; it does not revive the discarded model-guessed observations.
+The landing-page and pricing-page reference sets are intentionally empty while their attributable Weles recaptures are rebuilt. The former landing set and the auto-discovered Stripe capital/connect/atlas/customers records were not family evidence and were removed rather than preserved beside valid work. `spis crawl start` now rejects an empty family and rejects pricing/landing category or URL mismatches before submitting any job.

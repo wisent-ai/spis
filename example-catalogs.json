@@ -1,13 +1,13 @@
 {
   "schema": "wisent.example-catalog.v2",
-  "generated_at": "2026-08-22",
+  "generated_at": "2026-09-01",
   "catalog_count": 15,
-  "example_count": 655,
-  "image_count": 655,
-  "structure_count": 655,
-  "record_count": 655,
+  "example_count": 650,
+  "image_count": 650,
+  "structure_count": 650,
+  "record_count": 650,
   "complete_record_count": 0,
-  "partial_record_count": 655,
+  "partial_record_count": 650,
   "locally_driven_motion_count": 221,
   "catalogs": [
     {
@@ -23,8 +23,6 @@
         "upstream-owner-media": 50
       },
       "source": "ios-app-examples/sources.json",
-      "readme": "ios-app-examples/README.md",
-      "full_reference": "ios-app-examples/full-reference.md",
       "full_reference_source": "ios-app-examples/references.json"
     },
     {
@@ -40,8 +38,6 @@
         "upstream-owner-media": 50
       },
       "source": "android-app-examples/sources.json",
-      "readme": "android-app-examples/README.md",
-      "full_reference": "android-app-examples/full-reference.md",
       "full_reference_source": "android-app-examples/references.json"
     },
     {
@@ -57,8 +53,6 @@
         "upstream-owner-media": 50
       },
       "source": "macos-app-examples/sources.json",
-      "readme": "macos-app-examples/README.md",
-      "full_reference": "macos-app-examples/full-reference.md",
       "full_reference_source": "macos-app-examples/references.json"
     },
     {
@@ -75,8 +69,6 @@
         "upstream-owner-media": 4
       },
       "source": "desktop-app-examples/sources.json",
-      "readme": "desktop-app-examples/README.md",
-      "full_reference": "desktop-app-examples/full-reference.md",
       "full_reference_source": "desktop-app-examples/references.json"
     },
     {
@@ -92,8 +84,6 @@
         "upstream-owner-media": 50
       },
       "source": "web-app-examples/sources.json",
-      "readme": "web-app-examples/README.md",
-      "full_reference": "web-app-examples/full-reference.md",
       "full_reference_source": "web-app-examples/references.json"
     },
     {
@@ -109,8 +99,6 @@
         "upstream-owner-media": 50
       },
       "source": "dashboard-console-examples/sources.json",
-      "readme": "dashboard-console-examples/README.md",
-      "full_reference": "dashboard-console-examples/full-reference.md",
       "full_reference_source": "dashboard-console-examples/references.json"
     },
     {
@@ -127,8 +115,6 @@
         "upstream-owner-media": 27
       },
       "source": "tui-examples/sources.json",
-      "readme": "tui-examples/README.md",
-      "full_reference": "tui-examples/full-reference.md",
       "full_reference_source": "tui-examples/references.json"
     },
     {
@@ -144,8 +130,6 @@
         "local-product-run": 50
       },
       "source": "cli-examples/sources.json",
-      "readme": "cli-examples/README.md",
-      "full_reference": "cli-examples/full-reference.md",
       "full_reference_source": "cli-examples/references.json"
     },
     {
@@ -161,8 +145,6 @@
         "upstream-owner-media": 50
       },
       "source": "onboarding-auth-examples/sources.json",
-      "readme": "onboarding-auth-examples/README.md",
-      "full_reference": "onboarding-auth-examples/full-reference.md",
       "full_reference_source": "onboarding-auth-examples/references.json"
     },
     {
@@ -178,8 +160,6 @@
         "local-browser-recording": 50
       },
       "source": "documentation-site-examples/sources.json",
-      "readme": "documentation-site-examples/README.md",
-      "full_reference": "documentation-site-examples/full-reference.md",
       "full_reference_source": "documentation-site-examples/references.json"
     },
     {
@@ -196,8 +176,6 @@
         "upstream-owner-media": 14
       },
       "source": "app-store-listing-examples/sources.json",
-      "readme": "app-store-listing-examples/README.md",
-      "full_reference": "app-store-listing-examples/full-reference.md",
       "full_reference_source": "app-store-listing-examples/references.json"
     },
     {
@@ -214,8 +192,6 @@
         "upstream-owner-media": 48
       },
       "source": "design-system-examples/sources.json",
-      "readme": "design-system-examples/README.md",
-      "full_reference": "design-system-examples/full-reference.md",
       "full_reference_source": "design-system-examples/references.json"
     },
     {
@@ -231,8 +207,6 @@
         "upstream-owner-media": 50
       },
       "source": "report-evidence-examples/sources.json",
-      "readme": "report-evidence-examples/README.md",
-      "full_reference": "report-evidence-examples/full-reference.md",
       "full_reference_source": "report-evidence-examples/references.json"
     },
     {
@@ -246,23 +220,19 @@
       "partial_record_count": 0,
       "measured_provenance": {},
       "source": "landing-page-examples/sources.json",
-      "readme": "landing-page-examples/README.md",
-      "full_reference": "landing-page-examples/full-reference.md",
       "full_reference_source": "landing-page-examples/references.json"
     },
     {
       "slug": "pricing-page-examples",
       "title": "Pricing & plans examples",
-      "description": "Product pricing and plan-comparison pages.",
-      "count": 5,
-      "image_count": 5,
-      "structure_count": 5,
+      "description": "Measured pricing and plan-comparison surfaces with visible price or plan comparisons; non-pricing product pages are rejected during crawl preflight.",
+      "count": 0,
+      "image_count": 0,
+      "structure_count": 0,
       "complete_record_count": 0,
-      "partial_record_count": 5,
+      "partial_record_count": 0,
       "measured_provenance": {},
       "source": "pricing-page-examples/sources.json",
-      "readme": "pricing-page-examples/README.md",
-      "full_reference": "pricing-page-examples/full-reference.md",
       "full_reference_source": "pricing-page-examples/references.json"
     }
   ]
