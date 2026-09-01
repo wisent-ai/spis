@@ -888,6 +888,20 @@ fn collect_weles_uris(value: &Value, uris: &mut Vec<String>) {
     }
 }
 
+fn find_spis_evidence(value: &Value) -> Option<Value> {
+    match value {
+        Value::Object(object) => {
+            if let Some(evidence) = object.get("spis_evidence").filter(|evidence| evidence.is_object()) {
+                return Some(evidence.clone());
+            }
+            object.values().find_map(find_spis_evidence)
+        }
+        Value::Array(values) => values.iter().find_map(find_spis_evidence),
+        Value::String(text) => serde_json::from_str::<Value>(text.trim()).ok().and_then(|parsed| find_spis_evidence(&parsed)),
+        _ => None,
+    }
+}
+
 fn web_observation(job: &Value) -> Value {
     let history = job.pointer("/result/generic_browser_task/history")
         .or_else(|| job.pointer("/result/history"))
@@ -900,6 +914,7 @@ fn web_observation(job: &Value) -> Value {
             "args": step.get("args").cloned().unwrap_or_else(|| json!({})),
         })
     }).collect();
+    let evidence = find_spis_evidence(job);
     json!({
         "schema": "wisent.web-crawl-record.v1",
         "states": if path.is_empty() { vec![] } else { vec![json!({"path": path})] },
@@ -907,7 +922,49 @@ fn web_observation(job: &Value) -> Value {
         "blocked_edges": job.get("error").into_iter().cloned().collect::<Vec<_>>(),
         "status": job.get("status").cloned().unwrap_or_else(|| json!("failed")),
         "error": job.get("error").cloned().unwrap_or(Value::Null),
+        "evidence_observations": {
+            "canonical_interactions": evidence.as_ref().and_then(|value| value.get("canonical_interactions")).cloned().unwrap_or_else(|| json!([])),
+            "canonical_journey": evidence.as_ref().and_then(|value| value.get("canonical_journey")).cloned().unwrap_or(Value::Null),
+            "canonical_motion_analysis": evidence.as_ref().and_then(|value| value.get("canonical_motion_analysis")).cloned().unwrap_or(Value::Null),
+            "canonical_accessibility": evidence.as_ref().and_then(|value| value.get("canonical_accessibility")).cloned().unwrap_or(Value::Null),
+            "surface_proof": evidence,
+        },
     })
+}
+
+fn normalized_surface_url(value: &str) -> Result<String> {
+    let mut url = url::Url::parse(value).context("surface proof URL is invalid")?;
+    url.set_fragment(None);
+    if url.path() != "/" {
+        let trimmed = url.path().trim_end_matches('/').to_string();
+        url.set_path(&trimmed);
+    }
+    Ok(url.to_string())
+}
+
+fn validate_web_surface(catalog: &str, product_url: &str, observation: &Value) -> Result<()> {
+    let proof = observation.pointer("/evidence_observations/surface_proof")
+        .filter(|value| value.is_object())
+        .ok_or_else(|| anyhow!("{catalog}: Weles result has no machine-readable spis_evidence surface proof"))?;
+    let observed_url = proof.get("observed_url").and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("{catalog}: spis_evidence has no observed_url"))?;
+    if catalog == "landing-page-examples" {
+        if proof.get("surface_kind").and_then(Value::as_str) != Some("landing") {
+            bail!("{catalog}: Weles did not identify the retained surface as a landing page");
+        }
+        if normalized_surface_url(observed_url)? != normalized_surface_url(product_url)? {
+            bail!("{catalog}: Weles observed {observed_url}, expected exact landing URL {product_url}");
+        }
+    }
+    if catalog == "pricing-page-examples" {
+        if proof.get("surface_kind").and_then(Value::as_str) != Some("pricing") {
+            bail!("{catalog}: Weles did not identify the retained surface as a pricing page");
+        }
+        if proof.get("visible_pricing_comparison").and_then(Value::as_bool) != Some(true) {
+            bail!("{catalog}: Weles did not prove a visible comparison of at least two plans or prices");
+        }
+    }
+    Ok(())
 }
 
 fn import_web_report(catalog: &str, run_id: &str, job_id: Option<&str>, _path: &Path, report: &Value) -> Result<Vec<Value>> {
@@ -926,17 +983,22 @@ fn import_web_report(catalog: &str, run_id: &str, job_id: Option<&str>, _path: &
         collect_weles_uris(job, &mut uris);
         let artifacts = destination.join("artifacts");
         std::fs::create_dir_all(&artifacts)?;
+        let mut downloaded = Vec::new();
         for (index, uri) in uris.iter().enumerate() {
             let basename = uri.rsplit('/').find(|part| !part.is_empty()).unwrap_or("artifact");
             let safe: String = basename.chars().map(|character| {
                 if character.is_ascii_alphanumeric() || matches!(character, '.' | '-' | '_') { character } else { '_' }
             }).collect();
-            download_uri(uri, &artifacts.join(format!("{index:04}-{safe}")))?;
+            let local = artifacts.join(format!("{index:04}-{safe}"));
+            download_uri(uri, &local)?;
+            downloaded.push((uri.clone(), local));
         }
         let observation = web_observation(job);
         std::fs::write(destination.join("crawl.json"), serde_json::to_string_pretty(&observation)? + "\n")?;
         let record_path = record_dir.join("reference.json");
         let mut record: Value = crate::read_json(record_path.to_str().context("record path is not UTF-8")?)?;
+        validate_web_surface(catalog, record.get("product_url").and_then(Value::as_str).unwrap_or_default(), &observation)?;
+        update_web_source_visual(catalog, &record_dir, &record, &downloaded)?;
         adapt_canonical_record("web", run_id, &destination, &destination, &record_dir, &observation, &mut record)?;
         let imported = artifact_record(item, &relative, run_id, job_id, None);
         let runs = record.as_object_mut().context("record is not an object")?.entry("crawl_runs").or_insert_with(|| json!([])).as_array_mut().context("crawl_runs is not a list")?;
@@ -969,6 +1031,43 @@ fn run_spis_command(arguments: &[&str]) -> Result<String> {
         );
     }
     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
+}
+
+fn update_web_source_visual(catalog: &str, record_dir: &Path, record: &Value, artifacts: &[(String, PathBuf)]) -> Result<()> {
+    let Some((source_uri, source_path)) = artifacts.iter().find(|(_, path)| media_kind(path) == Some("state")) else {
+        return Ok(());
+    };
+    let extension = source_path.extension().and_then(|value| value.to_str()).unwrap_or("png").to_ascii_lowercase();
+    let image_name = format!("{}.{}", record_dir.file_name().and_then(|value| value.to_str()).unwrap_or("capture"), extension);
+    let image_path = Path::new(catalog).join("images").join(image_name);
+    if let Some(parent) = image_path.parent() { std::fs::create_dir_all(parent)?; }
+    std::fs::copy(source_path, &image_path)?;
+    let bytes = std::fs::read(&image_path)?;
+    let decoded = image::open(&image_path)?;
+    let sources_path = Path::new(catalog).join("sources.json");
+    let mut sources: Value = crate::read_json(sources_path.to_str().context("sources path is not UTF-8")?)?;
+    let product_url = record.get("product_url").and_then(Value::as_str).context("record has no product_url")?;
+    let examples = sources.get_mut("examples").and_then(Value::as_array_mut).context("sources examples are not a list")?;
+    let example = examples.iter_mut().find(|example| example.get("source_url").and_then(Value::as_str) == Some(product_url))
+        .ok_or_else(|| anyhow!("{catalog}: no source example matches {product_url}"))?;
+    example["visual"] = json!({
+        "source_page_url": product_url,
+        "source_artifact_uri": source_uri,
+        "local_path": image_path.strip_prefix(catalog).unwrap_or(&image_path).to_string_lossy(),
+        "capture_kind": "local-browser-screenshot",
+        "captured_at": crate::now_iso_utc(),
+        "format": extension,
+        "width": decoded.width(),
+        "height": decoded.height(),
+        "bytes": bytes.len(),
+        "sha256": crate::sha256_hex(&bytes),
+    });
+    let visual_count = examples.iter().filter(|example| {
+        example.pointer("/visual/capture_status").and_then(Value::as_str) != Some("pending-weles")
+    }).count();
+    sources["visual_count"] = json!(visual_count);
+    std::fs::write(sources_path, serde_json::to_string_pretty(&sources)? + "\n")?;
+    Ok(())
 }
 
 fn summarize_catalog_records(catalog: &str, run_id: &str, entry: &mut Value) -> Result<()> {
@@ -1011,8 +1110,16 @@ fn import_ready(run: &mut Value, run_id: &str, run_dir: &Path) -> Result<()> {
             if state == "imported" { continue; }
             if !matches!(state, "completed" | "uploaded") { continue; }
             let catalog = entry.get("catalog").and_then(Value::as_str).context("catalog entry has no catalog")?.to_string();
+            let engine = entry.get("engine").and_then(Value::as_str).unwrap_or_default().to_string();
             match import_catalog(run_id, entry, run_dir)
-                .and_then(|_| run_spis_command(&["verify-reference-evidence", "--catalog", &catalog]).map(|_| ()))
+                .and_then(|_| {
+                    if engine == "web" {
+                        run_spis_command(&["analyze-example-structures", &catalog]).map(|_| ())
+                    } else {
+                        Ok(())
+                    }
+                })
+                .and_then(|_| run_spis_command(&["verify-reference-evidence", "--catalog", &catalog, "--apply"]).map(|_| ()))
                 .and_then(|_| summarize_catalog_records(&catalog, run_id, entry))
             {
                 Ok(()) => imported_catalogs.push(catalog),

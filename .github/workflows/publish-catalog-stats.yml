@@ -1,0 +1,15 @@
+name: Publish generated catalog stats
+
+on:
+  push:
+    branches: [main]
+    paths: [catalog-stats.json]
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger exact artifact sync
+        env:
+          GH_TOKEN: ${{ secrets.SPIS_LANDING_DISPATCH_TOKEN }}
+        run: gh api --method POST repos/wisent-ai/spis-landing/dispatches -f event_type=spis-catalog-generated
