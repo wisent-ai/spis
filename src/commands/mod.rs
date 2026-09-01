@@ -12,6 +12,7 @@ pub mod crawl_docs;
 pub mod crawl_mobile;
 pub mod crawl_tui;
 pub mod crawl_web;
+pub mod curate_marketing_catalogs;
 pub mod discover;
 pub mod docs_corpus;
 pub mod generate_example_catalogs;
@@ -95,6 +96,10 @@ const SUBCOMMANDS: &[(&str, &str)] = &[
         "capture-wisent-references",
         "pty-capture product CLIs into records",
     ),
+    (
+        "curate-marketing-catalogs",
+        "write validated pricing and landing candidates for Weles capture",
+    ),
 ];
 
 fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
@@ -106,6 +111,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "crawl-mobile" => crawl_mobile::run(rest)?,
         "crawl-web" => crawl_web::run(rest)?,
         "crawl-tui" => crawl_tui::run(rest)?,
+        "curate-marketing-catalogs" => curate_marketing_catalogs::run(rest)?,
         "docs-corpus" => docs_corpus::run(rest)?,
         "discover" => discover::run(rest)?,
         "reference-record" => reference_record::run(rest)?,

@@ -3,11 +3,612 @@
   "catalog": "landing-page-examples",
   "slug": "landing-page-examples",
   "title": "Landing page examples",
-  "description": "Measured landing-page surfaces: captures at three review widths with DOM snapshots, per the family section of the evidence contract (full-reference-contract.md).",
-  "status": "scaffolded",
-  "curated_at": "2026-08-22",
-  "count": 0,
-  "examples": [],
+  "description": "Measured exact landing destinations at responsive widths.",
+  "status": "capture-pending",
+  "curated_at": "2026-09-01",
+  "count": 50,
+  "examples": [
+    {
+      "name": "Airbnb",
+      "source_url": "https://www.airbnb.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Stripe",
+      "source_url": "https://stripe.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Linear",
+      "source_url": "https://linear.app/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Notion",
+      "source_url": "https://www.notion.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Slack",
+      "source_url": "https://slack.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Figma",
+      "source_url": "https://www.figma.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Canva",
+      "source_url": "https://www.canva.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "GitHub",
+      "source_url": "https://github.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "GitLab",
+      "source_url": "https://about.gitlab.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Vercel",
+      "source_url": "https://vercel.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Netlify",
+      "source_url": "https://www.netlify.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Cloudflare",
+      "source_url": "https://www.cloudflare.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "DigitalOcean",
+      "source_url": "https://www.digitalocean.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Render",
+      "source_url": "https://render.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Fly.io",
+      "source_url": "https://fly.io/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Railway",
+      "source_url": "https://railway.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Supabase",
+      "source_url": "https://supabase.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Neon",
+      "source_url": "https://neon.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "PlanetScale",
+      "source_url": "https://planetscale.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "MongoDB",
+      "source_url": "https://www.mongodb.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Elastic",
+      "source_url": "https://www.elastic.co/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Datadog",
+      "source_url": "https://www.datadoghq.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Sentry",
+      "source_url": "https://sentry.io/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "New Relic",
+      "source_url": "https://newrelic.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Grafana",
+      "source_url": "https://grafana.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "PostHog",
+      "source_url": "https://posthog.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Amplitude",
+      "source_url": "https://amplitude.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Mixpanel",
+      "source_url": "https://mixpanel.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Segment",
+      "source_url": "https://segment.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "HubSpot",
+      "source_url": "https://www.hubspot.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Mailchimp",
+      "source_url": "https://mailchimp.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Intercom",
+      "source_url": "https://www.intercom.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Zendesk",
+      "source_url": "https://www.zendesk.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Shopify",
+      "source_url": "https://www.shopify.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Squarespace",
+      "source_url": "https://www.squarespace.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Webflow",
+      "source_url": "https://webflow.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Framer",
+      "source_url": "https://www.framer.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Zapier",
+      "source_url": "https://zapier.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Twilio",
+      "source_url": "https://www.twilio.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Asana",
+      "source_url": "https://asana.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Monday",
+      "source_url": "https://monday.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "ClickUp",
+      "source_url": "https://clickup.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Airtable",
+      "source_url": "https://airtable.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Miro",
+      "source_url": "https://miro.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Zoom",
+      "source_url": "https://www.zoom.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Dropbox",
+      "source_url": "https://www.dropbox.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Box",
+      "source_url": "https://www.box.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Loom",
+      "source_url": "https://www.loom.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Calendly",
+      "source_url": "https://calendly.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    },
+    {
+      "name": "Typeform",
+      "source_url": "https://www.typeform.com/",
+      "category": "landing",
+      "selection_note": "Official destination selected by the deterministic marketing-family selector; Weles must prove the family surface before completeness.",
+      "visual": {
+        "capture_status": "pending-weles"
+      },
+      "interface_structure": {
+        "analysis_status": "pending-weles"
+      }
+    }
+  ],
   "visual_count": 0,
   "structure_count": 0
 }

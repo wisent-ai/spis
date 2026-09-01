@@ -1,0 +1,30 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Box",
+  "product_url": "https://www.box.com/pricing",
+  "evidence_status": "partial",
+  "upstream_owner": "Box",
+  "captured_at": "2026-09-01",
+  "motion": [],
+  "states": [],
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
+  "accessibility": {
+    "measured": false,
+    "observations": [],
+    "unknowns": [
+      "Weles accessibility variants not executed yet"
+    ]
+  },
+  "motion_provenance": [],
+  "evidence_gaps": [
+    "Weles capture not imported",
+    "motion evidence absent",
+    "state visuals below the three-state floor",
+    "interaction variants absent",
+    "journey variants absent",
+    "motion analysis absent",
+    "accessibility variants absent"
+  ]
+}
