@@ -15,7 +15,7 @@ use std::time::{Duration, Instant};
 
 const PLAN_SCHEMA: &str = "wisent.web-crawl-plan.v1";
 const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
-const TOKEN_ITEM: &str = "echo-weles-api#token";
+const TOKEN_ITEM: &str = "weles-admission-api#token";
 const CATALOGS: &[&str] = &[
     "web-app-examples",
     "dashboard-console-examples",
