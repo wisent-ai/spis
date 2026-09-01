@@ -12,13 +12,6 @@ STAGE="$ROOT/.wisent-output/release/spis-$VERSION"
 rm -rf "$OUT"
 mkdir -p "$STAGE/bin" "$STAGE/docs"
 install -m 0755 "$ROOT/bin/spis" "$STAGE/bin/spis"
-for tool in capture-wisent-references.py audit-reference-accessibility.py \
-            collect-example-images.py analyze-example-structures.py \
-            verify-reference-evidence.py check-upstream-drift.py \
-            generate-example-catalogs.py sync-readme-examples.py \
-            analyze-readme-examples.py reference_contract.py; do
-  install -m 0644 "$ROOT/$tool" "$STAGE/bin/$tool"
-done
 cp "$ROOT/example-catalogs.json" "$STAGE/example-catalogs.json"
 cp "$ROOT"/docs/*.md "$STAGE/docs/" 2>/dev/null || true
 
