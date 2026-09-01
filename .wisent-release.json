@@ -15,8 +15,9 @@
         "argv": ["sh", "scripts/build-release.sh"]
       },
       "stage": {
-        ".wisent-output/release/spis-darwin-arm64.tar.gz": "release/spis-darwin-arm64.tar.gz",
-        ".wisent-output/release/spis-darwin-arm64.tar.gz.sha256": "release/spis-darwin-arm64.tar.gz.sha256"
+        "release/bin/spis": "bin/spis",
+        "release/spis-darwin-arm64.tar.gz": "release/spis-darwin-arm64.tar.gz",
+        "release/spis-darwin-arm64.tar.gz.sha256": "release/spis-darwin-arm64.tar.gz.sha256"
       }
     }
   },
