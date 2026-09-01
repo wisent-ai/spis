@@ -581,6 +581,21 @@ fn crawl_record(
         "max_states": max_states,
         "input_fixtures": fixtures.inputs.len(),
         "max_depth": max_depth,
+        "evidence_observations": {
+            "executed_paths": graph.iter().filter_map(|state| state.get("path").cloned()).collect::<Vec<_>>(),
+            "variant_events": [],
+            "accessibility_artifacts": graph.iter().filter_map(|state| state.get("snapshot").cloned()).collect::<Vec<_>>(),
+            "motion_artifacts": graph.iter().filter_map(|state| state.get("recording").cloned()).collect::<Vec<_>>(),
+            "canonical_interactions": [],
+            "canonical_journey": Value::Null,
+            "canonical_accessibility": Value::Null,
+            "canonical_motion_analysis": Value::Null,
+            "gaps": [
+                "No complete trigger/response/feedback/cancellation/failure/recovery interaction set was observed.",
+                "No screen-reader, focus-order, live-region or reduced-motion variant was executed.",
+                "No semantic motion trigger, continuity, interruption or reversal observation was retained."
+            ]
+        },
         "completed_at": crate::now_iso_utc(),
     });
     std::fs::write(

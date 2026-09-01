@@ -491,6 +491,27 @@ fn crawl_one(
         reports.push(report);
     }
     let _ = tmux(&["kill-session", "-t", &session], "close CLI PTY");
+    let variant_events: Vec<Value> = reports.iter().enumerate().filter_map(|(position, invocation)| {
+        let kind = invocation.get("kind").and_then(Value::as_str)?;
+        let variant = if invocation.get("timed_out").and_then(Value::as_bool) == Some(true) {
+            "cancellation"
+        } else if kind == "refusal" && invocation.get("exit_status").and_then(Value::as_i64).is_some_and(|status| status != 0) {
+            "failure"
+        } else if kind == "recovery" && invocation.get("exit_status").and_then(Value::as_i64) == Some(0) {
+            "recovery"
+        } else {
+            return None;
+        };
+        Some(json!({
+            "event_id": format!("invocation-{}", position + 1),
+            "variant": variant,
+            "argv": invocation.get("argv"),
+            "exit_status": invocation.get("exit_status"),
+            "timed_out": invocation.get("timed_out"),
+            "state": invocation.get("state"),
+            "output_sha256": invocation.get("output_sha256"),
+        }))
+    }).collect();
     let report = json!({
         "schema": "wisent.cli-crawl-run.v1",
         "slug": record.slug,
@@ -500,6 +521,20 @@ fn crawl_one(
         "invocations": reports,
         "commands_crawled": seen.len(),
         "completed_at": crate::now_iso_utc(),
+        "evidence_observations": {
+            "executed_invocations": reports,
+            "variant_events": variant_events,
+            "terminal_stream": raw.strip_prefix(output).unwrap_or(&raw),
+            "canonical_interactions": [],
+            "canonical_journey": Value::Null,
+            "canonical_accessibility": Value::Null,
+            "canonical_motion_analysis": Value::Null,
+            "gaps": [
+                "Observed failure/recovery/cancellation events are retained independently; no eight interactions have all required variants linked.",
+                "No timed terminal cast or rendered state image was retained.",
+                "Terminal keyboard accessibility equivalents and reduced-motion behavior remain unmeasured."
+            ]
+        },
     });
     std::fs::write(
         output.join("crawl.json"),

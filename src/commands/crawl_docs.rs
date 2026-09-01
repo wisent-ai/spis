@@ -586,6 +586,18 @@ fn run_worker(rest: &[String]) -> Result<()> {
         "sites": chosen.len(),
         "urls_pending_at_start": total_pending,
         "urls_seen_after": total_seen,
+        "evidence_observations": {
+            "http_results": results,
+            "variant_events": [],
+            "canonical_interactions": [],
+            "canonical_journey": serde_json::Value::Null,
+            "canonical_accessibility": serde_json::Value::Null,
+            "canonical_motion_analysis": serde_json::Value::Null,
+            "gaps": [
+                "The crawler measured HTTP retrieval and retained response text only.",
+                "No interactive cancellation, failure recovery journey, screen-reader/focus/live-region traversal, or motion variant was executed."
+            ]
+        },
     });
     let manifest_run = structure_dir.join("crawl-run.json");
     std::fs::write(

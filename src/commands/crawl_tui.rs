@@ -327,6 +327,20 @@ fn crawl_one(
         "blocked_paths": blocked,
         "max_states": max_states,
         "max_depth": max_depth,
+        "evidence_observations": {
+            "executed_paths": graph.iter().filter_map(|state| state.get("path").cloned()).collect::<Vec<_>>(),
+            "variant_events": [],
+            "terminal_streams": graph.iter().filter_map(|state| state.get("raw_terminal_stream").cloned()).collect::<Vec<_>>(),
+            "canonical_interactions": [],
+            "canonical_journey": Value::Null,
+            "canonical_accessibility": Value::Null,
+            "canonical_motion_analysis": Value::Null,
+            "gaps": [
+                "No complete trigger/response/feedback/cancellation/failure/recovery interaction set was observed.",
+                "No timed terminal cast or rendered state image was retained.",
+                "Terminal keyboard accessibility equivalents and reduced-motion behavior remain unmeasured."
+            ]
+        },
         "completed_at": crate::now_iso_utc(),
     });
     std::fs::write(

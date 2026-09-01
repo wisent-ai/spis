@@ -624,66 +624,53 @@ fn copy_evidence_media(
 }
 
 
-fn evidence_interactions(_engine: &str, _report: &Value, _run_id: &str) -> Vec<Value> {
-    // Raw action events remain in crawl/<run>/crawl.json. A canonical
-    // interaction requires separately observed trigger, response, feedback,
-    // cancellation, failure and recovery variants. Current engine reports do
-    // not prove all variants for one interaction.
-    Vec::new()
+fn evidence_interactions(report: &Value) -> Vec<Value> {
+    report.pointer("/evidence_observations/canonical_interactions")
+        .and_then(Value::as_array).cloned().unwrap_or_default()
 }
 
-fn accessibility_evidence(raw_source: &Path, run_id: &str) -> Value {
+fn report_accessibility(report: &Value) -> Option<Value> {
+    report.pointer("/evidence_observations/canonical_accessibility").cloned()
+}
+
+fn accessibility_evidence(raw_source: &Path, run_id: &str, report: &Value) -> Value {
+    if let Some(measurement) = report_accessibility(report) {
+        return measurement;
+    }
     let files = files_under(raw_source);
     let trees: Vec<&PathBuf> = files.iter().filter(|path| {
         matches!(path.extension().and_then(|value| value.to_str()), Some("xml" | "html"))
             || matches!(path.file_name().and_then(|value| value.to_str()), Some("snapshot.json" | "source.json" | "axe.json"))
     }).collect();
     let bytes: u64 = trees.iter().filter_map(|path| std::fs::metadata(path).ok().map(|metadata| metadata.len())).sum();
-    let texts: Vec<String> = trees.iter().filter_map(|path| std::fs::read_to_string(path).ok()).collect();
-    let named = texts.iter().map(|text| text.matches("label").count() + text.matches("name").count()).sum::<usize>();
-    let actionable = texts.iter().map(|text| {
-        let lower = text.to_ascii_lowercase();
-        ["button", "link", "textfield", "clickable", "enabled"].iter().map(|needle| lower.matches(needle).count()).sum::<usize>()
-    }).sum::<usize>();
-    let observations = if trees.is_empty() { vec![] } else { vec![
-        format!("The crawl retained {} accessibility-tree or DOM source documents under crawl/{run_id}.", trees.len()),
-        format!("Those retained source documents contain {named} literal name or label fields."),
-        format!("Those retained source documents contain {actionable} literal actionable-role or enabled-state markers across {bytes} bytes."),
-    ]};
     json!({
         "measured": false,
-        "observations": observations,
+        "observations": if trees.is_empty() { vec![] } else { vec![format!("Retained {} accessibility/DOM source files totalling {bytes} bytes under crawl/{run_id}.", trees.len())] },
         "unknowns": [
-            "No screen-reader traversal was executed or retained.",
-            "No keyboard focus-order traversal was executed or retained.",
-            "No live-region announcement observation was executed or retained.",
-            "No reduced-motion preference variant was executed or retained.",
+            "No engine-supplied canonical accessibility measurement was retained.",
+            "Screen-reader traversal, focus order, live regions and reduced-motion preference remain unmeasured.",
         ],
     })
 }
 
-fn journey_evidence(_engine: &str, _report: &Value, _run_id: &str) -> Value {
-    // A graph path alone does not prove an end-to-end goal, failure route,
-    // recovery route and completion outcome. Preserve it in raw crawl evidence
-    // until an engine records those concrete variants.
-    Value::Null
+fn journey_evidence(report: &Value) -> Value {
+    report.pointer("/evidence_observations/canonical_journey")
+        .cloned().unwrap_or(Value::Null)
 }
 
-fn motion_analysis(_motion: &[Value], _states: &[Value], _report: &Value) -> Value {
-    // Duration and dimensions are measured later from bytes. Semantic timing,
-    // continuity, interruption, reversal and reduced-motion equivalence require
-    // explicit engine observations and must not be inferred from a file name.
-    Value::Null
+fn motion_analysis(report: &Value) -> Value {
+    report.pointer("/evidence_observations/canonical_motion_analysis")
+        .cloned().unwrap_or(Value::Null)
 }
 
 fn adapt_canonical_record(engine: &str, run_id: &str, raw_source: &Path, raw_destination: &Path, record_dir: &Path, report: &Value, record: &mut Value) -> Result<()> {
     let source_url = record.get("product_url").and_then(Value::as_str)
         .context("reference record has no product_url")?.to_string();
     let (motion, states) = copy_evidence_media(engine, raw_source, raw_destination, record_dir, run_id, &source_url)?;
-    let interactions = evidence_interactions(engine, report, run_id);
-    let journey = journey_evidence(engine, report, run_id);
-    let accessibility = accessibility_evidence(raw_source, run_id);
-    let analysis = motion_analysis(&motion, &states, report);
+    let interactions = evidence_interactions(report);
+    let journey = journey_evidence(report);
+    let accessibility = accessibility_evidence(raw_source, run_id, report);
+    let analysis = motion_analysis(report);
     let object = record.as_object_mut().context("reference record is not an object")?;
     object.insert("captured_at".into(), json!(crate::now_iso_utc()));
     object.insert("motion".into(), Value::Array(motion));

@@ -146,7 +146,7 @@ fn objective(catalog: &str, name: &str, goal: &str) -> String {
         goal
     };
     format!(
-        "Crawl the real {surface} for {name}. {goal}. Required coverage: {coverage}. Systematically inspect every reachable non-destructive control and record the accessibility state and visual state before and after every interaction. Retain animations, transitions, loading states, validation failures, cancellation paths, recovery paths and the first-success result. Open destructive flows only through their final confirmation screen and never commit the final destructive control. {source_guard}"
+        "Crawl the real {surface} for {name}. {goal}. Required coverage: {coverage}. Systematically inspect every reachable non-destructive control and retain the accessibility and visual state before and after every interaction. Execute and retain distinct cancellation, failure and recovery variants only when the real product exposes them. Retain animations, transitions, loading states and the first-success result with exact browser-history event IDs and artifact URIs. Exercise keyboard focus order, live regions, a screen-reader-relevant accessibility tree and reduced-motion media preference; name any variant that could not be executed instead of inferring it. Open destructive flows only through their final confirmation screen and never commit the final destructive control. {source_guard}"
     )
 }
 
@@ -449,6 +449,15 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
         "failed": failed,
         "pending_review": pending_review,
         "completed_at": crate::now_iso_utc(),
+        "evidence_observations": {
+            "canonical_interactions": [],
+            "canonical_journey": Value::Null,
+            "canonical_accessibility": Value::Null,
+            "canonical_motion_analysis": Value::Null,
+            "gaps": [
+                "Canonical semantic fields remain empty unless each Weles record result carries explicit linked variant observations."
+            ]
+        },
     }))
 }
 
