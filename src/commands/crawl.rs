@@ -259,6 +259,102 @@ fn preflight_catalog(catalog: &str, selected_record: Option<&str>) -> Result<()>
     Ok(())
 }
 
+fn host_probe(host: &str, arguments: &[&str]) -> Value {
+    let stado = std::env::var("SPIS_STADO_BIN").unwrap_or_else(|_| "stado".to_string());
+    let output = Command::new(stado).args(["host", "exec", host, "--"]).args(arguments).output();
+    match output {
+        Ok(output) => json!({
+            "command": arguments,
+            "ready": output.status.success(),
+            "stdout": String::from_utf8_lossy(&output.stdout).trim(),
+            "stderr": String::from_utf8_lossy(&output.stderr).trim(),
+        }),
+        Err(error) => json!({"command": arguments, "ready": false, "error": error.to_string()}),
+    }
+}
+
+fn preflight_record_diagnostics(catalog: &str, engine: &str, selected: Option<&str>, ready: bool) -> Vec<Value> {
+    let references = Path::new(catalog).join("references");
+    let mut paths: Vec<PathBuf> = std::fs::read_dir(references).into_iter().flatten().flatten()
+        .map(|entry| entry.path()).filter(|path| path.join("reference.json").is_file()).collect();
+    paths.sort();
+    paths.into_iter().filter_map(|path| {
+        let slug = path.file_name()?.to_str()?.to_string();
+        if selected.is_some_and(|wanted| wanted != slug && wanted != slug.split_once('-').map(|(_, tail)| tail).unwrap_or(&slug)) {
+            return None;
+        }
+        let record: Value = crate::read_json(path.join("reference.json").to_str()?).ok()?;
+        let name = record.get("name").and_then(Value::as_str).unwrap_or_default();
+        let product_url = record.get("product_url").and_then(Value::as_str).unwrap_or_default();
+        let runtime_id = if catalog == "android-app-examples" {
+            url::Url::parse(product_url).ok().and_then(|url| url.query_pairs().find(|(key, _)| key == "id").map(|(_, value)| value.into_owned()))
+        } else if catalog == "ios-app-examples" {
+            product_url.rsplit('/').next().and_then(|tail| tail.strip_prefix("id")).map(str::to_string)
+        } else {
+            Some(name.to_string())
+        };
+        Some(json!({
+            "record": slug,
+            "name": name,
+            "product_url": product_url,
+            "engine": engine,
+            "required_runtime_product": runtime_id,
+            "account_binding": if engine == "web" { "anonymous" } else { "not-applicable" },
+            "ready": ready,
+            "diagnostic": if ready { "host-level prerequisites passed; worker must bind this exact product" } else { "host-level prerequisite failed; record was not submitted" },
+        }))
+    }).collect()
+}
+
+fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str, selected: Option<&str>) -> Value {
+    let commands: Vec<Vec<&str>> = match (engine, catalog) {
+        ("mobile", "ios-app-examples") => vec![
+            vec!["appium", "--version"],
+            vec!["appium", "driver", "list", "--installed"],
+            vec!["xcrun", "simctl", "list", "devices", "available"],
+            vec!["xcrun", "simctl", "listapps", "booted"],
+        ],
+        ("mobile", _) => vec![
+            vec!["appium", "--version"],
+            vec!["appium", "driver", "list", "--installed"],
+            vec!["adb", "version"],
+            vec!["adb", "devices", "-l"],
+            vec!["adb", "shell", "pm", "list", "packages"],
+        ],
+        ("desktop", _) => vec![vec!["cua-driver", "doctor", "--json"], vec!["ls", "/Applications"]],
+        ("tui" | "cli", _) => vec![vec!["tmux", "-V"], vec!["cargo", "--version"]],
+        ("web", _) => vec![vec!["node", "--version"], vec!["curl", "--version"]],
+        ("docs", _) => vec![vec!["git", "--version"], vec!["curl", "--version"], vec!["df", "-h"]],
+        _ => vec![],
+    };
+    let checks: Vec<Value> = commands.iter().map(|command| host_probe(host, command)).collect();
+    let admission_ready = if engine == "web" {
+        url::Url::parse(admission_url).ok().and_then(|url| {
+            let host = url.host_str()?.to_string();
+            let port = url.port_or_known_default()?;
+            Some(std::net::TcpStream::connect_timeout(
+                &format!("{host}:{port}").parse().ok()?,
+                std::time::Duration::from_secs(3),
+            ).is_ok())
+        }).unwrap_or(false)
+    } else {
+        true
+    };
+    let ready = checks.iter().all(|check| check.get("ready").and_then(Value::as_bool) == Some(true)) && admission_ready;
+    let records = preflight_record_diagnostics(catalog, engine, selected, ready);
+    json!({
+        "schema": "wisent.crawl-host-preflight.v1",
+        "catalog": catalog,
+        "engine": engine,
+        "host": host,
+        "ready": ready,
+        "checks": checks,
+        "records": records,
+        "weles": if engine == "web" { json!({"admission_url": admission_url, "admission_transport_ready": admission_ready, "account_binding": "anonymous unless an engine account manifest is supplied"}) } else { Value::Null },
+        "no_permission_prompts_requested": true,
+    })
+}
+
 fn start(rest: &[String]) -> Result<()> {
     let mut hosts: HashMap<String, String> = HashMap::new();
     let mut admission_url = None;
@@ -301,7 +397,7 @@ fn start(rest: &[String]) -> Result<()> {
     for (catalog, engine) in specs {
         let host = host_for(catalog, engine, &hosts, &discovered_hosts)?;
         let command = engine_command(catalog, engine, &host, &admission_url, record.as_deref())?;
-        let output = invoke_engine(&command)?;
+        let preflight = host_preflight(catalog, engine, &host, &admission_url, record.as_deref());
         let mut entry = json!({
             "catalog": catalog,
             "engine": engine,
@@ -313,7 +409,16 @@ fn start(rest: &[String]) -> Result<()> {
             "state": "submission_failed",
             "records": [],
             "error": null,
+            "preflight": preflight,
+            "selected_record": record,
         });
+        if entry.pointer("/preflight/ready").and_then(Value::as_bool) != Some(true) {
+            entry["state"] = json!("preflight_failed");
+            entry["error"] = json!("host preflight failed; no crawler job was submitted");
+            entries.push(entry);
+            continue;
+        }
+        let output = invoke_engine(&command)?;
         if output.status.success() {
             match parse_submission(&output.stdout) {
                 Ok(receipt) => {
@@ -384,9 +489,9 @@ fn update_run_state(run: &mut Value) {
         .filter_map(|entry| entry.get("state").and_then(Value::as_str)).collect();
     let state = if states.iter().any(|s| matches!(
         *s,
-        "submission_failed" | "failed" | "cancelled" | "partial"
+        "preflight_failed" | "submission_failed" | "failed" | "cancelled" | "partial"
     )) {
-        if states.iter().all(|s| matches!(*s, "submission_failed" | "failed" | "cancelled")) {
+        if states.iter().all(|s| matches!(*s, "preflight_failed" | "submission_failed" | "failed" | "cancelled")) {
             "failed"
         } else {
             "partial"
@@ -446,10 +551,24 @@ fn resume(rest: &[String]) -> Result<()> {
     let (run_id, _) = parse_run_and_record(rest, true)?;
     let mut run = load(run_id.as_deref())?;
     refresh(&mut run);
+    let admission_url = run.get("admission_url").and_then(Value::as_str).unwrap_or_default().to_string();
     if let Some(entries) = run.get_mut("catalogs").and_then(Value::as_array_mut) {
         for entry in entries {
             let state = entry.get("state").and_then(Value::as_str).unwrap_or("submission_failed");
-            if !matches!(state, "submission_failed" | "failed" | "cancelled") { continue; }
+            if state == "preflight_failed" {
+                let catalog = entry.get("catalog").and_then(Value::as_str).unwrap_or_default();
+                let engine = entry.get("engine").and_then(Value::as_str).unwrap_or_default();
+                let host = entry.get("host").and_then(Value::as_str).unwrap_or_default();
+                let selected = entry.get("selected_record").and_then(Value::as_str);
+                let preflight = host_preflight(catalog, engine, host, &admission_url, selected);
+                entry["preflight"] = preflight;
+                if entry.pointer("/preflight/ready").and_then(Value::as_bool) != Some(true) {
+                    entry["error"] = json!("host preflight still fails; no crawler job was submitted");
+                    continue;
+                }
+            } else if !matches!(state, "submission_failed" | "failed" | "cancelled") {
+                continue;
+            }
             let result = if let Some(job_id) = entry.get("job_id").and_then(Value::as_str) {
                 rerun_job(job_id).map(|fresh| json!({"job_id": fresh}))
             } else {
@@ -1148,7 +1267,7 @@ fn import(rest: &[String]) -> Result<()> {
     if let Some(entries) = run.get_mut("catalogs").and_then(Value::as_array_mut) {
         for entry in entries {
             let state = entry.get("state").and_then(Value::as_str).unwrap_or_default();
-            if !matches!(state, "imported" | "partial" | "failed" | "cancelled" | "submission_failed") {
+            if !matches!(state, "imported" | "partial" | "failed" | "cancelled" | "submission_failed" | "preflight_failed") {
                 entry["error"] = json!(format!("artifact import requires a terminal successful job, found {state}"));
             }
         }
@@ -1164,7 +1283,7 @@ fn import(rest: &[String]) -> Result<()> {
 
 fn has_failures(run: &Value) -> bool {
     run.get("catalogs").and_then(Value::as_array).into_iter().flatten().any(|entry| {
-        matches!(entry.get("state").and_then(Value::as_str), Some("submission_failed" | "failed" | "cancelled" | "partial"))
+        matches!(entry.get("state").and_then(Value::as_str), Some("preflight_failed" | "submission_failed" | "failed" | "cancelled" | "partial"))
     })
 }
 
