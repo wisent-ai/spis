@@ -273,7 +273,7 @@ struct Shared {
     stop: std::sync::atomic::AtomicBool,
 }
 
-fn run_worker(rest: &[String]) -> Result<()> {
+fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManifest) -> Result<()> {
     let mut site: Option<String> = None;
     let mut all = false;
     let mut exclude: Vec<String> = Vec::new();
@@ -331,6 +331,18 @@ fn run_worker(rest: &[String]) -> Result<()> {
         if !slugs.contains(c) {
             bail!("unknown site: {c}");
         }
+    }
+    if chosen.len() != 1 || chosen[0] != manifest.record {
+        bail!("documentation worker selection differs from immutable runtime manifest");
+    }
+    let selected_meta: SiteMeta = lib::read_json(
+        structure_dir
+            .join(format!("{}.json", manifest.record))
+            .to_str()
+            .context("documentation structure path is not UTF-8")?,
+    )?;
+    if selected_meta.source_url != manifest.runtime_product.identifier {
+        bail!("documentation source URL differs from immutable runtime manifest");
     }
 
     let map = overrides();
@@ -565,19 +577,16 @@ fn run_worker(rest: &[String]) -> Result<()> {
     // Scrape-run record: one auditable object per execution.
     let definition_path = structure_dir.join("full-text-manifest.json");
     let definition_hash = lib::sha256_hex(&std::fs::read(&definition_path).unwrap_or_default());
-    let tool_sha = std::process::Command::new("git")
-        .args(["rev-parse", "--short", "HEAD"])
-        .current_dir(env!("CARGO_MANIFEST_DIR"))
-        .output()
-        .ok()
-        .and_then(|o| String::from_utf8(o.stdout).ok())
-        .map(|s| s.trim().to_string())
-        .unwrap_or_default();
+    let tool_sha = super::crawl::build_revision()?;
     let total_seen: usize = results
         .iter()
         .map(|r| r["seen"].as_u64().unwrap_or(0) as usize)
         .sum();
     let run_record = json!({
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "runtime_manifest": manifest,
+        "runtime_execution_identity": manifest.execution_identity,
         "schema": "wisent.crawl-run.v1",
         "tool": "spis crawl-docs",
         "tool_commit": tool_sha,
@@ -628,29 +637,16 @@ fn safe_job_value(value: &str, flag: &str) -> Result<()> {
 }
 
 fn source_revision() -> Result<String> {
-    let output = std::process::Command::new("git")
-        .args(["rev-parse", "HEAD"])
-        .output()
-        .context("read Spis source revision")?;
-    let revision = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if !output.status.success()
-        || revision.len() != 40
-        || !revision.bytes().all(|byte| byte.is_ascii_hexdigit())
-    {
-        bail!("Spis checkout has no exact Git revision");
-    }
-    Ok(revision)
+    super::crawl::build_revision()
 }
 
-fn publish_corpus(uri: &str) -> Result<()> {
-    if !uri.starts_with("stado://spis-crawls/documentation-site-examples/") {
+fn publish_corpus(uri: &str, slug: &str) -> Result<()> {
+    if !uri.starts_with("stado://spis-crawls/") {
         bail!("documentation artifact URI is outside the Spis crawl namespace");
     }
-    let root = PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
-        .join(".spis")
-        .join("docs-corpus");
+    let root = data_dir(slug);
     let archive = root.with_extension("tar.gz");
-    let status = std::process::Command::new("stado")
+    let status = super::crawl::stado_command()
         .args(["storage", "archive"])
         .arg(&root)
         .arg(&archive)
@@ -659,7 +655,7 @@ fn publish_corpus(uri: &str) -> Result<()> {
     if !status.success() {
         bail!("stado storage archive refused documentation corpus");
     }
-    let status = std::process::Command::new("stado")
+    let status = super::crawl::stado_command()
         .args(["storage", "put", "--if-absent", uri])
         .arg(&archive)
         .status()
@@ -670,31 +666,34 @@ fn publish_corpus(uri: &str) -> Result<()> {
     Ok(())
 }
 
-fn submit_worker(host: &str, arguments: &[String]) -> Result<()> {
+fn submit_worker(
+    host: &str,
+    record: &str,
+    manifest: &super::crawl::RuntimeManifest,
+) -> Result<()> {
     safe_job_value(host, "--host")?;
-    for value in arguments {
-        safe_job_value(value, "crawl-docs argument")?;
+    safe_job_value(record, "--record")?;
+    if source_revision()? != manifest.source_revision {
+        bail!("documentation coordinator revision does not match immutable runtime manifest");
     }
-    let revision = source_revision()?;
-    let stamp = crate::now_iso_utc().replace(':', "-");
-    let artifact = format!("stado://spis-crawls/documentation-site-examples/{stamp}.tar.gz");
+    let artifact = manifest.artifact_uri.clone();
+    let output_uri = manifest.output_uri.clone();
     let command = format!(
-        "cargo run --release -- crawl-docs --worker {} --artifact-uri {}",
-        arguments.join(" "),
-        artifact
+        "cargo run --release -- crawl-docs --worker --site {record} --artifact-uri {artifact} --runtime-manifest-base64 '{}'",
+        manifest.encoded()?
     );
-    let output_uri =
-        format!("stado://spis-crawls/documentation-site-examples/{stamp}/job-output");
-    let output = std::process::Command::new("stado")
+    let output = super::crawl::stado_command()
         .args([
             "submit",
             &command,
+            "--run-id",
+            &manifest.stado_run_id,
             "--pinned-host",
             host,
             "--repo",
             REPOSITORY,
             "--repo-ref",
-            &revision,
+            &manifest.source_revision,
             "--repo-workdir",
             "spis",
             "--repo-extras",
@@ -724,6 +723,8 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut host = None;
     let mut worker = false;
     let mut artifact_uri = None;
+    let mut record = None;
+    let mut runtime_manifest_base64 = None;
     let mut forwarded = Vec::new();
     let mut i = 0;
     while i < rest.len() {
@@ -731,6 +732,22 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--host" => {
                 i += 1;
                 host = Some(rest.get(i).context("--host needs a value")?.clone());
+            }
+            "--record" => {
+                i += 1;
+                record = Some(rest.get(i).context("--record needs a value")?.clone());
+            }
+            "--site" => {
+                i += 1;
+                let value = rest.get(i).context("--site needs a value")?.clone();
+                record = Some(value.clone());
+                forwarded.push("--site".into());
+                forwarded.push(value);
+            }
+            "--runtime-manifest-base64" => {
+                i += 1;
+                runtime_manifest_base64 =
+                    Some(rest.get(i).context("--runtime-manifest-base64 needs a value")?.clone());
             }
             "--worker" => worker = true,
             "--artifact-uri" => {
@@ -741,19 +758,28 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
         i += 1;
     }
+    let record = record.context("--record is required for one exact per-record job")?;
+    let manifest = super::crawl::decode_runtime_manifest(
+        runtime_manifest_base64.as_deref().context("--runtime-manifest-base64 is required")?,
+        "documentation-site-examples",
+        "docs",
+        Some(&record),
+    )?;
     if !worker {
         return submit_worker(
-            &host
-                .context("--host is required; documentation crawls execute as pinned Stado jobs")?,
-            &forwarded,
+            &host.context("--host is required; documentation crawls execute as pinned Stado jobs")?,
+            &record,
+            &manifest,
         );
     }
     if host.is_some() {
         bail!("--host cannot be used with --worker");
     }
-    run_worker(&forwarded)?;
-    if let Some(uri) = artifact_uri {
-        publish_corpus(&uri)?;
+    let artifact_uri = artifact_uri.context("--artifact-uri is required in worker mode")?;
+    if artifact_uri != manifest.artifact_uri {
+        bail!("worker artifact URI does not match immutable runtime manifest");
     }
+    run_worker(&forwarded, &manifest)?;
+    publish_corpus(&artifact_uri, &record)?;
     Ok(())
 }

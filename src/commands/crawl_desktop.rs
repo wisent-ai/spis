@@ -18,6 +18,7 @@ const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
 struct Record {
     slug: String,
     name: String,
+    bundle_id: String,
 }
 
 #[derive(Clone, Debug)]
@@ -112,8 +113,31 @@ struct Action {
     input: Option<InputValue>,
 }
 
+pub(crate) fn cua_driver_candidates() -> Vec<PathBuf> {
+    let mut candidates = Vec::new();
+    if let Some(configured) = std::env::var_os("SPIS_CUA_DRIVER_BIN") {
+        candidates.push(PathBuf::from(configured));
+    }
+    if let Some(path) = std::env::var_os("PATH") {
+        candidates.extend(std::env::split_paths(&path).map(|directory| directory.join("cua-driver")));
+    }
+    for applications in [
+        Some(PathBuf::from("/Applications")),
+        std::env::var_os("HOME").map(PathBuf::from).map(|home| home.join("Applications")),
+    ].into_iter().flatten() {
+        candidates.push(applications.join("CuaDriver.app/Contents/MacOS/cua-driver"));
+        candidates.push(applications.join("CuaDriver.app/Contents/MacOS/CuaDriver"));
+    }
+    candidates
+}
+
+fn cua_driver() -> Result<PathBuf> {
+    cua_driver_candidates().into_iter().find(|candidate| candidate.is_file())
+        .context("Cua Driver executable is absent from PATH, /Applications and the worker user's Applications")
+}
+
 fn call(tool: &str, payload: &Value) -> Result<Value> {
-    let output = Command::new("cua-driver")
+    let output = Command::new(cua_driver()?)
         .arg(tool)
         .arg(serde_json::to_string(payload)?)
         .output()
@@ -200,7 +224,7 @@ fn preflight() -> Result<()> {
     if std::env::consts::OS != "macos" {
         return Ok(());
     }
-    let output = Command::new("cua-driver")
+    let output = Command::new(cua_driver()?)
         .args(["permissions", "status", "--json"])
         .output()
         .context("read Cua Driver permission status")?;
@@ -253,6 +277,10 @@ fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
                 .get("name")
                 .and_then(Value::as_str)
                 .unwrap_or_default()
+                .to_string(),
+            bundle_id: record.pointer("/runtime_product/bundle_id").and_then(Value::as_str)
+                .filter(|value| !value.is_empty())
+                .ok_or_else(|| anyhow!("{catalog}/{slug} has no exact runtime_product.bundle_id manifest"))?
                 .to_string(),
         });
     }
@@ -424,8 +452,7 @@ fn launch(record: &Record, session: &str) -> Result<(i64, i64)> {
     let launched = call(
         "launch_app",
         &json!({
-            "name": record.name,
-            "creates_new_application_instance": true,
+            "bundle_id": record.bundle_id,
         }),
     )?;
     let pid = find_i64(&launched, "pid")
@@ -442,11 +469,15 @@ fn launch(record: &Record, session: &str) -> Result<(i64, i64)> {
 
 fn crawl_record(
     record: &Record,
+    manifest: &super::crawl::RuntimeManifest,
     fixtures: &Fixtures,
     root: &Path,
     max_states: usize,
     max_depth: usize,
 ) -> Result<Value> {
+    if record.bundle_id != manifest.runtime_product.identifier {
+        bail!("desktop record bundle id differs from immutable runtime manifest");
+    }
     let session = format!("spis-{}", record.slug.replace('_', "-"));
     call(
         "start_session",
@@ -528,6 +559,7 @@ fn crawl_record(
             serde_json::to_string_pretty(&current)? + "\n",
         )?;
         let recording = recording_guard.stop();
+        let recording_retained = recording.is_some();
         if let Some(recording) = recording {
             std::fs::write(
                 state_dir.join("recording.json"),
@@ -546,6 +578,9 @@ fn crawl_record(
                 "kind": if action.input.is_some() { "input" } else { "click" },
                 "input_fixture": action.input.as_ref().map(|input| &input.key),
             })).collect::<Vec<_>>(),
+            "snapshot": format!("state-{index:04}/snapshot.json"),
+            "screenshot": format!("state-{index:04}/screenshot.png"),
+            "recording": recording_retained.then(|| format!("state-{index:04}/recording.json")),
         }));
         if path.len() < max_depth {
             let entered_destructive_flow = path.iter().any(|step| step.destructive);
@@ -575,6 +610,15 @@ fn crawl_record(
         "record": record.slug,
         "name": record.name,
         "driver": "cua-driver",
+        "bundle_id": record.bundle_id,
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "runtime_manifest": manifest,
+        "runtime_execution_identity": manifest.execution_identity,
+        "resource_lease": manifest.resource_lease,
+        "capture_scope": "background-window",
+        "fresh_snapshot_before_after_each_action": true,
+        "system_consent_requested": false,
         "states": graph,
         "states_seen": seen_states.len(),
         "blocked_edges": blocked,
@@ -605,20 +649,7 @@ fn crawl_record(
     Ok(report)
 }
 
-fn revision() -> Result<String> {
-    let output = Command::new("git")
-        .args(["rev-parse", "HEAD"])
-        .output()
-        .context("read Spis source revision")?;
-    let revision = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if !output.status.success()
-        || revision.len() != 40
-        || !revision.bytes().all(|byte| byte.is_ascii_hexdigit())
-    {
-        bail!("Spis checkout has no exact Git revision");
-    }
-    Ok(revision)
-}
+fn revision() -> Result<String> { super::crawl::build_revision() }
 
 fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     if value.is_empty()
@@ -632,7 +663,7 @@ fn safe_job_value(value: &str, flag: &str) -> Result<()> {
 }
 
 fn publish_file(path: &Path, uri: &str) -> Result<()> {
-    let output = Command::new("stado")
+    let output = super::crawl::stado_command()
         .args([
             "storage",
             "put",
@@ -656,19 +687,18 @@ fn publish_file(path: &Path, uri: &str) -> Result<()> {
 struct DesktopSubmission<'a> {
     host: &'a str,
     catalog: &'a str,
-    record: Option<&'a str>,
+    record: &'a str,
     fixtures: Option<&'a Path>,
     secret_env: &'a [String],
     max_states: usize,
     max_depth: usize,
+    manifest: &'a super::crawl::RuntimeManifest,
 }
 
 fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
     safe_job_value(request.host, "--host")?;
     safe_job_value(request.catalog, "catalog")?;
-    if let Some(record) = request.record {
-        safe_job_value(record, "--record")?;
-    }
+    safe_job_value(request.record, "--record")?;
     for binding in request.secret_env {
         let (name, item) = binding
             .split_once('=')
@@ -683,40 +713,44 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
             bail!("--secret-env item is invalid");
         }
     }
-    let revision = revision()?;
-    let stamp = crate::now_iso_utc().replace(':', "-");
-    let artifact = format!("stado://spis-crawls/{}/{stamp}.tar.gz", request.catalog);
-    let mut command = format!(
-        "cargo run --release -- crawl-desktop {} --worker --max-states {} --max-depth {} --artifact-uri {}",
-        request.catalog, request.max_states, request.max_depth, artifact
-    );
-    if let Some(record) = request.record {
-        command.push_str(&format!(" --record {record}"));
+    if revision()? != request.manifest.source_revision {
+        bail!("desktop coordinator revision does not match immutable runtime manifest");
     }
+    let encoded = request.manifest.encoded()?;
+    let artifact = request.manifest.artifact_uri.clone();
+    let output_uri = request.manifest.output_uri.clone();
+    let mut command = format!(
+        "cargo run --release -- crawl-desktop {} --worker --record {} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
+        request.catalog,
+        request.record,
+        request.max_states,
+        request.max_depth,
+        artifact,
+        encoded,
+    );
     if let Some(fixtures) = request.fixtures {
         let uri = format!(
-            "stado://spis-crawls/{}/fixtures/{stamp}.json",
-            request.catalog
+            "stado://spis-crawls/{}/{}/{}/fixtures.json",
+            request.manifest.run_id, request.catalog, request.manifest.record
         );
         publish_file(fixtures, &uri)?;
-        let remote = format!("$HOME/.stado/work/{stamp}-desktop-fixtures.json");
+        let remote = format!("$HOME/.stado/work/{}-desktop-fixtures.json", request.manifest.record_key);
         command = format!(
             "$HOME/.stado/bin/stado storage get {uri} {remote} && {command} --fixtures {remote}"
         );
     }
-    let output_uri = format!(
-        "stado://spis-crawls/{}/{stamp}/job-output",
-        request.catalog
-    );
     let mut arguments = vec![
         "submit".to_string(),
         command,
+        "--run-id".to_string(),
+        request.manifest.stado_run_id.clone(),
         "--pinned-host".to_string(),
         request.host.to_string(),
+        "--exclusive".to_string(),
         "--repo".to_string(),
         REPOSITORY.to_string(),
         "--repo-ref".to_string(),
-        revision,
+        request.manifest.source_revision.clone(),
         "--repo-workdir".to_string(),
         "spis".to_string(),
         "--repo-extras".to_string(),
@@ -728,7 +762,7 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
         arguments.push("--secret-env".to_string());
         arguments.push(binding.clone());
     }
-    let output = Command::new("stado")
+    let output = super::crawl::stado_command()
         .args(arguments)
         .output()
         .context("submit desktop crawl through Stado")?;
@@ -750,7 +784,7 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
 
 fn publish_artifact(run_root: &Path, uri: &str) -> Result<()> {
     let archive = run_root.with_extension("tar.gz");
-    let status = Command::new("stado")
+    let status = super::crawl::stado_command()
         .args(["storage", "archive"])
         .arg(run_root)
         .arg(&archive)
@@ -759,7 +793,7 @@ fn publish_artifact(run_root: &Path, uri: &str) -> Result<()> {
     if !status.success() {
         bail!("stado storage archive refused desktop crawl artifacts");
     }
-    let status = Command::new("stado")
+    let status = super::crawl::stado_command()
         .args(["storage", "put", "--if-absent", uri])
         .arg(&archive)
         .status()
@@ -780,6 +814,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut host: Option<String> = None;
     let mut worker = false;
     let mut artifact_uri: Option<String> = None;
+    let mut runtime_manifest_base64: Option<String> = None;
     let mut output = PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
         .join(".spis")
         .join("crawls");
@@ -809,6 +844,11 @@ pub fn run(rest: &[String]) -> Result<()> {
                 i += 1;
                 artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
             }
+            "--runtime-manifest-base64" => {
+                i += 1;
+                runtime_manifest_base64 =
+                    Some(rest.get(i).context("--runtime-manifest-base64 needs a value")?.clone());
+            }
             "--max-states" => {
                 i += 1;
                 max_states = rest.get(i).context("--max-states needs a value")?.parse()?;
@@ -822,7 +862,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 output = PathBuf::from(rest.get(i).context("--output needs a value")?);
             }
             "--help" | "-h" => {
-                println!("usage: spis crawl-desktop <macos-app-examples|desktop-app-examples> --host TARGET [--record SLUG] [--fixtures FILE] [--secret-env NAME=SKARBIEC_ITEM] [--max-states N] [--max-depth N]\nworker mode: spis crawl-desktop <catalog> --worker [--artifact-uri stado://...] [--output DIR]");
+                println!("usage: spis crawl-desktop <macos-app-examples|desktop-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--fixtures FILE] [--secret-env NAME=SKARBIEC_ITEM] [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value if value.starts_with('-') => bail!("unknown argument: {value}"),
@@ -835,46 +875,60 @@ pub fn run(rest: &[String]) -> Result<()> {
     if max_states == 0 || max_states > 10_000 || max_depth > 32 {
         bail!("--max-states must be 1..10000 and --max-depth must be 0..32");
     }
+    let record = record.context("--record is required for one exact per-record job")?;
+    let encoded_manifest = runtime_manifest_base64
+        .as_deref()
+        .context("--runtime-manifest-base64 is required")?;
+    let manifest = super::crawl::decode_runtime_manifest(
+        encoded_manifest,
+        &catalog,
+        "desktop",
+        Some(&record),
+    )?;
     if !worker {
         let host =
             host.context("--host is required; desktop crawls execute as pinned Stado jobs")?;
         return submit_worker(DesktopSubmission {
             host: &host,
             catalog: &catalog,
-            record: record.as_deref(),
+            record: &record,
             fixtures: fixtures_path.as_deref(),
             secret_env: &secret_env,
             max_states,
             max_depth,
+            manifest: &manifest,
         });
     }
     if host.is_some() || !secret_env.is_empty() {
         bail!("--host and --secret-env are coordinator-only");
     }
-    if let Some(uri) = &artifact_uri {
-        let namespace = format!("stado://spis-crawls/{catalog}/");
-        if !uri.starts_with(&namespace) {
-            bail!("--artifact-uri must be under {namespace}");
-        }
+    let artifact_uri = artifact_uri.context("--artifact-uri is required in worker mode")?;
+    if artifact_uri != manifest.artifact_uri {
+        bail!("worker artifact URI does not match immutable runtime manifest");
     }
     preflight()?;
     let fixtures = Fixtures::load(fixtures_path.as_deref())?;
     let run_root = output
         .join(&catalog)
-        .join(crate::now_iso_utc().replace(':', "-"));
+        .join(&manifest.run_id)
+        .join(&manifest.record_key);
     std::fs::create_dir_all(&run_root)?;
-    let mut reports = Vec::new();
-    for entry in records(&catalog, record.as_deref())? {
-        match crawl_record(&entry, &fixtures, &run_root, max_states, max_depth) {
-            Ok(report) => reports.push(report),
-            Err(error) => reports.push(json!({
-                "record": entry.slug,
-                "name": entry.name,
-                "status": "failed",
-                "error": error.to_string(),
-            })),
-        }
-    }
+    let entry = records(&catalog, Some(&record))?
+        .into_iter()
+        .next()
+        .context("runtime manifest record is absent from catalog")?;
+    let reports = vec![match crawl_record(&entry, &manifest, &fixtures, &run_root, max_states, max_depth) {
+        Ok(report) => report,
+        Err(error) => json!({
+            "record": entry.slug,
+            "name": entry.name,
+            "status": "failed",
+            "source_revision": manifest.source_revision,
+            "source_input_sha256": manifest.source_input_sha256,
+            "runtime_manifest": manifest,
+            "error": error.to_string(),
+        }),
+    }];
     let failures = reports
         .iter()
         .filter(|report| report.get("status").and_then(Value::as_str) == Some("failed"))
@@ -882,6 +936,9 @@ pub fn run(rest: &[String]) -> Result<()> {
     let summary = json!({
         "schema": "wisent.desktop-crawl-batch.v1",
         "catalog": catalog,
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "runtime_manifest": manifest,
         "input_fixtures": fixtures.inputs.len(),
         "records": reports,
         "failed": failures,
@@ -891,9 +948,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         run_root.join("batch.json"),
         serde_json::to_string_pretty(&summary)? + "\n",
     )?;
-    if let Some(uri) = &artifact_uri {
-        publish_artifact(&run_root, uri)?;
-    }
+    publish_artifact(&run_root, &artifact_uri)?;
     println!("{}", serde_json::to_string_pretty(&summary)?);
     if failures > 0 {
         bail!("{failures} desktop records could not be crawled");

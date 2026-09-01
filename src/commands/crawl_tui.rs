@@ -71,34 +71,25 @@ fn safe_component(value: &str, name: &str) -> Result<()> {
     Ok(())
 }
 
-fn revision() -> Result<String> {
-    let output = Command::new("git")
-        .args(["rev-parse", "HEAD"])
-        .output()
-        .context("read Spis source revision")?;
-    let revision = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if !output.status.success()
-        || revision.len() != 40
-        || !revision.bytes().all(|byte| byte.is_ascii_hexdigit())
-    {
-        bail!("Spis checkout has no exact Git revision");
-    }
-    Ok(revision)
-}
+fn revision() -> Result<String> { super::crawl::build_revision() }
 
-fn executable(name: &str) -> Option<PathBuf> {
-    let path = std::env::var_os("PATH")?;
+pub(crate) fn binary_candidates(name: &str) -> Vec<String> {
     let lower = name.to_lowercase();
-    let candidates = [
-        lower.replace(' ', "-"),
-        lower.replace(' ', ""),
+    vec![
         match lower.as_str() {
             "midnight commander" => "mc".to_string(),
             "github cli dashboard" => "gh-dash".to_string(),
             "bottom" => "btm".to_string(),
             other => other.to_string(),
         },
-    ];
+        lower.replace(' ', "-"),
+        lower.replace(' ', ""),
+    ]
+}
+
+fn executable(name: &str) -> Option<PathBuf> {
+    let path = std::env::var_os("PATH")?;
+    let candidates = binary_candidates(name);
     std::env::split_paths(&path)
         .flat_map(|directory| candidates.iter().map(move |name| directory.join(name)))
         .find(|candidate| candidate.is_file())
@@ -248,11 +239,18 @@ fn replay(session: &str, path: &[Step]) -> Result<()> {
 fn crawl_one(
     slug: &str,
     name: &str,
+    manifest: &super::crawl::RuntimeManifest,
     output: &Path,
     max_states: usize,
     max_depth: usize,
 ) -> Result<Value> {
-    let binary = executable(name).ok_or_else(|| anyhow!("{name} is not installed on this host"))?;
+    let binary = executable(&manifest.runtime_product.identifier)
+        .ok_or_else(|| anyhow!("{} is not installed on this host", manifest.runtime_product.identifier))?;
+    if binary.file_name().and_then(|value| value.to_str())
+        != Some(manifest.runtime_product.identifier.as_str())
+    {
+        bail!("TUI executable differs from immutable runtime manifest");
+    }
     let fixture = output.join("fixture");
     let states = output.join("states");
     let attempts = output.join("attempts");
@@ -321,6 +319,10 @@ fn crawl_one(
         "slug": slug,
         "name": name,
         "binary": binary,
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "runtime_manifest": manifest,
+        "runtime_execution_identity": manifest.execution_identity,
         "terminal": {"columns": 120, "rows": 40, "term": "xterm-256color"},
         "states": graph,
         "states_seen": seen.len(),
@@ -383,7 +385,7 @@ fn records(selected: Option<&str>) -> Result<Vec<(String, String)>> {
 
 fn publish(root: &Path, uri: &str) -> Result<()> {
     let archive = root.with_extension("tar.gz");
-    let status = Command::new("stado")
+    let status = super::crawl::stado_command()
         .args(["storage", "archive"])
         .arg(root)
         .arg(&archive)
@@ -391,7 +393,7 @@ fn publish(root: &Path, uri: &str) -> Result<()> {
     if !status.success() {
         bail!("stado storage archive refused TUI artifacts");
     }
-    let status = Command::new("stado")
+    let status = super::crawl::stado_command()
         .args(["storage", "put", "--if-absent", uri])
         .arg(&archive)
         .status()?;
@@ -403,35 +405,34 @@ fn publish(root: &Path, uri: &str) -> Result<()> {
 
 fn submit(
     host: &str,
-    selected: Option<&str>,
-    max_records: usize,
+    selected: &str,
     max_states: usize,
     max_depth: usize,
+    manifest: &super::crawl::RuntimeManifest,
 ) -> Result<()> {
     safe_component(host, "--host")?;
-    if let Some(selected) = selected {
-        safe_component(selected, "--record")?;
+    safe_component(selected, "--record")?;
+    if revision()? != manifest.source_revision {
+        bail!("TUI coordinator revision does not match immutable runtime manifest");
     }
-    let revision = revision()?;
-    let stamp = crate::now_iso_utc().replace(':', "-");
-    let artifact = format!("stado://spis-crawls/tui-examples/{stamp}.tar.gz");
-    let mut worker = format!(
-        "cargo run --release -- crawl-tui --worker --max-records {max_records} --max-states {max_states} --max-depth {max_depth} --artifact-uri {artifact}"
+    let artifact = manifest.artifact_uri.clone();
+    let output_uri = manifest.output_uri.clone();
+    let worker = format!(
+        "cargo run --release -- crawl-tui --worker --record {selected} --max-records 1 --max-states {max_states} --max-depth {max_depth} --artifact-uri {artifact} --runtime-manifest-base64 '{}'",
+        manifest.encoded()?
     );
-    if let Some(selected) = selected {
-        worker.push_str(&format!(" --record {selected}"));
-    }
-    let output_uri = format!("stado://spis-crawls/tui-examples/{stamp}/job-output");
-    let output = Command::new("stado")
+    let output = super::crawl::stado_command()
         .args([
             "submit",
             &worker,
+            "--run-id",
+            &manifest.stado_run_id,
             "--pinned-host",
             host,
             "--repo",
             REPOSITORY,
             "--repo-ref",
-            &revision,
+            &manifest.source_revision,
             "--repo-workdir",
             "spis",
             "--repo-extras",
@@ -441,10 +442,7 @@ fn submit(
         ])
         .output()?;
     if !output.status.success() {
-        bail!(
-            "Stado refused TUI crawl: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
+        bail!("Stado refused TUI crawl: {}", String::from_utf8_lossy(&output.stderr).trim());
     }
     super::crawl::print_submission(
         "tui-examples",
@@ -464,6 +462,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut max_states = 200usize;
     let mut max_depth = 4usize;
     let mut artifact_uri: Option<String> = None;
+    let mut runtime_manifest_base64: Option<String> = None;
     let mut i = 0;
     while i < rest.len() {
         match rest[i].as_str() {
@@ -494,9 +493,14 @@ pub fn run(rest: &[String]) -> Result<()> {
                 i += 1;
                 artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
             }
+            "--runtime-manifest-base64" => {
+                i += 1;
+                runtime_manifest_base64 =
+                    Some(rest.get(i).context("--runtime-manifest-base64 needs a value")?.clone());
+            }
             "--worker" => worker = true,
             "--help" | "-h" => {
-                println!("usage: spis crawl-tui --host TARGET [--record SLUG] [--max-records N] [--max-states N] [--max-depth N]\nworker mode: spis crawl-tui --worker [--artifact-uri stado://...]");
+                println!("usage: spis crawl-tui --host TARGET --record SLUG --runtime-manifest-base64 DATA [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value => bail!("unknown argument: {value}"),
@@ -511,36 +515,61 @@ pub fn run(rest: &[String]) -> Result<()> {
     {
         bail!("--max-records must be 1..50, --max-states 1..5000 and --max-depth 0..12");
     }
+    let selected = selected.context("--record is required for one exact per-record job")?;
+    if max_records != 1 {
+        bail!("per-record TUI jobs require --max-records 1");
+    }
+    let manifest = super::crawl::decode_runtime_manifest(
+        runtime_manifest_base64.as_deref().context("--runtime-manifest-base64 is required")?,
+        "tui-examples",
+        "tui",
+        Some(&selected),
+    )?;
     if !worker {
         return submit(
             &host.context("--host is required; TUI crawls execute as pinned Stado jobs")?,
-            selected.as_deref(),
-            max_records,
+            &selected,
             max_states,
             max_depth,
+            &manifest,
         );
     }
     if host.is_some() {
         bail!("--host cannot be used with --worker");
     }
-    let stamp = crate::now_iso_utc().replace(':', "-");
-    let root = Path::new("target").join("spis-tui-crawls").join(&stamp);
-    std::fs::create_dir_all(&root)?;
-    let mut reports = Vec::new();
-    for (slug, name) in records(selected.as_deref())?.into_iter().take(max_records) {
-        let output = root.join(&slug);
-        std::fs::create_dir_all(&output)?;
-        reports.push(match crawl_one(&slug, &name, &output, max_states, max_depth) {
-            Ok(report) => report,
-            Err(error) => json!({"slug": slug, "name": name, "status": "failed", "error": error.to_string()}),
-        });
+    let artifact_uri = artifact_uri.context("--artifact-uri is required in worker mode")?;
+    if artifact_uri != manifest.artifact_uri {
+        bail!("worker artifact URI does not match immutable runtime manifest");
     }
+    let root = Path::new("target")
+        .join("spis-tui-crawls")
+        .join(&manifest.run_id)
+        .join(&manifest.record_key);
+    std::fs::create_dir_all(&root)?;
+    let (slug, name) = records(Some(&selected))?.into_iter().next().context("runtime manifest record is absent")?;
+    let output = root.join(&slug);
+    std::fs::create_dir_all(&output)?;
+    let reports = vec![match crawl_one(&slug, &name, &manifest, &output, max_states, max_depth) {
+        Ok(report) => report,
+        Err(error) => json!({
+            "slug": slug,
+            "name": name,
+            "status": "failed",
+            "source_revision": manifest.source_revision,
+            "source_input_sha256": manifest.source_input_sha256,
+            "runtime_manifest": manifest,
+            "error": error.to_string()
+        }),
+    }];
     let failures = reports
         .iter()
         .filter(|report| report.get("status").and_then(Value::as_str) == Some("failed"))
         .count();
     let summary = json!({
         "schema": "wisent.tui-crawl-batch.v1",
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "runtime_manifest": manifest,
         "records": reports,
         "failed": failures,
         "completed_at": crate::now_iso_utc(),
@@ -549,12 +578,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         root.join("batch.json"),
         serde_json::to_string_pretty(&summary)? + "\n",
     )?;
-    if let Some(uri) = artifact_uri {
-        if !uri.starts_with("stado://spis-crawls/tui-examples/") {
-            bail!("--artifact-uri must be under stado://spis-crawls/tui-examples/");
-        }
-        publish(&root, &uri)?;
-    }
+    publish(&root, &artifact_uri)?;
     println!("{}", serde_json::to_string_pretty(&summary)?);
     if failures > 0 {
         bail!("{failures} TUI records could not be crawled");

@@ -4,7 +4,7 @@ use anyhow::{bail, Context, Result};
 use std::time::Duration;
 
 pub const USER_AGENT: &str =
-    "WisentKronikaCorpus/0.1 (documentation writing-style research; +https://wisent.com)";
+    concat!("Spis/", env!("CARGO_PKG_VERSION"), " (evidence-grade interface corpus; +https://spis.wisent.com/docs)");
 
 mod robots {
     use super::USER_AGENT;
@@ -13,44 +13,98 @@ mod robots {
     use std::time::Duration;
 
     #[derive(Clone)]
+    struct Rule {
+        pattern: regex::Regex,
+        specificity: usize,
+        allow: bool,
+    }
+
+    #[derive(Clone)]
     struct Rules {
-        applies_to_us: bool,
-        disallow: Vec<String>,
+        directives: Vec<Rule>,
     }
 
     impl Rules {
         fn allows(&self, path: &str) -> bool {
-            self.disallow.iter().all(|d| !path.starts_with(d.as_str()))
+            self.directives.iter()
+                .filter(|rule| rule.pattern.is_match(path))
+                .max_by(|left, right| left.specificity.cmp(&right.specificity).then(left.allow.cmp(&right.allow)))
+                .is_none_or(|rule| rule.allow)
         }
     }
 
     fn compute(origin: &str) -> Rules {
-        let mut rules = Rules {
-            applies_to_us: false,
-            disallow: Vec::new(),
-        };
+        let mut groups: Vec<(Vec<String>, Vec<Rule>)> = Vec::new();
         let url = format!("{origin}/robots.txt");
-        if let Ok(resp) = ureq::get(&url)
+        let response = ureq::get(&url)
             .timeout(Duration::from_secs(15))
             .set("User-Agent", USER_AGENT)
-            .call()
-        {
-            if let Ok(body) = resp.into_string() {
-                for line in body.lines() {
-                    let line = line.split('#').next().unwrap_or("").trim();
-                    if let Some(rest) = line.strip_prefix("User-agent:") {
-                        let agent = rest.trim();
-                        rules.applies_to_us = agent == "*" || USER_AGENT.starts_with(agent);
-                        rules.disallow.clear();
-                    } else if let Some(rest) = line.strip_prefix("Disallow:") {
-                        if rules.applies_to_us && !rest.trim().is_empty() {
-                            rules.disallow.push(rest.trim().to_string());
+            .call();
+        let body = match response {
+            Ok(response) => response.into_string().ok(),
+            Err(ureq::Error::Status(status, _)) if status == 401 || status == 403 => {
+                return Rules { directives: vec![Rule {
+                    pattern: regex::Regex::new("^/").expect("fixed robots pattern"),
+                    specificity: 1,
+                    allow: false,
+                }] };
+            }
+            Err(ureq::Error::Status(status, _)) if (400..500).contains(&status) => None,
+            Err(_) => {
+                return Rules { directives: vec![Rule {
+                    pattern: regex::Regex::new("^/").expect("fixed robots pattern"),
+                    specificity: 1,
+                    allow: false,
+                }] };
+            }
+        };
+        if let Some(body) = body {
+            let mut agents = Vec::new();
+                let mut directives = Vec::new();
+                for raw in body.lines() {
+                    let line = raw.split('#').next().unwrap_or("").trim();
+                    let Some((field, value)) = line.split_once(':') else { continue };
+                    let field = field.trim();
+                    let value = value.trim();
+                    if field.eq_ignore_ascii_case("user-agent") {
+                        if !directives.is_empty() {
+                            groups.push((std::mem::take(&mut agents), std::mem::take(&mut directives)));
+                        }
+                        agents.push(value.to_ascii_lowercase());
+                    } else if field.eq_ignore_ascii_case("allow") || field.eq_ignore_ascii_case("disallow") {
+                        if !agents.is_empty() && !value.is_empty() {
+                            let terminal = value.ends_with('$');
+                            let source = value.strip_suffix('$').unwrap_or(value);
+                            let expression = format!(
+                                "^{}{}",
+                                regex::escape(source).replace(r"\*", ".*"),
+                                if terminal { "$" } else { "" }
+                            );
+                            if let Ok(pattern) = regex::Regex::new(&expression) {
+                                directives.push(Rule {
+                                    pattern,
+                                    specificity: source.chars().filter(|character| *character != '*').count(),
+                                    allow: field.eq_ignore_ascii_case("allow"),
+                                });
+                            }
                         }
                     }
                 }
+                if !agents.is_empty() {
+                    groups.push((agents, directives));
+                }
             }
-        }
-        rules
+        let user_agent = USER_AGENT.to_ascii_lowercase();
+        let specificity = groups.iter().flat_map(|(agents, _)| agents)
+            .filter_map(|agent| if agent == "*" { Some(0) } else if user_agent.starts_with(agent) { Some(agent.len()) } else { None })
+            .max();
+        let directives = specificity.map(|wanted| groups.into_iter()
+            .filter(|(agents, _)| agents.iter().any(|agent| {
+                (agent == "*" && wanted == 0) || (agent != "*" && agent.len() == wanted && user_agent.starts_with(agent))
+            }))
+            .flat_map(|(_, rules)| rules)
+            .collect()).unwrap_or_default();
+        Rules { directives }
     }
 
     static CACHE: Mutex<Option<HashMap<String, Rules>>> = Mutex::new(None);

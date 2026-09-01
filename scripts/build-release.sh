@@ -4,8 +4,8 @@ set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 OUT="$ROOT/.wisent-output/release"
-VERSION=$(sed -n 's/.*print("spis \([0-9]*\.[0-9]*\.[0-9]*\)").*/\1/p' "$ROOT/bin/spis")
-[ -n "$VERSION" ] || { echo "cannot determine version from bin/spis" >&2; exit 1; }
+VERSION=$(sed -n 's/^version[[:space:]]*=[[:space:]]*"\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)"[[:space:]]*$/\1/p' "$ROOT/Cargo.toml")
+[ -n "$VERSION" ] || { echo "cannot determine version from Cargo.toml" >&2; exit 1; }
 STAGE="$OUT/spis-$VERSION"
 
 cargo build --release --manifest-path "$ROOT/Cargo.toml"

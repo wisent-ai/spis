@@ -20,7 +20,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::time::Duration;
 
 const REPORT: &str = "upstream-drift.json";
-const USER_AGENT: &str = "WisentProductGuidelines/1.0 (+https://wisent.ai)";
+const USER_AGENT: &str = crate::USER_AGENT;
 const SCHEMA: &str = "wisent.upstream-drift-report.v1";
 const TIMEOUT_SECS: u64 = 20;
 

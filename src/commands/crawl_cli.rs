@@ -60,22 +60,9 @@ fn safe_component(value: &str, flag: &str) -> Result<()> {
     Ok(())
 }
 
-fn revision() -> Result<String> {
-    let output = Command::new("git")
-        .args(["rev-parse", "HEAD"])
-        .output()
-        .context("read Spis source revision")?;
-    let revision = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if !output.status.success()
-        || revision.len() != 40
-        || !revision.bytes().all(|byte| byte.is_ascii_hexdigit())
-    {
-        bail!("Spis checkout has no exact Git revision");
-    }
-    Ok(revision)
-}
+fn revision() -> Result<String> { super::crawl::build_revision() }
 
-fn binary_for(slug: &str) -> String {
+pub(crate) fn binary_for(slug: &str) -> String {
     let tail = slug.split_once('-').map(|(_, tail)| tail).unwrap_or(slug);
     match tail {
         "github-cli-gh" => "gh",
@@ -308,11 +295,15 @@ fn invocation_json(invocation: &Invocation, kind: &str) -> Value {
 
 fn crawl_one(
     record: &Record,
+    manifest: &super::crawl::RuntimeManifest,
     output: &Path,
     journeys: &[Journey],
     max_commands: usize,
     max_depth: usize,
 ) -> Result<Value> {
+    if record.binary != manifest.runtime_product.identifier {
+        bail!("CLI binary differs from immutable runtime manifest");
+    }
     let binary = executable(&record.binary).ok_or_else(|| {
         anyhow!(
             "{} ({}) is not installed on this host",
@@ -493,23 +484,24 @@ fn crawl_one(
     let _ = tmux(&["kill-session", "-t", &session], "close CLI PTY");
     let variant_events: Vec<Value> = reports.iter().enumerate().filter_map(|(position, invocation)| {
         let kind = invocation.get("kind").and_then(Value::as_str)?;
-        let variant = if invocation.get("timed_out").and_then(Value::as_bool) == Some(true) {
-            "cancellation"
+        let event_kind = if invocation.get("timed_out").and_then(Value::as_bool) == Some(true) {
+            "crawler_timeout"
         } else if kind == "refusal" && invocation.get("exit_status").and_then(Value::as_i64).is_some_and(|status| status != 0) {
-            "failure"
+            "parser_refusal"
         } else if kind == "recovery" && invocation.get("exit_status").and_then(Value::as_i64) == Some(0) {
-            "recovery"
+            "recovery_observation"
         } else {
             return None;
         };
         Some(json!({
             "event_id": format!("invocation-{}", position + 1),
-            "variant": variant,
+            "event_kind": event_kind,
             "argv": invocation.get("argv"),
             "exit_status": invocation.get("exit_status"),
             "timed_out": invocation.get("timed_out"),
             "state": invocation.get("state"),
             "output_sha256": invocation.get("output_sha256"),
+            "linked_interaction_id": Value::Null,
         }))
     }).collect();
     let report = json!({
@@ -517,6 +509,10 @@ fn crawl_one(
         "slug": record.slug,
         "name": record.name,
         "binary": binary,
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "runtime_manifest": manifest,
+        "runtime_execution_identity": manifest.execution_identity,
         "terminal": {"columns": 120, "rows": 40, "term": "xterm-256color"},
         "invocations": reports,
         "commands_crawled": seen.len(),
@@ -545,7 +541,7 @@ fn crawl_one(
 
 fn publish(root: &Path, uri: &str) -> Result<()> {
     let archive = root.with_extension("tar.gz");
-    let status = Command::new("stado")
+    let status = super::crawl::stado_command()
         .args(["storage", "archive"])
         .arg(root)
         .arg(&archive)
@@ -553,7 +549,7 @@ fn publish(root: &Path, uri: &str) -> Result<()> {
     if !status.success() {
         bail!("stado storage archive refused CLI artifacts");
     }
-    let status = Command::new("stado")
+    let status = super::crawl::stado_command()
         .args(["storage", "put", "--if-absent", uri])
         .arg(&archive)
         .status()?;
@@ -564,7 +560,7 @@ fn publish(root: &Path, uri: &str) -> Result<()> {
 }
 
 fn publish_file(path: &Path, uri: &str) -> Result<()> {
-    let output = Command::new("stado")
+    let output = super::crawl::stado_command()
         .args([
             "storage",
             "put",
@@ -586,18 +582,17 @@ fn publish_file(path: &Path, uri: &str) -> Result<()> {
 
 struct Submission<'a> {
     host: &'a str,
-    record: Option<&'a str>,
+    record: &'a str,
     journeys: Option<&'a Path>,
     secret_env: &'a [String],
     max_commands: usize,
     max_depth: usize,
+    manifest: &'a super::crawl::RuntimeManifest,
 }
 
 fn submit(request: Submission<'_>) -> Result<()> {
     safe_component(request.host, "--host")?;
-    if let Some(record) = request.record {
-        safe_component(record, "--record")?;
-    }
+    safe_component(request.record, "--record")?;
     for binding in request.secret_env {
         let (name, item) = binding
             .split_once('=')
@@ -612,34 +607,41 @@ fn submit(request: Submission<'_>) -> Result<()> {
             bail!("--secret-env item is invalid");
         }
     }
-    let revision = revision()?;
-    let stamp = crate::now_iso_utc().replace(':', "-");
-    let artifact = format!("stado://spis-crawls/{CATALOG}/{stamp}.tar.gz");
-    let mut worker = format!(
-        "cargo run --release -- crawl-cli --worker --max-commands {} --max-depth {} --artifact-uri {}",
-        request.max_commands, request.max_depth, artifact
-    );
-    if let Some(record) = request.record {
-        worker.push_str(&format!(" --record {record}"));
+    if revision()? != request.manifest.source_revision {
+        bail!("CLI coordinator revision does not match immutable runtime manifest");
     }
+    let artifact = request.manifest.artifact_uri.clone();
+    let output_uri = request.manifest.output_uri.clone();
+    let mut worker = format!(
+        "cargo run --release -- crawl-cli --worker --record {} --max-commands {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
+        request.record,
+        request.max_commands,
+        request.max_depth,
+        artifact,
+        request.manifest.encoded()?,
+    );
     if let Some(journeys) = request.journeys {
-        let uri = format!("stado://spis-crawls/{CATALOG}/journeys/{stamp}.json");
+        let uri = format!(
+            "stado://spis-crawls/{}/{}/{}/journeys.json",
+            request.manifest.run_id, CATALOG, request.manifest.record
+        );
         publish_file(journeys, &uri)?;
-        let remote = format!("$HOME/.stado/work/{stamp}-cli-journeys.json");
+        let remote = format!("$HOME/.stado/work/{}-cli-journeys.json", request.manifest.record_key);
         worker = format!(
             "$HOME/.stado/bin/stado storage get {uri} {remote} && {worker} --journeys {remote}"
         );
     }
-    let output_uri = format!("stado://spis-crawls/{CATALOG}/{stamp}/job-output");
     let mut arguments = vec![
         "submit".to_string(),
         worker,
+        "--run-id".to_string(),
+        request.manifest.stado_run_id.clone(),
         "--pinned-host".to_string(),
         request.host.to_string(),
         "--repo".to_string(),
         REPOSITORY.to_string(),
         "--repo-ref".to_string(),
-        revision,
+        request.manifest.source_revision.clone(),
         "--repo-workdir".to_string(),
         "spis".to_string(),
         "--repo-extras".to_string(),
@@ -651,12 +653,9 @@ fn submit(request: Submission<'_>) -> Result<()> {
         arguments.push("--secret-env".to_string());
         arguments.push(binding.clone());
     }
-    let output = Command::new("stado").args(arguments).output()?;
+    let output = super::crawl::stado_command().args(arguments).output()?;
     if !output.status.success() {
-        bail!(
-            "Stado refused CLI crawl: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
+        bail!("Stado refused CLI crawl: {}", String::from_utf8_lossy(&output.stderr).trim());
     }
     super::crawl::print_submission(
         CATALOG,
@@ -675,6 +674,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut secret_env = Vec::new();
     let mut worker = false;
     let mut artifact_uri = None;
+    let mut runtime_manifest_base64 = None;
     let mut max_commands = 250usize;
     let mut max_depth = 4usize;
     let mut i = 0;
@@ -713,9 +713,14 @@ pub fn run(rest: &[String]) -> Result<()> {
                 i += 1;
                 artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
             }
+            "--runtime-manifest-base64" => {
+                i += 1;
+                runtime_manifest_base64 =
+                    Some(rest.get(i).context("--runtime-manifest-base64 needs a value")?.clone());
+            }
             "--worker" => worker = true,
             "--help" | "-h" => {
-                println!("usage: spis crawl-cli --host TARGET [--record SLUG] [--journeys FILE] [--secret-env NAME=SKARBIEC_ITEM] [--max-commands N] [--max-depth N]\nworker mode: spis crawl-cli --worker [--artifact-uri stado://...]");
+                println!("usage: spis crawl-cli --host TARGET --record SLUG --runtime-manifest-base64 DATA [--journeys FILE] [--secret-env NAME=SKARBIEC_ITEM] [--max-commands N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value => bail!("unknown argument: {value}"),
@@ -725,14 +730,25 @@ pub fn run(rest: &[String]) -> Result<()> {
     if max_commands == 0 || max_commands > 5_000 || max_depth > 16 {
         bail!("--max-commands must be 1..5000 and --max-depth must be 0..16");
     }
+    let record = record.context("--record is required for one exact per-record job")?;
+    let encoded_manifest = runtime_manifest_base64
+        .as_deref()
+        .context("--runtime-manifest-base64 is required")?;
+    let manifest = super::crawl::decode_runtime_manifest(
+        encoded_manifest,
+        CATALOG,
+        "cli",
+        Some(&record),
+    )?;
     if !worker {
         return submit(Submission {
             host: &host.context("--host is required; CLI crawls execute as pinned Stado jobs")?,
-            record: record.as_deref(),
+            record: &record,
             journeys: journeys.as_deref(),
             secret_env: &secret_env,
             max_commands,
             max_depth,
+            manifest: &manifest,
         });
     }
     if host.is_some() || !secret_env.is_empty() {
@@ -742,29 +758,40 @@ pub fn run(rest: &[String]) -> Result<()> {
         Some(path) => serde_json::from_slice(&std::fs::read(path)?)?,
         None => JourneyDocument::default(),
     };
-    let stamp = crate::now_iso_utc().replace(':', "-");
-    let root = Path::new("target").join("spis-cli-crawls").join(&stamp);
-    std::fs::create_dir_all(&root)?;
-    let mut reports = Vec::new();
-    for entry in records(record.as_deref())? {
-        let output = root.join(&entry.slug);
-        std::fs::create_dir_all(&output)?;
-        let declared = journeys_document
-            .records
-            .get(&entry.slug)
-            .map(Vec::as_slice)
-            .unwrap_or(&[]);
-        reports.push(match crawl_one(&entry, &output, declared, max_commands, max_depth) {
-            Ok(report) => report,
-            Err(error) => json!({"slug": entry.slug, "name": entry.name, "status": "failed", "error": error.to_string()}),
-        });
+    let artifact_uri = artifact_uri.context("--artifact-uri is required in worker mode")?;
+    if artifact_uri != manifest.artifact_uri {
+        bail!("worker artifact URI does not match immutable runtime manifest");
     }
+    let root = Path::new("target")
+        .join("spis-cli-crawls")
+        .join(&manifest.run_id)
+        .join(&manifest.record_key);
+    std::fs::create_dir_all(&root)?;
+    let entry = records(Some(&record))?.into_iter().next().context("runtime manifest record is absent")?;
+    let output = root.join(&entry.slug);
+    std::fs::create_dir_all(&output)?;
+    let declared = journeys_document.records.get(&entry.slug).map(Vec::as_slice).unwrap_or(&[]);
+    let reports = vec![match crawl_one(&entry, &manifest, &output, declared, max_commands, max_depth) {
+        Ok(report) => report,
+        Err(error) => json!({
+            "slug": entry.slug,
+            "name": entry.name,
+            "status": "failed",
+            "source_revision": manifest.source_revision,
+            "source_input_sha256": manifest.source_input_sha256,
+            "runtime_manifest": manifest,
+            "error": error.to_string()
+        }),
+    }];
     let failures = reports
         .iter()
         .filter(|report| report.get("status").and_then(Value::as_str) == Some("failed"))
         .count();
     let summary = json!({
         "schema": "wisent.cli-crawl-batch.v1",
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "runtime_manifest": manifest,
         "records": reports,
         "failed": failures,
         "completed_at": crate::now_iso_utc(),
@@ -773,12 +800,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         root.join("batch.json"),
         serde_json::to_string_pretty(&summary)? + "\n",
     )?;
-    if let Some(uri) = artifact_uri {
-        if !uri.starts_with("stado://spis-crawls/cli-examples/") {
-            bail!("--artifact-uri must be under stado://spis-crawls/cli-examples/");
-        }
-        publish(&root, &uri)?;
-    }
+    publish(&root, &artifact_uri)?;
     println!("{}", serde_json::to_string_pretty(&summary)?);
     if failures > 0 {
         bail!("{failures} CLI records could not be crawled");

@@ -157,6 +157,7 @@ fn make_plan(
     batch: &str,
 ) -> Result<Value> {
     let bindings = account_bindings(accounts_path)?;
+    let source_revision = revision()?;
     let mut tasks = Vec::new();
     for path in record_paths(catalog, selected)? {
         let slug = path
@@ -179,21 +180,29 @@ fn make_plan(
             .and_then(Value::as_str)
             .unwrap_or_default();
         let binding = bindings.get(&slug).and_then(Value::as_object);
-        let account_id = binding
-            .and_then(|value| value.get("account_id"))
-            .and_then(Value::as_str)
-            .map(str::to_string);
-        let constraints = binding
-            .and_then(|value| value.get("constraints"))
-            .cloned()
-            .unwrap_or_else(|| json!({}));
+        let account_id = binding.and_then(|value| value.get("account_id")).and_then(Value::as_str).map(str::to_string);
+        let credential_refs = binding.and_then(|value| value.get("credential_refs")).cloned().unwrap_or_else(|| json!([]));
+        let action = binding.and_then(|value| value.get("action")).and_then(Value::as_str)
+            .unwrap_or("generic_browser_task");
+        let constraints = binding.and_then(|value| value.get("constraints")).cloned().unwrap_or_else(|| json!({}));
+        let objective = objective(catalog, name, goal);
+        let origin = url::Url::parse(url)?.origin().ascii_serialization();
+        let idempotency_key = crate::sha256_hex(
+            format!("{source_revision}\n{catalog}\n{slug}\n{action}\n{objective}").as_bytes()
+        );
         tasks.push(json!({
             "slug": slug,
             "name": name,
             "url": url,
+            "origin": origin,
             "account_id": account_id,
-            "objective": objective(catalog, name, goal),
+            "credential_refs": credential_refs,
+            "action": action,
+            "objective": objective,
+            "justification": format!("Spis evidence capture for {catalog}/{slug}"),
             "flow_name": format!("spis:{catalog}:{slug}"),
+            "idempotency_key": idempotency_key,
+            "source_revision": source_revision,
             "constraints": constraints,
         }));
     }
@@ -205,20 +214,7 @@ fn make_plan(
     }))
 }
 
-fn revision() -> Result<String> {
-    let output = Command::new("git")
-        .args(["rev-parse", "HEAD"])
-        .output()
-        .context("read Spis source revision")?;
-    let revision = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if !output.status.success()
-        || revision.len() != 40
-        || !revision.bytes().all(|byte| byte.is_ascii_hexdigit())
-    {
-        bail!("Spis checkout has no exact Git revision");
-    }
-    Ok(revision)
-}
+fn revision() -> Result<String> { super::crawl::build_revision() }
 
 
 fn submit(
@@ -237,7 +233,7 @@ fn submit(
         "cargo run --release -- crawl-web {catalog} --worker --plan-base64 '{encoded_plan}' --admission-url {admission_url} --wait-seconds {wait_seconds}"
     );
     let output_uri = format!("stado://spis-crawls/{catalog}/{batch}/enqueue-output");
-    let output = Command::new("stado")
+    let output = super::crawl::stado_command()
         .args([
             "submit",
             &command,
@@ -274,6 +270,29 @@ fn submit(
     )
 }
 
+fn persisted_weles_id(uri: &str, path: &Path, plan_hash: &str, slug: &str) -> Option<String> {
+    let output = super::crawl::stado_command().args(["storage", "get", uri]).arg(path).output().ok()?;
+    if !output.status.success() { return None; }
+    let receipt: Value = serde_json::from_slice(&std::fs::read(path).ok()?).ok()?;
+    (receipt.get("plan_sha256").and_then(Value::as_str) == Some(plan_hash)
+        && receipt.get("slug").and_then(Value::as_str) == Some(slug))
+        .then(|| receipt.get("job_id").and_then(Value::as_str).map(str::to_string))
+        .flatten()
+}
+
+fn persist_weles_id(uri: &str, path: &Path, receipt: &Value) -> Result<()> {
+    if let Some(parent) = path.parent() { std::fs::create_dir_all(parent)?; }
+    std::fs::write(path, serde_json::to_string_pretty(receipt)? + "\n")?;
+    let output = super::crawl::stado_command()
+        .args(["storage", "put", "--if-absent", "--content-type", "application/json", uri])
+        .arg(path)
+        .output()?;
+    if !output.status.success() {
+        bail!("persist Weles correlation receipt {uri}: {}", String::from_utf8_lossy(&output.stderr).trim());
+    }
+    Ok(())
+}
+
 fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value> {
     if plan.get("schema").and_then(Value::as_str) != Some(PLAN_SCHEMA) {
         bail!("worker plan must declare {PLAN_SCHEMA}");
@@ -287,65 +306,75 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
     let agent = ureq::AgentBuilder::new()
         .timeout(Duration::from_secs(60))
         .build();
+    let plan_bytes = serde_json::to_vec(plan)?;
+    let plan_hash = crate::sha256_hex(&plan_bytes);
+    let batch = plan.get("batch").and_then(Value::as_str).context("web plan has no batch")?;
+    let catalog = plan.get("catalog").and_then(Value::as_str).context("web plan has no catalog")?;
+    let receipt_root = Path::new("target").join("spis-weles-receipts").join(batch);
     let mut ids = Vec::new();
     let mut task_ids: Vec<(String, String)> = Vec::new();
-    for chunk in tasks.chunks(100) {
-        let jobs: Vec<Value> = chunk
-            .iter()
-            .map(|task| {
-                json!({
-                    "account_id": task.get("account_id").cloned().unwrap_or(Value::Null),
-                    "action": "generic_browser_task",
-                    "platform": "generic",
-                    "params": {
-                        "url": task.get("url").cloned().unwrap_or(Value::Null),
-                        "objective": task.get("objective").cloned().unwrap_or(Value::Null),
-                        "flow_name": task.get("flow_name").cloned().unwrap_or(Value::Null),
-                        "constraints": task.get("constraints").cloned().unwrap_or_else(|| json!({})),
-                        "headless": true,
-                        "browser": "chromium",
-                    },
-                })
-            })
-            .collect();
-        let response = match agent
-            .post(&format!("{admission_url}/v1/echo/jobs/enqueue-batch"))
-            .set("Authorization", &format!("Bearer {token}"))
-            .send_json(json!({"jobs": jobs}))
-        {
-            Ok(response) => response,
-            Err(ureq::Error::Status(status, response)) => {
-                let detail = response.into_string().unwrap_or_default();
-                bail!("Weles admission refused web crawl with HTTP {status}: {detail}");
-            }
-            Err(error) => bail!("Weles admission refused web crawl: {error}"),
+    for task in tasks {
+        let slug = task.get("slug").and_then(Value::as_str).context("web crawl task has no slug")?;
+        let receipt_uri = format!("stado://spis-crawls/{catalog}/{batch}/weles-receipts/{slug}.json");
+        let receipt_path = receipt_root.join(format!("{slug}.json"));
+        let id = if let Some(id) = persisted_weles_id(&receipt_uri, &receipt_path, &plan_hash, slug) {
+            id
+        } else {
+            let job = json!({
+                "account_id": task.get("account_id").cloned().unwrap_or(Value::Null),
+                "action": task.get("action").cloned().unwrap_or(Value::Null),
+                "origin": task.get("origin").cloned().unwrap_or(Value::Null),
+                "justification": task.get("justification").cloned().unwrap_or(Value::Null),
+                "credential_refs": task.get("credential_refs").cloned().unwrap_or_else(|| json!([])),
+                "idempotency_key": task.get("idempotency_key").cloned().unwrap_or(Value::Null),
+                "platform": "generic",
+                "params": {
+                    "url": task.get("url").cloned().unwrap_or(Value::Null),
+                    "objective": task.get("objective").cloned().unwrap_or(Value::Null),
+                    "flow_name": task.get("flow_name").cloned().unwrap_or(Value::Null),
+                    "client_correlation_id": task.get("idempotency_key").cloned().unwrap_or(Value::Null),
+                    "constraints": task.get("constraints").cloned().unwrap_or_else(|| json!({})),
+                    "headless": true,
+                    "browser": "chromium",
+                },
+            });
+            let response = match agent
+                .post(&format!("{admission_url}/v1/echo/jobs/enqueue-batch"))
+                .set("Authorization", &format!("Bearer {token}"))
+                .send_json(json!({"jobs": [job]}))
+            {
+                Ok(response) => response,
+                Err(ureq::Error::Status(status, response)) => {
+                    let detail = response.into_string().unwrap_or_default();
+                    bail!("Weles admission refused {slug} with HTTP {status}: {detail}");
+                }
+                Err(error) => bail!("Weles admission refused {slug}: {error}"),
+            };
+            let response: Value = response.into_json()?;
+            let accepted = response.get("job_ids").and_then(Value::as_array)
+                .filter(|ids| ids.len() == 1)
+                .context("single Weles enqueue returned other than one job id")?;
+            let id = accepted[0].as_str().context("Weles admission returned a non-string job id")?.to_string();
+            persist_weles_id(&receipt_uri, &receipt_path, &json!({
+                "schema": "wisent.weles-correlation-receipt.v1",
+                "batch": batch,
+                "slug": slug,
+                "flow_name": task.get("flow_name"),
+                "plan_sha256": plan_hash,
+                "idempotency_key": task.get("idempotency_key"),
+                "origin": task.get("origin"),
+                "action": task.get("action"),
+                "credential_refs": task.get("credential_refs"),
+                "job_id": id,
+                "accepted_at": crate::now_iso_utc(),
+            }))?;
+            id
         };
-        let response: Value = response.into_json()?;
-        let accepted = response
-            .get("job_ids")
-            .and_then(Value::as_array)
-            .ok_or_else(|| anyhow!("Weles admission returned no job_ids"))?;
-        if accepted.len() != chunk.len() {
-            bail!(
-                "Weles admission accepted {} ids for {} ordered tasks",
-                accepted.len(),
-                chunk.len()
-            );
+        if task_ids.iter().any(|(_, existing)| existing == &id) {
+            bail!("Weles admission returned duplicate job id {id}");
         }
-        for (task, id) in chunk.iter().zip(accepted.iter()) {
-            let slug = task
-                .get("slug")
-                .and_then(Value::as_str)
-                .context("web crawl task has no slug")?;
-            let id = id
-                .as_str()
-                .context("Weles admission returned a non-string job id")?;
-            if task_ids.iter().any(|(_, existing)| existing == id) {
-                bail!("Weles admission returned duplicate job id {id}");
-            }
-            task_ids.push((slug.to_string(), id.to_string()));
-        }
-        ids.extend(accepted.iter().cloned());
+        ids.push(json!(id));
+        task_ids.push((slug.to_string(), id));
     }
     let deadline = Instant::now() + Duration::from_secs(wait_seconds);
     let jobs = loop {
@@ -380,13 +409,13 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
             break jobs;
         }
         if Instant::now() >= deadline {
-            bail!(
-                "Weles crawl timed out after {wait_seconds}s with {active} of {} jobs active",
-                jobs.len()
-            );
+            break jobs;
         }
         std::thread::sleep(Duration::from_secs(5));
     };
+    let active = jobs.iter().filter(|job| {
+        matches!(job.get("status").and_then(Value::as_str), Some("queued" | "running"))
+    }).count();
     let failed = jobs
         .iter()
         .filter(|job| {
@@ -435,6 +464,10 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
                 "name": task.get("name"),
                 "job_id": id,
                 "job": job,
+                "origin": task.get("origin"),
+                "action": task.get("action"),
+                "idempotency_key": task.get("idempotency_key"),
+                "credential_refs": task.get("credential_refs"),
             }))
         })
         .collect::<Result<_>>()?;
@@ -448,6 +481,7 @@ fn enqueue(plan: &Value, admission_url: &str, wait_seconds: u64) -> Result<Value
         "records": records,
         "failed": failed,
         "pending_review": pending_review,
+        "active": active,
         "completed_at": crate::now_iso_utc(),
         "evidence_observations": {
             "canonical_interactions": [],
@@ -539,9 +573,10 @@ pub fn run(rest: &[String]) -> Result<()> {
         };
         let report = enqueue(&plan, &admission_url, wait_seconds)?;
         let failures = report.get("failed").and_then(Value::as_u64).unwrap_or(0);
+        let active = report.get("active").and_then(Value::as_u64).unwrap_or(0);
         println!("{}", serde_json::to_string(&report)?);
-        if failures > 0 {
-            bail!("{failures} Weles crawl jobs failed");
+        if failures > 0 || active > 0 {
+            bail!("{failures} Weles crawl jobs failed and {active} remain active; correlation receipts were persisted for idempotent resume");
         }
         return Ok(());
     }

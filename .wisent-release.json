@@ -4,8 +4,8 @@
   "releases": true,
   "version_source": {
     "kind": "regex",
-    "path": "bin/spis",
-    "pattern": "(?m)^\\s*print\\(\"spis (?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)\"\\)\\s*$"
+    "path": "Cargo.toml",
+    "pattern": "(?m)^version\\s*=\\s*\"(?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)\"\\s*$"
   },
   "platforms": {
     "darwin-arm64": {

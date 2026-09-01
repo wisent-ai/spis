@@ -17,7 +17,7 @@ use serde_json::{json, Map, Value};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
-const USER_AGENT: &str = "WisentProductGuidelines/1.0 (+https://wisent.ai)";
+const USER_AGENT: &str = crate::USER_AGENT;
 const MAX_PAGE_BYTES: usize = 8 * 1024 * 1024;
 const MAX_IMAGE_BYTES: usize = 16 * 1024 * 1024;
 const MAX_CANDIDATES: usize = 14;

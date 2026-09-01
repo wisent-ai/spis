@@ -33,7 +33,7 @@ cargo build --release
 ./target/release/spis generate-example-catalogs --check
 ```
 
-`scripts/build-release.sh` builds and ships that same binary, so the release archive and the `stado-release` install are the Rust command surface. The checked-in `bin/spis` is not: it is the retired Python dispatcher, and every script it dispatches to was deleted in the Rust rewrite. It stays only because `.wisent-release.json` reads the release version out of it, so do not use it as the authority for the current command surface. See the [runbook](https://spis.wisent.com/docs/runbook#rustpython-cutover-mismatch) for the remaining cutover mismatches.
+`scripts/build-release.sh` builds and ships that same binary, so the release archive and the `stado-release` install are the Rust command surface. `Cargo.toml` is the single package and release version source.
 
 ## Real product crawlers
 
