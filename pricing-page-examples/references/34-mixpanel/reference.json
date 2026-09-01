@@ -19,12 +19,20 @@
   },
   "motion_provenance": [],
   "evidence_gaps": [
-    "Weles capture not imported",
-    "motion evidence absent",
-    "state visuals below the three-state floor",
-    "interaction variants absent",
-    "journey variants absent",
+    "fewer than 3 states for document-navigation profile",
+    "journey exposes fewer than 5 observed steps for document-navigation profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for document-navigation profile",
     "motion analysis absent",
-    "accessibility variants absent"
-  ]
+    "fewer than 3 accessibility observations for document-navigation profile",
+    "accessibility never measured against the product",
+    "no measured motion evidence"
+  ],
+  "unverified_source_notes": [],
+  "measured_at": "2026-09-01"
 }

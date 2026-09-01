@@ -20,269 +20,437 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "telemetry route",
+      "name": "Observed state 1",
       "local_path": "media/state-01-telemetry-route.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 3s (mean abs diff 1.125/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 37177,
       "sha256": "bf5addeaffc23a36bc329742f365d483a752a8fe53cf48e2e5d16e741b33cc72",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 3.0,
-        "mean_abs_diff": 1.125,
-        "sampled_frames": 120
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 37177
     },
     {
-      "name": "install instructions",
+      "name": "Observed state 2",
       "local_path": "media/state-02-install-instructions.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 15.5s (mean abs diff 1.4883/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 79856,
       "sha256": "6f772667c32077eb30b1486223092c5ce0f506ee0198ab4f86901ec3cf9fd496",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 15.5,
-        "mean_abs_diff": 1.4883,
-        "sampled_frames": 120
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 79856
     },
     {
-      "name": "agent installed",
+      "name": "Observed state 3",
       "local_path": "media/state-03-agent-installed.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 24s (mean abs diff 1.4492/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 79895,
       "sha256": "41bec50e1588537c743899d70aaf87cf401895e75e007d394e6d41569f0aa4d6",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 24.0,
-        "mean_abs_diff": 1.4492,
-        "sampled_frames": 120
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 79895
     },
     {
-      "name": "source connected",
+      "name": "Observed state 4",
       "local_path": "media/state-04-source-connected.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 34s (mean abs diff 1.3906/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 148355,
       "sha256": "d5d2f325a721f0606afa0f80dc19dd713d402711870e2a49eea61062f38453b8",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 34.0,
-        "mean_abs_diff": 1.3906,
-        "sampled_frames": 120
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 148355
     },
     {
-      "name": "data detected",
+      "name": "Observed state 5",
       "local_path": "media/state-05-data-detected.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 1.5s (mean abs diff 10.3867/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 203253,
       "sha256": "e41bfa37dbe507d80a149a969731357efbe47014cb699033eab7dc7f8bad0034",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 1.5,
-        "mean_abs_diff": 10.3867,
-        "sampled_frames": 120
-      }
-    },
-    {
-      "name": "first telemetry",
-      "local_path": "media/state-06-first-telemetry.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 53.5s (mean abs diff 1.4844/255)",
       "width": 640,
       "height": 360,
-      "bytes": 71548,
+      "bytes": 203253
+    },
+    {
+      "name": "Observed state 6",
+      "local_path": "media/state-06-first-telemetry.png",
       "sha256": "9090e6e0b8688495be3d5913cf688e3bad5ad1e01b4923c018910f3f236283ba",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 53.5,
-        "mean_abs_diff": 1.4844,
-        "sampled_frames": 120
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 71548
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "Authenticate and choose a getting-started telemetry path",
-      "response": "Datadog shows platform-specific setup",
-      "feedback": "The retained telemetry route state makes the available next action visible.",
-      "cancellation": "Closing or leaving before submission produces no completion claim.",
-      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
-      "recovery": "Restore the prerequisite and repeat the same entry action.",
-      "evidence": "media/state-01-telemetry-route.png @ 3.00s; https://docs.datadoghq.com/getting_started/"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Select the operating system or runtime",
-      "response": "Datadog generates installation instructions",
-      "feedback": "The recording advances to install instructions and retains the selected context.",
-      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
-      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
-      "recovery": "Correct, resend, or reselect and submit again.",
-      "evidence": "media/state-01-telemetry-route.png @ 3.00s; media/state-02-install-instructions.png @ 13.21s; https://docs.datadoghq.com/getting_started/"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Run the official agent or tracer installation",
-      "response": "Datadog waits for the configured source",
-      "feedback": "The navigation result is visible as agent installed.",
-      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
-      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
-      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
-      "evidence": "media/state-02-install-instructions.png @ 13.21s; media/state-03-agent-installed.png @ 23.43s; https://docs.datadoghq.com/getting_started/"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Supply the site and API key as directed",
-      "response": "The source authenticates and starts sending telemetry",
-      "feedback": "The official recording shows the confirmed source connected state.",
-      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
-      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
-      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
-      "evidence": "media/state-03-agent-installed.png @ 23.43s; media/state-04-source-connected.png @ 33.64s; https://docs.datadoghq.com/getting_started/"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
-      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
-      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
-      "cancellation": "This interaction is the observed cancellation boundary.",
-      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
-      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
-      "evidence": "media/state-02-install-instructions.png @ 13.21s; media/state-03-agent-installed.png @ 23.43s; media/state-04-source-connected.png @ 33.64s; https://docs.datadoghq.com/getting_started/"
-    },
-    {
-      "name": "progress feedback",
-      "trigger": "Wait for the source check",
-      "response": "Datadog changes the setup state when data arrives",
-      "feedback": "Progress is observable as the distinct data detected state.",
-      "cancellation": "Leaving during feedback does not count as completion.",
-      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
-      "recovery": "Wait for durable feedback or use the product's retry route.",
-      "evidence": "media/state-04-source-connected.png @ 33.64s; media/state-05-data-detected.png @ 43.85s; https://docs.datadoghq.com/getting_started/"
-    },
-    {
-      "name": "failure",
-      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
-      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
-      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
-      "cancellation": "The user can leave without a false success state.",
-      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
-      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
-      "evidence": "media/state-03-agent-installed.png @ 23.43s; media/state-04-source-connected.png @ 33.64s; media/state-05-data-detected.png @ 43.85s; https://docs.datadoghq.com/getting_started/"
-    },
-    {
-      "name": "recovery and completion",
-      "trigger": "Open the host, service, or trace view",
-      "response": "Live telemetry renders, proving first observability success",
-      "feedback": "The retained first telemetry state is the completion evidence.",
-      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
-      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
-      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
-      "evidence": "media/state-05-data-detected.png @ 43.85s; media/state-06-first-telemetry.png @ 54.06s; https://docs.datadoghq.com/getting_started/"
-    }
-  ],
-  "journey": {
-    "actor": "new Datadog operator",
-    "goal": "connect telemetry and see the first host or trace",
-    "prerequisites": [
-      "Datadog account",
-      "host or application with install access"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Authenticate and choose a getting-started telemetry path",
-        "system_response": "Datadog shows platform-specific setup",
-        "state": "telemetry route",
-        "evidence": "media/state-01-telemetry-route.png; media/official-recording.mp4#t=3.003; https://docs.datadoghq.com/getting_started/"
-      },
-      {
-        "index": 2,
-        "user_action": "Select the operating system or runtime",
-        "system_response": "Datadog generates installation instructions",
-        "state": "install instructions",
-        "evidence": "media/state-02-install-instructions.png; media/official-recording.mp4#t=13.215; https://docs.datadoghq.com/getting_started/"
-      },
-      {
-        "index": 3,
-        "user_action": "Run the official agent or tracer installation",
-        "system_response": "Datadog waits for the configured source",
-        "state": "agent installed",
-        "evidence": "media/state-03-agent-installed.png; media/official-recording.mp4#t=23.426; https://docs.datadoghq.com/getting_started/"
-      },
-      {
-        "index": 4,
-        "user_action": "Supply the site and API key as directed",
-        "system_response": "The source authenticates and starts sending telemetry",
-        "state": "source connected",
-        "evidence": "media/state-04-source-connected.png; media/official-recording.mp4#t=33.638; https://docs.datadoghq.com/getting_started/"
-      },
-      {
-        "index": 5,
-        "user_action": "Wait for the source check",
-        "system_response": "Datadog changes the setup state when data arrives",
-        "state": "data detected",
-        "evidence": "media/state-05-data-detected.png; media/official-recording.mp4#t=43.849; https://docs.datadoghq.com/getting_started/"
-      },
-      {
-        "index": 6,
-        "user_action": "Open the host, service, or trace view",
-        "system_response": "Live telemetry renders, proving first observability success",
-        "state": "first telemetry",
-        "evidence": "media/state-06-first-telemetry.png; media/official-recording.mp4#t=54.060; https://docs.datadoghq.com/getting_started/"
-      }
-    ],
-    "failure_route": [
-      "At install instructions or agent installed, invalid, expired, denied, or missing required input leaves the flow short of first telemetry; evidence: media/state-02-install-instructions.png, media/state-03-agent-installed.png, and https://docs.datadoghq.com/getting_started/.",
-      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-agent-installed.png through media/state-05-data-detected.png."
-    ],
-    "recovery_route": [
-      "Return to the retained install instructions or agent installed requirement, correct or resend the blocking input, and resubmit; evidence: https://docs.datadoghq.com/getting_started/.",
-      "Continue through the same terminal action until first telemetry is visible in media/state-06-first-telemetry.png and the motion at 54.060s."
-    ],
-    "completion_evidence": "first telemetry retained at media/state-06-first-telemetry.png and media/official-recording.mp4#t=54.060; source https://docs.datadoghq.com/getting_started/"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visual observation from media/state-01-telemetry-route.png and media/state-02-install-instructions.png: the current task is presented with persistent on-screen text rather than motion alone.",
-      "Visual observation from media/state-03-agent-installed.png and media/state-04-source-connected.png: primary choices remain spatially associated with their current setup context.",
-      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
       "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
       "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
       "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/official-recording.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-telemetry-route.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-telemetry-route.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-install-instructions.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-install-instructions.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-agent-installed.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-agent-installed.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-source-connected.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-source-connected.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-data-detected.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-data-detected.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-06-first-telemetry.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-06-first-telemetry.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "Authenticate and choose a getting-started telemetry path",
+        "response": "Datadog shows platform-specific setup",
+        "feedback": "The retained telemetry route state makes the available next action visible.",
+        "cancellation": "Closing or leaving before submission produces no completion claim.",
+        "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+        "recovery": "Restore the prerequisite and repeat the same entry action.",
+        "evidence": "media/state-01-telemetry-route.png @ 3.00s; https://docs.datadoghq.com/getting_started/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Select the operating system or runtime",
+        "response": "Datadog generates installation instructions",
+        "feedback": "The recording advances to install instructions and retains the selected context.",
+        "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+        "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+        "recovery": "Correct, resend, or reselect and submit again.",
+        "evidence": "media/state-01-telemetry-route.png @ 3.00s; media/state-02-install-instructions.png @ 13.21s; https://docs.datadoghq.com/getting_started/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Run the official agent or tracer installation",
+        "response": "Datadog waits for the configured source",
+        "feedback": "The navigation result is visible as agent installed.",
+        "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+        "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+        "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+        "evidence": "media/state-02-install-instructions.png @ 13.21s; media/state-03-agent-installed.png @ 23.43s; https://docs.datadoghq.com/getting_started/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Supply the site and API key as directed",
+        "response": "The source authenticates and starts sending telemetry",
+        "feedback": "The official recording shows the confirmed source connected state.",
+        "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+        "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+        "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+        "evidence": "media/state-03-agent-installed.png @ 23.43s; media/state-04-source-connected.png @ 33.64s; https://docs.datadoghq.com/getting_started/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+        "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+        "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+        "cancellation": "This interaction is the observed cancellation boundary.",
+        "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+        "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+        "evidence": "media/state-02-install-instructions.png @ 13.21s; media/state-03-agent-installed.png @ 23.43s; media/state-04-source-connected.png @ 33.64s; https://docs.datadoghq.com/getting_started/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "progress feedback",
+        "trigger": "Wait for the source check",
+        "response": "Datadog changes the setup state when data arrives",
+        "feedback": "Progress is observable as the distinct data detected state.",
+        "cancellation": "Leaving during feedback does not count as completion.",
+        "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+        "recovery": "Wait for durable feedback or use the product's retry route.",
+        "evidence": "media/state-04-source-connected.png @ 33.64s; media/state-05-data-detected.png @ 43.85s; https://docs.datadoghq.com/getting_started/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+        "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+        "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+        "cancellation": "The user can leave without a false success state.",
+        "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+        "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+        "evidence": "media/state-03-agent-installed.png @ 23.43s; media/state-04-source-connected.png @ 33.64s; media/state-05-data-detected.png @ 43.85s; https://docs.datadoghq.com/getting_started/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery and completion",
+        "trigger": "Open the host, service, or trace view",
+        "response": "Live telemetry renders, proving first observability success",
+        "feedback": "The retained first telemetry state is the completion evidence.",
+        "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+        "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+        "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+        "evidence": "media/state-05-data-detected.png @ 43.85s; media/state-06-first-telemetry.png @ 54.06s; https://docs.datadoghq.com/getting_started/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "new Datadog operator",
+        "goal": "connect telemetry and see the first host or trace",
+        "prerequisites": [
+          "Datadog account",
+          "host or application with install access"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Authenticate and choose a getting-started telemetry path",
+            "system_response": "Datadog shows platform-specific setup",
+            "state": "telemetry route",
+            "evidence": "media/state-01-telemetry-route.png; media/official-recording.mp4#t=3.003; https://docs.datadoghq.com/getting_started/"
+          },
+          {
+            "index": 2,
+            "user_action": "Select the operating system or runtime",
+            "system_response": "Datadog generates installation instructions",
+            "state": "install instructions",
+            "evidence": "media/state-02-install-instructions.png; media/official-recording.mp4#t=13.215; https://docs.datadoghq.com/getting_started/"
+          },
+          {
+            "index": 3,
+            "user_action": "Run the official agent or tracer installation",
+            "system_response": "Datadog waits for the configured source",
+            "state": "agent installed",
+            "evidence": "media/state-03-agent-installed.png; media/official-recording.mp4#t=23.426; https://docs.datadoghq.com/getting_started/"
+          },
+          {
+            "index": 4,
+            "user_action": "Supply the site and API key as directed",
+            "system_response": "The source authenticates and starts sending telemetry",
+            "state": "source connected",
+            "evidence": "media/state-04-source-connected.png; media/official-recording.mp4#t=33.638; https://docs.datadoghq.com/getting_started/"
+          },
+          {
+            "index": 5,
+            "user_action": "Wait for the source check",
+            "system_response": "Datadog changes the setup state when data arrives",
+            "state": "data detected",
+            "evidence": "media/state-05-data-detected.png; media/official-recording.mp4#t=43.849; https://docs.datadoghq.com/getting_started/"
+          },
+          {
+            "index": 6,
+            "user_action": "Open the host, service, or trace view",
+            "system_response": "Live telemetry renders, proving first observability success",
+            "state": "first telemetry",
+            "evidence": "media/state-06-first-telemetry.png; media/official-recording.mp4#t=54.060; https://docs.datadoghq.com/getting_started/"
+          }
+        ],
+        "failure_route": [
+          "At install instructions or agent installed, invalid, expired, denied, or missing required input leaves the flow short of first telemetry; evidence: media/state-02-install-instructions.png, media/state-03-agent-installed.png, and https://docs.datadoghq.com/getting_started/.",
+          "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-agent-installed.png through media/state-05-data-detected.png."
+        ],
+        "recovery_route": [
+          "Return to the retained install instructions or agent installed requirement, correct or resend the blocking input, and resubmit; evidence: https://docs.datadoghq.com/getting_started/.",
+          "Continue through the same terminal action until first telemetry is visible in media/state-06-first-telemetry.png and the motion at 54.060s."
+        ],
+        "completion_evidence": "first telemetry retained at media/state-06-first-telemetry.png and media/official-recording.mp4#t=54.060; source https://docs.datadoghq.com/getting_started/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-01-telemetry-route.png and media/state-02-install-instructions.png: the current task is presented with persistent on-screen text rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-03-agent-installed.png and media/state-04-source-connected.png: primary choices remain spatially associated with their current setup context."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "telemetry route"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 3s (mean abs diff 1.125/255)",
+        "source_match": {
+          "timestamp_seconds": 3.0,
+          "mean_abs_diff": 1.125,
+          "sampled_frames": 120,
+          "motion_path": "media/state-01-telemetry-route.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "install instructions"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 15.5s (mean abs diff 1.4883/255)",
+        "source_match": {
+          "timestamp_seconds": 13.0,
+          "mean_abs_diff": 1.4883,
+          "sampled_frames": 120,
+          "motion_path": "media/state-02-install-instructions.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "agent installed"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 24s (mean abs diff 1.4492/255)",
+        "source_match": {
+          "timestamp_seconds": 24.0,
+          "mean_abs_diff": 1.4492,
+          "sampled_frames": 120,
+          "motion_path": "media/state-03-agent-installed.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "source connected"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 34s (mean abs diff 1.3906/255)",
+        "source_match": {
+          "timestamp_seconds": 34.0,
+          "mean_abs_diff": 1.3906,
+          "sampled_frames": 120,
+          "motion_path": "media/state-04-source-connected.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "data detected"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 1.5s (mean abs diff 10.3867/255)",
+        "source_match": {
+          "timestamp_seconds": 1.5,
+          "mean_abs_diff": 10.3867,
+          "sampled_frames": 120,
+          "motion_path": "media/state-05-data-detected.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "first telemetry"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 53.5s (mean abs diff 1.4844/255)",
+        "source_match": {
+          "timestamp_seconds": 53.5,
+          "mean_abs_diff": 1.4844,
+          "sampled_frames": 120,
+          "motion_path": "media/state-06-first-telemetry.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

@@ -10,352 +10,352 @@
       "name": "Grafana Explore",
       "path": "references/01-grafana-explore/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 28
     },
     {
       "index": 2,
       "name": "Datadog Log Explorer",
       "path": "references/02-datadog-log-explorer/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 28
     },
     {
       "index": 3,
       "name": "New Relic Errors Inbox",
       "path": "references/03-new-relic-errors-inbox/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 4,
       "name": "Splunk Search and Reporting",
       "path": "references/04-splunk-search-and-reporting/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 5,
       "name": "Elastic Discover",
       "path": "references/05-elastic-discover/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 6,
       "name": "Honeycomb Query Builder",
       "path": "references/06-honeycomb-query-builder/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 7,
       "name": "Sentry Issue Details",
       "path": "references/07-sentry-issue-details/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 8,
       "name": "Dynatrace Problems",
       "path": "references/08-dynatrace-problems/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 9,
       "name": "Azure Monitor Workbooks",
       "path": "references/09-azure-monitor-workbooks/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 10,
       "name": "Amazon CloudWatch Dashboards",
       "path": "references/10-amazon-cloudwatch-dashboards/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 11,
       "name": "Amplitude Charts",
       "path": "references/11-amplitude-charts/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 12,
       "name": "Mixpanel Insights",
       "path": "references/12-mixpanel-insights/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 28
     },
     {
       "index": 13,
       "name": "Matomo Reports",
       "path": "references/13-matomo-reports/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 14,
       "name": "Google Analytics Explorations",
       "path": "references/14-google-analytics-explorations/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 15,
       "name": "PostHog Insights",
       "path": "references/15-posthog-insights/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 16,
       "name": "GitHub Actions workflow run details",
       "path": "references/16-github-actions-workflow-run-details/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 17,
       "name": "GitLab pipeline details",
       "path": "references/17-gitlab-pipeline-details/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 18,
       "name": "CircleCI Insights",
       "path": "references/18-circleci-insights/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 19,
       "name": "Jenkins Blue Ocean",
       "path": "references/19-jenkins-blue-ocean/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 20,
       "name": "Playwright HTML Reporter",
       "path": "references/20-playwright-html-reporter/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 21,
       "name": "Cypress Cloud Test Replay",
       "path": "references/21-cypress-cloud-test-replay/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 22,
       "name": "Allure Report",
       "path": "references/22-allure-report/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 23,
       "name": "BrowserStack Test Observability",
       "path": "references/23-browserstack-test-observability/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 24,
       "name": "Snyk Reports",
       "path": "references/24-snyk-reports/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 25,
       "name": "SonarQube Server issues",
       "path": "references/25-sonarqube-server-issues/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 26,
       "name": "Semgrep AppSec Platform findings",
       "path": "references/26-semgrep-appsec-platform-findings/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 27,
       "name": "OWASP ZAP reports",
       "path": "references/27-owasp-zap-reports/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 28,
       "name": "Microsoft Defender for Cloud recommendations",
       "path": "references/28-microsoft-defender-for-cloud-recommendations/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 29,
       "name": "AWS Security Hub findings",
       "path": "references/29-aws-security-hub-findings/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 30,
       "name": "Google Security Command Center findings",
       "path": "references/30-google-security-command-center-findings/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 31,
       "name": "Tenable Vulnerability Management dashboards",
       "path": "references/31-tenable-vulnerability-management-dashboards/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 32,
       "name": "Lighthouse accessibility audits",
       "path": "references/32-lighthouse-accessibility-audits/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 33,
       "name": "axe DevTools browser extension",
       "path": "references/33-axe-devtools-browser-extension/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 34,
       "name": "WAVE web accessibility evaluation tool",
       "path": "references/34-wave-web-accessibility-evaluation-tool/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 35,
       "name": "Accessibility Insights for Web",
       "path": "references/35-accessibility-insights-for-web/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 36,
       "name": "Pa11y Dashboard",
       "path": "references/36-pa11y-dashboard/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 37,
       "name": "WebPageTest result pages",
       "path": "references/37-webpagetest-result-pages/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 38,
       "name": "PageSpeed Insights",
       "path": "references/38-pagespeed-insights/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 39,
       "name": "Chrome DevTools Performance panel",
       "path": "references/39-chrome-devtools-performance-panel/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 40,
       "name": "SpeedCurve dashboards",
       "path": "references/40-speedcurve-dashboards/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 41,
       "name": "Jaeger UI",
       "path": "references/41-jaeger-ui/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 42,
       "name": "Zipkin trace UI",
       "path": "references/42-zipkin-trace-ui/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 43,
       "name": "Grafana Pyroscope flame graphs",
       "path": "references/43-grafana-pyroscope-flame-graphs/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 44,
       "name": "Parca",
       "path": "references/44-parca/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 45,
       "name": "speedscope",
       "path": "references/45-speedscope/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 46,
       "name": "PagerDuty incident details",
       "path": "references/46-pagerduty-incident-details/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 47,
       "name": "incident.io incident timeline",
       "path": "references/47-incident-io-incident-timeline/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 28
     },
     {
       "index": 48,
       "name": "Power BI drillthrough",
       "path": "references/48-power-bi-drillthrough/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 49,
       "name": "Tableau Explain Data",
       "path": "references/49-tableau-explain-data/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     },
     {
       "index": 50,
       "name": "Apache Superset Explore",
       "path": "references/50-apache-superset-explore/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 3
+      "evidence_gap_count": 27
     }
   ],
-  "measured_at": "2026-08-19",
+  "measured_at": "2026-09-01",
   "partial_count": 50
 }

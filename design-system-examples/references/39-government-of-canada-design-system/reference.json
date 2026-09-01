@@ -20,224 +20,354 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "Entry / initial state",
+      "name": "Observed state 1",
       "local_path": "media/state-1.png",
-      "source_motion_path": "frame of media/motion.mp4 at 2.5s (mean abs diff 0.9609/255)",
-      "width": 256,
-      "height": 144,
-      "bytes": 747,
       "sha256": "329ff5730ee82ff1a40a402fd8b45b2743bfd9c3e1a9815d27e3ad43bd3c9e43",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 2.5,
-        "mean_abs_diff": 0.9609,
-        "sampled_frames": 36
-      }
+      "width": 256,
+      "height": 144,
+      "bytes": 747
     },
     {
-      "name": "Active / intermediate state",
+      "name": "Observed state 2",
       "local_path": "media/state-2.png",
-      "source_motion_path": "frame of media/motion.mp4 at 9s (mean abs diff 2.3281/255)",
-      "width": 256,
-      "height": 144,
-      "bytes": 27550,
       "sha256": "8d8f4970dec7391f27ec8459583b5553d605061406f223043e5e4798728aa6c6",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 9.0,
-        "mean_abs_diff": 2.3281,
-        "sampled_frames": 36
-      }
-    },
-    {
-      "name": "Result / settled state",
-      "local_path": "media/state-3.png",
-      "source_motion_path": "frame of media/motion.mp4 at 15s (mean abs diff 1.8438/255)",
       "width": 256,
       "height": 144,
-      "bytes": 4931,
+      "bytes": 27550
+    },
+    {
+      "name": "Observed state 3",
+      "local_path": "media/state-3.png",
       "sha256": "ac734c039b7abe627a96613b87eb0e538e2c9a11d698d4f4abcb5dd024743b65",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 15.0,
-        "mean_abs_diff": 1.8438,
-        "sampled_frames": 36
-      }
+      "width": 256,
+      "height": 144,
+      "bytes": 4931
     }
   ],
-  "interactions": [
-    {
-      "name": "Primary input",
-      "trigger": "Play the retained motion evidence and follow the demonstrated pointer, touch, keyboard, or presenter-directed action.",
-      "response": "The demonstrated surface enters its active state.",
-      "feedback": "Visible geometry, color, focus, or content changes in the motion.",
-      "cancellation": "Pause before the activation point.",
-      "failure": "The target remains in the entry state when the demonstrated trigger is not completed.",
-      "recovery": "Resume and repeat the demonstrated trigger.",
-      "evidence": "media/motion.mp4 at 4.49s"
-    },
-    {
-      "name": "Focus and selection",
-      "trigger": "Move attention to the highlighted control or implementation detail.",
-      "response": "The recording distinguishes the active target from surrounding content.",
-      "feedback": "The intermediate frame retains the changed state.",
-      "cancellation": "Move away or pause before selection.",
-      "failure": "No active-state distinction is reached.",
-      "recovery": "Return to the indicated target.",
-      "evidence": "media/motion.mp4 at 7.18s"
-    },
-    {
-      "name": "Navigation",
-      "trigger": "Advance from the introductory state to the component or pattern demonstration.",
-      "response": "The recording changes context while preserving task continuity.",
-      "feedback": "A new view, panel, slide, or component state appears.",
-      "cancellation": "Reverse or pause before the context change.",
-      "failure": "The implementation detail is not reached.",
-      "recovery": "Continue from the last visible orientation cue.",
-      "evidence": "media/motion.mp4 at 2.69s"
-    },
-    {
-      "name": "Confirmation",
-      "trigger": "Complete the shown activation or implementation step.",
-      "response": "The demonstrated pattern reaches its settled result.",
-      "feedback": "The result frame remains visible long enough to inspect.",
-      "cancellation": "Back out before the final activation when the recording demonstrates a reversible state.",
-      "failure": "The expected settled state does not appear.",
-      "recovery": "Repeat the final shown action from the intermediate state.",
-      "evidence": "media/motion.mp4 at 15.26s"
-    },
-    {
-      "name": "Cancellation and backtracking",
-      "trigger": "Stop or reverse before the settled state.",
-      "response": "The surface remains at, or returns toward, the preceding state.",
-      "feedback": "Continuity between the active and entry states is visible.",
-      "cancellation": "Resume forward progress.",
-      "failure": "Context is lost after leaving the active state.",
-      "recovery": "Restart from the retained entry frame.",
-      "evidence": "media/motion.mp4 at 8.98s"
-    },
-    {
-      "name": "System feedback",
-      "trigger": "Observe the immediate interval after activation.",
-      "response": "Motion communicates state transition rather than an unexplained jump.",
-      "feedback": "At least three distinct retained frames expose entry, active, and result states.",
-      "cancellation": "Pause to inspect a frame.",
-      "failure": "Feedback would be absent if frames remained identical; retained hashes are distinct.",
-      "recovery": "Replay the authentic motion asset.",
-      "evidence": "media/motion.mp4; media/state-1.png; media/state-2.png; media/state-3.png"
-    },
-    {
-      "name": "Failure route",
-      "trigger": "Omit or interrupt the demonstrated activation.",
-      "response": "The expected result state is not reached within the observed sequence.",
-      "feedback": "The earlier state persists.",
-      "cancellation": "Leave the sequence before retry.",
-      "failure": "First success remains incomplete.",
-      "recovery": "Return to the entry state and replay the demonstrated path.",
-      "evidence": "media/motion.mp4 at 2.69s"
-    },
-    {
-      "name": "Recovery route",
-      "trigger": "Repeat the recorded path from the retained entry state.",
-      "response": "The sequence progresses through the intermediate state to the result.",
-      "feedback": "The result state matches the retained final frame.",
-      "cancellation": "Pause at any retained state without fabricating an outcome.",
-      "failure": "If the authentic asset cannot play, the claim is not recoverable from prose alone.",
-      "recovery": "Open the local motion file and replay it offline.",
-      "evidence": "media/motion.mp4 through media/state-3.png"
-    }
-  ],
-  "journey": {
-    "actor": "Developer or designer evaluating a system pattern for implementation",
-    "goal": "Find and understand the first implementable interaction demonstrated for Government of Canada Design System.",
-    "prerequisites": [
-      "Local access to this reference directory",
-      "A media player capable of the retained authentic format",
-      "The product source URL for implementation follow-through"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the local authentic motion evidence.",
-        "system_response": "The real product or owner-published component demonstration appears in its entry state.",
-        "state": "entry",
-        "evidence": "media/motion.mp4 at 0.36s"
-      },
-      {
-        "index": 2,
-        "user_action": "Orient to the demonstrated component, page, or implementation context.",
-        "system_response": "The recording exposes the target and the context needed to interpret it.",
-        "state": "orientation",
-        "evidence": "media/motion.mp4 at 2.69s"
-      },
-      {
-        "index": 3,
-        "user_action": "Follow the shown primary activation or implementation action.",
-        "system_response": "The surface enters an active or transitional state.",
-        "state": "active",
-        "evidence": "media/motion.mp4 at 6.28s"
-      },
-      {
-        "index": 4,
-        "user_action": "Continue through the visible feedback rather than skipping to the end.",
-        "system_response": "Intermediate motion preserves continuity and communicates progress.",
-        "state": "feedback",
-        "evidence": "media/motion.mp4 at 10.77s"
-      },
-      {
-        "index": 5,
-        "user_action": "Inspect the settled result and map it back to the implementation guidance.",
-        "system_response": "A meaningful result state is visible and retained as the final key frame.",
-        "state": "first success",
-        "evidence": "media/motion.mp4 at 15.26s"
-      }
-    ],
-    "failure_route": [
-      "Interrupt or omit the demonstrated activation; the sequence remains before the meaningful result.",
-      "Treating a still frame or prose as motion evidence does not complete the journey."
-    ],
-    "recovery_route": [
-      "Return to the retained entry frame.",
-      "Replay the local authentic motion and repeat the demonstrated path through the final retained state."
-    ],
-    "completion_evidence": "Government of Canada Design System reaches the distinct settled frame at media/motion.mp4 at 15.26s; all three state images are hashes of frames decoded from the same local motion asset."
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "The local recording can be paused and inspected without network access.",
-      "Entry, active, and result states are visually distinguishable in three separately hashed frames.",
-      "The record identifies the motion source and a non-motion inspection path through retained states."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader announcements were not captured by the visual recording.",
       "Keyboard-only reachability is unknown unless explicitly visible in the source recording.",
       "The product’s reduced-motion preference behavior is unknown unless explicitly shown."
-    ]
+    ],
+    "measured": false
   },
-  "motion_analysis": {
-    "trigger": "The primary action shown in the authentic recording.",
-    "start_state": "Entry / initial state.",
-    "end_state": "Result / settled state.",
-    "continuity": "Decoded intermediate frames connect the start and end states without synthesized interpolation.",
-    "timing_class": "multi-second",
-    "feedback": "Visible state progression is retained in the local motion and three extracted source frames.",
-    "reduced_motion_equivalent": "Use the three retained nonanimated key states; upstream reduced-motion behavior remains listed as unknown.",
-    "interruption_or_reversal": "Playback can be paused; product-level reversal is recorded only where visible and otherwise remains unknown.",
-    "timing_description": "extended guided demonstration"
-  },
+  "motion_analysis": null,
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-1.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-1.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-2.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-2.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-3.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-3.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Primary input",
+        "trigger": "Play the retained motion evidence and follow the demonstrated pointer, touch, keyboard, or presenter-directed action.",
+        "response": "The demonstrated surface enters its active state.",
+        "feedback": "Visible geometry, color, focus, or content changes in the motion.",
+        "cancellation": "Pause before the activation point.",
+        "failure": "The target remains in the entry state when the demonstrated trigger is not completed.",
+        "recovery": "Resume and repeat the demonstrated trigger.",
+        "evidence": "media/motion.mp4 at 4.49s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus and selection",
+        "trigger": "Move attention to the highlighted control or implementation detail.",
+        "response": "The recording distinguishes the active target from surrounding content.",
+        "feedback": "The intermediate frame retains the changed state.",
+        "cancellation": "Move away or pause before selection.",
+        "failure": "No active-state distinction is reached.",
+        "recovery": "Return to the indicated target.",
+        "evidence": "media/motion.mp4 at 7.18s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Navigation",
+        "trigger": "Advance from the introductory state to the component or pattern demonstration.",
+        "response": "The recording changes context while preserving task continuity.",
+        "feedback": "A new view, panel, slide, or component state appears.",
+        "cancellation": "Reverse or pause before the context change.",
+        "failure": "The implementation detail is not reached.",
+        "recovery": "Continue from the last visible orientation cue.",
+        "evidence": "media/motion.mp4 at 2.69s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirmation",
+        "trigger": "Complete the shown activation or implementation step.",
+        "response": "The demonstrated pattern reaches its settled result.",
+        "feedback": "The result frame remains visible long enough to inspect.",
+        "cancellation": "Back out before the final activation when the recording demonstrates a reversible state.",
+        "failure": "The expected settled state does not appear.",
+        "recovery": "Repeat the final shown action from the intermediate state.",
+        "evidence": "media/motion.mp4 at 15.26s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Cancellation and backtracking",
+        "trigger": "Stop or reverse before the settled state.",
+        "response": "The surface remains at, or returns toward, the preceding state.",
+        "feedback": "Continuity between the active and entry states is visible.",
+        "cancellation": "Resume forward progress.",
+        "failure": "Context is lost after leaving the active state.",
+        "recovery": "Restart from the retained entry frame.",
+        "evidence": "media/motion.mp4 at 8.98s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "System feedback",
+        "trigger": "Observe the immediate interval after activation.",
+        "response": "Motion communicates state transition rather than an unexplained jump.",
+        "feedback": "At least three distinct retained frames expose entry, active, and result states.",
+        "cancellation": "Pause to inspect a frame.",
+        "failure": "Feedback would be absent if frames remained identical; retained hashes are distinct.",
+        "recovery": "Replay the authentic motion asset.",
+        "evidence": "media/motion.mp4; media/state-1.png; media/state-2.png; media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Failure route",
+        "trigger": "Omit or interrupt the demonstrated activation.",
+        "response": "The expected result state is not reached within the observed sequence.",
+        "feedback": "The earlier state persists.",
+        "cancellation": "Leave the sequence before retry.",
+        "failure": "First success remains incomplete.",
+        "recovery": "Return to the entry state and replay the demonstrated path.",
+        "evidence": "media/motion.mp4 at 2.69s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Recovery route",
+        "trigger": "Repeat the recorded path from the retained entry state.",
+        "response": "The sequence progresses through the intermediate state to the result.",
+        "feedback": "The result state matches the retained final frame.",
+        "cancellation": "Pause at any retained state without fabricating an outcome.",
+        "failure": "If the authentic asset cannot play, the claim is not recoverable from prose alone.",
+        "recovery": "Open the local motion file and replay it offline.",
+        "evidence": "media/motion.mp4 through media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "Developer or designer evaluating a system pattern for implementation",
+        "goal": "Find and understand the first implementable interaction demonstrated for Government of Canada Design System.",
+        "prerequisites": [
+          "Local access to this reference directory",
+          "A media player capable of the retained authentic format",
+          "The product source URL for implementation follow-through"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the local authentic motion evidence.",
+            "system_response": "The real product or owner-published component demonstration appears in its entry state.",
+            "state": "entry",
+            "evidence": "media/motion.mp4 at 0.36s"
+          },
+          {
+            "index": 2,
+            "user_action": "Orient to the demonstrated component, page, or implementation context.",
+            "system_response": "The recording exposes the target and the context needed to interpret it.",
+            "state": "orientation",
+            "evidence": "media/motion.mp4 at 2.69s"
+          },
+          {
+            "index": 3,
+            "user_action": "Follow the shown primary activation or implementation action.",
+            "system_response": "The surface enters an active or transitional state.",
+            "state": "active",
+            "evidence": "media/motion.mp4 at 6.28s"
+          },
+          {
+            "index": 4,
+            "user_action": "Continue through the visible feedback rather than skipping to the end.",
+            "system_response": "Intermediate motion preserves continuity and communicates progress.",
+            "state": "feedback",
+            "evidence": "media/motion.mp4 at 10.77s"
+          },
+          {
+            "index": 5,
+            "user_action": "Inspect the settled result and map it back to the implementation guidance.",
+            "system_response": "A meaningful result state is visible and retained as the final key frame.",
+            "state": "first success",
+            "evidence": "media/motion.mp4 at 15.26s"
+          }
+        ],
+        "failure_route": [
+          "Interrupt or omit the demonstrated activation; the sequence remains before the meaningful result.",
+          "Treating a still frame or prose as motion evidence does not complete the journey."
+        ],
+        "recovery_route": [
+          "Return to the retained entry frame.",
+          "Replay the local authentic motion and repeat the demonstrated path through the final retained state."
+        ],
+        "completion_evidence": "Government of Canada Design System reaches the distinct settled frame at media/motion.mp4 at 15.26s; all three state images are hashes of frames decoded from the same local motion asset."
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "The primary action shown in the authentic recording.",
+        "start_state": "Entry / initial state.",
+        "end_state": "Result / settled state.",
+        "continuity": "Decoded intermediate frames connect the start and end states without synthesized interpolation.",
+        "timing_class": "multi-second",
+        "feedback": "Visible state progression is retained in the local motion and three extracted source frames.",
+        "reduced_motion_equivalent": "Use the three retained nonanimated key states; upstream reduced-motion behavior remains listed as unknown.",
+        "interruption_or_reversal": "Playback can be paused; product-level reversal is recorded only where visible and otherwise remains unknown.",
+        "timing_description": "extended guided demonstration"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The local recording can be paused and inspected without network access."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Entry, active, and result states are visually distinguishable in three separately hashed frames."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The record identifies the motion source and a non-motion inspection path through retained states."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Entry / initial state"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 2.5s (mean abs diff 0.9609/255)",
+        "source_match": {
+          "timestamp_seconds": 2.5,
+          "mean_abs_diff": 0.9609,
+          "sampled_frames": 36,
+          "motion_path": "media/state-1.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Active / intermediate state"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 9s (mean abs diff 2.3281/255)",
+        "source_match": {
+          "timestamp_seconds": 9.0,
+          "mean_abs_diff": 2.3281,
+          "sampled_frames": 36,
+          "motion_path": "media/state-2.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Result / settled state"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 15s (mean abs diff 1.8438/255)",
+        "source_match": {
+          "timestamp_seconds": 15.0,
+          "mean_abs_diff": 1.8438,
+          "sampled_frames": 36,
+          "motion_path": "media/state-3.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

@@ -20,269 +20,437 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "workspace list",
+      "name": "Observed state 1",
       "local_path": "media/state-01-workspace-list.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 3.5s (mean abs diff 2.0312/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 113807,
       "sha256": "345f913d5e9def7cd12074df30a07515d69d9dbbb0a39baf5d126b7da9c96b3a",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 3.5,
-        "mean_abs_diff": 2.0312,
-        "sampled_frames": 145
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 113807
     },
     {
-      "name": "workspace form",
+      "name": "Observed state 2",
       "local_path": "media/state-02-workspace-form.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 16s (mean abs diff 1.9648/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 97761,
       "sha256": "34bcafa6c0354ac25151b994a22bdea892d1e420065409b2c274f1cd7aca49f5",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 16.0,
-        "mean_abs_diff": 1.9648,
-        "sampled_frames": 145
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 97761
     },
     {
-      "name": "workspace details",
+      "name": "Observed state 3",
       "local_path": "media/state-03-workspace-details.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 29.5s (mean abs diff 2.6055/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 51056,
       "sha256": "166d8079a74f8ab734131101f0b3b50aa98d2c060e89a1a11dbf10d057c526f0",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 29.5,
-        "mean_abs_diff": 2.6055,
-        "sampled_frames": 145
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 51056
     },
     {
-      "name": "visibility selected",
+      "name": "Observed state 4",
       "local_path": "media/state-04-visibility-selected.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 40.5s (mean abs diff 1.9961/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 50738,
       "sha256": "62e3fe0f1529acd66a37dce3cb1d5210c195fbcb3f3669f11fc8a9ea83ef08ab",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 40.5,
-        "mean_abs_diff": 1.9961,
-        "sampled_frames": 145
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 50738
     },
     {
-      "name": "workspace active",
+      "name": "Observed state 5",
       "local_path": "media/state-05-workspace-active.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 53s (mean abs diff 2.0586/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 84807,
       "sha256": "3279e676ef0bd9b06135dc8b59d6bee3fb13f5671d4971350a4d122a4848ed7c",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 53.0,
-        "mean_abs_diff": 2.0586,
-        "sampled_frames": 145
-      }
-    },
-    {
-      "name": "first request",
-      "local_path": "media/state-06-first-request.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 65s (mean abs diff 2.9766/255)",
       "width": 640,
       "height": 360,
-      "bytes": 88394,
+      "bytes": 84807
+    },
+    {
+      "name": "Observed state 6",
+      "local_path": "media/state-06-first-request.png",
       "sha256": "7f00dfbefd8d6e2f1fe8a04fe1724412b6d23fcf6d94a09916afca07b10d6c1f",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 65.0,
-        "mean_abs_diff": 2.9766,
-        "sampled_frames": 145
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 88394
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "Authenticate and open Workspaces",
-      "response": "Postman lists current workspaces and creation controls",
-      "feedback": "The retained workspace list state makes the available next action visible.",
-      "cancellation": "Closing or leaving before submission produces no completion claim.",
-      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
-      "recovery": "Restore the prerequisite and repeat the same entry action.",
-      "evidence": "media/state-01-workspace-list.png @ 3.63s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Choose Create Workspace",
-      "response": "Postman opens workspace details",
-      "feedback": "The recording advances to workspace form and retains the selected context.",
-      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
-      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
-      "recovery": "Correct, resend, or reselect and submit again.",
-      "evidence": "media/state-01-workspace-list.png @ 3.63s; media/state-02-workspace-form.png @ 15.99s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Enter name and optional summary",
-      "response": "Postman validates the required identity",
-      "feedback": "The navigation result is visible as workspace details.",
-      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
-      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
-      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
-      "evidence": "media/state-02-workspace-form.png @ 15.99s; media/state-03-workspace-details.png @ 28.34s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Choose visibility and team access",
-      "response": "Postman explains the effective audience",
-      "feedback": "The official recording shows the confirmed visibility selected state.",
-      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
-      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
-      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
-      "evidence": "media/state-03-workspace-details.png @ 28.34s; media/state-04-visibility-selected.png @ 40.69s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
-      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
-      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
-      "cancellation": "This interaction is the observed cancellation boundary.",
-      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
-      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
-      "evidence": "media/state-02-workspace-form.png @ 15.99s; media/state-03-workspace-details.png @ 28.34s; media/state-04-visibility-selected.png @ 40.69s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-    },
-    {
-      "name": "progress feedback",
-      "trigger": "Confirm creation",
-      "response": "Postman opens the new empty workspace",
-      "feedback": "Progress is observable as the distinct workspace active state.",
-      "cancellation": "Leaving during feedback does not count as completion.",
-      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
-      "recovery": "Wait for durable feedback or use the product's retry route.",
-      "evidence": "media/state-04-visibility-selected.png @ 40.69s; media/state-05-workspace-active.png @ 53.05s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-    },
-    {
-      "name": "failure",
-      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
-      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
-      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
-      "cancellation": "The user can leave without a false success state.",
-      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
-      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
-      "evidence": "media/state-03-workspace-details.png @ 28.34s; media/state-04-visibility-selected.png @ 40.69s; media/state-05-workspace-active.png @ 53.05s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-    },
-    {
-      "name": "recovery and completion",
-      "trigger": "Create or import the first request",
-      "response": "The request opens within the workspace, proving first usable result",
-      "feedback": "The retained first request state is the completion evidence.",
-      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
-      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
-      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
-      "evidence": "media/state-05-workspace-active.png @ 53.05s; media/state-06-first-request.png @ 65.40s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-    }
-  ],
-  "journey": {
-    "actor": "Postman workspace creator",
-    "goal": "create a workspace and open the first API request",
-    "prerequisites": [
-      "Postman account",
-      "workspace visibility choice"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Authenticate and open Workspaces",
-        "system_response": "Postman lists current workspaces and creation controls",
-        "state": "workspace list",
-        "evidence": "media/state-01-workspace-list.png; media/official-recording.mp4#t=3.633; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-      },
-      {
-        "index": 2,
-        "user_action": "Choose Create Workspace",
-        "system_response": "Postman opens workspace details",
-        "state": "workspace form",
-        "evidence": "media/state-02-workspace-form.png; media/official-recording.mp4#t=15.987; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-      },
-      {
-        "index": 3,
-        "user_action": "Enter name and optional summary",
-        "system_response": "Postman validates the required identity",
-        "state": "workspace details",
-        "evidence": "media/state-03-workspace-details.png; media/official-recording.mp4#t=28.340; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-      },
-      {
-        "index": 4,
-        "user_action": "Choose visibility and team access",
-        "system_response": "Postman explains the effective audience",
-        "state": "visibility selected",
-        "evidence": "media/state-04-visibility-selected.png; media/official-recording.mp4#t=40.694; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-      },
-      {
-        "index": 5,
-        "user_action": "Confirm creation",
-        "system_response": "Postman opens the new empty workspace",
-        "state": "workspace active",
-        "evidence": "media/state-05-workspace-active.png; media/official-recording.mp4#t=53.047; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-      },
-      {
-        "index": 6,
-        "user_action": "Create or import the first request",
-        "system_response": "The request opens within the workspace, proving first usable result",
-        "state": "first request",
-        "evidence": "media/state-06-first-request.png; media/official-recording.mp4#t=65.400; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-      }
-    ],
-    "failure_route": [
-      "At workspace form or workspace details, invalid, expired, denied, or missing required input leaves the flow short of first request; evidence: media/state-02-workspace-form.png, media/state-03-workspace-details.png, and https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/.",
-      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-workspace-details.png through media/state-05-workspace-active.png."
-    ],
-    "recovery_route": [
-      "Return to the retained workspace form or workspace details requirement, correct or resend the blocking input, and resubmit; evidence: https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/.",
-      "Continue through the same terminal action until first request is visible in media/state-06-first-request.png and the motion at 65.400s."
-    ],
-    "completion_evidence": "first request retained at media/state-06-first-request.png and media/official-recording.mp4#t=65.400; source https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visual observation from media/state-01-workspace-list.png and media/state-02-workspace-form.png: the current task is presented with persistent on-screen text rather than motion alone.",
-      "Visual observation from media/state-03-workspace-details.png and media/state-04-visibility-selected.png: primary choices remain spatially associated with their current setup context.",
-      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
       "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
       "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
       "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/official-recording.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-workspace-list.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-workspace-list.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-workspace-form.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-workspace-form.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-workspace-details.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-workspace-details.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-visibility-selected.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-visibility-selected.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-workspace-active.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-workspace-active.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-06-first-request.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-06-first-request.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "Authenticate and open Workspaces",
+        "response": "Postman lists current workspaces and creation controls",
+        "feedback": "The retained workspace list state makes the available next action visible.",
+        "cancellation": "Closing or leaving before submission produces no completion claim.",
+        "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+        "recovery": "Restore the prerequisite and repeat the same entry action.",
+        "evidence": "media/state-01-workspace-list.png @ 3.63s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Choose Create Workspace",
+        "response": "Postman opens workspace details",
+        "feedback": "The recording advances to workspace form and retains the selected context.",
+        "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+        "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+        "recovery": "Correct, resend, or reselect and submit again.",
+        "evidence": "media/state-01-workspace-list.png @ 3.63s; media/state-02-workspace-form.png @ 15.99s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Enter name and optional summary",
+        "response": "Postman validates the required identity",
+        "feedback": "The navigation result is visible as workspace details.",
+        "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+        "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+        "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+        "evidence": "media/state-02-workspace-form.png @ 15.99s; media/state-03-workspace-details.png @ 28.34s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Choose visibility and team access",
+        "response": "Postman explains the effective audience",
+        "feedback": "The official recording shows the confirmed visibility selected state.",
+        "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+        "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+        "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+        "evidence": "media/state-03-workspace-details.png @ 28.34s; media/state-04-visibility-selected.png @ 40.69s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+        "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+        "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+        "cancellation": "This interaction is the observed cancellation boundary.",
+        "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+        "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+        "evidence": "media/state-02-workspace-form.png @ 15.99s; media/state-03-workspace-details.png @ 28.34s; media/state-04-visibility-selected.png @ 40.69s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "progress feedback",
+        "trigger": "Confirm creation",
+        "response": "Postman opens the new empty workspace",
+        "feedback": "Progress is observable as the distinct workspace active state.",
+        "cancellation": "Leaving during feedback does not count as completion.",
+        "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+        "recovery": "Wait for durable feedback or use the product's retry route.",
+        "evidence": "media/state-04-visibility-selected.png @ 40.69s; media/state-05-workspace-active.png @ 53.05s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+        "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+        "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+        "cancellation": "The user can leave without a false success state.",
+        "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+        "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+        "evidence": "media/state-03-workspace-details.png @ 28.34s; media/state-04-visibility-selected.png @ 40.69s; media/state-05-workspace-active.png @ 53.05s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery and completion",
+        "trigger": "Create or import the first request",
+        "response": "The request opens within the workspace, proving first usable result",
+        "feedback": "The retained first request state is the completion evidence.",
+        "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+        "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+        "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+        "evidence": "media/state-05-workspace-active.png @ 53.05s; media/state-06-first-request.png @ 65.40s; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "Postman workspace creator",
+        "goal": "create a workspace and open the first API request",
+        "prerequisites": [
+          "Postman account",
+          "workspace visibility choice"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Authenticate and open Workspaces",
+            "system_response": "Postman lists current workspaces and creation controls",
+            "state": "workspace list",
+            "evidence": "media/state-01-workspace-list.png; media/official-recording.mp4#t=3.633; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+          },
+          {
+            "index": 2,
+            "user_action": "Choose Create Workspace",
+            "system_response": "Postman opens workspace details",
+            "state": "workspace form",
+            "evidence": "media/state-02-workspace-form.png; media/official-recording.mp4#t=15.987; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+          },
+          {
+            "index": 3,
+            "user_action": "Enter name and optional summary",
+            "system_response": "Postman validates the required identity",
+            "state": "workspace details",
+            "evidence": "media/state-03-workspace-details.png; media/official-recording.mp4#t=28.340; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+          },
+          {
+            "index": 4,
+            "user_action": "Choose visibility and team access",
+            "system_response": "Postman explains the effective audience",
+            "state": "visibility selected",
+            "evidence": "media/state-04-visibility-selected.png; media/official-recording.mp4#t=40.694; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+          },
+          {
+            "index": 5,
+            "user_action": "Confirm creation",
+            "system_response": "Postman opens the new empty workspace",
+            "state": "workspace active",
+            "evidence": "media/state-05-workspace-active.png; media/official-recording.mp4#t=53.047; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+          },
+          {
+            "index": 6,
+            "user_action": "Create or import the first request",
+            "system_response": "The request opens within the workspace, proving first usable result",
+            "state": "first request",
+            "evidence": "media/state-06-first-request.png; media/official-recording.mp4#t=65.400; https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+          }
+        ],
+        "failure_route": [
+          "At workspace form or workspace details, invalid, expired, denied, or missing required input leaves the flow short of first request; evidence: media/state-02-workspace-form.png, media/state-03-workspace-details.png, and https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/.",
+          "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-workspace-details.png through media/state-05-workspace-active.png."
+        ],
+        "recovery_route": [
+          "Return to the retained workspace form or workspace details requirement, correct or resend the blocking input, and resubmit; evidence: https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/.",
+          "Continue through the same terminal action until first request is visible in media/state-06-first-request.png and the motion at 65.400s."
+        ],
+        "completion_evidence": "first request retained at media/state-06-first-request.png and media/official-recording.mp4#t=65.400; source https://learning.postman.com/docs/collaborating-in-postman/using-workspaces/creating-workspaces/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-01-workspace-list.png and media/state-02-workspace-form.png: the current task is presented with persistent on-screen text rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-03-workspace-details.png and media/state-04-visibility-selected.png: primary choices remain spatially associated with their current setup context."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "workspace list"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 3.5s (mean abs diff 2.0312/255)",
+        "source_match": {
+          "timestamp_seconds": 3.5,
+          "mean_abs_diff": 2.0313,
+          "sampled_frames": 145,
+          "motion_path": "media/state-01-workspace-list.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "workspace form"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 16s (mean abs diff 1.9648/255)",
+        "source_match": {
+          "timestamp_seconds": 16.0,
+          "mean_abs_diff": 1.9648,
+          "sampled_frames": 145,
+          "motion_path": "media/state-02-workspace-form.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "workspace details"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 29.5s (mean abs diff 2.6055/255)",
+        "source_match": {
+          "timestamp_seconds": 29.5,
+          "mean_abs_diff": 2.6055,
+          "sampled_frames": 145,
+          "motion_path": "media/state-03-workspace-details.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "visibility selected"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 40.5s (mean abs diff 1.9961/255)",
+        "source_match": {
+          "timestamp_seconds": 40.5,
+          "mean_abs_diff": 1.9961,
+          "sampled_frames": 145,
+          "motion_path": "media/state-04-visibility-selected.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "workspace active"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 53s (mean abs diff 2.0586/255)",
+        "source_match": {
+          "timestamp_seconds": 53.0,
+          "mean_abs_diff": 2.0586,
+          "sampled_frames": 145,
+          "motion_path": "media/state-05-workspace-active.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "first request"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 65s (mean abs diff 2.9766/255)",
+        "source_match": {
+          "timestamp_seconds": 65.0,
+          "mean_abs_diff": 2.9766,
+          "sampled_frames": 145,
+          "motion_path": "media/state-06-first-request.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

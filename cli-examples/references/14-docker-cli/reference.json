@@ -20,204 +20,335 @@
       "declared_media_kind": "terminal-cast",
       "measured": true,
       "measurement_method": "asciinema-v2 header and event stream",
-      "provenance_class": "local-product-run"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "Version success",
+      "name": "Observed state 1",
       "local_path": "media/01-version-success.png",
-      "source_motion_path": "media/session.cast",
+      "sha256": "9670c5d77ea950cdf9f3c7bf6ff71982580ba6c371c6a6ff329fd0d72f658e12",
       "width": 1280,
       "height": 720,
-      "bytes": 16666,
-      "sha256": "9670c5d77ea950cdf9f3c7bf6ff71982580ba6c371c6a6ff329fd0d72f658e12"
+      "bytes": 16666
     },
     {
-      "name": "Help stream",
+      "name": "Observed state 2",
       "local_path": "media/02-help-stream.png",
-      "source_motion_path": "media/session.cast",
+      "sha256": "fcb045fe7c70ff96f337d9d5f4893496f5e87ac24b15a84fc7fa9b674f9b55d0",
       "width": 1280,
       "height": 720,
-      "bytes": 46903,
-      "sha256": "fcb045fe7c70ff96f337d9d5f4893496f5e87ac24b15a84fc7fa9b674f9b55d0"
+      "bytes": 46903
     },
     {
-      "name": "Failure and recovery",
+      "name": "Observed state 3",
       "local_path": "media/03-failure-recovery.png",
-      "source_motion_path": "media/session.cast",
+      "sha256": "d409a60009c866c0cca7aa528504a870b7e6e8b8fbbbcd1a7ae19f1ab284c64e",
       "width": 1280,
       "height": 720,
-      "bytes": 46368,
-      "sha256": "d409a60009c866c0cca7aa528504a870b7e6e8b8fbbbcd1a7ae19f1ab284c64e"
+      "bytes": 46368
     }
   ],
-  "interactions": [
-    {
-      "name": "command entry",
-      "trigger": "Type `docker --version 2>&1 | sed -n '1,14p'` and press Enter.",
-      "response": "Docker CLI starts and emits its installed version.",
-      "feedback": "Docker version 29.1.3, build 29.1.3-0ubuntu3~24.04.2",
-      "cancellation": "Ctrl-C before Enter clears the pending command in the recorded shell.",
-      "failure": "A misspelled option is rejected later in the same cast.",
-      "recovery": "Re-enter a documented help command.",
-      "evidence": "media/session.cast at 0.55–2.20 s; media/01-version-success.png; observed exit 0"
-    },
-    {
-      "name": "argument parsing",
-      "trigger": "Provide the documented version arguments.",
-      "response": "The CLI accepts the option/subcommand grammar and exits successfully.",
-      "feedback": "Observed exit status 0.",
-      "cancellation": "No cancellation is required for the short version query.",
-      "failure": "`docker --definitely-invalid-option 2>&1 | sed -n '1,14p'` follows the same parser and is rejected.",
-      "recovery": "Use the grammar printed by help.",
-      "evidence": "media/session.cast at 0.55–2.20 s; media/01-version-success.png; observed exit 0"
-    },
-    {
-      "name": "stdout stream",
-      "trigger": "Run `docker --help 2>&1 | sed -n '1,14p'`.",
-      "response": "Help text streams into the terminal and is bounded to fourteen lines by the shown pipeline.",
-      "feedback": "Usage:  docker [OPTIONS] COMMAND",
-      "cancellation": "The shell remains interruptible while the stream is active.",
-      "failure": "A closed downstream stream may stop display without changing the product help content.",
-      "recovery": "Run the bounded help command again.",
-      "evidence": "media/session.cast at 2.20–5.10 s; media/02-help-stream.png"
-    },
-    {
-      "name": "stderr and exit status",
-      "trigger": "Run `docker --definitely-invalid-option 2>&1 | sed -n '1,14p'`.",
-      "response": "The executable reports an invalid invocation and returns a nonzero status.",
-      "feedback": "unknown flag: --definitely-invalid-option",
-      "cancellation": "Ctrl-C is available if an error path blocks; this observed path returned on its own.",
-      "failure": "Observed status 125.",
-      "recovery": "Run `docker --help 2>&1 | sed -n '1,14p'`.",
-      "evidence": "media/session.cast at 5.10–7.10 s; observed exit 125; media/03-failure-recovery.png"
-    },
-    {
-      "name": "help navigation",
-      "trigger": "Invoke `docker --help 2>&1 | sed -n '1,14p'`.",
-      "response": "The top-level usage, options, or command index is printed without opening a browser.",
-      "feedback": "The first fourteen nonblank output lines remain readable in the cast.",
-      "cancellation": "Ctrl-C/backtracking returns to the shell prompt.",
-      "failure": "An invalid help spelling is handled as an invalid invocation.",
-      "recovery": "Repeat the exact documented help form.",
-      "evidence": "media/session.cast at 2.20–5.10 s; media/02-help-stream.png"
-    },
-    {
-      "name": "completion",
-      "trigger": "Wait for version or help output to finish.",
-      "response": "Control returns to `cli-ref$`.",
-      "feedback": "A new prompt is visible and the exit status is recorded.",
-      "cancellation": "Not needed after completion.",
-      "failure": "A nonzero status distinguishes rejected input from successful completion.",
-      "recovery": "Issue a corrected command at the restored prompt.",
-      "evidence": "media/session.cast at 0.85–2.20 s and after the recovery output at 8.45 s"
-    },
-    {
-      "name": "cancellation",
-      "trigger": "Type `docker --help` without Enter, then press Ctrl-C.",
-      "response": "The interactive PTY accepted Ctrl-C, discarded the pending line, and restored `cli-ref$`.",
-      "feedback": "The cast labels the recorder-observed Ctrl-C; the canceled command emits no product help because it was not submitted.",
-      "cancellation": "Ctrl-C is the observed cancellation mechanism.",
-      "failure": "The pending command is intentionally abandoned rather than executed.",
-      "recovery": "Submit the bounded help command on the next prompt.",
-      "evidence": "media/session.cast at 7.10–8.10 s; recorder annotation identifies the PTY-observed Ctrl-C, discarded pending input, and restored prompt"
-    },
-    {
-      "name": "failure recovery",
-      "trigger": "After the invalid invocation returns nonzero, enter the bounded help command again.",
-      "response": "The same real executable prints valid help output and returns control.",
-      "feedback": "Usage:  docker [OPTIONS] COMMAND",
-      "cancellation": "The recovery can itself be canceled with Ctrl-C at the prompt.",
-      "failure": "Repeating the invalid option reproduces the nonzero route.",
-      "recovery": "The valid help form completes the first-success journey.",
-      "evidence": "media/session.cast at 5.10–8.45 s; media/03-failure-recovery.png"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time terminal user checking that the CLI is installed and learning its top-level grammar.",
-    "goal": "Obtain the first meaningful Docker CLI result, discover valid usage, observe a real failure, cancel safely, and recover.",
-    "prerequisites": [
-      "Ubuntu 24.04 aarch64 Lima VM `cli-reference`",
-      "Real `docker` executable installed or extracted from its official distribution",
-      "A PTY with `TERM=xterm-256color`, `PAGER=cat`, `NO_COLOR=1`, and no credentials or live target configured"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the isolated PTY at `cli-ref$`.",
-        "system_response": "A clean prompt appears with no credentials, project files, or live target selected.",
-        "state": "ready prompt",
-        "evidence": "media/session.cast at 0.00–0.55 s"
-      },
-      {
-        "index": 2,
-        "user_action": "Run `docker --version 2>&1 | sed -n '1,14p'`.",
-        "system_response": "Docker CLI prints its installed version and exits 0.",
-        "state": "version success",
-        "evidence": "media/session.cast at 0.55–2.20 s; media/01-version-success.png; observed exit 0"
-      },
-      {
-        "index": 3,
-        "user_action": "Run `docker --help 2>&1 | sed -n '1,14p'`.",
-        "system_response": "The executable streams its authentic top-level help through the shown fourteen-line limiter.",
-        "state": "help stream",
-        "evidence": "media/session.cast at 2.20–5.10 s; media/02-help-stream.png"
-      },
-      {
-        "index": 4,
-        "user_action": "Run `docker --definitely-invalid-option 2>&1 | sed -n '1,14p'`.",
-        "system_response": "The executable rejects the input and returns status 125.",
-        "state": "observed failure",
-        "evidence": "media/session.cast at 5.10–7.10 s; observed exit 125; media/03-failure-recovery.png"
-      },
-      {
-        "index": 5,
-        "user_action": "Type `docker --help` but press Ctrl-C before Enter.",
-        "system_response": "The PTY accepts Ctrl-C, abandons the pending line, and restores the prompt; the cast labels this observed input action.",
-        "state": "canceled pending command",
-        "evidence": "media/session.cast at 7.10–8.10 s; recorder annotation identifies the PTY-observed Ctrl-C, discarded pending input, and restored prompt"
-      },
-      {
-        "index": 6,
-        "user_action": "Rerun `docker --help 2>&1 | sed -n '1,14p'`.",
-        "system_response": "Valid help output appears again, proving recovery after both parser failure and cancellation and completing first success.",
-        "state": "recovered first success",
-        "evidence": "media/session.cast at 8.10–8.45 s; media/03-failure-recovery.png"
-      }
-    ],
-    "failure_route": [
-      "Invoke `docker --definitely-invalid-option 2>&1 | sed -n '1,14p'`.",
-      "unknown flag: --definitely-invalid-option",
-      "Observe nonzero exit status 125 and restored prompt."
-    ],
-    "recovery_route": [
-      "Enter `docker --help 2>&1 | sed -n '1,14p'`.",
-      "Observe `Usage:  docker [OPTIONS] COMMAND`.",
-      "Confirm the prompt returns and no target state changed."
-    ],
-    "completion_evidence": "media/session.cast at 8.10–8.45 s plus all three PNG states; the recovered help stream is local and inspectable."
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "All essential content is emitted as terminal text and remains selectable/copyable in cast playback.",
-      "The recorded journey is keyboard-only: typed commands, Enter, and Ctrl-C.",
-      "`NO_COLOR=1` removes color as a required carrier; success and failure remain distinguishable through text and exit status.",
-      "The bounded help stream avoids a mandatory interactive pager in the evidence path."
-    ],
+    "observations": [],
     "unknowns": [
       "Behavior with a specific screen reader was not observed.",
       "Upstream conformance to WCAG or terminal accessibility standards was not independently audited.",
       "High-contrast theme behavior and non-UTF-8 locale behavior were not observed.",
       "Product-specific reduced-motion settings are unknown; terminal cast playback can be paused or played at reader-selected speed."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "local-product-run"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/session.cast has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/01-version-success.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/01-version-success.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/02-help-stream.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/02-help-stream.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/03-failure-recovery.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/03-failure-recovery.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for terminal-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for terminal-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for terminal-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "command entry",
+        "trigger": "Type `docker --version 2>&1 | sed -n '1,14p'` and press Enter.",
+        "response": "Docker CLI starts and emits its installed version.",
+        "feedback": "Docker version 29.1.3, build 29.1.3-0ubuntu3~24.04.2",
+        "cancellation": "Ctrl-C before Enter clears the pending command in the recorded shell.",
+        "failure": "A misspelled option is rejected later in the same cast.",
+        "recovery": "Re-enter a documented help command.",
+        "evidence": "media/session.cast at 0.55–2.20 s; media/01-version-success.png; observed exit 0"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "argument parsing",
+        "trigger": "Provide the documented version arguments.",
+        "response": "The CLI accepts the option/subcommand grammar and exits successfully.",
+        "feedback": "Observed exit status 0.",
+        "cancellation": "No cancellation is required for the short version query.",
+        "failure": "`docker --definitely-invalid-option 2>&1 | sed -n '1,14p'` follows the same parser and is rejected.",
+        "recovery": "Use the grammar printed by help.",
+        "evidence": "media/session.cast at 0.55–2.20 s; media/01-version-success.png; observed exit 0"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "stdout stream",
+        "trigger": "Run `docker --help 2>&1 | sed -n '1,14p'`.",
+        "response": "Help text streams into the terminal and is bounded to fourteen lines by the shown pipeline.",
+        "feedback": "Usage:  docker [OPTIONS] COMMAND",
+        "cancellation": "The shell remains interruptible while the stream is active.",
+        "failure": "A closed downstream stream may stop display without changing the product help content.",
+        "recovery": "Run the bounded help command again.",
+        "evidence": "media/session.cast at 2.20–5.10 s; media/02-help-stream.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "stderr and exit status",
+        "trigger": "Run `docker --definitely-invalid-option 2>&1 | sed -n '1,14p'`.",
+        "response": "The executable reports an invalid invocation and returns a nonzero status.",
+        "feedback": "unknown flag: --definitely-invalid-option",
+        "cancellation": "Ctrl-C is available if an error path blocks; this observed path returned on its own.",
+        "failure": "Observed status 125.",
+        "recovery": "Run `docker --help 2>&1 | sed -n '1,14p'`.",
+        "evidence": "media/session.cast at 5.10–7.10 s; observed exit 125; media/03-failure-recovery.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "help navigation",
+        "trigger": "Invoke `docker --help 2>&1 | sed -n '1,14p'`.",
+        "response": "The top-level usage, options, or command index is printed without opening a browser.",
+        "feedback": "The first fourteen nonblank output lines remain readable in the cast.",
+        "cancellation": "Ctrl-C/backtracking returns to the shell prompt.",
+        "failure": "An invalid help spelling is handled as an invalid invocation.",
+        "recovery": "Repeat the exact documented help form.",
+        "evidence": "media/session.cast at 2.20–5.10 s; media/02-help-stream.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "completion",
+        "trigger": "Wait for version or help output to finish.",
+        "response": "Control returns to `cli-ref$`.",
+        "feedback": "A new prompt is visible and the exit status is recorded.",
+        "cancellation": "Not needed after completion.",
+        "failure": "A nonzero status distinguishes rejected input from successful completion.",
+        "recovery": "Issue a corrected command at the restored prompt.",
+        "evidence": "media/session.cast at 0.85–2.20 s and after the recovery output at 8.45 s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation",
+        "trigger": "Type `docker --help` without Enter, then press Ctrl-C.",
+        "response": "The interactive PTY accepted Ctrl-C, discarded the pending line, and restored `cli-ref$`.",
+        "feedback": "The cast labels the recorder-observed Ctrl-C; the canceled command emits no product help because it was not submitted.",
+        "cancellation": "Ctrl-C is the observed cancellation mechanism.",
+        "failure": "The pending command is intentionally abandoned rather than executed.",
+        "recovery": "Submit the bounded help command on the next prompt.",
+        "evidence": "media/session.cast at 7.10–8.10 s; recorder annotation identifies the PTY-observed Ctrl-C, discarded pending input, and restored prompt"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure recovery",
+        "trigger": "After the invalid invocation returns nonzero, enter the bounded help command again.",
+        "response": "The same real executable prints valid help output and returns control.",
+        "feedback": "Usage:  docker [OPTIONS] COMMAND",
+        "cancellation": "The recovery can itself be canceled with Ctrl-C at the prompt.",
+        "failure": "Repeating the invalid option reproduces the nonzero route.",
+        "recovery": "The valid help form completes the first-success journey.",
+        "evidence": "media/session.cast at 5.10–8.45 s; media/03-failure-recovery.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time terminal user checking that the CLI is installed and learning its top-level grammar.",
+        "goal": "Obtain the first meaningful Docker CLI result, discover valid usage, observe a real failure, cancel safely, and recover.",
+        "prerequisites": [
+          "Ubuntu 24.04 aarch64 Lima VM `cli-reference`",
+          "Real `docker` executable installed or extracted from its official distribution",
+          "A PTY with `TERM=xterm-256color`, `PAGER=cat`, `NO_COLOR=1`, and no credentials or live target configured"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the isolated PTY at `cli-ref$`.",
+            "system_response": "A clean prompt appears with no credentials, project files, or live target selected.",
+            "state": "ready prompt",
+            "evidence": "media/session.cast at 0.00–0.55 s"
+          },
+          {
+            "index": 2,
+            "user_action": "Run `docker --version 2>&1 | sed -n '1,14p'`.",
+            "system_response": "Docker CLI prints its installed version and exits 0.",
+            "state": "version success",
+            "evidence": "media/session.cast at 0.55–2.20 s; media/01-version-success.png; observed exit 0"
+          },
+          {
+            "index": 3,
+            "user_action": "Run `docker --help 2>&1 | sed -n '1,14p'`.",
+            "system_response": "The executable streams its authentic top-level help through the shown fourteen-line limiter.",
+            "state": "help stream",
+            "evidence": "media/session.cast at 2.20–5.10 s; media/02-help-stream.png"
+          },
+          {
+            "index": 4,
+            "user_action": "Run `docker --definitely-invalid-option 2>&1 | sed -n '1,14p'`.",
+            "system_response": "The executable rejects the input and returns status 125.",
+            "state": "observed failure",
+            "evidence": "media/session.cast at 5.10–7.10 s; observed exit 125; media/03-failure-recovery.png"
+          },
+          {
+            "index": 5,
+            "user_action": "Type `docker --help` but press Ctrl-C before Enter.",
+            "system_response": "The PTY accepts Ctrl-C, abandons the pending line, and restores the prompt; the cast labels this observed input action.",
+            "state": "canceled pending command",
+            "evidence": "media/session.cast at 7.10–8.10 s; recorder annotation identifies the PTY-observed Ctrl-C, discarded pending input, and restored prompt"
+          },
+          {
+            "index": 6,
+            "user_action": "Rerun `docker --help 2>&1 | sed -n '1,14p'`.",
+            "system_response": "Valid help output appears again, proving recovery after both parser failure and cancellation and completing first success.",
+            "state": "recovered first success",
+            "evidence": "media/session.cast at 8.10–8.45 s; media/03-failure-recovery.png"
+          }
+        ],
+        "failure_route": [
+          "Invoke `docker --definitely-invalid-option 2>&1 | sed -n '1,14p'`.",
+          "unknown flag: --definitely-invalid-option",
+          "Observe nonzero exit status 125 and restored prompt."
+        ],
+        "recovery_route": [
+          "Enter `docker --help 2>&1 | sed -n '1,14p'`.",
+          "Observe `Usage:  docker [OPTIONS] COMMAND`.",
+          "Confirm the prompt returns and no target state changed."
+        ],
+        "completion_evidence": "media/session.cast at 8.10–8.45 s plus all three PNG states; the recovered help stream is local and inspectable."
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "All essential content is emitted as terminal text and remains selectable/copyable in cast playback."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The recorded journey is keyboard-only: typed commands, Enter, and Ctrl-C."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "`NO_COLOR=1` removes color as a required carrier; success and failure remain distinguishable through text and exit status."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[3]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The bounded help stream avoids a mandatory interactive pager in the evidence path."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Version success"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "media/session.cast",
+        "source_match": null
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Help stream"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "media/session.cast",
+        "source_match": null
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Failure and recovery"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "media/session.cast",
+        "source_match": null
+      }
+    }
+  ]
 }

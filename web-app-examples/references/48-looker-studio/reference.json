@@ -20,236 +20,375 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "Single \"Monthly machine orders by region\" stacked-bar card on white: Jan to May columns on a 100-400 axis with the legend Region A, Region B, Region C, Region D",
+      "name": "Observed state 1",
       "local_path": "media/state-01-entry.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 13.5s (mean abs diff 1.6914/255)",
+      "timestamp_seconds": 14.436,
       "width": 640,
       "height": 360,
       "bytes": 18053,
-      "sha256": "4d9b3db55f656698ffcec861907681de027f174784574ff7b602c3343cad41e6",
-      "timestamp_seconds": 14.436,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 13.5,
-        "mean_abs_diff": 1.6914,
-        "sampled_frames": 180
-      }
+      "sha256": "4d9b3db55f656698ffcec861907681de027f174784574ff7b602c3343cad41e6"
     },
     {
-      "name": "\"Add data to report\" panel open in the Untitled Report editor (File / View / Page / Help), on the \"Connect to data\" tab beside \"My data sources\", showing \"Google Connectors (26)\" — Looker, Google Analytics, Google Ads, Google Sheets, BigQuery, AppSheet, File Upload, Microsoft Excel (PREVIEW), Amazon Redshift, Apigee (PREVIEW), Campaign Manager 360, Cloud Spanner",
+      "name": "Observed state 2",
       "local_path": "media/state-02-progress.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 45s (mean abs diff 1.8164/255)",
+      "timestamp_seconds": 45.113,
       "width": 640,
       "height": 360,
       "bytes": 30875,
-      "sha256": "a991766b47439a30b0da64655f1bbe916414aeacb44d44d515f9e7ea320c6237",
-      "timestamp_seconds": 45.113,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 45.0,
-        "mean_abs_diff": 1.8164,
-        "sampled_frames": 180
-      }
+      "sha256": "a991766b47439a30b0da64655f1bbe916414aeacb44d44d515f9e7ea320c6237"
     },
     {
-      "name": "Chart-type picker scrolled to Pivot table, Bullet, Treemap, Sankey, Gauge, Waterfall, Timeline and Funnel over the report's \"Total Orders 2,017,504\" scorecard, with the red circle wipe already rising from the bottom edge",
+      "name": "Observed state 3",
       "local_path": "media/state-03-result.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 75.5s (mean abs diff 11.3047/255)",
+      "timestamp_seconds": 75.789,
       "width": 640,
       "height": 360,
       "bytes": 22545,
-      "sha256": "8911dc3062dddba8123018ecd6ace545ca94774fa588661ab1bc552c16ebff6a",
-      "timestamp_seconds": 75.789,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 75.5,
-        "mean_abs_diff": 11.3047,
-        "sampled_frames": 180
-      }
+      "sha256": "8911dc3062dddba8123018ecd6ace545ca94774fa588661ab1bc552c16ebff6a"
     }
   ],
-  "interactions": [
-    {
-      "name": "Primary input",
-      "trigger": "Pointer activation of the demonstrated primary control",
-      "response": "The product advances from the entry surface into the task",
-      "feedback": "The active surface changes immediately",
-      "cancellation": "Move away without activating the control",
-      "failure": "No activation leaves the entry state unchanged",
-      "recovery": "Return to the visible control and activate it",
-      "evidence": "media/motion.mp4 14.4-28.9s"
-    },
-    {
-      "name": "Focus and selection",
-      "trigger": "Select the demonstrated item, field, or workspace target",
-      "response": "The target becomes the active context",
-      "feedback": "Selection styling or an active detail surface is visible",
-      "cancellation": "Select a different visible target",
-      "failure": "An unselected target does not advance the workflow",
-      "recovery": "Restore the intended selection",
-      "evidence": "media/motion.mp4 28.9-45.1s"
-    },
-    {
-      "name": "Navigation",
-      "trigger": "Use the demonstrated navigation control",
-      "response": "The central product surface changes while application context remains",
-      "feedback": "Destination content replaces the prior surface",
-      "cancellation": "Use the visible prior destination",
-      "failure": "A wrong destination shows content unrelated to the goal",
-      "recovery": "Navigate back to the demonstrated destination",
-      "evidence": "media/motion.mp4 28.9-45.1s"
-    },
-    {
-      "name": "Configuration",
-      "trigger": "Enter or choose the demonstrated task parameters",
-      "response": "The product reflects the configured values",
-      "feedback": "The in-progress state exposes the chosen configuration",
-      "cancellation": "Remove or replace the current choice",
-      "failure": "An incomplete configuration cannot produce the shown result",
-      "recovery": "Supply the missing demonstrated choice",
-      "evidence": "media/motion.mp4 45.1-59.5s"
-    },
-    {
-      "name": "Confirmation",
-      "trigger": "Activate the demonstrated commit, create, run, send, or save action",
-      "response": "The product starts the operation",
-      "feedback": "The surface transitions toward the result",
-      "cancellation": "Back out before the commit action",
-      "failure": "Committing with the task incomplete leaves a no-result state",
-      "recovery": "Complete the required context and confirm again",
-      "evidence": "media/motion.mp4 59.5-75.8s"
-    },
-    {
-      "name": "Backtracking",
-      "trigger": "Return from the current detail or configuration surface",
-      "response": "The previous product context is restored",
-      "feedback": "Prior navigation and content reappear",
-      "cancellation": "Remain on the current surface",
-      "failure": "Leaving too early abandons the pending result",
-      "recovery": "Re-enter the demonstrated task from the restored context",
-      "evidence": "media/motion.mp4 45.1-59.5s"
-    },
-    {
-      "name": "System feedback",
-      "trigger": "Wait after the demonstrated committed action",
-      "response": "The first meaningful result becomes visible",
-      "feedback": "Result content replaces or augments the in-progress state",
-      "cancellation": "No cancellation is shown after completion",
-      "failure": "Stopping before feedback provides no completion evidence",
-      "recovery": "Wait for the visible result state",
-      "evidence": "media/motion.mp4 75.8-90.2s"
-    },
-    {
-      "name": "Failure and recovery",
-      "trigger": "Attempt to proceed without the demonstrated selection or context",
-      "response": "The workflow remains incomplete rather than reaching the result",
-      "feedback": "The expected result state is absent",
-      "cancellation": "Return to the preceding stable surface",
-      "failure": "Required context is missing",
-      "recovery": "Restore the demonstrated context and repeat the confirmed action",
-      "evidence": "Contrast media/motion.mp4 28.9-45.1s with media/motion.mp4 75.8-90.2s"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time Looker Studio user following the upstream owner's official walkthrough",
-    "goal": "Reach the first meaningful Looker Studio result demonstrated in the official walkthrough",
-    "prerequisites": [
-      "A supported browser",
-      "Network access",
-      "Any account, workspace, or source material shown by the official tutorial"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the product surface used by the official tutorial",
-        "system_response": "The product presents the initial application context",
-        "state": "Entry surface",
-        "evidence": "media/motion.mp4 0.0-14.4s"
-      },
-      {
-        "index": 2,
-        "user_action": "Invoke the tutorial's demonstrated primary control",
-        "system_response": "The product opens the task-specific surface",
-        "state": "Task opened",
-        "evidence": "media/motion.mp4 14.4-28.9s"
-      },
-      {
-        "index": 3,
-        "user_action": "Choose the demonstrated item, destination, or workspace context",
-        "system_response": "The selected target becomes active",
-        "state": "Target selected",
-        "evidence": "media/motion.mp4 28.9-45.1s"
-      },
-      {
-        "index": 4,
-        "user_action": "Provide or adjust the demonstrated configuration",
-        "system_response": "The interface reflects the in-progress configuration",
-        "state": "Configured in-progress state",
-        "evidence": "media/motion.mp4 45.1-59.5s"
-      },
-      {
-        "index": 5,
-        "user_action": "Confirm, create, run, send, or save as demonstrated",
-        "system_response": "The product executes the requested operation",
-        "state": "Operation committed",
-        "evidence": "media/motion.mp4 59.5-75.8s"
-      },
-      {
-        "index": 6,
-        "user_action": "Observe the operation feedback",
-        "system_response": "The official recording shows the first meaningful result",
-        "state": "First meaningful result",
-        "evidence": "media/motion.mp4 75.8-90.2s"
-      }
-    ],
-    "failure_route": [
-      "Without the demonstrated context or selection, the workflow remains before the result state.",
-      "Leaving before the commit or feedback interval provides no completion evidence."
-    ],
-    "recovery_route": [
-      "Return to the stable task surface shown before confirmation.",
-      "Restore the demonstrated selection or configuration, repeat the commit action, and wait for the result feedback."
-    ],
-    "completion_evidence": "media/motion.mp4 75.8-90.2s"
-  },
-  "motion_analysis": {
-    "trigger": "Nothing the viewer does: an official Looker Studio promotional walkthrough that plays itself, opening on stock footage of a man at a monitor (0-4s). Inside it the pointer is driven for the viewer — it hovers the chart-type picker's Funnel row at 74.5-75.75s, which raises the black tooltip \"Funnel chart stepped bar\" — and no keystrokes are shown.",
-    "start_state": "Stock footage of a person at a desktop monitor (0-4s), which gives way to a single \"Monthly machine orders by region\" stacked-bar card on white (about 5-16s).",
-    "end_state": "The finished \"Cymbal Direct 2024 Data Report\" in the Looker Studio editor with a chart selected and the Chart settings pane open on the right (84-90s).",
-    "continuity": "One 90.23s recording at 24 fps (2159 frames). Scene changes are Google-coloured expanding circle wipes rather than hard cuts — red into yellow into green at 39.0-39.5s before the blank Untitled Report editor with its \"Welcome to Looker Studio\" panel appears at 40.0s, and red into blue into green into yellow at 76.0-76.75s before the Cymbal Direct 2024 Data Report is revealed at 77.0s. Within a scene the motion is continuous: the report pages drift in a slow parallax at 34-38s, and the chart-type picker scrolls with the pointer through 74-75.75s. No still-image interpolation.",
-    "timing_class": "continuous",
-    "interruption_or_reversal": null,
-    "feedback": "Pointer position draws an immediate visible answer: hovering the picker's Funnel row raises a black text tooltip \"Funnel chart stepped bar\" at 74.5s that tracks the pointer to 75.75s, and the report itself carries its own result readouts — the scorecards $12.28M, $1.23M and \"Total Orders 2,017,504\" plus the Revenue by State choropleth (77-90s). No progress spinner, toast or error is shown anywhere in the clip.",
-    "reduced_motion_equivalent": null
-  },
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
   "accessibility": {
-    "observations": [
-      "Chart series are identified by a text label beside each colour swatch — \"Region A\", \"Region B\", \"Region C\", \"Region D\" — rather than by colour alone, and the value axis is labelled with the numerals 100, 200, 300, 400 (media/state-01-entry.jpg, 14.436s).",
-      "Every connector tile in the \"Add data to report\" panel carries a text name, a \"By Google\" attribution and a one-line description, and the pre-release ones are marked with the word \"PREVIEW\" (Microsoft Excel, Apigee) rather than by a colour or a badge shape alone (media/state-02-progress.jpg, 45.113s).",
-      "The chart-type picker labels every group in text above its icon row — Pivot table, Bullet, Treemap, Sankey, Gauge, Waterfall, Timeline, Funnel — and hovering an icon-only variant raises a black tooltip that names it, \"Funnel chart stepped bar\" at 74.5-75.75s (media/state-03-result.jpg, 75.789s).",
-      "In the chart-title crop of media/state-01-entry.jpg (x 165-420, y 64-82) the brightest 2% of pixels (255,255,255) against the darkest 2% (90,90,90) measure a 6.9:1 luminance contrast ratio, and the \"Total Orders 2,017,504\" scorecard crop of media/state-03-result.jpg (x 468-590, y 92-130) measures 14.32:1 for (246,226,255) text on the (19,0,98) navy card. Both computed with the WCAG relative-luminance formula over the retained JPEGs.",
-      "State stays legible with the animation stopped: report name, menu bar, panel tabs, connector names, chart-type names and every scorecard figure are on-screen text in the retained frames."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, and live-region announcements were not exposed by the static-source recording.",
       "Complete keyboard traversal and focus order were not established by the recording.",
       "Reduced-motion preference handling and a nonanimated equivalent were not demonstrated."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
-    "motion analysis missing interruption_or_reversal, reduced_motion_equivalent",
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-entry.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-entry.jpg; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-progress.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-progress.jpg; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-result.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-result.jpg; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Primary input",
+        "trigger": "Pointer activation of the demonstrated primary control",
+        "response": "The product advances from the entry surface into the task",
+        "feedback": "The active surface changes immediately",
+        "cancellation": "Move away without activating the control",
+        "failure": "No activation leaves the entry state unchanged",
+        "recovery": "Return to the visible control and activate it",
+        "evidence": "media/motion.mp4 14.4-28.9s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus and selection",
+        "trigger": "Select the demonstrated item, field, or workspace target",
+        "response": "The target becomes the active context",
+        "feedback": "Selection styling or an active detail surface is visible",
+        "cancellation": "Select a different visible target",
+        "failure": "An unselected target does not advance the workflow",
+        "recovery": "Restore the intended selection",
+        "evidence": "media/motion.mp4 28.9-45.1s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Navigation",
+        "trigger": "Use the demonstrated navigation control",
+        "response": "The central product surface changes while application context remains",
+        "feedback": "Destination content replaces the prior surface",
+        "cancellation": "Use the visible prior destination",
+        "failure": "A wrong destination shows content unrelated to the goal",
+        "recovery": "Navigate back to the demonstrated destination",
+        "evidence": "media/motion.mp4 28.9-45.1s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Configuration",
+        "trigger": "Enter or choose the demonstrated task parameters",
+        "response": "The product reflects the configured values",
+        "feedback": "The in-progress state exposes the chosen configuration",
+        "cancellation": "Remove or replace the current choice",
+        "failure": "An incomplete configuration cannot produce the shown result",
+        "recovery": "Supply the missing demonstrated choice",
+        "evidence": "media/motion.mp4 45.1-59.5s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirmation",
+        "trigger": "Activate the demonstrated commit, create, run, send, or save action",
+        "response": "The product starts the operation",
+        "feedback": "The surface transitions toward the result",
+        "cancellation": "Back out before the commit action",
+        "failure": "Committing with the task incomplete leaves a no-result state",
+        "recovery": "Complete the required context and confirm again",
+        "evidence": "media/motion.mp4 59.5-75.8s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Backtracking",
+        "trigger": "Return from the current detail or configuration surface",
+        "response": "The previous product context is restored",
+        "feedback": "Prior navigation and content reappear",
+        "cancellation": "Remain on the current surface",
+        "failure": "Leaving too early abandons the pending result",
+        "recovery": "Re-enter the demonstrated task from the restored context",
+        "evidence": "media/motion.mp4 45.1-59.5s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "System feedback",
+        "trigger": "Wait after the demonstrated committed action",
+        "response": "The first meaningful result becomes visible",
+        "feedback": "Result content replaces or augments the in-progress state",
+        "cancellation": "No cancellation is shown after completion",
+        "failure": "Stopping before feedback provides no completion evidence",
+        "recovery": "Wait for the visible result state",
+        "evidence": "media/motion.mp4 75.8-90.2s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Failure and recovery",
+        "trigger": "Attempt to proceed without the demonstrated selection or context",
+        "response": "The workflow remains incomplete rather than reaching the result",
+        "feedback": "The expected result state is absent",
+        "cancellation": "Return to the preceding stable surface",
+        "failure": "Required context is missing",
+        "recovery": "Restore the demonstrated context and repeat the confirmed action",
+        "evidence": "Contrast media/motion.mp4 28.9-45.1s with media/motion.mp4 75.8-90.2s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time Looker Studio user following the upstream owner's official walkthrough",
+        "goal": "Reach the first meaningful Looker Studio result demonstrated in the official walkthrough",
+        "prerequisites": [
+          "A supported browser",
+          "Network access",
+          "Any account, workspace, or source material shown by the official tutorial"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the product surface used by the official tutorial",
+            "system_response": "The product presents the initial application context",
+            "state": "Entry surface",
+            "evidence": "media/motion.mp4 0.0-14.4s"
+          },
+          {
+            "index": 2,
+            "user_action": "Invoke the tutorial's demonstrated primary control",
+            "system_response": "The product opens the task-specific surface",
+            "state": "Task opened",
+            "evidence": "media/motion.mp4 14.4-28.9s"
+          },
+          {
+            "index": 3,
+            "user_action": "Choose the demonstrated item, destination, or workspace context",
+            "system_response": "The selected target becomes active",
+            "state": "Target selected",
+            "evidence": "media/motion.mp4 28.9-45.1s"
+          },
+          {
+            "index": 4,
+            "user_action": "Provide or adjust the demonstrated configuration",
+            "system_response": "The interface reflects the in-progress configuration",
+            "state": "Configured in-progress state",
+            "evidence": "media/motion.mp4 45.1-59.5s"
+          },
+          {
+            "index": 5,
+            "user_action": "Confirm, create, run, send, or save as demonstrated",
+            "system_response": "The product executes the requested operation",
+            "state": "Operation committed",
+            "evidence": "media/motion.mp4 59.5-75.8s"
+          },
+          {
+            "index": 6,
+            "user_action": "Observe the operation feedback",
+            "system_response": "The official recording shows the first meaningful result",
+            "state": "First meaningful result",
+            "evidence": "media/motion.mp4 75.8-90.2s"
+          }
+        ],
+        "failure_route": [
+          "Without the demonstrated context or selection, the workflow remains before the result state.",
+          "Leaving before the commit or feedback interval provides no completion evidence."
+        ],
+        "recovery_route": [
+          "Return to the stable task surface shown before confirmation.",
+          "Restore the demonstrated selection or configuration, repeat the commit action, and wait for the result feedback."
+        ],
+        "completion_evidence": "media/motion.mp4 75.8-90.2s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "Nothing the viewer does: an official Looker Studio promotional walkthrough that plays itself, opening on stock footage of a man at a monitor (0-4s). Inside it the pointer is driven for the viewer — it hovers the chart-type picker's Funnel row at 74.5-75.75s, which raises the black tooltip \"Funnel chart stepped bar\" — and no keystrokes are shown.",
+        "start_state": "Stock footage of a person at a desktop monitor (0-4s), which gives way to a single \"Monthly machine orders by region\" stacked-bar card on white (about 5-16s).",
+        "end_state": "The finished \"Cymbal Direct 2024 Data Report\" in the Looker Studio editor with a chart selected and the Chart settings pane open on the right (84-90s).",
+        "continuity": "One 90.23s recording at 24 fps (2159 frames). Scene changes are Google-coloured expanding circle wipes rather than hard cuts — red into yellow into green at 39.0-39.5s before the blank Untitled Report editor with its \"Welcome to Looker Studio\" panel appears at 40.0s, and red into blue into green into yellow at 76.0-76.75s before the Cymbal Direct 2024 Data Report is revealed at 77.0s. Within a scene the motion is continuous: the report pages drift in a slow parallax at 34-38s, and the chart-type picker scrolls with the pointer through 74-75.75s. No still-image interpolation.",
+        "timing_class": "continuous",
+        "interruption_or_reversal": null,
+        "feedback": "Pointer position draws an immediate visible answer: hovering the picker's Funnel row raises a black text tooltip \"Funnel chart stepped bar\" at 74.5s that tracks the pointer to 75.75s, and the report itself carries its own result readouts — the scorecards $12.28M, $1.23M and \"Total Orders 2,017,504\" plus the Revenue by State choropleth (77-90s). No progress spinner, toast or error is shown anywhere in the clip.",
+        "reduced_motion_equivalent": null
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Chart series are identified by a text label beside each colour swatch — \"Region A\", \"Region B\", \"Region C\", \"Region D\" — rather than by colour alone, and the value axis is labelled with the numerals 100, 200, 300, 400 (media/state-01-entry.jpg, 14.436s)."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Every connector tile in the \"Add data to report\" panel carries a text name, a \"By Google\" attribution and a one-line description, and the pre-release ones are marked with the word \"PREVIEW\" (Microsoft Excel, Apigee) rather than by a colour or a badge shape alone (media/state-02-progress.jpg, 45.113s)."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The chart-type picker labels every group in text above its icon row — Pivot table, Bullet, Treemap, Sankey, Gauge, Waterfall, Timeline, Funnel — and hovering an icon-only variant raises a black tooltip that names it, \"Funnel chart stepped bar\" at 74.5-75.75s (media/state-03-result.jpg, 75.789s)."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[3]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "In the chart-title crop of media/state-01-entry.jpg (x 165-420, y 64-82) the brightest 2% of pixels (255,255,255) against the darkest 2% (90,90,90) measure a 6.9:1 luminance contrast ratio, and the \"Total Orders 2,017,504\" scorecard crop of media/state-03-result.jpg (x 468-590, y 92-130) measures 14.32:1 for (246,226,255) text on the (19,0,98) navy card. Both computed with the WCAG relative-luminance formula over the retained JPEGs."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[4]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "State stays legible with the animation stopped: report name, menu bar, panel tabs, connector names, chart-type names and every scorecard figure are on-screen text in the retained frames."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Single \"Monthly machine orders by region\" stacked-bar card on white: Jan to May columns on a 100-400 axis with the legend Region A, Region B, Region C, Region D"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 13.5s (mean abs diff 1.6914/255)",
+        "source_match": {
+          "timestamp_seconds": 13.5,
+          "mean_abs_diff": 1.6914,
+          "sampled_frames": 180,
+          "motion_path": "media/state-01-entry.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "\"Add data to report\" panel open in the Untitled Report editor (File / View / Page / Help), on the \"Connect to data\" tab beside \"My data sources\", showing \"Google Connectors (26)\" — Looker, Google Analytics, Google Ads, Google Sheets, BigQuery, AppSheet, File Upload, Microsoft Excel (PREVIEW), Amazon Redshift, Apigee (PREVIEW), Campaign Manager 360, Cloud Spanner"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 45s (mean abs diff 1.8164/255)",
+        "source_match": {
+          "timestamp_seconds": 45.0,
+          "mean_abs_diff": 1.8164,
+          "sampled_frames": 180,
+          "motion_path": "media/state-02-progress.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Chart-type picker scrolled to Pivot table, Bullet, Treemap, Sankey, Gauge, Waterfall, Timeline and Funnel over the report's \"Total Orders 2,017,504\" scorecard, with the red circle wipe already rising from the bottom edge"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 75.5s (mean abs diff 11.3047/255)",
+        "source_match": {
+          "timestamp_seconds": 75.5,
+          "mean_abs_diff": 11.3047,
+          "sampled_frames": 180,
+          "motion_path": "media/state-03-result.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

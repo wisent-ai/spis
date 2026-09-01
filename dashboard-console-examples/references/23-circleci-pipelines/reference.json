@@ -20,221 +20,48 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "entry context",
+      "name": "Observed state 1",
       "local_path": "media/state-1.png",
-      "source_motion_path": "frame of media/product-motion.mp4 at 0s (mean abs diff 1.6953/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 49944,
       "sha256": "4bfddfe26e2842b5bccfc7be37fa72f10711f445eee06eb88f4752a64797bae5",
-      "source_match": {
-        "motion_path": "media/product-motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 0.0,
-        "mean_abs_diff": 1.6953,
-        "sampled_frames": 30
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 49944
     },
     {
-      "name": "focused working state",
+      "name": "Observed state 2",
       "local_path": "media/state-2.png",
-      "source_motion_path": "frame of media/product-motion.mp4 at 7.5s (mean abs diff 1.6992/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 53527,
       "sha256": "c0ca3fa3a399f3b1d2efda074eb7fb288b22498a4040ad9bcae65a0778272619",
-      "source_match": {
-        "motion_path": "media/product-motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 7.5,
-        "mean_abs_diff": 1.6992,
-        "sampled_frames": 30
-      }
-    },
-    {
-      "name": "first-success result",
-      "local_path": "media/state-3.png",
-      "source_motion_path": "frame of media/product-motion.mp4 at 10s (mean abs diff 1.8398/255)",
       "width": 640,
       "height": 360,
-      "bytes": 64612,
+      "bytes": 53527
+    },
+    {
+      "name": "Observed state 3",
+      "local_path": "media/state-3.png",
       "sha256": "d40072a1397fcde3647d2aefcd954b27a7650f7250ee0f36f2704892bb87a55f",
-      "source_match": {
-        "motion_path": "media/product-motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 10.0,
-        "mean_abs_diff": 1.8398,
-        "sampled_frames": 30
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 64612
     }
   ],
-  "interactions": [
-    {
-      "name": "primary activation",
-      "trigger": "Activate the primary row, card, service, or control shown in the working surface.",
-      "response": "The persistent console shell keeps context while the work area changes.",
-      "feedback": "Selection styling and changed content identify the active target.",
-      "cancellation": "Leave the control uncommitted or return to the previous view.",
-      "failure": "A non-result leaves the prior context visible rather than inventing success.",
-      "recovery": "Choose the visible valid target and activate it again.",
-      "evidence": "media/product-motion.mp4 at 00:00:03; corresponding retained frame where noted"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Move focus or selection into the first actionable region.",
-      "response": "The target becomes visually distinguished from adjacent items.",
-      "feedback": "Highlight, outline, active-row color, or opened panel is visible.",
-      "cancellation": "Move selection back to the prior region.",
-      "failure": "An unavailable or unmatched target does not produce the populated result.",
-      "recovery": "Return to the available item retained in the same shell.",
-      "evidence": "media/product-motion.mp4 at 00:00:04; corresponding retained frame where noted"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Use the visible navigation, tab, breadcrumb, or collection entry.",
-      "response": "The central work area changes without losing global context.",
-      "feedback": "Heading, active destination, or view contents change.",
-      "cancellation": "Use the persistent previous destination or breadcrumb.",
-      "failure": "Wrong-destination content is recognizable before confirmation.",
-      "recovery": "Re-select the intended visible destination.",
-      "evidence": "media/product-motion.mp4 at 00:00:06; corresponding retained frame where noted"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Apply the visible primary action or accept the configured selection.",
-      "response": "The product advances from configuration to a result-bearing state.",
-      "feedback": "Changed status, populated content, or confirmation styling appears.",
-      "cancellation": "Do not activate the final action or use the adjacent close/back route.",
-      "failure": "Incomplete input keeps the result from appearing.",
-      "recovery": "Correct the visible selection or field and apply again.",
-      "evidence": "media/product-motion.mp4 at 00:00:09; corresponding retained frame where noted"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use the visible back, close, cancel, previous destination, or retained navigation context.",
-      "response": "The product returns without erasing the broader console context.",
-      "feedback": "The preceding state or destination is restored.",
-      "cancellation": "Stop before confirming a write action.",
-      "failure": "Abandoning after a write would not restore server state automatically.",
-      "recovery": "Reopen the retained item and continue from its current state.",
-      "evidence": "media/product-motion.mp4 at 00:00:02; corresponding retained frame where noted"
-    },
-    {
-      "name": "system feedback",
-      "trigger": "Wait after a navigation, selection, or action shown in the excerpt.",
-      "response": "The interface settles from an intermediate to a populated state.",
-      "feedback": "Loading, status, count, chart, table, or updated control is visible.",
-      "cancellation": "Navigation can be abandoned before acting on the settled result.",
-      "failure": "A pending or empty intermediate state is not treated as completion.",
-      "recovery": "Keep context, wait, or reapply the selection until the populated state appears.",
-      "evidence": "media/product-motion.mp4 at 00:00:12; corresponding retained frame where noted"
-    },
-    {
-      "name": "failure recognition",
-      "trigger": "Observe the intermediate, unavailable, empty, or not-yet-populated state in the recorded transition.",
-      "response": "The interface withholds completion evidence and retains actionable context.",
-      "feedback": "Missing result, pending indicator, validation styling, or unchanged status distinguishes failure from success.",
-      "cancellation": "Backtrack before any irreversible follow-up.",
-      "failure": "Continuing from the unresolved state would not meet the stated first-success goal.",
-      "recovery": "Return to the prior valid state and choose or apply the valid route shown next.",
-      "evidence": "media/product-motion.mp4 at 00:00:07; corresponding retained frame where noted"
-    },
-    {
-      "name": "recovery",
-      "trigger": "Re-select, correct, wait, or continue after the non-result state.",
-      "response": "The retained shell transitions to the populated result visible at the end.",
-      "feedback": "Result content and stable status replace the intermediate state.",
-      "cancellation": "The operator can still leave through persistent navigation after recovery.",
-      "failure": "If the result remains absent, completion is not claimed.",
-      "recovery": "Repeat the visible valid route while preserving context.",
-      "evidence": "media/product-motion.mp4 at 00:00:12; corresponding retained frame where noted"
-    }
-  ],
-  "journey": {
-    "actor": "Operator using CircleCI Pipelines",
-    "goal": "open a pipeline or workflow run and reach a legible run result",
-    "prerequisites": [
-      "Access to the product surface or equivalent demo environment shown in the owner recording",
-      "Permission to view and operate the demonstrated resource or workspace",
-      "A populated example, sample, or connected data source where the product requires one"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the product surface shown by the owner-published walkthrough.",
-        "system_response": "The authenticated or product-ready shell and its initial context are visible.",
-        "state": "entry context",
-        "evidence": "media/product-motion.mp4 at 00:00:00; corresponding retained frame where noted"
-      },
-      {
-        "index": 2,
-        "user_action": "Identify and enter the primary work region retained in the shell.",
-        "system_response": "A destination, row, card, or control becomes the active focus.",
-        "state": "focus established",
-        "evidence": "media/product-motion.mp4 at 00:00:03; corresponding retained frame where noted"
-      },
-      {
-        "index": 3,
-        "user_action": "Navigate to or activate the target demonstrated in the excerpt.",
-        "system_response": "The work area changes and preserves global navigation/context.",
-        "state": "target opened",
-        "evidence": "media/product-motion.mp4 at 00:00:06; corresponding retained frame where noted"
-      },
-      {
-        "index": 4,
-        "user_action": "Apply the shown selection, filter, configuration, or primary action.",
-        "system_response": "The interface enters an intermediate, loading, validation, or updating state.",
-        "state": "action in progress",
-        "evidence": "media/product-motion.mp4 at 00:00:09; corresponding retained frame where noted"
-      },
-      {
-        "index": 5,
-        "user_action": "Wait for feedback and inspect the resulting content or status.",
-        "system_response": "A populated, stable, and actionable result is visible.",
-        "state": "first-success result",
-        "evidence": "media/product-motion.mp4 at 00:00:12; corresponding retained frame where noted"
-      }
-    ],
-    "failure_route": [
-      "At the intermediate state, absence of populated content or unchanged status means first success has not occurred.",
-      "Do not continue to a consequential action from an unresolved or wrong-target state; use retained navigation to backtrack."
-    ],
-    "recovery_route": [
-      "Return to the last retained valid context.",
-      "Choose the visible valid target or correct the shown selection/configuration.",
-      "Reapply or wait for system feedback, and accept completion only when the recorded populated result appears."
-    ],
-    "completion_evidence": "media/state-3.png, derived from media/product-motion.mp4 at approximately 00:00:12, retains the populated first-success result."
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Persistent labels, headings, and structural regions remain visible across the three retained states.",
-      "Selection or status is communicated with position, text, shape, or highlight in addition to motion.",
-      "The recorded shell preserves orientation while the central work area changes."
-    ],
+    "observations": [],
     "unknowns": [
       "Keyboard focus order and full keyboard operability were not exercised by the static-source excerpt.",
       "Screen-reader names, roles, live-region announcements, and error announcement timing were not inspected.",
       "Measured contrast ratios, zoom/reflow behavior, and high-contrast mode were not inspected.",
       "A product-level reduced-motion preference or nonanimated equivalent was not demonstrated in the source excerpt."
-    ]
+    ],
+    "measured": false
   },
-  "motion_analysis": {
-    "trigger": "Navigation, selection, filtering, or primary activation demonstrated in the owner recording.",
-    "start_state": "Retained entry or working context in media/state-1.png.",
-    "end_state": "Populated result or stable feedback in media/state-3.png.",
-    "continuity": "The global shell or task context remains spatially stable while the work region changes.",
-    "timing_class": "one-to-three-seconds",
-    "feedback": "Changed selection, content, status, count, chart, table, or confirmation is visible in the motion and state frames.",
-    "reduced_motion_equivalent": "Not demonstrated; the inspectable nonanimated equivalent retained here is the ordered three-state frame set.",
-    "interruption_or_reversal": "Persistent navigation/back context is visible; interruption semantics for in-flight server work were not exercised.",
-    "timing_description": "Immediate selection feedback followed by short asynchronous settling within the 15-second excerpt."
-  },
+  "motion_analysis": null,
   "source_observation": {
     "official_recording_title": "CircleCI Demo",
     "official_recording_url": "https://www.youtube.com/watch?v=J1l-icYGyd0",
@@ -246,10 +73,313 @@
     "upstream_channel_or_owner": "CircleCI"
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/product-motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-1.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-1.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-2.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-2.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-3.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-3.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary activation",
+        "trigger": "Activate the primary row, card, service, or control shown in the working surface.",
+        "response": "The persistent console shell keeps context while the work area changes.",
+        "feedback": "Selection styling and changed content identify the active target.",
+        "cancellation": "Leave the control uncommitted or return to the previous view.",
+        "failure": "A non-result leaves the prior context visible rather than inventing success.",
+        "recovery": "Choose the visible valid target and activate it again.",
+        "evidence": "media/product-motion.mp4 at 00:00:03; corresponding retained frame where noted"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Move focus or selection into the first actionable region.",
+        "response": "The target becomes visually distinguished from adjacent items.",
+        "feedback": "Highlight, outline, active-row color, or opened panel is visible.",
+        "cancellation": "Move selection back to the prior region.",
+        "failure": "An unavailable or unmatched target does not produce the populated result.",
+        "recovery": "Return to the available item retained in the same shell.",
+        "evidence": "media/product-motion.mp4 at 00:00:04; corresponding retained frame where noted"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Use the visible navigation, tab, breadcrumb, or collection entry.",
+        "response": "The central work area changes without losing global context.",
+        "feedback": "Heading, active destination, or view contents change.",
+        "cancellation": "Use the persistent previous destination or breadcrumb.",
+        "failure": "Wrong-destination content is recognizable before confirmation.",
+        "recovery": "Re-select the intended visible destination.",
+        "evidence": "media/product-motion.mp4 at 00:00:06; corresponding retained frame where noted"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Apply the visible primary action or accept the configured selection.",
+        "response": "The product advances from configuration to a result-bearing state.",
+        "feedback": "Changed status, populated content, or confirmation styling appears.",
+        "cancellation": "Do not activate the final action or use the adjacent close/back route.",
+        "failure": "Incomplete input keeps the result from appearing.",
+        "recovery": "Correct the visible selection or field and apply again.",
+        "evidence": "media/product-motion.mp4 at 00:00:09; corresponding retained frame where noted"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use the visible back, close, cancel, previous destination, or retained navigation context.",
+        "response": "The product returns without erasing the broader console context.",
+        "feedback": "The preceding state or destination is restored.",
+        "cancellation": "Stop before confirming a write action.",
+        "failure": "Abandoning after a write would not restore server state automatically.",
+        "recovery": "Reopen the retained item and continue from its current state.",
+        "evidence": "media/product-motion.mp4 at 00:00:02; corresponding retained frame where noted"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "system feedback",
+        "trigger": "Wait after a navigation, selection, or action shown in the excerpt.",
+        "response": "The interface settles from an intermediate to a populated state.",
+        "feedback": "Loading, status, count, chart, table, or updated control is visible.",
+        "cancellation": "Navigation can be abandoned before acting on the settled result.",
+        "failure": "A pending or empty intermediate state is not treated as completion.",
+        "recovery": "Keep context, wait, or reapply the selection until the populated state appears.",
+        "evidence": "media/product-motion.mp4 at 00:00:12; corresponding retained frame where noted"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure recognition",
+        "trigger": "Observe the intermediate, unavailable, empty, or not-yet-populated state in the recorded transition.",
+        "response": "The interface withholds completion evidence and retains actionable context.",
+        "feedback": "Missing result, pending indicator, validation styling, or unchanged status distinguishes failure from success.",
+        "cancellation": "Backtrack before any irreversible follow-up.",
+        "failure": "Continuing from the unresolved state would not meet the stated first-success goal.",
+        "recovery": "Return to the prior valid state and choose or apply the valid route shown next.",
+        "evidence": "media/product-motion.mp4 at 00:00:07; corresponding retained frame where noted"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery",
+        "trigger": "Re-select, correct, wait, or continue after the non-result state.",
+        "response": "The retained shell transitions to the populated result visible at the end.",
+        "feedback": "Result content and stable status replace the intermediate state.",
+        "cancellation": "The operator can still leave through persistent navigation after recovery.",
+        "failure": "If the result remains absent, completion is not claimed.",
+        "recovery": "Repeat the visible valid route while preserving context.",
+        "evidence": "media/product-motion.mp4 at 00:00:12; corresponding retained frame where noted"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "Operator using CircleCI Pipelines",
+        "goal": "open a pipeline or workflow run and reach a legible run result",
+        "prerequisites": [
+          "Access to the product surface or equivalent demo environment shown in the owner recording",
+          "Permission to view and operate the demonstrated resource or workspace",
+          "A populated example, sample, or connected data source where the product requires one"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the product surface shown by the owner-published walkthrough.",
+            "system_response": "The authenticated or product-ready shell and its initial context are visible.",
+            "state": "entry context",
+            "evidence": "media/product-motion.mp4 at 00:00:00; corresponding retained frame where noted"
+          },
+          {
+            "index": 2,
+            "user_action": "Identify and enter the primary work region retained in the shell.",
+            "system_response": "A destination, row, card, or control becomes the active focus.",
+            "state": "focus established",
+            "evidence": "media/product-motion.mp4 at 00:00:03; corresponding retained frame where noted"
+          },
+          {
+            "index": 3,
+            "user_action": "Navigate to or activate the target demonstrated in the excerpt.",
+            "system_response": "The work area changes and preserves global navigation/context.",
+            "state": "target opened",
+            "evidence": "media/product-motion.mp4 at 00:00:06; corresponding retained frame where noted"
+          },
+          {
+            "index": 4,
+            "user_action": "Apply the shown selection, filter, configuration, or primary action.",
+            "system_response": "The interface enters an intermediate, loading, validation, or updating state.",
+            "state": "action in progress",
+            "evidence": "media/product-motion.mp4 at 00:00:09; corresponding retained frame where noted"
+          },
+          {
+            "index": 5,
+            "user_action": "Wait for feedback and inspect the resulting content or status.",
+            "system_response": "A populated, stable, and actionable result is visible.",
+            "state": "first-success result",
+            "evidence": "media/product-motion.mp4 at 00:00:12; corresponding retained frame where noted"
+          }
+        ],
+        "failure_route": [
+          "At the intermediate state, absence of populated content or unchanged status means first success has not occurred.",
+          "Do not continue to a consequential action from an unresolved or wrong-target state; use retained navigation to backtrack."
+        ],
+        "recovery_route": [
+          "Return to the last retained valid context.",
+          "Choose the visible valid target or correct the shown selection/configuration.",
+          "Reapply or wait for system feedback, and accept completion only when the recorded populated result appears."
+        ],
+        "completion_evidence": "media/state-3.png, derived from media/product-motion.mp4 at approximately 00:00:12, retains the populated first-success result."
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "Navigation, selection, filtering, or primary activation demonstrated in the owner recording.",
+        "start_state": "Retained entry or working context in media/state-1.png.",
+        "end_state": "Populated result or stable feedback in media/state-3.png.",
+        "continuity": "The global shell or task context remains spatially stable while the work region changes.",
+        "timing_class": "one-to-three-seconds",
+        "feedback": "Changed selection, content, status, count, chart, table, or confirmation is visible in the motion and state frames.",
+        "reduced_motion_equivalent": "Not demonstrated; the inspectable nonanimated equivalent retained here is the ordered three-state frame set.",
+        "interruption_or_reversal": "Persistent navigation/back context is visible; interruption semantics for in-flight server work were not exercised.",
+        "timing_description": "Immediate selection feedback followed by short asynchronous settling within the 15-second excerpt."
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Persistent labels, headings, and structural regions remain visible across the three retained states."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Selection or status is communicated with position, text, shape, or highlight in addition to motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The recorded shell preserves orientation while the central work area changes."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "entry context"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/product-motion.mp4 at 0s (mean abs diff 1.6953/255)",
+        "source_match": {
+          "timestamp_seconds": 0.0,
+          "mean_abs_diff": 1.6953,
+          "sampled_frames": 30,
+          "motion_path": "media/state-1.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "focused working state"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/product-motion.mp4 at 7.5s (mean abs diff 1.6992/255)",
+        "source_match": {
+          "timestamp_seconds": 7.5,
+          "mean_abs_diff": 1.6992,
+          "sampled_frames": 30,
+          "motion_path": "media/state-2.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "first-success result"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/product-motion.mp4 at 10s (mean abs diff 1.8398/255)",
+        "source_match": {
+          "timestamp_seconds": 10.0,
+          "mean_abs_diff": 1.8398,
+          "sampled_frames": 30,
+          "motion_path": "media/state-3.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

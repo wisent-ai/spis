@@ -26,6 +26,24 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 const RECORD_SCHEMA: &str = "wisent.full-product-reference.v2";
 const INDEX_SCHEMA: &str = "wisent.full-reference-catalog.v2";
 const STILL_KIND: &str = "still-image";
+const RECORDS_PER_CATALOG: usize = 50;
+const KNOWN_CATALOGS: &[&str] = &[
+    "ios-app-examples",
+    "android-app-examples",
+    "macos-app-examples",
+    "desktop-app-examples",
+    "web-app-examples",
+    "dashboard-console-examples",
+    "tui-examples",
+    "cli-examples",
+    "onboarding-auth-examples",
+    "documentation-site-examples",
+    "app-store-listing-examples",
+    "design-system-examples",
+    "report-evidence-examples",
+    "pricing-page-examples",
+    "landing-page-examples",
+];
 
 /// Declared media kind (any historical spelling) -> canonical kind.
 fn canonical_motion_kind(declared: Option<&str>) -> Option<String> {
@@ -91,7 +109,8 @@ const MOTION_ANALYSIS_ALIASES: &[(&str, &str)] = &[
 ];
 
 /// Extra keys a motion analysis may carry beyond the required eight.
-const MOTION_ANALYSIS_OPTIONAL: &[&str] = &["source_title", "evidence", "timing_description"];
+const MOTION_ANALYSIS_OPTIONAL: &[&str] =
+    &["source_title", "evidence", "timing_description", "provenance"];
 
 const TIMING_CLASSES: &[&str] = &[
     "instant",
@@ -133,100 +152,42 @@ fn canonical_timing_class(value: Option<&str>) -> Option<String> {
         .map(|(_, canon)| canon.to_string())
 }
 
-// Case-insensitive pattern tables. The Python originals were regexes with word
-// boundaries; plain lowercase-substring matching preserves the classifications
-// on this corpus without pulling in a regex engine.
-const LOCAL_RUN_PATTERNS: &[&str] = &[
-    "pseudo-terminal",
-    "pseudoterminal",
-    "pty",
-    "asciinema",
-    "terminal cast",
-    "real executable",
-    "stdout/stderr",
-    "real installed product recorded",
-    "isolated temporary working directory",
-    "local run of the installed product",
-];
+const UNVERIFIED_NOTE_SCHEMA: &str = "wisent.unverified-source-note.v1";
 
-const LOCAL_BROWSER_PATTERNS: &[&str] = &[
-    "weles",
-    "patched chromium",
-    "browser recording",
-    "screencast",
-];
+/// Deliberately carries no trust state.
+///
+/// The importer may retain `wisent.weles-verified-provenance.v1` documents, but
+/// this verifier cannot call `@wisent-ai/weles-client.verifyReceipt` with an
+/// out-of-band trusted key set. Re-reading `verified`, `verifier`, `claims`,
+/// `signed_payload` or `signature` from the same mutable JSON record would not
+/// constitute verification. Until the official verifier is integrated here,
+/// both crawl and upstream provenance fail closed.
+#[derive(Clone, Default)]
+struct ProvenanceContext;
 
-const UPSTREAM_PATTERNS: &[&str] = &[
-    "yt-dlp",
-    "youtube",
-    "cobalt",
-    "download of",
-    "direct download",
-    "official-product",
-    "product-site",
-    "apptrailers",
-    "play-games",
-    "publisher",
-    "video channel",
-    "downloaded",
-];
-
-const UPSTREAM_MEDIA_WORDS: &[&str] = &[
-    "media",
-    "asset",
-    "recording",
-    "stream",
-    "preview",
-    "trailer",
-    "tour",
-    "download",
-];
-
-/// r"official[- ][\w -]*(media|asset|recording|stream|preview|trailer|tour|download)"
-fn official_media_phrase(text: &str) -> bool {
-    let lower = text.to_lowercase();
-    let mut from = 0;
-    while let Some(pos) = lower[from..].find("official") {
-        let start = from + pos;
-        // Require the non-word boundary before "official".
-        let boundary_ok = start == 0
-            || !lower[..start]
-                .chars()
-                .next_back()
-                .map(|c| c.is_ascii_alphanumeric())
-                .unwrap_or(false);
-        let window_end = (start + 48).min(lower.len());
-        let window = &lower[start..window_end];
-        if boundary_ok
-            && UPSTREAM_MEDIA_WORDS
-                .iter()
-                .any(|w| window.contains(&format!(" {w}")) || window.contains(&format!("-{w}")))
-        {
-            return true;
-        }
-        from = start + "official".len();
+impl ProvenanceContext {
+    fn from_record(_record: &Value) -> Self {
+        Self
     }
+}
+
+fn observation_supported(_value: &Value, _context: &ProvenanceContext) -> bool {
     false
 }
 
-/// Derive the provenance class from the recorded capture method. The order
-/// matters: a locally driven run wins over any wording about the source.
-fn classify_provenance(capture_method: Option<&str>, media_kind: Option<&str>) -> &'static str {
-    let text = capture_method.unwrap_or("");
-    let hay = text.to_lowercase();
-    if LOCAL_RUN_PATTERNS.iter().any(|p| hay.contains(p)) {
-        return "local-product-run";
-    }
-    if LOCAL_BROWSER_PATTERNS.iter().any(|p| hay.contains(p)) {
-        return "local-browser-recording";
-    }
-    if UPSTREAM_PATTERNS.iter().any(|p| hay.contains(p)) || official_media_phrase(text) {
-        return "upstream-owner-media";
-    }
-    if media_kind == Some("terminal-cast") {
-        return "local-product-run";
-    }
-    "unclassified"
+pub(crate) fn observation_has_verified_provenance(_record: &Value, _value: &Value) -> bool {
+    false
+}
+
+fn provenance_class(_value: &Value, _context: &ProvenanceContext) -> &'static str {
+    "unverified-source-media"
+}
+
+pub(crate) fn measured_motion_provenance_class(
+    _record: &Value,
+    _value: &Value,
+) -> &'static str {
+    "unverified-source-media"
 }
 
 // ------------------------------------------------------------------ probes --
@@ -623,13 +584,255 @@ fn entry_local_path(entry: &Map<String, Value>) -> String {
         .unwrap_or("")
         .to_string()
 }
+/// Measurement date recorded by this migration release.
+const TODAY: &str = "2026-09-01";
 
-/// Frozen measurement date, kept byte-identical with the Python tool.
-const TODAY: &str = "2026-08-19";
 
+fn unverified_note(field: String, reason: &str, source_value: Value) -> Value {
+    json!({
+        "schema": UNVERIFIED_NOTE_SCHEMA,
+        "field": field,
+        "reason": reason,
+        "source_value": source_value,
+    })
+}
+
+fn demote_unsupported_semantics(
+    data: &mut Value,
+    context: &ProvenanceContext,
+) -> Vec<String> {
+    let mut notes: Vec<Value> = data
+        .get("unverified_source_notes")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .cloned()
+        .collect();
+    let mut migration_gaps = Vec::new();
+
+    let interactions = data
+        .get("interactions")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    let mut verified_interactions = Vec::new();
+    for (index, interaction) in interactions.into_iter().enumerate() {
+        if observation_supported(&interaction, context) {
+            verified_interactions.push(interaction);
+        } else {
+            notes.push(unverified_note(
+                format!("interactions[{index}]"),
+                "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+                interaction,
+            ));
+        }
+    }
+
+    let mut states = data
+        .get("states")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    for (index, state) in states.iter_mut().enumerate() {
+        if observation_supported(state, context) {
+            continue;
+        }
+        let name_field = format!("states[{index}].name");
+        let generic_name = format!("Observed state {}", index + 1);
+        let existing_name = state.get("name").cloned().unwrap_or(Value::Null);
+        let name_preserved = notes
+            .iter()
+            .any(|note| note.get("field").and_then(Value::as_str) == Some(&name_field));
+        if !name_preserved
+            && existing_name
+                .as_str()
+                .is_some_and(|name| name != generic_name)
+        {
+            notes.push(unverified_note(
+                name_field,
+                "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+                existing_name,
+            ));
+        }
+        let relationship_field = format!("states[{index}].source_relationship");
+        let relationship_preserved = notes
+            .iter()
+            .any(|note| note.get("field").and_then(Value::as_str) == Some(&relationship_field));
+        let existing_relationship = json!({
+            "source_motion_path": state.get("source_motion_path"),
+            "source_match": state.get("source_match"),
+        });
+        if !relationship_preserved
+            && existing_relationship
+                .as_object()
+                .is_some_and(|object| object.values().any(|value| !value.is_null()))
+        {
+            notes.push(unverified_note(
+                relationship_field,
+                "stored state relationship was not independently recomputed against verified motion",
+                existing_relationship,
+            ));
+        }
+        if let Some(object) = state.as_object_mut() {
+            object.insert("name".into(), json!(generic_name));
+            object.remove("source_motion_path");
+            object.remove("source_match");
+            object.remove("source_relationship");
+        }
+    }
+
+    let journey = data.get("journey").cloned().unwrap_or(Value::Null);
+    let journey_supported = journey.is_object()
+        && observation_supported(&journey, context)
+        && journey
+            .get("steps")
+            .and_then(Value::as_array)
+            .is_some_and(|steps| {
+                !steps.is_empty()
+                    && steps
+                        .iter()
+                        .all(|step| observation_supported(step, context))
+            });
+    let verified_journey = if journey_supported {
+        journey
+    } else {
+        if !journey.is_null() {
+            notes.push(unverified_note(
+                "journey".to_string(),
+                "canonical journey and every step require typed provenance linked to verified raw evidence",
+                journey,
+            ));
+        }
+        Value::Null
+    };
+
+    let motion_analysis = data
+        .get("motion_analysis")
+        .cloned()
+        .unwrap_or(Value::Null);
+    let was_analysis_array = motion_analysis.is_array();
+    let analysis_items = match motion_analysis {
+        Value::Array(items) => items,
+        Value::Null => Vec::new(),
+        item => vec![item],
+    };
+    let mut verified_analysis = Vec::new();
+    for (index, analysis) in analysis_items.into_iter().enumerate() {
+        if observation_supported(&analysis, context) {
+            verified_analysis.push(analysis);
+        } else {
+            notes.push(unverified_note(
+                format!("motion_analysis[{index}]"),
+                "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+                analysis,
+            ));
+        }
+    }
+    let verified_analysis = if verified_analysis.is_empty() {
+        Value::Null
+    } else if was_analysis_array {
+        Value::Array(verified_analysis)
+    } else {
+        verified_analysis.into_iter().next().unwrap_or(Value::Null)
+    };
+
+    let mut accessibility = data
+        .get("accessibility")
+        .cloned()
+        .filter(Value::is_object)
+        .unwrap_or_else(|| json!({"measured": false, "observations": [], "unknowns": []}));
+    let observations = accessibility
+        .get("observations")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    let mut verified_accessibility = Vec::new();
+    for (index, observation) in observations.into_iter().enumerate() {
+        let statement_present = observation
+            .get("observation")
+            .and_then(Value::as_str)
+            .is_some_and(|text| !text.trim().is_empty());
+        if statement_present && observation_supported(&observation, context) {
+            verified_accessibility.push(observation);
+        } else {
+            notes.push(unverified_note(
+                format!("accessibility.observations[{index}]"),
+                "canonical accessibility observation must be a typed observation with verified provenance",
+                observation,
+            ));
+        }
+    }
+    accessibility["measured"] = json!(!verified_accessibility.is_empty());
+    accessibility["observations"] = Value::Array(verified_accessibility);
+    if !accessibility
+        .get("unknowns")
+        .is_some_and(Value::is_array)
+    {
+        accessibility["unknowns"] = json!([]);
+    }
+
+    let migrated_fields: BTreeSet<&str> = notes
+        .iter()
+        .filter(|note| note.get("schema").and_then(Value::as_str) == Some(UNVERIFIED_NOTE_SCHEMA))
+        .filter_map(|note| note.get("field").and_then(Value::as_str))
+        .collect();
+    if migrated_fields.iter().any(|field| field.starts_with("interactions[")) {
+        migration_gaps.push(
+            "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent".to_string(),
+        );
+    }
+    if migrated_fields
+        .iter()
+        .any(|field| field.starts_with("states[") && field.ends_with(".name"))
+    {
+        migration_gaps.push(
+            "semantic state names preserved as unverified source notes; pixels and digests do not prove labels".to_string(),
+        );
+    }
+    if migrated_fields
+        .iter()
+        .any(|field| field.starts_with("states[") && field.ends_with(".source_relationship"))
+    {
+        migration_gaps.push(
+            "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count".to_string(),
+        );
+    }
+    if migrated_fields.contains("journey") {
+        migration_gaps.push(
+            "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent".to_string(),
+        );
+    }
+    if migrated_fields
+        .iter()
+        .any(|field| field.starts_with("motion_analysis["))
+    {
+        migration_gaps.push(
+            "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent".to_string(),
+        );
+    }
+    if migrated_fields
+        .iter()
+        .any(|field| field.starts_with("accessibility.observations["))
+    {
+        migration_gaps.push(
+            "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent".to_string(),
+        );
+    }
+
+    if let Some(object) = data.as_object_mut() {
+        object.insert("states".into(), Value::Array(states));
+        object.insert("interactions".into(), Value::Array(verified_interactions));
+        object.insert("journey".into(), verified_journey);
+        object.insert("motion_analysis".into(), verified_analysis);
+        object.insert("accessibility".into(), accessibility);
+        object.insert("unverified_source_notes".into(), Value::Array(notes));
+    }
+    migration_gaps
+}
 fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<Vec<String>> {
     let requirements = super::reference_contract::completeness_requirements(base);
-    let mut gaps: Vec<String> = Vec::new();
+    let provenance_context = ProvenanceContext::from_record(data);
+    let mut gaps = demote_unsupported_semantics(data, &provenance_context);
 
     if let Some(obj) = data.as_object_mut() {
         obj.insert("schema".into(), json!(RECORD_SCHEMA));
@@ -740,16 +943,20 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
                 fmt_opt_num(probe.duration_seconds)
             ));
         }
-        let capture_method = obj
-            .get("capture_method")
-            .and_then(|v| v.as_str())
-            .map(str::to_string);
-        let provenance = classify_provenance(capture_method.as_deref(), Some(kind.as_str()));
+        let provenance = provenance_class(
+            &Value::Object(obj.clone()),
+            &provenance_context,
+        );
         obj.insert("provenance_class".into(), json!(provenance));
-        if provenance == "unclassified" {
-            gaps.push(format!("motion provenance unclassified: {local_path}"));
+        if provenance == "unverified-source-media" {
+            gaps.push(format!(
+                "motion provenance unverified: {local_path} has no typed verified crawl or owner observation"
+            ));
         }
-        if !is_still && primary_motion.is_none() {
+        if !is_still
+            && provenance != "unverified-source-media"
+            && primary_motion.is_none()
+        {
             primary_motion = Some(local);
         }
     }
@@ -771,6 +978,7 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
             .and_then(|v| v.as_array_mut())
             .and_then(|a| a.get_mut(idx))
             .context("state entry vanished")?;
+        let semantic_name_verified = observation_supported(entry, &provenance_context);
         let Some(obj) = entry.as_object_mut() else {
             continue;
         };
@@ -807,46 +1015,50 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
             probe.height.map(|h| json!(h)).unwrap_or(Value::Null),
         );
 
-        // v1 records already used `name` and `source_motion_path`. A failed v2
-        // migration introduced parallel `state_name` / `source_relationship`
-        // fields and then called every original record unnamed. Clean cutover:
-        // retain one vocabulary and consume the aliases if an observer wrote one.
-        if let Some(alias_name) = obj.remove("state_name") {
-            if truthy(Some(&alias_name)) {
-                obj.insert("name".into(), alias_name);
-            }
-        }
+        obj.remove("state_name");
+        obj.remove("source_relationship");
+        obj.remove("source_motion_path");
+        obj.remove("source_match");
         if !truthy(obj.get("name")) {
-            gaps.push(format!("state unnamed: {local_path}"));
+            obj.insert("name".into(), json!(format!("Observed state {}", idx + 1)));
         }
-        if let Some(alias_relationship) = obj.remove("source_relationship") {
-            obj.insert("source_motion_path".into(), alias_relationship);
+        if !semantic_name_verified {
+            gaps.push(format!(
+                "state semantic name unverified: {local_path}; pixels and digest prove only an observed frame"
+            ));
         }
 
         if locate_states {
-            let has_primary = primary_motion.is_some();
-            if has_primary && motion_frames_cache.is_none() {
+            if primary_motion.is_some() && motion_frames_cache.is_none() {
                 motion_frames_cache = Some(motion_signatures(primary_motion.as_ref().unwrap()));
             }
-            if let Some(frames) = motion_frames_cache.as_ref() {
-                if let Some(m) = locate_state_in_motion(&local, frames)? {
-                    let rel = local
-                        .strip_prefix(base)
-                        .unwrap_or(&local)
-                        .to_string_lossy()
-                        .to_string();
-                    let diff = m["mean_abs_diff"].as_f64().unwrap_or(f64::INFINITY);
-                    let ts = m["timestamp_seconds"].as_f64().unwrap_or(0.0);
-                    let mut source_match = m.clone();
-                    if let Some(sm) = source_match.as_object_mut() {
-                        sm.insert("motion_path".into(), json!(rel));
-                        sm.insert(
-                            "method".into(),
-                            json!("16x16 grayscale mean-absolute-difference frame search"),
-                        );
-                    }
-                    obj.insert("source_match".into(), source_match);
-                    if !truthy(obj.get("source_motion_path")) && diff <= STATE_MATCH_MAX_DIFF {
+            if let (Some(frames), Some(motion)) =
+                (motion_frames_cache.as_ref(), primary_motion.as_ref())
+            {
+                if let Some(matched) = locate_state_in_motion(&local, frames)? {
+                    let diff = matched["mean_abs_diff"]
+                        .as_f64()
+                        .unwrap_or(f64::INFINITY);
+                    if diff <= STATE_MATCH_MAX_DIFF {
+                        let rel = motion
+                            .strip_prefix(base)
+                            .unwrap_or(motion)
+                            .to_string_lossy()
+                            .to_string();
+                        let ts = matched["timestamp_seconds"].as_f64().unwrap_or(0.0);
+                        let mut source_match = matched;
+                        if let Some(details) = source_match.as_object_mut() {
+                            details.insert("motion_path".into(), json!(rel));
+                            details.insert(
+                                "method".into(),
+                                json!("16x16 grayscale mean-absolute-difference frame search"),
+                            );
+                            details.insert(
+                                "max_mean_abs_diff".into(),
+                                json!(STATE_MATCH_MAX_DIFF),
+                            );
+                        }
+                        obj.insert("source_match".into(), source_match);
                         obj.insert(
                             "source_motion_path".into(),
                             json!(format!(
@@ -860,7 +1072,9 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
             }
         }
         if !truthy(obj.get("source_motion_path")) {
-            gaps.push(format!("state source relationship unproven: {local_path}"));
+            gaps.push(format!(
+                "state source relationship unproven: {local_path}; no threshold match against independently verified motion"
+            ));
         }
     }
 
@@ -1060,44 +1274,63 @@ fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<V
     Ok(gaps)
 }
 
-fn catalogs(selected: Option<&str>) -> Vec<PathBuf> {
-    let mut found: Vec<PathBuf> = std::fs::read_dir(".")
-        .into_iter()
-        .flatten()
-        .filter_map(|e| e.ok())
-        .map(|e| {
-            let p = e.path();
-            p.strip_prefix(".").unwrap_or(p.as_path()).to_path_buf()
-        })
-        .filter(|p| {
-            p.is_dir()
-                && p.file_name()
-                    .map(|n| n.to_string_lossy().ends_with("-examples"))
-                    .unwrap_or(false)
-                && p.join("references").is_dir()
+fn catalogs(selected: Option<&str>) -> Result<Vec<PathBuf>> {
+    let mut found: Vec<String> = std::fs::read_dir(".")?
+        .filter_map(Result::ok)
+        .map(|entry| entry.file_name().to_string_lossy().to_string())
+        .filter(|name| {
+            name.ends_with("-examples")
+                && Path::new(name).join("references").is_dir()
         })
         .collect();
     found.sort();
-    if let Some(sel) = selected {
-        found.retain(|p| {
-            p.file_name()
-                .map(|n| n.to_string_lossy() == sel)
-                .unwrap_or(false)
-        });
+    let mut expected: Vec<String> = KNOWN_CATALOGS.iter().map(|value| value.to_string()).collect();
+    expected.sort();
+    if found != expected {
+        anyhow::bail!(
+            "catalog set differs from the exact 15-family contract; found {:?}, expected {:?}",
+            found,
+            expected
+        );
     }
-    found
+    if let Some(selected) = selected {
+        if !KNOWN_CATALOGS.contains(&selected) {
+            anyhow::bail!(
+                "unknown catalog {selected}; exact corpus contains only {}",
+                KNOWN_CATALOGS.join(", ")
+            );
+        }
+        return Ok(vec![PathBuf::from(selected)]);
+    }
+    Ok(KNOWN_CATALOGS.iter().map(PathBuf::from).collect())
 }
 
-fn records_in(catalog: &Path) -> Vec<PathBuf> {
-    let mut records: Vec<PathBuf> = std::fs::read_dir(catalog.join("references"))
-        .into_iter()
-        .flatten()
-        .filter_map(|e| e.ok())
-        .map(|e| e.path().join("reference.json"))
-        .filter(|p| p.is_file())
+fn records_in(catalog: &Path) -> Result<Vec<PathBuf>> {
+    let mut records: Vec<PathBuf> = std::fs::read_dir(catalog.join("references"))?
+        .filter_map(Result::ok)
+        .map(|entry| entry.path().join("reference.json"))
+        .filter(|path| path.is_file())
         .collect();
     records.sort();
-    records
+    let sources: Value = lib::read_json(
+        catalog
+            .join("sources.json")
+            .to_str()
+            .context("non-UTF8 sources path")?,
+    )?;
+    let source_count = sources
+        .get("examples")
+        .and_then(Value::as_array)
+        .map(Vec::len)
+        .context("sources.json has no examples array")?;
+    if records.len() != RECORDS_PER_CATALOG || source_count != RECORDS_PER_CATALOG {
+        anyhow::bail!(
+            "{}: exact contract requires {RECORDS_PER_CATALOG} records and sources, found {} records and {source_count} sources",
+            catalog.display(),
+            records.len()
+        );
+    }
+    Ok(records)
 }
 
 fn gap_key(gap: &str) -> String {
@@ -1143,8 +1376,8 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut complete = 0usize;
     let mut gap_counter: Vec<(String, usize)> = Vec::new();
 
-    for cat in catalogs(catalog.as_deref()) {
-        let records = records_in(&cat);
+    for cat in catalogs(catalog.as_deref())? {
+        let records = records_in(&cat)?;
         let results: parking_lot::Mutex<Vec<(PathBuf, Vec<String>)>> =
             parking_lot::Mutex::new(Vec::new());
         let errors: parking_lot::Mutex<Vec<(PathBuf, String)>> =

@@ -20,255 +20,420 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "Menu bar collapsed: four status icons and the clock",
+      "name": "Observed state 1",
       "local_path": "media/state-01.png",
-      "source_motion_path": "frame of media/motion.mp4 at 0.5s (mean abs diff 0.2734/255)",
-      "width": 960,
-      "height": 266,
-      "bytes": 24910,
       "sha256": "577e586ff3b78cc36e4d822483c513fbb329e0ea228325763c77ad24bb5d06db",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 0.5,
-        "mean_abs_diff": 0.2734,
-        "sampled_frames": 11
-      }
+      "width": 960,
+      "height": 266,
+      "bytes": 24910
     },
     {
-      "name": "Menu bar expanded: the hidden status-item row fills the bar from the left frame edge to the clock",
+      "name": "Observed state 2",
       "local_path": "media/state-02.png",
-      "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 0.3164/255)",
-      "width": 960,
-      "height": 266,
-      "bytes": 42367,
       "sha256": "be8372c69776d2bb8488f75513273fee49f7204c2c4c14dfbc679a3e5592891f",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 1.0,
-        "mean_abs_diff": 0.3164,
-        "sampled_frames": 11
-      }
+      "width": 960,
+      "height": 266,
+      "bytes": 42367
     },
     {
-      "name": "Menu bar still expanded, row unchanged from state 2 (0.018/255 mean abs diff between the two PNGs)",
+      "name": "Observed state 3",
       "local_path": "media/state-03.png",
-      "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 0.3164/255)",
-      "width": 960,
-      "height": 266,
-      "bytes": 42428,
       "sha256": "d64d55d24bbd776272c811aa34335dfa7876814ac85b55f08e34f29f0166ca2b",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 1.0,
-        "mean_abs_diff": 0.3164,
-        "sampled_frames": 11
-      }
+      "width": 960,
+      "height": 266,
+      "bytes": 42428
     },
     {
-      "name": "Menu bar still expanded, row unchanged from state 3 (0.002/255 mean abs diff between the two PNGs)",
+      "name": "Observed state 4",
       "local_path": "media/state-04.png",
-      "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 0.3164/255)",
-      "width": 960,
-      "height": 266,
-      "bytes": 42396,
       "sha256": "b140e79c91d0c72c984bec101c59bbe583795183e25b37bdc6b6c7d1c51919d1",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 1.0,
-        "mean_abs_diff": 0.3164,
-        "sampled_frames": 11
-      }
-    },
-    {
-      "name": "Menu bar collapsed again: four status icons and the clock, identical layout to state 1",
-      "local_path": "media/state-05.png",
-      "source_motion_path": "frame of media/motion.mp4 at 4.5s (mean abs diff 0.3008/255)",
       "width": 960,
       "height": 266,
-      "bytes": 25073,
+      "bytes": 42396
+    },
+    {
+      "name": "Observed state 5",
+      "local_path": "media/state-05.png",
       "sha256": "2624faf0a1cf2ca53bc959dad5370e6d28ce7c4ef640801d323c1b02450ff18c",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 4.5,
-        "mean_abs_diff": 0.3008,
-        "sampled_frames": 11
-      }
+      "width": 960,
+      "height": 266,
+      "bytes": 25073
     }
   ],
-  "interactions": [
-    {
-      "name": "Primary input",
-      "trigger": "Start from the compact menu bar",
-      "response": "Bartender exposes the entry surface visible in the retained motion.",
-      "feedback": "The first state establishes the active surface before manipulation.",
-      "cancellation": "Stopping here leaves the product unchanged.",
-      "failure": "The goal is not yet complete in the entry state.",
-      "recovery": "Invoke Bartender’s reveal control.",
-      "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.43s"
-    },
-    {
-      "name": "Focus and selection",
-      "trigger": "Invoke Bartender’s reveal control",
-      "response": "A target control, item, document, or workspace becomes the active context.",
-      "feedback": "The next retained state visibly differs and identifies the active path.",
-      "cancellation": "Focus can remain on the previous context without committing.",
-      "failure": "An unintended target would leave the desired result unavailable.",
-      "recovery": "Move focus to the intended visible target and continue.",
-      "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.51s"
-    },
-    {
-      "name": "Navigation",
-      "trigger": "Scan the newly exposed menu items",
-      "response": "The recording advances into the product’s intermediate working state.",
-      "feedback": "Content, controls, or selection context changes in place.",
-      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
-      "failure": "Stopping at this state produces no completion evidence.",
-      "recovery": "Choose the visibility arrangement.",
-      "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.59s"
-    },
-    {
-      "name": "Confirmation",
-      "trigger": "Choose the visibility arrangement",
-      "response": "The selected operation crosses from preparation into a committed transition.",
-      "feedback": "The fourth state records the immediate product response.",
-      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
-      "failure": "Without confirmation, the fifth-state result does not appear.",
-      "recovery": "Repeat the intended selection and confirm it.",
-      "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.67s"
-    },
-    {
-      "name": "Completion feedback",
-      "trigger": "Leave the required items visible",
-      "response": "The recording reaches the first meaningful result for “Reveal and manage hidden menu-bar items”.",
-      "feedback": "The fifth local frame is the offline completion evidence.",
-      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
-      "failure": "Absence of the fifth state means the journey is incomplete.",
-      "recovery": "Replay the recorded sequence from the entry state.",
-      "evidence": "media/state-05.png extracted from media/motion.mp4 at 4.75s"
-    },
-    {
-      "name": "Cancellation and backtracking",
-      "trigger": "Leave the path before the committed transition.",
-      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
-      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
-      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
-      "failure": "Exiting early does not produce completion evidence.",
-      "recovery": "Re-enter through state 2 and continue to state 4.",
-      "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.51s; media/state-03.png extracted from media/motion.mp4 at 2.59s"
-    },
-    {
-      "name": "Failure boundary",
-      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
-      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
-      "feedback": "No fifth-state visual is present before commitment.",
-      "cancellation": "The actor may abandon the incomplete path without claiming success.",
-      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
-      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
-      "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.59s; contrasted with media/state-05.png extracted from media/motion.mp4 at 4.75s"
-    },
-    {
-      "name": "Recovery",
-      "trigger": "Resume from the last valid intermediate state.",
-      "response": "The same visible action sequence advances to the retained result.",
-      "feedback": "State 5 supplies positive completion feedback after state 4.",
-      "cancellation": "The actor can still stop before replaying confirmation.",
-      "failure": "A replay that never reaches state 5 remains incomplete.",
-      "recovery": "Replay state 4 and verify state 5.",
-      "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.67s; media/state-05.png extracted from media/motion.mp4 at 4.75s"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time or returning Bartender user",
-    "goal": "Reveal and manage hidden menu-bar items",
-    "prerequisites": [
-      "Bartender available on macOS or the official recording environment",
-      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Start from the compact menu bar",
-        "system_response": "Bartender advances to the entry state retained in state 1.",
-        "state": "Entry state: Start from the compact menu bar",
-        "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.43s"
-      },
-      {
-        "index": 2,
-        "user_action": "Invoke Bartender’s reveal control",
-        "system_response": "Bartender advances to the invocation state retained in state 2.",
-        "state": "Invocation state: Invoke Bartender’s reveal control",
-        "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.51s"
-      },
-      {
-        "index": 3,
-        "user_action": "Scan the newly exposed menu items",
-        "system_response": "Bartender advances to the focused intermediate state retained in state 3.",
-        "state": "Focused intermediate state: Scan the newly exposed menu items",
-        "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.59s"
-      },
-      {
-        "index": 4,
-        "user_action": "Choose the visibility arrangement",
-        "system_response": "Bartender advances to the committed transition retained in state 4.",
-        "state": "Committed transition: Choose the visibility arrangement",
-        "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.67s"
-      },
-      {
-        "index": 5,
-        "user_action": "Leave the required items visible",
-        "system_response": "Bartender advances to the first-success result retained in state 5.",
-        "state": "First-success result: Leave the required items visible",
-        "evidence": "media/state-05.png extracted from media/motion.mp4 at 4.75s"
-      }
-    ],
-    "failure_route": [
-      "Stop at the third retained state before confirmation; the meaningful result is absent.",
-      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
-    ],
-    "recovery_route": [
-      "Return to the second retained state and restore the intended focus or selection.",
-      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
-    ],
-    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 4.75s"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Every menu-bar item in both the collapsed and expanded frames is an icon with no text label; the only text anywhere in the 960×266 frame is the clock \"Fri Sep 5 3:57 PM\".",
-      "Contrast measured from media/state-01.png: the lightest text cluster in a 160×20 px crop at x=780,y=0 is #BDC0F6 and the menu-bar background there is #120995, a WCAG contrast ratio of 8.03:1 by the sRGB relative-luminance formula.",
-      "The revealed/hidden distinction is carried by whether the icons are present, not by movement, so state 2 and state 5 are told apart from a single still with no playback.",
-      "No focus ring, selection highlight, tooltip or keyboard hint appears in any of the 81 frames; the pointer arrow is the only indicator of where input is aimed."
-    ],
+    "observations": [],
     "unknowns": [
       "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
       "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
       "The product’s Reduce Motion behavior and contrast preferences are not demonstrated."
-    ]
+    ],
+    "measured": false
   },
-  "motion_analysis": {
-    "trigger": "The pointer is already parked in the menu bar over the item slot that will hold the battery icon; between 0.73s and 0.93s the hidden row appears. No pressed state, click ripple or cursor-down indicator is visible, so which control was activated cannot be read off the clip.",
-    "start_state": "Collapsed menu bar: four status icons and \"Fri Sep 5 3:57 PM\" on the blue desktop, nothing else on screen.",
-    "end_state": "Collapsed menu bar again, the same four status icons and the same clock reading; the revealed row is gone.",
-    "continuity": "One continuous take at 15fps: the row appears and disappears in place, the frame never cuts, and the wallpaper and the clock reading stay identical across all 81 frames.",
-    "timing_class": "sub-second",
-    "interruption_or_reversal": "The clip shows the reversal: at 4.53s the revealed row collapses back to the four-item bar in a single step, returning to the state-1 layout. No interrupted or half-cancelled transition is shown.",
-    "feedback": "The only feedback is the icon row itself appearing and disappearing; measured per-frame change is 0.11/255 on average with peaks of 3.48/255 at 0.87s and 1.99/255 at 4.53s, and no progress indicator, label, badge or highlight accompanies it.",
-    "reduced_motion_equivalent": "The reveal is a two-frame hard change with no easing, fade or slide, so the same information reads identically from one still; the clip does not show the product's Reduce Motion setting or an alternative non-animated path."
-  },
+  "motion_analysis": null,
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Primary input",
+        "trigger": "Start from the compact menu bar",
+        "response": "Bartender exposes the entry surface visible in the retained motion.",
+        "feedback": "The first state establishes the active surface before manipulation.",
+        "cancellation": "Stopping here leaves the product unchanged.",
+        "failure": "The goal is not yet complete in the entry state.",
+        "recovery": "Invoke Bartender’s reveal control.",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.43s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus and selection",
+        "trigger": "Invoke Bartender’s reveal control",
+        "response": "A target control, item, document, or workspace becomes the active context.",
+        "feedback": "The next retained state visibly differs and identifies the active path.",
+        "cancellation": "Focus can remain on the previous context without committing.",
+        "failure": "An unintended target would leave the desired result unavailable.",
+        "recovery": "Move focus to the intended visible target and continue.",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.51s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Navigation",
+        "trigger": "Scan the newly exposed menu items",
+        "response": "The recording advances into the product’s intermediate working state.",
+        "feedback": "Content, controls, or selection context changes in place.",
+        "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+        "failure": "Stopping at this state produces no completion evidence.",
+        "recovery": "Choose the visibility arrangement.",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.59s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirmation",
+        "trigger": "Choose the visibility arrangement",
+        "response": "The selected operation crosses from preparation into a committed transition.",
+        "feedback": "The fourth state records the immediate product response.",
+        "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+        "failure": "Without confirmation, the fifth-state result does not appear.",
+        "recovery": "Repeat the intended selection and confirm it.",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.67s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Completion feedback",
+        "trigger": "Leave the required items visible",
+        "response": "The recording reaches the first meaningful result for “Reveal and manage hidden menu-bar items”.",
+        "feedback": "The fifth local frame is the offline completion evidence.",
+        "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+        "failure": "Absence of the fifth state means the journey is incomplete.",
+        "recovery": "Replay the recorded sequence from the entry state.",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 4.75s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Cancellation and backtracking",
+        "trigger": "Leave the path before the committed transition.",
+        "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+        "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+        "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+        "failure": "Exiting early does not produce completion evidence.",
+        "recovery": "Re-enter through state 2 and continue to state 4.",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.51s; media/state-03.png extracted from media/motion.mp4 at 2.59s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Failure boundary",
+        "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+        "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+        "feedback": "No fifth-state visual is present before commitment.",
+        "cancellation": "The actor may abandon the incomplete path without claiming success.",
+        "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+        "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.59s; contrasted with media/state-05.png extracted from media/motion.mp4 at 4.75s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Recovery",
+        "trigger": "Resume from the last valid intermediate state.",
+        "response": "The same visible action sequence advances to the retained result.",
+        "feedback": "State 5 supplies positive completion feedback after state 4.",
+        "cancellation": "The actor can still stop before replaying confirmation.",
+        "failure": "A replay that never reaches state 5 remains incomplete.",
+        "recovery": "Replay state 4 and verify state 5.",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.67s; media/state-05.png extracted from media/motion.mp4 at 4.75s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time or returning Bartender user",
+        "goal": "Reveal and manage hidden menu-bar items",
+        "prerequisites": [
+          "Bartender available on macOS or the official recording environment",
+          "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Start from the compact menu bar",
+            "system_response": "Bartender advances to the entry state retained in state 1.",
+            "state": "Entry state: Start from the compact menu bar",
+            "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.43s"
+          },
+          {
+            "index": 2,
+            "user_action": "Invoke Bartender’s reveal control",
+            "system_response": "Bartender advances to the invocation state retained in state 2.",
+            "state": "Invocation state: Invoke Bartender’s reveal control",
+            "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.51s"
+          },
+          {
+            "index": 3,
+            "user_action": "Scan the newly exposed menu items",
+            "system_response": "Bartender advances to the focused intermediate state retained in state 3.",
+            "state": "Focused intermediate state: Scan the newly exposed menu items",
+            "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.59s"
+          },
+          {
+            "index": 4,
+            "user_action": "Choose the visibility arrangement",
+            "system_response": "Bartender advances to the committed transition retained in state 4.",
+            "state": "Committed transition: Choose the visibility arrangement",
+            "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.67s"
+          },
+          {
+            "index": 5,
+            "user_action": "Leave the required items visible",
+            "system_response": "Bartender advances to the first-success result retained in state 5.",
+            "state": "First-success result: Leave the required items visible",
+            "evidence": "media/state-05.png extracted from media/motion.mp4 at 4.75s"
+          }
+        ],
+        "failure_route": [
+          "Stop at the third retained state before confirmation; the meaningful result is absent.",
+          "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+        ],
+        "recovery_route": [
+          "Return to the second retained state and restore the intended focus or selection.",
+          "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+        ],
+        "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 4.75s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "The pointer is already parked in the menu bar over the item slot that will hold the battery icon; between 0.73s and 0.93s the hidden row appears. No pressed state, click ripple or cursor-down indicator is visible, so which control was activated cannot be read off the clip.",
+        "start_state": "Collapsed menu bar: four status icons and \"Fri Sep 5 3:57 PM\" on the blue desktop, nothing else on screen.",
+        "end_state": "Collapsed menu bar again, the same four status icons and the same clock reading; the revealed row is gone.",
+        "continuity": "One continuous take at 15fps: the row appears and disappears in place, the frame never cuts, and the wallpaper and the clock reading stay identical across all 81 frames.",
+        "timing_class": "sub-second",
+        "interruption_or_reversal": "The clip shows the reversal: at 4.53s the revealed row collapses back to the four-item bar in a single step, returning to the state-1 layout. No interrupted or half-cancelled transition is shown.",
+        "feedback": "The only feedback is the icon row itself appearing and disappearing; measured per-frame change is 0.11/255 on average with peaks of 3.48/255 at 0.87s and 1.99/255 at 4.53s, and no progress indicator, label, badge or highlight accompanies it.",
+        "reduced_motion_equivalent": "The reveal is a two-frame hard change with no easing, fade or slide, so the same information reads identically from one still; the clip does not show the product's Reduce Motion setting or an alternative non-animated path."
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Every menu-bar item in both the collapsed and expanded frames is an icon with no text label; the only text anywhere in the 960×266 frame is the clock \"Fri Sep 5 3:57 PM\"."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Contrast measured from media/state-01.png: the lightest text cluster in a 160×20 px crop at x=780,y=0 is #BDC0F6 and the menu-bar background there is #120995, a WCAG contrast ratio of 8.03:1 by the sRGB relative-luminance formula."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The revealed/hidden distinction is carried by whether the icons are present, not by movement, so state 2 and state 5 are told apart from a single still with no playback."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[3]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "No focus ring, selection highlight, tooltip or keyboard hint appears in any of the 81 frames; the pointer arrow is the only indicator of where input is aimed."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Menu bar collapsed: four status icons and the clock"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 0.5s (mean abs diff 0.2734/255)",
+        "source_match": {
+          "timestamp_seconds": 0.5,
+          "mean_abs_diff": 0.2734,
+          "sampled_frames": 11,
+          "motion_path": "media/state-01.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Menu bar expanded: the hidden status-item row fills the bar from the left frame edge to the clock"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 0.3164/255)",
+        "source_match": {
+          "timestamp_seconds": 1.0,
+          "mean_abs_diff": 0.3164,
+          "sampled_frames": 11,
+          "motion_path": "media/state-02.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Menu bar still expanded, row unchanged from state 2 (0.018/255 mean abs diff between the two PNGs)"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 0.3164/255)",
+        "source_match": {
+          "timestamp_seconds": 1.0,
+          "mean_abs_diff": 0.3164,
+          "sampled_frames": 11,
+          "motion_path": "media/state-03.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Menu bar still expanded, row unchanged from state 3 (0.002/255 mean abs diff between the two PNGs)"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 0.3164/255)",
+        "source_match": {
+          "timestamp_seconds": 1.0,
+          "mean_abs_diff": 0.3164,
+          "sampled_frames": 11,
+          "motion_path": "media/state-04.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Menu bar collapsed again: four status icons and the clock, identical layout to state 1"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 4.5s (mean abs diff 0.3008/255)",
+        "source_match": {
+          "timestamp_seconds": 4.5,
+          "mean_abs_diff": 0.3008,
+          "sampled_frames": 11,
+          "motion_path": "media/state-05.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

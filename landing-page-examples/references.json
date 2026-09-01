@@ -8,350 +8,353 @@
       "name": "Airbnb",
       "path": "references/01-airbnb/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 2,
       "name": "Stripe",
       "path": "references/02-stripe/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 3,
       "name": "Linear",
       "path": "references/03-linear/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 4,
       "name": "Notion",
       "path": "references/04-notion/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 5,
       "name": "Slack",
       "path": "references/05-slack/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 6,
       "name": "Figma",
       "path": "references/06-figma/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 7,
       "name": "Canva",
       "path": "references/07-canva/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 8,
       "name": "GitHub",
       "path": "references/08-github/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 9,
       "name": "GitLab",
       "path": "references/09-gitlab/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 10,
       "name": "Vercel",
       "path": "references/10-vercel/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 11,
       "name": "Netlify",
       "path": "references/11-netlify/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 12,
       "name": "Cloudflare",
       "path": "references/12-cloudflare/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 13,
       "name": "DigitalOcean",
       "path": "references/13-digitalocean/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 14,
       "name": "Render",
       "path": "references/14-render/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 15,
       "name": "Fly.io",
       "path": "references/15-fly-io/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 16,
       "name": "Railway",
       "path": "references/16-railway/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 17,
       "name": "Supabase",
       "path": "references/17-supabase/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 18,
       "name": "Neon",
       "path": "references/18-neon/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 19,
       "name": "PlanetScale",
       "path": "references/19-planetscale/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 20,
       "name": "MongoDB",
       "path": "references/20-mongodb/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 21,
       "name": "Elastic",
       "path": "references/21-elastic/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 22,
       "name": "Datadog",
       "path": "references/22-datadog/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 23,
       "name": "Sentry",
       "path": "references/23-sentry/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 24,
       "name": "New Relic",
       "path": "references/24-new-relic/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 25,
       "name": "Grafana",
       "path": "references/25-grafana/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 26,
       "name": "PostHog",
       "path": "references/26-posthog/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 27,
       "name": "Amplitude",
       "path": "references/27-amplitude/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 28,
       "name": "Mixpanel",
       "path": "references/28-mixpanel/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 29,
       "name": "Segment",
       "path": "references/29-segment/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 30,
       "name": "HubSpot",
       "path": "references/30-hubspot/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 31,
       "name": "Mailchimp",
       "path": "references/31-mailchimp/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 32,
       "name": "Intercom",
       "path": "references/32-intercom/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 33,
       "name": "Zendesk",
       "path": "references/33-zendesk/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 34,
       "name": "Shopify",
       "path": "references/34-shopify/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 35,
       "name": "Squarespace",
       "path": "references/35-squarespace/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 36,
       "name": "Webflow",
       "path": "references/36-webflow/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 37,
       "name": "Framer",
       "path": "references/37-framer/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 38,
       "name": "Zapier",
       "path": "references/38-zapier/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 39,
       "name": "Twilio",
       "path": "references/39-twilio/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 40,
       "name": "Asana",
       "path": "references/40-asana/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 41,
       "name": "Monday",
       "path": "references/41-monday/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 42,
       "name": "ClickUp",
       "path": "references/42-clickup/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 43,
       "name": "Airtable",
       "path": "references/43-airtable/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 44,
       "name": "Miro",
       "path": "references/44-miro/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 45,
       "name": "Zoom",
       "path": "references/45-zoom/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 46,
       "name": "Dropbox",
       "path": "references/46-dropbox/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 47,
       "name": "Box",
       "path": "references/47-box/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 48,
       "name": "Loom",
       "path": "references/48-loom/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 49,
       "name": "Calendly",
       "path": "references/49-calendly/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     },
     {
       "index": 50,
       "name": "Typeform",
       "path": "references/50-typeform/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 7
+      "evidence_gap_count": 13
     }
-  ]
+  ],
+  "measured_at": "2026-09-01",
+  "complete_count": 0,
+  "partial_count": 50
 }

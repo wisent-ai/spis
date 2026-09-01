@@ -20,302 +20,490 @@
       "declared_media_kind": "video-webm",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "local-browser-recording"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "listing-open",
+      "name": "Observed state 1",
       "local_path": "media/listing-state-01.png",
-      "source_motion_path": "frame of media/listing-interaction.webm at 21s (mean abs diff 0.1758/255)",
+      "sha256": "232adfaaca8ad787e782e14d467ca009a38569d122fea06b7ab6b1578a7c27f8",
       "width": 1366,
       "height": 768,
-      "bytes": 286034,
-      "sha256": "232adfaaca8ad787e782e14d467ca009a38569d122fea06b7ab6b1578a7c27f8",
-      "source_match": {
-        "motion_path": "media/listing-interaction.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 21.0,
-        "mean_abs_diff": 0.1758,
-        "sampled_frames": 43
-      }
+      "bytes": 286034
     },
     {
-      "name": "media-shelf",
+      "name": "Observed state 2",
       "local_path": "media/listing-state-02.png",
-      "source_motion_path": "frame of media/listing-interaction.webm at 7s (mean abs diff 0.207/255)",
-      "width": 1366,
-      "height": 768,
-      "bytes": 259032,
       "sha256": "e75cd5b756f5e86623e0065bbb53995aa93f15658548eaf8663ef6b5b2e5b33c",
-      "source_match": {
-        "motion_path": "media/listing-interaction.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 7.0,
-        "mean_abs_diff": 0.207,
-        "sampled_frames": 43
-      }
+      "width": 1366,
+      "height": 768,
+      "bytes": 259032
     },
     {
-      "name": "media-selected",
+      "name": "Observed state 3",
       "local_path": "media/listing-state-03.png",
-      "source_motion_path": "frame of media/listing-interaction.webm at 9.5s (mean abs diff 0.082/255)",
-      "width": 1366,
-      "height": 768,
-      "bytes": 261459,
       "sha256": "a8b8465c1efce6bb3671eec976649f4c4d66980a23e5b2a3b096cc15060efb06",
-      "source_match": {
-        "motion_path": "media/listing-interaction.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 9.5,
-        "mean_abs_diff": 0.082,
-        "sampled_frames": 43
-      }
+      "width": 1366,
+      "height": 768,
+      "bytes": 261459
     },
     {
-      "name": "details-reached",
+      "name": "Observed state 4",
       "local_path": "media/listing-state-04.png",
-      "source_motion_path": "frame of media/listing-interaction.webm at 13.5s (mean abs diff 0.1016/255)",
-      "width": 1366,
-      "height": 768,
-      "bytes": 87033,
       "sha256": "fb0e5c5d4a2000b75c1194136ac50745167039526d7a9cc0ee05fccb6634ea45",
-      "source_match": {
-        "motion_path": "media/listing-interaction.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 13.5,
-        "mean_abs_diff": 0.1016,
-        "sampled_frames": 43
-      }
+      "width": 1366,
+      "height": 768,
+      "bytes": 87033
     },
     {
-      "name": "target-overshot",
+      "name": "Observed state 5",
       "local_path": "media/listing-state-05.png",
-      "source_motion_path": "frame of media/listing-interaction.webm at 14s (mean abs diff 0.082/255)",
-      "width": 1366,
-      "height": 768,
-      "bytes": 67034,
       "sha256": "4b5f4d4f499d0faa4a1838b5a87ff591deb45e5aa451b6251b8fbe67b1bd0ec6",
-      "source_match": {
-        "motion_path": "media/listing-interaction.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 14.0,
-        "mean_abs_diff": 0.082,
-        "sampled_frames": 43
-      }
+      "width": 1366,
+      "height": 768,
+      "bytes": 67034
     },
     {
-      "name": "recovered-to-media",
+      "name": "Observed state 6",
       "local_path": "media/listing-state-06.png",
-      "source_motion_path": "frame of media/listing-interaction.webm at 15s (mean abs diff 0.1875/255)",
-      "width": 1366,
-      "height": 768,
-      "bytes": 275260,
       "sha256": "d1216370d80e01f9091888fbce26f63070d032f440fd9c788ccbc60394e96a4a",
-      "source_match": {
-        "motion_path": "media/listing-interaction.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 15.0,
-        "mean_abs_diff": 0.1875,
-        "sampled_frames": 43
-      }
-    },
-    {
-      "name": "returned-to-header",
-      "local_path": "media/listing-state-07.png",
-      "source_motion_path": "frame of media/listing-interaction.webm at 21s (mean abs diff 0.1758/255)",
       "width": 1366,
       "height": 768,
-      "bytes": 286034,
+      "bytes": 275260
+    },
+    {
+      "name": "Observed state 7",
+      "local_path": "media/listing-state-07.png",
       "sha256": "232adfaaca8ad787e782e14d467ca009a38569d122fea06b7ab6b1578a7c27f8",
-      "source_match": {
-        "motion_path": "media/listing-interaction.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 21.0,
-        "mean_abs_diff": 0.1758,
-        "sampled_frames": 43
-      }
+      "width": 1366,
+      "height": 768,
+      "bytes": 286034
     }
   ],
-  "interactions": [
-    {
-      "name": "Open listing",
-      "trigger": "Navigate to the canonical store URL.",
-      "response": "The store renders the product header and acquisition context.",
-      "feedback": "The product name, icon, rating/context, and listing chrome become visible.",
-      "cancellation": "Leave or close the page before interacting.",
-      "failure": "A network or store response can prevent the header from rendering.",
-      "recovery": "Reload the canonical URL and wait for the header state.",
-      "evidence": "media/listing-interaction.webm and media/listing-state-01.png"
-    },
-    {
-      "name": "Confirm load",
-      "trigger": "Pause for two seconds after navigation.",
-      "response": "Deferred artwork and listing modules finish rendering.",
-      "feedback": "Stable header and media geometry confirm readiness.",
-      "cancellation": "Navigate away before the settle interval ends.",
-      "failure": "Unsettled or blank media remains visibly incomplete.",
-      "recovery": "Wait for the page to settle before continuing.",
-      "evidence": "media/listing-interaction.webm opening segment"
-    },
-    {
-      "name": "Scroll to media",
-      "trigger": "Scroll downward by 520 pixels.",
-      "response": "The viewport moves from the header toward the screenshot or preview shelf.",
-      "feedback": "The media region replaces part of the header in the viewport.",
-      "cancellation": "Reverse the scroll upward.",
-      "failure": "A scroll that is too short leaves the media target below the fold.",
-      "recovery": "Continue a measured downward scroll until the shelf is visible.",
-      "evidence": "media/listing-interaction.webm and media/listing-state-02.png"
-    },
-    {
-      "name": "Select preview",
-      "trigger": "Activate the visible target named Screenshot.",
-      "response": "The store activates the visible screenshot media control.",
-      "feedback": "clicked button: Screenshot",
-      "cancellation": "Remain on the shelf, dismiss selected media, or reverse to the prior scroll position.",
-      "failure": "No selection failure is observed; the later scroll overshoot supplies the recorded failure route.",
-      "recovery": "Dismiss or leave the selected media context by continuing the reversible listing path.",
-      "evidence": "media/listing-interaction.webm and media/listing-state-03.png"
-    },
-    {
-      "name": "Continue to details",
-      "trigger": "Scroll downward by 760 pixels.",
-      "response": "Description, metadata, ratings, privacy, or data-safety content enters the viewport.",
-      "feedback": "The viewport changes continuously with the scroll.",
-      "cancellation": "Scroll upward to return to media.",
-      "failure": "The target detail can remain below the fold on a taller listing.",
-      "recovery": "Use another measured downward scroll.",
-      "evidence": "media/listing-interaction.webm and media/listing-state-04.png"
-    },
-    {
-      "name": "Overshoot target",
-      "trigger": "Scroll downward by 1800 pixels after reaching details.",
-      "response": "The viewport moves beyond the intended media/detail target.",
-      "feedback": "The target shelf is no longer visible and later listing sections appear.",
-      "cancellation": "Stop the gesture before its end.",
-      "failure": "The intended inspection target is overshot.",
-      "recovery": "Reverse direction with an upward scroll.",
-      "evidence": "media/listing-interaction.webm and media/listing-state-05.png"
-    },
-    {
-      "name": "Recover position",
-      "trigger": "Scroll upward by 2400 pixels after the overshoot.",
-      "response": "The viewport returns toward the media and detail region.",
-      "feedback": "Previously seen modules re-enter the viewport in reverse order.",
-      "cancellation": "Reverse downward again.",
-      "failure": "A partial reverse can stop short of the target.",
-      "recovery": "Continue upward until the recognizable shelf returns.",
-      "evidence": "media/listing-interaction.webm and media/listing-state-06.png"
-    },
-    {
-      "name": "Backtrack to header",
-      "trigger": "Scroll upward by a further 2400 pixels.",
-      "response": "The listing returns to its product header and acquisition context.",
-      "feedback": "The original product header is visible again.",
-      "cancellation": "Stop at any intermediate listing section.",
-      "failure": "Large pages may require another upward gesture.",
-      "recovery": "Repeat the upward gesture until the header is restored.",
-      "evidence": "media/listing-interaction.webm and media/listing-state-07.png"
-    }
-  ],
-  "journey": {
-    "actor": "Prospective mobile-app user evaluating a store listing before installation.",
-    "goal": "Discover Memrise: Speak a New Language (Google Play), inspect its product media and listing details, recover from a navigation overshoot, and return to the product header ready for the next store decision.",
-    "prerequisites": [
-      "Network access to the canonical Apple App Store or Google Play listing.",
-      "A browser capable of rendering the listing, scrolling, and exposing store controls.",
-      "No authentication or purchase is required for this observed inspection path."
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the canonical store URL.",
-        "system_response": "The store resolves the product listing and renders its header.",
-        "state": "listing-open",
-        "evidence": "media/listing-state-01.png; opening of media/listing-interaction.webm"
-      },
-      {
-        "index": 2,
-        "user_action": "Wait for deferred artwork and modules to settle.",
-        "system_response": "The listing reaches a stable, inspectable header state.",
-        "state": "listing-settled",
-        "evidence": "opening segment of media/listing-interaction.webm"
-      },
-      {
-        "index": 3,
-        "user_action": "Scroll down 520 pixels.",
-        "system_response": "The product screenshot/preview region enters the viewport.",
-        "state": "media-shelf",
-        "evidence": "media/listing-state-02.png"
-      },
-      {
-        "index": 4,
-        "user_action": "Attempt to activate the target named Screenshot.",
-        "system_response": "Weles reports clicked button: Screenshot; the visible screenshot control is activated.",
-        "state": "media-selected",
-        "evidence": "media/listing-state-03.png and the selection segment of media/listing-interaction.webm"
-      },
-      {
-        "index": 5,
-        "user_action": "Continue downward by 760 pixels.",
-        "system_response": "The listing advances to descriptive and trust metadata.",
-        "state": "details-reached",
-        "evidence": "media/listing-state-04.png"
-      },
-      {
-        "index": 6,
-        "user_action": "Scroll down a further 1800 pixels.",
-        "system_response": "The intended media/detail target is overshot and later sections appear.",
-        "state": "target-overshot",
-        "evidence": "media/listing-state-05.png"
-      },
-      {
-        "index": 7,
-        "user_action": "Reverse upward by 2400 pixels.",
-        "system_response": "Earlier media/detail modules return in reverse order.",
-        "state": "recovered-to-media",
-        "evidence": "media/listing-state-06.png"
-      },
-      {
-        "index": 8,
-        "user_action": "Continue upward by 2400 pixels.",
-        "system_response": "The original product header returns, completing the discovery-to-open inspection loop.",
-        "state": "returned-to-header",
-        "evidence": "media/listing-state-07.png; ending of media/listing-interaction.webm"
-      }
-    ],
-    "failure_route": [
-      "The Screenshot selection succeeds; no failure is observed for that interaction.",
-      "A subsequent large downward scroll intentionally overshoots the media/detail target and later listing sections replace it."
-    ],
-    "recovery_route": [
-      "Continue from or dismiss the selected media context using the reversible listing path.",
-      "Reverse direction by 2400 pixels after the later overshoot to recover the media/detail region.",
-      "Continue upward by 2400 pixels to restore the original listing header."
-    ],
-    "completion_evidence": "media/listing-state-07.png and the final segment of media/listing-interaction.webm show the product header restored after the observed failure and recovery route."
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "The product name and listing content are visibly rendered at the opening state.",
-      "Continuous scrolling preserves context and can be reversed without a modal trap.",
-      "The Screenshot selection attempt produced the explicit Weles result clicked button: Screenshot, rather than silently activating another element.",
-      "The recording retains stable visual feedback after each navigation action."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader announcements and accessible-name completeness were not audited with assistive technology.",
       "Keyboard-only focus order and focus visibility were not exercised.",
       "Caption availability for every upstream preview and autoplay policy are not established.",
       "Reduced-motion preferences and nonanimated equivalents were not exercised."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "local-browser-recording"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/listing-interaction.webm has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/listing-state-01.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/listing-state-01.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/listing-state-02.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/listing-state-02.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/listing-state-03.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/listing-state-03.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/listing-state-04.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/listing-state-04.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/listing-state-05.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/listing-state-05.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/listing-state-06.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/listing-state-06.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/listing-state-07.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/listing-state-07.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for document-navigation profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for document-navigation profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for document-navigation profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Open listing",
+        "trigger": "Navigate to the canonical store URL.",
+        "response": "The store renders the product header and acquisition context.",
+        "feedback": "The product name, icon, rating/context, and listing chrome become visible.",
+        "cancellation": "Leave or close the page before interacting.",
+        "failure": "A network or store response can prevent the header from rendering.",
+        "recovery": "Reload the canonical URL and wait for the header state.",
+        "evidence": "media/listing-interaction.webm and media/listing-state-01.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirm load",
+        "trigger": "Pause for two seconds after navigation.",
+        "response": "Deferred artwork and listing modules finish rendering.",
+        "feedback": "Stable header and media geometry confirm readiness.",
+        "cancellation": "Navigate away before the settle interval ends.",
+        "failure": "Unsettled or blank media remains visibly incomplete.",
+        "recovery": "Wait for the page to settle before continuing.",
+        "evidence": "media/listing-interaction.webm opening segment"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Scroll to media",
+        "trigger": "Scroll downward by 520 pixels.",
+        "response": "The viewport moves from the header toward the screenshot or preview shelf.",
+        "feedback": "The media region replaces part of the header in the viewport.",
+        "cancellation": "Reverse the scroll upward.",
+        "failure": "A scroll that is too short leaves the media target below the fold.",
+        "recovery": "Continue a measured downward scroll until the shelf is visible.",
+        "evidence": "media/listing-interaction.webm and media/listing-state-02.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Select preview",
+        "trigger": "Activate the visible target named Screenshot.",
+        "response": "The store activates the visible screenshot media control.",
+        "feedback": "clicked button: Screenshot",
+        "cancellation": "Remain on the shelf, dismiss selected media, or reverse to the prior scroll position.",
+        "failure": "No selection failure is observed; the later scroll overshoot supplies the recorded failure route.",
+        "recovery": "Dismiss or leave the selected media context by continuing the reversible listing path.",
+        "evidence": "media/listing-interaction.webm and media/listing-state-03.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Continue to details",
+        "trigger": "Scroll downward by 760 pixels.",
+        "response": "Description, metadata, ratings, privacy, or data-safety content enters the viewport.",
+        "feedback": "The viewport changes continuously with the scroll.",
+        "cancellation": "Scroll upward to return to media.",
+        "failure": "The target detail can remain below the fold on a taller listing.",
+        "recovery": "Use another measured downward scroll.",
+        "evidence": "media/listing-interaction.webm and media/listing-state-04.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Overshoot target",
+        "trigger": "Scroll downward by 1800 pixels after reaching details.",
+        "response": "The viewport moves beyond the intended media/detail target.",
+        "feedback": "The target shelf is no longer visible and later listing sections appear.",
+        "cancellation": "Stop the gesture before its end.",
+        "failure": "The intended inspection target is overshot.",
+        "recovery": "Reverse direction with an upward scroll.",
+        "evidence": "media/listing-interaction.webm and media/listing-state-05.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Recover position",
+        "trigger": "Scroll upward by 2400 pixels after the overshoot.",
+        "response": "The viewport returns toward the media and detail region.",
+        "feedback": "Previously seen modules re-enter the viewport in reverse order.",
+        "cancellation": "Reverse downward again.",
+        "failure": "A partial reverse can stop short of the target.",
+        "recovery": "Continue upward until the recognizable shelf returns.",
+        "evidence": "media/listing-interaction.webm and media/listing-state-06.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Backtrack to header",
+        "trigger": "Scroll upward by a further 2400 pixels.",
+        "response": "The listing returns to its product header and acquisition context.",
+        "feedback": "The original product header is visible again.",
+        "cancellation": "Stop at any intermediate listing section.",
+        "failure": "Large pages may require another upward gesture.",
+        "recovery": "Repeat the upward gesture until the header is restored.",
+        "evidence": "media/listing-interaction.webm and media/listing-state-07.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "Prospective mobile-app user evaluating a store listing before installation.",
+        "goal": "Discover Memrise: Speak a New Language (Google Play), inspect its product media and listing details, recover from a navigation overshoot, and return to the product header ready for the next store decision.",
+        "prerequisites": [
+          "Network access to the canonical Apple App Store or Google Play listing.",
+          "A browser capable of rendering the listing, scrolling, and exposing store controls.",
+          "No authentication or purchase is required for this observed inspection path."
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the canonical store URL.",
+            "system_response": "The store resolves the product listing and renders its header.",
+            "state": "listing-open",
+            "evidence": "media/listing-state-01.png; opening of media/listing-interaction.webm"
+          },
+          {
+            "index": 2,
+            "user_action": "Wait for deferred artwork and modules to settle.",
+            "system_response": "The listing reaches a stable, inspectable header state.",
+            "state": "listing-settled",
+            "evidence": "opening segment of media/listing-interaction.webm"
+          },
+          {
+            "index": 3,
+            "user_action": "Scroll down 520 pixels.",
+            "system_response": "The product screenshot/preview region enters the viewport.",
+            "state": "media-shelf",
+            "evidence": "media/listing-state-02.png"
+          },
+          {
+            "index": 4,
+            "user_action": "Attempt to activate the target named Screenshot.",
+            "system_response": "Weles reports clicked button: Screenshot; the visible screenshot control is activated.",
+            "state": "media-selected",
+            "evidence": "media/listing-state-03.png and the selection segment of media/listing-interaction.webm"
+          },
+          {
+            "index": 5,
+            "user_action": "Continue downward by 760 pixels.",
+            "system_response": "The listing advances to descriptive and trust metadata.",
+            "state": "details-reached",
+            "evidence": "media/listing-state-04.png"
+          },
+          {
+            "index": 6,
+            "user_action": "Scroll down a further 1800 pixels.",
+            "system_response": "The intended media/detail target is overshot and later sections appear.",
+            "state": "target-overshot",
+            "evidence": "media/listing-state-05.png"
+          },
+          {
+            "index": 7,
+            "user_action": "Reverse upward by 2400 pixels.",
+            "system_response": "Earlier media/detail modules return in reverse order.",
+            "state": "recovered-to-media",
+            "evidence": "media/listing-state-06.png"
+          },
+          {
+            "index": 8,
+            "user_action": "Continue upward by 2400 pixels.",
+            "system_response": "The original product header returns, completing the discovery-to-open inspection loop.",
+            "state": "returned-to-header",
+            "evidence": "media/listing-state-07.png; ending of media/listing-interaction.webm"
+          }
+        ],
+        "failure_route": [
+          "The Screenshot selection succeeds; no failure is observed for that interaction.",
+          "A subsequent large downward scroll intentionally overshoots the media/detail target and later listing sections replace it."
+        ],
+        "recovery_route": [
+          "Continue from or dismiss the selected media context using the reversible listing path.",
+          "Reverse direction by 2400 pixels after the later overshoot to recover the media/detail region.",
+          "Continue upward by 2400 pixels to restore the original listing header."
+        ],
+        "completion_evidence": "media/listing-state-07.png and the final segment of media/listing-interaction.webm show the product header restored after the observed failure and recovery route."
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The product name and listing content are visibly rendered at the opening state."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Continuous scrolling preserves context and can be reversed without a modal trap."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The Screenshot selection attempt produced the explicit Weles result clicked button: Screenshot, rather than silently activating another element."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[3]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The recording retains stable visual feedback after each navigation action."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "listing-open"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/listing-interaction.webm at 21s (mean abs diff 0.1758/255)",
+        "source_match": {
+          "timestamp_seconds": 17.5,
+          "mean_abs_diff": 0.1758,
+          "sampled_frames": 43,
+          "motion_path": "media/listing-state-01.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "media-shelf"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/listing-interaction.webm at 7s (mean abs diff 0.207/255)",
+        "source_match": {
+          "timestamp_seconds": 7.0,
+          "mean_abs_diff": 0.207,
+          "sampled_frames": 43,
+          "motion_path": "media/listing-state-02.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "media-selected"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/listing-interaction.webm at 9.5s (mean abs diff 0.082/255)",
+        "source_match": {
+          "timestamp_seconds": 9.5,
+          "mean_abs_diff": 0.082,
+          "sampled_frames": 43,
+          "motion_path": "media/listing-state-03.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "details-reached"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/listing-interaction.webm at 13.5s (mean abs diff 0.1016/255)",
+        "source_match": {
+          "timestamp_seconds": 13.5,
+          "mean_abs_diff": 0.1016,
+          "sampled_frames": 43,
+          "motion_path": "media/listing-state-04.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "target-overshot"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/listing-interaction.webm at 14s (mean abs diff 0.082/255)",
+        "source_match": {
+          "timestamp_seconds": 14.0,
+          "mean_abs_diff": 0.082,
+          "sampled_frames": 43,
+          "motion_path": "media/listing-state-05.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "recovered-to-media"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/listing-interaction.webm at 15s (mean abs diff 0.1875/255)",
+        "source_match": {
+          "timestamp_seconds": 15.0,
+          "mean_abs_diff": 0.1875,
+          "sampled_frames": 43,
+          "motion_path": "media/listing-state-06.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[6].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "returned-to-header"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[6].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/listing-interaction.webm at 21s (mean abs diff 0.1758/255)",
+        "source_match": {
+          "timestamp_seconds": 17.5,
+          "mean_abs_diff": 0.1758,
+          "sampled_frames": 43,
+          "motion_path": "media/listing-state-07.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

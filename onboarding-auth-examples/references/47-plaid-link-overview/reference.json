@@ -20,270 +20,438 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "consent entry",
+      "name": "Observed state 1",
       "local_path": "media/state-01-consent-entry.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 3.5s (mean abs diff 1.8906/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 67120,
       "sha256": "edd7742deda083e05d8a19e581f0e263e4bc9d78dea49c6f9954e0e6781140ab",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 3.5,
-        "mean_abs_diff": 1.8906,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 67120
     },
     {
-      "name": "institution selected",
+      "name": "Observed state 2",
       "local_path": "media/state-02-institution-selected.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.4766/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 141197,
       "sha256": "1f23d56027985f5c8da7c344474a05a7b84214510ee15273efe4ddc7c6b80ac6",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 19.5,
-        "mean_abs_diff": 1.4766,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 141197
     },
     {
-      "name": "institution authenticated",
+      "name": "Observed state 3",
       "local_path": "media/state-03-institution-authenticated.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 1.625/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 137669,
       "sha256": "069e73a507c2aedbda10174d6ebe202957dc34521a4be4fafba422696765e70c",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 35.0,
-        "mean_abs_diff": 1.625,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 137669
     },
     {
-      "name": "MFA complete",
+      "name": "Observed state 4",
       "local_path": "media/state-04-mfa-complete.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 1.3633/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 125876,
       "sha256": "26c0e4f53ec378ad53a87f8318eae326584173aaea7ec1d5df10784bd40f4250",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 50.0,
-        "mean_abs_diff": 1.3633,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 125876
     },
     {
-      "name": "accounts selected",
+      "name": "Observed state 5",
       "local_path": "media/state-05-accounts-selected.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 1.668/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 100383,
       "sha256": "f95f82c6a252da5928e3f01483b7c86fe9bca5ce4c9239ab700d97ad2e871a78",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 65.5,
-        "mean_abs_diff": 1.668,
-        "sampled_frames": 180
-      }
-    },
-    {
-      "name": "account linked",
-      "local_path": "media/state-06-account-linked.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 81s (mean abs diff 1.4727/255)",
       "width": 640,
       "height": 360,
-      "bytes": 140514,
+      "bytes": 100383
+    },
+    {
+      "name": "Observed state 6",
+      "local_path": "media/state-06-account-linked.png",
       "sha256": "294ffc7ee7e9287ceb45db3c58c27911a4acf77eeab90ef25ff8b58e9c59fca5",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 81.0,
-        "mean_abs_diff": 1.4727,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 140514
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "Open Plaid Link and review the consent context",
-      "response": "Link shows purpose, data access, and Continue",
-      "feedback": "The retained consent entry state makes the available next action visible.",
-      "cancellation": "Closing or leaving before submission produces no completion claim.",
-      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
-      "recovery": "Restore the prerequisite and repeat the same entry action.",
-      "evidence": "media/state-01-consent-entry.png @ 4.50s; https://plaid.com/docs/link/"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Accept and search or choose an institution",
-      "response": "Link selects the institution-specific route",
-      "feedback": "The recording advances to institution selected and retains the selected context.",
-      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
-      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
-      "recovery": "Correct, resend, or reselect and submit again.",
-      "evidence": "media/state-01-consent-entry.png @ 4.50s; media/state-02-institution-selected.png @ 19.79s; https://plaid.com/docs/link/"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Authenticate through credentials or institution OAuth",
-      "response": "Link reports authentication progress",
-      "feedback": "The navigation result is visible as institution authenticated.",
-      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
-      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
-      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
-      "evidence": "media/state-02-institution-selected.png @ 19.79s; media/state-03-institution-authenticated.png @ 35.07s; https://plaid.com/docs/link/"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Complete multifactor verification when requested",
-      "response": "Link confirms the challenge",
-      "feedback": "The official recording shows the confirmed MFA complete state.",
-      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
-      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
-      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
-      "evidence": "media/state-03-institution-authenticated.png @ 35.07s; media/state-04-mfa-complete.png @ 50.36s; https://plaid.com/docs/link/"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
-      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
-      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
-      "cancellation": "This interaction is the observed cancellation boundary.",
-      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
-      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
-      "evidence": "media/state-02-institution-selected.png @ 19.79s; media/state-03-institution-authenticated.png @ 35.07s; media/state-04-mfa-complete.png @ 50.36s; https://plaid.com/docs/link/"
-    },
-    {
-      "name": "progress feedback",
-      "trigger": "Choose the accounts to share and confirm",
-      "response": "Link displays the selected scope",
-      "feedback": "Progress is observable as the distinct accounts selected state.",
-      "cancellation": "Leaving during feedback does not count as completion.",
-      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
-      "recovery": "Wait for durable feedback or use the product's retry route.",
-      "evidence": "media/state-04-mfa-complete.png @ 50.36s; media/state-05-accounts-selected.png @ 65.65s; https://plaid.com/docs/link/"
-    },
-    {
-      "name": "failure",
-      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
-      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
-      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
-      "cancellation": "The user can leave without a false success state.",
-      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
-      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
-      "evidence": "media/state-03-institution-authenticated.png @ 35.07s; media/state-04-mfa-complete.png @ 50.36s; media/state-05-accounts-selected.png @ 65.65s; https://plaid.com/docs/link/"
-    },
-    {
-      "name": "recovery and completion",
-      "trigger": "Finish Link",
-      "response": "The application receives success and selected-account metadata, proving first connection",
-      "feedback": "The retained account linked state is the completion evidence.",
-      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
-      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
-      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
-      "evidence": "media/state-05-accounts-selected.png @ 65.65s; media/state-06-account-linked.png @ 80.94s; https://plaid.com/docs/link/"
-    }
-  ],
-  "journey": {
-    "actor": "customer linking a financial account",
-    "goal": "connect an institution and return a successful Link result",
-    "prerequisites": [
-      "application-provided Link session",
-      "supported financial institution",
-      "institution credentials or OAuth access"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open Plaid Link and review the consent context",
-        "system_response": "Link shows purpose, data access, and Continue",
-        "state": "consent entry",
-        "evidence": "media/state-01-consent-entry.png; media/official-recording.mp4#t=4.497; https://plaid.com/docs/link/"
-      },
-      {
-        "index": 2,
-        "user_action": "Accept and search or choose an institution",
-        "system_response": "Link selects the institution-specific route",
-        "state": "institution selected",
-        "evidence": "media/state-02-institution-selected.png; media/official-recording.mp4#t=19.785; https://plaid.com/docs/link/"
-      },
-      {
-        "index": 3,
-        "user_action": "Authenticate through credentials or institution OAuth",
-        "system_response": "Link reports authentication progress",
-        "state": "institution authenticated",
-        "evidence": "media/state-03-institution-authenticated.png; media/official-recording.mp4#t=35.074; https://plaid.com/docs/link/"
-      },
-      {
-        "index": 4,
-        "user_action": "Complete multifactor verification when requested",
-        "system_response": "Link confirms the challenge",
-        "state": "MFA complete",
-        "evidence": "media/state-04-mfa-complete.png; media/official-recording.mp4#t=50.362; https://plaid.com/docs/link/"
-      },
-      {
-        "index": 5,
-        "user_action": "Choose the accounts to share and confirm",
-        "system_response": "Link displays the selected scope",
-        "state": "accounts selected",
-        "evidence": "media/state-05-accounts-selected.png; media/official-recording.mp4#t=65.651; https://plaid.com/docs/link/"
-      },
-      {
-        "index": 6,
-        "user_action": "Finish Link",
-        "system_response": "The application receives success and selected-account metadata, proving first connection",
-        "state": "account linked",
-        "evidence": "media/state-06-account-linked.png; media/official-recording.mp4#t=80.940; https://plaid.com/docs/link/"
-      }
-    ],
-    "failure_route": [
-      "At institution selected or institution authenticated, invalid, expired, denied, or missing required input leaves the flow short of account linked; evidence: media/state-02-institution-selected.png, media/state-03-institution-authenticated.png, and https://plaid.com/docs/link/.",
-      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-institution-authenticated.png through media/state-05-accounts-selected.png."
-    ],
-    "recovery_route": [
-      "Return to the retained institution selected or institution authenticated requirement, correct or resend the blocking input, and resubmit; evidence: https://plaid.com/docs/link/.",
-      "Continue through the same terminal action until account linked is visible in media/state-06-account-linked.png and the motion at 80.940s."
-    ],
-    "completion_evidence": "account linked retained at media/state-06-account-linked.png and media/official-recording.mp4#t=80.940; source https://plaid.com/docs/link/"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visual observation from media/state-01-consent-entry.png and media/state-02-institution-selected.png: the current task is presented with persistent on-screen text rather than motion alone.",
-      "Visual observation from media/state-03-institution-authenticated.png and media/state-04-mfa-complete.png: primary choices remain spatially associated with their current setup context.",
-      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
       "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
       "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
       "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/official-recording.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-consent-entry.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-consent-entry.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-institution-selected.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-institution-selected.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-institution-authenticated.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-institution-authenticated.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-mfa-complete.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-mfa-complete.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-accounts-selected.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-accounts-selected.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-06-account-linked.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-06-account-linked.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "Open Plaid Link and review the consent context",
+        "response": "Link shows purpose, data access, and Continue",
+        "feedback": "The retained consent entry state makes the available next action visible.",
+        "cancellation": "Closing or leaving before submission produces no completion claim.",
+        "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+        "recovery": "Restore the prerequisite and repeat the same entry action.",
+        "evidence": "media/state-01-consent-entry.png @ 4.50s; https://plaid.com/docs/link/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Accept and search or choose an institution",
+        "response": "Link selects the institution-specific route",
+        "feedback": "The recording advances to institution selected and retains the selected context.",
+        "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+        "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+        "recovery": "Correct, resend, or reselect and submit again.",
+        "evidence": "media/state-01-consent-entry.png @ 4.50s; media/state-02-institution-selected.png @ 19.79s; https://plaid.com/docs/link/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Authenticate through credentials or institution OAuth",
+        "response": "Link reports authentication progress",
+        "feedback": "The navigation result is visible as institution authenticated.",
+        "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+        "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+        "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+        "evidence": "media/state-02-institution-selected.png @ 19.79s; media/state-03-institution-authenticated.png @ 35.07s; https://plaid.com/docs/link/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Complete multifactor verification when requested",
+        "response": "Link confirms the challenge",
+        "feedback": "The official recording shows the confirmed MFA complete state.",
+        "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+        "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+        "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+        "evidence": "media/state-03-institution-authenticated.png @ 35.07s; media/state-04-mfa-complete.png @ 50.36s; https://plaid.com/docs/link/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+        "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+        "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+        "cancellation": "This interaction is the observed cancellation boundary.",
+        "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+        "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+        "evidence": "media/state-02-institution-selected.png @ 19.79s; media/state-03-institution-authenticated.png @ 35.07s; media/state-04-mfa-complete.png @ 50.36s; https://plaid.com/docs/link/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "progress feedback",
+        "trigger": "Choose the accounts to share and confirm",
+        "response": "Link displays the selected scope",
+        "feedback": "Progress is observable as the distinct accounts selected state.",
+        "cancellation": "Leaving during feedback does not count as completion.",
+        "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+        "recovery": "Wait for durable feedback or use the product's retry route.",
+        "evidence": "media/state-04-mfa-complete.png @ 50.36s; media/state-05-accounts-selected.png @ 65.65s; https://plaid.com/docs/link/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+        "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+        "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+        "cancellation": "The user can leave without a false success state.",
+        "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+        "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+        "evidence": "media/state-03-institution-authenticated.png @ 35.07s; media/state-04-mfa-complete.png @ 50.36s; media/state-05-accounts-selected.png @ 65.65s; https://plaid.com/docs/link/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery and completion",
+        "trigger": "Finish Link",
+        "response": "The application receives success and selected-account metadata, proving first connection",
+        "feedback": "The retained account linked state is the completion evidence.",
+        "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+        "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+        "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+        "evidence": "media/state-05-accounts-selected.png @ 65.65s; media/state-06-account-linked.png @ 80.94s; https://plaid.com/docs/link/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "customer linking a financial account",
+        "goal": "connect an institution and return a successful Link result",
+        "prerequisites": [
+          "application-provided Link session",
+          "supported financial institution",
+          "institution credentials or OAuth access"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open Plaid Link and review the consent context",
+            "system_response": "Link shows purpose, data access, and Continue",
+            "state": "consent entry",
+            "evidence": "media/state-01-consent-entry.png; media/official-recording.mp4#t=4.497; https://plaid.com/docs/link/"
+          },
+          {
+            "index": 2,
+            "user_action": "Accept and search or choose an institution",
+            "system_response": "Link selects the institution-specific route",
+            "state": "institution selected",
+            "evidence": "media/state-02-institution-selected.png; media/official-recording.mp4#t=19.785; https://plaid.com/docs/link/"
+          },
+          {
+            "index": 3,
+            "user_action": "Authenticate through credentials or institution OAuth",
+            "system_response": "Link reports authentication progress",
+            "state": "institution authenticated",
+            "evidence": "media/state-03-institution-authenticated.png; media/official-recording.mp4#t=35.074; https://plaid.com/docs/link/"
+          },
+          {
+            "index": 4,
+            "user_action": "Complete multifactor verification when requested",
+            "system_response": "Link confirms the challenge",
+            "state": "MFA complete",
+            "evidence": "media/state-04-mfa-complete.png; media/official-recording.mp4#t=50.362; https://plaid.com/docs/link/"
+          },
+          {
+            "index": 5,
+            "user_action": "Choose the accounts to share and confirm",
+            "system_response": "Link displays the selected scope",
+            "state": "accounts selected",
+            "evidence": "media/state-05-accounts-selected.png; media/official-recording.mp4#t=65.651; https://plaid.com/docs/link/"
+          },
+          {
+            "index": 6,
+            "user_action": "Finish Link",
+            "system_response": "The application receives success and selected-account metadata, proving first connection",
+            "state": "account linked",
+            "evidence": "media/state-06-account-linked.png; media/official-recording.mp4#t=80.940; https://plaid.com/docs/link/"
+          }
+        ],
+        "failure_route": [
+          "At institution selected or institution authenticated, invalid, expired, denied, or missing required input leaves the flow short of account linked; evidence: media/state-02-institution-selected.png, media/state-03-institution-authenticated.png, and https://plaid.com/docs/link/.",
+          "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-institution-authenticated.png through media/state-05-accounts-selected.png."
+        ],
+        "recovery_route": [
+          "Return to the retained institution selected or institution authenticated requirement, correct or resend the blocking input, and resubmit; evidence: https://plaid.com/docs/link/.",
+          "Continue through the same terminal action until account linked is visible in media/state-06-account-linked.png and the motion at 80.940s."
+        ],
+        "completion_evidence": "account linked retained at media/state-06-account-linked.png and media/official-recording.mp4#t=80.940; source https://plaid.com/docs/link/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-01-consent-entry.png and media/state-02-institution-selected.png: the current task is presented with persistent on-screen text rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-03-institution-authenticated.png and media/state-04-mfa-complete.png: primary choices remain spatially associated with their current setup context."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "consent entry"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 3.5s (mean abs diff 1.8906/255)",
+        "source_match": {
+          "timestamp_seconds": 3.5,
+          "mean_abs_diff": 1.8906,
+          "sampled_frames": 180,
+          "motion_path": "media/state-01-consent-entry.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "institution selected"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.4766/255)",
+        "source_match": {
+          "timestamp_seconds": 19.5,
+          "mean_abs_diff": 1.4766,
+          "sampled_frames": 180,
+          "motion_path": "media/state-02-institution-selected.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "institution authenticated"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 1.625/255)",
+        "source_match": {
+          "timestamp_seconds": 35.0,
+          "mean_abs_diff": 1.625,
+          "sampled_frames": 180,
+          "motion_path": "media/state-03-institution-authenticated.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "MFA complete"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 1.3633/255)",
+        "source_match": {
+          "timestamp_seconds": 50.0,
+          "mean_abs_diff": 1.3633,
+          "sampled_frames": 180,
+          "motion_path": "media/state-04-mfa-complete.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "accounts selected"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 1.668/255)",
+        "source_match": {
+          "timestamp_seconds": 65.5,
+          "mean_abs_diff": 1.668,
+          "sampled_frames": 180,
+          "motion_path": "media/state-05-accounts-selected.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "account linked"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 81s (mean abs diff 1.4727/255)",
+        "source_match": {
+          "timestamp_seconds": 81.0,
+          "mean_abs_diff": 1.4727,
+          "sampled_frames": 180,
+          "motion_path": "media/state-06-account-linked.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

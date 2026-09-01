@@ -20,236 +20,375 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "\"Welcome to Intercom\" onboarding modal with four unanswered Select dropdowns — experience setting up a customer support solution, what you primarily use Intercom for, department, and current role — beside the \"Get started with the Next-Generation Inbox\" panel",
+      "name": "Observed state 1",
       "local_path": "media/state-01-entry.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 14.5s (mean abs diff 1.8164/255)",
+      "timestamp_seconds": 14.4,
       "width": 640,
       "height": 360,
       "bytes": 22685,
-      "sha256": "2c9e453809a4a0e8e787433e0e201682a8abe62e01746808611e9b33ac513c22",
-      "timestamp_seconds": 14.4,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 14.5,
-        "mean_abs_diff": 1.8164,
-        "sampled_frames": 180
-      }
+      "sha256": "2c9e453809a4a0e8e787433e0e201682a8abe62e01746808611e9b33ac513c22"
     },
     {
-      "name": "Same onboarding modal with three answers chosen (\"I've used other support solutions but not Intercom\", \"Support customers\", \"Customer Support/Service\") and the role dropdown open on Support Executive/Director, Support Manager, Support Rep, Support Operations/Engineering",
+      "name": "Observed state 2",
       "local_path": "media/state-02-progress.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 44.5s (mean abs diff 1.7891/255)",
+      "timestamp_seconds": 45.0,
       "width": 640,
       "height": 360,
       "bytes": 31183,
-      "sha256": "0b1922930b277740169be3112a39f15294fb8538d2f278443f54c1ac57d65d26",
-      "timestamp_seconds": 45.0,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 44.5,
-        "mean_abs_diff": 1.7891,
-        "sampled_frames": 180
-      }
+      "sha256": "0b1922930b277740169be3112a39f15294fb8538d2f278443f54c1ac57d65d26"
     },
     {
-      "name": "Zoomed Intercom Inbox rail and conversation list: Your inbox 0, Mentions 0, Created by you 3, All 0, Unassigned 0, Spam 0, Dashboard, with \"0 Open\" in the list header",
+      "name": "Observed state 3",
       "local_path": "media/state-03-result.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 75s (mean abs diff 2.3281/255)",
+      "timestamp_seconds": 75.6,
       "width": 640,
       "height": 360,
       "bytes": 26087,
-      "sha256": "8acb2daea6561edf769f87eb1cdc9367d44f0369f01641e2f2f89ab9d9d2bcec",
-      "timestamp_seconds": 75.6,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 75.0,
-        "mean_abs_diff": 2.3281,
-        "sampled_frames": 180
-      }
+      "sha256": "8acb2daea6561edf769f87eb1cdc9367d44f0369f01641e2f2f89ab9d9d2bcec"
     }
   ],
-  "interactions": [
-    {
-      "name": "Primary input",
-      "trigger": "Pointer activation of the demonstrated primary control",
-      "response": "The product advances from the entry surface into the task",
-      "feedback": "The active surface changes immediately",
-      "cancellation": "Move away without activating the control",
-      "failure": "No activation leaves the entry state unchanged",
-      "recovery": "Return to the visible control and activate it",
-      "evidence": "media/motion.mp4 14.4-28.8s"
-    },
-    {
-      "name": "Focus and selection",
-      "trigger": "Select the demonstrated item, field, or workspace target",
-      "response": "The target becomes the active context",
-      "feedback": "Selection styling or an active detail surface is visible",
-      "cancellation": "Select a different visible target",
-      "failure": "An unselected target does not advance the workflow",
-      "recovery": "Restore the intended selection",
-      "evidence": "media/motion.mp4 28.8-45.0s"
-    },
-    {
-      "name": "Navigation",
-      "trigger": "Use the demonstrated navigation control",
-      "response": "The central product surface changes while application context remains",
-      "feedback": "Destination content replaces the prior surface",
-      "cancellation": "Use the visible prior destination",
-      "failure": "A wrong destination shows content unrelated to the goal",
-      "recovery": "Navigate back to the demonstrated destination",
-      "evidence": "media/motion.mp4 28.8-45.0s"
-    },
-    {
-      "name": "Configuration",
-      "trigger": "Enter or choose the demonstrated task parameters",
-      "response": "The product reflects the configured values",
-      "feedback": "The in-progress state exposes the chosen configuration",
-      "cancellation": "Remove or replace the current choice",
-      "failure": "An incomplete configuration cannot produce the shown result",
-      "recovery": "Supply the missing demonstrated choice",
-      "evidence": "media/motion.mp4 45.0-59.4s"
-    },
-    {
-      "name": "Confirmation",
-      "trigger": "Activate the demonstrated commit, create, run, send, or save action",
-      "response": "The product starts the operation",
-      "feedback": "The surface transitions toward the result",
-      "cancellation": "Back out before the commit action",
-      "failure": "Committing with the task incomplete leaves a no-result state",
-      "recovery": "Complete the required context and confirm again",
-      "evidence": "media/motion.mp4 59.4-75.6s"
-    },
-    {
-      "name": "Backtracking",
-      "trigger": "Return from the current detail or configuration surface",
-      "response": "The previous product context is restored",
-      "feedback": "Prior navigation and content reappear",
-      "cancellation": "Remain on the current surface",
-      "failure": "Leaving too early abandons the pending result",
-      "recovery": "Re-enter the demonstrated task from the restored context",
-      "evidence": "media/motion.mp4 45.0-59.4s"
-    },
-    {
-      "name": "System feedback",
-      "trigger": "Wait after the demonstrated committed action",
-      "response": "The first meaningful result becomes visible",
-      "feedback": "Result content replaces or augments the in-progress state",
-      "cancellation": "No cancellation is shown after completion",
-      "failure": "Stopping before feedback provides no completion evidence",
-      "recovery": "Wait for the visible result state",
-      "evidence": "media/motion.mp4 75.6-90.0s"
-    },
-    {
-      "name": "Failure and recovery",
-      "trigger": "Attempt to proceed without the demonstrated selection or context",
-      "response": "The workflow remains incomplete rather than reaching the result",
-      "feedback": "The expected result state is absent",
-      "cancellation": "Return to the preceding stable surface",
-      "failure": "Required context is missing",
-      "recovery": "Restore the demonstrated context and repeat the confirmed action",
-      "evidence": "Contrast media/motion.mp4 28.8-45.0s with media/motion.mp4 75.6-90.0s"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time Intercom user following the upstream owner's official walkthrough",
-    "goal": "Reach the first meaningful Intercom result demonstrated in the official walkthrough",
-    "prerequisites": [
-      "A supported browser",
-      "Network access",
-      "Any account, workspace, or source material shown by the official tutorial"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the product surface used by the official tutorial",
-        "system_response": "The product presents the initial application context",
-        "state": "Entry surface",
-        "evidence": "media/motion.mp4 0.0-14.4s"
-      },
-      {
-        "index": 2,
-        "user_action": "Invoke the tutorial's demonstrated primary control",
-        "system_response": "The product opens the task-specific surface",
-        "state": "Task opened",
-        "evidence": "media/motion.mp4 14.4-28.8s"
-      },
-      {
-        "index": 3,
-        "user_action": "Choose the demonstrated item, destination, or workspace context",
-        "system_response": "The selected target becomes active",
-        "state": "Target selected",
-        "evidence": "media/motion.mp4 28.8-45.0s"
-      },
-      {
-        "index": 4,
-        "user_action": "Provide or adjust the demonstrated configuration",
-        "system_response": "The interface reflects the in-progress configuration",
-        "state": "Configured in-progress state",
-        "evidence": "media/motion.mp4 45.0-59.4s"
-      },
-      {
-        "index": 5,
-        "user_action": "Confirm, create, run, send, or save as demonstrated",
-        "system_response": "The product executes the requested operation",
-        "state": "Operation committed",
-        "evidence": "media/motion.mp4 59.4-75.6s"
-      },
-      {
-        "index": 6,
-        "user_action": "Observe the operation feedback",
-        "system_response": "The official recording shows the first meaningful result",
-        "state": "First meaningful result",
-        "evidence": "media/motion.mp4 75.6-90.0s"
-      }
-    ],
-    "failure_route": [
-      "Without the demonstrated context or selection, the workflow remains before the result state.",
-      "Leaving before the commit or feedback interval provides no completion evidence."
-    ],
-    "recovery_route": [
-      "Return to the stable task surface shown before confirmation.",
-      "Restore the demonstrated selection or configuration, repeat the commit action, and wait for the result feedback."
-    ],
-    "completion_evidence": "media/motion.mp4 75.6-90.0s"
-  },
-  "motion_analysis": {
-    "trigger": "Nothing the viewer does: the clip is an official screen recording that plays itself. Inside it a drawn white pointer does the work — it opens each \"Select\" dropdown in the Welcome to Intercom modal (first at ~18s, department at ~36s, role at ~42s), reaches \"Save and continue\" at 48.0s and presses it by 49.0s, then travels down the collapsed Inbox rail from Fin AI Agent to Knowledge between 86s and 89s.",
-    "start_state": "A Gmail message \"Phil has invited you to work together on Intercom\" with a \"Join your team\" button (0-0.25s), which crossfades to the \"Join your team on Intercom\" signup page carrying Sign Up with Google, Your name, Work email and \"Password (at least 15 characters)\" fields.",
-    "end_state": "The Intercom Messenger home panel \"Hi, Sara! How can we help?\" listing \"Let's have a conversation\", \"Send us a message\", \"Order status\" and a \"Find an answer quickly\" search field, beside the zoomed Inbox rail (89.5-90.0s).",
-    "continuity": "One 90.00s render at 30 fps (2700 counted frames). Motion inside a scene is continuous — the pointer travels, dropdown menus expand in place, and across 46.0-48.75s the four modal answers stay on screen while the cursor moves down to the Save and continue button — and scenes are joined by short dissolves rather than hard cuts: the signup page dims behind a light outline around the Sign Up with Google block at ~2.5-3.75s, and the modal dissolves through a \"We'll be right with you...\" interstitial at 49.25s into the \"Join your team on Inbox\" page at 49.5s. No still-image interpolation.",
-    "timing_class": "continuous",
-    "interruption_or_reversal": null,
-    "feedback": "Every action draws a visible answer in the same frame: each chosen dropdown value replaces the placeholder word \"Select\" in the modal (three answers standing at 45.0s, all four including \"Support Rep\" by 47.0s), the Save and continue button darkens under the pointer at 48.5-49.0s, a \"We'll be right with you...\" line covers the wait at 49.25s, and the Inbox counters report the outcome as numerals (Your inbox 0, Created by you 3, header \"0 Open\") at 75.6s.",
-    "reduced_motion_equivalent": null
-  },
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
   "accessibility": {
-    "observations": [
-      "Every destination in media/state-03-result.jpg is written out as text beside its icon — Inbox, Fin AI Agent, Knowledge, Reports, Outbound, Contacts in the rail and Your inbox, Mentions, Created by you, All, Unassigned, Spam, Dashboard in the list — so nothing in the navigation is icon-only.",
-      "Conversation volume is carried by numerals rather than by motion: Your inbox 0, Mentions 0, Created by you 3, All 0, Unassigned 0, Spam 0 and the \"0 Open\" list header all read from the still frame (media/state-03-result.jpg, 75.6s).",
-      "Each answered onboarding question replaces the placeholder word \"Select\" with the chosen text (\"I've used other support solutions but not Intercom\", \"Support customers\", \"Customer Support/Service\"), so progress through the form stays legible with the animation stopped (media/state-02-progress.jpg, 45.0s).",
-      "In the rail-and-list crop of media/state-03-result.jpg (x 0-230, y 60-330) the brightest 2% of pixels (255,255,255) against the darkest 2% (28,29,23) measure a 16.97:1 luminance contrast ratio and the conversation-list crop (x 250-520, y 60-320) measures 8.39:1 for (79,77,78) on white, while the modal body crop of media/state-01-entry.jpg (x 228-420, y 55-300) measures only 4.81:1 for its grey (114,114,114) question text on white. All computed with the WCAG relative-luminance formula over the retained JPEGs.",
-      "The signup step marks emphasis without relying on movement alone: from ~2.5s to 3.75s the page behind the \"Sign Up with Google\" block is dimmed and the block is drawn inside a light outline, and the password field states its rule as visible text (\"Password (at least 15 characters)\")."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, and live-region announcements were not exposed by the static-source recording.",
       "Complete keyboard traversal and focus order were not established by the recording.",
       "Reduced-motion preference handling and a nonanimated equivalent were not demonstrated."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
-    "motion analysis missing interruption_or_reversal, reduced_motion_equivalent",
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-entry.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-entry.jpg; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-progress.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-progress.jpg; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-result.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-result.jpg; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Primary input",
+        "trigger": "Pointer activation of the demonstrated primary control",
+        "response": "The product advances from the entry surface into the task",
+        "feedback": "The active surface changes immediately",
+        "cancellation": "Move away without activating the control",
+        "failure": "No activation leaves the entry state unchanged",
+        "recovery": "Return to the visible control and activate it",
+        "evidence": "media/motion.mp4 14.4-28.8s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus and selection",
+        "trigger": "Select the demonstrated item, field, or workspace target",
+        "response": "The target becomes the active context",
+        "feedback": "Selection styling or an active detail surface is visible",
+        "cancellation": "Select a different visible target",
+        "failure": "An unselected target does not advance the workflow",
+        "recovery": "Restore the intended selection",
+        "evidence": "media/motion.mp4 28.8-45.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Navigation",
+        "trigger": "Use the demonstrated navigation control",
+        "response": "The central product surface changes while application context remains",
+        "feedback": "Destination content replaces the prior surface",
+        "cancellation": "Use the visible prior destination",
+        "failure": "A wrong destination shows content unrelated to the goal",
+        "recovery": "Navigate back to the demonstrated destination",
+        "evidence": "media/motion.mp4 28.8-45.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Configuration",
+        "trigger": "Enter or choose the demonstrated task parameters",
+        "response": "The product reflects the configured values",
+        "feedback": "The in-progress state exposes the chosen configuration",
+        "cancellation": "Remove or replace the current choice",
+        "failure": "An incomplete configuration cannot produce the shown result",
+        "recovery": "Supply the missing demonstrated choice",
+        "evidence": "media/motion.mp4 45.0-59.4s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirmation",
+        "trigger": "Activate the demonstrated commit, create, run, send, or save action",
+        "response": "The product starts the operation",
+        "feedback": "The surface transitions toward the result",
+        "cancellation": "Back out before the commit action",
+        "failure": "Committing with the task incomplete leaves a no-result state",
+        "recovery": "Complete the required context and confirm again",
+        "evidence": "media/motion.mp4 59.4-75.6s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Backtracking",
+        "trigger": "Return from the current detail or configuration surface",
+        "response": "The previous product context is restored",
+        "feedback": "Prior navigation and content reappear",
+        "cancellation": "Remain on the current surface",
+        "failure": "Leaving too early abandons the pending result",
+        "recovery": "Re-enter the demonstrated task from the restored context",
+        "evidence": "media/motion.mp4 45.0-59.4s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "System feedback",
+        "trigger": "Wait after the demonstrated committed action",
+        "response": "The first meaningful result becomes visible",
+        "feedback": "Result content replaces or augments the in-progress state",
+        "cancellation": "No cancellation is shown after completion",
+        "failure": "Stopping before feedback provides no completion evidence",
+        "recovery": "Wait for the visible result state",
+        "evidence": "media/motion.mp4 75.6-90.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Failure and recovery",
+        "trigger": "Attempt to proceed without the demonstrated selection or context",
+        "response": "The workflow remains incomplete rather than reaching the result",
+        "feedback": "The expected result state is absent",
+        "cancellation": "Return to the preceding stable surface",
+        "failure": "Required context is missing",
+        "recovery": "Restore the demonstrated context and repeat the confirmed action",
+        "evidence": "Contrast media/motion.mp4 28.8-45.0s with media/motion.mp4 75.6-90.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time Intercom user following the upstream owner's official walkthrough",
+        "goal": "Reach the first meaningful Intercom result demonstrated in the official walkthrough",
+        "prerequisites": [
+          "A supported browser",
+          "Network access",
+          "Any account, workspace, or source material shown by the official tutorial"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the product surface used by the official tutorial",
+            "system_response": "The product presents the initial application context",
+            "state": "Entry surface",
+            "evidence": "media/motion.mp4 0.0-14.4s"
+          },
+          {
+            "index": 2,
+            "user_action": "Invoke the tutorial's demonstrated primary control",
+            "system_response": "The product opens the task-specific surface",
+            "state": "Task opened",
+            "evidence": "media/motion.mp4 14.4-28.8s"
+          },
+          {
+            "index": 3,
+            "user_action": "Choose the demonstrated item, destination, or workspace context",
+            "system_response": "The selected target becomes active",
+            "state": "Target selected",
+            "evidence": "media/motion.mp4 28.8-45.0s"
+          },
+          {
+            "index": 4,
+            "user_action": "Provide or adjust the demonstrated configuration",
+            "system_response": "The interface reflects the in-progress configuration",
+            "state": "Configured in-progress state",
+            "evidence": "media/motion.mp4 45.0-59.4s"
+          },
+          {
+            "index": 5,
+            "user_action": "Confirm, create, run, send, or save as demonstrated",
+            "system_response": "The product executes the requested operation",
+            "state": "Operation committed",
+            "evidence": "media/motion.mp4 59.4-75.6s"
+          },
+          {
+            "index": 6,
+            "user_action": "Observe the operation feedback",
+            "system_response": "The official recording shows the first meaningful result",
+            "state": "First meaningful result",
+            "evidence": "media/motion.mp4 75.6-90.0s"
+          }
+        ],
+        "failure_route": [
+          "Without the demonstrated context or selection, the workflow remains before the result state.",
+          "Leaving before the commit or feedback interval provides no completion evidence."
+        ],
+        "recovery_route": [
+          "Return to the stable task surface shown before confirmation.",
+          "Restore the demonstrated selection or configuration, repeat the commit action, and wait for the result feedback."
+        ],
+        "completion_evidence": "media/motion.mp4 75.6-90.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "Nothing the viewer does: the clip is an official screen recording that plays itself. Inside it a drawn white pointer does the work — it opens each \"Select\" dropdown in the Welcome to Intercom modal (first at ~18s, department at ~36s, role at ~42s), reaches \"Save and continue\" at 48.0s and presses it by 49.0s, then travels down the collapsed Inbox rail from Fin AI Agent to Knowledge between 86s and 89s.",
+        "start_state": "A Gmail message \"Phil has invited you to work together on Intercom\" with a \"Join your team\" button (0-0.25s), which crossfades to the \"Join your team on Intercom\" signup page carrying Sign Up with Google, Your name, Work email and \"Password (at least 15 characters)\" fields.",
+        "end_state": "The Intercom Messenger home panel \"Hi, Sara! How can we help?\" listing \"Let's have a conversation\", \"Send us a message\", \"Order status\" and a \"Find an answer quickly\" search field, beside the zoomed Inbox rail (89.5-90.0s).",
+        "continuity": "One 90.00s render at 30 fps (2700 counted frames). Motion inside a scene is continuous — the pointer travels, dropdown menus expand in place, and across 46.0-48.75s the four modal answers stay on screen while the cursor moves down to the Save and continue button — and scenes are joined by short dissolves rather than hard cuts: the signup page dims behind a light outline around the Sign Up with Google block at ~2.5-3.75s, and the modal dissolves through a \"We'll be right with you...\" interstitial at 49.25s into the \"Join your team on Inbox\" page at 49.5s. No still-image interpolation.",
+        "timing_class": "continuous",
+        "interruption_or_reversal": null,
+        "feedback": "Every action draws a visible answer in the same frame: each chosen dropdown value replaces the placeholder word \"Select\" in the modal (three answers standing at 45.0s, all four including \"Support Rep\" by 47.0s), the Save and continue button darkens under the pointer at 48.5-49.0s, a \"We'll be right with you...\" line covers the wait at 49.25s, and the Inbox counters report the outcome as numerals (Your inbox 0, Created by you 3, header \"0 Open\") at 75.6s.",
+        "reduced_motion_equivalent": null
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Every destination in media/state-03-result.jpg is written out as text beside its icon — Inbox, Fin AI Agent, Knowledge, Reports, Outbound, Contacts in the rail and Your inbox, Mentions, Created by you, All, Unassigned, Spam, Dashboard in the list — so nothing in the navigation is icon-only."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Conversation volume is carried by numerals rather than by motion: Your inbox 0, Mentions 0, Created by you 3, All 0, Unassigned 0, Spam 0 and the \"0 Open\" list header all read from the still frame (media/state-03-result.jpg, 75.6s)."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Each answered onboarding question replaces the placeholder word \"Select\" with the chosen text (\"I've used other support solutions but not Intercom\", \"Support customers\", \"Customer Support/Service\"), so progress through the form stays legible with the animation stopped (media/state-02-progress.jpg, 45.0s)."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[3]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "In the rail-and-list crop of media/state-03-result.jpg (x 0-230, y 60-330) the brightest 2% of pixels (255,255,255) against the darkest 2% (28,29,23) measure a 16.97:1 luminance contrast ratio and the conversation-list crop (x 250-520, y 60-320) measures 8.39:1 for (79,77,78) on white, while the modal body crop of media/state-01-entry.jpg (x 228-420, y 55-300) measures only 4.81:1 for its grey (114,114,114) question text on white. All computed with the WCAG relative-luminance formula over the retained JPEGs."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[4]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The signup step marks emphasis without relying on movement alone: from ~2.5s to 3.75s the page behind the \"Sign Up with Google\" block is dimmed and the block is drawn inside a light outline, and the password field states its rule as visible text (\"Password (at least 15 characters)\")."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "\"Welcome to Intercom\" onboarding modal with four unanswered Select dropdowns — experience setting up a customer support solution, what you primarily use Intercom for, department, and current role — beside the \"Get started with the Next-Generation Inbox\" panel"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 14.5s (mean abs diff 1.8164/255)",
+        "source_match": {
+          "timestamp_seconds": 14.5,
+          "mean_abs_diff": 1.8164,
+          "sampled_frames": 180,
+          "motion_path": "media/state-01-entry.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Same onboarding modal with three answers chosen (\"I've used other support solutions but not Intercom\", \"Support customers\", \"Customer Support/Service\") and the role dropdown open on Support Executive/Director, Support Manager, Support Rep, Support Operations/Engineering"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 44.5s (mean abs diff 1.7891/255)",
+        "source_match": {
+          "timestamp_seconds": 43.5,
+          "mean_abs_diff": 1.7891,
+          "sampled_frames": 180,
+          "motion_path": "media/state-02-progress.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Zoomed Intercom Inbox rail and conversation list: Your inbox 0, Mentions 0, Created by you 3, All 0, Unassigned 0, Spam 0, Dashboard, with \"0 Open\" in the list header"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 75s (mean abs diff 2.3281/255)",
+        "source_match": {
+          "timestamp_seconds": 75.0,
+          "mean_abs_diff": 2.3281,
+          "sampled_frames": 180,
+          "motion_path": "media/state-03-result.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

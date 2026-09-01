@@ -20,236 +20,375 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "Cream agenda card listing Capture and Clarify, one line each, before Complete is added to the list",
+      "name": "Observed state 1",
       "local_path": "media/state-01-entry.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 14.5s (mean abs diff 3.3125/255)",
+      "timestamp_seconds": 14.405,
       "width": 554,
       "height": 360,
       "bytes": 9916,
-      "sha256": "ce70d2ece68ac949f7e15e1ea746d1b3977d1bad853ac30efb9ba2c2df33eab9",
-      "timestamp_seconds": 14.405,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 14.5,
-        "mean_abs_diff": 3.3125,
-        "sampled_frames": 180
-      }
+      "sha256": "ce70d2ece68ac949f7e15e1ea746d1b3977d1bad853ac30efb9ba2c2df33eab9"
     },
     {
-      "name": "Add-task dialog over the Inbox with \"send quote by eod  tod a\" typed into the task field and a green Today date chip already applied beside Deadline and Priority",
+      "name": "Observed state 2",
       "local_path": "media/state-02-progress.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 45s (mean abs diff 2.4258/255)",
+      "timestamp_seconds": 45.017,
       "width": 554,
       "height": 360,
       "bytes": 17267,
-      "sha256": "37826a2d294a53659afb73c993a18cf2ae572f5060623fcec6d88fdbdd93a8d4",
-      "timestamp_seconds": 45.017,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 45.0,
-        "mean_abs_diff": 2.4258,
-        "sampled_frames": 180
-      }
+      "sha256": "37826a2d294a53659afb73c993a18cf2ae572f5060623fcec6d88fdbdd93a8d4"
     },
     {
-      "name": "Mint-green section card reading Clarify alone, cut in between two Todoist Inbox scenes",
+      "name": "Observed state 3",
       "local_path": "media/state-03-result.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 75.5s (mean abs diff 3.2734/255)",
+      "timestamp_seconds": 75.628,
       "width": 554,
       "height": 360,
       "bytes": 5847,
-      "sha256": "0e985430a9d2a83af92ed73fd34e3bed9e406ab2dcf2361d88f2f67a0ffe3be2",
-      "timestamp_seconds": 75.628,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 75.5,
-        "mean_abs_diff": 3.2734,
-        "sampled_frames": 180
-      }
+      "sha256": "0e985430a9d2a83af92ed73fd34e3bed9e406ab2dcf2361d88f2f67a0ffe3be2"
     }
   ],
-  "interactions": [
-    {
-      "name": "Primary input",
-      "trigger": "Pointer activation of the demonstrated primary control",
-      "response": "The product advances from the entry surface into the task",
-      "feedback": "The active surface changes immediately",
-      "cancellation": "Move away without activating the control",
-      "failure": "No activation leaves the entry state unchanged",
-      "recovery": "Return to the visible control and activate it",
-      "evidence": "media/motion.mp4 14.4-28.8s"
-    },
-    {
-      "name": "Focus and selection",
-      "trigger": "Select the demonstrated item, field, or workspace target",
-      "response": "The target becomes the active context",
-      "feedback": "Selection styling or an active detail surface is visible",
-      "cancellation": "Select a different visible target",
-      "failure": "An unselected target does not advance the workflow",
-      "recovery": "Restore the intended selection",
-      "evidence": "media/motion.mp4 28.8-45.0s"
-    },
-    {
-      "name": "Navigation",
-      "trigger": "Use the demonstrated navigation control",
-      "response": "The central product surface changes while application context remains",
-      "feedback": "Destination content replaces the prior surface",
-      "cancellation": "Use the visible prior destination",
-      "failure": "A wrong destination shows content unrelated to the goal",
-      "recovery": "Navigate back to the demonstrated destination",
-      "evidence": "media/motion.mp4 28.8-45.0s"
-    },
-    {
-      "name": "Configuration",
-      "trigger": "Enter or choose the demonstrated task parameters",
-      "response": "The product reflects the configured values",
-      "feedback": "The in-progress state exposes the chosen configuration",
-      "cancellation": "Remove or replace the current choice",
-      "failure": "An incomplete configuration cannot produce the shown result",
-      "recovery": "Supply the missing demonstrated choice",
-      "evidence": "media/motion.mp4 45.0-59.4s"
-    },
-    {
-      "name": "Confirmation",
-      "trigger": "Activate the demonstrated commit, create, run, send, or save action",
-      "response": "The product starts the operation",
-      "feedback": "The surface transitions toward the result",
-      "cancellation": "Back out before the commit action",
-      "failure": "Committing with the task incomplete leaves a no-result state",
-      "recovery": "Complete the required context and confirm again",
-      "evidence": "media/motion.mp4 59.4-75.6s"
-    },
-    {
-      "name": "Backtracking",
-      "trigger": "Return from the current detail or configuration surface",
-      "response": "The previous product context is restored",
-      "feedback": "Prior navigation and content reappear",
-      "cancellation": "Remain on the current surface",
-      "failure": "Leaving too early abandons the pending result",
-      "recovery": "Re-enter the demonstrated task from the restored context",
-      "evidence": "media/motion.mp4 45.0-59.4s"
-    },
-    {
-      "name": "System feedback",
-      "trigger": "Wait after the demonstrated committed action",
-      "response": "The first meaningful result becomes visible",
-      "feedback": "Result content replaces or augments the in-progress state",
-      "cancellation": "No cancellation is shown after completion",
-      "failure": "Stopping before feedback provides no completion evidence",
-      "recovery": "Wait for the visible result state",
-      "evidence": "media/motion.mp4 75.6-90.0s"
-    },
-    {
-      "name": "Failure and recovery",
-      "trigger": "Attempt to proceed without the demonstrated selection or context",
-      "response": "The workflow remains incomplete rather than reaching the result",
-      "feedback": "The expected result state is absent",
-      "cancellation": "Return to the preceding stable surface",
-      "failure": "Required context is missing",
-      "recovery": "Restore the demonstrated context and repeat the confirmed action",
-      "evidence": "Contrast media/motion.mp4 28.8-45.0s with media/motion.mp4 75.6-90.0s"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time Todoist user following the upstream owner's official walkthrough",
-    "goal": "Reach the first meaningful Todoist result demonstrated in the official walkthrough",
-    "prerequisites": [
-      "A supported browser",
-      "Network access",
-      "Any account, workspace, or source material shown by the official tutorial"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the product surface used by the official tutorial",
-        "system_response": "The product presents the initial application context",
-        "state": "Entry surface",
-        "evidence": "media/motion.mp4 0.0-14.4s"
-      },
-      {
-        "index": 2,
-        "user_action": "Invoke the tutorial's demonstrated primary control",
-        "system_response": "The product opens the task-specific surface",
-        "state": "Task opened",
-        "evidence": "media/motion.mp4 14.4-28.8s"
-      },
-      {
-        "index": 3,
-        "user_action": "Choose the demonstrated item, destination, or workspace context",
-        "system_response": "The selected target becomes active",
-        "state": "Target selected",
-        "evidence": "media/motion.mp4 28.8-45.0s"
-      },
-      {
-        "index": 4,
-        "user_action": "Provide or adjust the demonstrated configuration",
-        "system_response": "The interface reflects the in-progress configuration",
-        "state": "Configured in-progress state",
-        "evidence": "media/motion.mp4 45.0-59.4s"
-      },
-      {
-        "index": 5,
-        "user_action": "Confirm, create, run, send, or save as demonstrated",
-        "system_response": "The product executes the requested operation",
-        "state": "Operation committed",
-        "evidence": "media/motion.mp4 59.4-75.6s"
-      },
-      {
-        "index": 6,
-        "user_action": "Observe the operation feedback",
-        "system_response": "The official recording shows the first meaningful result",
-        "state": "First meaningful result",
-        "evidence": "media/motion.mp4 75.6-90.0s"
-      }
-    ],
-    "failure_route": [
-      "Without the demonstrated context or selection, the workflow remains before the result state.",
-      "Leaving before the commit or feedback interval provides no completion evidence."
-    ],
-    "recovery_route": [
-      "Return to the stable task surface shown before confirmation.",
-      "Restore the demonstrated selection or configuration, repeat the commit action, and wait for the result feedback."
-    ],
-    "completion_evidence": "media/motion.mp4 75.6-90.0s"
-  },
-  "motion_analysis": {
-    "trigger": "Nothing the viewer does: the clip is an official screen recording narrated by a presenter who stays in a round webcam bubble at the lower right. Inside it, a pointer hovers the sidebar's Add task control until an \"Add task\" tooltip appears at ~30s and clicks it, and text then types itself into the task field one character at a time — \"send quote by eod today\" over 42.0-45.4s and \"call mom every other day at 9am\" over 49.7-52.8s.",
-    "start_state": "Full-frame webcam shot of the presenter talking, with no product surface visible (0-11.5s).",
-    "end_state": "The Todoist macOS Inbox for the account \"Denise\" holding four tasks — Record videos (Today 5 PM), Focus time! (Yesterday 9-11 AM in red), send quote by eod (Today), call mom (Sunday 9 AM with a recurrence glyph) — held unchanged to the last frame (84-90.0s).",
-    "continuity": "One 90.033s render of 2698 frames (~29.97 fps). Motion inside a scene is continuous — characters appear one at a time in the task field, the date chip fills itself in while the words are still being typed (\"Today\" by 44s, \"Sunday 9 AM\" by 52s), the \"Task added to Inbox\" toast slides up at 46.0s and is still on screen at 60.6s — and scenes are joined by hard cuts: webcam to the cream agenda card at ~11.8s, agenda card back to webcam at ~16.8s, Inbox to the mint Clarify card at ~75.1s and back to the Inbox at ~77.3s. No still-image interpolation.",
-    "timing_class": "continuous",
-    "interruption_or_reversal": null,
-    "feedback": "Every action draws a visible answer in the same frame: the hovered sidebar control raises an \"Add task\" tooltip at ~30s; typed prose is parsed into a chip while typing continues, so \"...by eod today\" produces a green \"Today ×\" chip at 44-45s and \"...every other day at 9am\" produces a \"Sunday 9 AM ×\" chip at ~52s; activating the red Add task button both inserts the new row into the Inbox list and raises a \"Task added to Inbox\" toast carrying an Open link, at 46.0s and again at 54.2s.",
-    "reduced_motion_equivalent": null
-  },
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
   "accessibility": {
-    "observations": [
-      "Every sidebar destination carries a text label beside its icon — Add task, Search, Inbox, Today, Upcoming, Filters & Labels, More — and the current destination is marked both by a pink row highlight and by pink label text, so selection is not carried by position alone (media/motion.mp4 at 88s).",
-      "Each task's due date is written out as words and numerals under the title rather than signalled by motion: \"Today 5 PM\", \"Yesterday 9-11 AM\", \"Today\", \"Sunday 9 AM\" (media/motion.mp4 at 88s). The overdue item is additionally red, so the colour is redundant with the word \"Yesterday\".",
-      "The add-task dialog names all of its controls in text — Today, Deadline, Priority, Inbox, Cancel, Add task — so the date the parser applied reads as the word \"Today\" in the chip and not only as a calendar glyph (media/state-02-progress.jpg, 45.017s).",
-      "In media/state-01-entry.jpg the agenda-card crop (x 195-360, y 95-200) measures a 17.03:1 luminance contrast ratio between its brightest 2% of pixels (255,255,230) and its darkest 2% (33,26,7); the dialog-title crop of media/state-02-progress.jpg (x 170-300, y 78-95) measures 8.11:1 for (81,79,82) against (255,255,255). Both computed with the WCAG relative-luminance formula over the retained JPEGs.",
-      "Committed state stays legible with the animation stopped: the toast text \"Task added to Inbox\" and its Open link remain on screen from 46.0s to about 60.6s, and every task title and date in the closing Inbox is text."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, and live-region announcements were not exposed by the static-source recording.",
       "Complete keyboard traversal and focus order were not established by the recording.",
       "Reduced-motion preference handling and a nonanimated equivalent were not demonstrated."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
-    "motion analysis missing interruption_or_reversal, reduced_motion_equivalent",
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-entry.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-entry.jpg; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-progress.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-progress.jpg; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-result.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-result.jpg; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Primary input",
+        "trigger": "Pointer activation of the demonstrated primary control",
+        "response": "The product advances from the entry surface into the task",
+        "feedback": "The active surface changes immediately",
+        "cancellation": "Move away without activating the control",
+        "failure": "No activation leaves the entry state unchanged",
+        "recovery": "Return to the visible control and activate it",
+        "evidence": "media/motion.mp4 14.4-28.8s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus and selection",
+        "trigger": "Select the demonstrated item, field, or workspace target",
+        "response": "The target becomes the active context",
+        "feedback": "Selection styling or an active detail surface is visible",
+        "cancellation": "Select a different visible target",
+        "failure": "An unselected target does not advance the workflow",
+        "recovery": "Restore the intended selection",
+        "evidence": "media/motion.mp4 28.8-45.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Navigation",
+        "trigger": "Use the demonstrated navigation control",
+        "response": "The central product surface changes while application context remains",
+        "feedback": "Destination content replaces the prior surface",
+        "cancellation": "Use the visible prior destination",
+        "failure": "A wrong destination shows content unrelated to the goal",
+        "recovery": "Navigate back to the demonstrated destination",
+        "evidence": "media/motion.mp4 28.8-45.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Configuration",
+        "trigger": "Enter or choose the demonstrated task parameters",
+        "response": "The product reflects the configured values",
+        "feedback": "The in-progress state exposes the chosen configuration",
+        "cancellation": "Remove or replace the current choice",
+        "failure": "An incomplete configuration cannot produce the shown result",
+        "recovery": "Supply the missing demonstrated choice",
+        "evidence": "media/motion.mp4 45.0-59.4s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirmation",
+        "trigger": "Activate the demonstrated commit, create, run, send, or save action",
+        "response": "The product starts the operation",
+        "feedback": "The surface transitions toward the result",
+        "cancellation": "Back out before the commit action",
+        "failure": "Committing with the task incomplete leaves a no-result state",
+        "recovery": "Complete the required context and confirm again",
+        "evidence": "media/motion.mp4 59.4-75.6s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Backtracking",
+        "trigger": "Return from the current detail or configuration surface",
+        "response": "The previous product context is restored",
+        "feedback": "Prior navigation and content reappear",
+        "cancellation": "Remain on the current surface",
+        "failure": "Leaving too early abandons the pending result",
+        "recovery": "Re-enter the demonstrated task from the restored context",
+        "evidence": "media/motion.mp4 45.0-59.4s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "System feedback",
+        "trigger": "Wait after the demonstrated committed action",
+        "response": "The first meaningful result becomes visible",
+        "feedback": "Result content replaces or augments the in-progress state",
+        "cancellation": "No cancellation is shown after completion",
+        "failure": "Stopping before feedback provides no completion evidence",
+        "recovery": "Wait for the visible result state",
+        "evidence": "media/motion.mp4 75.6-90.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Failure and recovery",
+        "trigger": "Attempt to proceed without the demonstrated selection or context",
+        "response": "The workflow remains incomplete rather than reaching the result",
+        "feedback": "The expected result state is absent",
+        "cancellation": "Return to the preceding stable surface",
+        "failure": "Required context is missing",
+        "recovery": "Restore the demonstrated context and repeat the confirmed action",
+        "evidence": "Contrast media/motion.mp4 28.8-45.0s with media/motion.mp4 75.6-90.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time Todoist user following the upstream owner's official walkthrough",
+        "goal": "Reach the first meaningful Todoist result demonstrated in the official walkthrough",
+        "prerequisites": [
+          "A supported browser",
+          "Network access",
+          "Any account, workspace, or source material shown by the official tutorial"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the product surface used by the official tutorial",
+            "system_response": "The product presents the initial application context",
+            "state": "Entry surface",
+            "evidence": "media/motion.mp4 0.0-14.4s"
+          },
+          {
+            "index": 2,
+            "user_action": "Invoke the tutorial's demonstrated primary control",
+            "system_response": "The product opens the task-specific surface",
+            "state": "Task opened",
+            "evidence": "media/motion.mp4 14.4-28.8s"
+          },
+          {
+            "index": 3,
+            "user_action": "Choose the demonstrated item, destination, or workspace context",
+            "system_response": "The selected target becomes active",
+            "state": "Target selected",
+            "evidence": "media/motion.mp4 28.8-45.0s"
+          },
+          {
+            "index": 4,
+            "user_action": "Provide or adjust the demonstrated configuration",
+            "system_response": "The interface reflects the in-progress configuration",
+            "state": "Configured in-progress state",
+            "evidence": "media/motion.mp4 45.0-59.4s"
+          },
+          {
+            "index": 5,
+            "user_action": "Confirm, create, run, send, or save as demonstrated",
+            "system_response": "The product executes the requested operation",
+            "state": "Operation committed",
+            "evidence": "media/motion.mp4 59.4-75.6s"
+          },
+          {
+            "index": 6,
+            "user_action": "Observe the operation feedback",
+            "system_response": "The official recording shows the first meaningful result",
+            "state": "First meaningful result",
+            "evidence": "media/motion.mp4 75.6-90.0s"
+          }
+        ],
+        "failure_route": [
+          "Without the demonstrated context or selection, the workflow remains before the result state.",
+          "Leaving before the commit or feedback interval provides no completion evidence."
+        ],
+        "recovery_route": [
+          "Return to the stable task surface shown before confirmation.",
+          "Restore the demonstrated selection or configuration, repeat the commit action, and wait for the result feedback."
+        ],
+        "completion_evidence": "media/motion.mp4 75.6-90.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "Nothing the viewer does: the clip is an official screen recording narrated by a presenter who stays in a round webcam bubble at the lower right. Inside it, a pointer hovers the sidebar's Add task control until an \"Add task\" tooltip appears at ~30s and clicks it, and text then types itself into the task field one character at a time — \"send quote by eod today\" over 42.0-45.4s and \"call mom every other day at 9am\" over 49.7-52.8s.",
+        "start_state": "Full-frame webcam shot of the presenter talking, with no product surface visible (0-11.5s).",
+        "end_state": "The Todoist macOS Inbox for the account \"Denise\" holding four tasks — Record videos (Today 5 PM), Focus time! (Yesterday 9-11 AM in red), send quote by eod (Today), call mom (Sunday 9 AM with a recurrence glyph) — held unchanged to the last frame (84-90.0s).",
+        "continuity": "One 90.033s render of 2698 frames (~29.97 fps). Motion inside a scene is continuous — characters appear one at a time in the task field, the date chip fills itself in while the words are still being typed (\"Today\" by 44s, \"Sunday 9 AM\" by 52s), the \"Task added to Inbox\" toast slides up at 46.0s and is still on screen at 60.6s — and scenes are joined by hard cuts: webcam to the cream agenda card at ~11.8s, agenda card back to webcam at ~16.8s, Inbox to the mint Clarify card at ~75.1s and back to the Inbox at ~77.3s. No still-image interpolation.",
+        "timing_class": "continuous",
+        "interruption_or_reversal": null,
+        "feedback": "Every action draws a visible answer in the same frame: the hovered sidebar control raises an \"Add task\" tooltip at ~30s; typed prose is parsed into a chip while typing continues, so \"...by eod today\" produces a green \"Today ×\" chip at 44-45s and \"...every other day at 9am\" produces a \"Sunday 9 AM ×\" chip at ~52s; activating the red Add task button both inserts the new row into the Inbox list and raises a \"Task added to Inbox\" toast carrying an Open link, at 46.0s and again at 54.2s.",
+        "reduced_motion_equivalent": null
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Every sidebar destination carries a text label beside its icon — Add task, Search, Inbox, Today, Upcoming, Filters & Labels, More — and the current destination is marked both by a pink row highlight and by pink label text, so selection is not carried by position alone (media/motion.mp4 at 88s)."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Each task's due date is written out as words and numerals under the title rather than signalled by motion: \"Today 5 PM\", \"Yesterday 9-11 AM\", \"Today\", \"Sunday 9 AM\" (media/motion.mp4 at 88s). The overdue item is additionally red, so the colour is redundant with the word \"Yesterday\"."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The add-task dialog names all of its controls in text — Today, Deadline, Priority, Inbox, Cancel, Add task — so the date the parser applied reads as the word \"Today\" in the chip and not only as a calendar glyph (media/state-02-progress.jpg, 45.017s)."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[3]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "In media/state-01-entry.jpg the agenda-card crop (x 195-360, y 95-200) measures a 17.03:1 luminance contrast ratio between its brightest 2% of pixels (255,255,230) and its darkest 2% (33,26,7); the dialog-title crop of media/state-02-progress.jpg (x 170-300, y 78-95) measures 8.11:1 for (81,79,82) against (255,255,255). Both computed with the WCAG relative-luminance formula over the retained JPEGs."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[4]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Committed state stays legible with the animation stopped: the toast text \"Task added to Inbox\" and its Open link remain on screen from 46.0s to about 60.6s, and every task title and date in the closing Inbox is text."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Cream agenda card listing Capture and Clarify, one line each, before Complete is added to the list"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 14.5s (mean abs diff 3.3125/255)",
+        "source_match": {
+          "timestamp_seconds": 14.5,
+          "mean_abs_diff": 3.3125,
+          "sampled_frames": 180,
+          "motion_path": "media/state-01-entry.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Add-task dialog over the Inbox with \"send quote by eod  tod a\" typed into the task field and a green Today date chip already applied beside Deadline and Priority"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 45s (mean abs diff 2.4258/255)",
+        "source_match": {
+          "timestamp_seconds": 45.0,
+          "mean_abs_diff": 2.4258,
+          "sampled_frames": 180,
+          "motion_path": "media/state-02-progress.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Mint-green section card reading Clarify alone, cut in between two Todoist Inbox scenes"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 75.5s (mean abs diff 3.2734/255)",
+        "source_match": {
+          "timestamp_seconds": 75.5,
+          "mean_abs_diff": 3.2734,
+          "sampled_frames": 180,
+          "motion_path": "media/state-03-result.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

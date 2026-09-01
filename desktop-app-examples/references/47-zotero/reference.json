@@ -21,225 +21,48 @@
       "declared_media_kind": "video-webm",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "local-browser-recording"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "launch and task context",
+      "name": "Observed state 1",
       "local_path": "media/state-1.png",
-      "source_motion_path": "frame of media/motion.webm at 0.5s (mean abs diff 1.5156/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 141841,
       "sha256": "a9be8ed76a40fc181fe1debc049e7995560b85b44d89833d57babbb6ef19bbc5",
-      "source_match": {
-        "motion_path": "media/motion.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 0.5,
-        "mean_abs_diff": 1.5156,
-        "sampled_frames": 16
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 141841
     },
     {
-      "name": "focused primary-action state",
+      "name": "Observed state 2",
       "local_path": "media/state-2.png",
-      "source_motion_path": "frame of media/motion.webm at 0.5s (mean abs diff 1.5312/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 146600,
       "sha256": "63b77b21df0ce71c4317051dd1a83ba6c0b4422f3b3f2fcfcd376412d5ac0ee5",
-      "source_match": {
-        "motion_path": "media/motion.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 0.5,
-        "mean_abs_diff": 1.5312,
-        "sampled_frames": 16
-      }
-    },
-    {
-      "name": "first-success result",
-      "local_path": "media/state-3.png",
-      "source_motion_path": "frame of media/motion.webm at 7s (mean abs diff 0.8125/255)",
       "width": 640,
       "height": 360,
-      "bytes": 9371,
+      "bytes": 146600
+    },
+    {
+      "name": "Observed state 3",
+      "local_path": "media/state-3.png",
       "sha256": "42c0025d8cc2fa28f0e80956021189bee14017a79fbdf87fb5dfe68a91b5ba2f",
-      "source_match": {
-        "motion_path": "media/motion.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 7.0,
-        "mean_abs_diff": 0.8125,
-        "sampled_frames": 16
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 9371
     }
   ],
-  "interactions": [
-    {
-      "name": "launch/open",
-      "trigger": "launch the product",
-      "response": "The product exposes its initial task context.",
-      "feedback": "The main window and available next action become visible.",
-      "cancellation": "Closing or backing out returns to the prior operating-system context without completing the task.",
-      "failure": "The start surface or prerequisite is unavailable.",
-      "recovery": "Relaunch and restore the prerequisite, then return to the start surface.",
-      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
-    },
-    {
-      "name": "primary input",
-      "trigger": "focus the primary control",
-      "response": "The central editor, composer, canvas, address field, or selection control accepts input.",
-      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
-      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
-      "failure": "the primary action is rejected",
-      "recovery": "backtrack to the previous state, correct the input, and retry",
-      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
-    },
-    {
-      "name": "focus/selection",
-      "trigger": "select a starting workspace",
-      "response": "The chosen workspace, item, or tool receives a visible selected state.",
-      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
-      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
-      "failure": "the primary action is rejected",
-      "recovery": "backtrack to the previous state, correct the input, and retry",
-      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
-    },
-    {
-      "name": "navigation",
-      "trigger": "select a starting workspace",
-      "response": "The adjacent content region updates while persistent navigation remains available.",
-      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
-      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
-      "failure": "the primary action is rejected",
-      "recovery": "backtrack to the previous state, correct the input, and retry",
-      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "confirm the action",
-      "response": "The requested operation advances to a processing or completed state.",
-      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
-      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
-      "failure": "the primary action is rejected",
-      "recovery": "backtrack to the previous state, correct the input, and retry",
-      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
-    },
-    {
-      "name": "cancellation/backtracking",
-      "trigger": "invoke the visible back, close, cancel, or prior-selection route before confirmation",
-      "response": "The transient surface closes and the last stable state returns.",
-      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
-      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
-      "failure": "the primary action is rejected",
-      "recovery": "backtrack to the previous state, correct the input, and retry",
-      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
-    },
-    {
-      "name": "failure feedback",
-      "trigger": "submit the observed task with an unavailable target or invalid prerequisite",
-      "response": "The result does not advance and the affected control or status region carries failure feedback.",
-      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
-      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
-      "failure": "the primary action is rejected",
-      "recovery": "backtrack to the previous state, correct the input, and retry",
-      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
-    },
-    {
-      "name": "recovery",
-      "trigger": "backtrack to the previous state, correct the input, and retry",
-      "response": "The same primary action can be re-entered and reaches the result state.",
-      "feedback": "The recording shows an immediate visible state change or persistent selected state.",
-      "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
-      "failure": "the primary action is rejected",
-      "recovery": "backtrack to the previous state, correct the input, and retry",
-      "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time desktop user with access to the prerequisite local files, service, device, or workspace shown in the recording.",
-    "goal": "complete the first primary task",
-    "prerequisites": [
-      "The desktop application is installed or its authentic product recording is available.",
-      "Any local file, workspace, service, engine, device, or account required by the shown path is available."
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "launch the product",
-        "system_response": "The product window establishes the available task context.",
-        "state": "start surface",
-        "evidence": "media/motion.webm and media/state-1.png"
-      },
-      {
-        "index": 2,
-        "user_action": "select a starting workspace",
-        "system_response": "The selected target becomes persistent and its content is exposed.",
-        "state": "workspace or source selected",
-        "evidence": "media/motion.webm and media/state-1.png"
-      },
-      {
-        "index": 3,
-        "user_action": "focus the primary control",
-        "system_response": "The primary control accepts focus and exposes editable or actionable state.",
-        "state": "primary input focused",
-        "evidence": "media/motion.webm and media/state-2.png"
-      },
-      {
-        "index": 4,
-        "user_action": "provide the required input",
-        "system_response": "The task-specific input is visible and ready for commitment.",
-        "state": "action ready for confirmation",
-        "evidence": "media/motion.webm and media/state-2.png"
-      },
-      {
-        "index": 5,
-        "user_action": "confirm the action",
-        "system_response": "The product acknowledges the command and transitions without a detached interstitial.",
-        "state": "operation in progress",
-        "evidence": "media/motion.webm and media/state-2.png"
-      },
-      {
-        "index": 6,
-        "user_action": "observe the resulting product state",
-        "system_response": "The resulting content, status, playback, transfer, document, or response is visibly present.",
-        "state": "first meaningful result",
-        "evidence": "media/motion.webm and media/state-3.png"
-      }
-    ],
-    "failure_route": [
-      "Attempt the task while the primary action is rejected.",
-      "Observe that the result does not reach the retained first-success state; cancel or backtrack to the last stable surface."
-    ],
-    "recovery_route": [
-      "backtrack to the previous state, correct the input, and retry.",
-      "Repeat the confirmation and compare the resulting surface with media/state-3.png."
-    ],
-    "completion_evidence": "The final portion of media/motion.webm and media/state-3.png retain the visible first meaningful result for complete the first primary task."
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Selection and completion are represented by persistent spatial or content changes in the retained frames, not described solely by color.",
-      "The recording preserves visible labels, control grouping, and state continuity needed to trace the primary route."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, role announcements, and live-region output were not exposed by the visual recording.",
       "Full keyboard traversal order and shortcut parity were not established by this source.",
       "Reduced-motion preference handling and a product-provided nonanimated equivalent were not exposed.",
       "Caption quality and nonvisual error announcement behavior remain unknown."
-    ]
+    ],
+    "measured": false
   },
-  "motion_analysis": {
-    "trigger": "confirm the action",
-    "start_state": "focused, task-ready state retained in media/state-2.png",
-    "end_state": "first meaningful result retained in media/state-3.png",
-    "continuity": "The capture retains continuous real-product frames; no interpolation or still-image animation was introduced.",
-    "timing_class": "one-to-three-seconds",
-    "feedback": "Selection persistence, content replacement, status change, transport progress, or result appearance carries completion feedback.",
-    "reduced_motion_equivalent": "Unknown; use the retained end-state frame as the documented nonanimated reference, not as evidence that the product supplies one.",
-    "interruption_or_reversal": "The visible back, cancel, close, or prior selection returns to the last stable task state; mid-transition interruption semantics beyond the capture remain unknown.",
-    "timing_description": "direct-manipulation feedback followed by a short product transition"
-  },
+  "motion_analysis": null,
   "provenance_notes": {
     "catalog_source_page": "https://www.zotero.org/",
     "source_recording_owner": "Steven Bradburn",
@@ -248,11 +71,312 @@
     "transformation": "Only temporal clipping, scaling, frame-rate normalization, and still extraction from authentic motion; no generated or interpolated content."
   },
   "motion_provenance": [
-    "local-browser-recording"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
-    "fewer than three accessibility observations",
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.webm has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-1.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-1.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-2.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-2.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-3.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-3.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "launch/open",
+        "trigger": "launch the product",
+        "response": "The product exposes its initial task context.",
+        "feedback": "The main window and available next action become visible.",
+        "cancellation": "Closing or backing out returns to the prior operating-system context without completing the task.",
+        "failure": "The start surface or prerequisite is unavailable.",
+        "recovery": "Relaunch and restore the prerequisite, then return to the start surface.",
+        "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "focus the primary control",
+        "response": "The central editor, composer, canvas, address field, or selection control accepts input.",
+        "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+        "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+        "failure": "the primary action is rejected",
+        "recovery": "backtrack to the previous state, correct the input, and retry",
+        "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus/selection",
+        "trigger": "select a starting workspace",
+        "response": "The chosen workspace, item, or tool receives a visible selected state.",
+        "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+        "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+        "failure": "the primary action is rejected",
+        "recovery": "backtrack to the previous state, correct the input, and retry",
+        "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "select a starting workspace",
+        "response": "The adjacent content region updates while persistent navigation remains available.",
+        "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+        "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+        "failure": "the primary action is rejected",
+        "recovery": "backtrack to the previous state, correct the input, and retry",
+        "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "confirm the action",
+        "response": "The requested operation advances to a processing or completed state.",
+        "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+        "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+        "failure": "the primary action is rejected",
+        "recovery": "backtrack to the previous state, correct the input, and retry",
+        "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation/backtracking",
+        "trigger": "invoke the visible back, close, cancel, or prior-selection route before confirmation",
+        "response": "The transient surface closes and the last stable state returns.",
+        "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+        "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+        "failure": "the primary action is rejected",
+        "recovery": "backtrack to the previous state, correct the input, and retry",
+        "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure feedback",
+        "trigger": "submit the observed task with an unavailable target or invalid prerequisite",
+        "response": "The result does not advance and the affected control or status region carries failure feedback.",
+        "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+        "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+        "failure": "the primary action is rejected",
+        "recovery": "backtrack to the previous state, correct the input, and retry",
+        "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery",
+        "trigger": "backtrack to the previous state, correct the input, and retry",
+        "response": "The same primary action can be re-entered and reaches the result state.",
+        "feedback": "The recording shows an immediate visible state change or persistent selected state.",
+        "cancellation": "Back, close, or returning to the prior selection leaves the previous durable result unchanged.",
+        "failure": "the primary action is rejected",
+        "recovery": "backtrack to the previous state, correct the input, and retry",
+        "evidence": "media/motion.webm; retained states media/state-1.png through media/state-3.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time desktop user with access to the prerequisite local files, service, device, or workspace shown in the recording.",
+        "goal": "complete the first primary task",
+        "prerequisites": [
+          "The desktop application is installed or its authentic product recording is available.",
+          "Any local file, workspace, service, engine, device, or account required by the shown path is available."
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "launch the product",
+            "system_response": "The product window establishes the available task context.",
+            "state": "start surface",
+            "evidence": "media/motion.webm and media/state-1.png"
+          },
+          {
+            "index": 2,
+            "user_action": "select a starting workspace",
+            "system_response": "The selected target becomes persistent and its content is exposed.",
+            "state": "workspace or source selected",
+            "evidence": "media/motion.webm and media/state-1.png"
+          },
+          {
+            "index": 3,
+            "user_action": "focus the primary control",
+            "system_response": "The primary control accepts focus and exposes editable or actionable state.",
+            "state": "primary input focused",
+            "evidence": "media/motion.webm and media/state-2.png"
+          },
+          {
+            "index": 4,
+            "user_action": "provide the required input",
+            "system_response": "The task-specific input is visible and ready for commitment.",
+            "state": "action ready for confirmation",
+            "evidence": "media/motion.webm and media/state-2.png"
+          },
+          {
+            "index": 5,
+            "user_action": "confirm the action",
+            "system_response": "The product acknowledges the command and transitions without a detached interstitial.",
+            "state": "operation in progress",
+            "evidence": "media/motion.webm and media/state-2.png"
+          },
+          {
+            "index": 6,
+            "user_action": "observe the resulting product state",
+            "system_response": "The resulting content, status, playback, transfer, document, or response is visibly present.",
+            "state": "first meaningful result",
+            "evidence": "media/motion.webm and media/state-3.png"
+          }
+        ],
+        "failure_route": [
+          "Attempt the task while the primary action is rejected.",
+          "Observe that the result does not reach the retained first-success state; cancel or backtrack to the last stable surface."
+        ],
+        "recovery_route": [
+          "backtrack to the previous state, correct the input, and retry.",
+          "Repeat the confirmation and compare the resulting surface with media/state-3.png."
+        ],
+        "completion_evidence": "The final portion of media/motion.webm and media/state-3.png retain the visible first meaningful result for complete the first primary task."
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "confirm the action",
+        "start_state": "focused, task-ready state retained in media/state-2.png",
+        "end_state": "first meaningful result retained in media/state-3.png",
+        "continuity": "The capture retains continuous real-product frames; no interpolation or still-image animation was introduced.",
+        "timing_class": "one-to-three-seconds",
+        "feedback": "Selection persistence, content replacement, status change, transport progress, or result appearance carries completion feedback.",
+        "reduced_motion_equivalent": "Unknown; use the retained end-state frame as the documented nonanimated reference, not as evidence that the product supplies one.",
+        "interruption_or_reversal": "The visible back, cancel, close, or prior selection returns to the last stable task state; mid-transition interruption semantics beyond the capture remain unknown.",
+        "timing_description": "direct-manipulation feedback followed by a short product transition"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Selection and completion are represented by persistent spatial or content changes in the retained frames, not described solely by color."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The recording preserves visible labels, control grouping, and state continuity needed to trace the primary route."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "launch and task context"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.webm at 0.5s (mean abs diff 1.5156/255)",
+        "source_match": {
+          "timestamp_seconds": 0.5,
+          "mean_abs_diff": 1.5156,
+          "sampled_frames": 16,
+          "motion_path": "media/state-1.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "focused primary-action state"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.webm at 0.5s (mean abs diff 1.5312/255)",
+        "source_match": {
+          "timestamp_seconds": 0.5,
+          "mean_abs_diff": 1.5313,
+          "sampled_frames": 16,
+          "motion_path": "media/state-2.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "first-success result"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.webm at 7s (mean abs diff 0.8125/255)",
+        "source_match": {
+          "timestamp_seconds": 7.0,
+          "mean_abs_diff": 0.8125,
+          "sampled_frames": 16,
+          "motion_path": "media/state-3.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

@@ -20,245 +20,398 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "Entry state: Open a project in Nova",
+      "name": "Observed state 1",
       "local_path": "media/state-01.png",
-      "source_motion_path": "frame of media/motion.mp4 at 1.5s (mean abs diff 1.3281/255)",
-      "width": 850,
-      "height": 478,
-      "bytes": 182526,
       "sha256": "8011d0c6dad3a8e56fdbf660188f5558f016ad20f7f25ee6d11743a0687dd452",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 1.5,
-        "mean_abs_diff": 1.3281,
-        "sampled_frames": 14
-      }
+      "width": 850,
+      "height": 478,
+      "bytes": 182526
     },
     {
-      "name": "Invocation state: Select a file or tool pane",
+      "name": "Observed state 2",
       "local_path": "media/state-02.png",
-      "source_motion_path": "frame of media/motion.mp4 at 3s (mean abs diff 1.2266/255)",
-      "width": 850,
-      "height": 478,
-      "bytes": 188890,
       "sha256": "510f6d041ad7e09676f88568f0cffbf073fb9fda71fabb77dfdc403afd47f3b4",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 3.0,
-        "mean_abs_diff": 1.2266,
-        "sampled_frames": 14
-      }
+      "width": 850,
+      "height": 478,
+      "bytes": 188890
     },
     {
-      "name": "Focused intermediate state: Edit code or configuration",
+      "name": "Observed state 3",
       "local_path": "media/state-03.png",
-      "source_motion_path": "frame of media/motion.mp4 at 3s (mean abs diff 1.2305/255)",
-      "width": 850,
-      "height": 478,
-      "bytes": 188974,
       "sha256": "4c4c9bf053be3da42ef203594619e4052d460b412bd3b36c2648bf8cf823479a",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 3.0,
-        "mean_abs_diff": 1.2305,
-        "sampled_frames": 14
-      }
+      "width": 850,
+      "height": 478,
+      "bytes": 188974
     },
     {
-      "name": "Committed transition: Invoke a run, debug, or inspection action",
+      "name": "Observed state 4",
       "local_path": "media/state-04.png",
-      "source_motion_path": "frame of media/motion.mp4 at 5s (mean abs diff 1.7891/255)",
-      "width": 850,
-      "height": 478,
-      "bytes": 186016,
       "sha256": "85b468953c753688395fc8509df0c4dec85f8b5dcbf12d765130cdd20ef7cc15",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 5.0,
-        "mean_abs_diff": 1.7891,
-        "sampled_frames": 14
-      }
-    },
-    {
-      "name": "First-success result: Observe the resulting output or debug state",
-      "local_path": "media/state-05.png",
-      "source_motion_path": "frame of media/motion.mp4 at 5.5s (mean abs diff 1.0039/255)",
       "width": 850,
       "height": 478,
-      "bytes": 188989,
+      "bytes": 186016
+    },
+    {
+      "name": "Observed state 5",
+      "local_path": "media/state-05.png",
       "sha256": "2a623219a4ec2453a2cf0c7c7b77752d13b5c8689f69fdc222d4aebcd973e08a",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 5.5,
-        "mean_abs_diff": 1.0039,
-        "sampled_frames": 14
-      }
+      "width": 850,
+      "height": 478,
+      "bytes": 188989
     }
   ],
-  "interactions": [
-    {
-      "name": "Primary input",
-      "trigger": "Open a project in Nova",
-      "response": "Nova exposes the entry surface visible in the retained motion.",
-      "feedback": "The first state establishes the active surface before manipulation.",
-      "cancellation": "Stopping here leaves the product unchanged.",
-      "failure": "The goal is not yet complete in the entry state.",
-      "recovery": "Select a file or tool pane.",
-      "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.58s"
-    },
-    {
-      "name": "Focus and selection",
-      "trigger": "Select a file or tool pane",
-      "response": "A target control, item, document, or workspace becomes the active context.",
-      "feedback": "The next retained state visibly differs and identifies the active path.",
-      "cancellation": "Focus can remain on the previous context without committing.",
-      "failure": "An unintended target would leave the desired result unavailable.",
-      "recovery": "Move focus to the intended visible target and continue.",
-      "evidence": "media/state-02.png extracted from media/motion.mp4 at 2.02s"
-    },
-    {
-      "name": "Navigation",
-      "trigger": "Edit code or configuration",
-      "response": "The recording advances into the product’s intermediate working state.",
-      "feedback": "Content, controls, or selection context changes in place.",
-      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
-      "failure": "Stopping at this state produces no completion evidence.",
-      "recovery": "Invoke a run, debug, or inspection action.",
-      "evidence": "media/state-03.png extracted from media/motion.mp4 at 3.46s"
-    },
-    {
-      "name": "Confirmation",
-      "trigger": "Invoke a run, debug, or inspection action",
-      "response": "The selected operation crosses from preparation into a committed transition.",
-      "feedback": "The fourth state records the immediate product response.",
-      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
-      "failure": "Without confirmation, the fifth-state result does not appear.",
-      "recovery": "Repeat the intended selection and confirm it.",
-      "evidence": "media/state-04.png extracted from media/motion.mp4 at 4.90s"
-    },
-    {
-      "name": "Completion feedback",
-      "trigger": "Observe the resulting output or debug state",
-      "response": "The recording reaches the first meaningful result for “Edit and inspect a code project”.",
-      "feedback": "The fifth local frame is the offline completion evidence.",
-      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
-      "failure": "Absence of the fifth state means the journey is incomplete.",
-      "recovery": "Replay the recorded sequence from the entry state.",
-      "evidence": "media/state-05.png extracted from media/motion.mp4 at 6.34s"
-    },
-    {
-      "name": "Cancellation and backtracking",
-      "trigger": "Leave the path before the committed transition.",
-      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
-      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
-      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
-      "failure": "Exiting early does not produce completion evidence.",
-      "recovery": "Re-enter through state 2 and continue to state 4.",
-      "evidence": "media/state-02.png extracted from media/motion.mp4 at 2.02s; media/state-03.png extracted from media/motion.mp4 at 3.46s"
-    },
-    {
-      "name": "Failure boundary",
-      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
-      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
-      "feedback": "No fifth-state visual is present before commitment.",
-      "cancellation": "The actor may abandon the incomplete path without claiming success.",
-      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
-      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
-      "evidence": "media/state-03.png extracted from media/motion.mp4 at 3.46s; contrasted with media/state-05.png extracted from media/motion.mp4 at 6.34s"
-    },
-    {
-      "name": "Recovery",
-      "trigger": "Resume from the last valid intermediate state.",
-      "response": "The same visible action sequence advances to the retained result.",
-      "feedback": "State 5 supplies positive completion feedback after state 4.",
-      "cancellation": "The actor can still stop before replaying confirmation.",
-      "failure": "A replay that never reaches state 5 remains incomplete.",
-      "recovery": "Replay state 4 and verify state 5.",
-      "evidence": "media/state-04.png extracted from media/motion.mp4 at 4.90s; media/state-05.png extracted from media/motion.mp4 at 6.34s"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time or returning Nova user",
-    "goal": "Edit and inspect a code project",
-    "prerequisites": [
-      "Nova available on macOS or the official recording environment",
-      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open a project in Nova",
-        "system_response": "Nova advances to the entry state retained in state 1.",
-        "state": "Entry state: Open a project in Nova",
-        "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.58s"
-      },
-      {
-        "index": 2,
-        "user_action": "Select a file or tool pane",
-        "system_response": "Nova advances to the invocation state retained in state 2.",
-        "state": "Invocation state: Select a file or tool pane",
-        "evidence": "media/state-02.png extracted from media/motion.mp4 at 2.02s"
-      },
-      {
-        "index": 3,
-        "user_action": "Edit code or configuration",
-        "system_response": "Nova advances to the focused intermediate state retained in state 3.",
-        "state": "Focused intermediate state: Edit code or configuration",
-        "evidence": "media/state-03.png extracted from media/motion.mp4 at 3.46s"
-      },
-      {
-        "index": 4,
-        "user_action": "Invoke a run, debug, or inspection action",
-        "system_response": "Nova advances to the committed transition retained in state 4.",
-        "state": "Committed transition: Invoke a run, debug, or inspection action",
-        "evidence": "media/state-04.png extracted from media/motion.mp4 at 4.90s"
-      },
-      {
-        "index": 5,
-        "user_action": "Observe the resulting output or debug state",
-        "system_response": "Nova advances to the first-success result retained in state 5.",
-        "state": "First-success result: Observe the resulting output or debug state",
-        "evidence": "media/state-05.png extracted from media/motion.mp4 at 6.34s"
-      }
-    ],
-    "failure_route": [
-      "Stop at the third retained state before confirmation; the meaningful result is absent.",
-      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
-    ],
-    "recovery_route": [
-      "Return to the second retained state and restore the intended focus or selection.",
-      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
-    ],
-    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 6.34s"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Active focus or selection is conveyed by a visible change between retained states.",
-      "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown.",
-      "The five extracted frames provide a nonanimated way to inspect the same sequence."
-    ],
+    "observations": [],
     "unknowns": [
       "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
       "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
       "The product’s Reduce Motion behavior and contrast preferences are not demonstrated."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Primary input",
+        "trigger": "Open a project in Nova",
+        "response": "Nova exposes the entry surface visible in the retained motion.",
+        "feedback": "The first state establishes the active surface before manipulation.",
+        "cancellation": "Stopping here leaves the product unchanged.",
+        "failure": "The goal is not yet complete in the entry state.",
+        "recovery": "Select a file or tool pane.",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.58s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus and selection",
+        "trigger": "Select a file or tool pane",
+        "response": "A target control, item, document, or workspace becomes the active context.",
+        "feedback": "The next retained state visibly differs and identifies the active path.",
+        "cancellation": "Focus can remain on the previous context without committing.",
+        "failure": "An unintended target would leave the desired result unavailable.",
+        "recovery": "Move focus to the intended visible target and continue.",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 2.02s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Navigation",
+        "trigger": "Edit code or configuration",
+        "response": "The recording advances into the product’s intermediate working state.",
+        "feedback": "Content, controls, or selection context changes in place.",
+        "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+        "failure": "Stopping at this state produces no completion evidence.",
+        "recovery": "Invoke a run, debug, or inspection action.",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 3.46s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirmation",
+        "trigger": "Invoke a run, debug, or inspection action",
+        "response": "The selected operation crosses from preparation into a committed transition.",
+        "feedback": "The fourth state records the immediate product response.",
+        "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+        "failure": "Without confirmation, the fifth-state result does not appear.",
+        "recovery": "Repeat the intended selection and confirm it.",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 4.90s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Completion feedback",
+        "trigger": "Observe the resulting output or debug state",
+        "response": "The recording reaches the first meaningful result for “Edit and inspect a code project”.",
+        "feedback": "The fifth local frame is the offline completion evidence.",
+        "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+        "failure": "Absence of the fifth state means the journey is incomplete.",
+        "recovery": "Replay the recorded sequence from the entry state.",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 6.34s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Cancellation and backtracking",
+        "trigger": "Leave the path before the committed transition.",
+        "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+        "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+        "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+        "failure": "Exiting early does not produce completion evidence.",
+        "recovery": "Re-enter through state 2 and continue to state 4.",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 2.02s; media/state-03.png extracted from media/motion.mp4 at 3.46s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Failure boundary",
+        "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+        "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+        "feedback": "No fifth-state visual is present before commitment.",
+        "cancellation": "The actor may abandon the incomplete path without claiming success.",
+        "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+        "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 3.46s; contrasted with media/state-05.png extracted from media/motion.mp4 at 6.34s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Recovery",
+        "trigger": "Resume from the last valid intermediate state.",
+        "response": "The same visible action sequence advances to the retained result.",
+        "feedback": "State 5 supplies positive completion feedback after state 4.",
+        "cancellation": "The actor can still stop before replaying confirmation.",
+        "failure": "A replay that never reaches state 5 remains incomplete.",
+        "recovery": "Replay state 4 and verify state 5.",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 4.90s; media/state-05.png extracted from media/motion.mp4 at 6.34s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time or returning Nova user",
+        "goal": "Edit and inspect a code project",
+        "prerequisites": [
+          "Nova available on macOS or the official recording environment",
+          "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open a project in Nova",
+            "system_response": "Nova advances to the entry state retained in state 1.",
+            "state": "Entry state: Open a project in Nova",
+            "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.58s"
+          },
+          {
+            "index": 2,
+            "user_action": "Select a file or tool pane",
+            "system_response": "Nova advances to the invocation state retained in state 2.",
+            "state": "Invocation state: Select a file or tool pane",
+            "evidence": "media/state-02.png extracted from media/motion.mp4 at 2.02s"
+          },
+          {
+            "index": 3,
+            "user_action": "Edit code or configuration",
+            "system_response": "Nova advances to the focused intermediate state retained in state 3.",
+            "state": "Focused intermediate state: Edit code or configuration",
+            "evidence": "media/state-03.png extracted from media/motion.mp4 at 3.46s"
+          },
+          {
+            "index": 4,
+            "user_action": "Invoke a run, debug, or inspection action",
+            "system_response": "Nova advances to the committed transition retained in state 4.",
+            "state": "Committed transition: Invoke a run, debug, or inspection action",
+            "evidence": "media/state-04.png extracted from media/motion.mp4 at 4.90s"
+          },
+          {
+            "index": 5,
+            "user_action": "Observe the resulting output or debug state",
+            "system_response": "Nova advances to the first-success result retained in state 5.",
+            "state": "First-success result: Observe the resulting output or debug state",
+            "evidence": "media/state-05.png extracted from media/motion.mp4 at 6.34s"
+          }
+        ],
+        "failure_route": [
+          "Stop at the third retained state before confirmation; the meaningful result is absent.",
+          "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+        ],
+        "recovery_route": [
+          "Return to the second retained state and restore the intended focus or selection.",
+          "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+        ],
+        "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 6.34s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Active focus or selection is conveyed by a visible change between retained states."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The five extracted frames provide a nonanimated way to inspect the same sequence."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Entry state: Open a project in Nova"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 1.5s (mean abs diff 1.3281/255)",
+        "source_match": {
+          "timestamp_seconds": 1.5,
+          "mean_abs_diff": 1.3281,
+          "sampled_frames": 14,
+          "motion_path": "media/state-01.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Invocation state: Select a file or tool pane"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 3s (mean abs diff 1.2266/255)",
+        "source_match": {
+          "timestamp_seconds": 2.0,
+          "mean_abs_diff": 1.2266,
+          "sampled_frames": 14,
+          "motion_path": "media/state-02.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Focused intermediate state: Edit code or configuration"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 3s (mean abs diff 1.2305/255)",
+        "source_match": {
+          "timestamp_seconds": 2.0,
+          "mean_abs_diff": 1.2305,
+          "sampled_frames": 14,
+          "motion_path": "media/state-03.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Committed transition: Invoke a run, debug, or inspection action"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 5s (mean abs diff 1.7891/255)",
+        "source_match": {
+          "timestamp_seconds": 3.5,
+          "mean_abs_diff": 1.7891,
+          "sampled_frames": 14,
+          "motion_path": "media/state-04.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "First-success result: Observe the resulting output or debug state"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 5.5s (mean abs diff 1.0039/255)",
+        "source_match": {
+          "timestamp_seconds": 5.5,
+          "mean_abs_diff": 1.0039,
+          "sampled_frames": 14,
+          "motion_path": "media/state-05.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

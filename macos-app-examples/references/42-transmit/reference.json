@@ -20,245 +20,398 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "Entry state: Open Transmit’s server setup",
+      "name": "Observed state 1",
       "local_path": "media/state-01.png",
-      "source_motion_path": "frame of media/motion.mp4 at 0s (mean abs diff 4.707/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 29408,
       "sha256": "6ef843fbacbfd8ef877ae27dfac109186e4efb11337e6e6aeb96a04419334691",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 0.0,
-        "mean_abs_diff": 4.707,
-        "sampled_frames": 10
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 29408
     },
     {
-      "name": "Invocation state: Choose a protocol",
+      "name": "Observed state 2",
       "local_path": "media/state-02.png",
-      "source_motion_path": "frame of media/motion.mp4 at 1.5s (mean abs diff 1.6172/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 85010,
       "sha256": "1415a90a9a0b2cc16f69b92955d1a1906aa4ba559a7e3554166d7ec22d61203c",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 1.5,
-        "mean_abs_diff": 1.6172,
-        "sampled_frames": 10
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 85010
     },
     {
-      "name": "Focused intermediate state: Enter server credentials and path",
+      "name": "Observed state 3",
       "local_path": "media/state-03.png",
-      "source_motion_path": "frame of media/motion.mp4 at 2.5s (mean abs diff 1.6211/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 86407,
       "sha256": "15faaeea7ce1109299181899ae046ab95e6d5960ed117c17a0a276f31d86cf66",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 2.5,
-        "mean_abs_diff": 1.6211,
-        "sampled_frames": 10
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 86407
     },
     {
-      "name": "Committed transition: Confirm Connect",
+      "name": "Observed state 4",
       "local_path": "media/state-04.png",
-      "source_motion_path": "frame of media/motion.mp4 at 3s (mean abs diff 2.2227/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 76802,
       "sha256": "a280795c921a8004f4427719ba570c8142daca7fbc7778d7fa2b9798dc7ca0c0",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 3.0,
-        "mean_abs_diff": 2.2227,
-        "sampled_frames": 10
-      }
-    },
-    {
-      "name": "First-success result: Observe the remote file browser",
-      "local_path": "media/state-05.png",
-      "source_motion_path": "frame of media/motion.mp4 at 4.5s (mean abs diff 1.5/255)",
       "width": 960,
       "height": 540,
-      "bytes": 82356,
+      "bytes": 76802
+    },
+    {
+      "name": "Observed state 5",
+      "local_path": "media/state-05.png",
       "sha256": "c249474984f8ebb33246199dd3d2742f5f4c27bf3aa4a2aec720f729287d1d95",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 4.5,
-        "mean_abs_diff": 1.5,
-        "sampled_frames": 10
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 82356
     }
   ],
-  "interactions": [
-    {
-      "name": "Primary input",
-      "trigger": "Open Transmit’s server setup",
-      "response": "Transmit exposes the entry surface visible in the retained motion.",
-      "feedback": "The first state establishes the active surface before manipulation.",
-      "cancellation": "Stopping here leaves the product unchanged.",
-      "failure": "The goal is not yet complete in the entry state.",
-      "recovery": "Choose a protocol.",
-      "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.39s"
-    },
-    {
-      "name": "Focus and selection",
-      "trigger": "Choose a protocol",
-      "response": "A target control, item, document, or workspace becomes the active context.",
-      "feedback": "The next retained state visibly differs and identifies the active path.",
-      "cancellation": "Focus can remain on the previous context without committing.",
-      "failure": "An unintended target would leave the desired result unavailable.",
-      "recovery": "Move focus to the intended visible target and continue.",
-      "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.36s"
-    },
-    {
-      "name": "Navigation",
-      "trigger": "Enter server credentials and path",
-      "response": "The recording advances into the product’s intermediate working state.",
-      "feedback": "Content, controls, or selection context changes in place.",
-      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
-      "failure": "Stopping at this state produces no completion evidence.",
-      "recovery": "Confirm Connect.",
-      "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.34s"
-    },
-    {
-      "name": "Confirmation",
-      "trigger": "Confirm Connect",
-      "response": "The selected operation crosses from preparation into a committed transition.",
-      "feedback": "The fourth state records the immediate product response.",
-      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
-      "failure": "Without confirmation, the fifth-state result does not appear.",
-      "recovery": "Repeat the intended selection and confirm it.",
-      "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.31s"
-    },
-    {
-      "name": "Completion feedback",
-      "trigger": "Observe the remote file browser",
-      "response": "The recording reaches the first meaningful result for “Connect to a remote server”.",
-      "feedback": "The fifth local frame is the offline completion evidence.",
-      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
-      "failure": "Absence of the fifth state means the journey is incomplete.",
-      "recovery": "Replay the recorded sequence from the entry state.",
-      "evidence": "media/state-05.png extracted from media/motion.mp4 at 4.28s"
-    },
-    {
-      "name": "Cancellation and backtracking",
-      "trigger": "Leave the path before the committed transition.",
-      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
-      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
-      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
-      "failure": "Exiting early does not produce completion evidence.",
-      "recovery": "Re-enter through state 2 and continue to state 4.",
-      "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.36s; media/state-03.png extracted from media/motion.mp4 at 2.34s"
-    },
-    {
-      "name": "Failure boundary",
-      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
-      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
-      "feedback": "No fifth-state visual is present before commitment.",
-      "cancellation": "The actor may abandon the incomplete path without claiming success.",
-      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
-      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
-      "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.34s; contrasted with media/state-05.png extracted from media/motion.mp4 at 4.28s"
-    },
-    {
-      "name": "Recovery",
-      "trigger": "Resume from the last valid intermediate state.",
-      "response": "The same visible action sequence advances to the retained result.",
-      "feedback": "State 5 supplies positive completion feedback after state 4.",
-      "cancellation": "The actor can still stop before replaying confirmation.",
-      "failure": "A replay that never reaches state 5 remains incomplete.",
-      "recovery": "Replay state 4 and verify state 5.",
-      "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.31s; media/state-05.png extracted from media/motion.mp4 at 4.28s"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time or returning Transmit user",
-    "goal": "Connect to a remote server",
-    "prerequisites": [
-      "Transmit available on macOS or the official recording environment",
-      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open Transmit’s server setup",
-        "system_response": "Transmit advances to the entry state retained in state 1.",
-        "state": "Entry state: Open Transmit’s server setup",
-        "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.39s"
-      },
-      {
-        "index": 2,
-        "user_action": "Choose a protocol",
-        "system_response": "Transmit advances to the invocation state retained in state 2.",
-        "state": "Invocation state: Choose a protocol",
-        "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.36s"
-      },
-      {
-        "index": 3,
-        "user_action": "Enter server credentials and path",
-        "system_response": "Transmit advances to the focused intermediate state retained in state 3.",
-        "state": "Focused intermediate state: Enter server credentials and path",
-        "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.34s"
-      },
-      {
-        "index": 4,
-        "user_action": "Confirm Connect",
-        "system_response": "Transmit advances to the committed transition retained in state 4.",
-        "state": "Committed transition: Confirm Connect",
-        "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.31s"
-      },
-      {
-        "index": 5,
-        "user_action": "Observe the remote file browser",
-        "system_response": "Transmit advances to the first-success result retained in state 5.",
-        "state": "First-success result: Observe the remote file browser",
-        "evidence": "media/state-05.png extracted from media/motion.mp4 at 4.28s"
-      }
-    ],
-    "failure_route": [
-      "Stop at the third retained state before confirmation; the meaningful result is absent.",
-      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
-    ],
-    "recovery_route": [
-      "Return to the second retained state and restore the intended focus or selection.",
-      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
-    ],
-    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 4.28s"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Active focus or selection is conveyed by a visible change between retained states.",
-      "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown.",
-      "The five extracted frames provide a nonanimated way to inspect the same sequence."
-    ],
+    "observations": [],
     "unknowns": [
       "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
       "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
       "The product’s Reduce Motion behavior and contrast preferences are not demonstrated."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Primary input",
+        "trigger": "Open Transmit’s server setup",
+        "response": "Transmit exposes the entry surface visible in the retained motion.",
+        "feedback": "The first state establishes the active surface before manipulation.",
+        "cancellation": "Stopping here leaves the product unchanged.",
+        "failure": "The goal is not yet complete in the entry state.",
+        "recovery": "Choose a protocol.",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.39s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus and selection",
+        "trigger": "Choose a protocol",
+        "response": "A target control, item, document, or workspace becomes the active context.",
+        "feedback": "The next retained state visibly differs and identifies the active path.",
+        "cancellation": "Focus can remain on the previous context without committing.",
+        "failure": "An unintended target would leave the desired result unavailable.",
+        "recovery": "Move focus to the intended visible target and continue.",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.36s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Navigation",
+        "trigger": "Enter server credentials and path",
+        "response": "The recording advances into the product’s intermediate working state.",
+        "feedback": "Content, controls, or selection context changes in place.",
+        "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+        "failure": "Stopping at this state produces no completion evidence.",
+        "recovery": "Confirm Connect.",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.34s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirmation",
+        "trigger": "Confirm Connect",
+        "response": "The selected operation crosses from preparation into a committed transition.",
+        "feedback": "The fourth state records the immediate product response.",
+        "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+        "failure": "Without confirmation, the fifth-state result does not appear.",
+        "recovery": "Repeat the intended selection and confirm it.",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.31s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Completion feedback",
+        "trigger": "Observe the remote file browser",
+        "response": "The recording reaches the first meaningful result for “Connect to a remote server”.",
+        "feedback": "The fifth local frame is the offline completion evidence.",
+        "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+        "failure": "Absence of the fifth state means the journey is incomplete.",
+        "recovery": "Replay the recorded sequence from the entry state.",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 4.28s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Cancellation and backtracking",
+        "trigger": "Leave the path before the committed transition.",
+        "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+        "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+        "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+        "failure": "Exiting early does not produce completion evidence.",
+        "recovery": "Re-enter through state 2 and continue to state 4.",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.36s; media/state-03.png extracted from media/motion.mp4 at 2.34s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Failure boundary",
+        "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+        "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+        "feedback": "No fifth-state visual is present before commitment.",
+        "cancellation": "The actor may abandon the incomplete path without claiming success.",
+        "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+        "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.34s; contrasted with media/state-05.png extracted from media/motion.mp4 at 4.28s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Recovery",
+        "trigger": "Resume from the last valid intermediate state.",
+        "response": "The same visible action sequence advances to the retained result.",
+        "feedback": "State 5 supplies positive completion feedback after state 4.",
+        "cancellation": "The actor can still stop before replaying confirmation.",
+        "failure": "A replay that never reaches state 5 remains incomplete.",
+        "recovery": "Replay state 4 and verify state 5.",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.31s; media/state-05.png extracted from media/motion.mp4 at 4.28s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time or returning Transmit user",
+        "goal": "Connect to a remote server",
+        "prerequisites": [
+          "Transmit available on macOS or the official recording environment",
+          "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open Transmit’s server setup",
+            "system_response": "Transmit advances to the entry state retained in state 1.",
+            "state": "Entry state: Open Transmit’s server setup",
+            "evidence": "media/state-01.png extracted from media/motion.mp4 at 0.39s"
+          },
+          {
+            "index": 2,
+            "user_action": "Choose a protocol",
+            "system_response": "Transmit advances to the invocation state retained in state 2.",
+            "state": "Invocation state: Choose a protocol",
+            "evidence": "media/state-02.png extracted from media/motion.mp4 at 1.36s"
+          },
+          {
+            "index": 3,
+            "user_action": "Enter server credentials and path",
+            "system_response": "Transmit advances to the focused intermediate state retained in state 3.",
+            "state": "Focused intermediate state: Enter server credentials and path",
+            "evidence": "media/state-03.png extracted from media/motion.mp4 at 2.34s"
+          },
+          {
+            "index": 4,
+            "user_action": "Confirm Connect",
+            "system_response": "Transmit advances to the committed transition retained in state 4.",
+            "state": "Committed transition: Confirm Connect",
+            "evidence": "media/state-04.png extracted from media/motion.mp4 at 3.31s"
+          },
+          {
+            "index": 5,
+            "user_action": "Observe the remote file browser",
+            "system_response": "Transmit advances to the first-success result retained in state 5.",
+            "state": "First-success result: Observe the remote file browser",
+            "evidence": "media/state-05.png extracted from media/motion.mp4 at 4.28s"
+          }
+        ],
+        "failure_route": [
+          "Stop at the third retained state before confirmation; the meaningful result is absent.",
+          "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+        ],
+        "recovery_route": [
+          "Return to the second retained state and restore the intended focus or selection.",
+          "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+        ],
+        "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 4.28s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Active focus or selection is conveyed by a visible change between retained states."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The five extracted frames provide a nonanimated way to inspect the same sequence."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Entry state: Open Transmit’s server setup"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 0s (mean abs diff 4.707/255)",
+        "source_match": {
+          "timestamp_seconds": 0.0,
+          "mean_abs_diff": 4.707,
+          "sampled_frames": 10,
+          "motion_path": "media/state-01.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Invocation state: Choose a protocol"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 1.5s (mean abs diff 1.6172/255)",
+        "source_match": {
+          "timestamp_seconds": 1.5,
+          "mean_abs_diff": 1.6172,
+          "sampled_frames": 10,
+          "motion_path": "media/state-02.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Focused intermediate state: Enter server credentials and path"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 2.5s (mean abs diff 1.6211/255)",
+        "source_match": {
+          "timestamp_seconds": 2.5,
+          "mean_abs_diff": 1.6211,
+          "sampled_frames": 10,
+          "motion_path": "media/state-03.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Committed transition: Confirm Connect"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 3s (mean abs diff 2.2227/255)",
+        "source_match": {
+          "timestamp_seconds": 3.0,
+          "mean_abs_diff": 2.2227,
+          "sampled_frames": 10,
+          "motion_path": "media/state-04.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "First-success result: Observe the remote file browser"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 4.5s (mean abs diff 1.5/255)",
+        "source_match": {
+          "timestamp_seconds": 4.5,
+          "mean_abs_diff": 1.5,
+          "sampled_frames": 10,
+          "motion_path": "media/state-05.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

@@ -20,240 +20,370 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "entry / orientation",
+      "name": "Observed state 1",
       "local_path": "media/state-01.png",
-      "source_motion_path": "media/motion.mp4",
-      "width": 720,
-      "height": 406,
-      "bytes": 109019,
       "sha256": "b2b718c1e4e1e766b04774cad2c97de0df1cbf02152c85b9556bb24605f8f1e6",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 9.5,
-        "mean_abs_diff": 18.75,
-        "sampled_frames": 134
-      }
+      "width": 720,
+      "height": 406,
+      "bytes": 109019
     },
     {
-      "name": "action in progress",
+      "name": "Observed state 2",
       "local_path": "media/state-02.png",
-      "source_motion_path": "frame of media/motion.mp4 at 33.5s (mean abs diff 11.4258/255)",
-      "width": 720,
-      "height": 406,
-      "bytes": 113891,
       "sha256": "d8db3884041ab42acbb311691333c03acd24e9ad03dd4327105f4582d11987d9",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 33.5,
-        "mean_abs_diff": 11.4258,
-        "sampled_frames": 134
-      }
-    },
-    {
-      "name": "result / established state",
-      "local_path": "media/state-03.png",
-      "source_motion_path": "frame of media/motion.mp4 at 56.5s (mean abs diff 2.543/255)",
       "width": 720,
       "height": 406,
-      "bytes": 24396,
+      "bytes": 113891
+    },
+    {
+      "name": "Observed state 3",
+      "local_path": "media/state-03.png",
       "sha256": "63bb0f33c1a44633f62aab3de3782cf22ff54f069fd469c0a0c7141b5c510327",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 56.5,
-        "mean_abs_diff": 2.543,
-        "sampled_frames": 134
-      }
+      "width": 720,
+      "height": 406,
+      "bytes": 24396
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "open the event composer",
-      "response": "The primary task surface opens.",
-      "feedback": "Selection highlight and surface transition make the response visible.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
-      "evidence": "media/motion.mp4 00:08.0–00:18.8"
-    },
-    {
-      "name": "focus / selection",
-      "trigger": "enter title, time, and details",
-      "response": "The chosen field, row, item, or canvas becomes the active target.",
-      "feedback": "The target changes emphasis or reveals contextual controls.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
-      "evidence": "media/motion.mp4 00:17.4–00:29.5"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Open the calendar timeline",
-      "response": "The app moves from entry context to the task destination.",
-      "feedback": "Header, content, or navigation state changes.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
-      "evidence": "media/motion.mp4 00:02.7–00:16.1"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "save the event",
-      "response": "The pending action commits and the result transition begins.",
-      "feedback": "A changed state, progress response, or completed item acknowledges the commit.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
-      "evidence": "media/motion.mp4 00:38.9–00:50.9"
-    },
-    {
-      "name": "cancellation / backtracking",
-      "trigger": "Withhold or reverse the visible commit while the recorded pre-confirmation state is on screen.",
-      "response": "The task remains in its pre-result state; the success artifact is absent.",
-      "feedback": "The unchanged/incomplete state distinguishes cancellation from completion.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
-      "evidence": "media/motion.mp4 00:25.5–00:38.9"
-    },
-    {
-      "name": "feedback",
-      "trigger": "Complete a visible selection or commit.",
-      "response": "The interface updates immediately or after a bounded progress transition.",
-      "feedback": "Motion, highlight, changed content, or result placement communicates status.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
-      "evidence": "media/motion.mp4 00:41.5–00:59.0"
-    },
-    {
-      "name": "failure",
-      "trigger": "Reach the recorded pre-confirmation state without issuing the final commit.",
-      "response": "The intended result is not yet present, so the goal remains incomplete.",
-      "feedback": "The pre-result surface remains visibly distinct from state-03.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
-      "evidence": "media/motion.mp4 00:21.4–00:36.9"
-    },
-    {
-      "name": "recovery",
-      "trigger": "Continue from the incomplete state and save the event.",
-      "response": "The product resumes the path and produces the visible result.",
-      "feedback": "The final state replaces the incomplete state.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
-      "evidence": "media/motion.mp4 00:34.8–01:01.6"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time or returning iPhone user with the minimum product account/device prerequisites",
-    "goal": "Add a calendar event",
-    "prerequisites": [
-      "Compatible iPhone and current iOS version",
-      "Product installed or product-native flow available",
-      "Network/account/permission access only where the observed flow requests it"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the calendar timeline",
-        "system_response": "The product exposes its initial context and available next action.",
-        "state": "entry",
-        "evidence": "media/motion.mp4 at 00:03.4"
-      },
-      {
-        "index": 2,
-        "user_action": "open the event composer",
-        "system_response": "The selected destination or task surface replaces or overlays the prior state.",
-        "state": "selection",
-        "evidence": "media/motion.mp4 at 00:16.8"
-      },
-      {
-        "index": 3,
-        "user_action": "enter title, time, and details",
-        "system_response": "The product reflects the entered choice or manipulation and exposes the next control.",
-        "state": "configuration",
-        "evidence": "media/motion.mp4 at 00:30.2"
-      },
-      {
-        "index": 4,
-        "user_action": "save the event",
-        "system_response": "The product acknowledges the commit and transitions toward the result.",
-        "state": "confirmation",
-        "evidence": "media/motion.mp4 at 00:43.6"
-      },
-      {
-        "index": 5,
-        "user_action": "see it placed on the calendar",
-        "system_response": "The completed result remains visible as durable evidence of first success.",
-        "state": "first success",
-        "evidence": "media/motion.mp4 at 00:56.9"
-      }
-    ],
-    "failure_route": [
-      {
-        "step": 1,
-        "user_action": "Stop at the recorded pre-confirmation state instead of committing.",
-        "system_response": "The intended result is absent at this point; the first-success goal remains incomplete.",
-        "evidence": "media/motion.mp4 00:21.4–00:38.9"
-      }
-    ],
-    "recovery_route": [
-      {
-        "step": 1,
-        "user_action": "Continue from the retained incomplete state and save the event.",
-        "system_response": "The confirmation transition resumes from the same observed flow.",
-        "evidence": "media/motion.mp4 00:33.5–00:48.2"
-      },
-      {
-        "step": 2,
-        "user_action": "see it placed on the calendar",
-        "system_response": "The product shows the documented first-success result: see it placed on the calendar.",
-        "evidence": "media/motion.mp4 00:45.6–01:03.0"
-      }
-    ],
-    "completion_evidence": "media/motion.mp4 at 00:56.9 and media/state-03.png"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visible text labels and state changes supplement iconography in the retained recording.",
-      "Selection, progress, or completion is communicated by a changed product state rather than motion alone.",
-      "The retained frames preserve the visual context before, during, and after the principal action."
-    ],
+    "observations": [],
     "unknowns": [
       "VoiceOver names, hints, rotor order, and focus return were not exposed by the source recording.",
       "Dynamic Type behavior and text truncation at accessibility sizes were not exposed.",
       "Reduce Motion behavior and a nonanimated equivalent were not exposed.",
       "Switch Control, keyboard navigation, contrast ratios, and haptic/audio-only feedback were not measured."
-    ]
+    ],
+    "measured": false
   },
-  "motion_analysis": {
-    "source_title": "fantastical-promo-video-silent.mp4",
-    "trigger": "open the event composer",
-    "start_state": "entry / orientation",
-    "end_state": "result / established state",
-    "continuity": "The recording retains the real product transition sequence; transcoding changes encoding only and does not synthesize intermediate frames.",
-    "timing_class": "multi-second",
-    "feedback": "Selection emphasis, surface transition, content change, or result placement provides visible acknowledgment.",
-    "interruption_or_reversal": "The retained pre-confirmation state supplies the reversible boundary: withholding or reversing commit leaves the result absent; continuing through confirmation reaches the end state. Exact gesture-interruption semantics are unknown unless visibly demonstrated.",
-    "reduced_motion_equivalent": "Unknown from the retained source; no reduced-motion claim is inferred.",
-    "timing_description": "extended guided walkthrough"
-  },
+  "motion_analysis": null,
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "open the event composer",
+        "response": "The primary task surface opens.",
+        "feedback": "Selection highlight and surface transition make the response visible.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
+        "evidence": "media/motion.mp4 00:08.0–00:18.8"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus / selection",
+        "trigger": "enter title, time, and details",
+        "response": "The chosen field, row, item, or canvas becomes the active target.",
+        "feedback": "The target changes emphasis or reveals contextual controls.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
+        "evidence": "media/motion.mp4 00:17.4–00:29.5"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Open the calendar timeline",
+        "response": "The app moves from entry context to the task destination.",
+        "feedback": "Header, content, or navigation state changes.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
+        "evidence": "media/motion.mp4 00:02.7–00:16.1"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "save the event",
+        "response": "The pending action commits and the result transition begins.",
+        "feedback": "A changed state, progress response, or completed item acknowledges the commit.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
+        "evidence": "media/motion.mp4 00:38.9–00:50.9"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation / backtracking",
+        "trigger": "Withhold or reverse the visible commit while the recorded pre-confirmation state is on screen.",
+        "response": "The task remains in its pre-result state; the success artifact is absent.",
+        "feedback": "The unchanged/incomplete state distinguishes cancellation from completion.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
+        "evidence": "media/motion.mp4 00:25.5–00:38.9"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "feedback",
+        "trigger": "Complete a visible selection or commit.",
+        "response": "The interface updates immediately or after a bounded progress transition.",
+        "feedback": "Motion, highlight, changed content, or result placement communicates status.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
+        "evidence": "media/motion.mp4 00:41.5–00:59.0"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Reach the recorded pre-confirmation state without issuing the final commit.",
+        "response": "The intended result is not yet present, so the goal remains incomplete.",
+        "feedback": "The pre-result surface remains visibly distinct from state-03.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
+        "evidence": "media/motion.mp4 00:21.4–00:36.9"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery",
+        "trigger": "Continue from the incomplete state and save the event.",
+        "response": "The product resumes the path and produces the visible result.",
+        "feedback": "The final state replaces the incomplete state.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through save the event to the visible result.",
+        "evidence": "media/motion.mp4 00:34.8–01:01.6"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time or returning iPhone user with the minimum product account/device prerequisites",
+        "goal": "Add a calendar event",
+        "prerequisites": [
+          "Compatible iPhone and current iOS version",
+          "Product installed or product-native flow available",
+          "Network/account/permission access only where the observed flow requests it"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the calendar timeline",
+            "system_response": "The product exposes its initial context and available next action.",
+            "state": "entry",
+            "evidence": "media/motion.mp4 at 00:03.4"
+          },
+          {
+            "index": 2,
+            "user_action": "open the event composer",
+            "system_response": "The selected destination or task surface replaces or overlays the prior state.",
+            "state": "selection",
+            "evidence": "media/motion.mp4 at 00:16.8"
+          },
+          {
+            "index": 3,
+            "user_action": "enter title, time, and details",
+            "system_response": "The product reflects the entered choice or manipulation and exposes the next control.",
+            "state": "configuration",
+            "evidence": "media/motion.mp4 at 00:30.2"
+          },
+          {
+            "index": 4,
+            "user_action": "save the event",
+            "system_response": "The product acknowledges the commit and transitions toward the result.",
+            "state": "confirmation",
+            "evidence": "media/motion.mp4 at 00:43.6"
+          },
+          {
+            "index": 5,
+            "user_action": "see it placed on the calendar",
+            "system_response": "The completed result remains visible as durable evidence of first success.",
+            "state": "first success",
+            "evidence": "media/motion.mp4 at 00:56.9"
+          }
+        ],
+        "failure_route": [
+          {
+            "step": 1,
+            "user_action": "Stop at the recorded pre-confirmation state instead of committing.",
+            "system_response": "The intended result is absent at this point; the first-success goal remains incomplete.",
+            "evidence": "media/motion.mp4 00:21.4–00:38.9"
+          }
+        ],
+        "recovery_route": [
+          {
+            "step": 1,
+            "user_action": "Continue from the retained incomplete state and save the event.",
+            "system_response": "The confirmation transition resumes from the same observed flow.",
+            "evidence": "media/motion.mp4 00:33.5–00:48.2"
+          },
+          {
+            "step": 2,
+            "user_action": "see it placed on the calendar",
+            "system_response": "The product shows the documented first-success result: see it placed on the calendar.",
+            "evidence": "media/motion.mp4 00:45.6–01:03.0"
+          }
+        ],
+        "completion_evidence": "media/motion.mp4 at 00:56.9 and media/state-03.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "source_title": "fantastical-promo-video-silent.mp4",
+        "trigger": "open the event composer",
+        "start_state": "entry / orientation",
+        "end_state": "result / established state",
+        "continuity": "The recording retains the real product transition sequence; transcoding changes encoding only and does not synthesize intermediate frames.",
+        "timing_class": "multi-second",
+        "feedback": "Selection emphasis, surface transition, content change, or result placement provides visible acknowledgment.",
+        "interruption_or_reversal": "The retained pre-confirmation state supplies the reversible boundary: withholding or reversing commit leaves the result absent; continuing through confirmation reaches the end state. Exact gesture-interruption semantics are unknown unless visibly demonstrated.",
+        "reduced_motion_equivalent": "Unknown from the retained source; no reduced-motion claim is inferred.",
+        "timing_description": "extended guided walkthrough"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visible text labels and state changes supplement iconography in the retained recording."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Selection, progress, or completion is communicated by a changed product state rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The retained frames preserve the visual context before, during, and after the principal action."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "entry / orientation"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "media/motion.mp4",
+        "source_match": {
+          "timestamp_seconds": 9.5,
+          "mean_abs_diff": 18.75,
+          "sampled_frames": 134,
+          "motion_path": "media/state-01.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "action in progress"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 33.5s (mean abs diff 11.4258/255)",
+        "source_match": {
+          "timestamp_seconds": 33.5,
+          "mean_abs_diff": 11.4258,
+          "sampled_frames": 134,
+          "motion_path": "media/state-02.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "result / established state"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 56.5s (mean abs diff 2.543/255)",
+        "source_match": {
+          "timestamp_seconds": 56.5,
+          "mean_abs_diff": 2.543,
+          "sampled_frames": 134,
+          "motion_path": "media/state-03.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

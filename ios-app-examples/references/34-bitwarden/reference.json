@@ -20,218 +20,39 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "\"Bitwarden on iOS\" title slide: an iPhone home screen carrying the Bitwarden, Dropbox and Reddit icons beside the caption \"To start with Bitwarden on iOS, search the App Store for Bitwarden\" and \"Or go to get.bitwarden.com\"",
+      "name": "Observed state 1",
       "local_path": "media/state-01.png",
-      "source_motion_path": "frame of media/motion.mp4 at 22s (mean abs diff 1.6836/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 83011,
       "sha256": "22d6f4fc998f6748c702a29b19994f49949ecff9edb38021f746dae91444a59f",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 22.0,
-        "mean_abs_diff": 1.6836,
-        "sampled_frames": 240
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 83011
     },
     {
-      "name": "\"Welcome to your Vault\" slide: Bitwarden's \"My Vault\" list open with the \"TYPES\" section (Login, \"Card 0\", \"Identity 0\", \"Secure Note 2\"), \"FOLDERS\" (\"Personal Vault\", \"No Folder\") and \"COLLECTIONS\" (\"Tutorial Collection\"), above the \"My Vault\" / \"Generator\" / \"Settings\" tab bar",
+      "name": "Observed state 2",
       "local_path": "media/state-02.png",
-      "source_motion_path": "frame of media/motion.mp4 at 54.5s (mean abs diff 1.7773/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 65565,
       "sha256": "dabc7917c3057189bc150ef50f65b65023b7ba7f80463a3ded8cb5946667851d",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 54.5,
-        "mean_abs_diff": 1.7773,
-        "sampled_frames": 240
-      }
-    },
-    {
-      "name": "\"Verify Face ID\" slide: the iOS \"Lock Options\" action sheet fully open over Bitwarden \"Settings\", \"Immediately\" checked above \"1 minute\", \"5 minutes\", \"15 minutes\", \"30 minutes\", \"1 hour\", \"4 hours\", \"On App Restart\" and \"Never\", with a separate \"Cancel\" button beneath",
-      "local_path": "media/state-03.png",
-      "source_motion_path": "frame of media/motion.mp4 at 102s (mean abs diff 1.7266/255)",
       "width": 640,
       "height": 360,
-      "bytes": 64174,
+      "bytes": 65565
+    },
+    {
+      "name": "Observed state 3",
+      "local_path": "media/state-03.png",
       "sha256": "43b862a809e89f21db667a93fc8eccf665a30fb5fa2cd98b72748a3ae470ed53",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 102.0,
-        "mean_abs_diff": 1.7266,
-        "sampled_frames": 240
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 64174
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "sign in and choose a vault item",
-      "response": "The primary task surface opens.",
-      "feedback": "Selection highlight and surface transition make the response visible.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
-      "evidence": "media/motion.mp4 00:14.4–00:33.6"
-    },
-    {
-      "name": "focus / selection",
-      "trigger": "select a credential action",
-      "response": "The chosen field, row, item, or canvas becomes the active target.",
-      "feedback": "The target changes emphasis or reveals contextual controls.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
-      "evidence": "media/motion.mp4 00:31.2–00:52.8"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Open Bitwarden",
-      "response": "The app moves from entry context to the task destination.",
-      "feedback": "Header, content, or navigation state changes.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
-      "evidence": "media/motion.mp4 00:04.8–00:28.8"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "confirm fill/copy/open",
-      "response": "The pending action commits and the result transition begins.",
-      "feedback": "A changed state, progress response, or completed item acknowledges the commit.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
-      "evidence": "media/motion.mp4 01:09.6–01:31.2"
-    },
-    {
-      "name": "cancellation / backtracking",
-      "trigger": "Withhold or reverse the visible commit while the recorded pre-confirmation state is on screen.",
-      "response": "The task remains in its pre-result state; the success artifact is absent.",
-      "feedback": "The unchanged/incomplete state distinguishes cancellation from completion.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
-      "evidence": "media/motion.mp4 00:45.6–01:09.6"
-    },
-    {
-      "name": "feedback",
-      "trigger": "Complete a visible selection or commit.",
-      "response": "The interface updates immediately or after a bounded progress transition.",
-      "feedback": "Motion, highlight, changed content, or result placement communicates status.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
-      "evidence": "media/motion.mp4 01:14.4–01:45.6"
-    },
-    {
-      "name": "failure",
-      "trigger": "Reach the recorded pre-confirmation state without issuing the final commit.",
-      "response": "The intended result is not yet present, so the goal remains incomplete.",
-      "feedback": "The pre-result surface remains visibly distinct from state-03.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
-      "evidence": "media/motion.mp4 00:38.4–01:06.0"
-    },
-    {
-      "name": "recovery",
-      "trigger": "Continue from the incomplete state and confirm fill/copy/open.",
-      "response": "The product resumes the path and produces the visible result.",
-      "feedback": "The final state replaces the incomplete state.",
-      "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
-      "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
-      "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
-      "evidence": "media/motion.mp4 01:02.4–01:50.4"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time or returning iPhone user with the minimum product account/device prerequisites",
-    "goal": "Use Bitwarden on iOS",
-    "prerequisites": [
-      "Compatible iPhone and current iOS version",
-      "Product installed or product-native flow available",
-      "Network/account/permission access only where the observed flow requests it"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open Bitwarden",
-        "system_response": "The product exposes its initial context and available next action.",
-        "state": "entry",
-        "evidence": "media/motion.mp4 at 00:06.0"
-      },
-      {
-        "index": 2,
-        "user_action": "sign in and choose a vault item",
-        "system_response": "The selected destination or task surface replaces or overlays the prior state.",
-        "state": "selection",
-        "evidence": "media/motion.mp4 at 00:30.0"
-      },
-      {
-        "index": 3,
-        "user_action": "select a credential action",
-        "system_response": "The product reflects the entered choice or manipulation and exposes the next control.",
-        "state": "configuration",
-        "evidence": "media/motion.mp4 at 00:54.0"
-      },
-      {
-        "index": 4,
-        "user_action": "confirm fill/copy/open",
-        "system_response": "The product acknowledges the commit and transitions toward the result.",
-        "state": "confirmation",
-        "evidence": "media/motion.mp4 at 01:18.0"
-      },
-      {
-        "index": 5,
-        "user_action": "see the credential applied",
-        "system_response": "The completed result remains visible as durable evidence of first success.",
-        "state": "first success",
-        "evidence": "media/motion.mp4 at 01:42.0"
-      }
-    ],
-    "failure_route": [
-      {
-        "step": 1,
-        "user_action": "Stop at the recorded pre-confirmation state instead of committing.",
-        "system_response": "The intended result is absent at this point; the first-success goal remains incomplete.",
-        "evidence": "media/motion.mp4 00:38.4–01:09.6"
-      }
-    ],
-    "recovery_route": [
-      {
-        "step": 1,
-        "user_action": "Continue from the retained incomplete state and confirm fill/copy/open.",
-        "system_response": "The confirmation transition resumes from the same observed flow.",
-        "evidence": "media/motion.mp4 01:00.0–01:26.4"
-      },
-      {
-        "step": 2,
-        "user_action": "see the credential applied",
-        "system_response": "The product shows the documented first-success result: see the credential applied.",
-        "evidence": "media/motion.mp4 01:21.6–01:52.8"
-      }
-    ],
-    "completion_evidence": "media/motion.mp4 at 01:42.0 and media/state-03.png"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "In media/state-03.png the active lock timeout is marked by a \"✓\" glyph beside the word \"Immediately\" and all nine choices are spelled out as text (\"Immediately\", \"1 minute\", \"5 minutes\", \"15 minutes\", \"30 minutes\", \"1 hour\", \"4 hours\", \"On App Restart\", \"Never\"), so the current setting is readable without colour.",
-      "That \"✓ Immediately\" row measures 4.05:1 in the retained frame: darkest pixel #58769b against lightest #e6f0f5 in the crop 158,101 58x12 of media/state-03.png.",
-      "The sheet's dismiss affordance is a separate white \"Cancel\" bar and it is the highest-contrast text on that screen at 4.33:1, darkest #597d9e against lightest #ffffff in the crop 150,315 70x14 of media/state-03.png.",
-      "Bitwarden's Settings screen at 101.10s of media/motion.mp4 prints each security value as a word at the right of its own row — \"Lock Options / Immediately\", \"Unlock with Face ID / Enabled\", \"Unlock with PIN Code / Disabled\" — instead of as a switch, so those states can be read from one still.",
-      "In media/state-02.png the tab bar carries a text label under every icon (\"My Vault\", \"Generator\", \"Settings\") and each vault row carries a numeric count beside its text label, so an empty category reads as \"Card 0\" and \"Identity 0\" rather than as icon shape alone; the \"Login\" label there measures 5.23:1, darkest #23283c against lightest #959ab0 in the crop 125,73 40x11."
-    ],
+    "observations": [],
     "unknowns": [
       "VoiceOver names, hints, rotor order, and focus return were not exposed by the source recording.",
       "Dynamic Type behavior and text truncation at accessibility sizes were not exposed.",
@@ -239,24 +60,342 @@
       "Switch Control, keyboard navigation, and haptic/audio-only feedback were not measured.",
       "The phone is a 640x360 mockup inside a slide, so the contrast figures above come from that downscaled render and not from glyphs rasterized on a device.",
       "No touch point, ripple, or focus ring is ever drawn inside the mockup, so which row was pressed is identified from the sheet's own \"Lock Options\" header rather than from a visible tap."
-    ]
+    ],
+    "measured": false
   },
-  "motion_analysis": {
-    "trigger": "The \"Lock Options\" row under Bitwarden's \"SECURITY\" heading, right-hand value \"Immediately\", is activated inside the phone mockup and the iOS action sheet headed \"Lock Options\" slides up from the bottom edge of the screen (media/motion.mp4 101.30s to 101.57s).",
-    "start_state": "Bitwarden \"Settings\" with no overlay: \"AUTO-FILL\" (Password AutoFill, App Extension), \"MANAGE\" (Folders, Sync 5/1/2020 11:26 AM), \"SECURITY\" (Lock Options — Immediately, Unlock with Face ID — Enabled, Unlock with PIN Code — Disabled, Lock Now, Two-step Login) and \"ACCOUNT\" (Change Master Password, Fingerprint Phrase); last clean frame 101.300s.",
-    "end_state": "The \"Lock Options\" action sheet settled at its resting height over the Settings list, \"✓ Immediately\" first, then \"1 minute\" through \"Never\", with a detached white \"Cancel\" bar below it (101.533s; the retained media/state-03.png is this state at 102.0s).",
-    "continuity": "The asset is a cut-edited tutorial reel — the right-hand caption panel hard-cuts from \"Unlock with Face ID\" to \"Verify Face ID\" between 97.00s and 97.25s while the left-hand phone mockup keeps running. Inside the mockup the one real product transition is unbroken: consecutive 30 fps frames at 101.300s, 101.333s, 101.400s, 101.467s and 101.533s show the sheet climbing from the bottom edge to its resting height with the Settings rows still visible behind it, with no cut. Transcoding to H.264 changed encoding only; no frames were synthesized.",
-    "timing_class": "sub-second",
-    "interruption_or_reversal": "The same sheet is dismissed with no choice taken: it is still fully open at 103.967s, slides back down through 104.033s, 104.100s and 104.167s, and is gone at 104.200s, and the \"Lock Options\" row underneath still reads \"Immediately\" — the value it carried before the sheet opened.",
-    "feedback": "The overlay is itself the acknowledgment: it enters from the edge the finger came from, dims nothing but covers the list from the bottom up so the rows behind stay legible, and it restates the value already printed on the Settings row by putting a \"✓\" against \"Immediately\" (101.333s to 101.533s). The \"Cancel\" bar arrives last, separated from the option list by a gap.",
-    "reduced_motion_equivalent": null
-  },
+  "motion_analysis": null,
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
-    "motion analysis missing reduced_motion_equivalent",
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "sign in and choose a vault item",
+        "response": "The primary task surface opens.",
+        "feedback": "Selection highlight and surface transition make the response visible.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
+        "evidence": "media/motion.mp4 00:14.4–00:33.6"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus / selection",
+        "trigger": "select a credential action",
+        "response": "The chosen field, row, item, or canvas becomes the active target.",
+        "feedback": "The target changes emphasis or reveals contextual controls.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
+        "evidence": "media/motion.mp4 00:31.2–00:52.8"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Open Bitwarden",
+        "response": "The app moves from entry context to the task destination.",
+        "feedback": "Header, content, or navigation state changes.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
+        "evidence": "media/motion.mp4 00:04.8–00:28.8"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "confirm fill/copy/open",
+        "response": "The pending action commits and the result transition begins.",
+        "feedback": "A changed state, progress response, or completed item acknowledges the commit.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
+        "evidence": "media/motion.mp4 01:09.6–01:31.2"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation / backtracking",
+        "trigger": "Withhold or reverse the visible commit while the recorded pre-confirmation state is on screen.",
+        "response": "The task remains in its pre-result state; the success artifact is absent.",
+        "feedback": "The unchanged/incomplete state distinguishes cancellation from completion.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
+        "evidence": "media/motion.mp4 00:45.6–01:09.6"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "feedback",
+        "trigger": "Complete a visible selection or commit.",
+        "response": "The interface updates immediately or after a bounded progress transition.",
+        "feedback": "Motion, highlight, changed content, or result placement communicates status.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
+        "evidence": "media/motion.mp4 01:14.4–01:45.6"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Reach the recorded pre-confirmation state without issuing the final commit.",
+        "response": "The intended result is not yet present, so the goal remains incomplete.",
+        "feedback": "The pre-result surface remains visibly distinct from state-03.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
+        "evidence": "media/motion.mp4 00:38.4–01:06.0"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery",
+        "trigger": "Continue from the incomplete state and confirm fill/copy/open.",
+        "response": "The product resumes the path and produces the visible result.",
+        "feedback": "The final state replaces the incomplete state.",
+        "cancellation": "Withholding or reversing the visible commit keeps the flow in its recorded pre-result state; no completed artifact is shown there.",
+        "failure": "At the recorded pre-confirmation state the intended result is absent, so the first-success goal is not yet met.",
+        "recovery": "The retained sequence continues from that incomplete state through confirm fill/copy/open to the visible result.",
+        "evidence": "media/motion.mp4 01:02.4–01:50.4"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time or returning iPhone user with the minimum product account/device prerequisites",
+        "goal": "Use Bitwarden on iOS",
+        "prerequisites": [
+          "Compatible iPhone and current iOS version",
+          "Product installed or product-native flow available",
+          "Network/account/permission access only where the observed flow requests it"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open Bitwarden",
+            "system_response": "The product exposes its initial context and available next action.",
+            "state": "entry",
+            "evidence": "media/motion.mp4 at 00:06.0"
+          },
+          {
+            "index": 2,
+            "user_action": "sign in and choose a vault item",
+            "system_response": "The selected destination or task surface replaces or overlays the prior state.",
+            "state": "selection",
+            "evidence": "media/motion.mp4 at 00:30.0"
+          },
+          {
+            "index": 3,
+            "user_action": "select a credential action",
+            "system_response": "The product reflects the entered choice or manipulation and exposes the next control.",
+            "state": "configuration",
+            "evidence": "media/motion.mp4 at 00:54.0"
+          },
+          {
+            "index": 4,
+            "user_action": "confirm fill/copy/open",
+            "system_response": "The product acknowledges the commit and transitions toward the result.",
+            "state": "confirmation",
+            "evidence": "media/motion.mp4 at 01:18.0"
+          },
+          {
+            "index": 5,
+            "user_action": "see the credential applied",
+            "system_response": "The completed result remains visible as durable evidence of first success.",
+            "state": "first success",
+            "evidence": "media/motion.mp4 at 01:42.0"
+          }
+        ],
+        "failure_route": [
+          {
+            "step": 1,
+            "user_action": "Stop at the recorded pre-confirmation state instead of committing.",
+            "system_response": "The intended result is absent at this point; the first-success goal remains incomplete.",
+            "evidence": "media/motion.mp4 00:38.4–01:09.6"
+          }
+        ],
+        "recovery_route": [
+          {
+            "step": 1,
+            "user_action": "Continue from the retained incomplete state and confirm fill/copy/open.",
+            "system_response": "The confirmation transition resumes from the same observed flow.",
+            "evidence": "media/motion.mp4 01:00.0–01:26.4"
+          },
+          {
+            "step": 2,
+            "user_action": "see the credential applied",
+            "system_response": "The product shows the documented first-success result: see the credential applied.",
+            "evidence": "media/motion.mp4 01:21.6–01:52.8"
+          }
+        ],
+        "completion_evidence": "media/motion.mp4 at 01:42.0 and media/state-03.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "The \"Lock Options\" row under Bitwarden's \"SECURITY\" heading, right-hand value \"Immediately\", is activated inside the phone mockup and the iOS action sheet headed \"Lock Options\" slides up from the bottom edge of the screen (media/motion.mp4 101.30s to 101.57s).",
+        "start_state": "Bitwarden \"Settings\" with no overlay: \"AUTO-FILL\" (Password AutoFill, App Extension), \"MANAGE\" (Folders, Sync 5/1/2020 11:26 AM), \"SECURITY\" (Lock Options — Immediately, Unlock with Face ID — Enabled, Unlock with PIN Code — Disabled, Lock Now, Two-step Login) and \"ACCOUNT\" (Change Master Password, Fingerprint Phrase); last clean frame 101.300s.",
+        "end_state": "The \"Lock Options\" action sheet settled at its resting height over the Settings list, \"✓ Immediately\" first, then \"1 minute\" through \"Never\", with a detached white \"Cancel\" bar below it (101.533s; the retained media/state-03.png is this state at 102.0s).",
+        "continuity": "The asset is a cut-edited tutorial reel — the right-hand caption panel hard-cuts from \"Unlock with Face ID\" to \"Verify Face ID\" between 97.00s and 97.25s while the left-hand phone mockup keeps running. Inside the mockup the one real product transition is unbroken: consecutive 30 fps frames at 101.300s, 101.333s, 101.400s, 101.467s and 101.533s show the sheet climbing from the bottom edge to its resting height with the Settings rows still visible behind it, with no cut. Transcoding to H.264 changed encoding only; no frames were synthesized.",
+        "timing_class": "sub-second",
+        "interruption_or_reversal": "The same sheet is dismissed with no choice taken: it is still fully open at 103.967s, slides back down through 104.033s, 104.100s and 104.167s, and is gone at 104.200s, and the \"Lock Options\" row underneath still reads \"Immediately\" — the value it carried before the sheet opened.",
+        "feedback": "The overlay is itself the acknowledgment: it enters from the edge the finger came from, dims nothing but covers the list from the bottom up so the rows behind stay legible, and it restates the value already printed on the Settings row by putting a \"✓\" against \"Immediately\" (101.333s to 101.533s). The \"Cancel\" bar arrives last, separated from the option list by a gap.",
+        "reduced_motion_equivalent": null
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "In media/state-03.png the active lock timeout is marked by a \"✓\" glyph beside the word \"Immediately\" and all nine choices are spelled out as text (\"Immediately\", \"1 minute\", \"5 minutes\", \"15 minutes\", \"30 minutes\", \"1 hour\", \"4 hours\", \"On App Restart\", \"Never\"), so the current setting is readable without colour."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "That \"✓ Immediately\" row measures 4.05:1 in the retained frame: darkest pixel #58769b against lightest #e6f0f5 in the crop 158,101 58x12 of media/state-03.png."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The sheet's dismiss affordance is a separate white \"Cancel\" bar and it is the highest-contrast text on that screen at 4.33:1, darkest #597d9e against lightest #ffffff in the crop 150,315 70x14 of media/state-03.png."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[3]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Bitwarden's Settings screen at 101.10s of media/motion.mp4 prints each security value as a word at the right of its own row — \"Lock Options / Immediately\", \"Unlock with Face ID / Enabled\", \"Unlock with PIN Code / Disabled\" — instead of as a switch, so those states can be read from one still."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[4]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "In media/state-02.png the tab bar carries a text label under every icon (\"My Vault\", \"Generator\", \"Settings\") and each vault row carries a numeric count beside its text label, so an empty category reads as \"Card 0\" and \"Identity 0\" rather than as icon shape alone; the \"Login\" label there measures 5.23:1, darkest #23283c against lightest #959ab0 in the crop 125,73 40x11."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "\"Bitwarden on iOS\" title slide: an iPhone home screen carrying the Bitwarden, Dropbox and Reddit icons beside the caption \"To start with Bitwarden on iOS, search the App Store for Bitwarden\" and \"Or go to get.bitwarden.com\""
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 22s (mean abs diff 1.6836/255)",
+        "source_match": {
+          "timestamp_seconds": 21.5,
+          "mean_abs_diff": 1.6836,
+          "sampled_frames": 240,
+          "motion_path": "media/state-01.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "\"Welcome to your Vault\" slide: Bitwarden's \"My Vault\" list open with the \"TYPES\" section (Login, \"Card 0\", \"Identity 0\", \"Secure Note 2\"), \"FOLDERS\" (\"Personal Vault\", \"No Folder\") and \"COLLECTIONS\" (\"Tutorial Collection\"), above the \"My Vault\" / \"Generator\" / \"Settings\" tab bar"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 54.5s (mean abs diff 1.7773/255)",
+        "source_match": {
+          "timestamp_seconds": 54.5,
+          "mean_abs_diff": 1.7773,
+          "sampled_frames": 240,
+          "motion_path": "media/state-02.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "\"Verify Face ID\" slide: the iOS \"Lock Options\" action sheet fully open over Bitwarden \"Settings\", \"Immediately\" checked above \"1 minute\", \"5 minutes\", \"15 minutes\", \"30 minutes\", \"1 hour\", \"4 hours\", \"On App Restart\" and \"Never\", with a separate \"Cancel\" button beneath"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 102s (mean abs diff 1.7266/255)",
+        "source_match": {
+          "timestamp_seconds": 102.0,
+          "mean_abs_diff": 1.7266,
+          "sampled_frames": 240,
+          "motion_path": "media/state-03.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

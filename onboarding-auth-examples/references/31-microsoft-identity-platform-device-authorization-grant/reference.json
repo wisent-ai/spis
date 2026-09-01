@@ -20,269 +20,437 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "device code issued",
+      "name": "Observed state 1",
       "local_path": "media/state-01-device-code-issued.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 3s (mean abs diff 0.2109/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 39097,
       "sha256": "7c16d45a66aa6907c0ce2ee8dcb76a123d060e6fdcf6db205a685d1e1bfcd82f",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 3.0,
-        "mean_abs_diff": 0.2109,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 39097
     },
     {
-      "name": "verification page",
+      "name": "Observed state 2",
       "local_path": "media/state-02-verification-page.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.918/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 81301,
       "sha256": "5551c516b8fd65c90984809b494c537535255f954b911caaf9d95028e252399e",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 19.5,
-        "mean_abs_diff": 1.918,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 81301
     },
     {
-      "name": "code accepted",
+      "name": "Observed state 3",
       "local_path": "media/state-03-code-accepted.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 1.5625/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 79187,
       "sha256": "781b82ef647c220f3058debf999b478718300094bf175899604e25c1d36bfca0",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 35.0,
-        "mean_abs_diff": 1.5625,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 79187
     },
     {
-      "name": "identity verified",
+      "name": "Observed state 4",
       "local_path": "media/state-04-identity-verified.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 2.8359/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 89476,
       "sha256": "b7d09d321d0f6ab324b3a503befdf741b341b2a1caa03e29b116a7b640ebd068",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 50.0,
-        "mean_abs_diff": 2.8359,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 89476
     },
     {
-      "name": "consent approved",
+      "name": "Observed state 5",
       "local_path": "media/state-05-consent-approved.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 2.6758/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 94420,
       "sha256": "4f842fb2682c6e3ffecf1ea2a4e943e9f4a28a9ed60e0ad8e79f1f242923b05c",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 65.5,
-        "mean_abs_diff": 2.6758,
-        "sampled_frames": 180
-      }
-    },
-    {
-      "name": "client authenticated",
-      "local_path": "media/state-06-client-authenticated.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 81s (mean abs diff 2.2227/255)",
       "width": 640,
       "height": 360,
-      "bytes": 97121,
+      "bytes": 94420
+    },
+    {
+      "name": "Observed state 6",
+      "local_path": "media/state-06-client-authenticated.png",
       "sha256": "56c5f137151c866a28c7d9f6703af343692f839ad6eb4a5cd53b08830bbc9ed1",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 81.0,
-        "mean_abs_diff": 2.2227,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 97121
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "Start the client device-code request",
-      "response": "Microsoft returns the verification URL, user code, expiry, and interval",
-      "feedback": "The retained device code issued state makes the available next action visible.",
-      "cancellation": "Closing or leaving before submission produces no completion claim.",
-      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
-      "recovery": "Restore the prerequisite and repeat the same entry action.",
-      "evidence": "media/state-01-device-code-issued.png @ 4.50s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Open the verification URL on another device",
-      "response": "Microsoft shows the code entry page",
-      "feedback": "The recording advances to verification page and retains the selected context.",
-      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
-      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
-      "recovery": "Correct, resend, or reselect and submit again.",
-      "evidence": "media/state-01-device-code-issued.png @ 4.50s; media/state-02-verification-page.png @ 19.79s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Enter the user code",
-      "response": "Microsoft associates the browser session with the client request",
-      "feedback": "The navigation result is visible as code accepted.",
-      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
-      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
-      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
-      "evidence": "media/state-02-verification-page.png @ 19.79s; media/state-03-code-accepted.png @ 35.07s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Sign in and complete any required factor",
-      "response": "Microsoft verifies the user and tenant context",
-      "feedback": "The official recording shows the confirmed identity verified state.",
-      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
-      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
-      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
-      "evidence": "media/state-03-code-accepted.png @ 35.07s; media/state-04-identity-verified.png @ 50.36s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
-      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
-      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
-      "cancellation": "This interaction is the observed cancellation boundary.",
-      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
-      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
-      "evidence": "media/state-02-verification-page.png @ 19.79s; media/state-03-code-accepted.png @ 35.07s; media/state-04-identity-verified.png @ 50.36s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-    },
-    {
-      "name": "progress feedback",
-      "trigger": "Review and approve requested permissions",
-      "response": "Microsoft records consent and confirms the device",
-      "feedback": "Progress is observable as the distinct consent approved state.",
-      "cancellation": "Leaving during feedback does not count as completion.",
-      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
-      "recovery": "Wait for durable feedback or use the product's retry route.",
-      "evidence": "media/state-04-identity-verified.png @ 50.36s; media/state-05-consent-approved.png @ 65.65s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-    },
-    {
-      "name": "failure",
-      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
-      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
-      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
-      "cancellation": "The user can leave without a false success state.",
-      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
-      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
-      "evidence": "media/state-03-code-accepted.png @ 35.07s; media/state-04-identity-verified.png @ 50.36s; media/state-05-consent-approved.png @ 65.65s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-    },
-    {
-      "name": "recovery and completion",
-      "trigger": "Return to the original client",
-      "response": "Polling completes with tokens, proving first-success device authorization",
-      "feedback": "The retained client authenticated state is the completion evidence.",
-      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
-      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
-      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
-      "evidence": "media/state-05-consent-approved.png @ 65.65s; media/state-06-client-authenticated.png @ 80.94s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-    }
-  ],
-  "journey": {
-    "actor": "user authorizing a Microsoft device-code client",
-    "goal": "authenticate the input-constrained client",
-    "prerequisites": [
-      "Microsoft Entra app registration permitting device code",
-      "browser-capable companion device"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Start the client device-code request",
-        "system_response": "Microsoft returns the verification URL, user code, expiry, and interval",
-        "state": "device code issued",
-        "evidence": "media/state-01-device-code-issued.png; media/official-recording.mp4#t=4.497; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-      },
-      {
-        "index": 2,
-        "user_action": "Open the verification URL on another device",
-        "system_response": "Microsoft shows the code entry page",
-        "state": "verification page",
-        "evidence": "media/state-02-verification-page.png; media/official-recording.mp4#t=19.785; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-      },
-      {
-        "index": 3,
-        "user_action": "Enter the user code",
-        "system_response": "Microsoft associates the browser session with the client request",
-        "state": "code accepted",
-        "evidence": "media/state-03-code-accepted.png; media/official-recording.mp4#t=35.074; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-      },
-      {
-        "index": 4,
-        "user_action": "Sign in and complete any required factor",
-        "system_response": "Microsoft verifies the user and tenant context",
-        "state": "identity verified",
-        "evidence": "media/state-04-identity-verified.png; media/official-recording.mp4#t=50.362; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-      },
-      {
-        "index": 5,
-        "user_action": "Review and approve requested permissions",
-        "system_response": "Microsoft records consent and confirms the device",
-        "state": "consent approved",
-        "evidence": "media/state-05-consent-approved.png; media/official-recording.mp4#t=65.651; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-      },
-      {
-        "index": 6,
-        "user_action": "Return to the original client",
-        "system_response": "Polling completes with tokens, proving first-success device authorization",
-        "state": "client authenticated",
-        "evidence": "media/state-06-client-authenticated.png; media/official-recording.mp4#t=80.940; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-      }
-    ],
-    "failure_route": [
-      "At verification page or code accepted, invalid, expired, denied, or missing required input leaves the flow short of client authenticated; evidence: media/state-02-verification-page.png, media/state-03-code-accepted.png, and https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code.",
-      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-code-accepted.png through media/state-05-consent-approved.png."
-    ],
-    "recovery_route": [
-      "Return to the retained verification page or code accepted requirement, correct or resend the blocking input, and resubmit; evidence: https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code.",
-      "Continue through the same terminal action until client authenticated is visible in media/state-06-client-authenticated.png and the motion at 80.940s."
-    ],
-    "completion_evidence": "client authenticated retained at media/state-06-client-authenticated.png and media/official-recording.mp4#t=80.940; source https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visual observation from media/state-01-device-code-issued.png and media/state-02-verification-page.png: the current task is presented with persistent on-screen text rather than motion alone.",
-      "Visual observation from media/state-03-code-accepted.png and media/state-04-identity-verified.png: primary choices remain spatially associated with their current setup context.",
-      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
       "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
       "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
       "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/official-recording.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-device-code-issued.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-device-code-issued.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-verification-page.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-verification-page.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-code-accepted.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-code-accepted.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-identity-verified.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-identity-verified.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-consent-approved.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-consent-approved.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-06-client-authenticated.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-06-client-authenticated.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "Start the client device-code request",
+        "response": "Microsoft returns the verification URL, user code, expiry, and interval",
+        "feedback": "The retained device code issued state makes the available next action visible.",
+        "cancellation": "Closing or leaving before submission produces no completion claim.",
+        "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+        "recovery": "Restore the prerequisite and repeat the same entry action.",
+        "evidence": "media/state-01-device-code-issued.png @ 4.50s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Open the verification URL on another device",
+        "response": "Microsoft shows the code entry page",
+        "feedback": "The recording advances to verification page and retains the selected context.",
+        "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+        "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+        "recovery": "Correct, resend, or reselect and submit again.",
+        "evidence": "media/state-01-device-code-issued.png @ 4.50s; media/state-02-verification-page.png @ 19.79s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Enter the user code",
+        "response": "Microsoft associates the browser session with the client request",
+        "feedback": "The navigation result is visible as code accepted.",
+        "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+        "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+        "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+        "evidence": "media/state-02-verification-page.png @ 19.79s; media/state-03-code-accepted.png @ 35.07s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Sign in and complete any required factor",
+        "response": "Microsoft verifies the user and tenant context",
+        "feedback": "The official recording shows the confirmed identity verified state.",
+        "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+        "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+        "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+        "evidence": "media/state-03-code-accepted.png @ 35.07s; media/state-04-identity-verified.png @ 50.36s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+        "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+        "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+        "cancellation": "This interaction is the observed cancellation boundary.",
+        "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+        "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+        "evidence": "media/state-02-verification-page.png @ 19.79s; media/state-03-code-accepted.png @ 35.07s; media/state-04-identity-verified.png @ 50.36s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "progress feedback",
+        "trigger": "Review and approve requested permissions",
+        "response": "Microsoft records consent and confirms the device",
+        "feedback": "Progress is observable as the distinct consent approved state.",
+        "cancellation": "Leaving during feedback does not count as completion.",
+        "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+        "recovery": "Wait for durable feedback or use the product's retry route.",
+        "evidence": "media/state-04-identity-verified.png @ 50.36s; media/state-05-consent-approved.png @ 65.65s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+        "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+        "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+        "cancellation": "The user can leave without a false success state.",
+        "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+        "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+        "evidence": "media/state-03-code-accepted.png @ 35.07s; media/state-04-identity-verified.png @ 50.36s; media/state-05-consent-approved.png @ 65.65s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery and completion",
+        "trigger": "Return to the original client",
+        "response": "Polling completes with tokens, proving first-success device authorization",
+        "feedback": "The retained client authenticated state is the completion evidence.",
+        "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+        "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+        "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+        "evidence": "media/state-05-consent-approved.png @ 65.65s; media/state-06-client-authenticated.png @ 80.94s; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "user authorizing a Microsoft device-code client",
+        "goal": "authenticate the input-constrained client",
+        "prerequisites": [
+          "Microsoft Entra app registration permitting device code",
+          "browser-capable companion device"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Start the client device-code request",
+            "system_response": "Microsoft returns the verification URL, user code, expiry, and interval",
+            "state": "device code issued",
+            "evidence": "media/state-01-device-code-issued.png; media/official-recording.mp4#t=4.497; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+          },
+          {
+            "index": 2,
+            "user_action": "Open the verification URL on another device",
+            "system_response": "Microsoft shows the code entry page",
+            "state": "verification page",
+            "evidence": "media/state-02-verification-page.png; media/official-recording.mp4#t=19.785; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+          },
+          {
+            "index": 3,
+            "user_action": "Enter the user code",
+            "system_response": "Microsoft associates the browser session with the client request",
+            "state": "code accepted",
+            "evidence": "media/state-03-code-accepted.png; media/official-recording.mp4#t=35.074; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+          },
+          {
+            "index": 4,
+            "user_action": "Sign in and complete any required factor",
+            "system_response": "Microsoft verifies the user and tenant context",
+            "state": "identity verified",
+            "evidence": "media/state-04-identity-verified.png; media/official-recording.mp4#t=50.362; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+          },
+          {
+            "index": 5,
+            "user_action": "Review and approve requested permissions",
+            "system_response": "Microsoft records consent and confirms the device",
+            "state": "consent approved",
+            "evidence": "media/state-05-consent-approved.png; media/official-recording.mp4#t=65.651; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+          },
+          {
+            "index": 6,
+            "user_action": "Return to the original client",
+            "system_response": "Polling completes with tokens, proving first-success device authorization",
+            "state": "client authenticated",
+            "evidence": "media/state-06-client-authenticated.png; media/official-recording.mp4#t=80.940; https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+          }
+        ],
+        "failure_route": [
+          "At verification page or code accepted, invalid, expired, denied, or missing required input leaves the flow short of client authenticated; evidence: media/state-02-verification-page.png, media/state-03-code-accepted.png, and https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code.",
+          "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-code-accepted.png through media/state-05-consent-approved.png."
+        ],
+        "recovery_route": [
+          "Return to the retained verification page or code accepted requirement, correct or resend the blocking input, and resubmit; evidence: https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code.",
+          "Continue through the same terminal action until client authenticated is visible in media/state-06-client-authenticated.png and the motion at 80.940s."
+        ],
+        "completion_evidence": "client authenticated retained at media/state-06-client-authenticated.png and media/official-recording.mp4#t=80.940; source https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-01-device-code-issued.png and media/state-02-verification-page.png: the current task is presented with persistent on-screen text rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-03-code-accepted.png and media/state-04-identity-verified.png: primary choices remain spatially associated with their current setup context."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "device code issued"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 3s (mean abs diff 0.2109/255)",
+        "source_match": {
+          "timestamp_seconds": 3.0,
+          "mean_abs_diff": 0.2109,
+          "sampled_frames": 180,
+          "motion_path": "media/state-01-device-code-issued.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "verification page"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.918/255)",
+        "source_match": {
+          "timestamp_seconds": 19.5,
+          "mean_abs_diff": 1.918,
+          "sampled_frames": 180,
+          "motion_path": "media/state-02-verification-page.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "code accepted"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 1.5625/255)",
+        "source_match": {
+          "timestamp_seconds": 35.0,
+          "mean_abs_diff": 1.5625,
+          "sampled_frames": 180,
+          "motion_path": "media/state-03-code-accepted.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "identity verified"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 2.8359/255)",
+        "source_match": {
+          "timestamp_seconds": 50.0,
+          "mean_abs_diff": 2.8359,
+          "sampled_frames": 180,
+          "motion_path": "media/state-04-identity-verified.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "consent approved"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 2.6758/255)",
+        "source_match": {
+          "timestamp_seconds": 65.5,
+          "mean_abs_diff": 2.6758,
+          "sampled_frames": 180,
+          "motion_path": "media/state-05-consent-approved.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "client authenticated"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 81s (mean abs diff 2.2227/255)",
+        "source_match": {
+          "timestamp_seconds": 81.0,
+          "mean_abs_diff": 2.2227,
+          "sampled_frames": 180,
+          "motion_path": "media/state-06-client-authenticated.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

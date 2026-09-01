@@ -10,352 +10,352 @@
       "name": "Material Design 3",
       "path": "references/01-material-design-3/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 2,
       "name": "Apple Human Interface Guidelines",
       "path": "references/02-apple-human-interface-guidelines/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 3,
       "name": "Fluent 2 Design System",
       "path": "references/03-fluent-2-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 4,
       "name": "Carbon Design System",
       "path": "references/04-carbon-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 5,
       "name": "Salesforce Lightning Design System",
       "path": "references/05-salesforce-lightning-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 6,
       "name": "Adobe Spectrum",
       "path": "references/06-adobe-spectrum/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 7,
       "name": "Atlassian Design System",
       "path": "references/07-atlassian-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 8,
       "name": "Shopify Polaris",
       "path": "references/08-shopify-polaris/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 9,
       "name": "GitHub Primer",
       "path": "references/09-github-primer/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 10,
       "name": "GitLab Pajamas",
       "path": "references/10-gitlab-pajamas/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 11,
       "name": "SAP Fiori Design System",
       "path": "references/11-sap-fiori-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 12,
       "name": "VMware Clarity Design System",
       "path": "references/12-vmware-clarity-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 13,
       "name": "AWS Cloudscape Design System",
       "path": "references/13-aws-cloudscape-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 14,
       "name": "PatternFly",
       "path": "references/14-patternfly/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 15,
       "name": "Zendesk Garden",
       "path": "references/15-zendesk-garden/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 16,
       "name": "Twilio Paste",
       "path": "references/16-twilio-paste/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 17,
       "name": "Base Web",
       "path": "references/17-base-web/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 18,
       "name": "Gestalt",
       "path": "references/18-gestalt/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 19,
       "name": "Nord Design System",
       "path": "references/19-nord-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 20,
       "name": "Elastic UI",
       "path": "references/20-elastic-ui/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 21,
       "name": "MongoDB LeafyGreen",
       "path": "references/21-mongodb-leafygreen/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 22,
       "name": "HashiCorp Helios Design System",
       "path": "references/22-hashicorp-helios-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 23,
       "name": "Blueprint",
       "path": "references/23-blueprint/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 24,
       "name": "JetBrains Ring UI",
       "path": "references/24-jetbrains-ring-ui/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 25,
       "name": "Mozilla Protocol",
       "path": "references/25-mozilla-protocol/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 26,
       "name": "BBC Global Experience Language",
       "path": "references/26-bbc-global-experience-language/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 27,
       "name": "Skyscanner Backpack",
       "path": "references/27-skyscanner-backpack/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 28,
       "name": "Vanilla Framework",
       "path": "references/28-vanilla-framework/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 29,
       "name": "Ant Design",
       "path": "references/29-ant-design/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 30,
       "name": "Material UI",
       "path": "references/30-material-ui/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 31,
       "name": "Chakra UI",
       "path": "references/31-chakra-ui/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 32,
       "name": "Radix Primitives",
       "path": "references/32-radix-primitives/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 33,
       "name": "React Aria",
       "path": "references/33-react-aria/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 34,
       "name": "Headless UI",
       "path": "references/34-headless-ui/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 35,
       "name": "WAI-ARIA Authoring Practices Guide",
       "path": "references/35-wai-aria-authoring-practices-guide/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 36,
       "name": "U.S. Web Design System",
       "path": "references/36-u-s-web-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 37,
       "name": "GOV.UK Design System",
       "path": "references/37-gov-uk-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 38,
       "name": "NHS Digital Service Manual",
       "path": "references/38-nhs-digital-service-manual/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 39,
       "name": "Government of Canada Design System",
       "path": "references/39-government-of-canada-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 40,
       "name": "Singapore Government Design System",
       "path": "references/40-singapore-government-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 41,
       "name": "French State Design System",
       "path": "references/41-french-state-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 42,
       "name": "Design System of the Country of Italy",
       "path": "references/42-design-system-of-the-country-of-italy/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 43,
       "name": "European Commission Europa Component Library",
       "path": "references/43-european-commission-europa-component-library/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 44,
       "name": "Suomi.fi Design System",
       "path": "references/44-suomi-fi-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 45,
       "name": "Scottish Government Design System",
       "path": "references/45-scottish-government-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 46,
       "name": "CMS Design System",
       "path": "references/46-cms-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 47,
       "name": "VA.gov Design System",
       "path": "references/47-va-gov-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 48,
       "name": "California Design System",
       "path": "references/48-california-design-system/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 49,
       "name": "GNOME Human Interface Guidelines",
       "path": "references/49-gnome-human-interface-guidelines/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     },
     {
       "index": 50,
       "name": "KDE Human Interface Guidelines",
       "path": "references/50-kde-human-interface-guidelines/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 1
+      "evidence_gap_count": 24
     }
   ],
-  "measured_at": "2026-08-19",
+  "measured_at": "2026-09-01",
   "partial_count": 50
 }

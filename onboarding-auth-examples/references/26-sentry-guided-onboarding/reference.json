@@ -20,269 +20,437 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "project entry",
+      "name": "Observed state 1",
       "local_path": "media/state-01-project-entry.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 4.5s (mean abs diff 1.6719/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 175272,
       "sha256": "56f22d00a54389684d7ad0dffc926b2f08e6999127ab57f2bb3632e5b174d995",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 4.5,
-        "mean_abs_diff": 1.6719,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 175272
     },
     {
-      "name": "onboarding generated",
+      "name": "Observed state 2",
       "local_path": "media/state-02-onboarding-generated.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 20s (mean abs diff 1.6797/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 159020,
       "sha256": "ffc876e5c1450e9a2434398ef5d91a3f1e15973da61cebd90ab1f8fecef45f7d",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 20.0,
-        "mean_abs_diff": 1.6797,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 159020
     },
     {
-      "name": "SDK installed",
+      "name": "Observed state 3",
       "local_path": "media/state-03-sdk-installed.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 36.5s (mean abs diff 1.4688/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 122060,
       "sha256": "ecb1c7067008ddc89cc98a4537322cdd623aa1bd75cfaaca59f37694f4fbf6f8",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 36.5,
-        "mean_abs_diff": 1.4688,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 122060
     },
     {
-      "name": "SDK configured",
+      "name": "Observed state 4",
       "local_path": "media/state-04-sdk-configured.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 61s (mean abs diff 1.293/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 175258,
       "sha256": "fba67a0e2d321bec7fb961d3ca5638d81eaa371856d133a01fd38d1b56cdc07e",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 61.0,
-        "mean_abs_diff": 1.293,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 175258
     },
     {
-      "name": "event pending",
+      "name": "Observed state 5",
       "local_path": "media/state-05-event-pending.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 1.5/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 119758,
       "sha256": "2ba9bed51363a8dbcdde442e0e8116ae3fe068be1c43f82e7cee8135e6fb190f",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 65.5,
-        "mean_abs_diff": 1.5,
-        "sampled_frames": 180
-      }
-    },
-    {
-      "name": "first issue",
-      "local_path": "media/state-06-first-issue.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 79s (mean abs diff 1.4648/255)",
       "width": 640,
       "height": 360,
-      "bytes": 121577,
+      "bytes": 119758
+    },
+    {
+      "name": "Observed state 6",
+      "local_path": "media/state-06-first-issue.png",
       "sha256": "b4ddf703d2e7b3030efc92b1256451904aab6ed3ca6146fb9d5eb4815afe542f",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 79.0,
-        "mean_abs_diff": 1.4648,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 121577
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "Authenticate and choose Create project",
-      "response": "Sentry opens platform selection",
-      "feedback": "The retained project entry state makes the available next action visible.",
-      "cancellation": "Closing or leaving before submission produces no completion claim.",
-      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
-      "recovery": "Restore the prerequisite and repeat the same entry action.",
-      "evidence": "media/state-01-project-entry.png @ 4.50s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Select the application framework and team",
-      "response": "Sentry generates framework-specific onboarding",
-      "feedback": "The recording advances to onboarding generated and retains the selected context.",
-      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
-      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
-      "recovery": "Correct, resend, or reselect and submit again.",
-      "evidence": "media/state-01-project-entry.png @ 4.50s; media/state-02-onboarding-generated.png @ 19.79s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Install the shown SDK package",
-      "response": "The application gains the required dependency",
-      "feedback": "The navigation result is visible as SDK installed.",
-      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
-      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
-      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
-      "evidence": "media/state-02-onboarding-generated.png @ 19.79s; media/state-03-sdk-installed.png @ 35.07s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Apply the generated initialization snippet and DSN",
-      "response": "Sentry displays the verification step",
-      "feedback": "The official recording shows the confirmed SDK configured state.",
-      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
-      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
-      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
-      "evidence": "media/state-03-sdk-installed.png @ 35.07s; media/state-04-sdk-configured.png @ 50.36s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
-      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
-      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
-      "cancellation": "This interaction is the observed cancellation boundary.",
-      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
-      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
-      "evidence": "media/state-02-onboarding-generated.png @ 19.79s; media/state-03-sdk-installed.png @ 35.07s; media/state-04-sdk-configured.png @ 50.36s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-    },
-    {
-      "name": "progress feedback",
-      "trigger": "Trigger the provided test error",
-      "response": "The application sends an event and Sentry polls for it",
-      "feedback": "Progress is observable as the distinct event pending state.",
-      "cancellation": "Leaving during feedback does not count as completion.",
-      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
-      "recovery": "Wait for durable feedback or use the product's retry route.",
-      "evidence": "media/state-04-sdk-configured.png @ 50.36s; media/state-05-event-pending.png @ 65.65s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-    },
-    {
-      "name": "failure",
-      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
-      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
-      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
-      "cancellation": "The user can leave without a false success state.",
-      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
-      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
-      "evidence": "media/state-03-sdk-installed.png @ 35.07s; media/state-04-sdk-configured.png @ 50.36s; media/state-05-event-pending.png @ 65.65s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-    },
-    {
-      "name": "recovery and completion",
-      "trigger": "Open the received issue",
-      "response": "Sentry renders the event details, proving first monitoring success",
-      "feedback": "The retained first issue state is the completion evidence.",
-      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
-      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
-      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
-      "evidence": "media/state-05-event-pending.png @ 65.65s; media/state-06-first-issue.png @ 80.94s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-    }
-  ],
-  "journey": {
-    "actor": "new Sentry project owner",
-    "goal": "install an SDK and capture the first error",
-    "prerequisites": [
-      "Sentry account and organization",
-      "supported application project"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Authenticate and choose Create project",
-        "system_response": "Sentry opens platform selection",
-        "state": "project entry",
-        "evidence": "media/state-01-project-entry.png; media/official-recording.mp4#t=4.497; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-      },
-      {
-        "index": 2,
-        "user_action": "Select the application framework and team",
-        "system_response": "Sentry generates framework-specific onboarding",
-        "state": "onboarding generated",
-        "evidence": "media/state-02-onboarding-generated.png; media/official-recording.mp4#t=19.785; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-      },
-      {
-        "index": 3,
-        "user_action": "Install the shown SDK package",
-        "system_response": "The application gains the required dependency",
-        "state": "SDK installed",
-        "evidence": "media/state-03-sdk-installed.png; media/official-recording.mp4#t=35.074; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-      },
-      {
-        "index": 4,
-        "user_action": "Apply the generated initialization snippet and DSN",
-        "system_response": "Sentry displays the verification step",
-        "state": "SDK configured",
-        "evidence": "media/state-04-sdk-configured.png; media/official-recording.mp4#t=50.362; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-      },
-      {
-        "index": 5,
-        "user_action": "Trigger the provided test error",
-        "system_response": "The application sends an event and Sentry polls for it",
-        "state": "event pending",
-        "evidence": "media/state-05-event-pending.png; media/official-recording.mp4#t=65.651; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-      },
-      {
-        "index": 6,
-        "user_action": "Open the received issue",
-        "system_response": "Sentry renders the event details, proving first monitoring success",
-        "state": "first issue",
-        "evidence": "media/state-06-first-issue.png; media/official-recording.mp4#t=80.940; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-      }
-    ],
-    "failure_route": [
-      "At onboarding generated or SDK installed, invalid, expired, denied, or missing required input leaves the flow short of first issue; evidence: media/state-02-onboarding-generated.png, media/state-03-sdk-installed.png, and https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/.",
-      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-sdk-installed.png through media/state-05-event-pending.png."
-    ],
-    "recovery_route": [
-      "Return to the retained onboarding generated or SDK installed requirement, correct or resend the blocking input, and resubmit; evidence: https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/.",
-      "Continue through the same terminal action until first issue is visible in media/state-06-first-issue.png and the motion at 80.940s."
-    ],
-    "completion_evidence": "first issue retained at media/state-06-first-issue.png and media/official-recording.mp4#t=80.940; source https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visual observation from media/state-01-project-entry.png and media/state-02-onboarding-generated.png: the current task is presented with persistent on-screen text rather than motion alone.",
-      "Visual observation from media/state-03-sdk-installed.png and media/state-04-sdk-configured.png: primary choices remain spatially associated with their current setup context.",
-      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
       "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
       "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
       "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/official-recording.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-project-entry.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-project-entry.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-onboarding-generated.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-onboarding-generated.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-sdk-installed.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-sdk-installed.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-sdk-configured.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-sdk-configured.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-event-pending.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-event-pending.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-06-first-issue.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-06-first-issue.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "Authenticate and choose Create project",
+        "response": "Sentry opens platform selection",
+        "feedback": "The retained project entry state makes the available next action visible.",
+        "cancellation": "Closing or leaving before submission produces no completion claim.",
+        "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+        "recovery": "Restore the prerequisite and repeat the same entry action.",
+        "evidence": "media/state-01-project-entry.png @ 4.50s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Select the application framework and team",
+        "response": "Sentry generates framework-specific onboarding",
+        "feedback": "The recording advances to onboarding generated and retains the selected context.",
+        "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+        "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+        "recovery": "Correct, resend, or reselect and submit again.",
+        "evidence": "media/state-01-project-entry.png @ 4.50s; media/state-02-onboarding-generated.png @ 19.79s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Install the shown SDK package",
+        "response": "The application gains the required dependency",
+        "feedback": "The navigation result is visible as SDK installed.",
+        "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+        "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+        "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+        "evidence": "media/state-02-onboarding-generated.png @ 19.79s; media/state-03-sdk-installed.png @ 35.07s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Apply the generated initialization snippet and DSN",
+        "response": "Sentry displays the verification step",
+        "feedback": "The official recording shows the confirmed SDK configured state.",
+        "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+        "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+        "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+        "evidence": "media/state-03-sdk-installed.png @ 35.07s; media/state-04-sdk-configured.png @ 50.36s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+        "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+        "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+        "cancellation": "This interaction is the observed cancellation boundary.",
+        "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+        "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+        "evidence": "media/state-02-onboarding-generated.png @ 19.79s; media/state-03-sdk-installed.png @ 35.07s; media/state-04-sdk-configured.png @ 50.36s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "progress feedback",
+        "trigger": "Trigger the provided test error",
+        "response": "The application sends an event and Sentry polls for it",
+        "feedback": "Progress is observable as the distinct event pending state.",
+        "cancellation": "Leaving during feedback does not count as completion.",
+        "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+        "recovery": "Wait for durable feedback or use the product's retry route.",
+        "evidence": "media/state-04-sdk-configured.png @ 50.36s; media/state-05-event-pending.png @ 65.65s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+        "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+        "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+        "cancellation": "The user can leave without a false success state.",
+        "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+        "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+        "evidence": "media/state-03-sdk-installed.png @ 35.07s; media/state-04-sdk-configured.png @ 50.36s; media/state-05-event-pending.png @ 65.65s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery and completion",
+        "trigger": "Open the received issue",
+        "response": "Sentry renders the event details, proving first monitoring success",
+        "feedback": "The retained first issue state is the completion evidence.",
+        "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+        "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+        "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+        "evidence": "media/state-05-event-pending.png @ 65.65s; media/state-06-first-issue.png @ 80.94s; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "new Sentry project owner",
+        "goal": "install an SDK and capture the first error",
+        "prerequisites": [
+          "Sentry account and organization",
+          "supported application project"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Authenticate and choose Create project",
+            "system_response": "Sentry opens platform selection",
+            "state": "project entry",
+            "evidence": "media/state-01-project-entry.png; media/official-recording.mp4#t=4.497; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+          },
+          {
+            "index": 2,
+            "user_action": "Select the application framework and team",
+            "system_response": "Sentry generates framework-specific onboarding",
+            "state": "onboarding generated",
+            "evidence": "media/state-02-onboarding-generated.png; media/official-recording.mp4#t=19.785; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+          },
+          {
+            "index": 3,
+            "user_action": "Install the shown SDK package",
+            "system_response": "The application gains the required dependency",
+            "state": "SDK installed",
+            "evidence": "media/state-03-sdk-installed.png; media/official-recording.mp4#t=35.074; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+          },
+          {
+            "index": 4,
+            "user_action": "Apply the generated initialization snippet and DSN",
+            "system_response": "Sentry displays the verification step",
+            "state": "SDK configured",
+            "evidence": "media/state-04-sdk-configured.png; media/official-recording.mp4#t=50.362; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+          },
+          {
+            "index": 5,
+            "user_action": "Trigger the provided test error",
+            "system_response": "The application sends an event and Sentry polls for it",
+            "state": "event pending",
+            "evidence": "media/state-05-event-pending.png; media/official-recording.mp4#t=65.651; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+          },
+          {
+            "index": 6,
+            "user_action": "Open the received issue",
+            "system_response": "Sentry renders the event details, proving first monitoring success",
+            "state": "first issue",
+            "evidence": "media/state-06-first-issue.png; media/official-recording.mp4#t=80.940; https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+          }
+        ],
+        "failure_route": [
+          "At onboarding generated or SDK installed, invalid, expired, denied, or missing required input leaves the flow short of first issue; evidence: media/state-02-onboarding-generated.png, media/state-03-sdk-installed.png, and https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/.",
+          "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-sdk-installed.png through media/state-05-event-pending.png."
+        ],
+        "recovery_route": [
+          "Return to the retained onboarding generated or SDK installed requirement, correct or resend the blocking input, and resubmit; evidence: https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/.",
+          "Continue through the same terminal action until first issue is visible in media/state-06-first-issue.png and the motion at 80.940s."
+        ],
+        "completion_evidence": "first issue retained at media/state-06-first-issue.png and media/official-recording.mp4#t=80.940; source https://docs.sentry.io/product/sentry-basics/integrate-frontend/onboarding-guides/"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-01-project-entry.png and media/state-02-onboarding-generated.png: the current task is presented with persistent on-screen text rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-03-sdk-installed.png and media/state-04-sdk-configured.png: primary choices remain spatially associated with their current setup context."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "project entry"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 4.5s (mean abs diff 1.6719/255)",
+        "source_match": {
+          "timestamp_seconds": 4.5,
+          "mean_abs_diff": 1.6719,
+          "sampled_frames": 180,
+          "motion_path": "media/state-01-project-entry.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "onboarding generated"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 20s (mean abs diff 1.6797/255)",
+        "source_match": {
+          "timestamp_seconds": 16.5,
+          "mean_abs_diff": 1.6797,
+          "sampled_frames": 180,
+          "motion_path": "media/state-02-onboarding-generated.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "SDK installed"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 36.5s (mean abs diff 1.4688/255)",
+        "source_match": {
+          "timestamp_seconds": 35.0,
+          "mean_abs_diff": 1.4688,
+          "sampled_frames": 180,
+          "motion_path": "media/state-03-sdk-installed.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "SDK configured"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 61s (mean abs diff 1.293/255)",
+        "source_match": {
+          "timestamp_seconds": 60.5,
+          "mean_abs_diff": 1.293,
+          "sampled_frames": 180,
+          "motion_path": "media/state-04-sdk-configured.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "event pending"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 1.5/255)",
+        "source_match": {
+          "timestamp_seconds": 65.5,
+          "mean_abs_diff": 1.5,
+          "sampled_frames": 180,
+          "motion_path": "media/state-05-event-pending.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "first issue"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 79s (mean abs diff 1.4648/255)",
+        "source_match": {
+          "timestamp_seconds": 79.0,
+          "mean_abs_diff": 1.4648,
+          "sampled_frames": 180,
+          "motion_path": "media/state-06-first-issue.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

@@ -2,7 +2,7 @@
   "schema": "wisent.catalog-stats.v1",
   "generated_at": "2026-09-01",
   "catalog_count": 15,
-  "record_count": 650,
+  "record_count": 750,
   "complete_record_count": 0,
-  "partial_record_count": 650
+  "partial_record_count": 750
 }

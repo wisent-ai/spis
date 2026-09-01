@@ -40,9 +40,10 @@ const PROVENANCE_CLASSES: &[&str] = &[
     "local-product-run",
     "local-browser-recording",
     "upstream-owner-media",
-    "unclassified",
+    "unverified-source-media",
 ];
 const LOCAL_PROVENANCE: &[&str] = &["local-browser-recording", "local-product-run"];
+const RECORDS_PER_CATALOG: usize = 50;
 
 
 const INTERACTION_FIELDS: &[&str] = &[
@@ -66,7 +67,8 @@ const MOTION_ANALYSIS_FIELDS: &[&str] = &[
     "feedback",
     "reduced_motion_equivalent",
 ];
-const MOTION_ANALYSIS_OPTIONAL: &[&str] = &["source_title", "evidence", "timing_description"];
+const MOTION_ANALYSIS_OPTIONAL: &[&str] =
+    &["source_title", "evidence", "timing_description", "provenance"];
 
 const TIMING_CLASSES: &[&str] = &[
     "continuous",
@@ -95,8 +97,7 @@ const JOURNEY_STEP_FIELDS: &[&str] = &[
     "evidence",
 ];
 
-/// Curated third-party families, in reading order, followed by catalogs of our
-/// own products. Any other directory that satisfies the contract is appended.
+/// Exact public corpus contract. Extra or missing families are refused.
 const CATALOGS: &[&str] = &[
     "ios-app-examples",
     "android-app-examples",
@@ -111,15 +112,17 @@ const CATALOGS: &[&str] = &[
     "app-store-listing-examples",
     "design-system-examples",
     "report-evidence-examples",
-    "wisent-product-examples",
+    "pricing-page-examples",
+    "landing-page-examples",
 ];
 
 fn provenance_label(name: &str) -> &'static str {
     match name {
-        "local-product-run" => "product run here",
-        "local-browser-recording" => "browser driven here",
-        "upstream-owner-media" => "owner-published media",
-        _ => "unclassified",
+        "local-product-run" => "verified product run here",
+        "local-browser-recording" => "verified browser run here",
+        "upstream-owner-media" => "verified product-owner media",
+        "unverified-source-media" => "unverified source media",
+        _ => "invalid provenance",
     }
 }
 
@@ -137,6 +140,13 @@ fn py_truthy(value: Option<&Value>) -> bool {
         Some(Value::Array(a)) => !a.is_empty(),
         Some(Value::Object(o)) => !o.is_empty(),
     }
+}
+
+fn nonempty_observation(value: &Value) -> bool {
+    value
+        .get("observation")
+        .and_then(Value::as_str)
+        .is_some_and(|text| !text.trim().is_empty())
 }
 
 fn is_null_or_empty_string_or_list(value: Option<&Value>) -> bool {
@@ -282,8 +292,17 @@ fn validate_motion(record: &Value, record_path: &str, reference_dir: &Path) -> R
         if !PROVENANCE_CLASSES.contains(&provenance_class) {
             bail!("{context}: unknown provenance class '{provenance_class}'");
         }
-        if provenance_class == "unclassified" {
-            bail!("{context}: provenance was never classified");
+        let derived =
+            super::verify_reference_evidence::measured_motion_provenance_class(record, item);
+        if provenance_class != derived {
+            bail!(
+                "{context}: provenance class '{provenance_class}' contradicts typed provenance '{derived}'"
+            );
+        }
+        if provenance_class == "unverified-source-media"
+            && evidence_status_of(record) == Some("complete")
+        {
+            bail!("{context}: complete evidence requires verified typed motion provenance");
         }
         if !py_truthy(item.get("measured")) {
             bail!("{context}: asset was never measured; run verify-reference-evidence.py");
@@ -352,6 +371,16 @@ fn validate_states(record: &Value, record_path: &str, reference_dir: &Path) -> R
             bail!("{context}: unsupported state-image format");
         }
         validate_file_metadata(&state_path, item, &context)?;
+        if evidence_status_of(record) == Some("complete") {
+            if !super::verify_reference_evidence::observation_has_verified_provenance(record, item) {
+                bail!("{context}: semantic state name lacks independently verified observation provenance");
+            }
+            if !py_truthy(item.get("source_motion_path"))
+                || !item.get("source_match").is_some_and(Value::is_object)
+            {
+                bail!("{context}: state has no recomputed relationship to verified motion");
+            }
+        }
     }
     Ok(())
 }
@@ -374,12 +403,21 @@ fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -
             INTERACTION_FIELDS,
             &format!("{record_path}: interaction {}", position + 1),
         )?;
+        if !super::verify_reference_evidence::observation_has_verified_provenance(record, item) {
+            bail!(
+                "{record_path}: interaction {} lacks verified typed provenance",
+                position + 1
+            );
+        }
     }
 
     let journey_value = record.get("journey");
     if py_truthy(journey_value) {
         let journey = journey_value.expect("truthy");
         require_nonempty(journey, JOURNEY_FIELDS, &format!("{record_path}: journey"))?;
+        if !super::verify_reference_evidence::observation_has_verified_provenance(record, journey) {
+            bail!("{record_path}: journey lacks verified typed provenance");
+        }
         let steps_ok = journey
             .get("steps")
             .and_then(Value::as_array)
@@ -394,6 +432,12 @@ fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -
                 JOURNEY_STEP_FIELDS,
                 &format!("{record_path}: journey step {}", position + 1),
             )?;
+            if !super::verify_reference_evidence::observation_has_verified_provenance(record, step) {
+                bail!(
+                    "{record_path}: journey step {} lacks verified typed provenance",
+                    position + 1
+                );
+            }
             let index = step.get("index").and_then(Value::as_i64);
             if index != Some(position as i64 + 1) {
                 bail!("{record_path}: journey step order is invalid");
@@ -446,6 +490,12 @@ fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -
                         missing
                     );
                 }
+                if !super::verify_reference_evidence::observation_has_verified_provenance(record, item) {
+                    bail!(
+                        "{record_path}: motion analysis {} lacks verified typed provenance",
+                        position + 1
+                    );
+                }
                 if let Some(timing) = item.get("timing_class") {
                     if !timing.is_null() {
                         let timing = timing.as_str().unwrap_or("");
@@ -472,6 +522,24 @@ fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -
         || !unknowns.map(Value::is_array).unwrap_or(false)
     {
         bail!("{record_path}: accessibility observations and unknowns are required");
+    }
+    for (position, observation) in observations
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .enumerate()
+    {
+        if !nonempty_observation(observation)
+            || !super::verify_reference_evidence::observation_has_verified_provenance(
+                record,
+                observation,
+            )
+        {
+            bail!(
+                "{record_path}: accessibility observation {} lacks a typed statement or verified provenance",
+                position + 1
+            );
+        }
     }
     if evidence_status_of(record) == Some("complete") {
         let count = observations.and_then(Value::as_array).map(Vec::len).unwrap_or(0);
@@ -606,6 +674,21 @@ fn load_full_references(slug: &str, examples: &[Value]) -> Result<Value> {
     );
     obj.insert("measured_gap_total".into(), json!(gap_total));
     obj.insert(
+        "complete_count".into(),
+        json!(statuses.get("complete").copied().unwrap_or(0)),
+    );
+    obj.insert(
+        "partial_count".into(),
+        json!(statuses.get("partial").copied().unwrap_or(0)),
+    );
+    let status_count = statuses.values().sum::<usize>();
+    if status_count != records.len() {
+        bail!(
+            "{index_path_str}: complete and partial counts cover {status_count} of {} references",
+            records.len()
+        );
+    }
+    obj.insert(
         "locally_driven_count".into(),
         json!(provenance
             .iter()
@@ -640,45 +723,27 @@ fn load_catalog(slug: &str) -> Result<Value> {
         .cloned()
         .ok_or_else(|| anyhow!("{source_path_str}: examples must be a list"))?;
 
-    if examples.is_empty() && catalog.get("status").and_then(Value::as_str) == Some("scaffolded") {
-        // A scaffolded catalog is an intentional empty shell: the contract
-        // requires records before they are indexed, so an empty type renders
-        // with zero counts and its named evidence gaps.
-        return Ok(json!({
-            "catalog": slug,
-            "slug": slug,
-            "title": catalog.get("title").cloned().unwrap_or_else(|| json!(slug)),
-            "description": catalog.get("description").cloned().unwrap_or_else(|| json!("")),
-            "count": 0,
-            "image_count": 0,
-            "structure_count": 0,
-            "complete_record_count": 0,
-            "partial_record_count": 0,
-            "visual_count": 0,
-            "curated_at": catalog.get("curated_at").cloned().unwrap_or_else(|| json!("unknown")),
-            "measured_provenance": {},
-            "full_reference_catalog": {
-                "measured_provenance": {},
-                "complete_count": 0,
-                "partial_count": 0,
-                "locally_driven_count": 0,
-                "measured_gap_total": 0,
-                "reference_count": 0,
-            },
-            "source": format!("{slug}/sources.json"),
-            "full_reference_source": format!("{slug}/references.json"),
-            "scaffolded": true,
-            "examples": [],
-        }));
+    if examples.len() != RECORDS_PER_CATALOG {
+        bail!(
+            "{source_path_str}: exact corpus contract requires {RECORDS_PER_CATALOG} sources, found {}",
+            examples.len()
+        );
     }
 
-    for key in ["count", "visual_count", "structure_count"] {
-        if catalog.get(key).and_then(Value::as_u64) != Some(examples.len() as u64) {
-            bail!(
-                "{source_path_str}: {key} does not match the {} examples",
-                examples.len()
-            );
-        }
+    if catalog.get("count").and_then(Value::as_u64) != Some(examples.len() as u64) {
+        bail!("{source_path_str}: count does not match the {} examples", examples.len());
+    }
+    let measured_visuals = examples.iter().filter(|example| {
+        example.pointer("/visual/capture_status").and_then(Value::as_str) != Some("pending-weles")
+    }).count() as u64;
+    let measured_structures = examples.iter().filter(|example| {
+        example.pointer("/interface_structure/analysis_status").and_then(Value::as_str) != Some("pending-weles")
+    }).count() as u64;
+    if catalog.get("visual_count").and_then(Value::as_u64) != Some(measured_visuals) {
+        bail!("{source_path_str}: visual_count does not match the {measured_visuals} retained captures");
+    }
+    if catalog.get("structure_count").and_then(Value::as_u64) != Some(measured_structures) {
+        bail!("{source_path_str}: structure_count does not match the {measured_structures} retained analyses");
     }
 
     let mut names: BTreeSet<String> = BTreeSet::new();
@@ -719,6 +784,15 @@ fn load_catalog(slug: &str) -> Result<Value> {
         }
         if !urls.insert(source_url.to_string()) {
             bail!("{source_path_str}: duplicate source URL '{source_url}'");
+        }
+
+        let pending_visual = example.pointer("/visual/capture_status").and_then(Value::as_str) == Some("pending-weles");
+        let pending_structure = example.pointer("/interface_structure/analysis_status").and_then(Value::as_str) == Some("pending-weles");
+        if pending_visual || pending_structure {
+            if pending_visual && pending_structure {
+                continue;
+            }
+            bail!("{source_path_str}: example {index} has mismatched pending visual and structure evidence");
         }
 
         let visual = example.get("visual").expect("checked above");
@@ -825,9 +899,6 @@ fn load_catalog(slug: &str) -> Result<Value> {
 // Rendering
 // ---------------------------------------------------------------------------
 
-fn escape_cell(value: &str) -> String {
-    value.replace('|', "\\|").replace('\n', " ")
-}
 
 /// Comma-separated "N label" sentence, strongest-provenance first.
 fn provenance_sentence(measured_provenance: &Value) -> String {
@@ -862,23 +933,26 @@ fn full_reference_index<'a>(catalog: &'a Value) -> &'a Value {
 // Entry point
 // ---------------------------------------------------------------------------
 
-fn discovered_catalogs() -> Vec<String> {
-    let mut known: Vec<String> = CATALOGS.iter().map(|s| s.to_string()).collect();
-    let mut found: Vec<String> = std::fs::read_dir(".")
-        .into_iter()
-        .flatten()
-        .filter_map(|e| e.ok())
-        .map(|e| e.file_name().to_string_lossy().to_string())
-        .filter(|name| name.ends_with("-examples") && Path::new(name).is_dir())
+fn discovered_catalogs() -> Result<Vec<String>> {
+    let mut found: Vec<String> = std::fs::read_dir(".")?
+        .filter_map(Result::ok)
+        .map(|entry| entry.file_name().to_string_lossy().to_string())
+        .filter(|name| {
+            name.ends_with("-examples")
+                && Path::new(name).join("references").is_dir()
+        })
         .collect();
     found.sort();
-    for name in found {
-        if !known.contains(&name) {
-            known.push(name);
-        }
+    let mut expected: Vec<String> = CATALOGS.iter().map(|value| value.to_string()).collect();
+    expected.sort();
+    if found != expected {
+        bail!(
+            "catalog set differs from the exact 15-family contract; found {:?}, expected {:?}",
+            found,
+            expected
+        );
     }
-    known.retain(|slug| Path::new(slug).join("references").is_dir());
-    known
+    Ok(CATALOGS.iter().map(|value| value.to_string()).collect())
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
@@ -895,10 +969,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
     }
 
-    let slugs = discovered_catalogs();
-    if slugs.is_empty() {
-        bail!("no catalogs with measured references were found");
-    }
+    let slugs = discovered_catalogs()?;
     let mut catalogs: Vec<Value> = Vec::new();
     for slug in &slugs {
         catalogs.push(load_catalog(slug)?);
@@ -946,6 +1017,25 @@ pub fn run(rest: &[String]) -> Result<()> {
         })
         .collect();
 
+    let record_count = catalogs
+        .iter()
+        .map(|c| full_reference_index(c)["reference_count"].as_u64().unwrap_or(0))
+        .sum::<u64>();
+    let complete_record_count = catalogs
+        .iter()
+        .map(|c| full_reference_index(c)["complete_count"].as_u64().unwrap_or(0))
+        .sum::<u64>();
+    let partial_record_count = catalogs
+        .iter()
+        .map(|c| full_reference_index(c)["partial_count"].as_u64().unwrap_or(0))
+        .sum::<u64>();
+    if complete_record_count + partial_record_count != record_count {
+        bail!(
+            "generated status counts cover {} of {record_count} records",
+            complete_record_count + partial_record_count
+        );
+    }
+
     let index = json!({
         "schema": CATALOG_SCHEMA,
         "generated_at": generated_at,
@@ -953,9 +1043,9 @@ pub fn run(rest: &[String]) -> Result<()> {
         "example_count": catalogs.iter().map(|c| c["count"].as_u64().unwrap_or(0)).sum::<u64>(),
         "image_count": catalogs.iter().map(|c| c["visual_count"].as_u64().unwrap_or(0)).sum::<u64>(),
         "structure_count": catalogs.iter().map(|c| c["structure_count"].as_u64().unwrap_or(0)).sum::<u64>(),
-        "record_count": catalogs.iter().map(|c| full_reference_index(c)["reference_count"].as_u64().unwrap_or(0)).sum::<u64>(),
-        "complete_record_count": catalogs.iter().map(|c| full_reference_index(c)["complete_count"].as_u64().unwrap_or(0)).sum::<u64>(),
-        "partial_record_count": catalogs.iter().map(|c| full_reference_index(c)["partial_count"].as_u64().unwrap_or(0)).sum::<u64>(),
+        "record_count": record_count,
+        "complete_record_count": complete_record_count,
+        "partial_record_count": partial_record_count,
         "locally_driven_motion_count": catalogs.iter().map(|c| full_reference_index(c)["locally_driven_count"].as_u64().unwrap_or(0)).sum::<u64>(),
         "catalogs": catalog_entries,
     });

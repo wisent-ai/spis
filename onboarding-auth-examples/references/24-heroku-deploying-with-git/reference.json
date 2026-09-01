@@ -20,270 +20,438 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "CLI authenticated",
+      "name": "Observed state 1",
       "local_path": "media/state-01-cli-authenticated.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 2.5s (mean abs diff 1.7539/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 118956,
       "sha256": "a99da9719718eb5e2f622406449f5612668874ea9280b8c9706d265830b3bbfc",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 2.5,
-        "mean_abs_diff": 1.7539,
-        "sampled_frames": 101
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 118956
     },
     {
-      "name": "app created",
+      "name": "Observed state 2",
       "local_path": "media/state-02-app-created.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 10.5s (mean abs diff 1.5273/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 109472,
       "sha256": "88ae7d6eb10f79c6f5b14ba750815037eeb1673028ea6878a2d01240b9f15235",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 10.5,
-        "mean_abs_diff": 1.5273,
-        "sampled_frames": 101
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 109472
     },
     {
-      "name": "remote ready",
+      "name": "Observed state 3",
       "local_path": "media/state-03-remote-ready.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.5469/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 111731,
       "sha256": "d4607b52675a48f34a8b5314c1d0bc112332c55563d9481271b552b43cb7556c",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 19.5,
-        "mean_abs_diff": 1.5469,
-        "sampled_frames": 101
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 111731
     },
     {
-      "name": "build running",
+      "name": "Observed state 4",
       "local_path": "media/state-04-build-running.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 28.5s (mean abs diff 1.6055/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 111204,
       "sha256": "d9e04c7810067bec6746bb26570ac4aeadb9d017f65e20ea16db199073d2f9ac",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 28.5,
-        "mean_abs_diff": 1.6055,
-        "sampled_frames": 101
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 111204
     },
     {
-      "name": "release complete",
+      "name": "Observed state 5",
       "local_path": "media/state-05-release-complete.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 36.5s (mean abs diff 1.6602/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 84047,
       "sha256": "0c389f76682a5e03d4527dfbdded1766853e582ea63c00f92249ebf94224b829",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 36.5,
-        "mean_abs_diff": 1.6602,
-        "sampled_frames": 101
-      }
-    },
-    {
-      "name": "app live",
-      "local_path": "media/state-06-app-live.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 44.5s (mean abs diff 1.7227/255)",
       "width": 640,
       "height": 360,
-      "bytes": 76900,
+      "bytes": 84047
+    },
+    {
+      "name": "Observed state 6",
+      "local_path": "media/state-06-app-live.png",
       "sha256": "656da7e5f4d70974c6c9e8e833f4eb3c14b83ffc62f82391060df329a8cfde9c",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 44.5,
-        "mean_abs_diff": 1.7227,
-        "sampled_frames": 101
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 76900
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "Authenticate with the Heroku CLI",
-      "response": "Heroku completes browser or terminal authentication",
-      "feedback": "The retained CLI authenticated state makes the available next action visible.",
-      "cancellation": "Closing or leaving before submission produces no completion claim.",
-      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
-      "recovery": "Restore the prerequisite and repeat the same entry action.",
-      "evidence": "media/state-01-cli-authenticated.png @ 2.53s; https://devcenter.heroku.com/articles/git"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Create or select an app",
-      "response": "Heroku returns the app name and Git remote",
-      "feedback": "The recording advances to app created and retains the selected context.",
-      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
-      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
-      "recovery": "Correct, resend, or reselect and submit again.",
-      "evidence": "media/state-01-cli-authenticated.png @ 2.53s; media/state-02-app-created.png @ 11.12s; https://devcenter.heroku.com/articles/git"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Confirm the Heroku remote",
-      "response": "Git shows the deployment destination",
-      "feedback": "The navigation result is visible as remote ready.",
-      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
-      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
-      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
-      "evidence": "media/state-02-app-created.png @ 11.12s; media/state-03-remote-ready.png @ 19.71s; https://devcenter.heroku.com/articles/git"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Push the target branch",
-      "response": "Heroku receives source and starts the build",
-      "feedback": "The official recording shows the confirmed build running state.",
-      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
-      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
-      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
-      "evidence": "media/state-03-remote-ready.png @ 19.71s; media/state-04-build-running.png @ 28.30s; https://devcenter.heroku.com/articles/git"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
-      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
-      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
-      "cancellation": "This interaction is the observed cancellation boundary.",
-      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
-      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
-      "evidence": "media/state-02-app-created.png @ 11.12s; media/state-03-remote-ready.png @ 19.71s; media/state-04-build-running.png @ 28.30s; https://devcenter.heroku.com/articles/git"
-    },
-    {
-      "name": "progress feedback",
-      "trigger": "Read build and release feedback",
-      "response": "Heroku reports a successful release or actionable failure",
-      "feedback": "Progress is observable as the distinct release complete state.",
-      "cancellation": "Leaving during feedback does not count as completion.",
-      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
-      "recovery": "Wait for durable feedback or use the product's retry route.",
-      "evidence": "media/state-04-build-running.png @ 28.30s; media/state-05-release-complete.png @ 36.89s; https://devcenter.heroku.com/articles/git"
-    },
-    {
-      "name": "failure",
-      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
-      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
-      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
-      "cancellation": "The user can leave without a false success state.",
-      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
-      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
-      "evidence": "media/state-03-remote-ready.png @ 19.71s; media/state-04-build-running.png @ 28.30s; media/state-05-release-complete.png @ 36.89s; https://devcenter.heroku.com/articles/git"
-    },
-    {
-      "name": "recovery and completion",
-      "trigger": "Open the app URL",
-      "response": "The deployed application responds, proving first delivery success",
-      "feedback": "The retained app live state is the completion evidence.",
-      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
-      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
-      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
-      "evidence": "media/state-05-release-complete.png @ 36.89s; media/state-06-app-live.png @ 45.48s; https://devcenter.heroku.com/articles/git"
-    }
-  ],
-  "journey": {
-    "actor": "new Heroku developer",
-    "goal": "deploy a Git repository and open the application",
-    "prerequisites": [
-      "Heroku account",
-      "Heroku CLI",
-      "Git repository"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Authenticate with the Heroku CLI",
-        "system_response": "Heroku completes browser or terminal authentication",
-        "state": "CLI authenticated",
-        "evidence": "media/state-01-cli-authenticated.png; media/official-recording.mp4#t=2.527; https://devcenter.heroku.com/articles/git"
-      },
-      {
-        "index": 2,
-        "user_action": "Create or select an app",
-        "system_response": "Heroku returns the app name and Git remote",
-        "state": "app created",
-        "evidence": "media/state-02-app-created.png; media/official-recording.mp4#t=11.117; https://devcenter.heroku.com/articles/git"
-      },
-      {
-        "index": 3,
-        "user_action": "Confirm the Heroku remote",
-        "system_response": "Git shows the deployment destination",
-        "state": "remote ready",
-        "evidence": "media/state-03-remote-ready.png; media/official-recording.mp4#t=19.708; https://devcenter.heroku.com/articles/git"
-      },
-      {
-        "index": 4,
-        "user_action": "Push the target branch",
-        "system_response": "Heroku receives source and starts the build",
-        "state": "build running",
-        "evidence": "media/state-04-build-running.png; media/official-recording.mp4#t=28.298; https://devcenter.heroku.com/articles/git"
-      },
-      {
-        "index": 5,
-        "user_action": "Read build and release feedback",
-        "system_response": "Heroku reports a successful release or actionable failure",
-        "state": "release complete",
-        "evidence": "media/state-05-release-complete.png; media/official-recording.mp4#t=36.889; https://devcenter.heroku.com/articles/git"
-      },
-      {
-        "index": 6,
-        "user_action": "Open the app URL",
-        "system_response": "The deployed application responds, proving first delivery success",
-        "state": "app live",
-        "evidence": "media/state-06-app-live.png; media/official-recording.mp4#t=45.480; https://devcenter.heroku.com/articles/git"
-      }
-    ],
-    "failure_route": [
-      "At app created or remote ready, invalid, expired, denied, or missing required input leaves the flow short of app live; evidence: media/state-02-app-created.png, media/state-03-remote-ready.png, and https://devcenter.heroku.com/articles/git.",
-      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-remote-ready.png through media/state-05-release-complete.png."
-    ],
-    "recovery_route": [
-      "Return to the retained app created or remote ready requirement, correct or resend the blocking input, and resubmit; evidence: https://devcenter.heroku.com/articles/git.",
-      "Continue through the same terminal action until app live is visible in media/state-06-app-live.png and the motion at 45.480s."
-    ],
-    "completion_evidence": "app live retained at media/state-06-app-live.png and media/official-recording.mp4#t=45.480; source https://devcenter.heroku.com/articles/git"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visual observation from media/state-01-cli-authenticated.png and media/state-02-app-created.png: the current task is presented with persistent on-screen text rather than motion alone.",
-      "Visual observation from media/state-03-remote-ready.png and media/state-04-build-running.png: primary choices remain spatially associated with their current setup context.",
-      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
       "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
       "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
       "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/official-recording.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-cli-authenticated.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-cli-authenticated.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-app-created.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-app-created.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-remote-ready.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-remote-ready.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-build-running.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-build-running.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-release-complete.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-release-complete.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-06-app-live.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-06-app-live.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "Authenticate with the Heroku CLI",
+        "response": "Heroku completes browser or terminal authentication",
+        "feedback": "The retained CLI authenticated state makes the available next action visible.",
+        "cancellation": "Closing or leaving before submission produces no completion claim.",
+        "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+        "recovery": "Restore the prerequisite and repeat the same entry action.",
+        "evidence": "media/state-01-cli-authenticated.png @ 2.53s; https://devcenter.heroku.com/articles/git"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Create or select an app",
+        "response": "Heroku returns the app name and Git remote",
+        "feedback": "The recording advances to app created and retains the selected context.",
+        "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+        "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+        "recovery": "Correct, resend, or reselect and submit again.",
+        "evidence": "media/state-01-cli-authenticated.png @ 2.53s; media/state-02-app-created.png @ 11.12s; https://devcenter.heroku.com/articles/git"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Confirm the Heroku remote",
+        "response": "Git shows the deployment destination",
+        "feedback": "The navigation result is visible as remote ready.",
+        "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+        "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+        "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+        "evidence": "media/state-02-app-created.png @ 11.12s; media/state-03-remote-ready.png @ 19.71s; https://devcenter.heroku.com/articles/git"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Push the target branch",
+        "response": "Heroku receives source and starts the build",
+        "feedback": "The official recording shows the confirmed build running state.",
+        "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+        "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+        "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+        "evidence": "media/state-03-remote-ready.png @ 19.71s; media/state-04-build-running.png @ 28.30s; https://devcenter.heroku.com/articles/git"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+        "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+        "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+        "cancellation": "This interaction is the observed cancellation boundary.",
+        "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+        "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+        "evidence": "media/state-02-app-created.png @ 11.12s; media/state-03-remote-ready.png @ 19.71s; media/state-04-build-running.png @ 28.30s; https://devcenter.heroku.com/articles/git"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "progress feedback",
+        "trigger": "Read build and release feedback",
+        "response": "Heroku reports a successful release or actionable failure",
+        "feedback": "Progress is observable as the distinct release complete state.",
+        "cancellation": "Leaving during feedback does not count as completion.",
+        "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+        "recovery": "Wait for durable feedback or use the product's retry route.",
+        "evidence": "media/state-04-build-running.png @ 28.30s; media/state-05-release-complete.png @ 36.89s; https://devcenter.heroku.com/articles/git"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+        "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+        "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+        "cancellation": "The user can leave without a false success state.",
+        "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+        "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+        "evidence": "media/state-03-remote-ready.png @ 19.71s; media/state-04-build-running.png @ 28.30s; media/state-05-release-complete.png @ 36.89s; https://devcenter.heroku.com/articles/git"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery and completion",
+        "trigger": "Open the app URL",
+        "response": "The deployed application responds, proving first delivery success",
+        "feedback": "The retained app live state is the completion evidence.",
+        "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+        "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+        "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+        "evidence": "media/state-05-release-complete.png @ 36.89s; media/state-06-app-live.png @ 45.48s; https://devcenter.heroku.com/articles/git"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "new Heroku developer",
+        "goal": "deploy a Git repository and open the application",
+        "prerequisites": [
+          "Heroku account",
+          "Heroku CLI",
+          "Git repository"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Authenticate with the Heroku CLI",
+            "system_response": "Heroku completes browser or terminal authentication",
+            "state": "CLI authenticated",
+            "evidence": "media/state-01-cli-authenticated.png; media/official-recording.mp4#t=2.527; https://devcenter.heroku.com/articles/git"
+          },
+          {
+            "index": 2,
+            "user_action": "Create or select an app",
+            "system_response": "Heroku returns the app name and Git remote",
+            "state": "app created",
+            "evidence": "media/state-02-app-created.png; media/official-recording.mp4#t=11.117; https://devcenter.heroku.com/articles/git"
+          },
+          {
+            "index": 3,
+            "user_action": "Confirm the Heroku remote",
+            "system_response": "Git shows the deployment destination",
+            "state": "remote ready",
+            "evidence": "media/state-03-remote-ready.png; media/official-recording.mp4#t=19.708; https://devcenter.heroku.com/articles/git"
+          },
+          {
+            "index": 4,
+            "user_action": "Push the target branch",
+            "system_response": "Heroku receives source and starts the build",
+            "state": "build running",
+            "evidence": "media/state-04-build-running.png; media/official-recording.mp4#t=28.298; https://devcenter.heroku.com/articles/git"
+          },
+          {
+            "index": 5,
+            "user_action": "Read build and release feedback",
+            "system_response": "Heroku reports a successful release or actionable failure",
+            "state": "release complete",
+            "evidence": "media/state-05-release-complete.png; media/official-recording.mp4#t=36.889; https://devcenter.heroku.com/articles/git"
+          },
+          {
+            "index": 6,
+            "user_action": "Open the app URL",
+            "system_response": "The deployed application responds, proving first delivery success",
+            "state": "app live",
+            "evidence": "media/state-06-app-live.png; media/official-recording.mp4#t=45.480; https://devcenter.heroku.com/articles/git"
+          }
+        ],
+        "failure_route": [
+          "At app created or remote ready, invalid, expired, denied, or missing required input leaves the flow short of app live; evidence: media/state-02-app-created.png, media/state-03-remote-ready.png, and https://devcenter.heroku.com/articles/git.",
+          "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-remote-ready.png through media/state-05-release-complete.png."
+        ],
+        "recovery_route": [
+          "Return to the retained app created or remote ready requirement, correct or resend the blocking input, and resubmit; evidence: https://devcenter.heroku.com/articles/git.",
+          "Continue through the same terminal action until app live is visible in media/state-06-app-live.png and the motion at 45.480s."
+        ],
+        "completion_evidence": "app live retained at media/state-06-app-live.png and media/official-recording.mp4#t=45.480; source https://devcenter.heroku.com/articles/git"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-01-cli-authenticated.png and media/state-02-app-created.png: the current task is presented with persistent on-screen text rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-03-remote-ready.png and media/state-04-build-running.png: primary choices remain spatially associated with their current setup context."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "CLI authenticated"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 2.5s (mean abs diff 1.7539/255)",
+        "source_match": {
+          "timestamp_seconds": 2.5,
+          "mean_abs_diff": 1.7539,
+          "sampled_frames": 101,
+          "motion_path": "media/state-01-cli-authenticated.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "app created"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 10.5s (mean abs diff 1.5273/255)",
+        "source_match": {
+          "timestamp_seconds": 10.5,
+          "mean_abs_diff": 1.5273,
+          "sampled_frames": 101,
+          "motion_path": "media/state-02-app-created.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "remote ready"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.5469/255)",
+        "source_match": {
+          "timestamp_seconds": 19.5,
+          "mean_abs_diff": 1.5469,
+          "sampled_frames": 101,
+          "motion_path": "media/state-03-remote-ready.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "build running"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 28.5s (mean abs diff 1.6055/255)",
+        "source_match": {
+          "timestamp_seconds": 28.5,
+          "mean_abs_diff": 1.6055,
+          "sampled_frames": 101,
+          "motion_path": "media/state-04-build-running.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "release complete"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 36.5s (mean abs diff 1.6602/255)",
+        "source_match": {
+          "timestamp_seconds": 36.5,
+          "mean_abs_diff": 1.6602,
+          "sampled_frames": 101,
+          "motion_path": "media/state-05-release-complete.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "app live"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 44.5s (mean abs diff 1.7227/255)",
+        "source_match": {
+          "timestamp_seconds": 44.5,
+          "mean_abs_diff": 1.7227,
+          "sampled_frames": 101,
+          "motion_path": "media/state-06-app-live.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

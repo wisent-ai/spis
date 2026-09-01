@@ -2,13 +2,13 @@
   "schema": "wisent.example-catalog.v2",
   "generated_at": "2026-09-01",
   "catalog_count": 15,
-  "example_count": 650,
+  "example_count": 750,
   "image_count": 650,
   "structure_count": 650,
-  "record_count": 650,
+  "record_count": 750,
   "complete_record_count": 0,
-  "partial_record_count": 650,
-  "locally_driven_motion_count": 221,
+  "partial_record_count": 750,
+  "locally_driven_motion_count": 0,
   "catalogs": [
     {
       "slug": "ios-app-examples",
@@ -20,7 +20,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "upstream-owner-media": 50
+        "unverified-source-media": 50
       },
       "source": "ios-app-examples/sources.json",
       "full_reference_source": "ios-app-examples/references.json"
@@ -35,7 +35,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "upstream-owner-media": 50
+        "unverified-source-media": 50
       },
       "source": "android-app-examples/sources.json",
       "full_reference_source": "android-app-examples/references.json"
@@ -50,7 +50,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "upstream-owner-media": 50
+        "unverified-source-media": 50
       },
       "source": "macos-app-examples/sources.json",
       "full_reference_source": "macos-app-examples/references.json"
@@ -65,8 +65,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "local-browser-recording": 46,
-        "upstream-owner-media": 4
+        "unverified-source-media": 50
       },
       "source": "desktop-app-examples/sources.json",
       "full_reference_source": "desktop-app-examples/references.json"
@@ -81,7 +80,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "upstream-owner-media": 50
+        "unverified-source-media": 50
       },
       "source": "web-app-examples/sources.json",
       "full_reference_source": "web-app-examples/references.json"
@@ -96,7 +95,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "upstream-owner-media": 50
+        "unverified-source-media": 50
       },
       "source": "dashboard-console-examples/sources.json",
       "full_reference_source": "dashboard-console-examples/references.json"
@@ -111,8 +110,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "local-product-run": 23,
-        "upstream-owner-media": 27
+        "unverified-source-media": 50
       },
       "source": "tui-examples/sources.json",
       "full_reference_source": "tui-examples/references.json"
@@ -127,7 +125,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "local-product-run": 50
+        "unverified-source-media": 50
       },
       "source": "cli-examples/sources.json",
       "full_reference_source": "cli-examples/references.json"
@@ -142,7 +140,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "upstream-owner-media": 50
+        "unverified-source-media": 50
       },
       "source": "onboarding-auth-examples/sources.json",
       "full_reference_source": "onboarding-auth-examples/references.json"
@@ -157,7 +155,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "local-browser-recording": 50
+        "unverified-source-media": 50
       },
       "source": "documentation-site-examples/sources.json",
       "full_reference_source": "documentation-site-examples/references.json"
@@ -172,8 +170,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "local-browser-recording": 50,
-        "upstream-owner-media": 14
+        "unverified-source-media": 64
       },
       "source": "app-store-listing-examples/sources.json",
       "full_reference_source": "app-store-listing-examples/references.json"
@@ -188,8 +185,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "local-browser-recording": 2,
-        "upstream-owner-media": 48
+        "unverified-source-media": 50
       },
       "source": "design-system-examples/sources.json",
       "full_reference_source": "design-system-examples/references.json"
@@ -204,36 +200,36 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "upstream-owner-media": 50
+        "unverified-source-media": 50
       },
       "source": "report-evidence-examples/sources.json",
       "full_reference_source": "report-evidence-examples/references.json"
     },
     {
-      "slug": "landing-page-examples",
-      "title": "Landing page examples",
-      "description": "Measured landing-page surfaces: captures at three review widths with DOM snapshots, per the family section of the evidence contract (full-reference-contract.md).",
-      "count": 0,
-      "image_count": 0,
-      "structure_count": 0,
-      "complete_record_count": 0,
-      "partial_record_count": 0,
-      "measured_provenance": {},
-      "source": "landing-page-examples/sources.json",
-      "full_reference_source": "landing-page-examples/references.json"
-    },
-    {
       "slug": "pricing-page-examples",
       "title": "Pricing & plans examples",
-      "description": "Measured pricing and plan-comparison surfaces with visible price or plan comparisons; non-pricing product pages are rejected during crawl preflight.",
-      "count": 0,
+      "description": "Measured pricing pages with visible price and plan comparison.",
+      "count": 50,
       "image_count": 0,
       "structure_count": 0,
       "complete_record_count": 0,
-      "partial_record_count": 0,
+      "partial_record_count": 50,
       "measured_provenance": {},
       "source": "pricing-page-examples/sources.json",
       "full_reference_source": "pricing-page-examples/references.json"
+    },
+    {
+      "slug": "landing-page-examples",
+      "title": "Landing page examples",
+      "description": "Measured exact landing destinations at responsive widths.",
+      "count": 50,
+      "image_count": 0,
+      "structure_count": 0,
+      "complete_record_count": 0,
+      "partial_record_count": 50,
+      "measured_provenance": {},
+      "source": "landing-page-examples/sources.json",
+      "full_reference_source": "landing-page-examples/references.json"
     }
   ]
 }

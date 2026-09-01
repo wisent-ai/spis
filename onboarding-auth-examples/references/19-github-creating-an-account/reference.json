@@ -20,269 +20,437 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "registration",
+      "name": "Observed state 1",
       "local_path": "media/state-01-registration.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 4.5s (mean abs diff 3.4922/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 202822,
       "sha256": "65ec02ef56705eb500043862bcf8dab3e87c4f9e20978ce4893215dbdc78ff84",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 4.5,
-        "mean_abs_diff": 3.4922,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 202822
     },
     {
-      "name": "challenge passed",
+      "name": "Observed state 2",
       "local_path": "media/state-02-challenge-passed.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 3.207/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 225070,
       "sha256": "b6ca4e6c941ee37017287ce26b152fb19bb057fb00949b491f7429a5ec6150ca",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 19.5,
-        "mean_abs_diff": 3.207,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 225070
     },
     {
-      "name": "identity verified",
+      "name": "Observed state 3",
       "local_path": "media/state-03-identity-verified.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 2.3984/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 229865,
       "sha256": "98babf6076825b2fbc047072673b151992185e89bc0884904b8cb8a14097604d",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 35.0,
-        "mean_abs_diff": 2.3984,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 229865
     },
     {
-      "name": "dashboard",
+      "name": "Observed state 4",
       "local_path": "media/state-04-dashboard.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 3.5039/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 253412,
       "sha256": "8e296086750667857ed2da5ddf48f992e81f76702a38bfd2f7ea69aacdd4f353",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 50.0,
-        "mean_abs_diff": 3.5039,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 253412
     },
     {
-      "name": "repository setup",
+      "name": "Observed state 5",
       "local_path": "media/state-05-repository-setup.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 2.1172/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 249124,
       "sha256": "961a7c9a2ce0e0447babcc431abe69cd28553d3a0ef13e4c4e7212a30b14a453",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 65.5,
-        "mean_abs_diff": 2.1172,
-        "sampled_frames": 180
-      }
-    },
-    {
-      "name": "first repository",
-      "local_path": "media/state-06-first-repository.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 80.5s (mean abs diff 2.4062/255)",
       "width": 640,
       "height": 360,
-      "bytes": 251075,
+      "bytes": 249124
+    },
+    {
+      "name": "Observed state 6",
+      "local_path": "media/state-06-first-repository.png",
       "sha256": "96bb2b8440e1ac024589d4c0f9dfaa98e3d8f1fb7b5bb9ccf54e076250966ac0",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 80.5,
-        "mean_abs_diff": 2.4062,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 251075
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "Enter email, password, and username",
-      "response": "GitHub validates each credential requirement",
-      "feedback": "The retained registration state makes the available next action visible.",
-      "cancellation": "Closing or leaving before submission produces no completion claim.",
-      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
-      "recovery": "Restore the prerequisite and repeat the same entry action.",
-      "evidence": "media/state-01-registration.png @ 4.50s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Complete the human-verification challenge",
-      "response": "GitHub accepts the anti-abuse check",
-      "feedback": "The recording advances to challenge passed and retains the selected context.",
-      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
-      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
-      "recovery": "Correct, resend, or reselect and submit again.",
-      "evidence": "media/state-01-registration.png @ 4.50s; media/state-02-challenge-passed.png @ 19.79s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Enter the email verification code",
-      "response": "GitHub activates the account identity",
-      "feedback": "The navigation result is visible as identity verified.",
-      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
-      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
-      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
-      "evidence": "media/state-02-challenge-passed.png @ 19.79s; media/state-03-identity-verified.png @ 35.07s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Complete or skip optional personalization",
-      "response": "GitHub opens the authenticated dashboard",
-      "feedback": "The official recording shows the confirmed dashboard state.",
-      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
-      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
-      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
-      "evidence": "media/state-03-identity-verified.png @ 35.07s; media/state-04-dashboard.png @ 50.36s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
-      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
-      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
-      "cancellation": "This interaction is the observed cancellation boundary.",
-      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
-      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
-      "evidence": "media/state-02-challenge-passed.png @ 19.79s; media/state-03-identity-verified.png @ 35.07s; media/state-04-dashboard.png @ 50.36s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-    },
-    {
-      "name": "progress feedback",
-      "trigger": "Choose New repository and enter its name",
-      "response": "GitHub previews repository configuration",
-      "feedback": "Progress is observable as the distinct repository setup state.",
-      "cancellation": "Leaving during feedback does not count as completion.",
-      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
-      "recovery": "Wait for durable feedback or use the product's retry route.",
-      "evidence": "media/state-04-dashboard.png @ 50.36s; media/state-05-repository-setup.png @ 65.65s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-    },
-    {
-      "name": "failure",
-      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
-      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
-      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
-      "cancellation": "The user can leave without a false success state.",
-      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
-      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
-      "evidence": "media/state-03-identity-verified.png @ 35.07s; media/state-04-dashboard.png @ 50.36s; media/state-05-repository-setup.png @ 65.65s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-    },
-    {
-      "name": "recovery and completion",
-      "trigger": "Confirm repository creation",
-      "response": "The repository page opens, proving first developer-platform success",
-      "feedback": "The retained first repository state is the completion evidence.",
-      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
-      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
-      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
-      "evidence": "media/state-05-repository-setup.png @ 65.65s; media/state-06-first-repository.png @ 80.94s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-    }
-  ],
-  "journey": {
-    "actor": "new GitHub developer",
-    "goal": "verify an account and create the first repository",
-    "prerequisites": [
-      "unique email and username",
-      "email access"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Enter email, password, and username",
-        "system_response": "GitHub validates each credential requirement",
-        "state": "registration",
-        "evidence": "media/state-01-registration.png; media/official-recording.mp4#t=4.497; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-      },
-      {
-        "index": 2,
-        "user_action": "Complete the human-verification challenge",
-        "system_response": "GitHub accepts the anti-abuse check",
-        "state": "challenge passed",
-        "evidence": "media/state-02-challenge-passed.png; media/official-recording.mp4#t=19.785; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-      },
-      {
-        "index": 3,
-        "user_action": "Enter the email verification code",
-        "system_response": "GitHub activates the account identity",
-        "state": "identity verified",
-        "evidence": "media/state-03-identity-verified.png; media/official-recording.mp4#t=35.074; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-      },
-      {
-        "index": 4,
-        "user_action": "Complete or skip optional personalization",
-        "system_response": "GitHub opens the authenticated dashboard",
-        "state": "dashboard",
-        "evidence": "media/state-04-dashboard.png; media/official-recording.mp4#t=50.362; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-      },
-      {
-        "index": 5,
-        "user_action": "Choose New repository and enter its name",
-        "system_response": "GitHub previews repository configuration",
-        "state": "repository setup",
-        "evidence": "media/state-05-repository-setup.png; media/official-recording.mp4#t=65.651; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-      },
-      {
-        "index": 6,
-        "user_action": "Confirm repository creation",
-        "system_response": "The repository page opens, proving first developer-platform success",
-        "state": "first repository",
-        "evidence": "media/state-06-first-repository.png; media/official-recording.mp4#t=80.940; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-      }
-    ],
-    "failure_route": [
-      "At challenge passed or identity verified, invalid, expired, denied, or missing required input leaves the flow short of first repository; evidence: media/state-02-challenge-passed.png, media/state-03-identity-verified.png, and https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github.",
-      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-identity-verified.png through media/state-05-repository-setup.png."
-    ],
-    "recovery_route": [
-      "Return to the retained challenge passed or identity verified requirement, correct or resend the blocking input, and resubmit; evidence: https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github.",
-      "Continue through the same terminal action until first repository is visible in media/state-06-first-repository.png and the motion at 80.940s."
-    ],
-    "completion_evidence": "first repository retained at media/state-06-first-repository.png and media/official-recording.mp4#t=80.940; source https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visual observation from media/state-01-registration.png and media/state-02-challenge-passed.png: the current task is presented with persistent on-screen text rather than motion alone.",
-      "Visual observation from media/state-03-identity-verified.png and media/state-04-dashboard.png: primary choices remain spatially associated with their current setup context.",
-      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
       "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
       "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
       "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/official-recording.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-registration.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-registration.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-challenge-passed.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-challenge-passed.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-identity-verified.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-identity-verified.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-dashboard.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-dashboard.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-repository-setup.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-repository-setup.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-06-first-repository.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-06-first-repository.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "Enter email, password, and username",
+        "response": "GitHub validates each credential requirement",
+        "feedback": "The retained registration state makes the available next action visible.",
+        "cancellation": "Closing or leaving before submission produces no completion claim.",
+        "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+        "recovery": "Restore the prerequisite and repeat the same entry action.",
+        "evidence": "media/state-01-registration.png @ 4.50s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Complete the human-verification challenge",
+        "response": "GitHub accepts the anti-abuse check",
+        "feedback": "The recording advances to challenge passed and retains the selected context.",
+        "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+        "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+        "recovery": "Correct, resend, or reselect and submit again.",
+        "evidence": "media/state-01-registration.png @ 4.50s; media/state-02-challenge-passed.png @ 19.79s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Enter the email verification code",
+        "response": "GitHub activates the account identity",
+        "feedback": "The navigation result is visible as identity verified.",
+        "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+        "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+        "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+        "evidence": "media/state-02-challenge-passed.png @ 19.79s; media/state-03-identity-verified.png @ 35.07s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Complete or skip optional personalization",
+        "response": "GitHub opens the authenticated dashboard",
+        "feedback": "The official recording shows the confirmed dashboard state.",
+        "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+        "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+        "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+        "evidence": "media/state-03-identity-verified.png @ 35.07s; media/state-04-dashboard.png @ 50.36s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+        "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+        "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+        "cancellation": "This interaction is the observed cancellation boundary.",
+        "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+        "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+        "evidence": "media/state-02-challenge-passed.png @ 19.79s; media/state-03-identity-verified.png @ 35.07s; media/state-04-dashboard.png @ 50.36s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "progress feedback",
+        "trigger": "Choose New repository and enter its name",
+        "response": "GitHub previews repository configuration",
+        "feedback": "Progress is observable as the distinct repository setup state.",
+        "cancellation": "Leaving during feedback does not count as completion.",
+        "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+        "recovery": "Wait for durable feedback or use the product's retry route.",
+        "evidence": "media/state-04-dashboard.png @ 50.36s; media/state-05-repository-setup.png @ 65.65s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+        "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+        "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+        "cancellation": "The user can leave without a false success state.",
+        "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+        "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+        "evidence": "media/state-03-identity-verified.png @ 35.07s; media/state-04-dashboard.png @ 50.36s; media/state-05-repository-setup.png @ 65.65s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery and completion",
+        "trigger": "Confirm repository creation",
+        "response": "The repository page opens, proving first developer-platform success",
+        "feedback": "The retained first repository state is the completion evidence.",
+        "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+        "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+        "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+        "evidence": "media/state-05-repository-setup.png @ 65.65s; media/state-06-first-repository.png @ 80.94s; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "new GitHub developer",
+        "goal": "verify an account and create the first repository",
+        "prerequisites": [
+          "unique email and username",
+          "email access"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Enter email, password, and username",
+            "system_response": "GitHub validates each credential requirement",
+            "state": "registration",
+            "evidence": "media/state-01-registration.png; media/official-recording.mp4#t=4.497; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+          },
+          {
+            "index": 2,
+            "user_action": "Complete the human-verification challenge",
+            "system_response": "GitHub accepts the anti-abuse check",
+            "state": "challenge passed",
+            "evidence": "media/state-02-challenge-passed.png; media/official-recording.mp4#t=19.785; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+          },
+          {
+            "index": 3,
+            "user_action": "Enter the email verification code",
+            "system_response": "GitHub activates the account identity",
+            "state": "identity verified",
+            "evidence": "media/state-03-identity-verified.png; media/official-recording.mp4#t=35.074; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+          },
+          {
+            "index": 4,
+            "user_action": "Complete or skip optional personalization",
+            "system_response": "GitHub opens the authenticated dashboard",
+            "state": "dashboard",
+            "evidence": "media/state-04-dashboard.png; media/official-recording.mp4#t=50.362; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+          },
+          {
+            "index": 5,
+            "user_action": "Choose New repository and enter its name",
+            "system_response": "GitHub previews repository configuration",
+            "state": "repository setup",
+            "evidence": "media/state-05-repository-setup.png; media/official-recording.mp4#t=65.651; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+          },
+          {
+            "index": 6,
+            "user_action": "Confirm repository creation",
+            "system_response": "The repository page opens, proving first developer-platform success",
+            "state": "first repository",
+            "evidence": "media/state-06-first-repository.png; media/official-recording.mp4#t=80.940; https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+          }
+        ],
+        "failure_route": [
+          "At challenge passed or identity verified, invalid, expired, denied, or missing required input leaves the flow short of first repository; evidence: media/state-02-challenge-passed.png, media/state-03-identity-verified.png, and https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github.",
+          "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-identity-verified.png through media/state-05-repository-setup.png."
+        ],
+        "recovery_route": [
+          "Return to the retained challenge passed or identity verified requirement, correct or resend the blocking input, and resubmit; evidence: https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github.",
+          "Continue through the same terminal action until first repository is visible in media/state-06-first-repository.png and the motion at 80.940s."
+        ],
+        "completion_evidence": "first repository retained at media/state-06-first-repository.png and media/official-recording.mp4#t=80.940; source https://docs.github.com/en/get-started/start-your-journey/creating-an-account-on-github"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-01-registration.png and media/state-02-challenge-passed.png: the current task is presented with persistent on-screen text rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-03-identity-verified.png and media/state-04-dashboard.png: primary choices remain spatially associated with their current setup context."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "registration"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 4.5s (mean abs diff 3.4922/255)",
+        "source_match": {
+          "timestamp_seconds": 4.5,
+          "mean_abs_diff": 3.4922,
+          "sampled_frames": 180,
+          "motion_path": "media/state-01-registration.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "challenge passed"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 3.207/255)",
+        "source_match": {
+          "timestamp_seconds": 19.5,
+          "mean_abs_diff": 3.207,
+          "sampled_frames": 180,
+          "motion_path": "media/state-02-challenge-passed.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "identity verified"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 2.3984/255)",
+        "source_match": {
+          "timestamp_seconds": 35.0,
+          "mean_abs_diff": 2.3984,
+          "sampled_frames": 180,
+          "motion_path": "media/state-03-identity-verified.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "dashboard"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 3.5039/255)",
+        "source_match": {
+          "timestamp_seconds": 50.0,
+          "mean_abs_diff": 3.5039,
+          "sampled_frames": 180,
+          "motion_path": "media/state-04-dashboard.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "repository setup"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 65.5s (mean abs diff 2.1172/255)",
+        "source_match": {
+          "timestamp_seconds": 65.5,
+          "mean_abs_diff": 2.1172,
+          "sampled_frames": 180,
+          "motion_path": "media/state-05-repository-setup.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "first repository"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 80.5s (mean abs diff 2.4062/255)",
+        "source_match": {
+          "timestamp_seconds": 80.5,
+          "mean_abs_diff": 2.4063,
+          "sampled_frames": 180,
+          "motion_path": "media/state-06-first-repository.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

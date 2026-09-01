@@ -20,269 +20,437 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "file home",
+      "name": "Observed state 1",
       "local_path": "media/state-01-file-home.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 3s (mean abs diff 1.4297/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 48168,
       "sha256": "9f2c6369679666dd3fb9812c1278a45290e5cf447591dcf82f47240ef4feae71",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 3.0,
-        "mean_abs_diff": 1.4297,
-        "sampled_frames": 122
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 48168
     },
     {
-      "name": "upload selection",
+      "name": "Observed state 2",
       "local_path": "media/state-02-upload-selection.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 13.5s (mean abs diff 1.6445/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 69915,
       "sha256": "e5ec245e44fe21be8fe3a71df6a18cdfb9f4fbe5bae47588fd588cb0441f2791",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 13.5,
-        "mean_abs_diff": 1.6445,
-        "sampled_frames": 122
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 69915
     },
     {
-      "name": "upload queued",
+      "name": "Observed state 3",
       "local_path": "media/state-03-upload-queued.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 22.5s (mean abs diff 1.3555/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 113855,
       "sha256": "da1e7a2941d94b0842c8878a287873aad92c635b4b8e8fafd9fa99ee4486232e",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 22.5,
-        "mean_abs_diff": 1.3555,
-        "sampled_frames": 122
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 113855
     },
     {
-      "name": "uploading",
+      "name": "Observed state 4",
       "local_path": "media/state-04-uploading.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 34s (mean abs diff 1.8555/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 82150,
       "sha256": "ecd64dd8680fb4fdd9e191bbc7c272d80c5eb581d17d9d8c47e2cb66404ec312",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 34.0,
-        "mean_abs_diff": 1.8555,
-        "sampled_frames": 122
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 82150
     },
     {
-      "name": "upload complete",
+      "name": "Observed state 5",
       "local_path": "media/state-05-upload-complete.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 40s (mean abs diff 1.7383/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 40037,
       "sha256": "70e38377fd4d24c66d5a5bb1c6cb6685d181fc7aa815d1ae3371389d3312f810",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 40.0,
-        "mean_abs_diff": 1.7383,
-        "sampled_frames": 122
-      }
-    },
-    {
-      "name": "file available",
-      "local_path": "media/state-06-file-available.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 55s (mean abs diff 1.793/255)",
       "width": 640,
       "height": 360,
-      "bytes": 46751,
+      "bytes": 40037
+    },
+    {
+      "name": "Observed state 6",
+      "local_path": "media/state-06-file-available.png",
       "sha256": "6c680f5f29f80de66edfe0592a379f52b62b6becd29260313cfe6430eb54f571",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 55.0,
-        "mean_abs_diff": 1.793,
-        "sampled_frames": 122
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 46751
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "Authenticate and open All files",
-      "response": "Dropbox shows the file list and upload controls",
-      "feedback": "The retained file home state makes the available next action visible.",
-      "cancellation": "Closing or leaving before submission produces no completion claim.",
-      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
-      "recovery": "Restore the prerequisite and repeat the same entry action.",
-      "evidence": "media/state-01-file-home.png @ 3.05s; https://help.dropbox.com/create-upload/add-files"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Choose Upload files, Upload folder, or drag-and-drop",
-      "response": "Dropbox opens the picker or accepts the dropped item",
-      "feedback": "The recording advances to upload selection and retains the selected context.",
-      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
-      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
-      "recovery": "Correct, resend, or reselect and submit again.",
-      "evidence": "media/state-01-file-home.png @ 3.05s; media/state-02-upload-selection.png @ 13.43s; https://help.dropbox.com/create-upload/add-files"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Select the file or folder",
-      "response": "Dropbox queues the selected content",
-      "feedback": "The navigation result is visible as upload queued.",
-      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
-      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
-      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
-      "evidence": "media/state-02-upload-selection.png @ 13.43s; media/state-03-upload-queued.png @ 23.82s; https://help.dropbox.com/create-upload/add-files"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Confirm the destination when prompted",
-      "response": "Dropbox starts transfer and shows progress feedback",
-      "feedback": "The official recording shows the confirmed uploading state.",
-      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
-      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
-      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
-      "evidence": "media/state-03-upload-queued.png @ 23.82s; media/state-04-uploading.png @ 34.20s; https://help.dropbox.com/create-upload/add-files"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
-      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
-      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
-      "cancellation": "This interaction is the observed cancellation boundary.",
-      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
-      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
-      "evidence": "media/state-02-upload-selection.png @ 13.43s; media/state-03-upload-queued.png @ 23.82s; media/state-04-uploading.png @ 34.20s; https://help.dropbox.com/create-upload/add-files"
-    },
-    {
-      "name": "progress feedback",
-      "trigger": "Wait for transfer completion",
-      "response": "Dropbox removes progress state and adds the item to the list",
-      "feedback": "Progress is observable as the distinct upload complete state.",
-      "cancellation": "Leaving during feedback does not count as completion.",
-      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
-      "recovery": "Wait for durable feedback or use the product's retry route.",
-      "evidence": "media/state-04-uploading.png @ 34.20s; media/state-05-upload-complete.png @ 44.58s; https://help.dropbox.com/create-upload/add-files"
-    },
-    {
-      "name": "failure",
-      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
-      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
-      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
-      "cancellation": "The user can leave without a false success state.",
-      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
-      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
-      "evidence": "media/state-03-upload-queued.png @ 23.82s; media/state-04-uploading.png @ 34.20s; media/state-05-upload-complete.png @ 44.58s; https://help.dropbox.com/create-upload/add-files"
-    },
-    {
-      "name": "recovery and completion",
-      "trigger": "Open the uploaded item",
-      "response": "The cloud copy renders or downloads, proving first storage success",
-      "feedback": "The retained file available state is the completion evidence.",
-      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
-      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
-      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
-      "evidence": "media/state-05-upload-complete.png @ 44.58s; media/state-06-file-available.png @ 54.96s; https://help.dropbox.com/create-upload/add-files"
-    }
-  ],
-  "journey": {
-    "actor": "new Dropbox user",
-    "goal": "upload a file and see it in cloud storage",
-    "prerequisites": [
-      "Dropbox account",
-      "local file or folder"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Authenticate and open All files",
-        "system_response": "Dropbox shows the file list and upload controls",
-        "state": "file home",
-        "evidence": "media/state-01-file-home.png; media/official-recording.mp4#t=3.053; https://help.dropbox.com/create-upload/add-files"
-      },
-      {
-        "index": 2,
-        "user_action": "Choose Upload files, Upload folder, or drag-and-drop",
-        "system_response": "Dropbox opens the picker or accepts the dropped item",
-        "state": "upload selection",
-        "evidence": "media/state-02-upload-selection.png; media/official-recording.mp4#t=13.435; https://help.dropbox.com/create-upload/add-files"
-      },
-      {
-        "index": 3,
-        "user_action": "Select the file or folder",
-        "system_response": "Dropbox queues the selected content",
-        "state": "upload queued",
-        "evidence": "media/state-03-upload-queued.png; media/official-recording.mp4#t=23.816; https://help.dropbox.com/create-upload/add-files"
-      },
-      {
-        "index": 4,
-        "user_action": "Confirm the destination when prompted",
-        "system_response": "Dropbox starts transfer and shows progress feedback",
-        "state": "uploading",
-        "evidence": "media/state-04-uploading.png; media/official-recording.mp4#t=34.198; https://help.dropbox.com/create-upload/add-files"
-      },
-      {
-        "index": 5,
-        "user_action": "Wait for transfer completion",
-        "system_response": "Dropbox removes progress state and adds the item to the list",
-        "state": "upload complete",
-        "evidence": "media/state-05-upload-complete.png; media/official-recording.mp4#t=44.579; https://help.dropbox.com/create-upload/add-files"
-      },
-      {
-        "index": 6,
-        "user_action": "Open the uploaded item",
-        "system_response": "The cloud copy renders or downloads, proving first storage success",
-        "state": "file available",
-        "evidence": "media/state-06-file-available.png; media/official-recording.mp4#t=54.960; https://help.dropbox.com/create-upload/add-files"
-      }
-    ],
-    "failure_route": [
-      "At upload selection or upload queued, invalid, expired, denied, or missing required input leaves the flow short of file available; evidence: media/state-02-upload-selection.png, media/state-03-upload-queued.png, and https://help.dropbox.com/create-upload/add-files.",
-      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-upload-queued.png through media/state-05-upload-complete.png."
-    ],
-    "recovery_route": [
-      "Return to the retained upload selection or upload queued requirement, correct or resend the blocking input, and resubmit; evidence: https://help.dropbox.com/create-upload/add-files.",
-      "Continue through the same terminal action until file available is visible in media/state-06-file-available.png and the motion at 54.960s."
-    ],
-    "completion_evidence": "file available retained at media/state-06-file-available.png and media/official-recording.mp4#t=54.960; source https://help.dropbox.com/create-upload/add-files"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visual observation from media/state-01-file-home.png and media/state-02-upload-selection.png: the current task is presented with persistent on-screen text rather than motion alone.",
-      "Visual observation from media/state-03-upload-queued.png and media/state-04-uploading.png: primary choices remain spatially associated with their current setup context.",
-      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
       "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
       "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
       "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/official-recording.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-file-home.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-file-home.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-upload-selection.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-upload-selection.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-upload-queued.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-upload-queued.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-uploading.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-uploading.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-upload-complete.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-upload-complete.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-06-file-available.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-06-file-available.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "Authenticate and open All files",
+        "response": "Dropbox shows the file list and upload controls",
+        "feedback": "The retained file home state makes the available next action visible.",
+        "cancellation": "Closing or leaving before submission produces no completion claim.",
+        "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+        "recovery": "Restore the prerequisite and repeat the same entry action.",
+        "evidence": "media/state-01-file-home.png @ 3.05s; https://help.dropbox.com/create-upload/add-files"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Choose Upload files, Upload folder, or drag-and-drop",
+        "response": "Dropbox opens the picker or accepts the dropped item",
+        "feedback": "The recording advances to upload selection and retains the selected context.",
+        "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+        "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+        "recovery": "Correct, resend, or reselect and submit again.",
+        "evidence": "media/state-01-file-home.png @ 3.05s; media/state-02-upload-selection.png @ 13.43s; https://help.dropbox.com/create-upload/add-files"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Select the file or folder",
+        "response": "Dropbox queues the selected content",
+        "feedback": "The navigation result is visible as upload queued.",
+        "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+        "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+        "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+        "evidence": "media/state-02-upload-selection.png @ 13.43s; media/state-03-upload-queued.png @ 23.82s; https://help.dropbox.com/create-upload/add-files"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Confirm the destination when prompted",
+        "response": "Dropbox starts transfer and shows progress feedback",
+        "feedback": "The official recording shows the confirmed uploading state.",
+        "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+        "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+        "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+        "evidence": "media/state-03-upload-queued.png @ 23.82s; media/state-04-uploading.png @ 34.20s; https://help.dropbox.com/create-upload/add-files"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+        "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+        "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+        "cancellation": "This interaction is the observed cancellation boundary.",
+        "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+        "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+        "evidence": "media/state-02-upload-selection.png @ 13.43s; media/state-03-upload-queued.png @ 23.82s; media/state-04-uploading.png @ 34.20s; https://help.dropbox.com/create-upload/add-files"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "progress feedback",
+        "trigger": "Wait for transfer completion",
+        "response": "Dropbox removes progress state and adds the item to the list",
+        "feedback": "Progress is observable as the distinct upload complete state.",
+        "cancellation": "Leaving during feedback does not count as completion.",
+        "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+        "recovery": "Wait for durable feedback or use the product's retry route.",
+        "evidence": "media/state-04-uploading.png @ 34.20s; media/state-05-upload-complete.png @ 44.58s; https://help.dropbox.com/create-upload/add-files"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+        "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+        "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+        "cancellation": "The user can leave without a false success state.",
+        "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+        "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+        "evidence": "media/state-03-upload-queued.png @ 23.82s; media/state-04-uploading.png @ 34.20s; media/state-05-upload-complete.png @ 44.58s; https://help.dropbox.com/create-upload/add-files"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery and completion",
+        "trigger": "Open the uploaded item",
+        "response": "The cloud copy renders or downloads, proving first storage success",
+        "feedback": "The retained file available state is the completion evidence.",
+        "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+        "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+        "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+        "evidence": "media/state-05-upload-complete.png @ 44.58s; media/state-06-file-available.png @ 54.96s; https://help.dropbox.com/create-upload/add-files"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "new Dropbox user",
+        "goal": "upload a file and see it in cloud storage",
+        "prerequisites": [
+          "Dropbox account",
+          "local file or folder"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Authenticate and open All files",
+            "system_response": "Dropbox shows the file list and upload controls",
+            "state": "file home",
+            "evidence": "media/state-01-file-home.png; media/official-recording.mp4#t=3.053; https://help.dropbox.com/create-upload/add-files"
+          },
+          {
+            "index": 2,
+            "user_action": "Choose Upload files, Upload folder, or drag-and-drop",
+            "system_response": "Dropbox opens the picker or accepts the dropped item",
+            "state": "upload selection",
+            "evidence": "media/state-02-upload-selection.png; media/official-recording.mp4#t=13.435; https://help.dropbox.com/create-upload/add-files"
+          },
+          {
+            "index": 3,
+            "user_action": "Select the file or folder",
+            "system_response": "Dropbox queues the selected content",
+            "state": "upload queued",
+            "evidence": "media/state-03-upload-queued.png; media/official-recording.mp4#t=23.816; https://help.dropbox.com/create-upload/add-files"
+          },
+          {
+            "index": 4,
+            "user_action": "Confirm the destination when prompted",
+            "system_response": "Dropbox starts transfer and shows progress feedback",
+            "state": "uploading",
+            "evidence": "media/state-04-uploading.png; media/official-recording.mp4#t=34.198; https://help.dropbox.com/create-upload/add-files"
+          },
+          {
+            "index": 5,
+            "user_action": "Wait for transfer completion",
+            "system_response": "Dropbox removes progress state and adds the item to the list",
+            "state": "upload complete",
+            "evidence": "media/state-05-upload-complete.png; media/official-recording.mp4#t=44.579; https://help.dropbox.com/create-upload/add-files"
+          },
+          {
+            "index": 6,
+            "user_action": "Open the uploaded item",
+            "system_response": "The cloud copy renders or downloads, proving first storage success",
+            "state": "file available",
+            "evidence": "media/state-06-file-available.png; media/official-recording.mp4#t=54.960; https://help.dropbox.com/create-upload/add-files"
+          }
+        ],
+        "failure_route": [
+          "At upload selection or upload queued, invalid, expired, denied, or missing required input leaves the flow short of file available; evidence: media/state-02-upload-selection.png, media/state-03-upload-queued.png, and https://help.dropbox.com/create-upload/add-files.",
+          "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-upload-queued.png through media/state-05-upload-complete.png."
+        ],
+        "recovery_route": [
+          "Return to the retained upload selection or upload queued requirement, correct or resend the blocking input, and resubmit; evidence: https://help.dropbox.com/create-upload/add-files.",
+          "Continue through the same terminal action until file available is visible in media/state-06-file-available.png and the motion at 54.960s."
+        ],
+        "completion_evidence": "file available retained at media/state-06-file-available.png and media/official-recording.mp4#t=54.960; source https://help.dropbox.com/create-upload/add-files"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-01-file-home.png and media/state-02-upload-selection.png: the current task is presented with persistent on-screen text rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-03-upload-queued.png and media/state-04-uploading.png: primary choices remain spatially associated with their current setup context."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "file home"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 3s (mean abs diff 1.4297/255)",
+        "source_match": {
+          "timestamp_seconds": 3.0,
+          "mean_abs_diff": 1.4297,
+          "sampled_frames": 122,
+          "motion_path": "media/state-01-file-home.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "upload selection"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 13.5s (mean abs diff 1.6445/255)",
+        "source_match": {
+          "timestamp_seconds": 13.5,
+          "mean_abs_diff": 1.6445,
+          "sampled_frames": 122,
+          "motion_path": "media/state-02-upload-selection.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "upload queued"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 22.5s (mean abs diff 1.3555/255)",
+        "source_match": {
+          "timestamp_seconds": 22.5,
+          "mean_abs_diff": 1.3555,
+          "sampled_frames": 122,
+          "motion_path": "media/state-03-upload-queued.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "uploading"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 34s (mean abs diff 1.8555/255)",
+        "source_match": {
+          "timestamp_seconds": 34.0,
+          "mean_abs_diff": 1.8555,
+          "sampled_frames": 122,
+          "motion_path": "media/state-04-uploading.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "upload complete"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 40s (mean abs diff 1.7383/255)",
+        "source_match": {
+          "timestamp_seconds": 39.0,
+          "mean_abs_diff": 1.7383,
+          "sampled_frames": 122,
+          "motion_path": "media/state-05-upload-complete.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "file available"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 55s (mean abs diff 1.793/255)",
+        "source_match": {
+          "timestamp_seconds": 55.0,
+          "mean_abs_diff": 1.793,
+          "sampled_frames": 122,
+          "motion_path": "media/state-06-file-available.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

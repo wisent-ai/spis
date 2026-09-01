@@ -20,234 +20,358 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "Entry surface",
+      "name": "Observed state 1",
       "local_path": "media/state-01-entry.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 14s (mean abs diff 5.3398/255)",
+      "timestamp_seconds": 14.404,
       "width": 640,
       "height": 360,
       "bytes": 32634,
-      "sha256": "8008ec1309e9cab6a4d36cde43030eb7a87b2b31c58da345f8d1d061db79768a",
-      "timestamp_seconds": 14.404,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 14.0,
-        "mean_abs_diff": 5.3398,
-        "sampled_frames": 180
-      }
+      "sha256": "8008ec1309e9cab6a4d36cde43030eb7a87b2b31c58da345f8d1d061db79768a"
     },
     {
-      "name": "Configured in-progress state",
+      "name": "Observed state 2",
       "local_path": "media/state-02-progress.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 45s (mean abs diff 5.7305/255)",
+      "timestamp_seconds": 45.012,
       "width": 640,
       "height": 360,
       "bytes": 29571,
-      "sha256": "729c398c94b9145a78074b8a276367de4270d16d7fa9ee04212075091c2aa8da",
-      "timestamp_seconds": 45.012,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 45.0,
-        "mean_abs_diff": 5.7305,
-        "sampled_frames": 180
-      }
+      "sha256": "729c398c94b9145a78074b8a276367de4270d16d7fa9ee04212075091c2aa8da"
     },
     {
-      "name": "First meaningful result",
+      "name": "Observed state 3",
       "local_path": "media/state-03-result.jpg",
-      "source_motion_path": "frame of media/motion.mp4 at 75.5s (mean abs diff 2.125/255)",
+      "timestamp_seconds": 75.62,
       "width": 640,
       "height": 360,
       "bytes": 29849,
-      "sha256": "c7b0ceafb6302987e8ecba86863b524ce5d683532181aad041673cd6580ad0f4",
-      "timestamp_seconds": 75.62,
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 75.5,
-        "mean_abs_diff": 2.125,
-        "sampled_frames": 180
-      }
+      "sha256": "c7b0ceafb6302987e8ecba86863b524ce5d683532181aad041673cd6580ad0f4"
     }
   ],
-  "interactions": [
-    {
-      "name": "Primary input",
-      "trigger": "Pointer activation of the demonstrated primary control",
-      "response": "The product advances from the entry surface into the task",
-      "feedback": "The active surface changes immediately",
-      "cancellation": "Move away without activating the control",
-      "failure": "No activation leaves the entry state unchanged",
-      "recovery": "Return to the visible control and activate it",
-      "evidence": "media/motion.mp4 14.4-28.8s"
-    },
-    {
-      "name": "Focus and selection",
-      "trigger": "Select the demonstrated item, field, or workspace target",
-      "response": "The target becomes the active context",
-      "feedback": "Selection styling or an active detail surface is visible",
-      "cancellation": "Select a different visible target",
-      "failure": "An unselected target does not advance the workflow",
-      "recovery": "Restore the intended selection",
-      "evidence": "media/motion.mp4 28.8-45.0s"
-    },
-    {
-      "name": "Navigation",
-      "trigger": "Use the demonstrated navigation control",
-      "response": "The central product surface changes while application context remains",
-      "feedback": "Destination content replaces the prior surface",
-      "cancellation": "Use the visible prior destination",
-      "failure": "A wrong destination shows content unrelated to the goal",
-      "recovery": "Navigate back to the demonstrated destination",
-      "evidence": "media/motion.mp4 28.8-45.0s"
-    },
-    {
-      "name": "Configuration",
-      "trigger": "Enter or choose the demonstrated task parameters",
-      "response": "The product reflects the configured values",
-      "feedback": "The in-progress state exposes the chosen configuration",
-      "cancellation": "Remove or replace the current choice",
-      "failure": "An incomplete configuration cannot produce the shown result",
-      "recovery": "Supply the missing demonstrated choice",
-      "evidence": "media/motion.mp4 45.0-59.4s"
-    },
-    {
-      "name": "Confirmation",
-      "trigger": "Activate the demonstrated commit, create, run, send, or save action",
-      "response": "The product starts the operation",
-      "feedback": "The surface transitions toward the result",
-      "cancellation": "Back out before the commit action",
-      "failure": "Committing with the task incomplete leaves a no-result state",
-      "recovery": "Complete the required context and confirm again",
-      "evidence": "media/motion.mp4 59.4-75.6s"
-    },
-    {
-      "name": "Backtracking",
-      "trigger": "Return from the current detail or configuration surface",
-      "response": "The previous product context is restored",
-      "feedback": "Prior navigation and content reappear",
-      "cancellation": "Remain on the current surface",
-      "failure": "Leaving too early abandons the pending result",
-      "recovery": "Re-enter the demonstrated task from the restored context",
-      "evidence": "media/motion.mp4 45.0-59.4s"
-    },
-    {
-      "name": "System feedback",
-      "trigger": "Wait after the demonstrated committed action",
-      "response": "The first meaningful result becomes visible",
-      "feedback": "Result content replaces or augments the in-progress state",
-      "cancellation": "No cancellation is shown after completion",
-      "failure": "Stopping before feedback provides no completion evidence",
-      "recovery": "Wait for the visible result state",
-      "evidence": "media/motion.mp4 75.6-90.0s"
-    },
-    {
-      "name": "Failure and recovery",
-      "trigger": "Attempt to proceed without the demonstrated selection or context",
-      "response": "The workflow remains incomplete rather than reaching the result",
-      "feedback": "The expected result state is absent",
-      "cancellation": "Return to the preceding stable surface",
-      "failure": "Required context is missing",
-      "recovery": "Restore the demonstrated context and repeat the confirmed action",
-      "evidence": "Contrast media/motion.mp4 28.8-45.0s with media/motion.mp4 75.6-90.0s"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time Wise user following the upstream owner's official walkthrough",
-    "goal": "Reach the first meaningful Wise result demonstrated in the official walkthrough",
-    "prerequisites": [
-      "A supported browser",
-      "Network access",
-      "Any account, workspace, or source material shown by the official tutorial"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the product surface used by the official tutorial",
-        "system_response": "The product presents the initial application context",
-        "state": "Entry surface",
-        "evidence": "media/motion.mp4 0.0-14.4s"
-      },
-      {
-        "index": 2,
-        "user_action": "Invoke the tutorial's demonstrated primary control",
-        "system_response": "The product opens the task-specific surface",
-        "state": "Task opened",
-        "evidence": "media/motion.mp4 14.4-28.8s"
-      },
-      {
-        "index": 3,
-        "user_action": "Choose the demonstrated item, destination, or workspace context",
-        "system_response": "The selected target becomes active",
-        "state": "Target selected",
-        "evidence": "media/motion.mp4 28.8-45.0s"
-      },
-      {
-        "index": 4,
-        "user_action": "Provide or adjust the demonstrated configuration",
-        "system_response": "The interface reflects the in-progress configuration",
-        "state": "Configured in-progress state",
-        "evidence": "media/motion.mp4 45.0-59.4s"
-      },
-      {
-        "index": 5,
-        "user_action": "Confirm, create, run, send, or save as demonstrated",
-        "system_response": "The product executes the requested operation",
-        "state": "Operation committed",
-        "evidence": "media/motion.mp4 59.4-75.6s"
-      },
-      {
-        "index": 6,
-        "user_action": "Observe the operation feedback",
-        "system_response": "The official recording shows the first meaningful result",
-        "state": "First meaningful result",
-        "evidence": "media/motion.mp4 75.6-90.0s"
-      }
-    ],
-    "failure_route": [
-      "Without the demonstrated context or selection, the workflow remains before the result state.",
-      "Leaving before the commit or feedback interval provides no completion evidence."
-    ],
-    "recovery_route": [
-      "Return to the stable task surface shown before confirmation.",
-      "Restore the demonstrated selection or configuration, repeat the commit action, and wait for the result feedback."
-    ],
-    "completion_evidence": "media/motion.mp4 75.6-90.0s"
-  },
-  "motion_analysis": {
-    "trigger": "The demonstrated pointer or keyboard action in the official walkthrough",
-    "start_state": "Entry or configured product surface",
-    "end_state": "Visible first meaningful result",
-    "continuity": "Continuous authentic screen recording; no still-image interpolation",
-    "timing_class": "one-to-three-seconds",
-    "feedback": "Selection, surface change, progress, and result visibility in the local motion asset",
-    "interruption_or_reversal": "Backtracking is possible before commit; post-commit reversal is not established by this evidence",
-    "reduced_motion_equivalent": "Not established by the official recording; retained as an accessibility unknown",
-    "timing_description": "Immediate control feedback followed by task-dependent result feedback"
-  },
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
   "accessibility": {
-    "observations": [
-      "The recorded interface uses visible text labels and persistent spatial grouping for the demonstrated path.",
-      "Active context, selection, or result changes are conveyed visually in the retained motion and state frames."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, and live-region announcements were not exposed by the static-source recording.",
       "Complete keyboard traversal and focus order were not established by the recording.",
       "Reduced-motion preference handling and a nonanimated equivalent were not demonstrated."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
-    "fewer than three accessibility observations",
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-entry.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-entry.jpg; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-progress.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-progress.jpg; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-result.jpg; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-result.jpg; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Primary input",
+        "trigger": "Pointer activation of the demonstrated primary control",
+        "response": "The product advances from the entry surface into the task",
+        "feedback": "The active surface changes immediately",
+        "cancellation": "Move away without activating the control",
+        "failure": "No activation leaves the entry state unchanged",
+        "recovery": "Return to the visible control and activate it",
+        "evidence": "media/motion.mp4 14.4-28.8s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus and selection",
+        "trigger": "Select the demonstrated item, field, or workspace target",
+        "response": "The target becomes the active context",
+        "feedback": "Selection styling or an active detail surface is visible",
+        "cancellation": "Select a different visible target",
+        "failure": "An unselected target does not advance the workflow",
+        "recovery": "Restore the intended selection",
+        "evidence": "media/motion.mp4 28.8-45.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Navigation",
+        "trigger": "Use the demonstrated navigation control",
+        "response": "The central product surface changes while application context remains",
+        "feedback": "Destination content replaces the prior surface",
+        "cancellation": "Use the visible prior destination",
+        "failure": "A wrong destination shows content unrelated to the goal",
+        "recovery": "Navigate back to the demonstrated destination",
+        "evidence": "media/motion.mp4 28.8-45.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Configuration",
+        "trigger": "Enter or choose the demonstrated task parameters",
+        "response": "The product reflects the configured values",
+        "feedback": "The in-progress state exposes the chosen configuration",
+        "cancellation": "Remove or replace the current choice",
+        "failure": "An incomplete configuration cannot produce the shown result",
+        "recovery": "Supply the missing demonstrated choice",
+        "evidence": "media/motion.mp4 45.0-59.4s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirmation",
+        "trigger": "Activate the demonstrated commit, create, run, send, or save action",
+        "response": "The product starts the operation",
+        "feedback": "The surface transitions toward the result",
+        "cancellation": "Back out before the commit action",
+        "failure": "Committing with the task incomplete leaves a no-result state",
+        "recovery": "Complete the required context and confirm again",
+        "evidence": "media/motion.mp4 59.4-75.6s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Backtracking",
+        "trigger": "Return from the current detail or configuration surface",
+        "response": "The previous product context is restored",
+        "feedback": "Prior navigation and content reappear",
+        "cancellation": "Remain on the current surface",
+        "failure": "Leaving too early abandons the pending result",
+        "recovery": "Re-enter the demonstrated task from the restored context",
+        "evidence": "media/motion.mp4 45.0-59.4s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "System feedback",
+        "trigger": "Wait after the demonstrated committed action",
+        "response": "The first meaningful result becomes visible",
+        "feedback": "Result content replaces or augments the in-progress state",
+        "cancellation": "No cancellation is shown after completion",
+        "failure": "Stopping before feedback provides no completion evidence",
+        "recovery": "Wait for the visible result state",
+        "evidence": "media/motion.mp4 75.6-90.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Failure and recovery",
+        "trigger": "Attempt to proceed without the demonstrated selection or context",
+        "response": "The workflow remains incomplete rather than reaching the result",
+        "feedback": "The expected result state is absent",
+        "cancellation": "Return to the preceding stable surface",
+        "failure": "Required context is missing",
+        "recovery": "Restore the demonstrated context and repeat the confirmed action",
+        "evidence": "Contrast media/motion.mp4 28.8-45.0s with media/motion.mp4 75.6-90.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time Wise user following the upstream owner's official walkthrough",
+        "goal": "Reach the first meaningful Wise result demonstrated in the official walkthrough",
+        "prerequisites": [
+          "A supported browser",
+          "Network access",
+          "Any account, workspace, or source material shown by the official tutorial"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the product surface used by the official tutorial",
+            "system_response": "The product presents the initial application context",
+            "state": "Entry surface",
+            "evidence": "media/motion.mp4 0.0-14.4s"
+          },
+          {
+            "index": 2,
+            "user_action": "Invoke the tutorial's demonstrated primary control",
+            "system_response": "The product opens the task-specific surface",
+            "state": "Task opened",
+            "evidence": "media/motion.mp4 14.4-28.8s"
+          },
+          {
+            "index": 3,
+            "user_action": "Choose the demonstrated item, destination, or workspace context",
+            "system_response": "The selected target becomes active",
+            "state": "Target selected",
+            "evidence": "media/motion.mp4 28.8-45.0s"
+          },
+          {
+            "index": 4,
+            "user_action": "Provide or adjust the demonstrated configuration",
+            "system_response": "The interface reflects the in-progress configuration",
+            "state": "Configured in-progress state",
+            "evidence": "media/motion.mp4 45.0-59.4s"
+          },
+          {
+            "index": 5,
+            "user_action": "Confirm, create, run, send, or save as demonstrated",
+            "system_response": "The product executes the requested operation",
+            "state": "Operation committed",
+            "evidence": "media/motion.mp4 59.4-75.6s"
+          },
+          {
+            "index": 6,
+            "user_action": "Observe the operation feedback",
+            "system_response": "The official recording shows the first meaningful result",
+            "state": "First meaningful result",
+            "evidence": "media/motion.mp4 75.6-90.0s"
+          }
+        ],
+        "failure_route": [
+          "Without the demonstrated context or selection, the workflow remains before the result state.",
+          "Leaving before the commit or feedback interval provides no completion evidence."
+        ],
+        "recovery_route": [
+          "Return to the stable task surface shown before confirmation.",
+          "Restore the demonstrated selection or configuration, repeat the commit action, and wait for the result feedback."
+        ],
+        "completion_evidence": "media/motion.mp4 75.6-90.0s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "The demonstrated pointer or keyboard action in the official walkthrough",
+        "start_state": "Entry or configured product surface",
+        "end_state": "Visible first meaningful result",
+        "continuity": "Continuous authentic screen recording; no still-image interpolation",
+        "timing_class": "one-to-three-seconds",
+        "feedback": "Selection, surface change, progress, and result visibility in the local motion asset",
+        "interruption_or_reversal": "Backtracking is possible before commit; post-commit reversal is not established by this evidence",
+        "reduced_motion_equivalent": "Not established by the official recording; retained as an accessibility unknown",
+        "timing_description": "Immediate control feedback followed by task-dependent result feedback"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The recorded interface uses visible text labels and persistent spatial grouping for the demonstrated path."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Active context, selection, or result changes are conveyed visually in the retained motion and state frames."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Entry surface"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 14s (mean abs diff 5.3398/255)",
+        "source_match": {
+          "timestamp_seconds": 14.0,
+          "mean_abs_diff": 5.3398,
+          "sampled_frames": 180,
+          "motion_path": "media/state-01-entry.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Configured in-progress state"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 45s (mean abs diff 5.7305/255)",
+        "source_match": {
+          "timestamp_seconds": 45.0,
+          "mean_abs_diff": 5.7305,
+          "sampled_frames": 180,
+          "motion_path": "media/state-02-progress.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "First meaningful result"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 75.5s (mean abs diff 2.125/255)",
+        "source_match": {
+          "timestamp_seconds": 75.5,
+          "mean_abs_diff": 2.125,
+          "sampled_frames": 180,
+          "motion_path": "media/state-03-result.jpg",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

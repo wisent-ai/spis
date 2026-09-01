@@ -20,260 +20,429 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "incident channel open, one sidebar channel row highlighted, app timeline messages listed",
+      "name": "Observed state 1",
       "local_path": "media/state-01.png",
-      "source_motion_path": "frame of media/journey.mp4 at 4.5s (mean abs diff 1.4414/255)",
-      "width": 256,
-      "height": 144,
-      "bytes": 15063,
       "sha256": "11b9a847e9bbd1c12b4fbc7e57ef2ff64e33b2094c4060dee8f3f6b6b7779ba7",
-      "source_match": {
-        "motion_path": "media/journey.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 4.5,
-        "mean_abs_diff": 1.4414,
-        "sampled_frames": 24
-      }
+      "width": 256,
+      "height": 144,
+      "bytes": 15063
     },
     {
-      "name": "same incident channel view half a second earlier, message list unchanged",
+      "name": "Observed state 2",
       "local_path": "media/state-02.png",
-      "source_motion_path": "frame of media/journey.mp4 at 4s (mean abs diff 1.418/255)",
-      "width": 256,
-      "height": 144,
-      "bytes": 15138,
       "sha256": "d1b69931af18487a79de218827dbc21b1bf1625759dfbd5a90c8d0b8b0dadd96",
-      "source_match": {
-        "motion_path": "media/journey.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 4.0,
-        "mean_abs_diff": 1.418,
-        "sampled_frames": 24
-      }
+      "width": 256,
+      "height": 144,
+      "bytes": 15138
     },
     {
-      "name": "same incident channel view redrawn sharper, no interface element changed",
+      "name": "Observed state 3",
       "local_path": "media/state-03.png",
-      "source_motion_path": "frame of media/journey.mp4 at 4.5s (mean abs diff 1.4883/255)",
-      "width": 256,
-      "height": 144,
-      "bytes": 16093,
       "sha256": "61b1d6b746418069092c8170a407d6d5a1eea7068d6601bb28bab53a67c233d6",
-      "source_match": {
-        "motion_path": "media/journey.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 4.5,
-        "mean_abs_diff": 1.4883,
-        "sampled_frames": 24
-      }
+      "width": 256,
+      "height": 144,
+      "bytes": 16093
     },
     {
-      "name": "hover action row visible at the right of one timeline message",
+      "name": "Observed state 4",
       "local_path": "media/state-04.png",
-      "source_motion_path": "frame of media/journey.mp4 at 8s (mean abs diff 1.5586/255)",
-      "width": 256,
-      "height": 144,
-      "bytes": 16936,
       "sha256": "cf2a148f5f86f92b6de1bf0f03b9d8ab1ee32255f6182966c414252bc151c530",
-      "source_match": {
-        "motion_path": "media/journey.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 8.0,
-        "mean_abs_diff": 1.5586,
-        "sampled_frames": 24
-      }
-    },
-    {
-      "name": "message list scrolled down, two further timeline entries and quoted block visible",
-      "local_path": "media/state-05.png",
-      "source_motion_path": "frame of media/journey.mp4 at 11s (mean abs diff 1.4961/255)",
       "width": 256,
       "height": 144,
-      "bytes": 21743,
+      "bytes": 16936
+    },
+    {
+      "name": "Observed state 5",
+      "local_path": "media/state-05.png",
       "sha256": "18655bf947c50eb164942f773850cc5e255949dfe9675f8e0620eaa82e511158",
-      "source_match": {
-        "motion_path": "media/journey.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 11.0,
-        "mean_abs_diff": 1.4961,
-        "sampled_frames": 24
-      }
+      "width": 256,
+      "height": 144,
+      "bytes": 21743
     }
   ],
-  "interactions": [
-    {
-      "name": "open evidence",
-      "trigger": "Open the local motion asset at its beginning.",
-      "response": "The evidence viewer presents the upstream product demonstration at the selected investigation segment.",
-      "feedback": "The first retained frame establishes product and viewer context.",
-      "cancellation": "Close the player or leave it at the initial frame.",
-      "failure": "A missing or unreadable asset prevents the product state from appearing.",
-      "recovery": "Reopen the hash-verified local asset.",
-      "evidence": "media/journey.mp4 and media/state-01.png"
-    },
-    {
-      "name": "start playback",
-      "trigger": "Activate play.",
-      "response": "The playhead advances through authentic upstream product motion.",
-      "feedback": "Successive product-rendered states replace the ready frame.",
-      "cancellation": "Pause returns control without discarding the current position.",
-      "failure": "Playback can remain on the ready frame when interrupted.",
-      "recovery": "Activate play again.",
-      "evidence": "media/journey.mp4, opening segment through media/state-02.png"
-    },
-    {
-      "name": "focus or select",
-      "trigger": "Follow the source recording as its pointer or focus changes the visible evidence surface.",
-      "response": "The product binds a selected summary, row, finding, span, report item, or visual mark to more specific evidence.",
-      "feedback": "The retained overview and paused-detail states visibly differ.",
-      "cancellation": "Pause before accepting the changed selection.",
-      "failure": "A transient frame can make the selected target ambiguous.",
-      "recovery": "Step backward and replay the transition.",
-      "evidence": "media/state-02.png and media/state-03.png"
-    },
-    {
-      "name": "pause for inspection",
-      "trigger": "Pause at the retained detail state.",
-      "response": "Motion stops while the selected product evidence remains visible.",
-      "feedback": "The paused frame is retained as media/state-03.png.",
-      "cancellation": "Resume immediately without seeking.",
-      "failure": "The evidence flow is intentionally interrupted at the paused state.",
-      "recovery": "Resume playback from the same playhead position.",
-      "evidence": "media/journey.mp4 and media/state-03.png"
-    },
-    {
-      "name": "resume after interruption",
-      "trigger": "Activate play after the pause.",
-      "response": "The source journey continues from the retained detail.",
-      "feedback": "The subsequent deeper-evidence frame appears.",
-      "cancellation": "Pause again.",
-      "failure": "Resumption may not advance when the player remains paused.",
-      "recovery": "Activate play and confirm the next visible frame.",
-      "evidence": "media/state-03.png to media/state-04.png"
-    },
-    {
-      "name": "navigate forward",
-      "trigger": "Seek forward within the local recording.",
-      "response": "The viewer reveals a later product state without changing evidence provenance.",
-      "feedback": "The playhead and visible product content advance together.",
-      "cancellation": "Seek back to the prior retained frame.",
-      "failure": "An over-large seek can skip the intended intermediate state.",
-      "recovery": "Use the retained state images or seek backward.",
-      "evidence": "media/journey.mp4 and media/state-04.png"
-    },
-    {
-      "name": "backtrack",
-      "trigger": "Seek backward or return to an earlier retained state.",
-      "response": "The prior evidence context is restored.",
-      "feedback": "The same earlier frame can be compared with the later state.",
-      "cancellation": "Resume forward playback.",
-      "failure": "A viewer without precise seeking can land between documented states.",
-      "recovery": "Open the corresponding local state image directly.",
-      "evidence": "media/state-02.png, media/state-03.png, and media/state-04.png"
-    },
-    {
-      "name": "confirm completion",
-      "trigger": "Continue to the retained completion point.",
-      "response": "A later, more specific product evidence state is visible.",
-      "feedback": "media/state-05.png records the completion evidence.",
-      "cancellation": "Return to any earlier state without altering the source asset.",
-      "failure": "Stopping early leaves the summary claim unsupported by the final retained state.",
-      "recovery": "Resume or seek to the completion frame.",
-      "evidence": "media/journey.mp4 and media/state-05.png"
-    }
-  ],
-  "journey": {
-    "actor": "A reviewer validating a summary claim against product-native evidence",
-    "goal": "Study the automatically assembled incident timeline, where actions, updates, role changes, and key decisions form auditable response evidence.",
-    "prerequisites": [
-      "A local media player capable of the recorded format",
-      "The numbered state images in this reference directory",
-      "No network connection is required after capture"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the local evidence recording.",
-        "system_response": "The authentic upstream demonstration is ready at the chosen investigation segment.",
-        "state": "incident channel open, one sidebar channel row highlighted, app timeline messages listed",
-        "evidence": "media/state-01.png"
-      },
-      {
-        "index": 2,
-        "user_action": "Start playback and orient to the report or evidence surface.",
-        "system_response": "The product moves from its summary context toward an inspectable evidence view.",
-        "state": "same incident channel view half a second earlier, message list unchanged",
-        "evidence": "media/state-02.png"
-      },
-      {
-        "index": 3,
-        "user_action": "Pause when the selected detail becomes visible.",
-        "system_response": "The viewer freezes the product-native state for inspection.",
-        "state": "same incident channel view redrawn sharper, no interface element changed",
-        "evidence": "media/state-03.png"
-      },
-      {
-        "index": 4,
-        "user_action": "Resume and navigate farther into the recorded investigation.",
-        "system_response": "A later product state reveals deeper or differently scoped evidence.",
-        "state": "hover action row visible at the right of one timeline message",
-        "evidence": "media/state-04.png"
-      },
-      {
-        "index": 5,
-        "user_action": "Continue to the retained completion point.",
-        "system_response": "The source journey leaves a final visible state that supports the investigation outcome.",
-        "state": "message list scrolled down, two further timeline entries and quoted block visible",
-        "evidence": "media/state-05.png"
-      }
-    ],
-    "failure_route": [
-      "Playback is paused or a seek skips the intended evidence transition.",
-      "The reviewer does not treat the interrupted or skipped state as completed evidence."
-    ],
-    "recovery_route": [
-      "Resume from the paused position or seek backward.",
-      "Use the retained state images to re-establish context, then continue to media/state-05.png."
-    ],
-    "completion_evidence": "media/journey.mp4 together with media/state-05.png"
-  },
-  "motion_analysis": {
-    "trigger": "Pointer interaction inside the recording: a hover action row appears at the right edge of one timeline message from about 8s, and the message column then scrolls down beginning at 9.58s.",
-    "start_state": "media/state-01.png at 4.5s: the incident channel is open, one row in the dark purple sidebar is a filled blue band, and the message column shows four app-posted timeline entries with red square avatars, the last of them a bordered card carrying labelled rows and two button-like controls.",
-    "end_state": "media/state-05.png at 11s: the same window with the message column scrolled down, the entry that was mid-column now near the top, two further app-posted entries revealed at the bottom, one of them a grey quoted block with a left border, and a second grey pill added beside the channel title.",
-    "continuity": "Continuous inside one window. The sidebar, the channel header and the composer stay in place while only the message column changes. Sampled at 12 fps from 8.5s, the column is unchanged through the 9.500s frame, shifts between the 9.500s and 9.583s frames, shifts again between the 10.000s and 10.083s frames, and is byte-identical from the 10.833s frame to the 11.000s frame.",
-    "timing_class": "one-to-three-seconds",
-    "interruption_or_reversal": null,
-    "feedback": "The selected channel row in the sidebar stays a filled blue band in all five stills; in media/state-04.png the message under the pointer carries both a grey background band and an action row of small icons at its right end; app-posted entries are marked by a red square avatar and a separate short badge beside the author name.",
-    "reduced_motion_equivalent": "The outcome of the motion persists statically: media/state-05.png alone shows the scrolled position and the two later timeline entries, so a reader who never sees the scroll still reaches the later evidence."
-  },
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
   "accessibility": {
-    "observations": [
-      "The selected channel in the left sidebar is marked by a filled blue band spanning the sidebar width, and it is present in all five retained stills, so the current channel is legible from any single frame.",
-      "Contrast measured from media/state-01.png over the frame's eight-colour histogram: dominant #FDFAFD against darkest #1C091C is 18.34:1 by the WCAG relative-luminance formula.",
-      "In media/state-04.png the message under the pointer is marked twice, by a grey background band across the message row and by an action row of icons appearing at its right end, so the hovered target is not carried by a single colour cue.",
-      "Every app-posted timeline entry in the retained stills carries a red square avatar and a separate short badge element beside the author name, so entry origin is marked by two independent visual elements.",
-      "Five discrete local states provide a nonanimated inspection path for the recorded visual sequence."
-    ],
+    "observations": [],
     "unknowns": [
       "The source recording does not expose the product accessibility tree, screen-reader announcements, or exact focus order.",
       "Reduced-motion behavior inside the recorded product is not established by this visual evidence.",
       "Audio narration and caption quality were not used as evidence in this reference.",
       "Whether the icon-only controls in the message composer and in the hover action row carry text labels cannot be read from a 256x144 frame.",
       "The wording of the channel title, the message text and the badge beside each author name is not legible at 256x144, so no label text is claimed here."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
-    "motion analysis missing interruption_or_reversal",
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported motion analysis preserved as unverified source notes; verified observation provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/journey.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
+    "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "open evidence",
+        "trigger": "Open the local motion asset at its beginning.",
+        "response": "The evidence viewer presents the upstream product demonstration at the selected investigation segment.",
+        "feedback": "The first retained frame establishes product and viewer context.",
+        "cancellation": "Close the player or leave it at the initial frame.",
+        "failure": "A missing or unreadable asset prevents the product state from appearing.",
+        "recovery": "Reopen the hash-verified local asset.",
+        "evidence": "media/journey.mp4 and media/state-01.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "start playback",
+        "trigger": "Activate play.",
+        "response": "The playhead advances through authentic upstream product motion.",
+        "feedback": "Successive product-rendered states replace the ready frame.",
+        "cancellation": "Pause returns control without discarding the current position.",
+        "failure": "Playback can remain on the ready frame when interrupted.",
+        "recovery": "Activate play again.",
+        "evidence": "media/journey.mp4, opening segment through media/state-02.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus or select",
+        "trigger": "Follow the source recording as its pointer or focus changes the visible evidence surface.",
+        "response": "The product binds a selected summary, row, finding, span, report item, or visual mark to more specific evidence.",
+        "feedback": "The retained overview and paused-detail states visibly differ.",
+        "cancellation": "Pause before accepting the changed selection.",
+        "failure": "A transient frame can make the selected target ambiguous.",
+        "recovery": "Step backward and replay the transition.",
+        "evidence": "media/state-02.png and media/state-03.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "pause for inspection",
+        "trigger": "Pause at the retained detail state.",
+        "response": "Motion stops while the selected product evidence remains visible.",
+        "feedback": "The paused frame is retained as media/state-03.png.",
+        "cancellation": "Resume immediately without seeking.",
+        "failure": "The evidence flow is intentionally interrupted at the paused state.",
+        "recovery": "Resume playback from the same playhead position.",
+        "evidence": "media/journey.mp4 and media/state-03.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "resume after interruption",
+        "trigger": "Activate play after the pause.",
+        "response": "The source journey continues from the retained detail.",
+        "feedback": "The subsequent deeper-evidence frame appears.",
+        "cancellation": "Pause again.",
+        "failure": "Resumption may not advance when the player remains paused.",
+        "recovery": "Activate play and confirm the next visible frame.",
+        "evidence": "media/state-03.png to media/state-04.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigate forward",
+        "trigger": "Seek forward within the local recording.",
+        "response": "The viewer reveals a later product state without changing evidence provenance.",
+        "feedback": "The playhead and visible product content advance together.",
+        "cancellation": "Seek back to the prior retained frame.",
+        "failure": "An over-large seek can skip the intended intermediate state.",
+        "recovery": "Use the retained state images or seek backward.",
+        "evidence": "media/journey.mp4 and media/state-04.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "backtrack",
+        "trigger": "Seek backward or return to an earlier retained state.",
+        "response": "The prior evidence context is restored.",
+        "feedback": "The same earlier frame can be compared with the later state.",
+        "cancellation": "Resume forward playback.",
+        "failure": "A viewer without precise seeking can land between documented states.",
+        "recovery": "Open the corresponding local state image directly.",
+        "evidence": "media/state-02.png, media/state-03.png, and media/state-04.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirm completion",
+        "trigger": "Continue to the retained completion point.",
+        "response": "A later, more specific product evidence state is visible.",
+        "feedback": "media/state-05.png records the completion evidence.",
+        "cancellation": "Return to any earlier state without altering the source asset.",
+        "failure": "Stopping early leaves the summary claim unsupported by the final retained state.",
+        "recovery": "Resume or seek to the completion frame.",
+        "evidence": "media/journey.mp4 and media/state-05.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A reviewer validating a summary claim against product-native evidence",
+        "goal": "Study the automatically assembled incident timeline, where actions, updates, role changes, and key decisions form auditable response evidence.",
+        "prerequisites": [
+          "A local media player capable of the recorded format",
+          "The numbered state images in this reference directory",
+          "No network connection is required after capture"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the local evidence recording.",
+            "system_response": "The authentic upstream demonstration is ready at the chosen investigation segment.",
+            "state": "incident channel open, one sidebar channel row highlighted, app timeline messages listed",
+            "evidence": "media/state-01.png"
+          },
+          {
+            "index": 2,
+            "user_action": "Start playback and orient to the report or evidence surface.",
+            "system_response": "The product moves from its summary context toward an inspectable evidence view.",
+            "state": "same incident channel view half a second earlier, message list unchanged",
+            "evidence": "media/state-02.png"
+          },
+          {
+            "index": 3,
+            "user_action": "Pause when the selected detail becomes visible.",
+            "system_response": "The viewer freezes the product-native state for inspection.",
+            "state": "same incident channel view redrawn sharper, no interface element changed",
+            "evidence": "media/state-03.png"
+          },
+          {
+            "index": 4,
+            "user_action": "Resume and navigate farther into the recorded investigation.",
+            "system_response": "A later product state reveals deeper or differently scoped evidence.",
+            "state": "hover action row visible at the right of one timeline message",
+            "evidence": "media/state-04.png"
+          },
+          {
+            "index": 5,
+            "user_action": "Continue to the retained completion point.",
+            "system_response": "The source journey leaves a final visible state that supports the investigation outcome.",
+            "state": "message list scrolled down, two further timeline entries and quoted block visible",
+            "evidence": "media/state-05.png"
+          }
+        ],
+        "failure_route": [
+          "Playback is paused or a seek skips the intended evidence transition.",
+          "The reviewer does not treat the interrupted or skipped state as completed evidence."
+        ],
+        "recovery_route": [
+          "Resume from the paused position or seek backward.",
+          "Use the retained state images to re-establish context, then continue to media/state-05.png."
+        ],
+        "completion_evidence": "media/journey.mp4 together with media/state-05.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "motion_analysis[0]",
+      "reason": "canonical motion analysis lacks typed provenance linked to verified raw evidence",
+      "source_value": {
+        "trigger": "Pointer interaction inside the recording: a hover action row appears at the right edge of one timeline message from about 8s, and the message column then scrolls down beginning at 9.58s.",
+        "start_state": "media/state-01.png at 4.5s: the incident channel is open, one row in the dark purple sidebar is a filled blue band, and the message column shows four app-posted timeline entries with red square avatars, the last of them a bordered card carrying labelled rows and two button-like controls.",
+        "end_state": "media/state-05.png at 11s: the same window with the message column scrolled down, the entry that was mid-column now near the top, two further app-posted entries revealed at the bottom, one of them a grey quoted block with a left border, and a second grey pill added beside the channel title.",
+        "continuity": "Continuous inside one window. The sidebar, the channel header and the composer stay in place while only the message column changes. Sampled at 12 fps from 8.5s, the column is unchanged through the 9.500s frame, shifts between the 9.500s and 9.583s frames, shifts again between the 10.000s and 10.083s frames, and is byte-identical from the 10.833s frame to the 11.000s frame.",
+        "timing_class": "one-to-three-seconds",
+        "interruption_or_reversal": null,
+        "feedback": "The selected channel row in the sidebar stays a filled blue band in all five stills; in media/state-04.png the message under the pointer carries both a grey background band and an action row of small icons at its right end; app-posted entries are marked by a red square avatar and a separate short badge beside the author name.",
+        "reduced_motion_equivalent": "The outcome of the motion persists statically: media/state-05.png alone shows the scrolled position and the two later timeline entries, so a reader who never sees the scroll still reaches the later evidence."
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The selected channel in the left sidebar is marked by a filled blue band spanning the sidebar width, and it is present in all five retained stills, so the current channel is legible from any single frame."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Contrast measured from media/state-01.png over the frame's eight-colour histogram: dominant #FDFAFD against darkest #1C091C is 18.34:1 by the WCAG relative-luminance formula."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "In media/state-04.png the message under the pointer is marked twice, by a grey background band across the message row and by an action row of icons appearing at its right end, so the hovered target is not carried by a single colour cue."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[3]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Every app-posted timeline entry in the retained stills carries a red square avatar and a separate short badge element beside the author name, so entry origin is marked by two independent visual elements."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[4]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Five discrete local states provide a nonanimated inspection path for the recorded visual sequence."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "incident channel open, one sidebar channel row highlighted, app timeline messages listed"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/journey.mp4 at 4.5s (mean abs diff 1.4414/255)",
+        "source_match": {
+          "timestamp_seconds": 4.5,
+          "mean_abs_diff": 1.4414,
+          "sampled_frames": 24,
+          "motion_path": "media/state-01.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "same incident channel view half a second earlier, message list unchanged"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/journey.mp4 at 4s (mean abs diff 1.418/255)",
+        "source_match": {
+          "timestamp_seconds": 3.5,
+          "mean_abs_diff": 1.418,
+          "sampled_frames": 24,
+          "motion_path": "media/state-02.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "same incident channel view redrawn sharper, no interface element changed"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/journey.mp4 at 4.5s (mean abs diff 1.4883/255)",
+        "source_match": {
+          "timestamp_seconds": 4.5,
+          "mean_abs_diff": 1.4883,
+          "sampled_frames": 24,
+          "motion_path": "media/state-03.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "hover action row visible at the right of one timeline message"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/journey.mp4 at 8s (mean abs diff 1.5586/255)",
+        "source_match": {
+          "timestamp_seconds": 8.0,
+          "mean_abs_diff": 1.5586,
+          "sampled_frames": 24,
+          "motion_path": "media/state-04.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "message list scrolled down, two further timeline entries and quoted block visible"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/journey.mp4 at 11s (mean abs diff 1.4961/255)",
+        "source_match": {
+          "timestamp_seconds": 11.0,
+          "mean_abs_diff": 1.4961,
+          "sampled_frames": 24,
+          "motion_path": "media/state-05.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

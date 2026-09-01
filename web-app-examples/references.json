@@ -10,352 +10,352 @@
       "name": "Slack",
       "path": "references/01-slack/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 2,
       "name": "Microsoft Teams",
       "path": "references/02-microsoft-teams/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 3,
       "name": "Discord",
       "path": "references/03-discord/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 4,
       "name": "Miro",
       "path": "references/04-miro/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 5,
       "name": "Notion",
       "path": "references/05-notion/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 6,
       "name": "Asana",
       "path": "references/06-asana/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 7,
       "name": "Trello",
       "path": "references/07-trello/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 8,
       "name": "Linear",
       "path": "references/08-linear/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 9,
       "name": "ClickUp",
       "path": "references/09-clickup/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 10,
       "name": "Figma",
       "path": "references/10-figma/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 11,
       "name": "Canva",
       "path": "references/11-canva/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 12,
       "name": "Webflow",
       "path": "references/12-webflow/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 13,
       "name": "Framer",
       "path": "references/13-framer/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 14,
       "name": "Adobe Express",
       "path": "references/14-adobe-express/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 15,
       "name": "Descript",
       "path": "references/15-descript/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 16,
       "name": "GitHub",
       "path": "references/16-github/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 17,
       "name": "GitLab",
       "path": "references/17-gitlab/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 18,
       "name": "Vercel",
       "path": "references/18-vercel/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 19,
       "name": "Netlify",
       "path": "references/19-netlify/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 20,
       "name": "Sentry",
       "path": "references/20-sentry/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 21,
       "name": "Postman",
       "path": "references/21-postman/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 22,
       "name": "Replit",
       "path": "references/22-replit/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 23,
       "name": "Supabase",
       "path": "references/23-supabase/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 24,
       "name": "Cloudflare Dashboard",
       "path": "references/24-cloudflare-dashboard/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 25,
       "name": "Stripe Dashboard",
       "path": "references/25-stripe-dashboard/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 26,
       "name": "QuickBooks Online",
       "path": "references/26-quickbooks-online/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 27,
       "name": "Xero",
       "path": "references/27-xero/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 28,
       "name": "Wise",
       "path": "references/28-wise/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 29,
       "name": "Ramp",
       "path": "references/29-ramp/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 30,
       "name": "Mercury",
       "path": "references/30-mercury/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 31,
       "name": "Zendesk",
       "path": "references/31-zendesk/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 32,
       "name": "Intercom",
       "path": "references/32-intercom/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 33,
       "name": "Freshdesk",
       "path": "references/33-freshdesk/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 34,
       "name": "Jira",
       "path": "references/34-jira/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 35,
       "name": "Airtable",
       "path": "references/35-airtable/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 36,
       "name": "Shopify Admin",
       "path": "references/36-shopify-admin/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 37,
       "name": "Square Dashboard",
       "path": "references/37-square-dashboard/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 38,
       "name": "BigCommerce",
       "path": "references/38-bigcommerce/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 39,
       "name": "Klaviyo",
       "path": "references/39-klaviyo/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 40,
       "name": "Google Drive",
       "path": "references/40-google-drive/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 41,
       "name": "Dropbox",
       "path": "references/41-dropbox/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 42,
       "name": "Todoist",
       "path": "references/42-todoist/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 43,
       "name": "Calendly",
       "path": "references/43-calendly/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 44,
       "name": "Front",
       "path": "references/44-front/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 45,
       "name": "Snowflake Snowsight",
       "path": "references/45-snowflake-snowsight/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 46,
       "name": "Tableau Cloud",
       "path": "references/46-tableau-cloud/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 47,
       "name": "Microsoft Power BI",
       "path": "references/47-microsoft-power-bi/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 48,
       "name": "Looker Studio",
       "path": "references/48-looker-studio/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 49,
       "name": "dbt Cloud",
       "path": "references/49-dbt-cloud/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     },
     {
       "index": 50,
       "name": "Hex",
       "path": "references/50-hex/reference.json",
       "evidence_status": "partial",
-      "evidence_gap_count": 2
+      "evidence_gap_count": 24
     }
   ],
-  "measured_at": "2026-08-19",
+  "measured_at": "2026-09-01",
   "partial_count": 50
 }

@@ -20,245 +20,398 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "Entry state: Open the Logic workspace",
+      "name": "Observed state 1",
       "local_path": "media/state-01.png",
-      "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 4.2109/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 343649,
       "sha256": "532508ec55d0ec0264ea8feb78209c13994473e68ad7d5f2b73045a25e4d96e2",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 1.0,
-        "mean_abs_diff": 4.2109,
-        "sampled_frames": 36
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 343649
     },
     {
-      "name": "Invocation state: Choose or add a track",
+      "name": "Observed state 2",
       "local_path": "media/state-02.png",
-      "source_motion_path": "frame of media/motion.mp4 at 8s (mean abs diff 1.9805/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 164179,
       "sha256": "e5ea64a23352adc04b1655ac2daeee2f310b8579ec5e238c83e7fb8a4c100700",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 8.0,
-        "mean_abs_diff": 1.9805,
-        "sampled_frames": 36
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 164179
     },
     {
-      "name": "Focused intermediate state: Place or select musical material",
+      "name": "Observed state 3",
       "local_path": "media/state-03.png",
-      "source_motion_path": "frame of media/motion.mp4 at 8s (mean abs diff 2.0234/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 166373,
       "sha256": "fe6548e42ea23d467bbdb80750ae970718f24dc13f1dc3ac5fdd6f294fe4c3b3",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 8.0,
-        "mean_abs_diff": 2.0234,
-        "sampled_frames": 36
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 166373
     },
     {
-      "name": "Committed transition: Invoke playback or edit the track",
+      "name": "Observed state 4",
       "local_path": "media/state-04.png",
-      "source_motion_path": "frame of media/motion.mp4 at 8s (mean abs diff 2.0117/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 168181,
       "sha256": "80a5114a0910ad7bdb0b0bda9cd38a7ab29605ef829b618e1ee3695ff99fcd98",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 8.0,
-        "mean_abs_diff": 2.0117,
-        "sampled_frames": 36
-      }
-    },
-    {
-      "name": "First-success result: Observe the project responding in the timeline",
-      "local_path": "media/state-05.png",
-      "source_motion_path": "frame of media/motion.mp4 at 14.5s (mean abs diff 2.0547/255)",
       "width": 960,
       "height": 540,
-      "bytes": 170441,
+      "bytes": 168181
+    },
+    {
+      "name": "Observed state 5",
+      "local_path": "media/state-05.png",
       "sha256": "cf8f8d4cc7e003ba08649472e3f1717691c70d5d333c20ba20007d9f068c274a",
-      "source_match": {
-        "motion_path": "media/motion.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 14.5,
-        "mean_abs_diff": 2.0547,
-        "sampled_frames": 36
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 170441
     }
   ],
-  "interactions": [
-    {
-      "name": "Primary input",
-      "trigger": "Open the Logic workspace",
-      "response": "Logic Pro exposes the entry surface visible in the retained motion.",
-      "feedback": "The first state establishes the active surface before manipulation.",
-      "cancellation": "Stopping here leaves the product unchanged.",
-      "failure": "The goal is not yet complete in the entry state.",
-      "recovery": "Choose or add a track.",
-      "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
-    },
-    {
-      "name": "Focus and selection",
-      "trigger": "Choose or add a track",
-      "response": "A target control, item, document, or workspace becomes the active context.",
-      "feedback": "The next retained state visibly differs and identifies the active path.",
-      "cancellation": "Focus can remain on the previous context without committing.",
-      "failure": "An unintended target would leave the desired result unavailable.",
-      "recovery": "Move focus to the intended visible target and continue.",
-      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
-    },
-    {
-      "name": "Navigation",
-      "trigger": "Place or select musical material",
-      "response": "The recording advances into the product’s intermediate working state.",
-      "feedback": "Content, controls, or selection context changes in place.",
-      "cancellation": "Returning to the preceding surface abandons this intermediate path.",
-      "failure": "Stopping at this state produces no completion evidence.",
-      "recovery": "Invoke playback or edit the track.",
-      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
-    },
-    {
-      "name": "Confirmation",
-      "trigger": "Invoke playback or edit the track",
-      "response": "The selected operation crosses from preparation into a committed transition.",
-      "feedback": "The fourth state records the immediate product response.",
-      "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
-      "failure": "Without confirmation, the fifth-state result does not appear.",
-      "recovery": "Repeat the intended selection and confirm it.",
-      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
-    },
-    {
-      "name": "Completion feedback",
-      "trigger": "Observe the project responding in the timeline",
-      "response": "The recording reaches the first meaningful result for “Create and play a Logic project”.",
-      "feedback": "The fifth local frame is the offline completion evidence.",
-      "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
-      "failure": "Absence of the fifth state means the journey is incomplete.",
-      "recovery": "Replay the recorded sequence from the entry state.",
-      "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
-    },
-    {
-      "name": "Cancellation and backtracking",
-      "trigger": "Leave the path before the committed transition.",
-      "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
-      "feedback": "Earlier extracted states remain distinguishable from the committed result.",
-      "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
-      "failure": "Exiting early does not produce completion evidence.",
-      "recovery": "Re-enter through state 2 and continue to state 4.",
-      "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s; media/state-03.png extracted from media/motion.mp4 at 8.64s"
-    },
-    {
-      "name": "Failure boundary",
-      "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
-      "response": "The meaningful result is absent; the recording still shows the preparation surface.",
-      "feedback": "No fifth-state visual is present before commitment.",
-      "cancellation": "The actor may abandon the incomplete path without claiming success.",
-      "failure": "The observed boundary is non-completion rather than an invented error dialog.",
-      "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
-      "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s; contrasted with media/state-05.png extracted from media/motion.mp4 at 15.84s"
-    },
-    {
-      "name": "Recovery",
-      "trigger": "Resume from the last valid intermediate state.",
-      "response": "The same visible action sequence advances to the retained result.",
-      "feedback": "State 5 supplies positive completion feedback after state 4.",
-      "cancellation": "The actor can still stop before replaying confirmation.",
-      "failure": "A replay that never reaches state 5 remains incomplete.",
-      "recovery": "Replay state 4 and verify state 5.",
-      "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s; media/state-05.png extracted from media/motion.mp4 at 15.84s"
-    }
-  ],
-  "journey": {
-    "actor": "A first-time or returning Logic Pro user",
-    "goal": "Create and play a Logic project",
-    "prerequisites": [
-      "Logic Pro available on macOS or the official recording environment",
-      "The product-specific input, document, account, repository, server, or project shown by the recording when required"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the Logic workspace",
-        "system_response": "Logic Pro advances to the entry state retained in state 1.",
-        "state": "Entry state: Open the Logic workspace",
-        "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
-      },
-      {
-        "index": 2,
-        "user_action": "Choose or add a track",
-        "system_response": "Logic Pro advances to the invocation state retained in state 2.",
-        "state": "Invocation state: Choose or add a track",
-        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
-      },
-      {
-        "index": 3,
-        "user_action": "Place or select musical material",
-        "system_response": "Logic Pro advances to the focused intermediate state retained in state 3.",
-        "state": "Focused intermediate state: Place or select musical material",
-        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
-      },
-      {
-        "index": 4,
-        "user_action": "Invoke playback or edit the track",
-        "system_response": "Logic Pro advances to the committed transition retained in state 4.",
-        "state": "Committed transition: Invoke playback or edit the track",
-        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
-      },
-      {
-        "index": 5,
-        "user_action": "Observe the project responding in the timeline",
-        "system_response": "Logic Pro advances to the first-success result retained in state 5.",
-        "state": "First-success result: Observe the project responding in the timeline",
-        "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
-      }
-    ],
-    "failure_route": [
-      "Stop at the third retained state before confirmation; the meaningful result is absent.",
-      "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
-    ],
-    "recovery_route": [
-      "Return to the second retained state and restore the intended focus or selection.",
-      "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
-    ],
-    "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Active focus or selection is conveyed by a visible change between retained states.",
-      "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown.",
-      "The five extracted frames provide a nonanimated way to inspect the same sequence."
-    ],
+    "observations": [],
     "unknowns": [
       "VoiceOver announcements and accessible names are not audible in the retained excerpt.",
       "Full Keyboard Access order is not proven unless explicitly visible in the recording.",
       "The product’s Reduce Motion behavior and contrast preferences are not demonstrated."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Primary input",
+        "trigger": "Open the Logic workspace",
+        "response": "Logic Pro exposes the entry surface visible in the retained motion.",
+        "feedback": "The first state establishes the active surface before manipulation.",
+        "cancellation": "Stopping here leaves the product unchanged.",
+        "failure": "The goal is not yet complete in the entry state.",
+        "recovery": "Choose or add a track.",
+        "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus and selection",
+        "trigger": "Choose or add a track",
+        "response": "A target control, item, document, or workspace becomes the active context.",
+        "feedback": "The next retained state visibly differs and identifies the active path.",
+        "cancellation": "Focus can remain on the previous context without committing.",
+        "failure": "An unintended target would leave the desired result unavailable.",
+        "recovery": "Move focus to the intended visible target and continue.",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Navigation",
+        "trigger": "Place or select musical material",
+        "response": "The recording advances into the product’s intermediate working state.",
+        "feedback": "Content, controls, or selection context changes in place.",
+        "cancellation": "Returning to the preceding surface abandons this intermediate path.",
+        "failure": "Stopping at this state produces no completion evidence.",
+        "recovery": "Invoke playback or edit the track.",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Confirmation",
+        "trigger": "Invoke playback or edit the track",
+        "response": "The selected operation crosses from preparation into a committed transition.",
+        "feedback": "The fourth state records the immediate product response.",
+        "cancellation": "Cancellation is available only before this retained commitment boundary unless the product provides undo.",
+        "failure": "Without confirmation, the fifth-state result does not appear.",
+        "recovery": "Repeat the intended selection and confirm it.",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Completion feedback",
+        "trigger": "Observe the project responding in the timeline",
+        "response": "The recording reaches the first meaningful result for “Create and play a Logic project”.",
+        "feedback": "The fifth local frame is the offline completion evidence.",
+        "cancellation": "Backtracking after completion requires the product’s normal close, undo, or navigation path; it is not fabricated here.",
+        "failure": "Absence of the fifth state means the journey is incomplete.",
+        "recovery": "Replay the recorded sequence from the entry state.",
+        "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Cancellation and backtracking",
+        "trigger": "Leave the path before the committed transition.",
+        "response": "The visible intermediate surface remains non-destructive until the confirmation boundary shown by the excerpt.",
+        "feedback": "Earlier extracted states remain distinguishable from the committed result.",
+        "cancellation": "Backtracking is represented by returning from state 3 to state 2.",
+        "failure": "Exiting early does not produce completion evidence.",
+        "recovery": "Re-enter through state 2 and continue to state 4.",
+        "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s; media/state-03.png extracted from media/motion.mp4 at 8.64s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Failure boundary",
+        "trigger": "Use an incomplete, unselected, or unconfirmed intermediate state.",
+        "response": "The meaningful result is absent; the recording still shows the preparation surface.",
+        "feedback": "No fifth-state visual is present before commitment.",
+        "cancellation": "The actor may abandon the incomplete path without claiming success.",
+        "failure": "The observed boundary is non-completion rather than an invented error dialog.",
+        "recovery": "Restore the intended selection and cross the recorded confirmation boundary.",
+        "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s; contrasted with media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Recovery",
+        "trigger": "Resume from the last valid intermediate state.",
+        "response": "The same visible action sequence advances to the retained result.",
+        "feedback": "State 5 supplies positive completion feedback after state 4.",
+        "cancellation": "The actor can still stop before replaying confirmation.",
+        "failure": "A replay that never reaches state 5 remains incomplete.",
+        "recovery": "Replay state 4 and verify state 5.",
+        "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s; media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A first-time or returning Logic Pro user",
+        "goal": "Create and play a Logic project",
+        "prerequisites": [
+          "Logic Pro available on macOS or the official recording environment",
+          "The product-specific input, document, account, repository, server, or project shown by the recording when required"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the Logic workspace",
+            "system_response": "Logic Pro advances to the entry state retained in state 1.",
+            "state": "Entry state: Open the Logic workspace",
+            "evidence": "media/state-01.png extracted from media/motion.mp4 at 1.44s"
+          },
+          {
+            "index": 2,
+            "user_action": "Choose or add a track",
+            "system_response": "Logic Pro advances to the invocation state retained in state 2.",
+            "state": "Invocation state: Choose or add a track",
+            "evidence": "media/state-02.png extracted from media/motion.mp4 at 5.04s"
+          },
+          {
+            "index": 3,
+            "user_action": "Place or select musical material",
+            "system_response": "Logic Pro advances to the focused intermediate state retained in state 3.",
+            "state": "Focused intermediate state: Place or select musical material",
+            "evidence": "media/state-03.png extracted from media/motion.mp4 at 8.64s"
+          },
+          {
+            "index": 4,
+            "user_action": "Invoke playback or edit the track",
+            "system_response": "Logic Pro advances to the committed transition retained in state 4.",
+            "state": "Committed transition: Invoke playback or edit the track",
+            "evidence": "media/state-04.png extracted from media/motion.mp4 at 12.24s"
+          },
+          {
+            "index": 5,
+            "user_action": "Observe the project responding in the timeline",
+            "system_response": "Logic Pro advances to the first-success result retained in state 5.",
+            "state": "First-success result: Observe the project responding in the timeline",
+            "evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+          }
+        ],
+        "failure_route": [
+          "Stop at the third retained state before confirmation; the meaningful result is absent.",
+          "Treat a mismatched selection or incomplete input as non-success rather than inferring an unseen error."
+        ],
+        "recovery_route": [
+          "Return to the second retained state and restore the intended focus or selection.",
+          "Repeat the fourth-state confirmation and verify the fifth-state completion evidence."
+        ],
+        "completion_evidence": "media/state-05.png extracted from media/motion.mp4 at 15.84s"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Active focus or selection is conveyed by a visible change between retained states."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The excerpt preserves the native macOS/product visual hierarchy and pointer/keyboard-driven state changes where shown."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The five extracted frames provide a nonanimated way to inspect the same sequence."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Entry state: Open the Logic workspace"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 1s (mean abs diff 4.2109/255)",
+        "source_match": {
+          "timestamp_seconds": 1.0,
+          "mean_abs_diff": 4.2109,
+          "sampled_frames": 36,
+          "motion_path": "media/state-01.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Invocation state: Choose or add a track"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 8s (mean abs diff 1.9805/255)",
+        "source_match": {
+          "timestamp_seconds": 8.0,
+          "mean_abs_diff": 1.9805,
+          "sampled_frames": 36,
+          "motion_path": "media/state-02.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Focused intermediate state: Place or select musical material"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 8s (mean abs diff 2.0234/255)",
+        "source_match": {
+          "timestamp_seconds": 8.0,
+          "mean_abs_diff": 2.0234,
+          "sampled_frames": 36,
+          "motion_path": "media/state-03.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "Committed transition: Invoke playback or edit the track"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 8s (mean abs diff 2.0117/255)",
+        "source_match": {
+          "timestamp_seconds": 8.0,
+          "mean_abs_diff": 2.0117,
+          "sampled_frames": 36,
+          "motion_path": "media/state-04.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "First-success result: Observe the project responding in the timeline"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.mp4 at 14.5s (mean abs diff 2.0547/255)",
+        "source_match": {
+          "timestamp_seconds": 14.5,
+          "mean_abs_diff": 2.0547,
+          "sampled_frames": 36,
+          "motion_path": "media/state-05.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

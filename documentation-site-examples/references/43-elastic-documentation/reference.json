@@ -30,254 +30,401 @@
       "declared_media_kind": "video-webm",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "local-browser-recording"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "landing",
+      "name": "Observed state 1",
       "local_path": "media/state-01-landing.png",
-      "source_motion_path": "frame of media/motion.webm at 1s (mean abs diff 0.2461/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 59026,
       "sha256": "8d65e625c5f7fa6cc1f2b9a5d1e2c6dfc18449c890d4f2519b7c1866b61f4bde",
-      "source_match": {
-        "motion_path": "media/motion.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 1.0,
-        "mean_abs_diff": 0.2461,
-        "sampled_frames": 19
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 59026
     },
     {
-      "name": "search open",
+      "name": "Observed state 2",
       "local_path": "media/state-02-search-open.png",
-      "source_motion_path": "frame of media/motion.webm at 2.5s (mean abs diff 0.1719/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 66573,
       "sha256": "573189d18f6959f106d0aacd03feb3e6ec7b4c6432f617f88942cf343074323e",
-      "source_match": {
-        "motion_path": "media/motion.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 2.5,
-        "mean_abs_diff": 0.1719,
-        "sampled_frames": 19
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 66573
     },
     {
-      "name": "failed search",
+      "name": "Observed state 3",
       "local_path": "media/state-03-failed-search.png",
-      "source_motion_path": "frame of media/motion.webm at 4s (mean abs diff 0.8828/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 70669,
       "sha256": "3e4e7f2a88727d70de5de671f55dec0a7b85663e0e2f7985358815296e7e827d",
-      "source_match": {
-        "motion_path": "media/motion.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 4.0,
-        "mean_abs_diff": 0.8828,
-        "sampled_frames": 19
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 70669
     },
     {
-      "name": "recovered results",
+      "name": "Observed state 4",
       "local_path": "media/state-04-results.png",
-      "source_motion_path": "frame of media/motion.webm at 5.5s (mean abs diff 0.3125/255)",
-      "width": 960,
-      "height": 540,
-      "bytes": 68393,
       "sha256": "df8fdad33a5e409275934b3677e29d9bccbf8c7a0050f048c122747f3a74be7e",
-      "source_match": {
-        "motion_path": "media/motion.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 5.5,
-        "mean_abs_diff": 0.3125,
-        "sampled_frames": 19
-      }
-    },
-    {
-      "name": "first answer",
-      "local_path": "media/state-05-answer.png",
-      "source_motion_path": "frame of media/motion.webm at 8s (mean abs diff 0.4023/255)",
       "width": 960,
       "height": 540,
-      "bytes": 105428,
+      "bytes": 68393
+    },
+    {
+      "name": "Observed state 5",
+      "local_path": "media/state-05-answer.png",
       "sha256": "67446ea815339db962e1937b1b7c1a8d4e5a7f807b9756ec6668c53ce234fe42",
-      "source_match": {
-        "motion_path": "media/motion.webm",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 8.0,
-        "mean_abs_diff": 0.4023,
-        "sampled_frames": 19
-      }
+      "width": 960,
+      "height": 540,
+      "bytes": 105428
     }
   ],
-  "interactions": [
-    {
-      "name": "Load documentation",
-      "trigger": "Navigate to the official documentation URL",
-      "response": "The live documentation landing/article surface renders",
-      "feedback": "Title and content settle before search",
-      "cancellation": "Navigation may be stopped before completion",
-      "failure": "Origin or network failure prevents the landing state",
-      "recovery": "Reload the same canonical URL",
-      "evidence": "media/state-01-landing.png and opening of media/motion.webm"
-    },
-    {
-      "name": "Open search or learn route",
-      "trigger": "Activate the visible native search control, keyboard convention, or official product search/learn route",
-      "response": "A product-owned query/result surface appears",
-      "feedback": "The surface is visibly distinct from landing",
-      "cancellation": "Leave the surface without choosing an answer",
-      "failure": "Some book-style sites expose no visible inline search field",
-      "recovery": "Use the same product’s official search/result or concept navigation route",
-      "evidence": "media/state-02-search-open.png and media/motion.webm"
-    },
-    {
-      "name": "Focus query input",
-      "trigger": "Target the visible query control when the product exposes one",
-      "response": "The product accepts text input or a query-bearing official route",
-      "feedback": "Query/result state becomes visible",
-      "cancellation": "Clear or replace the query before confirmation",
-      "failure": "A hidden or absent field cannot accept direct text",
-      "recovery": "Continue through the official product result/learn route retained in the recording",
-      "evidence": "media/state-02-search-open.png and media/motion.webm"
-    },
-    {
-      "name": "Enter impossible query",
-      "trigger": "Enter or request zzwissent-no-result-7f3c9",
-      "response": "The product returns an unmatched/failed lookup state",
-      "feedback": "The failed state is retained locally",
-      "cancellation": "Clear or replace the term",
-      "failure": "No useful answer exists for the deliberately impossible query",
-      "recovery": "Replace it with “search”",
-      "evidence": "media/state-03-failed-search.png and media/motion.webm"
-    },
-    {
-      "name": "Cancel failed query",
-      "trigger": "Clear or leave the impossible-query route",
-      "response": "The failed lookup is abandoned",
-      "feedback": "The next product state no longer represents the impossible term",
-      "cancellation": "Remain on the documentation surface without selection",
-      "failure": "Stale no-result feedback may persist",
-      "recovery": "Load the recovered query/result state",
-      "evidence": "transition from media/state-03-failed-search.png to media/state-04-results.png"
-    },
-    {
-      "name": "Submit learn query",
-      "trigger": "Enter or request “search”",
-      "response": "The product renders relevant documentation feedback",
-      "feedback": "Recovered candidate content is visible",
-      "cancellation": "Revise the term before opening an answer",
-      "failure": "A narrow query can yield no exact match",
-      "recovery": "Use the broader recorded product term and official route",
-      "evidence": "media/state-04-results.png and media/motion.webm"
-    },
-    {
-      "name": "Inspect result feedback",
-      "trigger": "Wait for the product result/learn surface to settle",
-      "response": "Candidate content remains stable for inspection",
-      "feedback": "The recovered result state is frozen in a local frame",
-      "cancellation": "Return to query/navigation to revise the route",
-      "failure": "An empty result surface is not treated as success",
-      "recovery": "Follow the captured canonical concept route",
-      "evidence": "media/state-04-results.png and media/motion.webm"
-    },
-    {
-      "name": "Open first answer",
-      "trigger": "Activate or navigate from the recovered product route to the first relevant answer",
-      "response": "The official documentation answer renders",
-      "feedback": "URL/title/content change visibly",
-      "cancellation": "Browser Back is the available post-navigation return path",
-      "failure": "A route may land on missing or generic content",
-      "recovery": "Return to results and choose the captured canonical answer route",
-      "evidence": "media/state-05-answer.png and closing of media/motion.webm"
-    }
-  ],
-  "journey": {
-    "actor": "A public documentation visitor looking for one product concept",
-    "goal": "Reach the first useful Elastic Documentation answer for “search”",
-    "prerequisites": [
-      "Network access to the official public documentation origin",
-      "A Weles-managed real browser on the Stado-selected dedicated host",
-      "No account unless the public origin itself imposes a gate"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Open the official documentation URL",
-        "system_response": "Render the public product landing/article surface",
-        "state": "landing",
-        "evidence": "media/state-01-landing.png"
-      },
-      {
-        "index": 2,
-        "user_action": "Invoke the product search or official learn route",
-        "system_response": "Expose a query/result/navigation surface",
-        "state": "search or learn open",
-        "evidence": "media/state-02-search-open.png"
-      },
-      {
-        "index": 3,
-        "user_action": "Request the deliberately impossible term zzwissent-no-result-7f3c9",
-        "system_response": "Return no useful answer",
-        "state": "failed search",
-        "evidence": "media/state-03-failed-search.png"
-      },
-      {
-        "index": 4,
-        "user_action": "Cancel the failed route and request “search”",
-        "system_response": "Recover with relevant documentation feedback",
-        "state": "recovered results",
-        "evidence": "media/state-04-results.png"
-      },
-      {
-        "index": 5,
-        "user_action": "Inspect the first relevant product-owned route",
-        "system_response": "Keep the candidate state stable for confirmation",
-        "state": "result ready",
-        "evidence": "media/state-04-results.png and media/motion.webm"
-      },
-      {
-        "index": 6,
-        "user_action": "Open the captured canonical answer",
-        "system_response": "Render the first useful documentation answer",
-        "state": "first answer",
-        "evidence": "media/state-05-answer.png and media/motion.webm"
-      }
-    ],
-    "failure_route": [
-      "Request the deliberately impossible term zzwissent-no-result-7f3c9",
-      "Observe and retain the no-useful-answer state"
-    ],
-    "recovery_route": [
-      "Abandon the failed term and request “search”",
-      "Inspect the recovered product result/learn state",
-      "Open the captured canonical answer"
-    ],
-    "completion_evidence": "media/state-05-answer.png plus the closing transition in media/motion.webm"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "The captured query/navigation path was operable through focused controls or official product links without drag-only gestures.",
-      "Failure, recovery, and answer feedback remained visually persistent long enough to retain inspectable frames."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, live-region announcements, and reading order were not audited.",
       "Focus styling and focus restoration after cancellation were not independently audited.",
       "Reduced motion, 400% zoom reflow, high contrast, and switch-device access were not tested."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "local-browser-recording"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/motion.webm has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-landing.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-landing.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-search-open.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-search-open.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-failed-search.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-failed-search.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-results.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-results.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-answer.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-answer.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for document-navigation profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for document-navigation profile",
     "motion analysis absent",
-    "fewer than three accessibility observations",
+    "fewer than 3 accessibility observations for document-navigation profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Load documentation",
+        "trigger": "Navigate to the official documentation URL",
+        "response": "The live documentation landing/article surface renders",
+        "feedback": "Title and content settle before search",
+        "cancellation": "Navigation may be stopped before completion",
+        "failure": "Origin or network failure prevents the landing state",
+        "recovery": "Reload the same canonical URL",
+        "evidence": "media/state-01-landing.png and opening of media/motion.webm"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Open search or learn route",
+        "trigger": "Activate the visible native search control, keyboard convention, or official product search/learn route",
+        "response": "A product-owned query/result surface appears",
+        "feedback": "The surface is visibly distinct from landing",
+        "cancellation": "Leave the surface without choosing an answer",
+        "failure": "Some book-style sites expose no visible inline search field",
+        "recovery": "Use the same product’s official search/result or concept navigation route",
+        "evidence": "media/state-02-search-open.png and media/motion.webm"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Focus query input",
+        "trigger": "Target the visible query control when the product exposes one",
+        "response": "The product accepts text input or a query-bearing official route",
+        "feedback": "Query/result state becomes visible",
+        "cancellation": "Clear or replace the query before confirmation",
+        "failure": "A hidden or absent field cannot accept direct text",
+        "recovery": "Continue through the official product result/learn route retained in the recording",
+        "evidence": "media/state-02-search-open.png and media/motion.webm"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Enter impossible query",
+        "trigger": "Enter or request zzwissent-no-result-7f3c9",
+        "response": "The product returns an unmatched/failed lookup state",
+        "feedback": "The failed state is retained locally",
+        "cancellation": "Clear or replace the term",
+        "failure": "No useful answer exists for the deliberately impossible query",
+        "recovery": "Replace it with “search”",
+        "evidence": "media/state-03-failed-search.png and media/motion.webm"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Cancel failed query",
+        "trigger": "Clear or leave the impossible-query route",
+        "response": "The failed lookup is abandoned",
+        "feedback": "The next product state no longer represents the impossible term",
+        "cancellation": "Remain on the documentation surface without selection",
+        "failure": "Stale no-result feedback may persist",
+        "recovery": "Load the recovered query/result state",
+        "evidence": "transition from media/state-03-failed-search.png to media/state-04-results.png"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Submit learn query",
+        "trigger": "Enter or request “search”",
+        "response": "The product renders relevant documentation feedback",
+        "feedback": "Recovered candidate content is visible",
+        "cancellation": "Revise the term before opening an answer",
+        "failure": "A narrow query can yield no exact match",
+        "recovery": "Use the broader recorded product term and official route",
+        "evidence": "media/state-04-results.png and media/motion.webm"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Inspect result feedback",
+        "trigger": "Wait for the product result/learn surface to settle",
+        "response": "Candidate content remains stable for inspection",
+        "feedback": "The recovered result state is frozen in a local frame",
+        "cancellation": "Return to query/navigation to revise the route",
+        "failure": "An empty result surface is not treated as success",
+        "recovery": "Follow the captured canonical concept route",
+        "evidence": "media/state-04-results.png and media/motion.webm"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "Open first answer",
+        "trigger": "Activate or navigate from the recovered product route to the first relevant answer",
+        "response": "The official documentation answer renders",
+        "feedback": "URL/title/content change visibly",
+        "cancellation": "Browser Back is the available post-navigation return path",
+        "failure": "A route may land on missing or generic content",
+        "recovery": "Return to results and choose the captured canonical answer route",
+        "evidence": "media/state-05-answer.png and closing of media/motion.webm"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "A public documentation visitor looking for one product concept",
+        "goal": "Reach the first useful Elastic Documentation answer for “search”",
+        "prerequisites": [
+          "Network access to the official public documentation origin",
+          "A Weles-managed real browser on the Stado-selected dedicated host",
+          "No account unless the public origin itself imposes a gate"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Open the official documentation URL",
+            "system_response": "Render the public product landing/article surface",
+            "state": "landing",
+            "evidence": "media/state-01-landing.png"
+          },
+          {
+            "index": 2,
+            "user_action": "Invoke the product search or official learn route",
+            "system_response": "Expose a query/result/navigation surface",
+            "state": "search or learn open",
+            "evidence": "media/state-02-search-open.png"
+          },
+          {
+            "index": 3,
+            "user_action": "Request the deliberately impossible term zzwissent-no-result-7f3c9",
+            "system_response": "Return no useful answer",
+            "state": "failed search",
+            "evidence": "media/state-03-failed-search.png"
+          },
+          {
+            "index": 4,
+            "user_action": "Cancel the failed route and request “search”",
+            "system_response": "Recover with relevant documentation feedback",
+            "state": "recovered results",
+            "evidence": "media/state-04-results.png"
+          },
+          {
+            "index": 5,
+            "user_action": "Inspect the first relevant product-owned route",
+            "system_response": "Keep the candidate state stable for confirmation",
+            "state": "result ready",
+            "evidence": "media/state-04-results.png and media/motion.webm"
+          },
+          {
+            "index": 6,
+            "user_action": "Open the captured canonical answer",
+            "system_response": "Render the first useful documentation answer",
+            "state": "first answer",
+            "evidence": "media/state-05-answer.png and media/motion.webm"
+          }
+        ],
+        "failure_route": [
+          "Request the deliberately impossible term zzwissent-no-result-7f3c9",
+          "Observe and retain the no-useful-answer state"
+        ],
+        "recovery_route": [
+          "Abandon the failed term and request “search”",
+          "Inspect the recovered product result/learn state",
+          "Open the captured canonical answer"
+        ],
+        "completion_evidence": "media/state-05-answer.png plus the closing transition in media/motion.webm"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The captured query/navigation path was operable through focused controls or official product links without drag-only gestures."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Failure, recovery, and answer feedback remained visually persistent long enough to retain inspectable frames."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "landing"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.webm at 1s (mean abs diff 0.2461/255)",
+        "source_match": {
+          "timestamp_seconds": 1.0,
+          "mean_abs_diff": 0.2461,
+          "sampled_frames": 19,
+          "motion_path": "media/state-01-landing.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "search open"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.webm at 2.5s (mean abs diff 0.1719/255)",
+        "source_match": {
+          "timestamp_seconds": 2.5,
+          "mean_abs_diff": 0.1719,
+          "sampled_frames": 19,
+          "motion_path": "media/state-02-search-open.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "failed search"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.webm at 4s (mean abs diff 0.8828/255)",
+        "source_match": {
+          "timestamp_seconds": 4.0,
+          "mean_abs_diff": 0.8828,
+          "sampled_frames": 19,
+          "motion_path": "media/state-03-failed-search.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "recovered results"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.webm at 5.5s (mean abs diff 0.3125/255)",
+        "source_match": {
+          "timestamp_seconds": 5.5,
+          "mean_abs_diff": 0.3125,
+          "sampled_frames": 19,
+          "motion_path": "media/state-04-results.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "first answer"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/motion.webm at 8s (mean abs diff 0.4023/255)",
+        "source_match": {
+          "timestamp_seconds": 8.0,
+          "mean_abs_diff": 0.4023,
+          "sampled_frames": 19,
+          "motion_path": "media/state-05-answer.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }

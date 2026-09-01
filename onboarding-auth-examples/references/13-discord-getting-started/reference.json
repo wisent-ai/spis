@@ -20,269 +20,437 @@
       "declared_media_kind": "video-mp4",
       "measured": true,
       "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "upstream-owner-media"
+      "provenance_class": "unverified-source-media"
     }
   ],
   "states": [
     {
-      "name": "registration",
+      "name": "Observed state 1",
       "local_path": "media/state-01-registration.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 0s (mean abs diff 9.7188/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 36014,
       "sha256": "7813f32a785848cb05f6a5d6915b8e0b4739fdaaaac5f0b165b88c2e20af527e",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 0.0,
-        "mean_abs_diff": 9.7188,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 36014
     },
     {
-      "name": "identity verified",
+      "name": "Observed state 2",
       "local_path": "media/state-02-identity-verified.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.5781/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 60715,
       "sha256": "09f0868be59828ecb38c5266166f7b255b2e139f74ccb9adc94ad6ab9217aa00",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 19.5,
-        "mean_abs_diff": 1.5781,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 60715
     },
     {
-      "name": "server route",
+      "name": "Observed state 3",
       "local_path": "media/state-03-server-route.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 1.9531/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 44143,
       "sha256": "09dadeea180fb85cd8ba25f350f34131b8b53f56ab91c5cae92a0d00d097ab5c",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 35.0,
-        "mean_abs_diff": 1.9531,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 44143
     },
     {
-      "name": "server active",
+      "name": "Observed state 4",
       "local_path": "media/state-04-server-active.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 1.6523/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 81469,
       "sha256": "45b736ac26612ff7623f310f7eddb23a1f0c1728bb5816135d6208852aff7ead",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 50.0,
-        "mean_abs_diff": 1.6523,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 81469
     },
     {
-      "name": "identity configured",
+      "name": "Observed state 5",
       "local_path": "media/state-05-identity-configured.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 67s (mean abs diff 1.668/255)",
-      "width": 640,
-      "height": 360,
-      "bytes": 57000,
       "sha256": "3363fc658f75a13ca81bcf9a6f2b4ae5d3b4f90de05a04e1f3b38b1378b9ecd6",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 67.0,
-        "mean_abs_diff": 1.668,
-        "sampled_frames": 180
-      }
-    },
-    {
-      "name": "first message",
-      "local_path": "media/state-06-first-message.png",
-      "source_motion_path": "frame of media/official-recording.mp4 at 80.5s (mean abs diff 1.8594/255)",
       "width": 640,
       "height": 360,
-      "bytes": 88785,
+      "bytes": 57000
+    },
+    {
+      "name": "Observed state 6",
+      "local_path": "media/state-06-first-message.png",
       "sha256": "3f54ced8ca07a894c35a5421a9654451aa6b3ec08b0aa02ad3733f2ad98cd025",
-      "source_match": {
-        "motion_path": "media/official-recording.mp4",
-        "method": "16x16 grayscale mean-absolute-difference frame search",
-        "timestamp_seconds": 80.5,
-        "mean_abs_diff": 1.8594,
-        "sampled_frames": 180
-      }
+      "width": 640,
+      "height": 360,
+      "bytes": 88785
     }
   ],
-  "interactions": [
-    {
-      "name": "primary input",
-      "trigger": "Choose Register and enter account details",
-      "response": "Discord validates the account form",
-      "feedback": "The retained registration state makes the available next action visible.",
-      "cancellation": "Closing or leaving before submission produces no completion claim.",
-      "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
-      "recovery": "Restore the prerequisite and repeat the same entry action.",
-      "evidence": "media/state-01-registration.png @ 4.50s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-    },
-    {
-      "name": "focus and selection",
-      "trigger": "Complete the email verification challenge",
-      "response": "Discord marks the account verified and returns to the app",
-      "feedback": "The recording advances to identity verified and retains the selected context.",
-      "cancellation": "Back returns to the preceding entry context when the product exposes it.",
-      "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
-      "recovery": "Correct, resend, or reselect and submit again.",
-      "evidence": "media/state-01-registration.png @ 4.50s; media/state-02-identity-verified.png @ 19.79s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-    },
-    {
-      "name": "navigation",
-      "trigger": "Choose to join a server or create one",
-      "response": "Discord opens invitation resolution or server templates",
-      "feedback": "The navigation result is visible as server route.",
-      "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
-      "failure": "A denied authorization or missing required value leaves the destination unavailable.",
-      "recovery": "Return to the preserved requirement and satisfy it before continuing.",
-      "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-server-route.png @ 35.07s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-    },
-    {
-      "name": "confirmation",
-      "trigger": "Accept the invitation or name the new server",
-      "response": "Discord adds the server to navigation",
-      "feedback": "The official recording shows the confirmed server active state.",
-      "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
-      "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
-      "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
-      "evidence": "media/state-03-server-route.png @ 35.07s; media/state-04-server-active.png @ 50.36s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-    },
-    {
-      "name": "cancellation and backtracking",
-      "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
-      "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
-      "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
-      "cancellation": "This interaction is the observed cancellation boundary.",
-      "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
-      "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
-      "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-server-route.png @ 35.07s; media/state-04-server-active.png @ 50.36s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-    },
-    {
-      "name": "progress feedback",
-      "trigger": "Set optional profile or server identity",
-      "response": "Discord updates visible identity without blocking chat",
-      "feedback": "Progress is observable as the distinct identity configured state.",
-      "cancellation": "Leaving during feedback does not count as completion.",
-      "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
-      "recovery": "Wait for durable feedback or use the product's retry route.",
-      "evidence": "media/state-04-server-active.png @ 50.36s; media/state-05-identity-configured.png @ 65.65s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-    },
-    {
-      "name": "failure",
-      "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
-      "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
-      "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
-      "cancellation": "The user can leave without a false success state.",
-      "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
-      "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
-      "evidence": "media/state-03-server-route.png @ 35.07s; media/state-04-server-active.png @ 50.36s; media/state-05-identity-configured.png @ 65.65s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-    },
-    {
-      "name": "recovery and completion",
-      "trigger": "Send the first channel message",
-      "response": "The message appears in the server, proving first participation",
-      "feedback": "The retained first message state is the completion evidence.",
-      "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
-      "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
-      "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
-      "evidence": "media/state-05-identity-configured.png @ 65.65s; media/state-06-first-message.png @ 80.94s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-    }
-  ],
-  "journey": {
-    "actor": "new Discord member",
-    "goal": "register and participate in the first server",
-    "prerequisites": [
-      "email address",
-      "server invitation or server concept"
-    ],
-    "steps": [
-      {
-        "index": 1,
-        "user_action": "Choose Register and enter account details",
-        "system_response": "Discord validates the account form",
-        "state": "registration",
-        "evidence": "media/state-01-registration.png; media/official-recording.mp4#t=4.497; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-      },
-      {
-        "index": 2,
-        "user_action": "Complete the email verification challenge",
-        "system_response": "Discord marks the account verified and returns to the app",
-        "state": "identity verified",
-        "evidence": "media/state-02-identity-verified.png; media/official-recording.mp4#t=19.785; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-      },
-      {
-        "index": 3,
-        "user_action": "Choose to join a server or create one",
-        "system_response": "Discord opens invitation resolution or server templates",
-        "state": "server route",
-        "evidence": "media/state-03-server-route.png; media/official-recording.mp4#t=35.074; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-      },
-      {
-        "index": 4,
-        "user_action": "Accept the invitation or name the new server",
-        "system_response": "Discord adds the server to navigation",
-        "state": "server active",
-        "evidence": "media/state-04-server-active.png; media/official-recording.mp4#t=50.362; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-      },
-      {
-        "index": 5,
-        "user_action": "Set optional profile or server identity",
-        "system_response": "Discord updates visible identity without blocking chat",
-        "state": "identity configured",
-        "evidence": "media/state-05-identity-configured.png; media/official-recording.mp4#t=65.651; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-      },
-      {
-        "index": 6,
-        "user_action": "Send the first channel message",
-        "system_response": "The message appears in the server, proving first participation",
-        "state": "first message",
-        "evidence": "media/state-06-first-message.png; media/official-recording.mp4#t=80.940; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-      }
-    ],
-    "failure_route": [
-      "At identity verified or server route, invalid, expired, denied, or missing required input leaves the flow short of first message; evidence: media/state-02-identity-verified.png, media/state-03-server-route.png, and https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started.",
-      "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-server-route.png through media/state-05-identity-configured.png."
-    ],
-    "recovery_route": [
-      "Return to the retained identity verified or server route requirement, correct or resend the blocking input, and resubmit; evidence: https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started.",
-      "Continue through the same terminal action until first message is visible in media/state-06-first-message.png and the motion at 80.940s."
-    ],
-    "completion_evidence": "first message retained at media/state-06-first-message.png and media/official-recording.mp4#t=80.940; source https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
-  },
+  "interactions": [],
+  "journey": null,
   "accessibility": {
-    "observations": [
-      "Visual observation from media/state-01-registration.png and media/state-02-identity-verified.png: the current task is presented with persistent on-screen text rather than motion alone.",
-      "Visual observation from media/state-03-server-route.png and media/state-04-server-active.png: primary choices remain spatially associated with their current setup context.",
-      "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
-    ],
+    "observations": [],
     "unknowns": [
       "Screen-reader names, roles, state announcements, and error associations cannot be established from the retained official recording.",
       "Keyboard-only focus order and focus restoration after each transition were not exposed by the recording.",
       "Text scaling, zoom reflow, voice input, one-time-code autofill, and password-manager behavior remain unverified.",
       "The recording does not expose a product-level reduced-motion preference; the extracted state sequence is the retained nonanimated equivalent."
-    ]
+    ],
+    "measured": false
   },
   "motion_provenance": [
-    "upstream-owner-media"
+    "unverified-source-media"
   ],
   "evidence_gaps": [
+    "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
+    "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
+    "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
+    "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
+    "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
+    "motion provenance unverified: media/official-recording.mp4 has no typed verified crawl or owner observation",
+    "state semantic name unverified: media/state-01-registration.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-01-registration.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-02-identity-verified.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-02-identity-verified.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-03-server-route.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-03-server-route.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-04-server-active.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-04-server-active.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-05-identity-configured.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-05-identity-configured.png; no threshold match against independently verified motion",
+    "state semantic name unverified: media/state-06-first-message.png; pixels and digest prove only an observed frame",
+    "state source relationship unproven: media/state-06-first-message.png; no threshold match against independently verified motion",
+    "journey exposes fewer than 5 observed steps for interactive-product profile",
+    "journey missing actor",
+    "journey missing goal",
+    "journey missing prerequisites",
+    "journey missing failure_route",
+    "journey missing recovery_route",
+    "journey missing completion_evidence",
+    "fewer than 8 mapped interactions for interactive-product profile",
     "motion analysis absent",
+    "fewer than 3 accessibility observations for interactive-product profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-08-19"
+  "measured_at": "2026-09-01",
+  "motion_analysis": null,
+  "unverified_source_notes": [
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[0]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "primary input",
+        "trigger": "Choose Register and enter account details",
+        "response": "Discord validates the account form",
+        "feedback": "The retained registration state makes the available next action visible.",
+        "cancellation": "Closing or leaving before submission produces no completion claim.",
+        "failure": "Unavailable identity, permission, or prerequisite keeps the user at entry.",
+        "recovery": "Restore the prerequisite and repeat the same entry action.",
+        "evidence": "media/state-01-registration.png @ 4.50s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[1]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "focus and selection",
+        "trigger": "Complete the email verification challenge",
+        "response": "Discord marks the account verified and returns to the app",
+        "feedback": "The recording advances to identity verified and retains the selected context.",
+        "cancellation": "Back returns to the preceding entry context when the product exposes it.",
+        "failure": "An invalid, expired, or unavailable selection does not advance to the next recorded state.",
+        "recovery": "Correct, resend, or reselect and submit again.",
+        "evidence": "media/state-01-registration.png @ 4.50s; media/state-02-identity-verified.png @ 19.79s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[2]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "navigation",
+        "trigger": "Choose to join a server or create one",
+        "response": "Discord opens invitation resolution or server templates",
+        "feedback": "The navigation result is visible as server route.",
+        "cancellation": "The prior state remains the safe return target; optional work may be skipped only when shown.",
+        "failure": "A denied authorization or missing required value leaves the destination unavailable.",
+        "recovery": "Return to the preserved requirement and satisfy it before continuing.",
+        "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-server-route.png @ 35.07s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[3]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "confirmation",
+        "trigger": "Accept the invitation or name the new server",
+        "response": "Discord adds the server to navigation",
+        "feedback": "The official recording shows the confirmed server active state.",
+        "cancellation": "A cancel or back action before confirmation does not create the terminal result.",
+        "failure": "Rejected confirmation or validation keeps the flow incomplete with the current requirement visible.",
+        "recovery": "Correct the blocking value or repeat authorization, then confirm again.",
+        "evidence": "media/state-03-server-route.png @ 35.07s; media/state-04-server-active.png @ 50.36s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[4]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "cancellation and backtracking",
+        "trigger": "Use Back, Cancel, Decline, or the product's explicit optional Skip route before the terminal action.",
+        "response": "The flow returns to the preceding requirement or leaves optional work pending rather than fabricating success.",
+        "feedback": "The current-step surface and absence of terminal evidence make the interruption visible.",
+        "cancellation": "This interaction is the observed cancellation boundary.",
+        "failure": "Closing an unsaved or verification-pending step can leave onboarding incomplete.",
+        "recovery": "Re-enter from the documented entry point and resume the last retained requirement.",
+        "evidence": "media/state-02-identity-verified.png @ 19.79s; media/state-03-server-route.png @ 35.07s; media/state-04-server-active.png @ 50.36s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[5]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "progress feedback",
+        "trigger": "Set optional profile or server identity",
+        "response": "Discord updates visible identity without blocking chat",
+        "feedback": "Progress is observable as the distinct identity configured state.",
+        "cancellation": "Leaving during feedback does not count as completion.",
+        "failure": "No success is claimed while the product still reports pending, building, verifying, uploading, or incomplete work.",
+        "recovery": "Wait for durable feedback or use the product's retry route.",
+        "evidence": "media/state-04-server-active.png @ 50.36s; media/state-05-identity-configured.png @ 65.65s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[6]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "failure",
+        "trigger": "Submit missing, invalid, expired, denied, or otherwise unacceptable required input at the current requirement.",
+        "response": "The product remains short of the terminal state and exposes the requirement or failure feedback.",
+        "feedback": "The current state is retained; values already accepted by the product are not described as completed again.",
+        "cancellation": "The user can leave without a false success state.",
+        "failure": "The first-success outcome is unavailable until the blocking requirement is resolved.",
+        "recovery": "Correct the value, resend the challenge, reconnect the provider, or retry the operation as appropriate.",
+        "evidence": "media/state-03-server-route.png @ 35.07s; media/state-04-server-active.png @ 50.36s; media/state-05-identity-configured.png @ 65.65s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "interactions[7]",
+      "reason": "canonical interaction lacks typed provenance linked to a verified crawl import or proven owner observation",
+      "source_value": {
+        "name": "recovery and completion",
+        "trigger": "Send the first channel message",
+        "response": "The message appears in the server, proving first participation",
+        "feedback": "The retained first message state is the completion evidence.",
+        "cancellation": "After durable completion, leaving does not erase the recorded result; before it, leaving remains incomplete.",
+        "failure": "If the terminal action fails, the user must remain on the actionable prior state rather than a false success page.",
+        "recovery": "Return to the last durable state, retry the terminal action, and require the same completion evidence.",
+        "evidence": "media/state-05-identity-configured.png @ 65.65s; media/state-06-first-message.png @ 80.94s; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "journey",
+      "reason": "canonical journey and every step require typed provenance linked to verified raw evidence",
+      "source_value": {
+        "actor": "new Discord member",
+        "goal": "register and participate in the first server",
+        "prerequisites": [
+          "email address",
+          "server invitation or server concept"
+        ],
+        "steps": [
+          {
+            "index": 1,
+            "user_action": "Choose Register and enter account details",
+            "system_response": "Discord validates the account form",
+            "state": "registration",
+            "evidence": "media/state-01-registration.png; media/official-recording.mp4#t=4.497; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+          },
+          {
+            "index": 2,
+            "user_action": "Complete the email verification challenge",
+            "system_response": "Discord marks the account verified and returns to the app",
+            "state": "identity verified",
+            "evidence": "media/state-02-identity-verified.png; media/official-recording.mp4#t=19.785; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+          },
+          {
+            "index": 3,
+            "user_action": "Choose to join a server or create one",
+            "system_response": "Discord opens invitation resolution or server templates",
+            "state": "server route",
+            "evidence": "media/state-03-server-route.png; media/official-recording.mp4#t=35.074; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+          },
+          {
+            "index": 4,
+            "user_action": "Accept the invitation or name the new server",
+            "system_response": "Discord adds the server to navigation",
+            "state": "server active",
+            "evidence": "media/state-04-server-active.png; media/official-recording.mp4#t=50.362; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+          },
+          {
+            "index": 5,
+            "user_action": "Set optional profile or server identity",
+            "system_response": "Discord updates visible identity without blocking chat",
+            "state": "identity configured",
+            "evidence": "media/state-05-identity-configured.png; media/official-recording.mp4#t=65.651; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+          },
+          {
+            "index": 6,
+            "user_action": "Send the first channel message",
+            "system_response": "The message appears in the server, proving first participation",
+            "state": "first message",
+            "evidence": "media/state-06-first-message.png; media/official-recording.mp4#t=80.940; https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+          }
+        ],
+        "failure_route": [
+          "At identity verified or server route, invalid, expired, denied, or missing required input leaves the flow short of first message; evidence: media/state-02-identity-verified.png, media/state-03-server-route.png, and https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started.",
+          "Back, Cancel, Decline, or an explicit optional Skip interrupts setup without substituting a success state; evidence boundary: media/state-03-server-route.png through media/state-05-identity-configured.png."
+        ],
+        "recovery_route": [
+          "Return to the retained identity verified or server route requirement, correct or resend the blocking input, and resubmit; evidence: https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started.",
+          "Continue through the same terminal action until first message is visible in media/state-06-first-message.png and the motion at 80.940s."
+        ],
+        "completion_evidence": "first message retained at media/state-06-first-message.png and media/official-recording.mp4#t=80.940; source https://support.discord.com/hc/en-us/articles/360033931551-Getting-Started"
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[0]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-01-registration.png and media/state-02-identity-verified.png: the current task is presented with persistent on-screen text rather than motion alone."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[1]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "Visual observation from media/state-03-server-route.png and media/state-04-server-active.png: primary choices remain spatially associated with their current setup context."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "accessibility.observations[2]",
+      "reason": "canonical accessibility observation must be a typed observation with verified provenance",
+      "source_value": "The six local frames provide a nonanimated way to inspect the sequence without playing motion."
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "registration"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[0].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 0s (mean abs diff 9.7188/255)",
+        "source_match": {
+          "timestamp_seconds": 0.0,
+          "mean_abs_diff": 9.7188,
+          "sampled_frames": 180,
+          "motion_path": "media/state-01-registration.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "identity verified"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[1].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 19.5s (mean abs diff 1.5781/255)",
+        "source_match": {
+          "timestamp_seconds": 19.5,
+          "mean_abs_diff": 1.5781,
+          "sampled_frames": 180,
+          "motion_path": "media/state-02-identity-verified.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "server route"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[2].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 35s (mean abs diff 1.9531/255)",
+        "source_match": {
+          "timestamp_seconds": 35.0,
+          "mean_abs_diff": 1.9531,
+          "sampled_frames": 180,
+          "motion_path": "media/state-03-server-route.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "server active"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[3].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 50s (mean abs diff 1.6523/255)",
+        "source_match": {
+          "timestamp_seconds": 50.0,
+          "mean_abs_diff": 1.6523,
+          "sampled_frames": 180,
+          "motion_path": "media/state-04-server-active.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "identity configured"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[4].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 67s (mean abs diff 1.668/255)",
+        "source_match": {
+          "timestamp_seconds": 67.0,
+          "mean_abs_diff": 1.668,
+          "sampled_frames": 180,
+          "motion_path": "media/state-05-identity-configured.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].name",
+      "reason": "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
+      "source_value": "first message"
+    },
+    {
+      "schema": "wisent.unverified-source-note.v1",
+      "field": "states[5].source_relationship",
+      "reason": "stored state relationship was not independently recomputed against verified motion",
+      "source_value": {
+        "source_motion_path": "frame of media/official-recording.mp4 at 80.5s (mean abs diff 1.8594/255)",
+        "source_match": {
+          "timestamp_seconds": 80.5,
+          "mean_abs_diff": 1.8594,
+          "sampled_frames": 180,
+          "motion_path": "media/state-06-first-message.png",
+          "method": "16x16 grayscale mean-absolute-difference frame search"
+        }
+      }
+    }
+  ]
 }
