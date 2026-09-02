@@ -11,7 +11,7 @@ use std::ffi::OsString;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
 
@@ -36,13 +36,47 @@ struct TmuxSession {
 
 impl Drop for TmuxSession {
     fn drop(&mut self) {
-        let _ = Command::new("tmux")
+        // Short deadline: cleanup must never block the worker (finding 4).
+        let mut command = Command::new("tmux");
+        command
             .env_clear()
             .env("PATH", "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
             .args(["-S", self.socket.to_string_lossy().as_ref()])
-            .args(["kill-session", "-t", &self.name])
-            .output();
+            .args(["kill-session", "-t", &self.name]);
+        let _ = super::crawl::bounded_command_output(
+            &mut command,
+            "close private TUI PTY",
+            Duration::from_secs(5),
+            64 * 1024,
+        );
     }
+}
+
+/// Typed record failure so the worker report can name a stable machine code
+/// instead of a free-text diagnostic.
+#[derive(Debug)]
+struct RecordFailure {
+    code: &'static str,
+    message: String,
+}
+
+impl std::fmt::Display for RecordFailure {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(formatter, "{}: {}", self.code, self.message)
+    }
+}
+
+impl std::error::Error for RecordFailure {}
+
+fn failure_code(error: &anyhow::Error) -> &'static str {
+    error
+        .chain()
+        .find_map(|cause| {
+            cause
+                .downcast_ref::<RecordFailure>()
+                .map(|failure| failure.code)
+        })
+        .unwrap_or("tui_record_failed")
 }
 
 fn safe_component(value: &str, name: &str) -> Result<()> {
@@ -191,11 +225,14 @@ fn verify_exact_executable(
         .and_then(Value::as_str)
         .filter(|value| !value.is_empty())
         .context("TUI execution identity has no typed observed_hostname")?;
-    let hostname = Command::new("hostname")
-        .env_clear()
-        .env("PATH", "/usr/bin:/bin")
-        .output()
-        .context("read TUI worker hostname")?;
+    let mut hostname_command = Command::new("hostname");
+    hostname_command.env_clear().env("PATH", "/usr/bin:/bin");
+    let hostname = super::crawl::bounded_command_output(
+        &mut hostname_command,
+        "read TUI worker hostname",
+        Duration::from_secs(10),
+        64 * 1024,
+    )?;
     if !hostname.status.success() {
         bail!(
             "TUI worker hostname command failed: status={}; stdout={:?}; stderr={:?}",
@@ -265,9 +302,13 @@ fn verify_exact_executable(
         .arg("--version")
         .env_clear()
         .envs(environment);
-    let version = version_command
-        .output()
-        .with_context(|| format!("read exact TUI version from {}", path.display()))?;
+    let version = super::crawl::bounded_command_output(
+        &mut version_command,
+        "read exact TUI version",
+        Duration::from_secs(30),
+        1024 * 1024,
+    )
+    .with_context(|| format!("read exact TUI version from {}", path.display()))?;
     if !version.status.success() {
         bail!(
             "exact TUI version command failed immediately before launch: status={}; stdout={:?}; stderr={:?}",
@@ -291,13 +332,18 @@ fn tmux(
     args: &[&str],
     context: &str,
 ) -> Result<String> {
-    let output = Command::new("tmux")
+    let mut command = Command::new("tmux");
+    command
         .env_clear()
         .envs(environment)
         .args(["-S", socket.to_string_lossy().as_ref()])
-        .args(args)
-        .output()
-        .with_context(|| context.to_string())?;
+        .args(args);
+    let output = super::crawl::bounded_command_output(
+        &mut command,
+        context,
+        Duration::from_secs(30),
+        MAXIMUM_CAPTURE_BYTES,
+    )?;
     if !output.status.success() {
         bail!(
             "{context}: {}",
@@ -307,13 +353,34 @@ fn tmux(
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
-fn capture(session: &TmuxSession) -> Result<String> {
-    tmux(
+/// A capture larger than this is refused rather than digested as evidence.
+const MAXIMUM_CAPTURE_BYTES: usize = 4 * 1024 * 1024;
+
+fn capture_range(session: &TmuxSession, start: &str, context: &'static str) -> Result<String> {
+    let screen = tmux(
         &session.socket,
         &session.environment,
-        &["capture-pane", "-t", &session.name, "-p", "-e", "-S", "-"],
-        "capture TUI pane",
-    )
+        &["capture-pane", "-t", &session.name, "-p", "-e", "-S", start],
+        context,
+    )?;
+    if screen.len() > MAXIMUM_CAPTURE_BYTES {
+        bail!(
+            "{context} returned {} bytes, beyond the {MAXIMUM_CAPTURE_BYTES}-byte bound",
+            screen.len()
+        );
+    }
+    Ok(screen)
+}
+
+/// Readiness polling reads only the visible tail; `-S -` would re-read the
+/// entire scrollback on every poll (finding 8).
+fn capture_tail(session: &TmuxSession) -> Result<String> {
+    capture_range(session, "-50", "poll TUI pane tail")
+}
+
+/// Exactly one bounded full capture per record (finding 8).
+fn capture(session: &TmuxSession) -> Result<String> {
+    capture_range(session, "-2000", "capture TUI pane")
 }
 
 fn hash(value: &str) -> String {
@@ -340,16 +407,22 @@ fn prepare_fixture(fixture: &Path) -> Result<()> {
     std::fs::write(fixture.join("seed.txt"), "Spis TUI crawl fixture\n")?;
     std::fs::write(fixture.join("tracked.txt"), "committed fixture state\n")?;
     let run_git = |arguments: &[&str]| -> Result<()> {
-        let output = Command::new("git")
+        let mut command = Command::new("git");
+        command
             .env_clear()
             .env("PATH", "/usr/bin:/bin")
             .args(arguments)
             .current_dir(fixture)
             .env("HOME", &home)
             .env("GIT_CONFIG_GLOBAL", fixture.join("gitconfig"))
-            .env("GIT_CONFIG_NOSYSTEM", "1")
-            .output()
-            .with_context(|| format!("prepare TUI fixture: git {}", arguments.join(" ")))?;
+            .env("GIT_CONFIG_NOSYSTEM", "1");
+        let output = super::crawl::bounded_command_output(
+            &mut command,
+            "prepare TUI fixture with git",
+            Duration::from_secs(60),
+            1024 * 1024,
+        )
+        .with_context(|| format!("prepare TUI fixture: git {}", arguments.join(" ")))?;
         if !output.status.success() {
             bail!(
                 "prepare TUI fixture: git {}: {}",
@@ -382,14 +455,34 @@ fn launch(
 ) -> Result<TmuxSession> {
     let name = format!("spis-tui-{}-{attempt}-{record_slug}", std::process::id());
     let socket = fixture.join("tmux.sock");
-    if socket.exists() {
+    // exists() follows symlinks and is false for a dangling one, so a planted
+    // link would survive and tmux would place its socket at the link target
+    // (finding 18).
+    if std::fs::symlink_metadata(&socket).is_ok() {
         std::fs::remove_file(&socket)
             .with_context(|| format!("remove stale private TUI tmux socket {}", socket.display()))?;
     }
+    if std::fs::symlink_metadata(&socket).is_ok() {
+        bail!(
+            "private TUI tmux socket path {} reappeared before launch",
+            socket.display()
+        );
+    }
+    if std::fs::symlink_metadata(raw).is_ok() {
+        bail!(
+            "TUI raw terminal log {} exists before this attempt recorded anything",
+            raw.display()
+        );
+    }
+    // Bounded scrollback on this private server (finding 8).
+    let configuration = fixture.join("tmux.conf");
+    std::fs::write(&configuration, "set -g history-limit 2000\n")?;
     tmux(
         &socket,
         &environment,
         &[
+            "-f",
+            configuration.to_string_lossy().as_ref(),
             "new-session",
             "-d",
             "-s",
@@ -410,14 +503,37 @@ fn launch(
         socket,
         environment,
     };
-    let pipe = format!("cat >> {}", shell_quote(raw.to_string_lossy().as_ref()));
+    // `>` truncates, so terminal.raw holds this attempt only (finding 11).
+    let pipe = format!("cat > {}", shell_quote(raw.to_string_lossy().as_ref()));
     tmux(
         &session.socket,
         &session.environment,
         &["pipe-pane", "-t", &session.name, "-o", &pipe],
         "record TUI byte stream",
     )?;
-    std::thread::sleep(Duration::from_secs(1));
+    // Bounded readiness poll instead of trusting a fixed sleep: the exact
+    // initial state is only captured once the program has actually drawn
+    // something (finding 19). A dynamic TUI keeps repainting, so this waits for
+    // first paint rather than for a stable screen.
+    let floor = Duration::from_secs(1);
+    let started = Instant::now();
+    loop {
+        let blank = capture_tail(&session)?.trim().is_empty();
+        if !blank && started.elapsed() >= floor {
+            break;
+        }
+        if started.elapsed() >= Duration::from_secs(20) {
+            // The hung program is killed with the session by TmuxSession::drop;
+            // nothing downstream may reuse this PTY (finding 6).
+            return Err(anyhow::Error::new(RecordFailure {
+                code: "tui_launch_not_ready",
+                message: format!(
+                    "the exact TUI executable drew nothing in the private PTY within 20s for record {record_slug}"
+                ),
+            }));
+        }
+        std::thread::sleep(Duration::from_millis(100));
+    }
     Ok(session)
 }
 
@@ -438,6 +554,18 @@ fn crawl_one(
         .and_then(|value| value.to_str())
         .context("TUI executable path has no UTF-8 filename")?
         .to_string();
+    // Attempt-clean tree: `pipe-pane` appends, so without this a retried record
+    // would blend the previous attempt's raw terminal bytes with this attempt's
+    // overwritten state files (finding 11).
+    match std::fs::symlink_metadata(output) {
+        Ok(metadata) if metadata.file_type().is_symlink() => {
+            bail!("TUI attempt output {} is a symlink", output.display())
+        }
+        Ok(_) => std::fs::remove_dir_all(output)
+            .with_context(|| format!("clear TUI attempt output {}", output.display()))?,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
+    }
     let states = output.join("states");
     let trajectory_root = output.join("trajectories/trajectory-00001");
     let fixture = trajectory_root.join("fixture");
@@ -556,87 +684,10 @@ fn records(selected: Option<&str>) -> Result<Vec<(String, String)>> {
     Ok(records)
 }
 
-fn hash_artifact(path: &Path) -> Result<(String, u64)> {
-    let mut file = std::fs::File::open(path)
-        .with_context(|| format!("open TUI artifact {}", path.display()))?;
-    let mut digest = Sha256::new();
-    let mut bytes = 0_u64;
-    let mut buffer = [0_u8; 64 * 1024];
-    loop {
-        let count = file
-            .read(&mut buffer)
-            .with_context(|| format!("hash TUI artifact {}", path.display()))?;
-        if count == 0 {
-            break;
-        }
-        bytes += count as u64;
-        digest.update(&buffer[..count]);
-    }
-    Ok((hex::encode(digest.finalize()), bytes))
-}
-
-fn publish(root: &Path, uri: &str) -> Result<Value> {
-    let attempt_name = root
-        .file_name()
-        .and_then(|value| value.to_str())
-        .context("TUI attempt artifact root has no UTF-8 name")?;
-    let archive = root.with_file_name(format!("{attempt_name}.tar.gz"));
-    if !archive.is_file() {
-        let output = super::crawl::stado_command()
-            .args(["storage", "archive"])
-            .arg(root)
-            .arg(&archive)
-            .output()?;
-        if !output.status.success() {
-            bail!(
-                "stado storage archive refused TUI artifacts: {}",
-                String::from_utf8_lossy(&output.stderr).trim()
-            );
-        }
-    }
-    let (sha256, bytes) = hash_artifact(&archive)?;
-    let output = super::crawl::stado_command()
-        .args(["storage", "put", "--if-absent", uri])
-        .arg(&archive)
-        .output()?;
-    if !output.status.success() {
-        bail!(
-            "stado storage put refused TUI artifacts: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    let readback = root.with_file_name(format!("{attempt_name}.readback.tar.gz"));
-    if readback.exists() {
-        std::fs::remove_file(&readback)?;
-    }
-    let output = super::crawl::stado_command()
-        .args(["storage", "get", uri])
-        .arg(&readback)
-        .output()?;
-    if !output.status.success() {
-        bail!(
-            "stado storage readback refused TUI artifacts: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    let (observed_sha256, observed_bytes) = hash_artifact(&readback)?;
-    std::fs::remove_file(&readback)?;
-    if observed_sha256 != sha256 || observed_bytes != bytes {
-        bail!(
-            "TUI artifact readback differs: expected sha256={sha256} bytes={bytes}, observed sha256={observed_sha256} bytes={observed_bytes}"
-        );
-    }
-    Ok(json!({
-        "uri": uri,
-        "sha256": sha256,
-        "bytes": bytes,
-        "media_type": "application/gzip",
-    }))
-}
-
 fn worker_report(
     manifest: &super::crawl::RuntimeManifest,
-    artifact: Value,
+    artifact: Option<Value>,
+    failure: Option<Value>,
 ) -> Result<Value> {
     let value = serde_json::to_value(manifest)?;
     let attempt = value
@@ -660,6 +711,11 @@ fn worker_report(
         .filter(|identity| identity.is_object())
         .context("TUI runtime manifest has no typed execution_identity")?
         .clone();
+    if let Some(artifact) = artifact.as_ref() {
+        if artifact.get("uri").and_then(Value::as_str) != Some(manifest.artifact_uri.as_str()) {
+            bail!("published TUI artifact URI does not match the immutable runtime manifest");
+        }
+    }
     Ok(json!({
         "schema": "wisent.native-worker-report.v1",
         "run_id": manifest.run_id,
@@ -669,7 +725,7 @@ fn worker_report(
         "attempt": attempt,
         "attempt_id": attempt_id,
         "engine": manifest.engine,
-        "state": "artifact_published",
+        "state": if failure.is_some() { "failed" } else { "artifact_published" },
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
         "reference_sha256": manifest.reference_sha256,
@@ -677,6 +733,7 @@ fn worker_report(
         "bindings_sha256": bindings_sha256,
         "execution_identity": execution_identity,
         "artifact": artifact,
+        "failure": failure,
     }))
 }
 
@@ -719,7 +776,12 @@ fn submit(
     for (name, reference) in delivery_secret_bindings(manifest)? {
         stado.arg("--secret-env").arg(format!("{name}={reference}"));
     }
-    let output = stado.output()?;
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "submit TUI crawl through Stado",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!("Stado refused TUI crawl: {}", String::from_utf8_lossy(&output.stderr).trim());
     }
@@ -797,39 +859,64 @@ pub fn run(rest: &[String]) -> Result<()> {
     let (slug, name) = records(Some(&selected))?.into_iter().next().context("runtime manifest record is absent")?;
     let output = root.join(&slug);
     std::fs::create_dir_all(&output)?;
-    let reports = vec![match crawl_one(&slug, &name, &manifest, &output) {
-        Ok(report) => report,
-        Err(error) => json!({
-            "slug": slug,
-            "name": name,
-            "status": "failed",
-            "source_revision": manifest.source_revision,
-            "source_input_sha256": manifest.source_input_sha256,
-            "runtime_manifest": manifest,
-            "error": error.to_string()
-        }),
-    }];
-    let failures = reports
-        .iter()
-        .filter(|report| report.get("status").and_then(Value::as_str) == Some("failed"))
-        .count();
+    let (record_report, failure) = match crawl_one(&slug, &name, &manifest, &output) {
+        Ok(report) => (report, None),
+        Err(error) => {
+            let code = failure_code(&error);
+            let message = format!("{error:#}");
+            // Diagnostics never share stdout with the one worker report line.
+            eprintln!("TUI record {slug} failed: {message}");
+            (
+                json!({
+                    "slug": slug,
+                    "name": name,
+                    "status": "failed",
+                    "source_revision": manifest.source_revision,
+                    "source_input_sha256": manifest.source_input_sha256,
+                    "runtime_manifest": manifest,
+                    "error": message,
+                }),
+                Some((code, message)),
+            )
+        }
+    };
     let summary = json!({
         "schema": "wisent.tui-crawl-batch.v1",
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
         "runtime_manifest": manifest,
-        "records": reports,
-        "failed": failures,
+        "records": [record_report],
+        "failed": usize::from(failure.is_some()),
     });
     std::fs::write(
         root.join("batch.json"),
         serde_json::to_string_pretty(&summary)? + "\n",
     )?;
-    if failures > 0 {
-        bail!("{failures} TUI records could not be crawled");
+    // A failed record still retains a typed failure artifact and still
+    // publishes the attempt archive, so every attempt has exactly one archive
+    // and exactly one worker report line.
+    if let Some((code, message)) = failure.as_ref() {
+        std::fs::write(
+            root.join("failure.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "wisent.native-worker-failure.v1",
+                "code": code,
+                "message": message,
+                "run_id": manifest.run_id,
+                "catalog": manifest.catalog,
+                "record": manifest.record,
+                "attempt": manifest.attempt,
+                "attempt_id": manifest.attempt_id,
+                "engine": manifest.engine,
+            }))? + "\n",
+        )?;
     }
-    let artifact = publish(&root, &artifact_uri)?;
-    let worker_report = worker_report(&manifest, artifact)?;
-    println!("{}", serde_json::to_string(&worker_report)?);
+    let artifact = super::crawl::publish_attempt_archive(&root, &artifact_uri)?;
+    let failure = failure.map(|(code, message)| json!({"code": code, "message": message}));
+    let report = worker_report(&manifest, Some(artifact), failure.clone())?;
+    println!("{}", serde_json::to_string(&report)?);
+    if failure.is_some() {
+        bail!("the exact TUI record could not be crawled");
+    }
     Ok(())
 }

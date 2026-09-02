@@ -35,45 +35,170 @@ struct Action {
     destructive: bool,
 }
 
+/// Only the absolute bundle paths the coordinator itself admits. Inherited
+/// PATH entries are deliberately absent: any writable earlier PATH entry would
+/// be arbitrary code execution with accessibility privileges (finding 10).
 pub(crate) fn cua_driver_candidates() -> Vec<PathBuf> {
-    let mut candidates = Vec::new();
-    if let Some(configured) = std::env::var_os("SPIS_CUA_DRIVER_BIN") {
-        candidates.push(PathBuf::from(configured));
-    }
-    if let Some(path) = std::env::var_os("PATH") {
-        candidates.extend(std::env::split_paths(&path).map(|directory| directory.join("cua-driver")));
-    }
-    for applications in [
-        Some(PathBuf::from("/Applications")),
-        std::env::var_os("HOME").map(PathBuf::from).map(|home| home.join("Applications")),
-    ].into_iter().flatten() {
-        candidates.push(applications.join("CuaDriver.app/Contents/MacOS/cua-driver"));
-        candidates.push(applications.join("CuaDriver.app/Contents/MacOS/CuaDriver"));
-    }
-    candidates
+    vec![
+        PathBuf::from("/Applications/CuaDriver.app/Contents/MacOS/cua-driver"),
+        PathBuf::from("/Applications/CuaDriver.app/Contents/MacOS/CuaDriver"),
+    ]
 }
 
-fn cua_driver() -> Result<PathBuf> {
-    cua_driver_candidates().into_iter().find(|candidate| candidate.is_file())
-        .context("Cua Driver executable is absent from PATH, /Applications and the worker user's Applications")
+/// The driver binary pinned for the whole record: path, digest and version are
+/// observed once and every later call runs this exact file.
+#[derive(Clone, Debug)]
+struct CuaDriver {
+    path: PathBuf,
+    sha256: String,
+    version: String,
 }
 
-fn call(tool: &str, payload: &Value) -> Result<Value> {
-    call_with_cli_options(tool, payload, &[])
+fn hash_file(path: &Path) -> Result<String> {
+    let mut file =
+        std::fs::File::open(path).with_context(|| format!("open {}", path.display()))?;
+    let mut digest = Sha256::new();
+    let mut buffer = [0_u8; 64 * 1024];
+    loop {
+        let count = file
+            .read(&mut buffer)
+            .with_context(|| format!("hash {}", path.display()))?;
+        if count == 0 {
+            break;
+        }
+        digest.update(&buffer[..count]);
+    }
+    Ok(hex::encode(digest.finalize()))
+}
+
+/// Resolve, canonicalize, hash and version-stamp the driver exactly once per
+/// record. Re-resolving inside every call left the binary unstable even within
+/// one record, and following a symlink out of the bundle defeated the pin
+/// entirely (finding 10).
+fn pin_cua_driver() -> Result<CuaDriver> {
+    let path = cua_driver_candidates()
+        .into_iter()
+        .find(|candidate| candidate.is_file())
+        .context("Cua Driver executable is absent from the admitted /Applications bundle paths")?;
+    if !path.is_absolute() {
+        bail!("Cua Driver candidate {} is not absolute", path.display());
+    }
+    if std::fs::symlink_metadata(&path)?.file_type().is_symlink() {
+        bail!("Cua Driver executable {} is a symlink", path.display());
+    }
+    let canonical = std::fs::canonicalize(&path)?;
+    if canonical != path {
+        bail!(
+            "Cua Driver executable is not canonical: declared {}, canonical {}",
+            path.display(),
+            canonical.display()
+        );
+    }
+    let sha256 = hash_file(&path)?;
+    let mut version_command = Command::new(&path);
+    version_command.arg("--version");
+    let output = super::crawl::bounded_command_output(
+        &mut version_command,
+        "read pinned Cua Driver version",
+        Duration::from_secs(15),
+        64 * 1024,
+    )?;
+    if !output.status.success() {
+        bail!(
+            "pinned Cua Driver {} refused --version: {}",
+            path.display(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    Ok(CuaDriver {
+        path,
+        sha256,
+        version: String::from_utf8_lossy(&output.stdout).trim().to_string(),
+    })
+}
+
+/// One helper binary, pinned exactly once per record.
+#[derive(Clone, Debug)]
+struct PinnedHelper {
+    path: PathBuf,
+    sha256: String,
+    version: String,
+}
+
+/// The readiness helper is resolved from absolute directories only, never from
+/// the inherited PATH, and its digest and version are retained (finding 10).
+fn pinned_readiness_helper() -> Result<PinnedHelper> {
+    const PROGRAM: &str = "stado-runtime-readiness";
+    let path = ["/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin"]
+        .iter()
+        .map(|directory| Path::new(directory).join(PROGRAM))
+        .find(|candidate| candidate.is_file())
+        .with_context(|| {
+            format!("{PROGRAM} is absent from the pinned absolute helper directories")
+        })?;
+    if std::fs::symlink_metadata(&path)?.file_type().is_symlink() {
+        bail!(
+            "pinned desktop readiness helper {} is a symlink",
+            path.display()
+        );
+    }
+    let canonical = std::fs::canonicalize(&path)?;
+    if canonical != path {
+        bail!(
+            "pinned desktop readiness helper is not canonical: declared {}, canonical {}",
+            path.display(),
+            canonical.display()
+        );
+    }
+    let sha256 = hash_file(&path)?;
+    let mut version_command = Command::new(&path);
+    version_command
+        .arg("--version")
+        .env_clear()
+        .env("PATH", "/usr/bin:/bin");
+    let output = super::crawl::bounded_command_output(
+        &mut version_command,
+        "read pinned desktop readiness helper version",
+        Duration::from_secs(15),
+        64 * 1024,
+    )?;
+    if !output.status.success() {
+        bail!(
+            "pinned desktop readiness helper {} refused --version: {}",
+            path.display(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    Ok(PinnedHelper {
+        path,
+        sha256,
+        version: String::from_utf8_lossy(&output.stdout).trim().to_string(),
+    })
+}
+
+fn call(driver: &CuaDriver, tool: &str, payload: &Value) -> Result<Value> {
+    call_with_cli_options(driver, tool, payload, &[], Duration::from_secs(30))
+}
+
+/// Cleanup deadline. A guard must never block the worker (finding 4).
+fn call_briefly(driver: &CuaDriver, tool: &str, payload: &Value) -> Result<Value> {
+    call_with_cli_options(driver, tool, payload, &[], Duration::from_secs(5))
 }
 
 fn call_with_cli_options(
+    driver: &CuaDriver,
     tool: &str,
     payload: &Value,
     options: &[&std::ffi::OsStr],
+    timeout: Duration,
 ) -> Result<Value> {
-    let mut command = Command::new(cua_driver()?);
+    let mut command = Command::new(&driver.path);
     command.arg(tool).arg(serde_json::to_string(payload)?);
     command.args(options);
     let output = super::crawl::bounded_command_output(
         &mut command,
         &format!("cua-driver {tool}"),
-        Duration::from_secs(30),
+        timeout,
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {
@@ -89,16 +214,37 @@ fn call_with_cli_options(
 }
 
 struct SessionGuard {
+    driver: CuaDriver,
     session: String,
 }
 
 impl Drop for SessionGuard {
     fn drop(&mut self) {
-        let _ = call("end_session", &json!({"session": self.session}));
+        let _ = call_briefly(&self.driver, "end_session", &json!({"session": self.session}));
+    }
+}
+
+/// The launched application is terminated with the record. Without this the app
+/// outlives the crawl, and across a catalog every record leaves another live GUI
+/// app contending for focus (finding 5).
+struct AppGuard {
+    driver: CuaDriver,
+    session: String,
+    pid: i64,
+}
+
+impl Drop for AppGuard {
+    fn drop(&mut self) {
+        let _ = call_briefly(
+            &self.driver,
+            "terminate_app",
+            &json!({"session": self.session, "pid": self.pid}),
+        );
     }
 }
 
 struct RecordingGuard {
+    driver: CuaDriver,
     session: String,
     active: bool,
 }
@@ -109,16 +255,51 @@ impl RecordingGuard {
             return None;
         }
         self.active = false;
-        Some(call("stop_recording", &json!({"session": self.session})))
+        Some(call(
+            &self.driver,
+            "stop_recording",
+            &json!({"session": self.session}),
+        ))
     }
 }
 
 impl Drop for RecordingGuard {
     fn drop(&mut self) {
         if self.active {
-            let _ = call("stop_recording", &json!({"session": self.session}));
+            let _ = call_briefly(
+                &self.driver,
+                "stop_recording",
+                &json!({"session": self.session}),
+            );
         }
     }
+}
+
+/// Typed record failure so the worker report can name a stable machine code
+/// instead of a free-text diagnostic.
+#[derive(Debug)]
+struct RecordFailure {
+    code: &'static str,
+    message: String,
+}
+
+impl std::fmt::Display for RecordFailure {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(formatter, "{}: {}", self.code, self.message)
+    }
+}
+
+impl std::error::Error for RecordFailure {}
+
+fn failure_code(error: &anyhow::Error) -> &'static str {
+    error
+        .chain()
+        .find_map(|cause| {
+            cause
+                .downcast_ref::<RecordFailure>()
+                .map(|failure| failure.code)
+        })
+        .unwrap_or("desktop_record_failed")
 }
 
 fn find_i64(value: &Value, key: &str) -> Option<i64> {
@@ -136,18 +317,94 @@ fn find_i64(value: &Value, key: &str) -> Option<i64> {
     }
 }
 
-fn find_elements(value: &Value) -> Option<&Vec<Value>> {
+fn find_array<'a>(value: &'a Value, key: &str) -> Option<&'a Vec<Value>> {
     let object = value.as_object()?;
-    let direct = object.get("elements").and_then(Value::as_array);
+    let direct = object.get(key).and_then(Value::as_array);
     let result = object
         .get("result")
         .and_then(Value::as_object)
-        .and_then(|result| result.get("elements"))
+        .and_then(|result| result.get(key))
         .and_then(Value::as_array);
     match (direct, result) {
         (Some(left), Some(right)) if left != right => None,
         (Some(value), None) | (None, Some(value)) | (Some(value), Some(_)) => Some(value),
         _ => None,
+    }
+}
+
+/// Anchored, typed view of one cua-driver response. Every read consults only
+/// the root object and its `result` child, so a child element, a nested
+/// accessibility node or a sibling window list can never answer an identity or
+/// ownership question by serde_json map order (finding 13).
+struct DriverResponse<'a>(&'a Value);
+
+impl<'a> DriverResponse<'a> {
+    fn integer(&self, key: &str) -> Option<i64> {
+        find_i64(self.0, key)
+    }
+
+    fn text(&self, key: &str) -> Option<&'a str> {
+        find_string(self.0, key)
+    }
+
+    fn bundle(&self) -> Option<&'a str> {
+        ["owner_bundle_id", "bundle_id", "bundle_identifier"]
+            .iter()
+            .find_map(|key| self.text(key))
+    }
+
+    fn elements(&self) -> Option<&'a Vec<Value>> {
+        find_array(self.0, "elements")
+    }
+
+    fn apps(&self) -> Option<&'a Vec<Value>> {
+        find_array(self.0, "apps")
+    }
+}
+
+/// The window ownership triple, read only from anchored positions.
+struct WindowOwnership {
+    pid: i64,
+    window_id: i64,
+    owner_bundle_id: String,
+}
+
+impl WindowOwnership {
+    fn read(snapshot: &Value) -> Result<Self> {
+        let response = DriverResponse(snapshot);
+        Ok(Self {
+            pid: response
+                .integer("pid")
+                .context("Cua window snapshot has no anchored owner pid")?,
+            window_id: response
+                .integer("window_id")
+                .context("Cua window snapshot has no anchored window id")?,
+            owner_bundle_id: response
+                .bundle()
+                .context("Cua window snapshot has no anchored owner bundle identifier")?
+                .to_string(),
+        })
+    }
+}
+
+/// One entry of an anchored `list_apps` response.
+struct DriverApp<'a>(&'a Value);
+
+impl DriverApp<'_> {
+    fn pid(&self) -> Option<i64> {
+        self.0.get("pid").and_then(Value::as_i64)
+    }
+
+    fn bundle(&self) -> Option<&str> {
+        ["bundle_id", "bundle_identifier", "owner_bundle_id"]
+            .iter()
+            .find_map(|key| self.0.get(*key).and_then(Value::as_str))
+    }
+
+    fn frontmost(&self) -> bool {
+        ["frontmost", "is_frontmost", "active", "is_active"]
+            .iter()
+            .any(|key| self.0.get(*key).and_then(Value::as_bool) == Some(true))
     }
 }
 
@@ -180,11 +437,11 @@ fn find_string<'a>(value: &'a Value, key: &str) -> Option<&'a str> {
     }
 }
 
-fn preflight() -> Result<()> {
+fn preflight(driver: &CuaDriver) -> Result<()> {
     if std::env::consts::OS != "macos" {
         return Ok(());
     }
-    let mut command = Command::new(cua_driver()?);
+    let mut command = Command::new(&driver.path);
     command.args(["permissions", "status", "--json"]);
     let output = super::crawl::bounded_command_output(
         &mut command,
@@ -252,7 +509,13 @@ fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
     Ok(records)
 }
 
-fn snapshot(session: &str, pid: i64, window_id: i64, screenshot: &Path) -> Result<Value> {
+fn snapshot(
+    driver: &CuaDriver,
+    session: &str,
+    pid: i64,
+    window_id: i64,
+    screenshot: &Path,
+) -> Result<Value> {
     if let Some(parent) = screenshot.parent() {
         std::fs::create_dir_all(parent)?;
     }
@@ -264,6 +527,7 @@ fn snapshot(session: &str, pid: i64, window_id: i64, screenshot: &Path) -> Resul
     }
     let started = SystemTime::now();
     let mut response = call_with_cli_options(
+        driver,
         "get_window_state",
         &json!({
             "session": session,
@@ -276,6 +540,7 @@ fn snapshot(session: &str, pid: i64, window_id: i64, screenshot: &Path) -> Resul
             std::ffi::OsStr::new("--screenshot-out-file"),
             screenshot.as_os_str(),
         ],
+        Duration::from_secs(30),
     )?;
     let metadata = std::fs::symlink_metadata(screenshot)
         .with_context(|| format!("read fresh screenshot metadata {}", screenshot.display()))?;
@@ -337,7 +602,7 @@ fn actions(snapshot: &Value) -> Vec<Action> {
     .expect("static destructive regex");
     let mut seen = HashSet::new();
     let mut found = Vec::new();
-    for element in find_elements(snapshot).into_iter().flatten() {
+    for element in DriverResponse(snapshot).elements().into_iter().flatten() {
         let role = element
             .get("role")
             .and_then(Value::as_str)
@@ -381,8 +646,15 @@ fn matching_action(snapshot: &Value, step: &Step) -> Option<Action> {
     })
 }
 
-fn apply(session: &str, pid: i64, window_id: i64, action: &Action) -> Result<Value> {
+fn apply(
+    driver: &CuaDriver,
+    session: &str,
+    pid: i64,
+    window_id: i64,
+    action: &Action,
+) -> Result<Value> {
     call(
+        driver,
         "click",
         &json!({
             "session": session,
@@ -395,7 +667,8 @@ fn apply(session: &str, pid: i64, window_id: i64, action: &Action) -> Result<Val
 }
 
 fn state_hash(snapshot: &Value) -> String {
-    let mut rows: Vec<String> = find_elements(snapshot)
+    let mut rows: Vec<String> = DriverResponse(snapshot)
+        .elements()
         .into_iter()
         .flatten()
         .map(|element| {
@@ -448,31 +721,42 @@ fn system_bundle(bundle: &str) -> bool {
     .iter()
     .any(|candidate| bundle == *candidate || bundle.starts_with(&format!("{candidate}.")))
 }
-fn find_active_owner(value: &Value) -> Option<&str> {
-    match value {
-        Value::Object(map) => {
-            let active = ["frontmost", "is_frontmost", "active", "is_active"]
-                .iter()
-                .any(|key| map.get(*key).and_then(Value::as_bool) == Some(true));
-            if active {
-                ["bundle_id", "bundle_identifier", "owner_bundle_id"]
-                    .iter()
-                    .find_map(|key| map.get(*key).and_then(Value::as_str))
-                    .or_else(|| map.values().find_map(find_active_owner))
-            } else {
-                map.values().find_map(find_active_owner)
-            }
-        }
-        Value::Array(values) => values.iter().find_map(find_active_owner),
-        _ => None,
+/// Read the frontmost owner from the anchored `apps` array only. The previous
+/// recursive descent returned the first matching key anywhere in the tree, so
+/// map order decided which app answered (finding 13).
+fn global_active_owner(driver: &CuaDriver, session: &str) -> Result<String> {
+    let apps = call(driver, "list_apps", &json!({"session": session}))?;
+    let entries = DriverResponse(&apps)
+        .apps()
+        .ok_or_else(|| anyhow!("Cua Driver list_apps returned no anchored apps array: {apps}"))?;
+    let mut frontmost = entries
+        .iter()
+        .map(DriverApp)
+        .filter(|entry| entry.frontmost());
+    let owner = frontmost
+        .next()
+        .ok_or_else(|| anyhow!("Cua Driver list_apps reported no frontmost app: {apps}"))?;
+    if frontmost.next().is_some() {
+        bail!("Cua Driver list_apps reported more than one frontmost app: {apps}");
     }
+    owner
+        .bundle()
+        .map(str::to_string)
+        .ok_or_else(|| anyhow!("Cua Driver frontmost app has no exact bundle identifier: {apps}"))
 }
 
-fn global_active_owner(session: &str) -> Result<String> {
-    let apps = call("list_apps", &json!({"session": session}))?;
-    find_active_owner(&apps)
-        .map(str::to_string)
-        .ok_or_else(|| anyhow!("Cua Driver list_apps returned no exact active-owner bundle: {apps}"))
+/// Every running pid of `bundle_id`, read from the anchored `apps` array.
+fn running_instances(driver: &CuaDriver, session: &str, bundle_id: &str) -> Result<Vec<i64>> {
+    let apps = call(driver, "list_apps", &json!({"session": session}))?;
+    let entries = DriverResponse(&apps)
+        .apps()
+        .ok_or_else(|| anyhow!("Cua Driver list_apps returned no anchored apps array: {apps}"))?;
+    Ok(entries
+        .iter()
+        .map(DriverApp)
+        .filter(|entry| entry.bundle() == Some(bundle_id))
+        .filter_map(|entry| entry.pid())
+        .collect())
 }
 
 fn assert_target_surface(
@@ -481,18 +765,17 @@ fn assert_target_surface(
     expected_window: i64,
     expected_bundle: &str,
 ) -> Result<()> {
-    let observed_pid = find_i64(snapshot, "pid").context("Cua window snapshot has no owner pid")?;
-    let observed_window =
-        find_i64(snapshot, "window_id").context("Cua window snapshot has no window id")?;
+    // Anchored typed read: the strongest safety property in this crawler may
+    // not be answered by a child element or a sibling window (finding 13).
+    let observed = WindowOwnership::read(snapshot)?;
+    let observed_pid = observed.pid;
+    let observed_window = observed.window_id;
     if observed_pid != expected_pid || observed_window != expected_window {
         bail!(
             "Cua window ownership changed: expected pid={expected_pid} window={expected_window}, observed pid={observed_pid} window={observed_window}"
         );
     }
-    let observed_bundle = ["owner_bundle_id", "bundle_id", "bundle_identifier"]
-        .iter()
-        .find_map(|key| find_string(snapshot, key))
-        .context("Cua window snapshot has no exact owner bundle identifier")?;
+    let observed_bundle = observed.owner_bundle_id.as_str();
     if observed_bundle != expected_bundle {
         if system_bundle(observed_bundle) {
             bail!(
@@ -509,6 +792,7 @@ fn assert_target_surface(
 fn readiness_observation(
     manifest: &super::crawl::RuntimeManifest,
     product: &str,
+    helper: &PinnedHelper,
 ) -> Result<Value> {
     let identity = manifest
         .execution_identity
@@ -537,21 +821,25 @@ fn readiness_observation(
             "prepared-runtime proof does not bind the exact desktop app/device with prompt invocation and notification delivery disabled"
         );
     }
-    let output = Command::new("stado-runtime-readiness")
-        .args([
-            "verify",
-            "--json",
-            "--product",
-            product,
-            "--device",
-            device,
-            "--evidence-uri",
-            &proof.evidence_uri,
-            "--evidence-sha256",
-            &proof.evidence_sha256,
-        ])
-        .output()
-        .context("run fresh desktop runtime-readiness verification")?;
+    let mut readiness = Command::new(&helper.path);
+    readiness.args([
+        "verify",
+        "--json",
+        "--product",
+        product,
+        "--device",
+        device,
+        "--evidence-uri",
+        &proof.evidence_uri,
+        "--evidence-sha256",
+        &proof.evidence_sha256,
+    ]);
+    let output = super::crawl::bounded_command_output(
+        &mut readiness,
+        "run fresh desktop runtime-readiness verification",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "fresh desktop runtime-readiness verification failed: status={}; stdout={:?}; stderr={:?}",
@@ -581,6 +869,7 @@ fn readiness_observation(
 fn verify_desktop_executable(
     expected_bundle: &str,
     manifest: &super::crawl::RuntimeManifest,
+    helper: &PinnedHelper,
 ) -> Result<Value> {
     let identity = manifest
         .execution_identity
@@ -602,11 +891,15 @@ fn verify_desktop_executable(
         .context("desktop execution identity is not an exact Contents/MacOS executable")?;
     let info = contents.join("Info.plist");
     let metadata = |key: &str| -> Result<String> {
-        let output = Command::new("/usr/bin/plutil")
-            .args(["-extract", key, "raw", "-o", "-"])
-            .arg(&info)
-            .output()
-            .with_context(|| format!("read {key} from {}", info.display()))?;
+        let mut command = Command::new("/usr/bin/plutil");
+        command.args(["-extract", key, "raw", "-o", "-"]).arg(&info);
+        let output = super::crawl::bounded_command_output(
+            &mut command,
+            "read desktop bundle metadata",
+            Duration::from_secs(30),
+            1024 * 1024,
+        )
+        .with_context(|| format!("read {key} from {}", info.display()))?;
         if !output.status.success() {
             bail!(
                 "read {key} from {} failed: status={}; stdout={:?}; stderr={:?}",
@@ -638,26 +931,13 @@ fn verify_desktop_executable(
         .executable_sha256
         .as_deref()
         .context("desktop execution identity has no executable SHA-256")?;
-    let mut file = std::fs::File::open(path)
-        .with_context(|| format!("open exact desktop executable {}", path.display()))?;
-    let mut digest = Sha256::new();
-    let mut buffer = [0_u8; 64 * 1024];
-    loop {
-        let count = file
-            .read(&mut buffer)
-            .with_context(|| format!("hash exact desktop executable {}", path.display()))?;
-        if count == 0 {
-            break;
-        }
-        digest.update(&buffer[..count]);
-    }
-    let observed_sha = hex::encode(digest.finalize());
+    let observed_sha = hash_file(path)?;
     if !observed_sha.eq_ignore_ascii_case(expected_sha) {
         bail!(
             "desktop executable SHA-256 changed immediately before launch: expected {expected_sha}, observed {observed_sha}"
         );
     }
-    let observation = readiness_observation(manifest, expected_bundle)?;
+    let observation = readiness_observation(manifest, expected_bundle, helper)?;
     if observation.get("product_version").and_then(Value::as_str) != Some(expected_version)
         || !observation
             .get("executable_sha256")
@@ -669,26 +949,157 @@ fn verify_desktop_executable(
     Ok(observation)
 }
 
-fn launch(record: &Record, bundle_id: &str, session: &str) -> Result<(i64, i64)> {
+struct LaunchedApp {
+    pid: i64,
+    window_id: i64,
+    executable_path: Option<String>,
+    response: Value,
+}
+
+fn launch(
+    driver: &CuaDriver,
+    record: &Record,
+    bundle_id: &str,
+    session: &str,
+) -> Result<LaunchedApp> {
     let launched = call(
+        driver,
         "launch_app",
         &json!({
+            "session": session,
             "bundle_id": bundle_id,
         }),
     )?;
-    let pid = find_i64(&launched, "pid")
-        .ok_or_else(|| anyhow!("{} launch returned no pid", record.name))?;
-    let window = find_i64(&launched, "window_id")
+    let response = DriverResponse(&launched);
+    let pid = response
+        .integer("pid")
+        .ok_or_else(|| anyhow!("{} launch returned no anchored pid", record.name))?;
+    let window_id = response
+        .integer("window_id")
         .or_else(|| {
-            call("list_windows", &json!({"pid": pid, "session": session}))
-                .ok()
-                .and_then(|value| find_i64(&value, "window_id"))
+            call(
+                driver,
+                "list_windows",
+                &json!({"pid": pid, "session": session}),
+            )
+            .ok()
+            .and_then(|value| DriverResponse(&value).integer("window_id"))
         })
         .ok_or_else(|| anyhow!("{} launch returned no window", record.name))?;
-    Ok((pid, window))
+    // Anchored typed read of the launched executable, never a recursive key
+    // search through the response tree (findings 5b and 13).
+    let executable_path = response
+        .text("executable_path")
+        .or_else(|| response.text("executable"))
+        .map(str::to_string);
+    Ok(LaunchedApp {
+        pid,
+        window_id,
+        executable_path,
+        response: launched,
+    })
+}
+
+/// Terminate every pre-existing instance of the bundle so the launch is cold.
+/// Reusing a stale instance means the screenshot is not evidence of a clean
+/// launch (finding 5).
+fn terminate_pre_existing(
+    driver: &CuaDriver,
+    session: &str,
+    bundle_id: &str,
+) -> Result<Vec<i64>> {
+    let pre_existing = running_instances(driver, session, bundle_id)?;
+    for pid in &pre_existing {
+        call_briefly(
+            driver,
+            "terminate_app",
+            &json!({"session": session, "pid": pid}),
+        )
+        .with_context(|| format!("terminate pre-existing {bundle_id} instance {pid}"))?;
+    }
+    if !pre_existing.is_empty() {
+        let deadline = SystemTime::now() + Duration::from_secs(15);
+        loop {
+            let remaining = running_instances(driver, session, bundle_id)?;
+            if remaining.is_empty() {
+                break;
+            }
+            if SystemTime::now() >= deadline {
+                return Err(anyhow::Error::new(RecordFailure {
+                    code: "desktop_stale_instance_survived",
+                    message: format!(
+                        "{bundle_id} instances {remaining:?} survived termination; the launch would not be cold"
+                    ),
+                }));
+            }
+            std::thread::sleep(Duration::from_millis(200));
+        }
+    }
+    Ok(pre_existing)
+}
+
+/// Prove the process now running is the exact executable the manifest bound:
+/// the path comes from an anchored field of the launch response, must be an
+/// absolute canonical non-symlink file, and is re-hashed against the manifest
+/// digest (finding 5b).
+fn launched_executable_proof(
+    launched: &LaunchedApp,
+    manifest: &super::crawl::RuntimeManifest,
+) -> Result<Value> {
+    let identity = manifest
+        .execution_identity
+        .as_ref()
+        .context("desktop runtime manifest has no resolved execution identity")?;
+    let expected_path = identity
+        .executable_path
+        .as_deref()
+        .context("desktop execution identity has no exact executable path")?;
+    let observed = launched.executable_path.as_deref().context(
+        "cua-driver launch response has no anchored executable path for the launched pid",
+    )?;
+    if observed != expected_path {
+        return Err(anyhow::Error::new(RecordFailure {
+            code: "desktop_executable_identity_mismatch",
+            message: format!(
+                "launched pid {} runs {observed}, not the manifest-bound executable {expected_path}",
+                launched.pid
+            ),
+        }));
+    }
+    let path = Path::new(observed);
+    if !path.is_absolute() {
+        bail!("launched executable path {observed} is not absolute");
+    }
+    if std::fs::symlink_metadata(path)?.file_type().is_symlink() {
+        bail!("launched executable path {observed} is a symlink");
+    }
+    let canonical = std::fs::canonicalize(path)?;
+    if canonical != path {
+        bail!(
+            "launched executable path is not canonical: declared {observed}, canonical {}",
+            canonical.display()
+        );
+    }
+    let expected_sha = identity
+        .executable_sha256
+        .as_deref()
+        .context("desktop execution identity has no executable SHA-256")?;
+    let observed_sha = hash_file(path)?;
+    if !observed_sha.eq_ignore_ascii_case(expected_sha) {
+        bail!(
+            "launched executable SHA-256 differs from the manifest: expected {expected_sha}, observed {observed_sha}"
+        );
+    }
+    Ok(json!({
+        "pid": launched.pid,
+        "executable_path": canonical,
+        "executable_sha256": observed_sha,
+        "matches_manifest_execution_identity": true,
+    }))
 }
 
 fn crawl_record(
+    driver: &CuaDriver,
     record: &Record,
     manifest: &super::crawl::RuntimeManifest,
     root: &Path,
@@ -703,14 +1114,16 @@ fn crawl_record(
         .clone();
     let session = format!("spis-{}", record.slug.replace('_', "-"));
     call(
+        driver,
         "start_session",
         &json!({"session": session, "capture_scope": "window"}),
     )?;
     let _session_guard = SessionGuard {
+        driver: driver.clone(),
         session: session.clone(),
     };
-    let session_state = call("get_session_state", &json!({"session": session}))?;
-    if find_string(&session_state, "capture_scope") != Some("window") {
+    let session_state = call(driver, "get_session_state", &json!({"session": session}))?;
+    if DriverResponse(&session_state).text("capture_scope") != Some("window") {
         bail!("Cua Driver did not establish the required strict window session: {session_state}");
     }
 
@@ -724,9 +1137,41 @@ fn crawl_record(
 
     // These are deliberately the last product checks before the exact-bundle
     // launch. No catalog display name or PATH lookup participates.
-    let readiness = verify_desktop_executable(&bundle_id, manifest)?;
-    let (pid, window_id) = launch(record, &bundle_id, &session)?;
+    let readiness_helper = pinned_readiness_helper()?;
+    let readiness = verify_desktop_executable(&bundle_id, manifest, &readiness_helper)?;
+    // Cold launch: any pre-existing instance of this bundle is terminated
+    // first, because launching an already-running bundle only activates the
+    // stale instance and the screenshot would not be evidence of a clean
+    // launch (finding 5).
+    let pre_existing = terminate_pre_existing(driver, &session, &bundle_id)?;
+    let launched = launch(driver, record, &bundle_id, &session)?;
+    // Declared after the session guard so it drops first: the app is
+    // terminated before the driver session is ended (finding 5).
+    let _app_guard = AppGuard {
+        driver: driver.clone(),
+        session: session.clone(),
+        pid: launched.pid,
+    };
+    if pre_existing.contains(&launched.pid) {
+        return Err(anyhow::Error::new(RecordFailure {
+            code: "desktop_launch_not_cold",
+            message: format!(
+                "launched pid {} was already running before the launch; the app was not started cold",
+                launched.pid
+            ),
+        }));
+    }
+    let executable_proof = launched_executable_proof(&launched, manifest)?;
+    let cold_launch_proof = json!({
+        "pre_existing_pids": pre_existing,
+        "terminated_pre_existing_pids": pre_existing,
+        "launched_pid": launched.pid,
+        "pid_existed_before_launch": false,
+        "launch_response": launched.response,
+    });
+    let (pid, window_id) = (launched.pid, launched.window_id);
     call(
+        driver,
         "start_recording",
         &json!({
             "session": session,
@@ -735,6 +1180,7 @@ fn crawl_record(
         }),
     )?;
     let mut recording_guard = RecordingGuard {
+        driver: driver.clone(),
         session: session.clone(),
         active: true,
     };
@@ -756,7 +1202,7 @@ fn crawl_record(
             break;
         }
         let observation_path = states_dir.join(format!("observation-{:04}.png", action_index + 1));
-        let current = snapshot(&session, pid, window_id, &observation_path)?;
+        let current = snapshot(driver, &session, pid, window_id, &observation_path)?;
         assert_target_surface(&current, pid, window_id, &bundle_id)?;
         let hash = state_hash(&current);
         let available = actions(&current);
@@ -824,9 +1270,9 @@ fn crawl_record(
 
         let transition_index = transitions.len() + 1;
         let pre_image = transitions_dir.join(format!("step-{transition_index:04}-before.png"));
-        let pre = snapshot(&session, pid, window_id, &pre_image)?;
+        let pre = snapshot(driver, &session, pid, window_id, &pre_image)?;
         assert_target_surface(&pre, pid, window_id, &bundle_id)?;
-        let active_owner_before = global_active_owner(&session)?;
+        let active_owner_before = global_active_owner(driver, &session)?;
         if active_owner_before != bundle_id {
             blocked.push(json!({
                 "state": hash,
@@ -864,7 +1310,7 @@ fn crawl_record(
             continue;
         }
         let before_hash = state_hash(&pre);
-        let driver_response = match apply(&session, pid, window_id, &action) {
+        let driver_response = match apply(driver, &session, pid, window_id, &action) {
             Ok(response) => response,
             Err(error) => {
                 transitions.push(json!({
@@ -880,14 +1326,16 @@ fn crawl_record(
                 break;
             }
         };
-        let driver_effect = find_string(&driver_response, "effect")
+        let driver_effect = DriverResponse(&driver_response)
+            .text("effect")
             .unwrap_or("missing")
             .to_string();
-        let driver_route = find_string(&driver_response, "route")
+        let driver_route = DriverResponse(&driver_response)
+            .text("route")
             .unwrap_or("missing")
             .to_string();
         let post_image = transitions_dir.join(format!("step-{transition_index:04}-after.png"));
-        let post = match snapshot(&session, pid, window_id, &post_image) {
+        let post = match snapshot(driver, &session, pid, window_id, &post_image) {
             Ok(post) => post,
             Err(error) => {
                 transitions.push(json!({
@@ -903,7 +1351,7 @@ fn crawl_record(
                 break;
             }
         };
-        let active_owner_after = global_active_owner(&session)?;
+        let active_owner_after = global_active_owner(driver, &session)?;
         let post_snapshot = transitions_dir.join(format!("step-{transition_index:04}-after.json"));
         std::fs::write(
             &post_snapshot,
@@ -1000,6 +1448,18 @@ fn crawl_record(
         "record": record.slug,
         "name": record.name,
         "driver": "cua-driver",
+        "pinned_driver": {
+            "path": driver.path,
+            "sha256": driver.sha256,
+            "version": driver.version,
+        },
+        "pinned_readiness_helper": {
+            "path": readiness_helper.path,
+            "sha256": readiness_helper.sha256,
+            "version": readiness_helper.version,
+        },
+        "cold_launch_proof": cold_launch_proof,
+        "launched_executable_proof": executable_proof,
         "bundle_id": bundle_id,
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
@@ -1132,103 +1592,10 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
     )
 }
 
-fn hash_artifact(path: &Path) -> Result<(String, u64)> {
-    let mut file = std::fs::File::open(path)
-        .with_context(|| format!("open desktop artifact {}", path.display()))?;
-    let mut digest = Sha256::new();
-    let mut bytes = 0_u64;
-    let mut buffer = [0_u8; 64 * 1024];
-    loop {
-        let count = file
-            .read(&mut buffer)
-            .with_context(|| format!("hash desktop artifact {}", path.display()))?;
-        if count == 0 {
-            break;
-        }
-        bytes += count as u64;
-        digest.update(&buffer[..count]);
-    }
-    Ok((hex::encode(digest.finalize()), bytes))
-}
-
-fn publish_artifact(run_root: &Path, uri: &str) -> Result<Value> {
-    let attempt_name = run_root
-        .file_name()
-        .and_then(|value| value.to_str())
-        .context("desktop attempt artifact root has no UTF-8 name")?;
-    let archive = run_root.with_file_name(format!("{attempt_name}.tar.gz"));
-    if !archive.is_file() {
-        let mut stado = super::crawl::stado_command();
-        stado
-            .args(["storage", "archive"])
-            .arg(run_root)
-            .arg(&archive);
-        let output = super::crawl::bounded_command_output(
-            &mut stado,
-            "archive desktop crawl",
-            Duration::from_secs(120),
-            4 * 1024 * 1024,
-        )?;
-        if !output.status.success() {
-            bail!(
-                "stado storage archive refused desktop crawl artifacts: {}",
-                String::from_utf8_lossy(&output.stderr).trim()
-            );
-        }
-    }
-    let (sha256, bytes) = hash_artifact(&archive)?;
-    let mut stado = super::crawl::stado_command();
-    stado
-        .args(["storage", "put", "--if-absent", uri])
-        .arg(&archive);
-    let output = super::crawl::bounded_command_output(
-        &mut stado,
-        "publish desktop crawl",
-        Duration::from_secs(120),
-        4 * 1024 * 1024,
-    )?;
-    if !output.status.success() {
-        bail!(
-            "stado storage put refused desktop crawl artifacts: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    let readback = run_root.with_file_name(format!("{attempt_name}.readback.tar.gz"));
-    if readback.exists() {
-        std::fs::remove_file(&readback)?;
-    }
-    let mut stado = super::crawl::stado_command();
-    stado.args(["storage", "get", uri]).arg(&readback);
-    let output = super::crawl::bounded_command_output(
-        &mut stado,
-        "read back desktop crawl",
-        Duration::from_secs(120),
-        4 * 1024 * 1024,
-    )?;
-    if !output.status.success() {
-        bail!(
-            "stado storage readback refused desktop crawl artifacts: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    let (observed_sha256, observed_bytes) = hash_artifact(&readback)?;
-    std::fs::remove_file(&readback)?;
-    if observed_sha256 != sha256 || observed_bytes != bytes {
-        bail!(
-            "desktop artifact readback differs: expected sha256={sha256} bytes={bytes}, observed sha256={observed_sha256} bytes={observed_bytes}"
-        );
-    }
-    Ok(json!({
-        "uri": uri,
-        "sha256": sha256,
-        "bytes": bytes,
-        "media_type": "application/gzip",
-    }))
-}
-
 fn worker_report(
     manifest: &super::crawl::RuntimeManifest,
-    artifact: Value,
+    artifact: Option<Value>,
+    failure: Option<Value>,
 ) -> Result<Value> {
     let value = serde_json::to_value(manifest)?;
     let attempt = value
@@ -1252,6 +1619,11 @@ fn worker_report(
         .filter(|identity| identity.is_object())
         .context("desktop runtime manifest has no typed execution_identity")?
         .clone();
+    if let Some(artifact) = artifact.as_ref() {
+        if artifact.get("uri").and_then(Value::as_str) != Some(manifest.artifact_uri.as_str()) {
+            bail!("published desktop artifact URI does not match the immutable runtime manifest");
+        }
+    }
     Ok(json!({
         "schema": "wisent.native-worker-report.v1",
         "run_id": manifest.run_id,
@@ -1261,7 +1633,7 @@ fn worker_report(
         "attempt": attempt,
         "attempt_id": attempt_id,
         "engine": manifest.engine,
-        "state": "artifact_published",
+        "state": if failure.is_some() { "failed" } else { "artifact_published" },
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
         "reference_sha256": manifest.reference_sha256,
@@ -1269,6 +1641,7 @@ fn worker_report(
         "bindings_sha256": bindings_sha256,
         "execution_identity": execution_identity,
         "artifact": artifact,
+        "failure": failure,
     }))
 }
 
@@ -1360,7 +1733,6 @@ pub fn run(rest: &[String]) -> Result<()> {
     if artifact_uri != manifest.artifact_uri {
         bail!("worker artifact URI does not match immutable runtime manifest");
     }
-    preflight()?;
     let run_root = attempt_root(
         &output,
         &manifest,
@@ -1370,40 +1742,75 @@ pub fn run(rest: &[String]) -> Result<()> {
         .into_iter()
         .next()
         .context("runtime manifest record is absent from catalog")?;
-    let reports = vec![match crawl_record(&entry, &manifest, &run_root, max_states, max_depth) {
-        Ok(report) => report,
-        Err(error) => json!({
-            "record": entry.slug,
-            "name": entry.name,
-            "status": "failed",
-            "source_revision": manifest.source_revision,
-            "source_input_sha256": manifest.source_input_sha256,
-            "runtime_manifest": manifest,
-            "error": error.to_string(),
-        }),
-    }];
-    let failures = reports
-        .iter()
-        .filter(|report| report.get("status").and_then(Value::as_str) == Some("failed"))
-        .count();
+    // Driver pinning and the permission preflight run inside the failure-handled
+    // region, so a refused driver still produces a typed failure artifact and a
+    // published attempt archive like any other record failure.
+    let (record_report, failure) =
+        match (|| -> Result<Value> {
+            // Resolved, canonicalized, hashed and version-stamped exactly once
+            // for this record; every later call runs that same file (finding 10).
+            let driver = pin_cua_driver()?;
+            preflight(&driver)?;
+            crawl_record(&driver, &entry, &manifest, &run_root, max_states, max_depth)
+        })() {
+            Ok(report) => (report, None),
+            Err(error) => {
+                let code = failure_code(&error);
+                let message = format!("{error:#}");
+                // Diagnostics never share stdout with the one worker report line.
+                eprintln!("desktop record {} failed: {message}", entry.slug);
+                (
+                    json!({
+                        "record": entry.slug,
+                        "name": entry.name,
+                        "status": "failed",
+                        "source_revision": manifest.source_revision,
+                        "source_input_sha256": manifest.source_input_sha256,
+                        "runtime_manifest": manifest,
+                        "error": message,
+                    }),
+                    Some((code, message)),
+                )
+            }
+        };
     let summary = json!({
         "schema": "wisent.desktop-crawl-batch.v1",
         "catalog": catalog,
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
         "runtime_manifest": manifest,
-        "records": reports,
-        "failed": failures,
+        "records": [record_report],
+        "failed": usize::from(failure.is_some()),
     });
     std::fs::write(
         run_root.join("batch.json"),
         serde_json::to_string_pretty(&summary)? + "\n",
     )?;
-    if failures > 0 {
-        bail!("{failures} desktop records could not be crawled");
+    // A failed record still retains a typed failure artifact and still
+    // publishes the attempt archive, so every attempt has exactly one archive
+    // and exactly one worker report line.
+    if let Some((code, message)) = failure.as_ref() {
+        std::fs::write(
+            run_root.join("failure.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "wisent.native-worker-failure.v1",
+                "code": code,
+                "message": message,
+                "run_id": manifest.run_id,
+                "catalog": manifest.catalog,
+                "record": manifest.record,
+                "attempt": manifest.attempt,
+                "attempt_id": manifest.attempt_id,
+                "engine": manifest.engine,
+            }))? + "\n",
+        )?;
     }
-    let artifact = publish_artifact(&run_root, &artifact_uri)?;
-    let worker_report = worker_report(&manifest, artifact)?;
-    println!("{}", serde_json::to_string(&worker_report)?);
+    let artifact = super::crawl::publish_attempt_archive(&run_root, &artifact_uri)?;
+    let failure = failure.map(|(code, message)| json!({"code": code, "message": message}));
+    let report = worker_report(&manifest, Some(artifact), failure.clone())?;
+    println!("{}", serde_json::to_string(&report)?);
+    if failure.is_some() {
+        bail!("the exact desktop record could not be crawled");
+    }
     Ok(())
 }

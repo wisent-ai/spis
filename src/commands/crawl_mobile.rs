@@ -14,7 +14,34 @@ use std::collections::HashSet;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::time::Duration;
+use std::time::{Duration, Instant};
+
+/// Typed record failure so the worker report can name a stable machine code
+/// instead of a free-text diagnostic.
+#[derive(Debug)]
+struct RecordFailure {
+    code: &'static str,
+    message: String,
+}
+
+impl std::fmt::Display for RecordFailure {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(formatter, "{}: {}", self.code, self.message)
+    }
+}
+
+impl std::error::Error for RecordFailure {}
+
+fn failure_code(error: &anyhow::Error) -> &'static str {
+    error
+        .chain()
+        .find_map(|cause| {
+            cause
+                .downcast_ref::<RecordFailure>()
+                .map(|failure| failure.code)
+        })
+        .unwrap_or("mobile_record_failed")
+}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum Platform {
@@ -95,6 +122,17 @@ fn canonical_driver_url(value: &str) -> Result<String> {
     Ok(parsed.as_str().trim_end_matches('/').to_string())
 }
 
+/// Per-endpoint response bound in bytes.
+fn response_limit(path: &str) -> u64 {
+    if path.ends_with("/screenshot") {
+        32 * 1024 * 1024
+    } else if path.ends_with("/stop_recording_screen") {
+        256 * 1024 * 1024
+    } else {
+        8 * 1024 * 1024
+    }
+}
+
 struct Appium {
     base: String,
     agent: ureq::Agent,
@@ -104,8 +142,11 @@ impl Appium {
     fn new(base: &str) -> Result<Self> {
         Ok(Self {
             base: canonical_driver_url(base)?,
+            // Zero redirects: an Appium reply may not send this worker, its
+            // session id or its screenshots to another origin (finding 12b).
             agent: ureq::AgentBuilder::new()
                 .timeout(Duration::from_secs(45))
+                .redirects(0)
                 .build(),
         })
     }
@@ -134,9 +175,21 @@ impl Appium {
                 bail!("Appium {method} {path} transport failed: {error}");
             }
         };
-        response
-            .into_json()
-            .map_err(|error| anyhow!("Appium {method} {path} returned invalid JSON: {error}"))
+        if (300..400).contains(&response.status()) {
+            bail!(
+                "Appium {method} {path} returned redirect HTTP {}; this agent follows no redirects",
+                response.status()
+            );
+        }
+        // `into_json` has no length bound, so a screenshot or screen-recording
+        // body would be materialized whole inside a Value before any decode
+        // could reject it (finding 12).
+        let limit = response_limit(path);
+        serde_json::from_reader(response.into_reader().take(limit)).map_err(|error| {
+            anyhow!(
+                "Appium {method} {path} returned invalid JSON within its {limit}-byte response bound: {error}"
+            )
+        })
     }
 
     fn create_session(
@@ -238,9 +291,17 @@ impl Appium {
                 bail!("Appium GET {path} transport failed: {error}");
             }
         };
-        let value: Value = response
-            .into_json()
-            .context("Appium alert-text response was invalid JSON")?;
+        if (300..400).contains(&response.status()) {
+            bail!(
+                "Appium GET {path} returned redirect HTTP {}; this agent follows no redirects",
+                response.status()
+            );
+        }
+        let limit = response_limit(&path);
+        let value: Value = serde_json::from_reader(response.into_reader().take(limit))
+            .with_context(|| {
+                format!("Appium GET {path} alert text exceeded its {limit}-byte bound or was invalid JSON")
+            })?;
         Ok(value
             .get("value")
             .and_then(Value::as_str)
@@ -290,6 +351,32 @@ impl Appium {
             .ok_or_else(|| anyhow!("Appium element response had no id"))
     }
 
+    /// Poll the accessibility source until two consecutive reads agree. A fixed
+    /// 700ms sleep was the only settling wait before a screenshot, so a slower
+    /// transition was captured mid-animation; 700ms is now the floor of a
+    /// bounded wait, not the whole wait (finding 19).
+    fn settle(&self, session: &str) -> Result<String> {
+        let started = Instant::now();
+        let mut previous = hash_text(&self.source(session)?);
+        loop {
+            std::thread::sleep(Duration::from_millis(200));
+            let current = self.source(session)?;
+            let digest = hash_text(&current);
+            if digest == previous && started.elapsed() >= Duration::from_millis(700) {
+                return Ok(current);
+            }
+            if started.elapsed() >= Duration::from_secs(20) {
+                return Err(anyhow::Error::new(RecordFailure {
+                    code: "mobile_surface_never_settled",
+                    message:
+                        "the mobile surface produced no two consecutive identical accessibility sources within 20s"
+                            .to_string(),
+                }));
+            }
+            previous = digest;
+        }
+    }
+
     fn click(&self, session: &str, selector: &str) -> Result<()> {
         let element = self.element(session, selector)?;
         self.call(
@@ -297,7 +384,7 @@ impl Appium {
             &format!("/session/{session}/element/{element}/click"),
             Some(&json!({})),
         )?;
-        std::thread::sleep(Duration::from_millis(700));
+        self.settle(session)?;
         Ok(())
     }
 
@@ -358,11 +445,27 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
     let response: Value = if cache.is_file() {
         serde_json::from_slice(&std::fs::read(&cache)?)?
     } else {
-        let value: Value = ureq::get(&url)
+        // Same bounded, redirect-free treatment as every Appium read: no
+        // unbounded into_json and no cross-origin redirect (findings 12/12b).
+        let agent = ureq::AgentBuilder::new()
             .timeout(Duration::from_secs(20))
+            .redirects(0)
+            .build();
+        let response = agent
+            .get(&url)
             .call()
-            .context("resolve exact iOS bundle id through Apple's lookup API")?
-            .into_json()?;
+            .context("resolve exact iOS bundle id through Apple's lookup API")?;
+        if (300..400).contains(&response.status()) {
+            bail!(
+                "Apple lookup returned redirect HTTP {}; this agent follows no redirects",
+                response.status()
+            );
+        }
+        let limit = response_limit(&url);
+        let value: Value = serde_json::from_reader(response.into_reader().take(limit))
+            .with_context(|| {
+                format!("Apple lookup response exceeded its {limit}-byte bound or was invalid JSON")
+            })?;
         super::crawl::atomic_json_write(&cache, &value)?;
         value
     };
@@ -466,6 +569,8 @@ fn exact_surface_screenshot(
     platform: Platform,
     expected_owner: &str,
 ) -> Result<(Vec<u8>, String, String)> {
+    // The screenshot is only taken from a settled surface (finding 19).
+    appium.settle(session)?;
     let active_owner_before = appium.active_app_identity(session)?;
     if active_owner_before != expected_owner {
         let owner_class = if system_owner(platform, &active_owner_before) {
@@ -551,9 +656,86 @@ fn verify_session_capabilities(
     Ok(())
 }
 
+fn hash_file(path: &Path) -> Result<String> {
+    let mut file = std::fs::File::open(path)
+        .with_context(|| format!("open {}", path.display()))?;
+    let mut digest = Sha256::new();
+    let mut buffer = [0_u8; 64 * 1024];
+    loop {
+        let count = file
+            .read(&mut buffer)
+            .with_context(|| format!("hash {}", path.display()))?;
+        if count == 0 {
+            break;
+        }
+        digest.update(&buffer[..count]);
+    }
+    Ok(hex::encode(digest.finalize()))
+}
+
+/// One helper binary, pinned exactly once per record.
+#[derive(Clone, Debug)]
+struct PinnedHelper {
+    path: PathBuf,
+    sha256: String,
+    version: String,
+}
+
+/// Resolve the readiness helper from absolute directories only. The inherited
+/// PATH never participates, the path must be canonical and must not be a
+/// symlink, and its digest and version are retained, so no writable earlier
+/// PATH entry can substitute the binary that observes device readiness
+/// (finding 10).
+fn pinned_readiness_helper() -> Result<PinnedHelper> {
+    const PROGRAM: &str = "stado-runtime-readiness";
+    let path = ["/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin"]
+        .iter()
+        .map(|directory| Path::new(directory).join(PROGRAM))
+        .find(|candidate| candidate.is_file())
+        .with_context(|| {
+            format!("{PROGRAM} is absent from the pinned absolute helper directories")
+        })?;
+    if std::fs::symlink_metadata(&path)?.file_type().is_symlink() {
+        bail!("pinned mobile readiness helper {} is a symlink", path.display());
+    }
+    let canonical = std::fs::canonicalize(&path)?;
+    if canonical != path {
+        bail!(
+            "pinned mobile readiness helper is not canonical: declared {}, canonical {}",
+            path.display(),
+            canonical.display()
+        );
+    }
+    let sha256 = hash_file(&path)?;
+    let mut version_command = Command::new(&path);
+    version_command
+        .arg("--version")
+        .env_clear()
+        .env("PATH", "/usr/bin:/bin");
+    let output = super::crawl::bounded_command_output(
+        &mut version_command,
+        "read pinned mobile readiness helper version",
+        Duration::from_secs(15),
+        64 * 1024,
+    )?;
+    if !output.status.success() {
+        bail!(
+            "pinned mobile readiness helper {} refused --version: {}",
+            path.display(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    Ok(PinnedHelper {
+        path,
+        sha256,
+        version: String::from_utf8_lossy(&output.stdout).trim().to_string(),
+    })
+}
+
 fn readiness_observation(
     manifest: &super::crawl::RuntimeManifest,
     app_id: &str,
+    helper: &PinnedHelper,
 ) -> Result<Value> {
     let execution = manifest
         .execution_identity
@@ -590,21 +772,25 @@ fn readiness_observation(
             "prepared-runtime proof does not bind the exact mobile app/device with prompt invocation and notification delivery disabled"
         );
     }
-    let output = Command::new("stado-runtime-readiness")
-        .args([
-            "verify",
-            "--json",
-            "--product",
-            app_id,
-            "--device",
-            device,
-            "--evidence-uri",
-            &proof.evidence_uri,
-            "--evidence-sha256",
-            &proof.evidence_sha256,
-        ])
-        .output()
-        .context("run fresh mobile runtime-readiness verification")?;
+    let mut readiness = Command::new(&helper.path);
+    readiness.args([
+        "verify",
+        "--json",
+        "--product",
+        app_id,
+        "--device",
+        device,
+        "--evidence-uri",
+        &proof.evidence_uri,
+        "--evidence-sha256",
+        &proof.evidence_sha256,
+    ]);
+    let output = super::crawl::bounded_command_output(
+        &mut readiness,
+        "run fresh mobile runtime-readiness verification",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "fresh mobile runtime-readiness verification failed: status={}; stdout={:?}; stderr={:?}",
@@ -811,7 +997,9 @@ fn crawl_record(
         .execution_identity
         .as_ref()
         .context("mobile runtime manifest has no exact device identity")?;
-    let readiness_before = readiness_observation(manifest, &app_id)?;
+    // Pinned exactly once per record and reused by both readiness observations.
+    let readiness_helper = pinned_readiness_helper()?;
+    let readiness_before = readiness_observation(manifest, &app_id, &readiness_helper)?;
     let output = root.join(&record.slug);
     std::fs::create_dir_all(&output)?;
 
@@ -820,7 +1008,7 @@ fn crawl_record(
         .with_context(|| format!("launch {} ({app_id})", record.name))?;
     let result = (|| -> Result<Value> {
         verify_session_capabilities(&capabilities, platform, &app_id, execution)?;
-        let readiness_after = readiness_observation(manifest, &app_id)?;
+        let readiness_after = readiness_observation(manifest, &app_id, &readiness_helper)?;
         appium.start_recording(&session)?;
 
         let mut states = HashSet::new();
@@ -1043,6 +1231,11 @@ fn crawl_record(
             "runtime_execution_identity": execution,
             "runtime_readiness_before_appium_launch": readiness_before,
             "runtime_readiness_after_capability_verification": readiness_after,
+            "pinned_readiness_helper": {
+                "path": readiness_helper.path,
+                "sha256": readiness_helper.sha256,
+                "version": readiness_helper.version,
+            },
             "appium_session_capabilities": capabilities,
             "driver_url": appium.base,
             "surface_observations": surface_observations,
@@ -1101,90 +1294,10 @@ fn attempt_root(
 fn revision() -> Result<String> { super::crawl::build_revision() }
 
 
-fn hash_artifact(path: &Path) -> Result<(String, u64)> {
-    let mut file = std::fs::File::open(path)
-        .with_context(|| format!("open mobile artifact {}", path.display()))?;
-    let mut digest = Sha256::new();
-    let mut bytes = 0_u64;
-    let mut buffer = [0_u8; 64 * 1024];
-    loop {
-        let count = file
-            .read(&mut buffer)
-            .with_context(|| format!("hash mobile artifact {}", path.display()))?;
-        if count == 0 {
-            break;
-        }
-        bytes += count as u64;
-        digest.update(&buffer[..count]);
-    }
-    Ok((hex::encode(digest.finalize()), bytes))
-}
-
-fn publish_artifact(root: &Path, uri: &str) -> Result<Value> {
-    let attempt_name = root
-        .file_name()
-        .and_then(|value| value.to_str())
-        .context("mobile attempt artifact root has no UTF-8 name")?;
-    let archive = root.with_file_name(format!("{attempt_name}.tar.gz"));
-    if !archive.is_file() {
-        let output = super::crawl::stado_command()
-            .args(["storage", "archive"])
-            .arg(root)
-            .arg(&archive)
-            .output()
-            .context("archive mobile crawl")?;
-        if !output.status.success() {
-            bail!(
-                "stado storage archive refused mobile crawl artifacts: {}",
-                String::from_utf8_lossy(&output.stderr).trim()
-            );
-        }
-    }
-    let (sha256, bytes) = hash_artifact(&archive)?;
-    let output = super::crawl::stado_command()
-        .args(["storage", "put", "--if-absent", uri])
-        .arg(&archive)
-        .output()
-        .context("publish mobile crawl")?;
-    if !output.status.success() {
-        bail!(
-            "stado storage put refused mobile crawl artifacts: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    let readback = root.with_file_name(format!("{attempt_name}.readback.tar.gz"));
-    if readback.exists() {
-        std::fs::remove_file(&readback)?;
-    }
-    let output = super::crawl::stado_command()
-        .args(["storage", "get", uri])
-        .arg(&readback)
-        .output()
-        .context("read back mobile crawl")?;
-    if !output.status.success() {
-        bail!(
-            "stado storage readback refused mobile crawl artifacts: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    let (observed_sha256, observed_bytes) = hash_artifact(&readback)?;
-    std::fs::remove_file(&readback)?;
-    if observed_sha256 != sha256 || observed_bytes != bytes {
-        bail!(
-            "mobile artifact readback differs: expected sha256={sha256} bytes={bytes}, observed sha256={observed_sha256} bytes={observed_bytes}"
-        );
-    }
-    Ok(json!({
-        "uri": uri,
-        "sha256": sha256,
-        "bytes": bytes,
-        "media_type": "application/gzip",
-    }))
-}
-
 fn worker_report(
     manifest: &super::crawl::RuntimeManifest,
-    artifact: Value,
+    artifact: Option<Value>,
+    failure: Option<Value>,
 ) -> Result<Value> {
     let value = serde_json::to_value(manifest)?;
     let attempt = value
@@ -1208,6 +1321,11 @@ fn worker_report(
         .filter(|identity| identity.is_object())
         .context("mobile runtime manifest has no typed execution_identity")?
         .clone();
+    if let Some(artifact) = artifact.as_ref() {
+        if artifact.get("uri").and_then(Value::as_str) != Some(manifest.artifact_uri.as_str()) {
+            bail!("published mobile artifact URI does not match the immutable runtime manifest");
+        }
+    }
     Ok(json!({
         "schema": "wisent.native-worker-report.v1",
         "run_id": manifest.run_id,
@@ -1217,7 +1335,7 @@ fn worker_report(
         "attempt": attempt,
         "attempt_id": attempt_id,
         "engine": manifest.engine,
-        "state": "artifact_published",
+        "state": if failure.is_some() { "failed" } else { "artifact_published" },
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
         "reference_sha256": manifest.reference_sha256,
@@ -1225,6 +1343,7 @@ fn worker_report(
         "bindings_sha256": bindings_sha256,
         "execution_identity": execution_identity,
         "artifact": artifact,
+        "failure": failure,
     }))
 }
 
@@ -1279,10 +1398,14 @@ fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
         "--output-uri".to_string(),
         output_uri.clone(),
     ];
-    let output = super::crawl::stado_command()
-        .args(arguments)
-        .output()
-        .context("submit mobile crawl through Stado")?;
+    let mut stado = super::crawl::stado_command();
+    stado.args(arguments);
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "submit mobile crawl through Stado",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "Stado refused mobile crawl: {}",
@@ -1405,7 +1528,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         .into_iter()
         .next()
         .context("runtime manifest record is absent from catalog")?;
-    let reports = vec![match crawl_record(
+    let (record_report, failure) = match crawl_record(
         &appium,
         platform,
         &entry,
@@ -1414,22 +1537,27 @@ pub fn run(rest: &[String]) -> Result<()> {
         max_states,
         max_depth,
     ) {
-        Ok(report) => report,
-        Err(error) => json!({
-            "record": entry.slug,
-            "name": entry.name,
-            "status": "failed",
-            "source_revision": manifest.source_revision,
-            "source_input_sha256": manifest.source_input_sha256,
-            "runtime_manifest": manifest,
-            "no_consent_diagnostic": error.to_string(),
-            "error": error.to_string(),
-        }),
-    }];
-    let failures = reports
-        .iter()
-        .filter(|report| report.get("status").and_then(Value::as_str) == Some("failed"))
-        .count();
+        Ok(report) => (report, None),
+        Err(error) => {
+            let code = failure_code(&error);
+            let message = format!("{error:#}");
+            // Diagnostics never share stdout with the one worker report line.
+            eprintln!("mobile record {} failed: {message}", entry.slug);
+            (
+                json!({
+                    "record": entry.slug,
+                    "name": entry.name,
+                    "status": "failed",
+                    "source_revision": manifest.source_revision,
+                    "source_input_sha256": manifest.source_input_sha256,
+                    "runtime_manifest": manifest,
+                    "no_consent_diagnostic": message,
+                    "error": message,
+                }),
+                Some((code, message)),
+            )
+        }
+    };
     let summary = json!({
         "schema": "wisent.mobile-crawl-batch.v1",
         "catalog": catalog,
@@ -1437,18 +1565,38 @@ pub fn run(rest: &[String]) -> Result<()> {
         "source_revision": manifest.source_revision,
         "source_input_sha256": manifest.source_input_sha256,
         "runtime_manifest": manifest,
-        "records": reports,
-        "failed": failures,
+        "records": [record_report],
+        "failed": usize::from(failure.is_some()),
     });
     std::fs::write(
         run_root.join("batch.json"),
         serde_json::to_string_pretty(&summary)? + "\n",
     )?;
-    if failures > 0 {
-        bail!("{failures} mobile records could not be crawled");
+    // A failed record still retains a typed failure artifact and still
+    // publishes the attempt archive, so every attempt has exactly one archive
+    // and exactly one worker report line.
+    if let Some((code, message)) = failure.as_ref() {
+        std::fs::write(
+            run_root.join("failure.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "wisent.native-worker-failure.v1",
+                "code": code,
+                "message": message,
+                "run_id": manifest.run_id,
+                "catalog": manifest.catalog,
+                "record": manifest.record,
+                "attempt": manifest.attempt,
+                "attempt_id": manifest.attempt_id,
+                "engine": manifest.engine,
+            }))? + "\n",
+        )?;
     }
-    let artifact = publish_artifact(&run_root, &artifact_uri)?;
-    let worker_report = worker_report(&manifest, artifact)?;
-    println!("{}", serde_json::to_string(&worker_report)?);
+    let artifact = super::crawl::publish_attempt_archive(&run_root, &artifact_uri)?;
+    let failure = failure.map(|(code, message)| json!({"code": code, "message": message}));
+    let report = worker_report(&manifest, Some(artifact), failure.clone())?;
+    println!("{}", serde_json::to_string(&report)?);
+    if failure.is_some() {
+        bail!("the exact mobile record could not be crawled");
+    }
     Ok(())
 }
