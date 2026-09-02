@@ -821,8 +821,26 @@ fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Resul
             let compiled = CompiledRobots::compile(&snapshot)?;
             (snapshot, compiled, Vec::new())
         }
-        Ok(_) => {
+        // An origin that answers "there is no policy here" is genuinely
+        // unconstrained, and only these two statuses say that.
+        Ok(response) if matches!(response.status, 404 | 410) => {
             let snapshot = RobotsSnapshot::default();
+            let compiled = CompiledRobots::compile(&snapshot)?;
+            (snapshot, compiled, Vec::new())
+        }
+        // `bounded_http_get` reports a served error status as `Ok`, so 429 and every 5xx
+        // arrive here rather than in the transport-error branch below. An origin that
+        // rate-limits or fails is an origin whose robots.txt was never observed: the
+        // rules it does serve may forbid this sweep, so an unobserved policy denies
+        // everything and leaves the same durable diagnostic as a transport failure.
+        Ok(response) => {
+            push_inventory_diagnostic(
+                &mut diagnostics,
+                "robots_unavailable",
+                format!("robots.txt returned HTTP {}", response.status),
+                robots_url.as_str(),
+            );
+            let snapshot = RobotsSnapshot::deny_all();
             let compiled = CompiledRobots::compile(&snapshot)?;
             (snapshot, compiled, Vec::new())
         }

@@ -5768,8 +5768,18 @@ fn import_record_attempt(
             // One corpus attempt. The typed report is validated in exactly one
             // place, shared with `docs-corpus import`, so this document is not
             // checked twice by two independent rules; that validation also proves
-            // the artifact coordinates, digests and corpus/tree agreement.
-            super::docs_corpus::validate_docs_worker_report(&report)?;
+            // the artifact coordinates, digests and corpus/tree agreement, and it
+            // returns them, so the artifact this attempt actually downloaded is
+            // compared here rather than through transitivity via the manifest URI
+            // equality above and the archive readback.
+            let (artifact_uri, artifact_sha256) =
+                super::docs_corpus::validate_docs_worker_report(&report)?;
+            if artifact_uri != manifest.artifact_uri || artifact_sha256 != expected_sha256 {
+                bail!(
+                    "docs worker report artifact ({artifact_uri} {artifact_sha256}) is not the immutable attempt artifact ({} {expected_sha256})",
+                    manifest.artifact_uri
+                );
+            }
             let corpus = report
                 .get("corpus")
                 .cloned()

@@ -1369,8 +1369,11 @@ fn validate_receipt_corpus(receipt: &Value, corpus: &AttemptCorpus) -> Result<()
         .pointer("/retrieval/retrieved_count")
         .and_then(Value::as_u64)
         .context("retrieval report has no retrieved_count")?;
-    if receipt.pointer("/corpus/files").and_then(Value::as_u64) != Some(CORPUS_FILES.len() as u64)
-        || receipt.pointer("/corpus/bytes").and_then(Value::as_u64) != Some(corpus_bytes)
+    // The exact file count is already proven against `CORPUS_FILES` by
+    // `validate_docs_worker_report`, which every path into this function runs first and
+    // which compares the same constant, so it is not restated here. Bytes and pages are
+    // a separate rule: they are compared with the corpus that was actually materialised.
+    if receipt.pointer("/corpus/bytes").and_then(Value::as_u64) != Some(corpus_bytes)
         || receipt.pointer("/corpus/pages").and_then(Value::as_u64) != Some(expected_pages)
     {
         bail!("attempt receipt corpus summary differs from imported corpus");
