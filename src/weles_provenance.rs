@@ -134,6 +134,9 @@ pub struct WelesEvidenceInventoryEntry {
     pub bytes: u64,
 }
 
+/// The receipt-bound manifest of a SUCCEEDED task: `weles.browser-evidence-manifest.v1`.
+/// `deny_unknown_fields` plus every field being required is what pins the shape, so a v2
+/// document can never be read as this one.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 struct ReceiptBoundEvidenceManifest {
@@ -150,6 +153,106 @@ struct ReceiptBoundEvidenceManifest {
     effective_url: String,
     final_url: String,
     evidence_inventory: Vec<WelesEvidenceInventoryEntry>,
+}
+
+/// The receipt-bound manifest of a FAILED, CANCELLED or REJECTED task:
+/// `weles.browser-evidence-manifest.v2`. There is no navigation to sign, so the effective
+/// and final URL are ABSENT rather than optional: together with `deny_unknown_fields`,
+/// their absence from this struct is what refuses a v1 document here and refuses a v2
+/// document that carries them.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct NonSuccessEvidenceManifest {
+    schema: String,
+    task_id: String,
+    organization_id: String,
+    origin: String,
+    action: String,
+    outcome: String,
+    request_digest: String,
+    result_digest: String,
+    spis_binding: WelesAttemptBinding,
+    requested_url: String,
+    evidence_inventory: Vec<WelesEvidenceInventoryEntry>,
+}
+
+/// One retained manifest in whichever version its terminal outcome mandates.
+enum ReceiptBoundManifest {
+    Successful(ReceiptBoundEvidenceManifest),
+    NonSuccess(NonSuccessEvidenceManifest),
+}
+
+/// The fields every version carries, plus the navigation pair only the successful version
+/// signs, so the checks below are written once instead of per version.
+struct EvidenceManifestFacts<'a> {
+    schema: &'a str,
+    expected_schema: &'static str,
+    task_id: &'a str,
+    organization_id: &'a str,
+    origin: &'a str,
+    action: &'a str,
+    outcome: &'a str,
+    request_digest: &'a str,
+    result_digest: &'a str,
+    spis_binding: &'a WelesAttemptBinding,
+    requested_url: &'a str,
+    navigation: Option<(&'a str, &'a str)>,
+    evidence_inventory: &'a [WelesEvidenceInventoryEntry],
+}
+
+impl ReceiptBoundManifest {
+    /// Parses the retained artifact in exactly the version the signed outcome mandates.
+    fn parse(value: &Value, outcome: &str) -> Result<Self, String> {
+        if outcome == "completed" {
+            serde_json::from_value(value.clone())
+                .map(Self::Successful)
+                .map_err(|_| {
+                    "receipt-bound evidence manifest does not match the typed schema".to_string()
+                })
+        } else {
+            serde_json::from_value(value.clone())
+                .map(Self::NonSuccess)
+                .map_err(|_| {
+                    "receipt-bound non-success evidence manifest does not match the typed schema"
+                        .to_string()
+                })
+        }
+    }
+
+    fn facts(&self) -> EvidenceManifestFacts<'_> {
+        match self {
+            Self::Successful(manifest) => EvidenceManifestFacts {
+                schema: &manifest.schema,
+                expected_schema: "weles.browser-evidence-manifest.v1",
+                task_id: &manifest.task_id,
+                organization_id: &manifest.organization_id,
+                origin: &manifest.origin,
+                action: &manifest.action,
+                outcome: &manifest.outcome,
+                request_digest: &manifest.request_digest,
+                result_digest: &manifest.result_digest,
+                spis_binding: &manifest.spis_binding,
+                requested_url: &manifest.requested_url,
+                navigation: Some((&manifest.effective_url, &manifest.final_url)),
+                evidence_inventory: &manifest.evidence_inventory,
+            },
+            Self::NonSuccess(manifest) => EvidenceManifestFacts {
+                schema: &manifest.schema,
+                expected_schema: "weles.browser-evidence-manifest.v2",
+                task_id: &manifest.task_id,
+                organization_id: &manifest.organization_id,
+                origin: &manifest.origin,
+                action: &manifest.action,
+                outcome: &manifest.outcome,
+                request_digest: &manifest.request_digest,
+                result_digest: &manifest.result_digest,
+                spis_binding: &manifest.spis_binding,
+                requested_url: &manifest.requested_url,
+                navigation: None,
+                evidence_inventory: &manifest.evidence_inventory,
+            },
+        }
+    }
 }
 
 
@@ -798,10 +901,11 @@ fn verify_attempt_binding(
                 .to_string(),
         );
     }
-    let manifest: ReceiptBoundEvidenceManifest = serde_json::from_value(artifact_value.clone())
-        .map_err(|_| {
-            "receipt-bound evidence manifest does not match the typed schema".to_string()
-        })?;
+    // The signed outcome, already proved above to be the receipt's own claim, chooses the
+    // manifest version. Nothing else may: a document that does not match the version its
+    // outcome mandates is refused, in either direction.
+    let manifest =
+        ReceiptBoundManifest::parse(artifact_value, &document.expected_claims.outcome)?;
     validate_request_and_evidence_manifest(
         &envelope,
         binding,
@@ -872,7 +976,7 @@ fn validate_request_and_evidence_manifest(
     binding: &WelesAttemptBinding,
     document: &WelesProvenanceDocument,
     product_url: &url::Url,
-    manifest: &ReceiptBoundEvidenceManifest,
+    manifest: &ReceiptBoundManifest,
     record_dir: &Path,
 ) -> Result<(), String> {
     let request = &envelope.weles_request_document;
@@ -919,24 +1023,33 @@ fn validate_request_and_evidence_manifest(
         &envelope.weles_task_id,
         record_dir,
     )?;
-    let manifest_requested_url = parse_http_url(&manifest.requested_url, "manifest requested URL")?;
-    let manifest_effective_url = parse_http_url(&manifest.effective_url, "manifest effective URL")?;
-    let manifest_final_url = parse_http_url(&manifest.final_url, "manifest final URL")?;
-    if manifest.schema != "weles.browser-evidence-manifest.v1"
-        || manifest.task_id != envelope.weles_task_id
-        || manifest.organization_id != document.expected_claims.organization_id
-        || manifest.origin != document.expected_claims.origin
-        || manifest.action != document.expected_claims.action
-        || manifest.outcome != "completed"
-        || manifest.request_digest != document.expected_claims.request_digest
-        || manifest.result_digest != document.expected_claims.result_digest
-        || manifest.spis_binding != *binding
+    let facts = manifest.facts();
+    let manifest_requested_url = parse_http_url(facts.requested_url, "manifest requested URL")?;
+    // Only the successful version signs a navigation, and only it can be compared with the
+    // envelope's final URL; the non-success version has neither field at all.
+    let navigation_matches = match facts.navigation {
+        Some((effective_url, final_url)) => {
+            let manifest_effective_url = parse_http_url(effective_url, "manifest effective URL")?;
+            let manifest_final_url = parse_http_url(final_url, "manifest final URL")?;
+            manifest_effective_url.origin() == product_url.origin()
+                && manifest_final_url.origin() == product_url.origin()
+                && final_url == envelope.final_url
+        }
+        None => true,
+    };
+    if facts.schema != facts.expected_schema
+        || facts.task_id != envelope.weles_task_id
+        || facts.organization_id != document.expected_claims.organization_id
+        || facts.origin != document.expected_claims.origin
+        || facts.action != document.expected_claims.action
+        || facts.outcome != document.expected_claims.outcome
+        || facts.request_digest != document.expected_claims.request_digest
+        || facts.result_digest != document.expected_claims.result_digest
+        || *facts.spis_binding != *binding
         || manifest_requested_url != *product_url
-        || manifest.requested_url != envelope.requested_url
-        || manifest_effective_url.origin() != product_url.origin()
-        || manifest_final_url.origin() != product_url.origin()
-        || manifest.final_url != envelope.final_url
-        || manifest.evidence_inventory != envelope.evidence_inventory
+        || facts.requested_url != envelope.requested_url
+        || !navigation_matches
+        || facts.evidence_inventory != envelope.evidence_inventory
     {
         return Err(
             "receipt-bound evidence manifest differs from the signed request/result/attempt"
