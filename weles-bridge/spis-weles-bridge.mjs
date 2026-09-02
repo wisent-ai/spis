@@ -5,10 +5,12 @@ import {
   constants as fsConstants,
   closeSync,
   createReadStream,
+  fstatSync,
   fsyncSync,
   lstatSync,
   openSync,
   readFileSync,
+  readSync,
   realpathSync,
   linkSync,
   unlinkSync,
@@ -16,15 +18,11 @@ import {
 } from 'node:fs';
 import { open } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, normalize, resolve, sep } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 
 const CLIENT_PACKAGE = '@wisent-ai/weles-client';
 const CLIENT_COMMIT = '37798a26022a040fbd0a4a4a25c99b5559d95a32';
 const CLIENT_SOURCE_SHA256 = '7cdfee8ae7d7ffc831c60d01e393640bf912d95adf0b06c9dd51a737f97ccada';
-const CANONICAL_TRUST_PATH = join(
-  dirname(fileURLToPath(import.meta.url)),
-  'weles-receipt-trust.json',
-);
 const CONFIG_SCHEMA = 'wisent.spis-weles-bridge-config.v1';
 const TRUST_SCHEMA = 'wisent.spis-weles-receipt-trust.v1';
 const COMMAND_SCHEMA = 'wisent.spis-weles-bridge-command.v1';
@@ -35,6 +33,7 @@ const TASK_STATUS_SCHEMA = 'wisent.spis-weles-task-status.v1';
 const CANCELLATION_SCHEMA = 'wisent.spis-weles-cancellation.v1';
 const ERROR_SCHEMA = 'wisent.spis-weles-bridge-error.v1';
 const MAX_JSON_BYTES = 1024 * 1024;
+const MAX_TRUST_BYTES = 64 * 1024;
 const MAX_OUTPUT_BYTES = 4 * 1024 * 1024;
 const MAX_EVIDENCE_MANIFEST_BYTES = 4 * 1024 * 1024;
 const MAX_EVIDENCE_INVENTORY_BYTES = 8 * 1024 * 1024;
@@ -110,6 +109,7 @@ const SIGNED_SPIS_CLAIMS = Object.freeze([
 const RECEIPT_FIELDS = Object.freeze([
   'schema',
   ...CORE_CLAIMS,
+  ...SIGNED_SPIS_CLAIMS,
   'keyId',
   'signature',
   'signedPayload',
@@ -126,6 +126,39 @@ class BridgeError extends Error {
 function fail(code, message) {
   throw new BridgeError(code, message);
 }
+
+const VERIFIED_DATA_EXECUTION = import.meta.url.startsWith('data:text/javascript;base64,');
+
+function resolveBridgeDirectory() {
+  if (!VERIFIED_DATA_EXECUTION) {
+    return dirname(fileURLToPath(import.meta.url));
+  }
+  const configured = process.env.SPIS_WELES_VERIFIED_BRIDGE_DIR;
+  if (!configured || !isAbsolute(configured)) {
+    fail(
+      'official-client-unavailable',
+      'verified in-memory bridge execution requires an absolute checked-in resource directory',
+    );
+  }
+  let resolved;
+  let stat;
+  try {
+    resolved = realpathSync(configured);
+    stat = lstatSync(resolved);
+  } catch {
+    fail('official-client-unavailable', 'the checked-in bridge resource directory is unavailable');
+  }
+  if (resolved !== configured || !stat.isDirectory() || stat.isSymbolicLink()) {
+    fail(
+      'official-client-unavailable',
+      'the checked-in bridge resource directory must be canonical and non-symlinked',
+    );
+  }
+  return resolved;
+}
+
+const BRIDGE_DIRECTORY = resolveBridgeDirectory();
+const CANONICAL_TRUST_PATH = join(BRIDGE_DIRECTORY, 'weles-receipt-trust.json');
 
 function plainObject(value, name) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -297,10 +330,36 @@ async function readStdin() {
 }
 
 function readBoundedFile(path, name) {
-  const stat = lstatSync(path);
-  if (!stat.isFile() || stat.isSymbolicLink()) fail('invalid-input-file', `${name} must be a regular file`);
-  if (stat.size > MAX_JSON_BYTES) fail('input-too-large', `${name} exceeded the size limit`);
-  return readFileSync(path, 'utf8');
+  let fd;
+  try {
+    const pathStat = lstatSync(path);
+    if (!pathStat.isFile() || pathStat.isSymbolicLink()) {
+      fail('invalid-input-file', `${name} must be a regular non-symlink file`);
+    }
+    fd = openSync(path, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0));
+    const openedStat = fstatSync(fd);
+    if (!openedStat.isFile()
+        || openedStat.dev !== pathStat.dev
+        || openedStat.ino !== pathStat.ino) {
+      fail('invalid-input-file', `${name} changed during open`);
+    }
+    const bytes = Buffer.allocUnsafe(MAX_JSON_BYTES + 1);
+    let offset = 0;
+    while (offset < bytes.length) {
+      const count = readSync(fd, bytes, offset, bytes.length - offset, null);
+      if (count === 0) break;
+      offset += count;
+    }
+    if (offset > MAX_JSON_BYTES) fail('input-too-large', `${name} exceeded the size limit`);
+    return bytes.subarray(0, offset).toString('utf8');
+  } catch (error) {
+    if (error instanceof BridgeError) throw error;
+    fail('invalid-input-file', `${name} could not be read`);
+  } finally {
+    if (fd !== undefined) {
+      try { closeSync(fd); } catch {}
+    }
+  }
 }
 
 function readProtectedConfig(path) {
@@ -349,10 +408,21 @@ function loadTrust() {
   if (resolve(configuredPath) !== resolve(CANONICAL_TRUST_PATH)) {
     fail('invalid-trust', 'SPIS_WELES_TRUST_FILE must resolve to the checked-in canonical trust document');
   }
-  const trust = plainObject(
-    readPublicTrust(CANONICAL_TRUST_PATH),
-    'public Weles receipt trust',
-  );
+  let trustValue;
+  if (VERIFIED_DATA_EXECUTION) {
+    const encoded = process.env.SPIS_WELES_VERIFIED_TRUST_BASE64;
+    if (typeof encoded !== 'string' || !encoded) {
+      fail('trust-unavailable', 'verified in-memory execution requires the checked-in public trust bytes');
+    }
+    const bytes = Buffer.from(encoded, 'base64');
+    if (bytes.toString('base64') !== encoded || bytes.length > MAX_TRUST_BYTES) {
+      fail('invalid-trust', 'verified public trust bytes are malformed or oversized');
+    }
+    trustValue = parseJson(bytes.toString('utf8'), 'verified public Weles receipt trust');
+  } else {
+    trustValue = readPublicTrust(CANONICAL_TRUST_PATH);
+  }
+  const trust = plainObject(trustValue, 'public Weles receipt trust');
   onlyKeys(trust, [
     'schema',
     'organizationId',
@@ -399,25 +469,53 @@ function loadConfig(trust) {
 
 async function loadOfficialClient() {
   const sourcePath = join(
-    dirname(fileURLToPath(import.meta.url)),
+    BRIDGE_DIRECTORY,
     'vendor',
     'weles-client',
     'index.mjs',
   );
+  let fd;
   let source;
   try {
-    source = readFileSync(sourcePath);
-  } catch {
+    const pathStat = lstatSync(sourcePath);
+    if (!pathStat.isFile() || pathStat.isSymbolicLink()) {
+      fail(
+        'official-client-unavailable',
+        'the vendored official Weles client must be a regular non-symlink file',
+      );
+    }
+    if (pathStat.size > MAX_JSON_BYTES) {
+      fail('official-client-unavailable', 'the vendored official Weles client is oversized');
+    }
+    fd = openSync(
+      sourcePath,
+      fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0),
+    );
+    const openedStat = fstatSync(fd);
+    if (!openedStat.isFile()
+        || openedStat.dev !== pathStat.dev
+        || openedStat.ino !== pathStat.ino
+        || openedStat.size !== pathStat.size) {
+      fail('official-client-unavailable', 'the vendored official Weles client changed during open');
+    }
+    source = readFileSync(fd);
+  } catch (error) {
+    if (error instanceof BridgeError) throw error;
     fail('official-client-unavailable', 'the vendored official Weles client source is unreadable');
+  } finally {
+    if (fd !== undefined) {
+      try { closeSync(fd); } catch {}
+    }
   }
   const digest = createHash('sha256').update(source).digest('hex');
   if (digest !== CLIENT_SOURCE_SHA256) {
     fail('official-client-mismatch', 'the vendored official Weles client does not match the pinned commit');
   }
   try {
-    return await import(pathToFileURL(sourcePath).href);
+    const verifiedModule = `data:text/javascript;base64,${source.toString('base64')}`;
+    return await import(verifiedModule);
   } catch {
-    fail('official-client-unavailable', 'the vendored official Weles client could not be loaded');
+    fail('official-client-unavailable', 'the verified official Weles client bytes could not be loaded');
   }
 }
 
@@ -460,8 +558,8 @@ function validateExpectedClaims(value, config) {
     origin: expected.origin,
     action: expected.action,
   }, config);
-  if (![...TERMINAL_OUTCOME_BY_STATUS.values()].includes(expected.outcome)) {
-    fail('expected-claim-mismatch', 'expected outcome is not in the typed terminal contract');
+  if (expected.outcome !== 'completed') {
+    fail('expected-claim-mismatch', 'Spis provenance requires the completed terminal outcome');
   }
   if (!SHA256.test(expected.evidenceDigest)) {
     fail('expected-claim-mismatch', 'expected evidenceDigest must be a lowercase SHA-256 digest');
@@ -481,12 +579,26 @@ function validateExpectedClaims(value, config) {
   return expected;
 }
 
-function validateReceipt(value, strict = true) {
+function validateReceipt(value) {
   const receipt = plainObject(value, 'receipt');
-  if (strict) onlyKeys(receipt, RECEIPT_FIELDS, 'receipt');
+  onlyKeys(receipt, RECEIPT_FIELDS, 'receipt');
   const retained = {};
-  for (const field of RECEIPT_FIELDS) retained[field] = nonemptyString(receipt[field], `receipt.${field}`);
+  for (const field of [
+    'schema',
+    ...CORE_CLAIMS,
+    'requestDigest',
+    'resultDigest',
+    'keyId',
+    'signature',
+    'signedPayload',
+  ]) {
+    retained[field] = nonemptyString(receipt[field], `receipt.${field}`);
+  }
   if (retained.schema !== 'weles.receipt.current') fail('unsupported-receipt', 'receipt schema is unsupported');
+  if (!SHA256_ID.test(retained.requestDigest) || !SHA256_ID.test(retained.resultDigest)) {
+    fail('invalid-receipt', 'receipt request/result digests must be sha256: identifiers');
+  }
+  retained.spisBinding = validateSpisBinding(receipt.spisBinding, 'receipt.spisBinding');
   return retained;
 }
 
@@ -504,8 +616,10 @@ function validateArtifact(value) {
   if (!SHA256.test(nonemptyString(artifact.sha256, 'artifact.sha256'))) {
     fail('invalid-artifact', 'artifact.sha256 must be a lowercase SHA-256 digest');
   }
-  if (artifact.bytes !== undefined && (!Number.isSafeInteger(artifact.bytes) || artifact.bytes < 0)) {
-    fail('invalid-artifact', 'artifact.bytes must be a non-negative safe integer');
+  if (!Number.isSafeInteger(artifact.bytes)
+      || artifact.bytes < 1
+      || artifact.bytes > MAX_EVIDENCE_MANIFEST_BYTES) {
+    fail('invalid-artifact', 'artifact.bytes must be a required positive bounded safe integer');
   }
   return artifact;
 }
@@ -538,7 +652,7 @@ async function digestArtifact(artifact) {
     }
     const sha256 = hash.digest('hex');
     if (sha256 !== artifact.sha256) fail('artifact-digest-mismatch', 'retained artifact digest differs from the caller expectation');
-    if (artifact.bytes !== undefined && stat.size !== artifact.bytes) {
+    if (stat.size !== artifact.bytes) {
       fail('artifact-size-mismatch', 'retained artifact size differs from the persisted verification document');
     }
     return {
@@ -569,6 +683,9 @@ function provenanceId(receipt, keySetVersion, artifact) {
     ['receipt.keyId', receipt.keyId],
     ['receipt.signedPayload', receipt.signedPayload],
     ['receipt.signature', receipt.signature],
+    ['receipt.requestDigest', receipt.requestDigest],
+    ['receipt.resultDigest', receipt.resultDigest],
+    ['receipt.spisBinding', canonicalJson(receipt.spisBinding)],
     ['keySetVersion', keySetVersion],
     ['artifact.path', artifact.path],
     ['artifact.sha256', artifact.sha256],
@@ -577,7 +694,7 @@ function provenanceId(receipt, keySetVersion, artifact) {
 }
 
 function buildReceiptCheckpoint(receiptValue, expectedTaskValue, config, verifyReceipt) {
-  const receipt = validateReceipt(receiptValue, false);
+  const receipt = validateReceipt(receiptValue);
   const expectedTask = validateExpectedTask(expectedTaskValue, config);
   let claims;
   try {
@@ -593,6 +710,8 @@ function buildReceiptCheckpoint(receiptValue, expectedTaskValue, config, verifyR
       fail('expected-claim-mismatch', `verified ${field} differs from the known task`);
     }
   }
+  claims = validateSignedSpisClaims(claims, config, 'verified claims');
+  validateReceiptClaimCopies(receipt, claims);
   if (claims.keyId !== receipt.keyId) fail('receipt-key-mismatch', 'verified keyId differs from the retained receipt');
   return {
     schema: RECEIPT_CHECKPOINT_SCHEMA,
@@ -606,17 +725,29 @@ function buildReceiptCheckpoint(receiptValue, expectedTaskValue, config, verifyR
   };
 }
 function validateSignedSpisClaims(claims, config, name) {
+  onlyKeys(claims, [...CORE_CLAIMS, ...SIGNED_SPIS_CLAIMS, 'keyId'], name);
   for (const field of ['requestDigest', 'resultDigest']) {
     if (!SHA256_ID.test(nonemptyString(claims[field], `${name}.${field}`))) {
       fail('invalid-receipt-payload', `${name}.${field} must be a sha256: identifier`);
     }
   }
-  claims.spisBinding = validateSpisBinding(claims.spisBinding, `${name}.spisBinding`);
-  if (claims.spisBinding.service.action !== config.allowedAction) {
+  const spisBinding = validateSpisBinding(claims.spisBinding, `${name}.spisBinding`);
+  if (spisBinding.service.action !== config.allowedAction) {
     fail('expected-claim-mismatch', 'signed spisBinding action differs from public receipt trust');
   }
-  return claims;
+  return { ...claims, spisBinding };
 }
+function validateReceiptClaimCopies(receipt, claims) {
+  for (const field of [...CORE_CLAIMS, 'requestDigest', 'resultDigest']) {
+    if (receipt[field] !== claims[field]) {
+      fail('receipt-claim-mismatch', `retained receipt ${field} differs from verified claims`);
+    }
+  }
+  if (canonicalJson(receipt.spisBinding) !== canonicalJson(claims.spisBinding)) {
+    fail('receipt-claim-mismatch', 'retained receipt spisBinding differs from verified claims');
+  }
+}
+
 
 function validateEvidenceManifest(value, expectedClaims) {
   const manifest = plainObject(value, 'retained evidence manifest');
@@ -725,7 +856,7 @@ function validateEvidenceManifest(value, expectedClaims) {
 
 
 async function buildProvenance(receiptValue, expectedValue, artifactValue, config, verifyReceipt) {
-  const receipt = validateReceipt(receiptValue, false);
+  const receipt = validateReceipt(receiptValue);
   const expectedClaims = validateExpectedClaims(expectedValue, config);
   const artifactExpectation = validateArtifact(artifactValue);
   let claims;
@@ -742,7 +873,8 @@ async function buildProvenance(receiptValue, expectedValue, artifactValue, confi
       fail('expected-claim-mismatch', `verified ${field} differs from the caller expectation`);
     }
   }
-  validateSignedSpisClaims(claims, config, 'verified claims');
+  claims = validateSignedSpisClaims(claims, config, 'verified claims');
+  validateReceiptClaimCopies(receipt, claims);
   if (claims.requestDigest !== expectedClaims.requestDigest
       || claims.resultDigest !== expectedClaims.resultDigest
       || canonicalJson(claims.spisBinding) !== canonicalJson(expectedClaims.spisBinding)) {
@@ -791,12 +923,55 @@ function networkClient(config, WelesClient, serviceIdentity, origin, action) {
   });
 }
 
+function assertJcsString(value) {
+  for (let index = 0; index < value.length; index += 1) {
+    const unit = value.charCodeAt(index);
+    if (unit >= 0xd800 && unit <= 0xdbff) {
+      const next = value.charCodeAt(index + 1);
+      if (!(next >= 0xdc00 && next <= 0xdfff)) {
+        fail('non-canonical-json', 'JCS strings must not contain lone UTF-16 surrogates');
+      }
+      index += 1;
+    } else if (unit >= 0xdc00 && unit <= 0xdfff) {
+      fail('non-canonical-json', 'JCS strings must not contain lone UTF-16 surrogates');
+    }
+  }
+}
+
+function compareUtf16(left, right) {
+  const length = Math.min(left.length, right.length);
+  for (let index = 0; index < length; index += 1) {
+    const difference = left.charCodeAt(index) - right.charCodeAt(index);
+    if (difference !== 0) return difference;
+  }
+  return left.length - right.length;
+}
+
 function canonicalJson(value) {
-  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (value === null) return 'null';
+  if (typeof value === 'boolean') return value ? 'true' : 'false';
+  if (typeof value === 'string') {
+    assertJcsString(value);
+    return JSON.stringify(value);
+  }
+  if (typeof value === 'number') {
+    if (!Number.isSafeInteger(value)) {
+      fail('non-canonical-json', 'JCS input numbers must be safe integers');
+    }
+    return JSON.stringify(value);
+  }
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
+  if (typeof value !== 'object'
+      || (Object.getPrototypeOf(value) !== Object.prototype
+        && Object.getPrototypeOf(value) !== null)) {
+    fail('non-canonical-json', 'JCS input must contain only JSON values');
+  }
   return `{${Object.keys(value)
-    .sort()
-    .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)
+    .sort(compareUtf16)
+    .map((key) => {
+      assertJcsString(key);
+      return `${JSON.stringify(key)}:${canonicalJson(value[key])}`;
+    })
     .join(',')}}`;
 }
 function canonicalHttpUrl(value, name) {
@@ -836,6 +1011,28 @@ function portableAttemptComponent(value) {
     && /^[A-Za-z0-9._-]+$/.test(value);
 }
 
+function sha256Text(value) {
+  return createHash('sha256').update(value, 'utf8').digest('hex');
+}
+
+function validateAttemptBindingDerivation(binding, name) {
+  const catalogKey = sha256Text(
+    `${binding.source_revision}\0${binding.run_id}\0${binding.catalog}`,
+  );
+  const recordKey = sha256Text(
+    `${catalogKey}\0${binding.record}\0${binding.source_input_sha256}`,
+  );
+  if (binding.record_key !== recordKey) {
+    fail('invalid-input', `${name}.record_key is not the runtime record-key derivation`);
+  }
+  const attemptFingerprint = sha256Text(
+    `${binding.record_key}\0${binding.attempt}\0${binding.service.host}`,
+  ).slice(0, 16);
+  if (binding.attempt_id !== `attempt-${binding.attempt}-${attemptFingerprint}`) {
+    fail('invalid-input', `${name}.attempt_id is not the runtime attempt-identity derivation`);
+  }
+}
+
 function validateAttemptBindingUris(binding, name) {
   for (const field of ['run_id', 'catalog', 'record', 'attempt_id']) {
     if (!portableAttemptComponent(binding[field])) {
@@ -845,6 +1042,7 @@ function validateAttemptBindingUris(binding, name) {
   if (!SHA256.test(binding.record_key)) {
     fail('invalid-input', `${name}.record_key must be a lowercase SHA-256`);
   }
+  validateAttemptBindingDerivation(binding, name);
   const base = `stado://spis-crawls/${binding.run_id}/${binding.catalog}/${binding.record}`
     + `/${binding.record_key}/attempts/${binding.attempt}/${binding.attempt_id}`;
   if (binding.artifact_uri !== `${base}/artifacts.tar.gz`
@@ -1137,7 +1335,6 @@ function taskStatusDocument(
     config,
     verifyReceipt,
   );
-  validateSignedSpisClaims(receiptCheckpoint.claims, config, 'verified claims');
   if (receiptCheckpoint.claims.requestDigest !== requestIdentity.requestDigest
       || canonicalJson(receiptCheckpoint.claims.spisBinding)
         !== canonicalJson(requestIdentity.spisBinding)) {

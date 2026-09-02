@@ -413,8 +413,9 @@ fn write_exact(path: &Path, bytes: &[u8]) -> Outcome<()> {
 }
 
 /// Runs one bridge operation through the single shared invoker in
-/// `crate::weles_provenance`, which owns the cleared environment, the process group, the
-/// stream bounds and the canonical trust path for every operation this repository runs.
+/// `crate::weles_provenance`, which owns the script digest pin, the data-URL execution of
+/// the verified bytes, the cleared environment, the process group, the stream bounds and
+/// the canonical trust path for every operation this repository runs.
 ///
 /// `output` is the durable destination `submit` requires and `get` refuses; `network`
 /// hands the bridge the protected config, and is the only difference between the
@@ -427,8 +428,14 @@ fn run_bridge(
     output: Option<&Path>,
     network: bool,
 ) -> Outcome<Vec<u8>> {
+    // Re-read and re-validated for every operation: the exact bytes this process
+    // accepted are the bytes the child is given, and an unprovisioned or altered trust
+    // document stops the attempt here instead of inside the child.
+    let trust = weles::CanonicalTrust::load()
+        .map_err(|message| WorkerFailure::new("weles_trust_unavailable", message))?;
     weles::run_bridge_command(&weles::BridgeInvocation {
         command,
+        trust: &trust,
         working_dir: attempt_root,
         output,
         config: network.then_some(private.config.as_path()),

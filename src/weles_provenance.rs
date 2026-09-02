@@ -5,14 +5,17 @@
 //! which loads the exact pinned official `@wisent-ai/weles-client`, then independently
 //! rechecks the returned claims, receipt identity, and retained artifact digest here.
 
+use base64::{engine::general_purpose::STANDARD, Engine as _};
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::io::{Read, Write};
 use std::path::{Component, Path, PathBuf};
 use std::process::{Command, Stdio};
+#[cfg(unix)]
+use std::os::unix::process::CommandExt;
 
 pub const BRIDGE_COMMAND_SCHEMA: &str = "wisent.spis-weles-bridge-command.v1";
 pub const BRIDGE_CONFIG_SCHEMA: &str = "wisent.spis-weles-bridge-config.v1";
@@ -31,11 +34,14 @@ pub const SPIS_WELES_ACTION: &str = "generic_browser_task";
 pub const OFFICIAL_CLIENT_PACKAGE: &str = "@wisent-ai/weles-client";
 pub const OFFICIAL_CLIENT_COMMIT: &str =
     "37798a26022a040fbd0a4a4a25c99b5559d95a32";
+const BRIDGE_SCRIPT_SHA256: &str = env!("SPIS_BRIDGE_SCRIPT_SHA256");
+const MAX_BRIDGE_SCRIPT_BYTES: u64 = 256 * 1024;
 
 const MAX_DOCUMENT_BYTES: u64 = 4 * 1024 * 1024;
+const MAX_TRUST_BYTES: u64 = 64 * 1024;
 const MAX_RETAINED_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
 const MAX_BRIDGE_ERROR_BYTES: usize = 64 * 1024;
-/// Local re-verification is CPU work on retained bytes.
+/// Local re-verification is CPU work over retained bytes.
 pub const VERIFY_BRIDGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
 /// `submit`, `get` and `cancel` are real HTTP round trips through the official client.
 pub const NETWORK_BRIDGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60);
@@ -56,7 +62,7 @@ pub struct ExpectedReceiptClaims {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct VerifiedReceiptClaims {
     pub task_id: String,
     pub organization_id: String,
@@ -68,8 +74,6 @@ pub struct VerifiedReceiptClaims {
     pub outcome: String,
     pub evidence_digest: String,
     pub key_id: String,
-    #[serde(flatten)]
-    pub additional: Map<String, Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -82,6 +86,9 @@ pub struct RetainedReceipt {
     pub action: String,
     pub outcome: String,
     pub evidence_digest: String,
+    pub request_digest: String,
+    pub result_digest: String,
+    pub spis_binding: WelesAttemptBinding,
     pub key_id: String,
     pub signature: String,
     pub signed_payload: String,
@@ -128,7 +135,7 @@ pub struct WelesEvidenceInventoryEntry {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 struct ReceiptBoundEvidenceManifest {
     schema: String,
     task_id: String,
@@ -379,9 +386,24 @@ struct VerifiedDocument {
     artifact: RetainedArtifact,
     artifact_value: Option<Value>,
 }
+/// The one public trust document, already read and validated by this process.
+///
+/// Every bridge operation needs it: the verifier compares persisted claims against it,
+/// and any producer has to hand the child the exact bytes it validated rather than
+/// letting the child pick its own trust. It is opaque outside this module.
 #[derive(Debug, Clone)]
-struct CanonicalTrust {
+pub struct CanonicalTrust {
+    path: PathBuf,
+    bytes: Vec<u8>,
     document: WelesReceiptTrust,
+}
+
+impl CanonicalTrust {
+    /// Reads and validates the checked-in public trust document. This is the gate that
+    /// fail-closes every operation while the trust document is unprovisioned.
+    pub fn load() -> Result<Self, String> {
+        load_canonical_trust()
+    }
 }
 
 
@@ -499,7 +521,8 @@ impl VerifiedProvenanceSet {
                     return false;
                 };
                 let stripped = strip_provenance(value);
-                canonical_json_sha256(source_value) == expected_digest
+                canonical_json_sha256(source_value)
+                    .is_ok_and(|digest| digest == expected_digest)
                     && *source_value == stripped
                     && self.retained_member_matches(value)
             }
@@ -568,7 +591,7 @@ fn verify_document_reference(
         .map_err(|_| "verification document does not match the typed schema".to_string())?;
     validate_document_shape(&persisted)?;
     validate_document_trust(&persisted, &trust.document)?;
-    let fresh = invoke_bridge(&persisted, record_dir)?;
+    let fresh = invoke_bridge(&persisted, record_dir, trust)?;
     validate_fresh_document(&persisted, &fresh, record_dir)?;
     let artifact_path = resolve_retained_file(record_dir, &fresh.artifact.path)?;
     let artifact_bytes = read_limited(&artifact_path, MAX_DOCUMENT_BYTES)?;
@@ -869,7 +892,7 @@ fn validate_request_and_evidence_manifest(
     validate_unique_nonempty(&request.input.constraints, "request constraints")?;
     let request_value = serde_json::to_value(request)
         .map_err(|_| "retained official request could not be canonicalized".to_string())?;
-    let request_digest = format!("sha256:{}", canonical_json_sha256(&request_value));
+    let request_digest = format!("sha256:{}", canonical_json_sha256(&request_value)?);
     if request_digest != envelope.weles_request_digest
         || request_digest != document.expected_claims.request_digest
     {
@@ -1019,21 +1042,50 @@ fn validate_document_shape(document: &WelesProvenanceDocument) -> Result<(), Str
     {
         return Err("verification document does not name the pinned official client and key set".to_string());
     }
-    if document.receipt.schema != "weles.receipt.current" {
-        return Err("retained receipt schema is unsupported".to_string());
-    }
-    if !is_sha256(&document.artifact.sha256)
-        || document.expected_claims.evidence_digest != document.artifact.sha256
+    let receipt = &document.receipt;
+    let expected = &document.expected_claims;
+    if receipt.schema != "weles.receipt.current"
+        || receipt.task_id.trim().is_empty()
+        || receipt.organization_id.trim().is_empty()
+        || receipt.origin.trim().is_empty()
+        || receipt.action.trim().is_empty()
+        || receipt.outcome != "completed"
+        || receipt.evidence_digest.trim().is_empty()
+        || receipt.key_id.trim().is_empty()
+        || receipt.signature.trim().is_empty()
+        || receipt.signed_payload.trim().is_empty()
+        || !is_sha256_id(&receipt.request_digest)
+        || !is_sha256_id(&receipt.result_digest)
     {
-        return Err("expected evidenceDigest is not bound to the retained artifact digest".to_string());
+        return Err("retained receipt shape is unsupported".to_string());
     }
-    if document.expected_claims.outcome != "completed"
-        || !is_sha256_id(&document.expected_claims.request_digest)
-        || !is_sha256_id(&document.expected_claims.result_digest)
+    if document.artifact.bytes == 0
+        || document.artifact.bytes > MAX_DOCUMENT_BYTES
+        || !is_sha256(&document.artifact.sha256)
+        || expected.evidence_digest != document.artifact.sha256
+    {
+        return Err("expected evidenceDigest is not bound to a bounded retained artifact".to_string());
+    }
+    if expected.outcome != "completed"
+        || !is_sha256_id(&expected.request_digest)
+        || !is_sha256_id(&expected.result_digest)
     {
         return Err("Spis provenance requires completed signed request/result digests".to_string());
     }
-    validate_spis_binding(&document.expected_claims.spis_binding)?;
+    validate_spis_binding(&expected.spis_binding)?;
+    validate_spis_binding(&receipt.spis_binding)?;
+    if receipt.task_id != expected.task_id
+        || receipt.organization_id != expected.organization_id
+        || receipt.origin != expected.origin
+        || receipt.action != expected.action
+        || receipt.outcome != expected.outcome
+        || receipt.evidence_digest != expected.evidence_digest
+        || receipt.request_digest != expected.request_digest
+        || receipt.result_digest != expected.result_digest
+        || receipt.spis_binding != expected.spis_binding
+    {
+        return Err("retained receipt claim copies differ from caller expectations".to_string());
+    }
     Ok(())
 }
 fn validate_document_trust(
@@ -1108,6 +1160,7 @@ fn validate_spis_binding(binding: &WelesAttemptBinding) -> Result<(), String> {
         return Err("signed Spis binding is invalid".to_string());
     }
     validate_api_endpoint(&binding.service.endpoint, "signed Spis service endpoint")?;
+    validate_attempt_binding_derivation(binding)?;
     let base = format!(
         "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
         binding.run_id,
@@ -1121,6 +1174,46 @@ fn validate_spis_binding(binding: &WelesAttemptBinding) -> Result<(), String> {
         || binding.output_uri != format!("{base}/worker-output.log")
     {
         return Err("signed Spis artifact/output URIs are not canonical".to_string());
+    }
+    Ok(())
+}
+
+/// Re-derives the runtime record key and attempt identity exactly as the Weles
+/// public admission service does, so the Rust layer never accepts a weaker
+/// attempt binding than the runtime promises.
+fn validate_attempt_binding_derivation(binding: &WelesAttemptBinding) -> Result<(), String> {
+    let catalog_key = sha256_bytes(
+        format!(
+            "{}\0{}\0{}",
+            binding.source_revision, binding.run_id, binding.catalog
+        )
+        .as_bytes(),
+    );
+    let record_key = sha256_bytes(
+        format!(
+            "{}\0{}\0{}",
+            catalog_key, binding.record, binding.source_input_sha256
+        )
+        .as_bytes(),
+    );
+    if binding.record_key != record_key {
+        return Err("signed Spis record key is not the runtime derivation".to_string());
+    }
+    let attempt_fingerprint = sha256_bytes(
+        format!(
+            "{}\0{}\0{}",
+            binding.record_key, binding.attempt, binding.service.host
+        )
+        .as_bytes(),
+    );
+    if binding.attempt_id
+        != format!(
+            "attempt-{}-{}",
+            binding.attempt,
+            &attempt_fingerprint[..16]
+        )
+    {
+        return Err("signed Spis attempt identity is not the runtime derivation".to_string());
     }
     Ok(())
 }
@@ -1142,7 +1235,9 @@ fn validate_api_endpoint(value: &str, label: &str) -> Result<(), String> {
 
 
 fn load_canonical_trust() -> Result<CanonicalTrust, String> {
-    let checked_in = canonical_trust_path();
+    let checked_in = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("weles-bridge")
+        .join("weles-receipt-trust.json");
     let metadata = fs::symlink_metadata(&checked_in)
         .map_err(|_| "checked-in public trust document is absent".to_string())?;
     if metadata.file_type().is_symlink() || !metadata.is_file() {
@@ -1150,7 +1245,7 @@ fn load_canonical_trust() -> Result<CanonicalTrust, String> {
     }
     let canonical = fs::canonicalize(&checked_in)
         .map_err(|_| "checked-in public trust document could not be resolved".to_string())?;
-    let bytes = read_limited(&canonical, MAX_DOCUMENT_BYTES)?;
+    let bytes = read_limited(&canonical, MAX_TRUST_BYTES)?;
     let document: WelesReceiptTrust = serde_json::from_slice(&bytes)
         .map_err(|_| "public trust document does not match the typed schema".to_string())?;
     if document.schema != BRIDGE_TRUST_SCHEMA
@@ -1165,26 +1260,19 @@ fn load_canonical_trust() -> Result<CanonicalTrust, String> {
     {
         return Err("public trust document is invalid".to_string());
     }
-    Ok(CanonicalTrust { document })
+    Ok(CanonicalTrust {
+        path: canonical,
+        bytes,
+        document,
+    })
 }
 
 
-/// The one bridge directory: the checked-in script, its vendored official client and the
-/// public trust document all live here and nothing else may stand in for them.
-fn bridge_directory() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("weles-bridge")
-}
-
-/// The single canonical public trust path. The bridge itself refuses a
-/// `SPIS_WELES_TRUST_FILE` that does not resolve to exactly this file, so every caller
-/// takes it from here rather than rebuilding the path.
-pub fn canonical_trust_path() -> PathBuf {
-    bridge_directory().join("weles-receipt-trust.json")
-}
-
-/// A typed bridge failure. `code` is the bridge's own machine-readable code whenever the
-/// bridge produced one, and a Rust-side code (`absent`, `spawn-failed`, `timeout`,
-/// `io-failed`) when the process never reported for itself.
+/// A typed bridge failure.
+///
+/// `code` is the bridge's own machine-readable code whenever the bridge reported for
+/// itself, and a Rust-side code (`absent`, `unpinned`, `spawn-failed`, `timeout`,
+/// `io-failed`) when it never got that far. `message` is the exact operator-facing text.
 #[derive(Debug, Clone)]
 pub struct BridgeFailure {
     pub code: String,
@@ -1192,23 +1280,27 @@ pub struct BridgeFailure {
 }
 
 impl BridgeFailure {
-    fn new(code: &str, message: &str) -> Self {
+    fn new(code: &str, message: impl Into<String>) -> Self {
         Self {
             code: code.to_string(),
-            message: message.to_string(),
+            message: message.into(),
         }
     }
 }
 
 /// One exact invocation of the checked-in bridge.
 ///
-/// The operation is carried by `command.operation`, not by this struct: submit, get,
-/// cancel and verify differ only in the command document, the output destination, whether
-/// a network credential is in play, and the wall-clock budget.
+/// The operation is carried by `command.operation`, not by this struct: `submit`, `get`,
+/// `cancel` and `verify` differ only in the command document, the output destination,
+/// whether a network credential is in play, and the wall-clock budget.
 pub struct BridgeInvocation<'a> {
-    /// `wisent.spis-weles-bridge-command.v1` document. The bridge runs a strict key
-    /// allowlist per operation, so it is passed through byte-for-byte as serialized.
+    /// `wisent.spis-weles-bridge-command.v1` document. The bridge runs a strict per
+    /// operation key allowlist, so it is passed through exactly as serialized.
     pub command: &'a Value,
+    /// The public trust document this process already validated. Its bytes are handed to
+    /// the child, which re-checks them against the canonical file, so the child never
+    /// gets to choose its own trust.
+    pub trust: &'a CanonicalTrust,
     /// Process working directory. `verify` resolves the retained artifact against the
     /// record directory; `submit` resolves a relative `--output` against it.
     pub working_dir: &'a Path,
@@ -1216,133 +1308,198 @@ pub struct BridgeInvocation<'a> {
     /// request-bound recovery; `None` returns it on bounded stdout, which `get` requires.
     pub output: Option<&'a Path>,
     /// The owner-only protected config carrying the bearer. `None` is the secretless
-    /// path: without it the bridge refuses every network operation and `verify` never
+    /// path: without it the bridge refuses every network operation, and `verify` never
     /// reads a config at all.
     pub config: Option<&'a Path>,
     /// Wall-clock budget for the whole child process.
     pub timeout: std::time::Duration,
 }
 
-/// Runs the checked-in bridge and returns its bounded stdout, which is empty when the
+/// Runs one bridge operation and returns its bounded stdout, which is empty when the
 /// document was persisted to `output` instead.
 ///
-/// The child is started with a cleared environment in its own process group: it receives
-/// exactly `PATH`, the canonical trust path and, on the network path, the config path.
-/// The command document travels on stdin, so no bridge command is ever left on disk.
+/// The script is read, digest-pinned against the build-time embedded source digest, and
+/// executed as verified bytes through a data URL, so no on-disk module is loaded by path.
+/// The child runs in its own process group with a cleared environment: exactly `PATH`,
+/// the canonical trust path, the verified trust bytes, the verified bridge directory and,
+/// on the network path, the protected config path. The command document travels on stdin,
+/// so no bridge command is ever left on disk.
 pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, BridgeFailure> {
-    let script = bridge_directory().join("spis-weles-bridge.mjs");
-    let metadata = fs::symlink_metadata(&script)
-        .map_err(|_| BridgeFailure::new("absent", "the checked-in Weles bridge is absent"))?;
-    if metadata.file_type().is_symlink() || !metadata.is_file() {
-        return Err(BridgeFailure::new(
-            "absent",
-            "the checked-in Weles bridge is not a regular non-symlink file",
+    let absent = |message: &str| BridgeFailure::new("absent", message);
+    let script_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("weles-bridge")
+        .join("spis-weles-bridge.mjs");
+    let bridge_directory = fs::canonicalize(
+        script_path
+            .parent()
+            .ok_or_else(|| absent("checked-in Weles bridge has no resource directory"))?,
+    )
+    .map_err(|_| absent("checked-in Weles bridge resource directory could not be resolved"))?;
+    let script_metadata = fs::symlink_metadata(&script_path)
+        .map_err(|_| absent("checked-in Weles bridge is absent"))?;
+    if script_metadata.file_type().is_symlink() || !script_metadata.is_file() {
+        return Err(absent("checked-in Weles bridge is not a regular non-symlink file"));
+    }
+    let script = fs::canonicalize(&script_path)
+        .map_err(|_| absent("checked-in Weles bridge could not be resolved"))?;
+    if script.parent() != Some(bridge_directory.as_path()) {
+        return Err(absent(
+            "checked-in Weles bridge escaped its canonical resource directory",
         ));
     }
-    let input_bytes = serde_json::to_vec(invocation.command).map_err(|_| {
-        BridgeFailure::new("io-failed", "the bridge command could not be serialized")
-    })?;
-    let mut node = Command::new("node");
-    node.arg(&script).arg("--input").arg("-").arg("--output");
+    let script_file =
+        fs::File::open(&script).map_err(|_| absent("checked-in Weles bridge could not be opened"))?;
+    let script_bytes = read_stream_limited(
+        script_file,
+        MAX_BRIDGE_SCRIPT_BYTES as usize,
+        "checked-in Weles bridge",
+    )
+    .map_err(|message| BridgeFailure::new("absent", message))?;
+    if sha256_bytes(&script_bytes) != BRIDGE_SCRIPT_SHA256 {
+        return Err(BridgeFailure::new(
+            "unpinned",
+            "checked-in Weles bridge differs from the embedded source pin",
+        ));
+    }
+    let bridge_module = format!(
+        "await import('data:text/javascript;base64,{}')",
+        STANDARD.encode(&script_bytes)
+    );
+    let input_bytes = serde_json::to_vec(invocation.command)
+        .map_err(|_| BridgeFailure::new("io-failed", "could not serialize the bridge command"))?;
+    let mut command = Command::new("node");
+    command
+        .arg("--input-type=module")
+        .arg("--eval")
+        .arg(bridge_module)
+        .arg("--")
+        .arg("spis-weles-bridge.mjs")
+        .arg("--input")
+        .arg("-")
+        .arg("--output");
     match invocation.output {
-        Some(path) => node.arg(path),
-        None => node.arg("-"),
+        Some(path) => command.arg(path),
+        None => command.arg("-"),
     };
-    node.current_dir(invocation.working_dir)
+    command
+        .current_dir(invocation.working_dir)
         .env_clear()
         .env("PATH", BRIDGE_PATH)
-        .env("SPIS_WELES_TRUST_FILE", canonical_trust_path());
-    if let Some(config) = invocation.config {
-        node.env("SPIS_WELES_CONFIG_FILE", config);
-    }
-    #[cfg(unix)]
-    {
-        use std::os::unix::process::CommandExt;
-        node.process_group(0);
-    }
-    let mut child = node
+        .env("SPIS_WELES_TRUST_FILE", &invocation.trust.path)
+        .env(
+            "SPIS_WELES_VERIFIED_TRUST_BASE64",
+            STANDARD.encode(&invocation.trust.bytes),
+        )
+        .env("SPIS_WELES_VERIFIED_BRIDGE_DIR", bridge_directory)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .map_err(|_| {
-            BridgeFailure::new(
-                "spawn-failed",
-                "Node could not be started for the checked-in Weles bridge",
-            )
-        })?;
+        .stderr(Stdio::piped());
+    if let Some(config) = invocation.config {
+        command.env("SPIS_WELES_CONFIG_FILE", config);
+    }
+    #[cfg(unix)]
+    unsafe {
+        command.pre_exec(|| {
+            if libc::setpgid(0, 0) == -1 {
+                Err(std::io::Error::last_os_error())
+            } else {
+                Ok(())
+            }
+        });
+    }
+    let mut child = command.spawn().map_err(|_| {
+        BridgeFailure::new(
+            "spawn-failed",
+            "could not start Node for the checked-in Weles bridge",
+        )
+    })?;
     let started = std::time::Instant::now();
-    let io_failed = || BridgeFailure::new("io-failed", "the Weles bridge streams were unavailable");
-    let stdout = child.stdout.take().ok_or_else(io_failed)?;
-    let stderr = child.stderr.take().ok_or_else(io_failed)?;
-    let mut stdin = child.stdin.take().ok_or_else(io_failed)?;
+    let stdout = child
+        .stdout
+        .take()
+        .ok_or_else(|| BridgeFailure::new("io-failed", "Weles bridge stdout was unavailable"))?;
+    let stderr = child
+        .stderr
+        .take()
+        .ok_or_else(|| BridgeFailure::new("io-failed", "Weles bridge stderr was unavailable"))?;
     let stdout_reader = std::thread::spawn(move || {
         read_stream_limited(stdout, MAX_DOCUMENT_BYTES as usize, "stdout")
     });
     let stderr_reader = std::thread::spawn(move || {
         read_stream_limited(stderr, MAX_BRIDGE_ERROR_BYTES, "stderr")
     });
-    let stdin_writer = std::thread::spawn(move || stdin.write_all(&input_bytes).is_ok());
+    let mut stdin = child
+        .stdin
+        .take()
+        .ok_or_else(|| BridgeFailure::new("io-failed", "Weles bridge stdin was unavailable"))?;
+    let stdin_writer = std::thread::spawn(move || {
+        stdin
+            .write_all(&input_bytes)
+            .map_err(|_| "could not send the command document to the Weles bridge".to_string())
+    });
     let status = loop {
         match child.try_wait() {
             Ok(Some(status)) => break status,
             Ok(None) if started.elapsed() < invocation.timeout => {
                 std::thread::sleep(std::time::Duration::from_millis(10));
             }
-            Ok(None) | Err(_) => {
-                let timed_out = started.elapsed() >= invocation.timeout;
+            Ok(None) => {
                 // The whole group: the official client may itself be waiting on a socket.
                 terminate_bridge_process_group(&mut child);
                 let _ = stdin_writer.join();
                 let _ = stdout_reader.join();
                 let _ = stderr_reader.join();
-                return Err(if timed_out {
-                    BridgeFailure::new(
-                        "timeout",
-                        &format!(
-                            "the official Weles bridge exceeded its {}-second deadline",
-                            invocation.timeout.as_secs()
-                        ),
-                    )
-                } else {
-                    BridgeFailure::new("io-failed", "the Weles bridge result could not be collected")
-                });
+                return Err(BridgeFailure::new(
+                    "timeout",
+                    format!(
+                        "official Weles bridge exceeded the {}-second deadline",
+                        invocation.timeout.as_secs()
+                    ),
+                ));
+            }
+            Err(_) => {
+                terminate_bridge_process_group(&mut child);
+                let _ = stdin_writer.join();
+                let _ = stdout_reader.join();
+                let _ = stderr_reader.join();
+                return Err(BridgeFailure::new(
+                    "io-failed",
+                    "could not collect the Weles bridge result",
+                ));
             }
         }
     };
-    // A bridge that fails closed before it reads the whole command is a bridge refusal,
-    // not a writer failure, so an unwritten stdin is judged by the exit status below.
-    let _ = stdin_writer.join();
-    let stdout = stdout_reader
-        .join()
-        .map_err(|_| io_failed())?
-        .map_err(|message| BridgeFailure::new("io-failed", &message))?;
-    let stderr = stderr_reader
-        .join()
-        .map_err(|_| io_failed())?
-        .map_err(|message| BridgeFailure::new("io-failed", &message))?;
+    let stdin_result = stdin_writer.join();
+    let stdout_result = stdout_reader.join();
+    let stderr_result = stderr_reader.join();
     if !status.success() {
+        let stderr = match stderr_result {
+            Ok(Ok(stderr)) => stderr,
+            _ => Vec::new(),
+        };
         let code = bridge_error_code(&stderr);
         return Err(BridgeFailure {
             message: format!("official Weles bridge failed closed ({code})"),
             code,
         });
     }
+    let io_failed = |message: String| BridgeFailure::new("io-failed", message);
+    stdin_result
+        .map_err(|_| io_failed("official Weles bridge stdin writer failed".to_string()))?
+        .map_err(io_failed)?;
+    let stdout = stdout_result
+        .map_err(|_| io_failed("official Weles bridge stdout reader failed".to_string()))?
+        .map_err(io_failed)?;
+    stderr_result
+        .map_err(|_| io_failed("official Weles bridge stderr reader failed".to_string()))?
+        .map_err(io_failed)?;
     Ok(stdout)
-}
-
-fn terminate_bridge_process_group(child: &mut std::process::Child) {
-    #[cfg(unix)]
-    unsafe {
-        libc::kill(-(child.id() as i32), libc::SIGKILL);
-    }
-    let _ = child.kill();
-    let _ = child.wait();
 }
 
 fn invoke_bridge(
     persisted: &WelesProvenanceDocument,
     record_dir: &Path,
+    trust: &CanonicalTrust,
 ) -> Result<WelesProvenanceDocument, String> {
     let command = serde_json::json!({
         "schema": BRIDGE_COMMAND_SCHEMA,
@@ -1353,6 +1510,7 @@ fn invoke_bridge(
     });
     let stdout = run_bridge_command(&BridgeInvocation {
         command: &command,
+        trust,
         working_dir: record_dir,
         output: None,
         // Re-verification is secretless: it re-reads retained bytes and the public trust
@@ -1363,6 +1521,20 @@ fn invoke_bridge(
     .map_err(|failure| failure.message)?;
     serde_json::from_slice(&stdout)
         .map_err(|_| "official Weles bridge returned a malformed verification document".to_string())
+}
+
+fn terminate_bridge_process_group(child: &mut std::process::Child) {
+    #[cfg(unix)]
+    unsafe {
+        if libc::killpg(child.id() as libc::pid_t, libc::SIGKILL) == -1 {
+            let _ = child.kill();
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = child.kill();
+    }
+    let _ = child.wait();
 }
 
 fn validate_fresh_document(
@@ -1398,7 +1570,7 @@ fn validate_fresh_document(
         &fresh.receipt,
         &fresh.client.key_set_version,
         &fresh.artifact,
-    );
+    )?;
     if fresh.id != expected_id || !is_sha256_id(&fresh.id) {
         return Err("verification document ID is not derived from verified receipt material".to_string());
     }
@@ -1545,20 +1717,27 @@ fn provenance_id(
     receipt: &RetainedReceipt,
     key_set_version: &str,
     artifact: &RetainedArtifact,
-) -> String {
+) -> Result<String, String> {
+    let binding_value = serde_json::to_value(&receipt.spis_binding)
+        .map_err(|_| "receipt spisBinding could not be canonicalized".to_string())?;
+    let binding_json = String::from_utf8(canonical_json_bytes(&binding_value)?)
+        .map_err(|_| "canonical receipt spisBinding was not UTF-8".to_string())?;
     let mut hash = Sha256::new();
     for (label, value) in [
         ("receipt.schema", receipt.schema.as_str()),
         ("receipt.keyId", receipt.key_id.as_str()),
         ("receipt.signedPayload", receipt.signed_payload.as_str()),
         ("receipt.signature", receipt.signature.as_str()),
+        ("receipt.requestDigest", receipt.request_digest.as_str()),
+        ("receipt.resultDigest", receipt.result_digest.as_str()),
+        ("receipt.spisBinding", binding_json.as_str()),
         ("keySetVersion", key_set_version),
         ("artifact.path", artifact.path.as_str()),
         ("artifact.sha256", artifact.sha256.as_str()),
     ] {
         update_framed(&mut hash, label, value);
     }
-    format!("sha256:{}", hex::encode(hash.finalize()))
+    Ok(format!("sha256:{}", hex::encode(hash.finalize())))
 }
 
 fn strip_provenance(value: &Value) -> Value {
@@ -1575,22 +1754,84 @@ fn strip_provenance(value: &Value) -> Value {
     }
 }
 
-fn canonical_json_sha256(value: &Value) -> String {
-    fn ordered(value: &Value) -> Value {
+fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
+    const MAX_SAFE_INTEGER: u64 = 9_007_199_254_740_991;
+
+    fn write_value(value: &Value, output: &mut String) -> Result<(), String> {
         match value {
-            Value::Array(entries) => Value::Array(entries.iter().map(ordered).collect()),
-            Value::Object(object) => {
-                let ordered_entries: BTreeMap<&String, &Value> = object.iter().collect();
-                Value::Object(
-                    ordered_entries
-                        .into_iter()
-                        .map(|(key, entry)| (key.clone(), ordered(entry)))
-                        .collect(),
-                )
+            Value::Null => output.push_str("null"),
+            Value::Bool(value) => output.push_str(if *value { "true" } else { "false" }),
+            Value::Number(number) => {
+                if let Some(value) = number.as_i64() {
+                    if value.unsigned_abs() > MAX_SAFE_INTEGER {
+                        return Err("JCS input integer exceeds the safe integer range".to_string());
+                    }
+                    output.push_str(&value.to_string());
+                } else if let Some(value) = number.as_u64() {
+                    if value > MAX_SAFE_INTEGER {
+                        return Err("JCS input integer exceeds the safe integer range".to_string());
+                    }
+                    output.push_str(&value.to_string());
+                } else {
+                    // One declared canonicalization, one behavior: `JSON.parse("1.0")`
+                    // yields the JS number 1 and the bridge emits `1`, so an integral
+                    // double inside the safe-integer range canonicalizes to the same
+                    // integer text here. Fractional and out-of-range numbers are
+                    // rejected on both sides.
+                    let float = number
+                        .as_f64()
+                        .ok_or_else(|| "JCS input contains an unrepresentable number".to_string())?;
+                    if !float.is_finite() || float.fract() != 0.0 {
+                        return Err("JCS input contains a fractional number".to_string());
+                    }
+                    if float.abs() > MAX_SAFE_INTEGER as f64 {
+                        return Err("JCS input integer exceeds the safe integer range".to_string());
+                    }
+                    output.push_str(&(float as i64).to_string());
+                }
             }
-            scalar => scalar.clone(),
+            Value::String(value) => {
+                let serialized = serde_json::to_string(value)
+                    .map_err(|_| "JCS string could not be serialized".to_string())?;
+                output.push_str(&serialized);
+            }
+            Value::Array(entries) => {
+                output.push('[');
+                for (index, entry) in entries.iter().enumerate() {
+                    if index != 0 {
+                        output.push(',');
+                    }
+                    write_value(entry, output)?;
+                }
+                output.push(']');
+            }
+            Value::Object(object) => {
+                let mut entries: Vec<_> = object.iter().collect();
+                entries.sort_by(|(left, _), (right, _)| {
+                    left.encode_utf16().cmp(right.encode_utf16())
+                });
+                output.push('{');
+                for (index, (key, entry)) in entries.into_iter().enumerate() {
+                    if index != 0 {
+                        output.push(',');
+                    }
+                    let serialized_key = serde_json::to_string(key)
+                        .map_err(|_| "JCS object key could not be serialized".to_string())?;
+                    output.push_str(&serialized_key);
+                    output.push(':');
+                    write_value(entry, output)?;
+                }
+                output.push('}');
+            }
         }
+        Ok(())
     }
-    let bytes = serde_json::to_vec(&ordered(value)).unwrap_or_default();
-    sha256_bytes(&bytes)
+
+    let mut output = String::new();
+    write_value(value, &mut output)?;
+    Ok(output.into_bytes())
+}
+
+fn canonical_json_sha256(value: &Value) -> Result<String, String> {
+    Ok(sha256_bytes(&canonical_json_bytes(value)?))
 }
