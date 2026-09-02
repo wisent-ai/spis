@@ -16,10 +16,17 @@ use std::process::{Command, Stdio};
 
 pub const BRIDGE_COMMAND_SCHEMA: &str = "wisent.spis-weles-bridge-command.v1";
 pub const BRIDGE_CONFIG_SCHEMA: &str = "wisent.spis-weles-bridge-config.v1";
+pub const BRIDGE_TRUST_SCHEMA: &str = "wisent.spis-weles-receipt-trust.v1";
+pub const RECEIPT_CHECKPOINT_SCHEMA: &str = "wisent.spis-weles-receipt-checkpoint.v1";
+pub const SUBMISSION_SCHEMA: &str = "wisent.spis-weles-submission.v1";
+pub const TASK_STATUS_SCHEMA: &str = "wisent.spis-weles-task-status.v1";
+pub const CANCELLATION_SCHEMA: &str = "wisent.spis-weles-cancellation.v1";
 pub const PROVENANCE_DOCUMENT_SCHEMA: &str = "wisent.spis-weles-provenance.v1";
 pub const PROVENANCE_DOCUMENT_REF_SCHEMA: &str =
     "wisent.spis-weles-provenance-document-ref.v1";
 pub const PROVENANCE_LINK_SCHEMA: &str = "wisent.spis-provenance-link.v1";
+pub const ATTEMPT_BINDING_SCHEMA: &str = "wisent.spis-weles-attempt-binding.v1";
+pub const SPIS_WELES_ACTION: &str = "generic_browser_task";
 pub const OFFICIAL_CLIENT_PACKAGE: &str = "@wisent-ai/weles-client";
 pub const OFFICIAL_CLIENT_COMMIT: &str =
     "37798a26022a040fbd0a4a4a25c99b5559d95a32";
@@ -81,6 +88,64 @@ pub struct OfficialClientIdentity {
     pub commit: String,
     pub key_set_version: String,
 }
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct WelesReceiptCheckpoint {
+    pub schema: String,
+    pub client: OfficialClientIdentity,
+    pub receipt: RetainedReceipt,
+    pub claims: VerifiedReceiptClaims,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct WelesSubmission {
+    pub schema: String,
+    pub task_id: String,
+    pub organization_id: String,
+    pub origin: String,
+    pub action: String,
+    pub idempotency_key: String,
+    pub request_digest: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub receipt_checkpoint: Option<WelesReceiptCheckpoint>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct WelesTaskStatus {
+    pub schema: String,
+    pub task_id: String,
+    pub organization_id: String,
+    pub origin: String,
+    pub action: String,
+    pub status: String,
+    pub terminal: bool,
+    pub outcome: Option<String>,
+    pub result_ref: Option<String>,
+    pub artifact_refs: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub receipt_checkpoint: Option<WelesReceiptCheckpoint>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct WelesCancellation {
+    pub schema: String,
+    pub task_id: String,
+    pub organization_id: String,
+    pub origin: String,
+    pub action: String,
+    pub status: String,
+    pub terminal: bool,
+    pub outcome: Option<String>,
+    pub result_ref: Option<String>,
+    pub artifact_refs: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub receipt_checkpoint: Option<WelesReceiptCheckpoint>,
+    pub idempotency_key: String,
+}
+
 
 /// The deterministic document written by `weles-bridge/spis-weles-bridge.mjs`.
 ///
@@ -107,6 +172,22 @@ pub struct WelesProvenanceDocumentRef {
     pub path: String,
     pub sha256: String,
 }
+/// Identity imported with the crawl-run attempt and repeated byte-for-byte in the
+/// receipt-bound JSON artifact under `spisBinding`.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct WelesAttemptBinding {
+    pub schema: String,
+    pub catalog: String,
+    pub record: String,
+    pub run_id: String,
+    pub attempt_id: String,
+    pub task_id: String,
+    pub source: String,
+    pub input_digest: String,
+    pub reference_digest: String,
+}
+
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
@@ -148,16 +229,20 @@ struct VerifiedDocument {
 pub struct VerifiedProvenanceSet {
     documents: BTreeMap<String, VerifiedDocument>,
     failures: Vec<String>,
+    record_dir: Option<PathBuf>,
 }
 
 impl VerifiedProvenanceSet {
     /// Re-run official receipt verification for every referenced document.
     ///
-    /// A malformed reference, missing vendored client/config/key, unknown key, claim
-    /// mismatch, bridge failure, changed artifact, or invalid document remains in
-    /// `failures` and never enters the verified set.
+    /// A malformed reference, missing vendored client/public trust/key, unknown key,
+    /// claim mismatch, bridge failure, changed artifact, or invalid document remains
+    /// in `failures` and never enters the verified set.
     pub fn verify_record(record: &Value, record_dir: &Path) -> Self {
-        let mut verified = Self::default();
+        let mut verified = Self {
+            record_dir: Some(record_dir.to_path_buf()),
+            ..Self::default()
+        };
         let Some(references_value) = record.get("provenance_documents") else {
             return verified;
         };
@@ -168,7 +253,7 @@ impl VerifiedProvenanceSet {
             return verified;
         };
         for (index, reference_value) in references.iter().enumerate() {
-            let result = verify_document_reference(reference_value, record_dir);
+            let result = verify_document_reference(reference_value, record, record_dir);
             match result {
                 Ok(document) => {
                     if verified.documents.contains_key(&document.id) {
@@ -223,6 +308,7 @@ impl VerifiedProvenanceSet {
                     == Some(document.artifact.path.as_str())
                     && value.get("sha256").and_then(Value::as_str)
                         == Some(document.artifact.sha256.as_str())
+                    && self.retained_member_matches(value)
             }
             ProvenanceLinkKind::Observation => {
                 let (Some(pointer), Some(expected_digest), Some(artifact_value)) = (
@@ -239,14 +325,45 @@ impl VerifiedProvenanceSet {
                     return false;
                 };
                 let stripped = strip_provenance(value);
-                canonical_json_sha256(source_value) == expected_digest && *source_value == stripped
+                canonical_json_sha256(source_value) == expected_digest
+                    && *source_value == stripped
+                    && self.retained_member_matches(value)
             }
+        }
+    }
+
+    fn retained_member_matches(&self, value: &Value) -> bool {
+        let local_path = value.get("local_path").and_then(Value::as_str);
+        let expected_sha256 = value.get("sha256").and_then(Value::as_str);
+        match (local_path, expected_sha256) {
+            (None, None) => true,
+            (Some(local_path), Some(expected_sha256)) if is_sha256(expected_sha256) => {
+                let Some(record_dir) = self.record_dir.as_deref() else {
+                    return false;
+                };
+                let Ok(path) = resolve_retained_file(record_dir, local_path) else {
+                    return false;
+                };
+                let Ok(actual_sha256) = sha256_file(&path) else {
+                    return false;
+                };
+                if actual_sha256 != expected_sha256 {
+                    return false;
+                }
+                match value.get("bytes").and_then(Value::as_u64) {
+                    Some(expected_bytes) => fs::metadata(path)
+                        .map(|metadata| metadata.len() == expected_bytes)
+                        .unwrap_or(false),
+                    None => true,
+                }
+            }
+            _ => false,
         }
     }
 
     pub fn provenance_class(&self, value: &Value) -> &'static str {
         if self.supports_value(value) {
-            "local-browser-recording"
+            "weles-signed-browser-evidence"
         } else {
             "unverified-source-media"
         }
@@ -255,6 +372,7 @@ impl VerifiedProvenanceSet {
 
 fn verify_document_reference(
     reference_value: &Value,
+    record: &Value,
     record_dir: &Path,
 ) -> Result<VerifiedDocument, String> {
     let reference: WelesProvenanceDocumentRef =
@@ -277,18 +395,112 @@ fn verify_document_reference(
     let fresh = invoke_bridge(&persisted, record_dir)?;
     validate_fresh_document(&persisted, &fresh, record_dir)?;
     let artifact_path = resolve_retained_file(record_dir, &fresh.artifact.path)?;
-    let artifact_value = if artifact_path.extension().and_then(|value| value.to_str()) == Some("json") {
-        let artifact_bytes = read_limited(&artifact_path, MAX_DOCUMENT_BYTES)?;
-        serde_json::from_slice(&artifact_bytes).ok()
-    } else {
-        None
-    };
+    let artifact_bytes = read_limited(&artifact_path, MAX_DOCUMENT_BYTES)?;
+    if sha256_bytes(&artifact_bytes) != fresh.artifact.sha256 {
+        return Err("receipt-bound JSON artifact changed while it was being parsed".to_string());
+    }
+    let artifact_value: Value = serde_json::from_slice(&artifact_bytes)
+        .map_err(|_| "receipt-bound artifact is not the required signed JSON document".to_string())?;
+    verify_attempt_binding(record, record_dir, &fresh, &artifact_value)?;
     Ok(VerifiedDocument {
         id: fresh.id,
         artifact: fresh.artifact,
-        artifact_value,
+        artifact_value: Some(artifact_value),
     })
 }
+fn verify_attempt_binding(
+    record: &Value,
+    record_dir: &Path,
+    document: &WelesProvenanceDocument,
+    artifact_value: &Value,
+) -> Result<(), String> {
+    let product_url = record
+        .get("product_url")
+        .and_then(Value::as_str)
+        .ok_or_else(|| "current record has no product_url for receipt origin binding".to_string())?;
+    let parsed_product_url = url::Url::parse(product_url)
+        .map_err(|_| "current record product_url is not a valid URL".to_string())?;
+    if !matches!(parsed_product_url.scheme(), "http" | "https") {
+        return Err("current record product_url is not HTTP(S)".to_string());
+    }
+    let expected_origin = parsed_product_url.origin().ascii_serialization();
+    if document.expected_claims.origin != expected_origin {
+        return Err("verified receipt origin does not match the current record product_url origin".to_string());
+    }
+    if document.expected_claims.action != SPIS_WELES_ACTION {
+        return Err("verified receipt action is not the exact Spis browser action".to_string());
+    }
+
+    let record_name = record_dir
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| "current record directory has no portable record name".to_string())?;
+    let catalog_name = record_dir
+        .parent()
+        .and_then(Path::parent)
+        .and_then(Path::file_name)
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| "current record directory has no portable catalog name".to_string())?;
+    let runs = record
+        .get("crawl_runs")
+        .and_then(Value::as_array)
+        .ok_or_else(|| "current record has no imported crawl-run attempts".to_string())?;
+    let mut matched: Option<(WelesAttemptBinding, &Value)> = None;
+    for run in runs {
+        let Some(binding_value) = run.get("weles_attempt") else {
+            continue;
+        };
+        let binding: WelesAttemptBinding = serde_json::from_value(binding_value.clone())
+            .map_err(|_| "imported crawl-run Weles attempt does not match the typed schema".to_string())?;
+        if binding.task_id != document.expected_claims.task_id {
+            continue;
+        }
+        if matched.is_some() {
+            return Err("current record repeats the receipt task across crawl-run attempts".to_string());
+        }
+        matched = Some((binding, run));
+    }
+    let Some((binding, run)) = matched else {
+        return Err("verified receipt taskId is not the imported crawl-run attempt".to_string());
+    };
+    if binding.schema != ATTEMPT_BINDING_SCHEMA
+        || binding.catalog.trim().is_empty()
+        || binding.record.trim().is_empty()
+        || binding.run_id.trim().is_empty()
+        || binding.attempt_id.trim().is_empty()
+        || binding.task_id.trim().is_empty()
+        || binding.source.trim().is_empty()
+        || !is_sha256_id(&binding.input_digest)
+        || !is_sha256_id(&binding.reference_digest)
+    {
+        return Err("imported crawl-run Weles attempt binding is invalid".to_string());
+    }
+    if binding.catalog != catalog_name
+        || binding.record != record_name
+        || binding.source != product_url
+        || binding.task_id != document.expected_claims.task_id
+    {
+        return Err("imported crawl-run attempt does not match the current catalog, record, source, and task".to_string());
+    }
+    if run.get("run_id").and_then(Value::as_str) != Some(binding.run_id.as_str())
+        || run.get("attempt_id").and_then(Value::as_str) != Some(binding.attempt_id.as_str())
+        || run.get("job_id").and_then(Value::as_str) != Some(binding.task_id.as_str())
+        || run.get("status").and_then(Value::as_str) != Some("completed")
+    {
+        return Err("imported crawl-run envelope does not match its Weles attempt binding".to_string());
+    }
+    let signed_binding_value = artifact_value
+        .get("spisBinding")
+        .ok_or_else(|| "receipt-bound JSON artifact has no spisBinding".to_string())?;
+    let signed_binding: WelesAttemptBinding =
+        serde_json::from_value(signed_binding_value.clone())
+            .map_err(|_| "receipt-bound spisBinding does not match the typed schema".to_string())?;
+    if signed_binding != binding {
+        return Err("receipt-bound catalog/record/run/attempt/source/input/reference binding differs from the imported attempt".to_string());
+    }
+    Ok(())
+}
+
 
 fn validate_document_shape(document: &WelesProvenanceDocument) -> Result<(), String> {
     if document.schema != PROVENANCE_DOCUMENT_SCHEMA {
@@ -340,6 +552,15 @@ fn invoke_bridge(
         .arg("--output")
         .arg("-")
         .current_dir(record_dir)
+        .env_remove("SPIS_WELES_CONFIG_FILE")
+        .env_remove("WELES_API_BASE")
+        .env_remove("WELES_TOKEN")
+        .env_remove("WISENT_ORGANIZATION_ID")
+        .env_remove("SPIS_WELES_ALLOWED_ORIGINS_JSON")
+        .env_remove("SPIS_WELES_ALLOWED_ACTIONS_JSON")
+        .env_remove("SPIS_WELES_TERMINAL_OUTCOMES_JSON")
+        .env_remove("SPIS_WELES_RECEIPT_KEYS_JSON")
+        .env_remove("SPIS_WELES_KEY_SET_VERSION")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -371,13 +592,11 @@ fn validate_fresh_document(
     record_dir: &Path,
 ) -> Result<(), String> {
     validate_document_shape(fresh)?;
-    if fresh.receipt != persisted.receipt
-        || fresh.expected_claims != persisted.expected_claims
-        || fresh.artifact.path != persisted.artifact.path
-        || fresh.artifact.sha256 != persisted.artifact.sha256
-        || fresh.artifact.bytes != persisted.artifact.bytes
-    {
-        return Err("fresh official verification differs from the persisted receipt contract".to_string());
+    if fresh != persisted {
+        return Err(
+            "fresh official verification differs from the persisted verification document"
+                .to_string(),
+        );
     }
     if !claims_match_expected(&fresh.claims, &fresh.expected_claims)
         || fresh.claims.key_id != fresh.receipt.key_id

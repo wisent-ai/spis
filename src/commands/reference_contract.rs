@@ -50,17 +50,17 @@ pub fn is_state_suffix(suffix: &str) -> bool {
     )
 }
 
-/// How the motion was obtained, strongest evidence first. Only the first two are a
-/// product this workspace drove; the third is media the product's owner published.
+/// How motion was obtained. Cryptographically verified Weles evidence is a distinct
+/// class and is never inferred from capture-method prose.
 pub const PROVENANCE_CLASSES: &[&str] = &[
     "local-product-run",
-    "local-browser-recording",
+    "weles-signed-browser-evidence",
     "upstream-owner-media",
     "unclassified",
 ];
 
 pub fn is_local_provenance(class: &str) -> bool {
-    matches!(class, "local-product-run" | "local-browser-recording")
+    class == "local-product-run"
 }
 
 /// Case-insensitive substring test (the plain-keyword patterns below).
@@ -174,7 +174,7 @@ pub fn classify_provenance(capture_method: Option<&str>, media_kind: Option<&str
             _ => ci_contains(text, pattern.1),
         };
         if hit {
-            return "local-browser-recording";
+            return "unclassified";
         }
     }
     for pattern in [

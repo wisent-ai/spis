@@ -11,6 +11,7 @@
 //! `generate-example-catalogs.py` pipeline.
 
 use crate as lib;
+use crate::weles_provenance::VerifiedProvenanceSet;
 use anyhow::{anyhow, bail, Context, Result};
 use serde_json::{json, Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
@@ -38,11 +39,11 @@ const STATE_SUFFIXES: &[&str] = &[".png", ".webp", ".jpg", ".jpeg"];
 
 const PROVENANCE_CLASSES: &[&str] = &[
     "local-product-run",
-    "local-browser-recording",
+    "weles-signed-browser-evidence",
     "upstream-owner-media",
     "unverified-source-media",
 ];
-const LOCAL_PROVENANCE: &[&str] = &["local-browser-recording", "local-product-run"];
+const LOCAL_PROVENANCE: &[&str] = &["local-product-run"];
 const RECORDS_PER_CATALOG: usize = 50;
 
 
@@ -119,7 +120,7 @@ const CATALOGS: &[&str] = &[
 fn provenance_label(name: &str) -> &'static str {
     match name {
         "local-product-run" => "verified product run here",
-        "local-browser-recording" => "verified browser run here",
+        "weles-signed-browser-evidence" => "Weles-signed browser evidence",
         "upstream-owner-media" => "verified product-owner media",
         "unverified-source-media" => "unverified source media",
         _ => "invalid provenance",
@@ -248,7 +249,12 @@ fn evidence_status_of(record: &Value) -> Option<&str> {
 // Validation
 // ---------------------------------------------------------------------------
 
-fn validate_motion(record: &Value, record_path: &str, reference_dir: &Path) -> Result<Vec<String>> {
+fn validate_motion(
+    record: &Value,
+    record_path: &str,
+    reference_dir: &Path,
+    verified_provenance: &VerifiedProvenanceSet,
+) -> Result<Vec<String>> {
     let requirements = super::reference_contract::completeness_requirements(reference_dir);
     let motion = record.get("motion");
     let Some(motion) = motion.and_then(Value::as_array) else {
@@ -292,8 +298,7 @@ fn validate_motion(record: &Value, record_path: &str, reference_dir: &Path) -> R
         if !PROVENANCE_CLASSES.contains(&provenance_class) {
             bail!("{context}: unknown provenance class '{provenance_class}'");
         }
-        let derived =
-            super::verify_reference_evidence::measured_motion_provenance_class(record, item);
+        let derived = verified_provenance.provenance_class(item);
         if provenance_class != derived {
             bail!(
                 "{context}: provenance class '{provenance_class}' contradicts typed provenance '{derived}'"
@@ -350,7 +355,12 @@ fn validate_motion(record: &Value, record_path: &str, reference_dir: &Path) -> R
     Ok(classes)
 }
 
-fn validate_states(record: &Value, record_path: &str, reference_dir: &Path) -> Result<()> {
+fn validate_states(
+    record: &Value,
+    record_path: &str,
+    reference_dir: &Path,
+    verified_provenance: &VerifiedProvenanceSet,
+) -> Result<()> {
     let requirements = super::reference_contract::completeness_requirements(reference_dir);
     let Some(states) = record.get("states").and_then(Value::as_array) else {
         bail!("{record_path}: states must be a list");
@@ -372,7 +382,7 @@ fn validate_states(record: &Value, record_path: &str, reference_dir: &Path) -> R
         }
         validate_file_metadata(&state_path, item, &context)?;
         if evidence_status_of(record) == Some("complete") {
-            if !super::verify_reference_evidence::observation_has_verified_provenance(record, item) {
+            if !verified_provenance.supports_value(item) {
                 bail!("{context}: semantic state name lacks independently verified observation provenance");
             }
             if !py_truthy(item.get("source_motion_path"))
@@ -385,7 +395,12 @@ fn validate_states(record: &Value, record_path: &str, reference_dir: &Path) -> R
     Ok(())
 }
 
-fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -> Result<()> {
+fn validate_behaviour(
+    record: &Value,
+    record_path: &str,
+    reference_dir: &Path,
+    verified_provenance: &VerifiedProvenanceSet,
+) -> Result<()> {
     let requirements = super::reference_contract::completeness_requirements(reference_dir);
     let Some(interactions) = record.get("interactions").and_then(Value::as_array) else {
         bail!("{record_path}: interactions must be a list");
@@ -403,7 +418,7 @@ fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -
             INTERACTION_FIELDS,
             &format!("{record_path}: interaction {}", position + 1),
         )?;
-        if !super::verify_reference_evidence::observation_has_verified_provenance(record, item) {
+        if !verified_provenance.supports_value(item) {
             bail!(
                 "{record_path}: interaction {} lacks verified typed provenance",
                 position + 1
@@ -415,7 +430,7 @@ fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -
     if py_truthy(journey_value) {
         let journey = journey_value.expect("truthy");
         require_nonempty(journey, JOURNEY_FIELDS, &format!("{record_path}: journey"))?;
-        if !super::verify_reference_evidence::observation_has_verified_provenance(record, journey) {
+        if !verified_provenance.supports_value(journey) {
             bail!("{record_path}: journey lacks verified typed provenance");
         }
         let steps_ok = journey
@@ -432,7 +447,7 @@ fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -
                 JOURNEY_STEP_FIELDS,
                 &format!("{record_path}: journey step {}", position + 1),
             )?;
-            if !super::verify_reference_evidence::observation_has_verified_provenance(record, step) {
+            if !verified_provenance.supports_value(step) {
                 bail!(
                     "{record_path}: journey step {} lacks verified typed provenance",
                     position + 1
@@ -490,7 +505,7 @@ fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -
                         missing
                     );
                 }
-                if !super::verify_reference_evidence::observation_has_verified_provenance(record, item) {
+                if !verified_provenance.supports_value(item) {
                     bail!(
                         "{record_path}: motion analysis {} lacks verified typed provenance",
                         position + 1
@@ -530,10 +545,7 @@ fn validate_behaviour(record: &Value, record_path: &str, reference_dir: &Path) -
         .enumerate()
     {
         if !nonempty_observation(observation)
-            || !super::verify_reference_evidence::observation_has_verified_provenance(
-                record,
-                observation,
-            )
+            || !verified_provenance.supports_value(observation)
         {
             bail!(
                 "{record_path}: accessibility observation {} lacks a typed statement or verified provenance",
@@ -653,11 +665,27 @@ fn load_full_references(slug: &str, examples: &[Value]) -> Result<Value> {
         }
 
         let reference_dir = record_path.parent().unwrap_or(Path::new("."));
-        for class in validate_motion(&record, &record_path_str, reference_dir)? {
+        let verified_provenance = VerifiedProvenanceSet::verify_record(&record, reference_dir);
+        for class in validate_motion(
+            &record,
+            &record_path_str,
+            reference_dir,
+            &verified_provenance,
+        )? {
             *provenance.entry(class).or_insert(0) += 1;
         }
-        validate_states(&record, &record_path_str, reference_dir)?;
-        validate_behaviour(&record, &record_path_str, reference_dir)?;
+        validate_states(
+            &record,
+            &record_path_str,
+            reference_dir,
+            &verified_provenance,
+        )?;
+        validate_behaviour(
+            &record,
+            &record_path_str,
+            reference_dir,
+            &verified_provenance,
+        )?;
 
         *statuses.entry(expected.to_string()).or_insert(0) += 1;
         gap_total += gaps.len();

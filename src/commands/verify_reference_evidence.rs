@@ -179,24 +179,11 @@ fn observation_supported(value: &Value, context: &ProvenanceContext) -> bool {
     context.verified.supports_value(value)
 }
 
-/// Callers without the record directory cannot reopen and hash retained artifacts.
-/// Returning false keeps the catalog generator closed; integration should use
-/// `VerifiedProvenanceSet::verify_record(record, reference_dir)` directly.
-pub(crate) fn observation_has_verified_provenance(_record: &Value, _value: &Value) -> bool {
-    false
-}
 
 fn provenance_class(value: &Value, context: &ProvenanceContext) -> &'static str {
     context.verified.provenance_class(value)
 }
 
-/// The base-less catalog-generation path cannot establish artifact containment.
-pub(crate) fn measured_motion_provenance_class(
-    _record: &Value,
-    _value: &Value,
-) -> &'static str {
-    "unverified-source-media"
-}
 
 // ------------------------------------------------------------------ probes --
 

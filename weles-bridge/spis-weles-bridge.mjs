@@ -10,7 +10,7 @@ import {
   openSync,
   readFileSync,
   realpathSync,
-  renameSync,
+  linkSync,
   unlinkSync,
   writeFileSync,
 } from 'node:fs';
@@ -22,15 +22,18 @@ const CLIENT_PACKAGE = '@wisent-ai/weles-client';
 const CLIENT_COMMIT = '37798a26022a040fbd0a4a4a25c99b5559d95a32';
 const CLIENT_SOURCE_SHA256 = '7cdfee8ae7d7ffc831c60d01e393640bf912d95adf0b06c9dd51a737f97ccada';
 const CONFIG_SCHEMA = 'wisent.spis-weles-bridge-config.v1';
+const TRUST_SCHEMA = 'wisent.spis-weles-receipt-trust.v1';
 const COMMAND_SCHEMA = 'wisent.spis-weles-bridge-command.v1';
 const PROVENANCE_SCHEMA = 'wisent.spis-weles-provenance.v1';
 const RECEIPT_CHECKPOINT_SCHEMA = 'wisent.spis-weles-receipt-checkpoint.v1';
 const SUBMISSION_SCHEMA = 'wisent.spis-weles-submission.v1';
 const TASK_STATUS_SCHEMA = 'wisent.spis-weles-task-status.v1';
+const CANCELLATION_SCHEMA = 'wisent.spis-weles-cancellation.v1';
 const ERROR_SCHEMA = 'wisent.spis-weles-bridge-error.v1';
 const MAX_JSON_BYTES = 1024 * 1024;
 const MAX_OUTPUT_BYTES = 4 * 1024 * 1024;
 const SHA256 = /^[0-9a-f]{64}$/;
+const NONTERMINAL_STATUSES = new Set(['queued', 'running', 'pending_review']);
 const CORE_CLAIMS = Object.freeze([
   'taskId',
   'organizationId',
@@ -140,6 +143,56 @@ function readProtectedConfig(path) {
     fail('config-unavailable', 'protected Weles config could not be read');
   }
 }
+function readPublicTrust(path) {
+  let stat;
+  try {
+    stat = lstatSync(path);
+  } catch {
+    fail('trust-unavailable', 'public Weles receipt trust document could not be read');
+  }
+  if (!stat.isFile() || stat.isSymbolicLink()) {
+    fail('invalid-trust', 'public Weles receipt trust must be a regular file, not a symlink');
+  }
+  if (stat.size > MAX_JSON_BYTES) fail('invalid-trust', 'public Weles receipt trust exceeded the size limit');
+  try {
+    return parseJson(readFileSync(path, 'utf8'), 'public Weles receipt trust');
+  } catch (error) {
+    if (error instanceof BridgeError) throw error;
+    fail('trust-unavailable', 'public Weles receipt trust document could not be read');
+  }
+}
+
+function loadTrust() {
+  const path = process.env.SPIS_WELES_TRUST_FILE;
+  if (!path) fail('trust-unavailable', 'SPIS_WELES_TRUST_FILE is required for receipt verification');
+  const trust = plainObject(readPublicTrust(path), 'public Weles receipt trust');
+  onlyKeys(trust, [
+    'schema',
+    'organizationId',
+    'allowedAction',
+    'receiptKeys',
+    'keySetVersion',
+  ], 'public Weles receipt trust');
+  if (trust.schema !== TRUST_SCHEMA) fail('invalid-trust', 'public Weles receipt trust schema is unsupported');
+  const organizationId = nonemptyString(trust.organizationId, 'public Weles receipt trust.organizationId');
+  const allowedAction = nonemptyString(trust.allowedAction, 'public Weles receipt trust.allowedAction');
+  const keySetVersion = nonemptyString(trust.keySetVersion, 'public Weles receipt trust.keySetVersion');
+  const receiptKeys = plainObject(trust.receiptKeys, 'public Weles receipt trust.receiptKeys');
+  if (Object.keys(receiptKeys).length === 0) fail('invalid-trust', 'public Weles receipt trust.receiptKeys must not be empty');
+  for (const [keyId, publicKey] of Object.entries(receiptKeys)) {
+    nonemptyString(keyId, 'public Weles receipt trust.receiptKeys key ID');
+    nonemptyString(publicKey, `public Weles receipt trust.receiptKeys.${keyId}`);
+  }
+  return {
+    organizationId,
+    allowedOrigins: null,
+    allowedActions: [allowedAction],
+    terminalOutcomes: ['completed'],
+    receiptKeys,
+    keySetVersion,
+  };
+}
+
 
 function parseEnvironmentJson(name) {
   const value = process.env[name];
@@ -244,13 +297,13 @@ function validateExpectedTask(value, config) {
   onlyKeys(expected, KNOWN_TASK_FIELDS, 'expectedTask');
   for (const field of KNOWN_TASK_FIELDS) nonemptyString(expected[field], `expectedTask.${field}`);
   if (expected.organizationId !== config.organizationId) {
-    fail('expected-claim-mismatch', 'expected organizationId differs from protected config');
+    fail('expected-claim-mismatch', 'expected organizationId differs from configured receipt trust');
   }
-  if (!config.allowedOrigins.includes(expected.origin)) {
+  if (config.allowedOrigins !== null && !config.allowedOrigins.includes(expected.origin)) {
     fail('expected-claim-mismatch', 'expected origin is not an exact protected allowlist member');
   }
   if (!config.allowedActions.includes(expected.action)) {
-    fail('expected-claim-mismatch', 'expected action is not an exact protected allowlist member');
+    fail('expected-claim-mismatch', 'expected action is not an exact configured allowlist member');
   }
   return expected;
 }
@@ -440,7 +493,159 @@ function networkClient(config, WelesClient) {
   });
 }
 
-async function execute(commandValue, config, official) {
+function canonicalJson(value) {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
+  return `{${Object.keys(value)
+    .sort()
+    .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)
+    .join(',')}}`;
+}
+
+function prepareSubmission(commandValue, config) {
+  const command = plainObject(commandValue, 'command');
+  if (command.schema !== COMMAND_SCHEMA) fail('unsupported-command', 'bridge command schema is unsupported');
+  if (command.operation !== 'submit') fail('unsupported-operation', 'submission preparation requires submit');
+  onlyKeys(command, ['schema', 'operation', 'request', 'idempotencyKey'], 'command');
+  const request = plainObject(command.request, 'command.request');
+  onlyKeys(request, ['origin', 'action', 'input', 'credentialRefs', 'evidencePolicy', 'justification'], 'command.request');
+  const origin = nonemptyString(request.origin, 'command.request.origin');
+  const action = nonemptyString(request.action, 'command.request.action');
+  if (!config.allowedOrigins.includes(origin)) {
+    fail('origin-denied', 'command.request.origin is not an exact protected allowlist member');
+  }
+  if (!config.allowedActions.includes(action)) {
+    fail('action-denied', 'command.request.action is not an exact protected allowlist member');
+  }
+  const normalizedRequest = {
+    origin,
+    action,
+    input: request.input === undefined ? {} : plainObject(request.input, 'command.request.input'),
+    credentialRefs: request.credentialRefs === undefined
+      ? []
+      : stringArray(request.credentialRefs, 'command.request.credentialRefs'),
+    evidencePolicy: request.evidencePolicy === undefined
+      ? 'receipt'
+      : nonemptyString(request.evidencePolicy, 'command.request.evidencePolicy'),
+    justification: nonemptyString(request.justification, 'command.request.justification'),
+  };
+  const idempotencyKey = nonemptyString(command.idempotencyKey, 'command.idempotencyKey');
+  const requestDigest = `sha256:${createHash('sha256').update(canonicalJson({
+    schema: 'wisent.spis-weles-submit-request.v1',
+    organizationId: config.organizationId,
+    idempotencyKey,
+    request: normalizedRequest,
+  })).digest('hex')}`;
+  return { request: normalizedRequest, idempotencyKey, requestDigest, origin, action };
+}
+
+function reusableSubmission(path, prepared, config) {
+  if (path === '-') {
+    fail('durable-output-required', 'submit requires a retained output file for request-bound recovery');
+  }
+  const destination = resolve(path);
+  let stat;
+  try {
+    stat = lstatSync(destination);
+  } catch (error) {
+    if (error?.code === 'ENOENT') return null;
+    fail('output-failed', 'existing submission output could not be inspected');
+  }
+  if (stat.isSymbolicLink() || !stat.isFile()) {
+    fail('invalid-output', 'submission output must be a regular non-symlink file');
+  }
+  if (stat.size > MAX_OUTPUT_BYTES) fail('output-conflict', 'existing submission output is oversized');
+  let existing;
+  try {
+    existing = JSON.parse(readFileSync(destination, 'utf8'));
+    plainObject(existing, 'existing submission output');
+    onlyKeys(existing, [
+      'schema',
+      'taskId',
+      'organizationId',
+      'origin',
+      'action',
+      'idempotencyKey',
+      'requestDigest',
+      'receiptCheckpoint',
+    ], 'existing submission output');
+  } catch {
+    fail('output-conflict', 'existing submission output is not a retained bridge submission');
+  }
+  const sameRequest = existing.schema === SUBMISSION_SCHEMA
+    && existing.requestDigest === prepared.requestDigest
+    && existing.idempotencyKey === prepared.idempotencyKey
+    && existing.organizationId === config.organizationId
+    && existing.origin === prepared.origin
+    && existing.action === prepared.action
+    && typeof existing.taskId === 'string'
+    && existing.taskId.length > 0;
+  if (!sameRequest) {
+    fail('output-conflict', 'existing submission output belongs to a different canonical request');
+  }
+  return existing;
+}
+
+function exactResultReferences(response, name) {
+  let resultRef = null;
+  if (response.resultRef !== undefined && response.resultRef !== null) {
+    resultRef = nonemptyString(response.resultRef, `${name}.resultRef`);
+  }
+  let artifactRefs = [];
+  if (response.artifactRefs !== undefined) {
+    artifactRefs = stringArray(response.artifactRefs, `${name}.artifactRefs`);
+    if (new Set(artifactRefs).size !== artifactRefs.length) {
+      fail('invalid-response', `${name}.artifactRefs must not contain duplicates`);
+    }
+  }
+  return { resultRef, artifactRefs };
+}
+
+function taskStatusDocument(schema, responseValue, expectedTask, config, verifyReceipt, responseName) {
+  const response = plainObject(responseValue, responseName);
+  for (const field of KNOWN_TASK_FIELDS) {
+    if (nonemptyString(response[field], `${responseName}.${field}`) !== expectedTask[field]) {
+      fail('expected-claim-mismatch', `${responseName} ${field} differs from the known task`);
+    }
+  }
+  const status = nonemptyString(response.status, `${responseName}.status`);
+  const terminal = !NONTERMINAL_STATUSES.has(status);
+  const result = {
+    schema,
+    ...expectedTask,
+    status,
+    terminal,
+    outcome: null,
+    ...exactResultReferences(response, responseName),
+  };
+  if (!terminal) {
+    if (response.outcome !== undefined && response.outcome !== null) {
+      fail('status-outcome-mismatch', 'a nonterminal task must not report a terminal outcome');
+    }
+    return result;
+  }
+  const outcome = nonemptyString(response.outcome, `${responseName}.outcome`);
+  if (status !== outcome || !config.terminalOutcomes.includes(outcome)) {
+    fail('status-outcome-mismatch', 'terminal status and configured terminal outcome must match exactly');
+  }
+  if (!response.receipt) {
+    fail('missing-terminal-receipt', 'a terminal Weles task requires a fresh signed receipt checkpoint');
+  }
+  const receiptCheckpoint = buildReceiptCheckpoint(
+    response.receipt,
+    expectedTask,
+    config,
+    verifyReceipt,
+  );
+  if (receiptCheckpoint.claims.outcome !== outcome) {
+    fail('status-outcome-mismatch', 'terminal status/outcome differs from the freshly verified receipt');
+  }
+  result.outcome = outcome;
+  result.receiptCheckpoint = receiptCheckpoint;
+  return result;
+}
+
+async function execute(commandValue, config, official, preparedSubmission) {
   const command = plainObject(commandValue, 'command');
   if (command.schema !== COMMAND_SCHEMA) fail('unsupported-command', 'bridge command schema is unsupported');
   const operation = nonemptyString(command.operation, 'command.operation');
@@ -460,43 +665,52 @@ async function execute(commandValue, config, official) {
       const code = typeof error?.code === 'string' ? error.code : 'weles-request-failed';
       fail(code, 'the official Weles client get operation failed');
     }
-    plainObject(response, 'Weles get response');
-    for (const field of KNOWN_TASK_FIELDS) {
-      if (nonemptyString(response[field], `Weles get response.${field}`) !== expectedTask[field]) {
-        fail('expected-claim-mismatch', `Weles get response ${field} differs from the known task`);
-      }
-    }
-    const result = {
-      schema: TASK_STATUS_SCHEMA,
-      ...expectedTask,
-      status: nonemptyString(response.status, 'Weles get response.status'),
-    };
-    if (response.receipt) {
-      result.receiptCheckpoint = buildReceiptCheckpoint(
-        response.receipt,
-        expectedTask,
-        config,
-        official.verifyReceipt,
-      );
-    }
-    return result;
+    return taskStatusDocument(
+      TASK_STATUS_SCHEMA,
+      response,
+      expectedTask,
+      config,
+      official.verifyReceipt,
+      'Weles get response',
+    );
   }
-  if (operation === 'submit') {
-    onlyKeys(command, ['schema', 'operation', 'request', 'idempotencyKey'], 'command');
-    const request = plainObject(command.request, 'command.request');
-    onlyKeys(request, ['origin', 'action', 'input', 'credentialRefs', 'evidencePolicy', 'justification'], 'command.request');
-    const origin = nonemptyString(request.origin, 'command.request.origin');
-    const action = nonemptyString(request.action, 'command.request.action');
-    if (!config.allowedOrigins.includes(origin)) {
-      fail('origin-denied', 'command.request.origin is not an exact protected allowlist member');
-    }
-    if (!config.allowedActions.includes(action)) {
-      fail('action-denied', 'command.request.action is not an exact protected allowlist member');
-    }
+  if (operation === 'cancel') {
+    onlyKeys(command, ['schema', 'operation', 'taskId', 'expectedTask', 'reason', 'idempotencyKey'], 'command');
+    const taskId = nonemptyString(command.taskId, 'command.taskId');
+    const expectedTask = validateExpectedTask(command.expectedTask, config);
+    if (taskId !== expectedTask.taskId) fail('expected-claim-mismatch', 'cancel taskId differs from expectedTask.taskId');
+    const reason = nonemptyString(command.reason, 'command.reason');
     const idempotencyKey = nonemptyString(command.idempotencyKey, 'command.idempotencyKey');
     let response;
     try {
-      response = await networkClient(config, official.WelesClient).submit(request, { idempotencyKey });
+      response = await networkClient(config, official.WelesClient).cancel(taskId, {
+        reason,
+        idempotencyKey,
+      });
+    } catch (error) {
+      const code = typeof error?.code === 'string' ? error.code : 'weles-request-failed';
+      fail(code, 'the official Weles client cancel operation failed');
+    }
+    return {
+      ...taskStatusDocument(
+        CANCELLATION_SCHEMA,
+        response,
+        expectedTask,
+        config,
+        official.verifyReceipt,
+        'Weles cancel response',
+      ),
+      idempotencyKey,
+    };
+  }
+  if (operation === 'submit') {
+    const prepared = preparedSubmission ?? prepareSubmission(command, config);
+    let response;
+    try {
+      response = await networkClient(config, official.WelesClient).submit(
+        prepared.request,
+        { idempotencyKey: prepared.idempotencyKey },
+      );
     } catch (error) {
       const code = typeof error?.code === 'string' ? error.code : 'weles-request-failed';
       fail(code, 'the official Weles client submit operation failed');
@@ -506,13 +720,14 @@ async function execute(commandValue, config, official) {
     const knownTask = {
       taskId,
       organizationId: config.organizationId,
-      origin,
-      action,
+      origin: prepared.origin,
+      action: prepared.action,
     };
     const result = {
       schema: SUBMISSION_SCHEMA,
       ...knownTask,
-      idempotencyKey,
+      idempotencyKey: prepared.idempotencyKey,
+      requestDigest: prepared.requestDigest,
     };
     if (response.receipt) {
       result.receiptCheckpoint = buildReceiptCheckpoint(
@@ -524,52 +739,73 @@ async function execute(commandValue, config, official) {
     }
     return result;
   }
-  fail('unsupported-operation', 'bridge operation must be submit, get, or verify');
+  fail('unsupported-operation', 'bridge operation must be submit, get, cancel, or verify');
 }
+
+function existingOutputMatches(destination, bytes) {
+  try {
+    const existing = lstatSync(destination);
+    if (existing.isSymbolicLink() || !existing.isFile()) {
+      fail('invalid-output', 'output must not be a symlink or non-file');
+    }
+    if (existing.size > MAX_OUTPUT_BYTES) fail('output-conflict', 'existing output differs from this result');
+    if (readFileSync(destination).equals(bytes)) return true;
+    fail('output-conflict', 'existing output differs from this result');
+  } catch (error) {
+    if (error instanceof BridgeError) throw error;
+    if (error?.code === 'ENOENT') return false;
+    fail('output-failed', 'existing bridge output could not be inspected');
+  }
+}
+function syncOutput(destination, parent) {
+  const persistedFd = openSync(destination, fsConstants.O_RDONLY);
+  try {
+    fsyncSync(persistedFd);
+  } finally {
+    closeSync(persistedFd);
+  }
+  const parentFd = openSync(parent, fsConstants.O_RDONLY);
+  try {
+    fsyncSync(parentFd);
+  } finally {
+    closeSync(parentFd);
+  }
+}
+
 
 function writeOutput(path, document) {
   const text = `${JSON.stringify(document, null, 2)}\n`;
-  if (path === '-') {
-    process.stdout.write(text);
-    return;
-  }
   const bytes = Buffer.from(text, 'utf8');
   if (bytes.length > MAX_OUTPUT_BYTES) fail('output-too-large', 'bridge output exceeded the size limit');
+  if (path === '-') {
+    process.stdout.write(bytes);
+    return;
+  }
   const destination = resolve(path);
   const parent = dirname(destination);
-  const lockPath = `${destination}.lock`;
-  let lockFd;
-  let fd;
-  let directoryFd;
   const temporary = join(parent, `.${basename(destination)}.${process.pid}.${randomUUID()}.tmp`);
+  let fd;
   try {
-    lockFd = openSync(lockPath, fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL, 0o600);
-    try {
-      const existing = lstatSync(destination);
-      if (existing.isSymbolicLink() || !existing.isFile()) {
-        fail('invalid-output', 'output must not replace a symlink or non-file');
-      }
-      if (existing.size > MAX_OUTPUT_BYTES) fail('output-conflict', 'existing output differs from this result');
-      if (readFileSync(destination).equals(bytes)) return;
-      fail('output-conflict', 'existing output differs from this result');
-    } catch (error) {
-      if (error instanceof BridgeError) throw error;
-      if (error?.code !== 'ENOENT') fail('output-failed', 'existing bridge output could not be inspected');
+    if (existingOutputMatches(destination, bytes)) {
+      syncOutput(destination, parent);
+      return;
     }
     fd = openSync(temporary, fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL, 0o600);
     writeFileSync(fd, bytes);
     fsyncSync(fd);
     closeSync(fd);
     fd = undefined;
-    renameSync(temporary, destination);
-    const persistedFd = openSync(destination, fsConstants.O_RDONLY);
     try {
-      fsyncSync(persistedFd);
-    } finally {
-      closeSync(persistedFd);
+      linkSync(temporary, destination);
+    } catch (error) {
+      if (error?.code !== 'EEXIST') throw error;
+      if (existingOutputMatches(destination, bytes)) {
+        syncOutput(destination, parent);
+        return;
+      }
     }
-    directoryFd = openSync(parent, fsConstants.O_RDONLY);
-    fsyncSync(directoryFd);
+    unlinkSync(temporary);
+    syncOutput(destination, parent);
   } catch (error) {
     if (error instanceof BridgeError) throw error;
     fail('output-failed', 'bridge output could not be persisted');
@@ -577,18 +813,7 @@ function writeOutput(path, document) {
     if (fd !== undefined) {
       try { closeSync(fd); } catch {}
     }
-    if (directoryFd !== undefined) {
-      try { closeSync(directoryFd); } catch {}
-    }
     try { unlinkSync(temporary); } catch {}
-    if (lockFd !== undefined) {
-      try { closeSync(lockFd); } catch {}
-      try { unlinkSync(lockPath); } catch {}
-      try {
-        const parentFd = openSync(parent, fsConstants.O_RDONLY);
-        try { fsyncSync(parentFd); } finally { closeSync(parentFd); }
-      } catch {}
-    }
   }
 }
 
@@ -596,9 +821,25 @@ try {
   const args = parseArgs(process.argv.slice(2));
   const inputText = args.input === '-' ? await readStdin() : readBoundedFile(args.input, 'bridge input');
   const command = parseJson(inputText, 'bridge input');
-  const config = loadConfig();
-  const official = await loadOfficialClient();
-  const result = await execute(command, config, official);
+  const commandEnvelope = plainObject(command, 'command');
+  if (commandEnvelope.schema !== COMMAND_SCHEMA) fail('unsupported-command', 'bridge command schema is unsupported');
+  const operation = nonemptyString(commandEnvelope.operation, 'command.operation');
+  if (!['submit', 'get', 'cancel', 'verify'].includes(operation)) {
+    fail('unsupported-operation', 'bridge operation must be submit, get, cancel, or verify');
+  }
+  const config = operation === 'verify' ? loadTrust() : loadConfig();
+  const preparedSubmission = command?.operation === 'submit'
+    ? prepareSubmission(command, config)
+    : null;
+  const recoveredSubmission = preparedSubmission
+    ? reusableSubmission(args.output, preparedSubmission, config)
+    : null;
+  const result = recoveredSubmission ?? await execute(
+    command,
+    config,
+    await loadOfficialClient(),
+    preparedSubmission,
+  );
   writeOutput(args.output, result);
 } catch (error) {
   const code = error instanceof BridgeError ? error.code : 'bridge-failed';

@@ -64,50 +64,45 @@ Mobile and desktop crawlers accept fixture files whose values can come from envi
 ## Official Weles bridge and receipt provenance
 
 `weles-bridge/spis-weles-bridge.mjs` is the only supported Node boundary for
-Spis task submission, exact task-status reads, and receipt verification. It
-loads the official `WelesClient` and `verifyReceipt` implementation vendored at
-`weles-bridge/vendor/weles-client/index.mjs`; it does not implement a second
-HTTP client. The vendored file is byte-for-byte source from commit
-`37798a26022a040fbd0a4a4a25c99b5559d95a32`. `UPSTREAM.json` records the
-repository, commit, source digest, license, and license digest. At runtime the
-bridge checks the source SHA-256 before loading it. A clean exact-revision
-checkout needs only Node: there is no package install, network fetch, or SSH
-dependency.
+Spis task submission, exact task-status reads, official cancellation, and
+receipt verification. It loads the official `WelesClient` and `verifyReceipt`
+implementation vendored at `weles-bridge/vendor/weles-client/index.mjs`; it
+does not implement a second HTTP client. The vendored file is byte-for-byte
+source from commit `37798a26022a040fbd0a4a4a25c99b5559d95a32`.
+`UPSTREAM.json` records the repository, commit, source digest, license, and
+license digest. At runtime the bridge checks the source SHA-256 before loading
+it. A clean exact-revision checkout needs only Node: there is no package
+install, network fetch, or SSH dependency.
 
 Commands use schema `wisent.spis-weles-bridge-command.v1`. Pass command JSON
 through stdin or `--input <file>` and persist output with `--output <file>`.
-Only those two path arguments are accepted. A file output is atomic and
-immutable: writing identical bytes again is a no-op, while different bytes at
-the same path fail with `output-conflict`. The bridge fsyncs the file and its
-parent directory. Stdout is available for a calling process such as the Rust
-verifier, but is not durable storage.
+Only those two path arguments are accepted. File output is an atomic immutable
+create: the bridge fsyncs bytes, hard-links a unique temporary inode into
+place, and fsyncs the parent directory. Process death cannot leave a stale lock
+that blocks recovery. Identical bytes are a no-op; different bytes at the same
+path fail with `output-conflict`. File and stdout output share the same 4 MiB
+bound. Submit requires a file because stdout is not durable storage.
 
-Bearer, organization ID, allowlists, terminal outcomes, trusted receipt public
-keys, and key-set version never appear in argv. Set `SPIS_WELES_CONFIG_FILE` to
-an owner-only, non-symlink regular file with mode `0600`:
+Network authorization and public receipt trust are intentionally separate.
+`submit`, `get`, and `cancel` require `SPIS_WELES_CONFIG_FILE`, an owner-only,
+non-symlink regular file with mode `0600` and schema
+`wisent.spis-weles-bridge-config.v1`. It contains the endpoint, bearer,
+organization ID, exact origin/action allowlists, terminal outcomes, receipt
+public keys, and key-set version. The environment-only alternative uses
+`WELES_API_BASE`, `WELES_TOKEN`, `WISENT_ORGANIZATION_ID`,
+`SPIS_WELES_ALLOWED_ORIGINS_JSON`, `SPIS_WELES_ALLOWED_ACTIONS_JSON`,
+`SPIS_WELES_TERMINAL_OUTCOMES_JSON`, `SPIS_WELES_RECEIPT_KEYS_JSON`, and
+`SPIS_WELES_KEY_SET_VERSION`.
 
-```json
-{
-  "schema": "wisent.spis-weles-bridge-config.v1",
-  "endpoint": "https://weles.example.invalid/v1/",
-  "bearer": "injected-outside-the-repository",
-  "organizationId": "00000000-0000-4000-8000-000000000000",
-  "allowedOrigins": ["https://console.example.com"],
-  "allowedActions": ["capture-reference"],
-  "terminalOutcomes": ["completed"],
-  "receiptKeys": {
-    "current-signing-key": "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----\n"
-  },
-  "keySetVersion": "2026-09-01"
-}
-```
-
-Offline `verify` does not require `endpoint` or `bearer`; `submit` and `get`
-do. The environment-only alternative uses `WELES_API_BASE`, `WELES_TOKEN`,
-`WISENT_ORGANIZATION_ID`, `SPIS_WELES_ALLOWED_ORIGINS_JSON`,
-`SPIS_WELES_ALLOWED_ACTIONS_JSON`,
-`SPIS_WELES_TERMINAL_OUTCOMES_JSON`,
-`SPIS_WELES_RECEIPT_KEYS_JSON`, and `SPIS_WELES_KEY_SET_VERSION`.
+`verify` does not read or require that secret configuration. It requires
+`SPIS_WELES_TRUST_FILE`, pointing to a regular non-symlink public document with
+schema `wisent.spis-weles-receipt-trust.v1`. The document contains only the
+organization ID, one exact `allowedAction`, trusted key-ID/public-key mapping,
+and `keySetVersion`; the exact origin is derived from the current record.
+This file may be tracked and world-readable. The repository deliberately has
+no placeholder trust document: verification fails closed until onboarding
+produces the real public keys and core commits that document. The Rust verifier
+also removes all network-auth configuration from the verification subprocess.
 
 Submission requires only information known before submission. It never asks
 for a dummy future task ID, outcome, evidence digest, or artifact:
@@ -119,7 +114,7 @@ for a dummy future task ID, outcome, evidence digest, or artifact:
   "idempotencyKey": "caller-retained-operation-id",
   "request": {
     "origin": "https://console.example.com",
-    "action": "capture-reference",
+    "action": "generic_browser_task",
     "input": {"record": "01-example"},
     "credentialRefs": ["approved-account"],
     "evidencePolicy": "receipt",
@@ -128,37 +123,36 @@ for a dummy future task ID, outcome, evidence digest, or artifact:
 }
 ```
 
-The result is `wisent.spis-weles-submission.v1` with the task ID, exact
-organization/origin/action, and retained idempotency key. If Weles returns a
-receipt immediately, `receiptCheckpoint` contains its signed payload,
-signature, key ID, independently verified claims, and key-set version. It is a
-receipt checkpoint, not terminal artifact provenance.
+The result is `wisent.spis-weles-submission.v1` with the task identity,
+idempotency key, and `requestDigest`, a SHA-256 over canonical normalized
+request, organization, and idempotency input. Before loading the official
+client or making a network request, submit reuses an existing output only when
+that digest and every retained request identity field match; any difference is
+an `output-conflict`. If Weles returns a receipt immediately,
+`receiptCheckpoint` retains signed material, independently verified claims,
+and key-set version. It is not terminal artifact provenance.
 
-Status reads require only the known task identity:
+`get` requires `taskId` and exact `expectedTask`. Its
+`wisent.spis-weles-task-status.v1` result carries only typed task identity,
+`status`, `terminal`, `outcome`, exact `resultRef`/`artifactRefs`, and the
+receipt checkpoint. `queued`, `running`, and `pending_review` are nonterminal
+and have no outcome. Any other status is accepted only when it exactly equals
+a configured terminal outcome and a freshly verified receipt claim. Terminal
+status without that receipt fails closed; the raw service response is never
+retained.
 
-```json
-{
-  "schema": "wisent.spis-weles-bridge-command.v1",
-  "operation": "get",
-  "taskId": "known-task-id",
-  "expectedTask": {
-    "taskId": "known-task-id",
-    "organizationId": "00000000-0000-4000-8000-000000000000",
-    "origin": "https://console.example.com",
-    "action": "capture-reference"
-  }
-}
-```
-
-The result is `wisent.spis-weles-task-status.v1`. Queued and running tasks
-return typed status without requiring a receipt. When a receipt exists, the
-result adds `receiptCheckpoint` with retained signed material and independently
-verified claims. The bridge retains no raw service response.
+`cancel` uses the official `WelesClient.cancel` operation with `taskId`,
+`expectedTask`, a nonsecret `reason`, and retained `idempotencyKey`. It returns
+the same typed status contract under `wisent.spis-weles-cancellation.v1`, so a
+Spis/Stado cancellation is coupled to the Weles task rather than abandoning it.
+`get` remains the reconciliation operation if cancellation is still
+nonterminal.
 
 Only `verify` creates `wisent.spis-weles-provenance.v1`. The caller supplies
-the terminal expectations and the already retained artifact; the bridge
-re-runs the official verifier, compares every bound claim exactly, hashes the
-artifact itself, and requires `claims.evidenceDigest == artifact.sha256`:
+the terminal expectations and already retained JSON artifact; the bridge uses
+only the public trust document, re-runs the official verifier, compares every
+bound claim exactly, hashes the artifact itself, and requires
+`claims.evidenceDigest == artifact.sha256`:
 
 ```json
 {
@@ -169,18 +163,18 @@ artifact itself, and requires `claims.evidenceDigest == artifact.sha256`:
     "taskId": "known-task-id",
     "organizationId": "00000000-0000-4000-8000-000000000000",
     "origin": "https://console.example.com",
-    "action": "capture-reference",
+    "action": "generic_browser_task",
     "outcome": "completed",
     "evidenceDigest": "lowercase-64-character-sha256",
     "keyId": "current-signing-key",
     "signature": "base64-signature",
-    "signedPayload": "{\"taskId\":\"known-task-id\",\"organizationId\":\"00000000-0000-4000-8000-000000000000\",\"origin\":\"https://console.example.com\",\"action\":\"capture-reference\",\"outcome\":\"completed\",\"evidenceDigest\":\"lowercase-64-character-sha256\"}"
+    "signedPayload": "{\"taskId\":\"known-task-id\",\"organizationId\":\"00000000-0000-4000-8000-000000000000\",\"origin\":\"https://console.example.com\",\"action\":\"generic_browser_task\",\"outcome\":\"completed\",\"evidenceDigest\":\"lowercase-64-character-sha256\"}"
   },
   "expectedClaims": {
     "taskId": "known-task-id",
     "organizationId": "00000000-0000-4000-8000-000000000000",
     "origin": "https://console.example.com",
-    "action": "capture-reference",
+    "action": "generic_browser_task",
     "outcome": "completed",
     "evidenceDigest": "lowercase-64-character-sha256"
   },
@@ -209,6 +203,32 @@ file digest:
 }
 ```
 
+The record's imported `crawl_runs` entry must identify the same completed
+attempt with matching `run_id`, `attempt_id`, `job_id`, and a typed
+`weles_attempt`. The receipt-bound JSON artifact must repeat that object
+exactly as top-level `spisBinding`:
+
+```json
+{
+  "schema": "wisent.spis-weles-attempt-binding.v1",
+  "catalog": "web-app-examples",
+  "record": "01-example",
+  "runId": "crawl-run-id",
+  "attemptId": "attempt-id",
+  "taskId": "known-task-id",
+  "source": "https://console.example.com/product/path",
+  "inputDigest": "sha256:lowercase-64-character-sha256",
+  "referenceDigest": "sha256:lowercase-64-character-sha256"
+}
+```
+
+Rust requires the task ID to be that imported attempt, the receipt origin to
+equal the current `product_url` origin, the action to equal
+`generic_browser_task`, and the signed catalog/record/run/attempt/source/input/
+reference binding to match the attempt. A valid receipt for any unrelated task
+therefore leaves the record raw.
+
+
 Each supported record value carries its own
 `wisent.spis-provenance-link.v1`; a valid record-level receipt never blesses
 every observation. For a semantic observation, `artifactPointer` is an RFC
@@ -234,19 +254,24 @@ Canonical JSON recursively sorts object keys, preserves array order, emits
 compact UTF-8 JSON, and hashes those bytes. Rust reopens the signed artifact,
 resolves the pointer, recomputes that digest, and requires the current value
 (after recursively removing its `provenance` links) to equal the pointed-to
-member. `kind: "artifact"` is reserved for an exact media value whose
-`local_path` and `sha256` equal the receipt-bound artifact path and digest; it
-must omit `artifactPointer` and `valueSha256`.
+member. If an observation member contains `local_path` and `sha256`, Rust also
+contains, reopens, and hashes that local file; a signed manifest entry alone is
+not proof of the member bytes. `kind: "artifact"` is reserved for an exact
+media value whose `local_path` and `sha256` equal the receipt-bound artifact
+path and digest; it must omit `artifactPointer` and `valueSha256`.
 
-`spis verify-reference-evidence` constructs one cached
-`VerifiedProvenanceSet::verify_record(record, reference_dir)` per record. Every
-referenced document is hashed, parsed through the typed Rust schema, sent back
-through the pinned official bridge, and independently checked again in Rust.
-Missing vendored client source, config, trusted key, supported claim, terminal
-outcome, artifact, pointer, member digest, or exact current-value match leaves
-the value unverified and adds an evidence gap. Persisted `verified: true`, verifier names,
-receipt-provided keys, persisted claim copies, and standalone correlation JSON
-are never authority.
+Both `spis verify-reference-evidence` and catalog generation construct one
+cached `VerifiedProvenanceSet::verify_record(record, reference_dir)` per record,
+so validation and generated provenance statistics use the same result. Only a
+supported link receives `weles-signed-browser-evidence`; capture-method prose
+cannot confer that class. Every referenced document is hashed, parsed through
+the typed Rust schema, sent back through the pinned official bridge, and
+independently checked again in Rust. Missing vendored client source, public
+trust document, trusted key, supported claim, terminal outcome, attempt
+binding, artifact, pointer, member digest, or exact current-value match leaves
+the value unverified and adds an evidence gap. Persisted `verified: true`,
+verifier names, receipt-provided keys, persisted claim copies, and standalone
+correlation JSON are never authority.
 
 ## Repository layout
 
