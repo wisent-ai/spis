@@ -839,14 +839,19 @@ function validateEvidenceManifest(value, expectedClaims) {
     fail('invalid-artifact', 'retained evidence manifest inventory must be an array');
   }
   const prefix = `stado://weles/recordings/${taskId}/`;
-  // `finalize` demands the screenshot and the accessibility tree only from a succeeded
-  // task; a non-success retains whatever the run produced, including nothing.
-  const required = successful
-    ? new Map([
-      ['screenshot', `${prefix}artifacts/browser_evidence_final.png`],
-      ['accessibility_tree', `${prefix}artifacts/browser_evidence_accessibility_tree.txt`],
-    ])
-    : new Map();
+  // Two separate rules, and this branch relaxes only the second one.
+  //
+  // `reserved` is how the service LABELS the two canonical artifacts, by their exact
+  // retained path and independently of the outcome: a failed or cancelled task that had
+  // already captured them signs them under the same reserved kinds. `required` is what the
+  // service DEMANDS, and it demands them only from a succeeded task. Emptying `reserved`
+  // for a non-success would refuse a manifest the service legitimately signs, and would
+  // also contradict the Rust layers, which match both kinds by URI for every outcome.
+  const reserved = new Map([
+    ['screenshot', `${prefix}artifacts/browser_evidence_final.png`],
+    ['accessibility_tree', `${prefix}artifacts/browser_evidence_accessibility_tree.txt`],
+  ]);
+  const required = successful ? new Set(reserved.keys()) : new Set();
   const kinds = new Set();
   const uris = new Set();
   let totalBytes = 0;
@@ -857,8 +862,8 @@ function validateEvidenceManifest(value, expectedClaims) {
     const kind = nonemptyString(entry.kind, `${name}.kind`);
     const uri = nonemptyString(entry.uri, `${name}.uri`);
     const relative = uri.startsWith(prefix) ? uri.slice(prefix.length) : '';
-    const supported = required.has(kind)
-      ? uri === required.get(kind)
+    const supported = reserved.has(kind)
+      ? uri === reserved.get(kind)
       : kind.startsWith('artifact:') && kind.slice('artifact:'.length) === relative;
     if (!supported
         || !relative
@@ -879,7 +884,7 @@ function validateEvidenceManifest(value, expectedClaims) {
     uris.add(uri);
     return { kind, uri, sha256: entry.sha256, bytes: entry.bytes };
   });
-  for (const kind of required.keys()) {
+  for (const kind of required) {
     if (!kinds.has(kind)) fail('invalid-artifact', `retained evidence inventory lacks ${kind}`);
   }
   return {
