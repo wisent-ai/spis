@@ -542,11 +542,12 @@ fn write_exact(path: &Path, bytes: &[u8]) -> Outcome<()> {
     Ok(())
 }
 
-/// Retains one operational attempt document: the submission, the task status, the
-/// cancellation, the official provenance, the attempt envelope and the failure
-/// diagnostic.
+/// Retains one operational attempt document: the task status, the cancellation, the
+/// official provenance, the attempt envelope and the failure diagnostic. The submission
+/// does not pass through here — the bridge persists that one itself, through `--output`.
 ///
-/// `relative` must name a path OUTSIDE the `weles/` and `recordings/` subtrees.
+/// `relative` must name a path outside the `weles/` and `recordings/` subtrees, and this
+/// function refuses anything else instead of merely asking for it.
 /// `crawl::apply_web_attempt` merges exactly those two subtrees into the shared record
 /// directory, and `crawl::write_immutable_file` refuses a destination that already holds
 /// different bytes. Every document written through here is named after its role instead
@@ -556,16 +557,35 @@ fn write_exact(path: &Path, bytes: &[u8]) -> Outcome<()> {
 /// attempt: in the attempt root, in the published archive, and in the attempt-private
 /// `crawl/{attempt_id}` tree the importer installs verbatim.
 ///
-/// The staged temp file lives BESIDE the attempt root, next to the published archive and
-/// its lock, so no `.tmp` byte is ever audited by `audit_attempt_tree`, archived, or
-/// installed into the record. Unlike `crawl::atomic_json_write` this leaves no
-/// `.{name}.lock` sibling either: the attempt root belongs to exactly one worker,
-/// because `native_attempt_root` derives it from the `attempt_id` that already binds the
-/// record key, the attempt number and the executing host, and the rename below is atomic,
-/// so the destination is always either absent or one complete document.
+/// The temp file staged HERE lives BESIDE the attempt root, next to the published archive
+/// and its lock, so none of its bytes are ever audited by `audit_attempt_tree`, archived,
+/// or installed into the record; `prune_stale_attempt_temporaries` sweeps what a killed
+/// run left there. The bridge's `--output` staging is a separate mechanism that does sit
+/// inside the attempt root, and the bridge unlinks it on every path it controls.
+///
+/// Unlike `crawl::atomic_json_write` this leaves no `.{name}.lock` sibling: `create_new`
+/// plus the atomic `rename` below leave the destination either absent or one complete
+/// document, so nothing an advisory lock would add is needed here.
 fn retain_attempt_document(attempt_root: &Path, relative: &str, value: &Value) -> Outcome<()> {
     use std::io::Write;
     let io_failed = |message: &str| WorkerFailure::new("web_worker_io_failed", message);
+    if !is_portable_relative(relative) {
+        return Err(io_failed(
+            "a retained attempt document name is not a portable relative path",
+        ));
+    }
+    // The distinction between `weles-status.json` and `weles/status.json` is one
+    // character, and getting it wrong reintroduces the permanent second-import failure,
+    // so the merged subtrees are refused here rather than trusted to every call site.
+    if relative
+        .split('/')
+        .next()
+        .is_some_and(|leading| matches!(leading, "weles" | "recordings"))
+    {
+        return Err(io_failed(
+            "an operational attempt document may not be retained inside a merged record subtree",
+        ));
+    }
     let owner = attempt_root
         .file_name()
         .and_then(|value| value.to_str())
@@ -601,6 +621,70 @@ fn retain_attempt_document(attempt_root: &Path, relative: &str, value: &Value) -
         let _ = std::fs::remove_file(&temporary);
     }
     result
+}
+
+/// Is `file_name` a document `retain_attempt_document` staged for THIS attempt, whose
+/// process is gone? Recognises only `.{attempt_id}.{document}.{pid}.tmp`, so a live
+/// sibling worker's staged write, the archive, the archive lock and the docs crawler's
+/// `.{owner}.{artifact}.{pid}-{sequence}.tmp` names are all left alone.
+fn is_stale_attempt_temporary(file_name: &str, owner: &str) -> bool {
+    let Some(body) = file_name
+        .strip_prefix('.')
+        .and_then(|rest| rest.strip_suffix(".tmp"))
+    else {
+        return false;
+    };
+    let Some(rest) = body
+        .strip_prefix(owner)
+        .and_then(|rest| rest.strip_prefix('.'))
+    else {
+        return false;
+    };
+    let Some((document, pid)) = rest.rsplit_once('.') else {
+        return false;
+    };
+    if !is_portable_component(document) {
+        return false;
+    }
+    let Ok(pid) = pid.parse::<i32>() else {
+        return false;
+    };
+    pid > 0 && !process_is_live(pid)
+}
+
+/// Drops staged documents an earlier run of this attempt orphaned between `create_new`
+/// and `rename`. They sit beside the attempt root, outside the audited and archived set,
+/// and carry no secret, so nothing breaks without this — they would simply accumulate on
+/// the host. Mirrors `crawl_docs::prune_stale_temporaries`.
+fn prune_stale_attempt_temporaries(attempt_root: &Path) -> Result<()> {
+    let owner = attempt_root
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("the attempt root has no UTF-8 name")?;
+    let staging = attempt_root
+        .parent()
+        .context("the attempt root has no staging parent")?;
+    let entries = match std::fs::read_dir(staging) {
+        Ok(entries) => entries,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => {
+            return Err(error)
+                .with_context(|| format!("list the attempt staging directory {}", staging.display()))
+        }
+    };
+    for entry in entries {
+        let entry = entry?;
+        let file_name = entry.file_name();
+        let Some(file_name) = file_name.to_str() else {
+            continue;
+        };
+        if is_stale_attempt_temporary(file_name, owner) && entry.file_type()?.is_file() {
+            let path = entry.path();
+            std::fs::remove_file(&path)
+                .with_context(|| format!("remove the stale staged document {}", path.display()))?;
+        }
+    }
+    Ok(())
 }
 
 /// Runs one bridge operation through the single shared invoker in
@@ -1032,6 +1116,7 @@ fn run_worker(
         .join("crawls");
     let attempt_root = super::crawl::native_attempt_root(&base, manifest)?;
     std::fs::create_dir_all(&attempt_root)?;
+    prune_stale_attempt_temporaries(&attempt_root)?;
     let private = PrivateBridge::open(manifest)?;
     let mut collected = Collected::default();
     let outcome = capture(

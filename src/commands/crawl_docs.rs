@@ -3255,9 +3255,10 @@ fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManifest) -> Resu
             // it. `corpus_summary` demands the root hold exactly CORPUS_ARTIFACTS,
             // and `atomic_json_write` additionally leaves a permanent
             // `.failure.json.lock` next to its target, so writing this into the root
-            // made every later resume of the attempt fail forever. Import refuses an
-            // archive carrying a `failure.json` member anyway, so keeping it inside
-            // bought nothing. The name matches the `<attempt_id>.tar.gz` convention
+            // made every later resume of the attempt fail forever. Import would not
+            // catch it either: `extract_attempt_archive` runs no member-name allowlist,
+            // so a `failure.json` inside the root would simply be installed with the
+            // rest of the tree. The name matches the `<attempt_id>.tar.gz` convention
             // already used in this directory.
             match failure_diagnostic_path(&layout) {
                 Ok(path) => {
