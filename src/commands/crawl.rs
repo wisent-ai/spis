@@ -5225,11 +5225,27 @@ fn retained_worker_report(engine: &str, output_log: &Path) -> Result<Value> {
 /// Every identity field must equal the immutable manifest, the artifact URI must
 /// be the canonical attempt coordinate, and the retained Stado submission
 /// receipt must bind the same job and source revision.
+///
+/// What this document is NOT: content-addressed. Unlike the evidence manifest, the
+/// provenance document and every retained artifact, the report has no digest committed
+/// anywhere before it is read — `retained_worker_report` takes the last matching line of
+/// the worker's own output log, and the artifact digest it declares is proved against the
+/// bytes in durable storage rather than against an independently signed value. What the
+/// report carries is therefore trusted only as far as something else re-proves it: the
+/// checks below bind it to the immutable attempt and to the retained submission receipt,
+/// the archive is re-hashed, and every field of the attempt envelope that matters is
+/// re-compared against the SIGNED receipt claims by
+/// `weles_provenance::verify_attempt_binding` at record-verification time. Nothing here
+/// may be read as proof of a fact that no signature or digest covers.
 fn verify_worker_report(
     report: &Value,
     manifest: &RuntimeManifest,
     entry: &Value,
     receipt: &Value,
+    // `artifact_published` for the accepted attempt, `failed` for a non-success attempt
+    // whose signed failure proof is being imported. Everything else this function proves is
+    // identical for both, so neither path gets its own weaker identity rules.
+    expected_state: &str,
 ) -> Result<Value> {
     let expected_strings = [
         ("run_id", manifest.run_id.as_str()),
@@ -5258,9 +5274,9 @@ fn verify_worker_report(
     if report.get("attempt").and_then(Value::as_u64) != Some(u64::from(manifest.attempt)) {
         bail!("worker report attempt differs from the immutable attempt");
     }
-    if report.get("state").and_then(Value::as_str) != Some("artifact_published") {
+    if report.get("state").and_then(Value::as_str) != Some(expected_state) {
         bail!(
-            "worker report state is {:?}; only a published attempt artifact can be imported",
+            "worker report state is {:?}, not the {expected_state} state this import requires",
             report.get("state")
         );
     }
@@ -5563,8 +5579,8 @@ fn apply_web_attempt(
     record_dir: &Path,
     // True only for the accepted, completed attempt. A non-success attempt is imported so
     // that its signed failure proof is re-verified with the record, and it must never
-    // contribute the record-level evidence inventory that downstream commands read as
-    // confirmed source material.
+    // write the record-level evidence inventory: see the comment at that write for what
+    // this guard does and does not decide.
     confirms_record: bool,
 ) -> Result<()> {
     let envelope = report
@@ -5678,11 +5694,15 @@ fn apply_web_attempt(
         })
         .collect::<Result<_>>()?;
     run["evidence_inventory"] = Value::Array(inventory.clone());
-    // THE BOUNDARY, importer side. `weles_evidence_inventory` on the RECORD is what
-    // downstream commands read as this record's confirmed browser material, so only the
-    // accepted completed attempt may set it. A non-success attempt still retains, merges
-    // and re-hashes every signed byte above, and still contributes its provenance
-    // reference, so its proof is verified with the record while supporting nothing.
+    // The importer side of the boundary. `weles_evidence_inventory` is the RECORD-level
+    // statement that this record has confirmed browser material, so only the accepted
+    // completed attempt writes it; a non-success attempt contributes its per-run
+    // `evidence_inventory` and its provenance reference and nothing record-level. No
+    // command in this repository reads `weles_evidence_inventory` today, so this is a
+    // guard on the record's own claim, NOT what stops a failure from being counted as
+    // confirmation: that is enforced by `VerifiedProvenanceSet::supports_value`, which
+    // refuses any document whose signed outcome is not the successful one and through
+    // which both consumers classify every item.
     if confirms_record {
         let object = record
             .as_object_mut()
@@ -5754,6 +5774,16 @@ fn import_non_success_attempts(
 
 /// One non-success attempt, or `None` when this attempt is not a published web attempt
 /// that carries a signed non-success proof.
+///
+/// Every record mutation happens on a COPY that replaces `record` only after the whole
+/// import has succeeded. `apply_web_attempt` appends the provenance reference before it
+/// runs the fallible loop that re-reads and re-hashes each retained evidence file, and the
+/// caller turns any error here into a diagnostic while persisting the record regardless,
+/// so mutating `record` in place would leave a reference behind whose verification is
+/// guaranteed to fail on the same read — a permanent record-verification failure created
+/// by an attempt the summary reports as not imported. Ordering the loop earlier would fix
+/// only today's arrangement; substituting the copy keeps the guarantee whatever a later
+/// change does inside `apply_web_attempt`.
 fn import_non_success_attempt(
     manifest: &RuntimeManifest,
     snapshot: &Value,
@@ -5773,63 +5803,52 @@ fn import_non_success_attempt(
     let output_log = staging.join("worker-output.log");
     download_uri(&manifest.output_uri, &output_log)?;
     let report = retained_worker_report("web", &output_log)?;
-    // Identity first: a report is imported only against the immutable attempt it names.
-    for (field, expected) in [
-        ("run_id", manifest.run_id.as_str()),
-        ("catalog", manifest.catalog.as_str()),
-        ("record", manifest.record.as_str()),
-        ("record_key", manifest.record_key.as_str()),
-        ("attempt_id", manifest.attempt_id.as_str()),
-        ("engine", manifest.engine.as_str()),
-        ("source_revision", manifest.source_revision.as_str()),
-        ("source_input_sha256", manifest.source_input_sha256.as_str()),
-        ("reference_sha256", manifest.reference_sha256.as_str()),
-    ] {
-        if report.get(field).and_then(Value::as_str) != Some(expected) {
-            bail!("failed worker report {field} differs from the immutable attempt");
-        }
-    }
     let envelope_outcome = report
         .pointer("/weles_attempt_envelope/outcome")
         .and_then(Value::as_str);
-    let Some(outcome) = envelope_outcome else {
-        // Nothing to verify: this attempt never reached a signed terminal outcome.
+    let (Some(outcome), true) = (
+        envelope_outcome,
+        report
+            .get("provenance_document")
+            .is_some_and(Value::is_object),
+    ) else {
+        // Nothing signed to verify: this attempt never reached a terminal outcome with a
+        // provenance document, so there is no proof to import and nothing to diagnose.
         let _ = std::fs::remove_dir_all(&staging);
         return Ok(None);
     };
-    if outcome == "completed" {
-        bail!("a non-accepted attempt reports the completed outcome");
+    if outcome == crate::weles_provenance::SUCCESSFUL_OUTCOME {
+        bail!("a non-accepted attempt reports the successful outcome");
     }
     if !crate::weles_provenance::is_terminal_outcome(outcome) {
         bail!("failed worker report envelope outcome {outcome} is not a terminal outcome");
     }
-    if !report
-        .get("provenance_document")
-        .is_some_and(Value::is_object)
-    {
-        let _ = std::fs::remove_dir_all(&staging);
-        return Ok(None);
-    }
-    let artifact = report
-        .get("artifact")
-        .filter(|value| value.is_object())
-        .cloned()
-        .context("failed worker report has no published attempt artifact")?;
-    if artifact.get("uri").and_then(Value::as_str) != Some(manifest.artifact_uri.as_str()) {
-        bail!("failed worker report artifact URI is not the canonical attempt coordinate");
-    }
-    let expected_sha256 = artifact
+    // The identical identity proof the accepted attempt gets, against the same immutable
+    // Stado submission receipt: a failure proof is not imported on weaker evidence than a
+    // success, only on a different reported state.
+    let receipt = load_submission_receipt(
+        &manifest.run_id,
+        &manifest.catalog,
+        &manifest.record,
+        &manifest.attempt_id,
+    )?
+    .context("non-success attempt has no immutable submission receipt")?;
+    let proof = verify_worker_report(&report, manifest, snapshot, &receipt, "failed")?;
+    let expected_sha256 = proof
         .get("sha256")
         .and_then(Value::as_str)
-        .filter(|value| is_lower_sha256(value))
-        .context("failed worker report artifact has no lowercase SHA-256 digest")?
+        .expect("verified artifact digest")
         .to_string();
+    let expected_bytes = proof
+        .get("bytes")
+        .and_then(Value::as_u64)
+        .expect("verified artifact byte count");
     let archive = staging.join("artifacts.tar.gz");
     download_uri(&manifest.artifact_uri, &archive)?;
     let (observed_sha256, observed_bytes) =
         hash_regular_file(&archive, MAX_ATTEMPT_ARCHIVE_BYTES)?;
-    if observed_sha256 != expected_sha256 {
-        bail!("retained failed-attempt artifact differs from the digest its worker reported");
+    if observed_sha256 != expected_sha256 || observed_bytes != expected_bytes {
+        bail!("retained failed-attempt artifact differs from the worker report");
     }
     let extracted_root = staging.join("extracted");
     let members = extract_attempt_archive(&archive, &extracted_root)?;
@@ -5849,18 +5868,18 @@ fn import_non_success_attempt(
     )?;
     install_staged_tree(&attempt_staged, &attempt_destination)?;
     let relative_report = format!("{attempt_relative}/worker-report.json");
-    let proof = json!({"sha256": expected_sha256, "bytes": observed_bytes});
+    let mut staged_record = record.clone();
     let mut run = crawl_run_entry(manifest, snapshot, &report, &proof, &relative_report);
     run["retained_members"] = json!(members.len());
     apply_web_attempt(
-        record,
+        &mut staged_record,
         &mut run,
         &report,
         &attempt_destination,
         record_dir,
         false,
     )?;
-    let runs = record
+    let runs = staged_record
         .as_object_mut()
         .context("reference record is not an object")?
         .entry("crawl_runs")
@@ -5879,6 +5898,8 @@ fn import_non_success_attempt(
             .and_then(Value::as_u64)
             .cmp(&right.get("attempt").and_then(Value::as_u64))
     });
+    // Nothing above this line has touched the caller's record.
+    *record = staged_record;
     let _ = std::fs::remove_dir_all(&staging);
     Ok(Some(json!({
         "attempt": manifest.attempt,
@@ -5925,7 +5946,7 @@ fn import_record_attempt(
     let output_log = staging.join("worker-output.log");
     download_uri(&manifest.output_uri, &output_log)?;
     let report = retained_worker_report(engine, &output_log)?;
-    let proof = verify_worker_report(&report, &manifest, entry, &receipt)?;
+    let proof = verify_worker_report(&report, &manifest, entry, &receipt, "artifact_published")?;
     let archive = staging.join("artifacts.tar.gz");
     download_uri(&manifest.artifact_uri, &archive)?;
     let expected_sha256 = proof
