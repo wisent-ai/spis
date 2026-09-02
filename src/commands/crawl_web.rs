@@ -2081,7 +2081,7 @@ fn capture(
         weles_request_digest: submission.request_digest.clone(),
         weles_result_digest: Some(result_digest),
         requested_url: product_url,
-        final_url,
+        final_url: Some(final_url),
         evidence_inventory: inventory,
         weles_evidence_manifest_uri: evidence_manifest_uri,
         weles_evidence_manifest_sha256: Some(artifact_document_sha256.clone()),

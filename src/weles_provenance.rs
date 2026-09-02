@@ -31,6 +31,26 @@ pub const PROVENANCE_LINK_SCHEMA: &str = "wisent.spis-provenance-link.v1";
 pub const ATTEMPT_BINDING_SCHEMA: &str = "weles.spis-browser-evidence-binding.v1";
 pub const ATTEMPT_ENVELOPE_SCHEMA: &str = "wisent.spis-weles-attempt-envelope.v1";
 pub const SPIS_WELES_ACTION: &str = "generic_browser_task";
+/// The one outcome that means the browser task produced its evidence. Everything that
+/// decides whether a record's material counts as CONFIRMED stays bound to this value
+/// alone: see `VerifiedProvenanceSet::supports_value`.
+pub const SUCCESSFUL_OUTCOME: &str = "completed";
+/// Every terminal outcome a Weles receipt can carry.
+///
+/// This is deliberately WIDER than what the deployed admission service can emit. Its
+/// status vocabulary is pinned to `queued`/`running` plus `succeeded`/`failed`/`cancelled`,
+/// which it maps to `completed`/`failed`/`cancelled`, so `rejected` is unreachable there
+/// today. The list is kept identical to the bridge's `TERMINAL_OUTCOME_BY_STATUS` values
+/// (`weles-bridge/spis-weles-bridge.mjs`) on purpose: a receipt the pinned bridge accepts
+/// must never be refused here for a reason the bridge does not know, and the producer now
+/// refuses to serialize any status outside its pinned vocabulary, so a new one fails
+/// loudly at that boundary instead of arriving here unannounced. Read this as the set
+/// this repository is willing to verify, NOT as a description of what the service emits.
+pub const TERMINAL_OUTCOMES: &[&str] = &["completed", "failed", "cancelled", "rejected"];
+
+pub fn is_terminal_outcome(value: &str) -> bool {
+    TERMINAL_OUTCOMES.contains(&value)
+}
 pub const OFFICIAL_CLIENT_PACKAGE: &str = "@wisent-ai/weles-client";
 pub const OFFICIAL_CLIENT_COMMIT: &str =
     "37798a26022a040fbd0a4a4a25c99b5559d95a32";
@@ -444,7 +464,9 @@ pub struct WelesAttemptEnvelope {
     pub weles_request_digest: String,
     pub weles_result_digest: Option<String>,
     pub requested_url: String,
-    pub final_url: String,
+    /// `Some` only for a completed attempt: a non-success signs no navigation at all, and
+    /// the v2 evidence manifest has no final URL for this field to be compared against.
+    pub final_url: Option<String>,
     pub evidence_inventory: Vec<WelesEvidenceInventoryEntry>,
     pub weles_evidence_manifest_uri: String,
     pub weles_evidence_manifest_sha256: Option<String>,
@@ -486,6 +508,10 @@ pub struct WelesProvenanceLink {
 #[derive(Debug, Clone)]
 struct VerifiedDocument {
     id: String,
+    /// The signed terminal outcome this document proves. A document is verified as a
+    /// DOCUMENT for every terminal outcome, but only `SUCCESSFUL_OUTCOME` may support a
+    /// claim about confirmed source material.
+    outcome: String,
     artifact: RetainedArtifact,
     artifact_value: Option<Value>,
 }
@@ -576,7 +602,17 @@ impl VerifiedProvenanceSet {
     }
 
     /// True only when the value's typed link resolves to freshly verified receipt and
-    /// artifact bytes, and the link is independently bound to this exact value.
+    /// artifact bytes, the link is independently bound to this exact value, AND the
+    /// document proves the successful outcome.
+    ///
+    /// THIS IS THE BOUNDARY. A failure provenance document is verified as a document —
+    /// its receipt, claims, manifest, envelope and retained bytes are all re-proved — but
+    /// it proves that the browser task did NOT produce evidence, so it can never support a
+    /// claim that a record's material is confirmed. Both consumers of this predicate
+    /// (`verify_reference_evidence` and `generate_example_catalogs`) classify and admit
+    /// material through here and through `provenance_class`, so binding the support to
+    /// `SUCCESSFUL_OUTCOME` in this one place keeps a non-success out of every confirmed
+    /// claim without weakening its own verification.
     pub fn supports_value(&self, value: &Value) -> bool {
         let Some(link_value) = value.get("provenance") else {
             return false;
@@ -593,6 +629,10 @@ impl VerifiedProvenanceSet {
         let Some(document) = self.documents.get(&link.document_id) else {
             return false;
         };
+        // Verified, and still not evidence of anything having been captured.
+        if document.outcome != SUCCESSFUL_OUTCOME {
+            return false;
+        }
         if link.artifact_path != document.artifact.path
             || link.artifact_sha256 != document.artifact.sha256
         {
@@ -706,6 +746,9 @@ fn verify_document_reference(
     verify_attempt_binding(record, record_dir, &fresh, &artifact_value, &trust.document)?;
     Ok(VerifiedDocument {
         id: fresh.id,
+        // Proved by `validate_document_shape` to be a terminal outcome and to be the
+        // identical value in the retained receipt and the expected claims.
+        outcome: fresh.expected_claims.outcome.clone(),
         artifact: fresh.artifact,
         artifact_value: Some(artifact_value),
     })
@@ -772,7 +815,9 @@ fn verify_attempt_binding(
     let Some((envelope, run)) = matched else {
         return Err("verified receipt taskId is not the imported inner Weles task".to_string());
     };
-    let required = [
+    let outcome = document.expected_claims.outcome.as_str();
+    let successful = outcome == SUCCESSFUL_OUTCOME;
+    let mut required = vec![
         envelope.run_id.as_str(),
         envelope.catalog.as_str(),
         envelope.record.as_str(),
@@ -782,11 +827,23 @@ fn verify_attempt_binding(
         envelope.weles_task_id.as_str(),
         envelope.source_revision.as_str(),
         envelope.requested_url.as_str(),
-        envelope.final_url.as_str(),
         envelope.weles_evidence_manifest_uri.as_str(),
         envelope.artifact_document_uri.as_str(),
         envelope.observation_document_uri.as_str(),
     ];
+    // A completed attempt signs a navigation and must name its final URL; a non-success
+    // has none to name, and the v2 manifest has no field to compare it against, so the
+    // envelope must leave it out rather than fill it in.
+    match (successful, envelope.final_url.as_deref()) {
+        (true, Some(final_url)) => required.push(final_url),
+        (false, None) => {}
+        _ => {
+            return Err(
+                "attempt envelope final URL is present exactly when the outcome is completed"
+                    .to_string(),
+            )
+        }
+    }
     if envelope.schema != ATTEMPT_ENVELOPE_SCHEMA
         || envelope.attempt == 0
         || !is_git_revision(&envelope.source_revision)
@@ -795,8 +852,10 @@ fn verify_attempt_binding(
         || !is_sha256(&envelope.reference_sha256)
         || required.iter().any(|value| value.trim().is_empty())
         || envelope.stado_job_id == envelope.weles_task_id
-        || envelope.state != "completed"
-        || envelope.outcome.as_deref() != Some("completed")
+        // The attempt reports exactly the outcome the receipt signed, under both names.
+        || !is_terminal_outcome(&envelope.state)
+        || envelope.state != outcome
+        || envelope.outcome.as_deref() != Some(outcome)
         || !is_sha256_id(&envelope.weles_request_digest)
         || !envelope
             .weles_result_digest
@@ -812,7 +871,10 @@ fn verify_attempt_binding(
             .is_some_and(is_sha256)
         || !is_sha256(&envelope.observation_document_sha256)
     {
-        return Err("imported Weles attempt envelope is not a completed typed attempt".to_string());
+        return Err(
+            "imported Weles attempt envelope is not a typed attempt of the signed outcome"
+                .to_string(),
+        );
     }
     let weles_evidence_manifest_sha256 = envelope
         .weles_evidence_manifest_sha256
@@ -1005,12 +1067,19 @@ fn validate_request_and_evidence_manifest(
 
     let requested_url = parse_http_url(&request.input.product_url, "requested product URL")?;
     let envelope_requested_url = parse_http_url(&envelope.requested_url, "attempt requested URL")?;
-    let final_url = parse_http_url(&envelope.final_url, "attempt final URL")?;
+    // The envelope names a final URL exactly when the attempt completed, which
+    // `verify_attempt_binding` already proved against the signed outcome.
+    let envelope_final_origin_ok = match envelope.final_url.as_deref() {
+        Some(final_url) => {
+            parse_http_url(final_url, "attempt final URL")?.origin() == product_url.origin()
+        }
+        None => true,
+    };
     if requested_url != *product_url
         || envelope_requested_url != *product_url
         || request.input.product_url != product_url.as_str()
         || request.input.product_url != envelope.requested_url
-        || final_url.origin() != product_url.origin()
+        || !envelope_final_origin_ok
     {
         return Err(
             "browser request/final URL differs from the canonical current product URL policy"
@@ -1033,7 +1102,7 @@ fn validate_request_and_evidence_manifest(
             let manifest_final_url = parse_http_url(final_url, "manifest final URL")?;
             manifest_effective_url.origin() == product_url.origin()
                 && manifest_final_url.origin() == product_url.origin()
-                && final_url == envelope.final_url
+                && Some(final_url) == envelope.final_url.as_deref()
         }
         None => true,
     };
@@ -1162,7 +1231,7 @@ fn validate_document_shape(document: &WelesProvenanceDocument) -> Result<(), Str
         || receipt.organization_id.trim().is_empty()
         || receipt.origin.trim().is_empty()
         || receipt.action.trim().is_empty()
-        || receipt.outcome != "completed"
+        || !is_terminal_outcome(&receipt.outcome)
         || receipt.evidence_digest.trim().is_empty()
         || receipt.key_id.trim().is_empty()
         || receipt.signature.trim().is_empty()
@@ -1179,11 +1248,17 @@ fn validate_document_shape(document: &WelesProvenanceDocument) -> Result<(), Str
     {
         return Err("expected evidenceDigest is not bound to a bounded retained artifact".to_string());
     }
-    if expected.outcome != "completed"
+    // Every terminal outcome is verifiable as a document. What the outcome is allowed to
+    // support is decided in exactly one other place, `supports_value`, which admits only
+    // `SUCCESSFUL_OUTCOME`; a failure proof must be provable without being promotable.
+    if !is_terminal_outcome(&expected.outcome)
         || !is_sha256_id(&expected.request_digest)
         || !is_sha256_id(&expected.result_digest)
     {
-        return Err("Spis provenance requires completed signed request/result digests".to_string());
+        return Err(
+            "Spis provenance requires a terminal outcome with signed request/result digests"
+                .to_string(),
+        );
     }
     validate_spis_binding(&expected.spis_binding)?;
     validate_spis_binding(&receipt.spis_binding)?;
