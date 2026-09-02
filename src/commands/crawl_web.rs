@@ -46,9 +46,6 @@ const SCREENSHOT_KIND: &str = "screenshot";
 const ACCESSIBILITY_KIND: &str = "accessibility_tree";
 const PNG_MAGIC: &[u8] = b"\x89PNG\r\n\x1a\n";
 const MAXIMUM_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
-const BRIDGE_PATH: &str = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
-const BRIDGE_STREAM_BYTES: usize = 4 * 1024 * 1024;
-const BRIDGE_TIMEOUT: Duration = Duration::from_secs(60);
 const POLL_INTERVAL: Duration = Duration::from_secs(5);
 
 /// A typed worker failure. Every exit path carries an exact machine-readable code so the
@@ -100,6 +97,7 @@ fn ensure(condition: bool, code: &str, message: &str) -> Outcome<()> {
 struct Collected {
     submission: Option<weles::WelesSubmission>,
     status: Option<weles::WelesTaskStatus>,
+    cancellation: Option<weles::WelesCancellation>,
     provenance: Option<weles::WelesProvenanceDocument>,
     envelope: Option<weles::WelesAttemptEnvelope>,
 }
@@ -328,10 +326,10 @@ fn submit_worker(
     )
 }
 
-/// The private, never-published, never-logged bridge work area.
+/// The private, never-published, never-logged bridge work area. It holds exactly one
+/// file: the protected config carrying the delivered bearer. Bridge commands travel on
+/// the child's stdin, so no command is ever written to the host.
 struct PrivateBridge {
-    directory: PathBuf,
-    suffix: String,
     config: PathBuf,
 }
 
@@ -350,17 +348,18 @@ impl PrivateBridge {
             use std::os::unix::fs::PermissionsExt;
             std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
         }
-        let suffix = format!("{}-{}", manifest.attempt_id, std::process::id());
-        let config = directory.join(format!("config-{suffix}.json"));
-        Ok(Self {
-            directory,
-            suffix,
-            config,
-        })
+        let config = directory.join(format!(
+            "config-{}-{}.json",
+            manifest.attempt_id,
+            std::process::id()
+        ));
+        Ok(Self { config })
     }
 
-    fn input(&self, label: &str) -> PathBuf {
-        self.directory.join(format!("{label}-{}.json", self.suffix))
+    /// Removes the delivered bearer token from the host. Called on every exit path,
+    /// successful or not.
+    fn discard(&self) {
+        let _ = std::fs::remove_file(&self.config);
     }
 
     fn write_config(&self, endpoint: &str, bearer: &str, organization_id: &str) -> Outcome<()> {
@@ -373,14 +372,6 @@ impl PrivateBridge {
         write_private(&self.config, &serde_json::to_vec(&document)?)
     }
 
-    /// Removes the bearer token and every bridge command from the host. Called on every
-    /// exit path, successful or not.
-    fn discard(&self) {
-        let _ = std::fs::remove_file(&self.config);
-        for label in ["submit", "get", "verify"] {
-            let _ = std::fs::remove_file(self.input(label));
-        }
-    }
 }
 
 fn write_private(path: &Path, bytes: &[u8]) -> Outcome<()> {
@@ -421,22 +412,13 @@ fn write_exact(path: &Path, bytes: &[u8]) -> Outcome<()> {
     Ok(())
 }
 
-fn bridge_error_code(stderr: &[u8]) -> String {
-    let text = String::from_utf8_lossy(stderr);
-    for line in text.lines().rev() {
-        if let Ok(document) = serde_json::from_str::<Value>(line.trim()) {
-            if let Some(code) = document.get("code").and_then(Value::as_str) {
-                if !code.trim().is_empty() {
-                    return format!("weles_bridge_{}", code.replace('-', "_"));
-                }
-            }
-        }
-    }
-    "weles_bridge_failed".to_string()
-}
-
-/// Runs the checked-in bridge with a cleared environment. The bridge owns every Weles
-/// request; this process never opens a socket to Weles.
+/// Runs one bridge operation through the single shared invoker in
+/// `crate::weles_provenance`, which owns the cleared environment, the process group, the
+/// stream bounds and the canonical trust path for every operation this repository runs.
+///
+/// `output` is the durable destination `submit` requires and `get` refuses; `network`
+/// hands the bridge the protected config, and is the only difference between the
+/// credentialed task operations and the secretless local verification.
 fn run_bridge(
     attempt_root: &Path,
     private: &PrivateBridge,
@@ -445,47 +427,25 @@ fn run_bridge(
     output: Option<&Path>,
     network: bool,
 ) -> Outcome<Vec<u8>> {
-    let bridge = Path::new(env!("CARGO_MANIFEST_DIR")).join("weles-bridge");
-    let script = bridge.join("spis-weles-bridge.mjs");
-    if !script.is_file() {
-        return Err(WorkerFailure::new(
-            "weles_bridge_absent",
-            "the checked-in Weles bridge is not a regular file",
-        ));
-    }
-    let input = private.input(label);
-    write_private(&input, &serde_json::to_vec(command)?)?;
-    let mut node = Command::new("node");
-    node.arg(&script).arg("--input").arg(&input).arg("--output");
-    match output {
-        Some(path) => node.arg(path),
-        None => node.arg("-"),
-    };
-    node.current_dir(attempt_root)
-        .stdin(std::process::Stdio::null())
-        .env_clear()
-        .env("PATH", BRIDGE_PATH)
-        .env("SPIS_WELES_TRUST_FILE", bridge.join("weles-receipt-trust.json"));
-    if network {
-        node.env("SPIS_WELES_CONFIG_FILE", &private.config);
-    }
-    let result = super::crawl::bounded_command_output(
-        &mut node,
-        "run the official Weles bridge",
-        BRIDGE_TIMEOUT,
-        BRIDGE_STREAM_BYTES,
-    );
-    let _ = std::fs::remove_file(&input);
-    let result = result?;
-    if !result.status.success() {
+    weles::run_bridge_command(&weles::BridgeInvocation {
+        command,
+        working_dir: attempt_root,
+        output,
+        config: network.then_some(private.config.as_path()),
+        timeout: if network {
+            weles::NETWORK_BRIDGE_TIMEOUT
+        } else {
+            weles::VERIFY_BRIDGE_TIMEOUT
+        },
+    })
+    .map_err(|failure| {
         // Only the typed bridge code is surfaced; bridge stderr is never echoed, so no
         // delivered secret can reach the worker report or the Stado job log.
-        return Err(WorkerFailure::new(
-            &bridge_error_code(&result.stderr),
+        WorkerFailure::new(
+            &format!("weles_bridge_{}", failure.code.replace('-', "_")),
             format!("the official Weles bridge refused the {label} operation"),
-        ));
-    }
-    Ok(result.stdout)
+        )
+    })
 }
 
 /// Reads back the durable, request-bound submission the bridge persisted.
@@ -494,6 +454,68 @@ fn read_submission(path: &Path) -> Outcome<weles::WelesSubmission> {
         WorkerFailure::new("web_worker_io_failed", "retained document path is not UTF-8")
     })?;
     Ok(crate::read_json(text)?)
+}
+
+/// Cancels a task that is still live at Weles through the bridge's `cancel` operation.
+///
+/// The cancellation key is derived from the retained submission's own idempotency key,
+/// itself a pure function of the immutable attempt, so a resubmitted identical attempt
+/// cancels exactly the same task exactly once; Weles refuses a second cancellation that
+/// carries a different key or reason for the same task.
+fn cancel_task(
+    attempt_root: &Path,
+    private: &PrivateBridge,
+    weles_directory: &Path,
+    identity: &weles::WelesServiceIdentity,
+    identity_value: &Value,
+    expected_task: &Value,
+    submission: &weles::WelesSubmission,
+    reason: &str,
+    collected: &mut Collected,
+) -> Outcome<weles::WelesCancellation> {
+    let idempotency_key = format!(
+        "spis-cancel-{}",
+        crate::sha256_hex(format!("{}\0cancel", submission.idempotency_key).as_bytes())
+    );
+    let command = json!({
+        "schema": weles::BRIDGE_COMMAND_SCHEMA,
+        "operation": "cancel",
+        "serviceIdentity": identity_value,
+        "taskId": submission.task_id,
+        "expectedTask": expected_task,
+        "reason": reason,
+        "idempotencyKey": idempotency_key,
+    });
+    let stdout = run_bridge(attempt_root, private, "cancel", &command, None, true)?;
+    let cancellation: weles::WelesCancellation = serde_json::from_slice(&stdout)?;
+    // Retained before it is judged: a cancellation this worker refuses is still the exact
+    // document Weles returned for this attempt.
+    super::crawl::atomic_json_write(
+        &weles_directory.join("cancellation.json"),
+        &serde_json::to_value(&cancellation)?,
+    )?;
+    collected.cancellation = Some(cancellation.clone());
+    ensure(
+        cancellation.schema == weles::CANCELLATION_SCHEMA
+            && cancellation.task_id == submission.task_id
+            && cancellation.organization_id == submission.organization_id
+            && cancellation.origin == submission.origin
+            && cancellation.action == submission.action,
+        "weles_cancellation_invalid",
+        "the retained cancellation does not name this exact Weles task",
+    )?;
+    ensure(
+        cancellation.idempotency_key == idempotency_key,
+        "weles_cancellation_invalid",
+        "the retained cancellation carries a different idempotency key",
+    )?;
+    ensure(
+        cancellation.request_identity == submission.request_identity
+            && cancellation.service_identity == *identity,
+        "weles_cancellation_invalid",
+        "the retained cancellation request/service identity differs from the submission",
+    )?;
+    Ok(cancellation)
 }
 
 /// Mirrors `weles_provenance::validate_service_identity`.
@@ -675,40 +697,52 @@ fn attempt_binding(
     Ok(binding)
 }
 
-/// Deterministic, sorted, duplicate-free constraint vocabulary derived only from the
-/// immutable runtime constraints. `validate_request_and_evidence_manifest` runs
-/// `validate_unique_nonempty` over exactly this vector.
-fn task_constraints(
-    constraints: &super::crawl::RuntimeConstraints,
-    origin: &str,
-) -> Outcome<Vec<String>> {
-    let mut values: BTreeSet<String> = BTreeSet::new();
-    for (flag, label) in [
-        (constraints.no_first_run_consent, "no-first-run-consent"),
-        (
-            constraints.no_system_permission_prompts,
-            "no-system-permission-prompts",
-        ),
-        (constraints.no_notifications, "no-notifications"),
-        (constraints.no_purchase, "no-purchase"),
-        (
-            constraints.no_final_destructive_action,
-            "no-final-destructive-action",
-        ),
-        (constraints.headless, "headless"),
-    ] {
-        if flag {
-            values.insert(label.to_string());
-        }
-    }
-    values.insert(format!("same-origin:{origin}"));
-    let values: Vec<String> = values.into_iter().collect();
+/// The exact typed browser-evidence constraint array Weles admits.
+///
+/// `parseTaskRequest` in the service refuses any `input.constraints` whose canonical JSON
+/// differs from `SPIS_BROWSER_EVIDENCE_POLICY.constraints`, and the browser worker
+/// enforces exactly that policy while it captures. The order below is the service's own
+/// order and is submitted verbatim.
+const BROWSER_EVIDENCE_CONSTRAINTS: &[&str] = &[
+    "browser-permission-apis:withhold",
+    "notification-apis:withhold",
+    "permission-notification-controls:withhold",
+    "system-ui-downloads:withhold",
+    "authentication-signup-recovery:withhold",
+    "mfa-trusted-device:withhold",
+    "message-submission:withhold",
+    "commerce-payment:withhold",
+    "destructive-confirmation:withhold",
+    "network:exact-public-origin-pinned",
+    "interactive-controls:default-deny",
+];
+
+/// The submitted constraint list.
+///
+/// Weles enforces one immutable withholding policy for every browser-evidence task and
+/// admits only that exact array, so this worker never negotiates its own weaker
+/// vocabulary: it refuses to submit unless the immutable runtime manifest asks for
+/// exactly the withholding the policy performs, and then submits the policy verbatim.
+/// The origin is not restated here; it is pinned by `network:exact-public-origin-pinned`
+/// against the request `origin`, which the service requires to equal the exact product
+/// URL origin and which is signed into the receipt as a core claim.
+/// `validate_request_and_evidence_manifest` runs `validate_unique_nonempty` over exactly
+/// this vector.
+fn task_constraints(constraints: &super::crawl::RuntimeConstraints) -> Outcome<Vec<String>> {
     ensure(
-        values.iter().all(|value| !value.trim().is_empty()),
+        constraints.no_first_run_consent
+            && constraints.no_system_permission_prompts
+            && constraints.no_notifications
+            && constraints.no_purchase
+            && constraints.no_final_destructive_action
+            && constraints.headless,
         "web_constraints_invalid",
-        "browser task constraints must be nonempty",
+        "the immutable runtime constraints do not request the exact Weles browser-evidence withholding policy",
     )?;
-    Ok(values)
+    Ok(BROWSER_EVIDENCE_CONSTRAINTS
+        .iter()
+        .map(|value| (*value).to_string())
+        .collect())
 }
 
 fn text<'a>(document: &'a Value, key: &str) -> Outcome<&'a str> {
@@ -776,6 +810,8 @@ fn worker_report(
             .unwrap_or(Value::Null),
         "weles_submission": serde_json::to_value(&collected.submission).unwrap_or(Value::Null),
         "weles_task_status": serde_json::to_value(&collected.status).unwrap_or(Value::Null),
+        "weles_cancellation": serde_json::to_value(&collected.cancellation)
+            .unwrap_or(Value::Null),
         "provenance_document": serde_json::to_value(&collected.provenance)
             .unwrap_or(Value::Null),
         "failure": failure
@@ -947,7 +983,7 @@ fn capture(
         .and_then(Value::as_str)
         .unwrap_or_default();
     let objective = objective(catalog, name, goal)?;
-    let constraints = task_constraints(&manifest.constraints, &origin)?;
+    let constraints = task_constraints(&manifest.constraints)?;
 
     ensure(
         manifest.account.mode == "anonymous-read-only-probe"
@@ -1096,17 +1132,18 @@ fn capture(
     )?;
     let weles_task_id = submission.task_id.clone();
 
+    let expected_task = json!({
+        "taskId": weles_task_id,
+        "organizationId": organization_id,
+        "origin": origin,
+        "action": weles::SPIS_WELES_ACTION,
+    });
     let get_command = json!({
         "schema": weles::BRIDGE_COMMAND_SCHEMA,
         "operation": "get",
         "serviceIdentity": identity_value,
         "taskId": weles_task_id,
-        "expectedTask": {
-            "taskId": weles_task_id,
-            "organizationId": organization_id,
-            "origin": origin,
-            "action": weles::SPIS_WELES_ACTION,
-        },
+        "expectedTask": expected_task,
     });
     let deadline = Instant::now() + Duration::from_secs(wait_seconds);
     let status = loop {
@@ -1143,11 +1180,33 @@ fn capture(
         "the retained task status service identity differs from the runtime directory",
     )?;
     if !status.terminal {
+        // The wait budget is spent while the task is still live at Weles. Leaving it
+        // running would hold a browser session and a leased worker for an attempt that
+        // can no longer publish evidence, so the same bridge that submitted the task
+        // cancels it and the typed cancellation is retained with the attempt.
+        let cancellation = cancel_task(
+            attempt_root,
+            private,
+            &weles_directory,
+            &identity,
+            &identity_value,
+            &expected_task,
+            &submission,
+            // A pure function of the immutable attempt, exactly like the key: Weles
+            // refuses a second cancellation of the same task under a different reason,
+            // so the wait budget is reported in the failure below rather than signed
+            // into the cancellation.
+            &format!(
+                "Spis browser-evidence attempt {} ({}) exhausted its wait budget",
+                manifest.attempt, manifest.attempt_id
+            ),
+            collected,
+        )?;
         return Err(WorkerFailure::new(
             "weles_task_not_terminal",
             format!(
-                "Weles task {weles_task_id} was still {} after {wait_seconds}s",
-                status.status
+                "Weles task {weles_task_id} was still {} after {wait_seconds}s and was cancelled through the official bridge (cancel status {})",
+                status.status, cancellation.status
             ),
         ));
     }
@@ -1177,22 +1236,21 @@ fn capture(
                 "the completed task carries no sha256: result digest",
             )
         })?;
-    ensure(
-        status
-            .result_ref
-            .as_deref()
-            .is_some_and(|value| !value.trim().is_empty()),
-        "weles_status_result_ref_absent",
-        "the completed task carries no result reference",
-    )?;
+    // The public task-status contract returns the task identity, the request identity,
+    // the outcome, the result digest and the receipt, and never a result or artifact
+    // reference; the bridge therefore normalizes both to `null`/`[]`. Retained evidence is
+    // addressed by this task's own recording prefix below, so nothing here may demand a
+    // reference the service never signs — but any reference that IS reported has to
+    // belong to exactly this recording.
     let prefix = format!("stado://weles/recordings/{weles_task_id}/");
     ensure(
         status
-            .artifact_refs
+            .result_ref
             .iter()
+            .chain(status.artifact_refs.iter())
             .all(|reference| reference.starts_with(&prefix)),
         "weles_artifact_refs_foreign",
-        "a completed task artifact reference is not bound to this exact Weles recording",
+        "a task result or artifact reference is not bound to this exact Weles recording",
     )?;
 
     let claims = &checkpoint.claims;

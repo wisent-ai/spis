@@ -35,7 +35,10 @@ pub const OFFICIAL_CLIENT_COMMIT: &str =
 const MAX_DOCUMENT_BYTES: u64 = 4 * 1024 * 1024;
 const MAX_RETAINED_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
 const MAX_BRIDGE_ERROR_BYTES: usize = 64 * 1024;
-const BRIDGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
+/// Local re-verification is CPU work on retained bytes.
+pub const VERIFY_BRIDGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
+/// `submit`, `get` and `cancel` are real HTTP round trips through the official client.
+pub const NETWORK_BRIDGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60);
 const BRIDGE_PATH: &str = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -378,7 +381,6 @@ struct VerifiedDocument {
 }
 #[derive(Debug, Clone)]
 struct CanonicalTrust {
-    path: PathBuf,
     document: WelesReceiptTrust,
 }
 
@@ -566,7 +568,7 @@ fn verify_document_reference(
         .map_err(|_| "verification document does not match the typed schema".to_string())?;
     validate_document_shape(&persisted)?;
     validate_document_trust(&persisted, &trust.document)?;
-    let fresh = invoke_bridge(&persisted, record_dir, &trust.path)?;
+    let fresh = invoke_bridge(&persisted, record_dir)?;
     validate_fresh_document(&persisted, &fresh, record_dir)?;
     let artifact_path = resolve_retained_file(record_dir, &fresh.artifact.path)?;
     let artifact_bytes = read_limited(&artifact_path, MAX_DOCUMENT_BYTES)?;
@@ -1140,9 +1142,7 @@ fn validate_api_endpoint(value: &str, label: &str) -> Result<(), String> {
 
 
 fn load_canonical_trust() -> Result<CanonicalTrust, String> {
-    let checked_in = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("weles-bridge")
-        .join("weles-receipt-trust.json");
+    let checked_in = canonical_trust_path();
     let metadata = fs::symlink_metadata(&checked_in)
         .map_err(|_| "checked-in public trust document is absent".to_string())?;
     if metadata.file_type().is_symlink() || !metadata.is_file() {
@@ -1165,109 +1165,202 @@ fn load_canonical_trust() -> Result<CanonicalTrust, String> {
     {
         return Err("public trust document is invalid".to_string());
     }
-    Ok(CanonicalTrust {
-        path: canonical,
-        document,
-    })
+    Ok(CanonicalTrust { document })
 }
 
 
-fn invoke_bridge(
-    persisted: &WelesProvenanceDocument,
-    record_dir: &Path,
-    trust_path: &Path,
-) -> Result<WelesProvenanceDocument, String> {
-    let script = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("weles-bridge")
-        .join("spis-weles-bridge.mjs");
-    if !script.is_file() {
-        return Err("checked-in Weles bridge is absent".to_string());
+/// The one bridge directory: the checked-in script, its vendored official client and the
+/// public trust document all live here and nothing else may stand in for them.
+fn bridge_directory() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("weles-bridge")
+}
+
+/// The single canonical public trust path. The bridge itself refuses a
+/// `SPIS_WELES_TRUST_FILE` that does not resolve to exactly this file, so every caller
+/// takes it from here rather than rebuilding the path.
+pub fn canonical_trust_path() -> PathBuf {
+    bridge_directory().join("weles-receipt-trust.json")
+}
+
+/// A typed bridge failure. `code` is the bridge's own machine-readable code whenever the
+/// bridge produced one, and a Rust-side code (`absent`, `spawn-failed`, `timeout`,
+/// `io-failed`) when the process never reported for itself.
+#[derive(Debug, Clone)]
+pub struct BridgeFailure {
+    pub code: String,
+    pub message: String,
+}
+
+impl BridgeFailure {
+    fn new(code: &str, message: &str) -> Self {
+        Self {
+            code: code.to_string(),
+            message: message.to_string(),
+        }
     }
-    let input = serde_json::json!({
-        "schema": BRIDGE_COMMAND_SCHEMA,
-        "operation": "verify",
-        "receipt": persisted.receipt,
-        "expectedClaims": persisted.expected_claims,
-        "artifact": persisted.artifact,
-    });
-    let input_bytes = serde_json::to_vec(&input)
-        .map_err(|_| "could not serialize the bridge verification request".to_string())?;
-    let mut child = Command::new("node")
-        .arg(&script)
-        .arg("--input")
-        .arg("-")
-        .arg("--output")
-        .arg("-")
-        .current_dir(record_dir)
+}
+
+/// One exact invocation of the checked-in bridge.
+///
+/// The operation is carried by `command.operation`, not by this struct: submit, get,
+/// cancel and verify differ only in the command document, the output destination, whether
+/// a network credential is in play, and the wall-clock budget.
+pub struct BridgeInvocation<'a> {
+    /// `wisent.spis-weles-bridge-command.v1` document. The bridge runs a strict key
+    /// allowlist per operation, so it is passed through byte-for-byte as serialized.
+    pub command: &'a Value,
+    /// Process working directory. `verify` resolves the retained artifact against the
+    /// record directory; `submit` resolves a relative `--output` against it.
+    pub working_dir: &'a Path,
+    /// `Some(path)` persists the document to that file, which `submit` requires for its
+    /// request-bound recovery; `None` returns it on bounded stdout, which `get` requires.
+    pub output: Option<&'a Path>,
+    /// The owner-only protected config carrying the bearer. `None` is the secretless
+    /// path: without it the bridge refuses every network operation and `verify` never
+    /// reads a config at all.
+    pub config: Option<&'a Path>,
+    /// Wall-clock budget for the whole child process.
+    pub timeout: std::time::Duration,
+}
+
+/// Runs the checked-in bridge and returns its bounded stdout, which is empty when the
+/// document was persisted to `output` instead.
+///
+/// The child is started with a cleared environment in its own process group: it receives
+/// exactly `PATH`, the canonical trust path and, on the network path, the config path.
+/// The command document travels on stdin, so no bridge command is ever left on disk.
+pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, BridgeFailure> {
+    let script = bridge_directory().join("spis-weles-bridge.mjs");
+    let metadata = fs::symlink_metadata(&script)
+        .map_err(|_| BridgeFailure::new("absent", "the checked-in Weles bridge is absent"))?;
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        return Err(BridgeFailure::new(
+            "absent",
+            "the checked-in Weles bridge is not a regular non-symlink file",
+        ));
+    }
+    let input_bytes = serde_json::to_vec(invocation.command).map_err(|_| {
+        BridgeFailure::new("io-failed", "the bridge command could not be serialized")
+    })?;
+    let mut node = Command::new("node");
+    node.arg(&script).arg("--input").arg("-").arg("--output");
+    match invocation.output {
+        Some(path) => node.arg(path),
+        None => node.arg("-"),
+    };
+    node.current_dir(invocation.working_dir)
         .env_clear()
         .env("PATH", BRIDGE_PATH)
-        .env("SPIS_WELES_TRUST_FILE", trust_path)
+        .env("SPIS_WELES_TRUST_FILE", canonical_trust_path());
+    if let Some(config) = invocation.config {
+        node.env("SPIS_WELES_CONFIG_FILE", config);
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::CommandExt;
+        node.process_group(0);
+    }
+    let mut child = node
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
-        .map_err(|_| "could not start Node for the checked-in Weles bridge".to_string())?;
+        .map_err(|_| {
+            BridgeFailure::new(
+                "spawn-failed",
+                "Node could not be started for the checked-in Weles bridge",
+            )
+        })?;
     let started = std::time::Instant::now();
-    let stdout = child
-        .stdout
-        .take()
-        .ok_or_else(|| "Weles bridge stdout was unavailable".to_string())?;
-    let stderr = child
-        .stderr
-        .take()
-        .ok_or_else(|| "Weles bridge stderr was unavailable".to_string())?;
+    let io_failed = || BridgeFailure::new("io-failed", "the Weles bridge streams were unavailable");
+    let stdout = child.stdout.take().ok_or_else(io_failed)?;
+    let stderr = child.stderr.take().ok_or_else(io_failed)?;
+    let mut stdin = child.stdin.take().ok_or_else(io_failed)?;
     let stdout_reader = std::thread::spawn(move || {
         read_stream_limited(stdout, MAX_DOCUMENT_BYTES as usize, "stdout")
     });
     let stderr_reader = std::thread::spawn(move || {
         read_stream_limited(stderr, MAX_BRIDGE_ERROR_BYTES, "stderr")
     });
-    let mut stdin = child
-        .stdin
-        .take()
-        .ok_or_else(|| "Weles bridge stdin was unavailable".to_string())?;
-    let stdin_writer = std::thread::spawn(move || {
-        stdin
-            .write_all(&input_bytes)
-            .map_err(|_| "could not send the verification document to the Weles bridge".to_string())
-    });
+    let stdin_writer = std::thread::spawn(move || stdin.write_all(&input_bytes).is_ok());
     let status = loop {
         match child.try_wait() {
             Ok(Some(status)) => break status,
-            Ok(None) if started.elapsed() < BRIDGE_TIMEOUT => {
+            Ok(None) if started.elapsed() < invocation.timeout => {
                 std::thread::sleep(std::time::Duration::from_millis(10));
             }
-            Ok(None) => {
-                let _ = child.kill();
-                let _ = child.wait();
+            Ok(None) | Err(_) => {
+                let timed_out = started.elapsed() >= invocation.timeout;
+                // The whole group: the official client may itself be waiting on a socket.
+                terminate_bridge_process_group(&mut child);
                 let _ = stdin_writer.join();
                 let _ = stdout_reader.join();
                 let _ = stderr_reader.join();
-                return Err("official Weles bridge exceeded the 30-second deadline".to_string());
-            }
-            Err(_) => {
-                let _ = child.kill();
-                let _ = child.wait();
-                let _ = stdin_writer.join();
-                let _ = stdout_reader.join();
-                let _ = stderr_reader.join();
-                return Err("could not collect the Weles bridge result".to_string());
+                return Err(if timed_out {
+                    BridgeFailure::new(
+                        "timeout",
+                        &format!(
+                            "the official Weles bridge exceeded its {}-second deadline",
+                            invocation.timeout.as_secs()
+                        ),
+                    )
+                } else {
+                    BridgeFailure::new("io-failed", "the Weles bridge result could not be collected")
+                });
             }
         }
     };
-    stdin_writer
-        .join()
-        .map_err(|_| "official Weles bridge stdin writer failed".to_string())??;
+    // A bridge that fails closed before it reads the whole command is a bridge refusal,
+    // not a writer failure, so an unwritten stdin is judged by the exit status below.
+    let _ = stdin_writer.join();
     let stdout = stdout_reader
         .join()
-        .map_err(|_| "official Weles bridge stdout reader failed".to_string())??;
+        .map_err(|_| io_failed())?
+        .map_err(|message| BridgeFailure::new("io-failed", &message))?;
     let stderr = stderr_reader
         .join()
-        .map_err(|_| "official Weles bridge stderr reader failed".to_string())??;
+        .map_err(|_| io_failed())?
+        .map_err(|message| BridgeFailure::new("io-failed", &message))?;
     if !status.success() {
         let code = bridge_error_code(&stderr);
-        return Err(format!("official Weles bridge failed closed ({code})"));
+        return Err(BridgeFailure {
+            message: format!("official Weles bridge failed closed ({code})"),
+            code,
+        });
     }
+    Ok(stdout)
+}
+
+fn terminate_bridge_process_group(child: &mut std::process::Child) {
+    #[cfg(unix)]
+    unsafe {
+        libc::kill(-(child.id() as i32), libc::SIGKILL);
+    }
+    let _ = child.kill();
+    let _ = child.wait();
+}
+
+fn invoke_bridge(
+    persisted: &WelesProvenanceDocument,
+    record_dir: &Path,
+) -> Result<WelesProvenanceDocument, String> {
+    let command = serde_json::json!({
+        "schema": BRIDGE_COMMAND_SCHEMA,
+        "operation": "verify",
+        "receipt": persisted.receipt,
+        "expectedClaims": persisted.expected_claims,
+        "artifact": persisted.artifact,
+    });
+    let stdout = run_bridge_command(&BridgeInvocation {
+        command: &command,
+        working_dir: record_dir,
+        output: None,
+        // Re-verification is secretless: it re-reads retained bytes and the public trust
+        // document, and must never be able to reach the network.
+        config: None,
+        timeout: VERIFY_BRIDGE_TIMEOUT,
+    })
+    .map_err(|failure| failure.message)?;
     serde_json::from_slice(&stdout)
         .map_err(|_| "official Weles bridge returned a malformed verification document".to_string())
 }
