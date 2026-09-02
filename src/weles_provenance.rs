@@ -223,7 +223,7 @@ struct EvidenceManifestFacts<'a> {
 impl ReceiptBoundManifest {
     /// Parses the retained artifact in exactly the version the signed outcome mandates.
     fn parse(value: &Value, outcome: &str) -> Result<Self, String> {
-        if outcome == "completed" {
+        if outcome == SUCCESSFUL_OUTCOME {
             serde_json::from_value(value.clone())
                 .map(Self::Successful)
                 .map_err(|_| {

@@ -1958,7 +1958,7 @@ fn capture(
                 ),
             )
         })?;
-    if terminal_outcome != "completed" {
+    if terminal_outcome != weles::SUCCESSFUL_OUTCOME {
         // A non-success is still a signed, delivered result, so the attempt fails carrying
         // the service's own proof of that failure rather than this worker's status text.
         let summary = format!(
