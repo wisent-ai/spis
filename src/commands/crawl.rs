@@ -5561,6 +5561,11 @@ fn apply_web_attempt(
     report: &Value,
     attempt_dir: &Path,
     record_dir: &Path,
+    // True only for the accepted, completed attempt. A non-success attempt is imported so
+    // that its signed failure proof is re-verified with the record, and it must never
+    // contribute the record-level evidence inventory that downstream commands read as
+    // confirmed source material.
+    confirms_record: bool,
 ) -> Result<()> {
     let envelope = report
         .get("weles_attempt_envelope")
@@ -5673,14 +5678,219 @@ fn apply_web_attempt(
         })
         .collect::<Result<_>>()?;
     run["evidence_inventory"] = Value::Array(inventory.clone());
-    let object = record
-        .as_object_mut()
-        .context("reference record is not an object")?;
-    object.insert("weles_evidence_inventory".into(), Value::Array(inventory));
+    // THE BOUNDARY, importer side. `weles_evidence_inventory` on the RECORD is what
+    // downstream commands read as this record's confirmed browser material, so only the
+    // accepted completed attempt may set it. A non-success attempt still retains, merges
+    // and re-hashes every signed byte above, and still contributes its provenance
+    // reference, so its proof is verified with the record while supporting nothing.
+    if confirms_record {
+        let object = record
+            .as_object_mut()
+            .context("reference record is not an object")?;
+        object.insert("weles_evidence_inventory".into(), Value::Array(inventory));
+    }
     let _ = attempt_dir;
     Ok(())
 }
 
+/// Import the signed failure proofs of this record's other published web attempts.
+///
+/// A non-success attempt is never the record's source. Its receipt, evidence manifest and
+/// retained evidence are signed and delivered all the same, so its provenance document
+/// belongs in `provenance_documents`, where `VerifiedProvenanceSet::verify_record`
+/// re-verifies it on every run instead of leaving it outside every path. Nothing about the
+/// record's confirmed material changes: `apply_web_attempt` is called with
+/// `confirms_record: false`, so no record-level evidence inventory is written, and
+/// `supports_value` refuses a document whose outcome is not the successful one, so the
+/// proof cannot back a single claim.
+///
+/// One unreadable or unpublished failed attempt is a diagnostic, never a reason to fail
+/// the accepted attempt's import: the returned values are recorded on the import summary.
+fn import_non_success_attempts(
+    run_id: &str,
+    catalog: &str,
+    accepted: &RuntimeManifest,
+    entry: &Value,
+    record: &mut Value,
+    record_dir: &Path,
+    run_dir: &Path,
+) -> Vec<Value> {
+    let mut imported = Vec::new();
+    let attempts = entry
+        .get("attempts")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    for snapshot in &attempts {
+        let Some(manifest) = snapshot
+            .get("manifest")
+            .cloned()
+            .and_then(|value| serde_json::from_value::<RuntimeManifest>(value).ok())
+        else {
+            continue;
+        };
+        if manifest.engine != "web"
+            || manifest.run_id != accepted.run_id
+            || manifest.catalog != accepted.catalog
+            || manifest.record != accepted.record
+            || manifest.record_key != accepted.record_key
+            || manifest.attempt_id == accepted.attempt_id
+        {
+            continue;
+        }
+        match import_non_success_attempt(&manifest, snapshot, record, record_dir, run_dir) {
+            Ok(Some(summary)) => imported.push(summary),
+            Ok(None) => {}
+            Err(error) => imported.push(json!({
+                "attempt_id": manifest.attempt_id,
+                "state": "not_imported",
+                "message": format!("{error:#}"),
+            })),
+        }
+    }
+    let _ = (run_id, catalog);
+    imported
+}
+
+/// One non-success attempt, or `None` when this attempt is not a published web attempt
+/// that carries a signed non-success proof.
+fn import_non_success_attempt(
+    manifest: &RuntimeManifest,
+    snapshot: &Value,
+    record: &mut Value,
+    record_dir: &Path,
+    run_dir: &Path,
+) -> Result<Option<Value>> {
+    let staging = run_dir
+        .join("imports")
+        .join(&manifest.catalog)
+        .join(&manifest.record)
+        .join(format!("{}-non-success", manifest.attempt_id));
+    if staging.exists() {
+        std::fs::remove_dir_all(&staging)?;
+    }
+    std::fs::create_dir_all(&staging)?;
+    let output_log = staging.join("worker-output.log");
+    download_uri(&manifest.output_uri, &output_log)?;
+    let report = retained_worker_report("web", &output_log)?;
+    // Identity first: a report is imported only against the immutable attempt it names.
+    for (field, expected) in [
+        ("run_id", manifest.run_id.as_str()),
+        ("catalog", manifest.catalog.as_str()),
+        ("record", manifest.record.as_str()),
+        ("record_key", manifest.record_key.as_str()),
+        ("attempt_id", manifest.attempt_id.as_str()),
+        ("engine", manifest.engine.as_str()),
+        ("source_revision", manifest.source_revision.as_str()),
+        ("source_input_sha256", manifest.source_input_sha256.as_str()),
+        ("reference_sha256", manifest.reference_sha256.as_str()),
+    ] {
+        if report.get(field).and_then(Value::as_str) != Some(expected) {
+            bail!("failed worker report {field} differs from the immutable attempt");
+        }
+    }
+    let envelope_outcome = report
+        .pointer("/weles_attempt_envelope/outcome")
+        .and_then(Value::as_str);
+    let Some(outcome) = envelope_outcome else {
+        // Nothing to verify: this attempt never reached a signed terminal outcome.
+        let _ = std::fs::remove_dir_all(&staging);
+        return Ok(None);
+    };
+    if outcome == "completed" {
+        bail!("a non-accepted attempt reports the completed outcome");
+    }
+    if !crate::weles_provenance::is_terminal_outcome(outcome) {
+        bail!("failed worker report envelope outcome {outcome} is not a terminal outcome");
+    }
+    if !report
+        .get("provenance_document")
+        .is_some_and(Value::is_object)
+    {
+        let _ = std::fs::remove_dir_all(&staging);
+        return Ok(None);
+    }
+    let artifact = report
+        .get("artifact")
+        .filter(|value| value.is_object())
+        .cloned()
+        .context("failed worker report has no published attempt artifact")?;
+    if artifact.get("uri").and_then(Value::as_str) != Some(manifest.artifact_uri.as_str()) {
+        bail!("failed worker report artifact URI is not the canonical attempt coordinate");
+    }
+    let expected_sha256 = artifact
+        .get("sha256")
+        .and_then(Value::as_str)
+        .filter(|value| is_lower_sha256(value))
+        .context("failed worker report artifact has no lowercase SHA-256 digest")?
+        .to_string();
+    let archive = staging.join("artifacts.tar.gz");
+    download_uri(&manifest.artifact_uri, &archive)?;
+    let (observed_sha256, observed_bytes) =
+        hash_regular_file(&archive, MAX_ATTEMPT_ARCHIVE_BYTES)?;
+    if observed_sha256 != expected_sha256 {
+        bail!("retained failed-attempt artifact differs from the digest its worker reported");
+    }
+    let extracted_root = staging.join("extracted");
+    let members = extract_attempt_archive(&archive, &extracted_root)?;
+    let attempt_relative = format!("crawl/{}", manifest.attempt_id);
+    let attempt_destination = record_dir.join(&attempt_relative);
+    let attempt_staged = record_dir
+        .join("crawl")
+        .join(format!(".{}.staging", manifest.attempt_id));
+    if attempt_staged.exists() {
+        std::fs::remove_dir_all(&attempt_staged)?;
+    }
+    std::fs::create_dir_all(attempt_staged.parent().expect("crawl parent"))?;
+    std::fs::rename(&extracted_root, &attempt_staged)?;
+    std::fs::write(
+        attempt_staged.join("worker-report.json"),
+        serde_json::to_string_pretty(&report)? + "\n",
+    )?;
+    install_staged_tree(&attempt_staged, &attempt_destination)?;
+    let relative_report = format!("{attempt_relative}/worker-report.json");
+    let proof = json!({"sha256": expected_sha256, "bytes": observed_bytes});
+    let mut run = crawl_run_entry(manifest, snapshot, &report, &proof, &relative_report);
+    run["retained_members"] = json!(members.len());
+    apply_web_attempt(
+        record,
+        &mut run,
+        &report,
+        &attempt_destination,
+        record_dir,
+        false,
+    )?;
+    let runs = record
+        .as_object_mut()
+        .context("reference record is not an object")?
+        .entry("crawl_runs")
+        .or_insert_with(|| json!([]))
+        .as_array_mut()
+        .context("crawl_runs is not a list")?;
+    if let Some(existing) = runs.iter_mut().find(|value| {
+        value.get("attempt_id").and_then(Value::as_str) == Some(manifest.attempt_id.as_str())
+    }) {
+        *existing = run.clone();
+    } else {
+        runs.push(run.clone());
+    }
+    runs.sort_by(|left, right| {
+        left.get("attempt")
+            .and_then(Value::as_u64)
+            .cmp(&right.get("attempt").and_then(Value::as_u64))
+    });
+    let _ = std::fs::remove_dir_all(&staging);
+    Ok(Some(json!({
+        "attempt": manifest.attempt,
+        "attempt_id": manifest.attempt_id,
+        "state": "provenance_imported",
+        "outcome": outcome,
+        "artifact_sha256": expected_sha256,
+        "retained_members": members.len(),
+        "weles_task_id": run.get("weles_task_id").cloned().unwrap_or(Value::Null),
+        "supports_confirmed_material": false,
+    })))
+}
 /// Import exactly one accepted attempt of one record.
 ///
 /// The whole record transaction is staged and fsynced before any rename, so an
@@ -5768,9 +5978,15 @@ fn import_record_attempt(
     let mut run = crawl_run_entry(&manifest, entry, &report, &proof, &relative_report);
     run["retained_members"] = json!(members.len());
     match engine {
-        "web" => {
-            apply_web_attempt(&mut record, &mut run, &report, &attempt_destination, &record_dir)?
-        }
+        "web" => apply_web_attempt(
+            &mut record,
+            &mut run,
+            &report,
+            &attempt_destination,
+            &record_dir,
+            // The accepted attempt is the one the record's confirmed material comes from.
+            true,
+        )?,
         "docs" => {
             // One corpus attempt. The typed report is validated in exactly one
             // place, shared with `docs-corpus import`, so this document is not
@@ -5834,6 +6050,21 @@ fn import_record_attempt(
             .and_then(Value::as_u64)
             .cmp(&right.get("attempt").and_then(Value::as_u64))
     });
+    // In the same record transaction, so the failure proofs and the accepted attempt are
+    // persisted by the one `atomic_json_write` below or not at all.
+    let non_success = if engine == "web" {
+        import_non_success_attempts(
+            run_id,
+            catalog,
+            &manifest,
+            entry,
+            &mut record,
+            &record_dir,
+            run_dir,
+        )
+    } else {
+        Vec::new()
+    };
     atomic_json_write(&record_path, &record)?;
     let _ = std::fs::remove_dir_all(&staging);
     Ok(json!({
@@ -5848,6 +6079,7 @@ fn import_record_attempt(
         "motion": motion.len(),
         "worker_report": relative_report,
         "weles_task_id": run.get("weles_task_id").cloned().unwrap_or(Value::Null),
+        "non_success_attempts": non_success,
         "imported_at": crate::now_iso_utc(),
     }))
 }
