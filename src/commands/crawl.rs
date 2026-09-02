@@ -5595,6 +5595,13 @@ fn apply_web_attempt(
     // RECORD directory, so the attempt's content-addressed `weles/` documents and its
     // task-scoped `recordings/` tree must exist there, merged rather than replaced:
     // earlier attempts' provenance documents still point at their own digests.
+    //
+    // This is why every object a worker places in these two subtrees is addressed by its
+    // own content or by its Weles task, never by its role: `write_immutable_file` refuses
+    // a name that already holds different bytes, so one role-named document here would
+    // permanently block the second import of the same record. Operational documents that
+    // differ per attempt by construction stay in the attempt root instead, and reach the
+    // record through the attempt-private `crawl/{attempt_id}` tree installed above.
     for subtree in ["weles", "recordings"] {
         let source = attempt_dir.join(subtree);
         if source.is_dir() {

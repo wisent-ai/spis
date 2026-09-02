@@ -282,6 +282,14 @@ Digest path components are bare lowercase SHA-256; signed request/result claims
 retain the `sha256:` prefix. No pre-submit URI is projected onto a post-submit
 artifact or observation coordinate.
 
+Import merges exactly the `weles/` and `recordings/` subtrees of an attempt into
+the shared record directory, and refuses any retained name that already holds
+different bytes, so every object in those two subtrees is addressed by its own
+content or by its Weles task. The role-named operational documents of an attempt
+— submission, task status, cancellation, official provenance, attempt envelope
+and failure diagnostic — differ per attempt by construction and therefore stay in
+the attempt root, reaching the record only under `crawl/{attempt_id}`.
+
 Only `verify` creates `wisent.spis-weles-provenance.v1`. It needs no network
 secret. `artifact.bytes` is required, positive, and at most 4 MiB. The bridge
 re-runs the official verifier, requires every signed claim and the typed

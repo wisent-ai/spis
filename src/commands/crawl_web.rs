@@ -412,12 +412,29 @@ impl Drop for PrivateBridge {
     }
 }
 
+/// `attempt-{attempt}-{fingerprint}`: the exact identifier
+/// `crawl::finalize_manifest_identity` derives and the Weles public admission runtime
+/// re-derives, a decimal attempt number and the first 16 hex characters of the attempt
+/// digest.
+fn is_attempt_id(value: &str) -> bool {
+    let Some(rest) = value.strip_prefix("attempt-") else {
+        return false;
+    };
+    let Some((attempt, fingerprint)) = rest.split_once('-') else {
+        return false;
+    };
+    !attempt.is_empty()
+        && attempt.bytes().all(|byte| byte.is_ascii_digit())
+        && is_lowercase_hex(fingerprint, 16)
+}
+
 /// Is `file_name` one of this worker's own config names, `config-{attempt_id}-{pid}.json`,
 /// whose process is gone?
 ///
-/// Only that exact shape is recognised, so no lock, no staged file and nothing another
-/// tool left in this directory is ever considered, and a config whose pid is still alive
-/// — a concurrent worker's delivered bearer — is always left alone.
+/// Only that exact shape is recognised — the attempt id down to its derivation, the pid
+/// down to a positive `pid_t` — so no lock, no staged file, no sibling tool's file and no
+/// merely similar name is ever considered, and a config whose pid is still alive, a
+/// concurrent worker's delivered bearer, is always left alone.
 fn is_orphaned_config(file_name: &str) -> bool {
     let Some(body) = file_name
         .strip_prefix("config-")
@@ -428,7 +445,7 @@ fn is_orphaned_config(file_name: &str) -> bool {
     let Some((attempt_id, pid)) = body.rsplit_once('-') else {
         return false;
     };
-    if !is_portable_component(attempt_id) {
+    if !is_attempt_id(attempt_id) {
         return false;
     }
     // Parsed as the signed `pid_t` the kernel takes: a value that does not fit is not a
