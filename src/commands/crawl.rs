@@ -55,6 +55,14 @@ pub(crate) struct RuntimeSurfaceIdentity {
 #[serde(deny_unknown_fields)]
 pub(crate) struct RuntimeProduct {
     pub kind: String,
+    /// The identity committed in `reference.json`, never rewritten.
+    ///
+    /// `record_preflight` resolves a display name into a bundle id and a slug
+    /// into a binary name, so `identifier` legitimately changes mid-flight. The
+    /// declared value stays fixed, which lets `decode_runtime_manifest` compare
+    /// every engine against the committed record instead of exempting the three
+    /// engines that resolve.
+    pub declared_identifier: String,
     pub identifier: String,
     pub product_url: String,
     pub identity_source: String,
@@ -130,6 +138,13 @@ pub(crate) struct RuntimeServiceIdentity {
     pub active_host: String,
     pub endpoint: String,
     pub action: String,
+    /// Exact deployed Weles worker release advertised by the Stado service
+    /// directory and re-confirmed against `{endpoint}/version` before a task is
+    /// submitted. It is signed into the receipt through `spisBinding.service`.
+    pub release_id: String,
+    /// Exact Weles source revision behind `release_id`, from the same two
+    /// independent observations.
+    pub source_revision: String,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -296,11 +311,24 @@ pub(crate) fn decode_runtime_manifest(
         bail!("docs crawl definition digest differs from the committed exact structure");
     }
     let execution = manifest.execution_identity.as_ref().expect("checked above");
-    if execution.resolved_product_identifier != manifest.runtime_product.identifier
+    let resolving_engine = matches!(manifest.engine.as_str(), "desktop" | "cli" | "tui");
+    // The declared identity is never rewritten, so this comparison covers every
+    // engine — including desktop, cli and tui, whose resolved `identifier` is a
+    // bundle id or binary name that legitimately differs from the record.
+    if expected_product.declared_identifier != manifest.runtime_product.declared_identifier
+        || execution.resolved_product_identifier != manifest.runtime_product.identifier
         || expected_product.product_url != manifest.runtime_product.product_url
         || expected_product.surface != manifest.runtime_product.surface
     {
-        bail!("runtime product differs from the committed record or resolved execution identity");
+        bail!(
+            "runtime product declared identity, URL, surface or resolved execution identity differs from the committed record"
+        );
+    }
+    if resolving_engine && !is_host_query_literal(&manifest.runtime_product.declared_identifier) {
+        bail!("declared runtime identity is not a safe host resolution literal");
+    }
+    if !resolving_engine && expected_product.kind != manifest.runtime_product.kind {
+        bail!("runtime product kind differs from the committed record");
     }
     match manifest.engine.as_str() {
         "mobile" | "web" | "docs" => {
@@ -469,14 +497,23 @@ pub(crate) fn build_revision() -> Result<String> {
     }
     Ok(revision.to_string())
 }
+fn bounded_git(arguments: &[&str], operation: &str) -> Result<Output> {
+    let mut command = Command::new("git");
+    command.arg("-C").arg(source_root()).args(arguments);
+    bounded_command_output(
+        &mut command,
+        operation,
+        Duration::from_secs(30),
+        4 * 1024 * 1024,
+    )
+}
+
 fn source_snapshot_revision() -> Result<String> {
     let embedded = build_revision()?;
-    let head = Command::new("git")
-        .arg("-C")
-        .arg(source_root())
-        .args(["rev-parse", "--verify", "HEAD"])
-        .output()
-        .context("read current Spis source revision")?;
+    let head = bounded_git(
+        &["rev-parse", "--verify", "HEAD"],
+        "read current Spis source revision",
+    )?;
     if !head.status.success() {
         bail!(
             "cannot identify current Spis source revision: {}",
@@ -492,12 +529,10 @@ fn source_snapshot_revision() -> Result<String> {
             "stale Spis binary: embedded revision {embedded} differs from runtime source revision {runtime}"
         );
     }
-    let status = Command::new("git")
-        .arg("-C")
-        .arg(source_root())
-        .args(["status", "--porcelain=v1", "--untracked-files=all"])
-        .output()
-        .context("verify current Spis source snapshot")?;
+    let status = bounded_git(
+        &["status", "--porcelain=v1", "--untracked-files=all"],
+        "verify current Spis source snapshot",
+    )?;
     if !status.status.success() {
         bail!(
             "cannot verify current Spis source snapshot: {}",
@@ -613,6 +648,194 @@ pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {
     if result.is_err() {
         let _ = std::fs::remove_file(&temporary);
     }
+    result
+}
+
+const MAX_ATTEMPT_TREE_ENTRIES: usize = 20_000;
+const MAX_ATTEMPT_TREE_BYTES: u64 = 512 * 1024 * 1024;
+const MAX_ATTEMPT_ARCHIVE_BYTES: u64 = 256 * 1024 * 1024;
+
+/// Walk `root` and prove it is a self-contained tree of ordinary directories and
+/// regular files. A symlink, device, socket, FIFO, hard-link fan-out or an
+/// out-of-bound entry count/byte total is refused before anything is archived,
+/// so a compromised or racing worker cannot smuggle host content into a
+/// published crawl artifact.
+fn audit_attempt_tree(root: &Path) -> Result<(usize, u64)> {
+    #[cfg(unix)]
+    use std::os::unix::fs::MetadataExt;
+    let mut pending = vec![root.to_path_buf()];
+    let mut entries = 0_usize;
+    let mut bytes = 0_u64;
+    while let Some(directory) = pending.pop() {
+        let metadata = std::fs::symlink_metadata(&directory)
+            .with_context(|| format!("read attempt tree entry {}", directory.display()))?;
+        if !metadata.is_dir() || metadata.file_type().is_symlink() {
+            bail!("attempt artifact tree {} is not a real directory", directory.display());
+        }
+        for entry in std::fs::read_dir(&directory)
+            .with_context(|| format!("list attempt tree {}", directory.display()))?
+        {
+            let entry = entry?;
+            let path = entry.path();
+            let metadata = std::fs::symlink_metadata(&path)
+                .with_context(|| format!("read attempt tree entry {}", path.display()))?;
+            let file_type = metadata.file_type();
+            entries += 1;
+            if entries > MAX_ATTEMPT_TREE_ENTRIES {
+                bail!(
+                    "attempt artifact tree exceeds the {MAX_ATTEMPT_TREE_ENTRIES}-entry bound"
+                );
+            }
+            if file_type.is_symlink() {
+                bail!("attempt artifact {} is a symbolic link", path.display());
+            }
+            if file_type.is_dir() {
+                pending.push(path);
+                continue;
+            }
+            if !file_type.is_file() {
+                bail!("attempt artifact {} is not a regular file", path.display());
+            }
+            #[cfg(unix)]
+            if metadata.nlink() != 1 {
+                bail!("attempt artifact {} is a hard link", path.display());
+            }
+            bytes = bytes
+                .checked_add(metadata.len())
+                .filter(|total| *total <= MAX_ATTEMPT_TREE_BYTES)
+                .with_context(|| {
+                    format!(
+                        "attempt artifact tree exceeds the {MAX_ATTEMPT_TREE_BYTES}-byte bound"
+                    )
+                })?;
+        }
+    }
+    Ok((entries, bytes))
+}
+
+fn hash_regular_file(path: &Path, maximum: u64) -> Result<(String, u64)> {
+    use sha2::{Digest, Sha256};
+    let metadata = std::fs::symlink_metadata(path)
+        .with_context(|| format!("read {}", path.display()))?;
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        bail!("{} is not a regular file", path.display());
+    }
+    if metadata.len() > maximum {
+        bail!("{} exceeds the {maximum}-byte bound", path.display());
+    }
+    let mut file = File::open(path).with_context(|| format!("open {}", path.display()))?;
+    let mut digest = Sha256::new();
+    let mut buffer = [0_u8; 128 * 1024];
+    let mut bytes = 0_u64;
+    loop {
+        let count = file
+            .read(&mut buffer)
+            .with_context(|| format!("hash {}", path.display()))?;
+        if count == 0 {
+            break;
+        }
+        bytes += count as u64;
+        if bytes > maximum {
+            bail!("{} grew past the {maximum}-byte bound while hashing", path.display());
+        }
+        digest.update(&buffer[..count]);
+    }
+    Ok((hex::encode(digest.finalize()), bytes))
+}
+
+/// Archive one audited attempt tree, publish it once to `uri`, then read it back
+/// and prove the stored bytes. Every engine shares this path so archive content
+/// safety, the exclusive per-archive lock and the digest proof cannot drift.
+pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
+    if !uri.starts_with("stado://spis-crawls/") {
+        bail!("attempt artifact URI is outside the Spis crawl namespace");
+    }
+    let attempt_name = root
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("attempt artifact root has no UTF-8 name")?
+        .to_string();
+    let parent = root.parent().context("attempt artifact root has no parent")?;
+    let (entries, tree_bytes) = audit_attempt_tree(root)?;
+    let lock_path = parent.join(format!(".{attempt_name}.archive.lock"));
+    let lock = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(&lock_path)?;
+    if unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
+        bail!("another worker is publishing the {attempt_name} attempt archive");
+    }
+    let result = (|| -> Result<Value> {
+        let archive = parent.join(format!("{attempt_name}.tar.gz"));
+        if !archive.exists() {
+            let mut stado = stado_command();
+            stado.args(["storage", "archive"]).arg(root).arg(&archive);
+            let output = bounded_command_output(
+                &mut stado,
+                "archive crawl attempt",
+                Duration::from_secs(600),
+                4 * 1024 * 1024,
+            )?;
+            if !output.status.success() {
+                bail!(
+                    "stado storage archive refused the crawl attempt: {}",
+                    String::from_utf8_lossy(&output.stderr).trim()
+                );
+            }
+        }
+        let (sha256, bytes) = hash_regular_file(&archive, MAX_ATTEMPT_ARCHIVE_BYTES)?;
+        let mut stado = stado_command();
+        stado
+            .args(["storage", "put", "--if-absent", "--content-type", "application/gzip", uri])
+            .arg(&archive);
+        let output = bounded_command_output(
+            &mut stado,
+            "publish crawl attempt",
+            Duration::from_secs(600),
+            4 * 1024 * 1024,
+        )?;
+        if !output.status.success() {
+            bail!(
+                "stado storage put refused the crawl attempt: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+        }
+        let readback = parent.join(format!(".{attempt_name}.{}.readback", std::process::id()));
+        let _ = std::fs::remove_file(&readback);
+        let mut stado = stado_command();
+        stado.args(["storage", "get", uri]).arg(&readback);
+        let output = bounded_command_output(
+            &mut stado,
+            "read back crawl attempt",
+            Duration::from_secs(600),
+            4 * 1024 * 1024,
+        )?;
+        if !output.status.success() {
+            let _ = std::fs::remove_file(&readback);
+            bail!(
+                "stado storage get refused the published crawl attempt: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+        }
+        let observed = hash_regular_file(&readback, MAX_ATTEMPT_ARCHIVE_BYTES);
+        let _ = std::fs::remove_file(&readback);
+        let (observed_sha256, observed_bytes) = observed?;
+        if observed_sha256 != sha256 || observed_bytes != bytes {
+            bail!(
+                "published crawl attempt read-back differs: expected sha256={sha256} bytes={bytes}, observed sha256={observed_sha256} bytes={observed_bytes}"
+            );
+        }
+        Ok(json!({
+            "uri": uri,
+            "sha256": sha256,
+            "bytes": bytes,
+            "media_type": "application/gzip",
+            "tree_entries": entries,
+            "tree_bytes": tree_bytes,
+        }))
+    })();
+    let _ = unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_UN) };
     result
 }
 
@@ -832,54 +1055,125 @@ fn load(run_id: Option<&str>) -> Result<Value> {
     crate::read_json(path.to_str().context("run path is not UTF-8")?)
 }
 
+const STADO_SUBMISSION_RECEIPT_SCHEMA: &str = "stado.submission-receipt.v3";
+pub(crate) const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
+const STADO_REPO_WORKDIR: &str = "spis";
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StadoSubmissionJob {
+    job_id: String,
+    command_index: u64,
+    command_digest: String,
+    output_uri: String,
+    repo: String,
+    repo_ref: String,
+    pinned_host: String,
+    executor: String,
+    submission_request_digest: String,
+    state: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StadoSubmissionReceipt {
+    schema: String,
+    run_id: String,
+    source_revision: String,
+    request_digest: String,
+    source_digest: String,
+    input_digest: String,
+    command_digest: String,
+    repo: String,
+    repo_ref: String,
+    repo_workdir: String,
+    pinned_host: String,
+    executor: String,
+    jobs: Vec<StadoSubmissionJob>,
+}
+
+fn is_lower_sha256(value: &str) -> bool {
+    value.len() == 64
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
+/// Accept only an exact typed Stado v3 submission receipt for one job.
+///
+/// Every digest must be lowercase SHA-256, the repository/ref/workdir/pinned host
+/// must equal the immutable attempt the caller is submitting, the single job must
+/// map to command index 0 with the receipt's own command and request digests, and
+/// its output URI must be the canonical attempt output coordinate. Unknown fields
+/// are refused so a v2 or extended receipt can never be mistaken for proof.
 fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Option<&str>, output_uri: &str, stado_stdout: &str) -> Result<Value> {
-    let receipt = stado_stdout
+    let raw = stado_stdout
         .lines()
         .rev()
-        .find_map(|line| serde_json::from_str::<Value>(line.trim()).ok())
-        .filter(|value| {
+        .filter_map(|line| serde_json::from_str::<Value>(line.trim()).ok())
+        .find(|value| {
             value.get("schema").and_then(Value::as_str)
-                == Some("stado.submission-receipt.v2")
+                == Some(STADO_SUBMISSION_RECEIPT_SCHEMA)
         })
-        .context("Stado accepted the command but returned no structured submission receipt")?;
-    for digest in ["request_digest", "source_digest", "input_digest"] {
-        let value = receipt.get(digest).and_then(Value::as_str).unwrap_or_default();
-        if value.len() != 64 || !value.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-            bail!("Stado submission receipt has invalid {digest}");
+        .context("Stado accepted the command but returned no exact typed v3 submission receipt")?;
+    let receipt: StadoSubmissionReceipt = serde_json::from_value(raw.clone())
+        .context("Stado submission receipt does not match the exact typed v3 contract")?;
+    let expected_revision = build_revision()?;
+    for (label, digest) in [
+        ("request_digest", receipt.request_digest.as_str()),
+        ("source_digest", receipt.source_digest.as_str()),
+        ("input_digest", receipt.input_digest.as_str()),
+        ("command_digest", receipt.command_digest.as_str()),
+    ] {
+        if !is_lower_sha256(digest) {
+            bail!("Stado submission receipt {label} is not a lowercase SHA-256 digest");
         }
     }
-    let jobs = receipt
-        .get("jobs")
-        .and_then(Value::as_array)
-        .context("Stado submission receipt has no jobs")?;
-    if jobs.len() != 1 {
+    if receipt.schema != STADO_SUBMISSION_RECEIPT_SCHEMA
+        || receipt.run_id.trim().is_empty()
+        || receipt.executor.trim().is_empty()
+        || receipt.repo != REPOSITORY
+        || receipt.repo_workdir != STADO_REPO_WORKDIR
+        || receipt.repo_ref != expected_revision
+        || receipt.source_revision != expected_revision
+        || receipt.pinned_host != host
+    {
+        bail!(
+            "Stado submission receipt run/executor/repository/ref/host does not bind this exact attempt"
+        );
+    }
+    if receipt.jobs.len() != 1 {
         bail!("per-record crawl submission must map to exactly one Stado job");
     }
-    let job = &jobs[0];
-    let job_id = job
-        .get("job_id")
-        .and_then(Value::as_str)
-        .filter(|value| !value.is_empty())
-        .context("Stado submission receipt has no exact job id")?;
-    if job.get("command_index").and_then(Value::as_u64) != Some(0)
-        || job.get("output_uri").and_then(Value::as_str) != Some(output_uri)
-        || job.get("repo_ref").and_then(Value::as_str)
-            != receipt.get("repo_ref").and_then(Value::as_str)
-        || job.get("submission_request_digest").and_then(Value::as_str)
-            != receipt.get("request_digest").and_then(Value::as_str)
+    let job = &receipt.jobs[0];
+    if job.job_id.trim().is_empty() || safe_component(&job.job_id, "stado job id").is_err() {
+        bail!("Stado submission receipt has no portable exact job id");
+    }
+    if job.command_index != 0
+        || job.command_digest != receipt.command_digest
+        || job.submission_request_digest != receipt.request_digest
+        || job.repo != receipt.repo
+        || job.repo_ref != receipt.repo_ref
+        || job.pinned_host != receipt.pinned_host
+        || job.executor != receipt.executor
+        || job.output_uri != output_uri
+        || !matches!(job.state.as_str(), "queued" | "pending")
     {
-        bail!("Stado receipt command mapping, output URI, source revision or request digest does not match");
+        bail!(
+            "Stado receipt job mapping, command digest, request digest, host, executor, output URI or initial state does not match the submitted attempt"
+        );
     }
     Ok(json!({
         "schema": SUBMISSION_SCHEMA,
         "catalog": catalog,
         "engine": engine,
         "host": host,
-        "stado_job_id": job_id,
+        "stado_job_id": job.job_id,
+        "stado_run_id": receipt.run_id,
         "artifact_uri": artifact_uri,
         "output_uri": output_uri,
         "state": "queued",
-        "stado_receipt": receipt,
+        "stado_receipt": raw,
     }))
 }
 
@@ -963,22 +1257,51 @@ fn selected_specs(selected: &[String]) -> Result<Vec<(&'static str, &'static str
     Ok(out)
 }
 
+/// Enumerate the committed record directories of one catalog.
+///
+/// A record directory must be a real directory with a portable UTF-8 name. A
+/// symbolic link, a non-UTF-8 name, an unreadable entry or a non-directory is an
+/// error rather than a silently dropped record, so a planted link can never
+/// redirect a crawl and a broken checkout can never shrink the plan in silence.
 fn record_directories(catalog: &str, selected: Option<&str>) -> Result<Vec<PathBuf>> {
     let root = catalog_root(catalog)?.join("references");
+    let require_real_directory = |path: &Path| -> Result<()> {
+        let metadata = std::fs::symlink_metadata(path)
+            .with_context(|| format!("read crawl record {}", path.display()))?;
+        if metadata.file_type().is_symlink() {
+            bail!("crawl record {} is a symbolic link", path.display());
+        }
+        if !metadata.is_dir() {
+            bail!("crawl record {} is not a directory", path.display());
+        }
+        Ok(())
+    };
     if let Some(record) = selected {
         safe_component(record, "record")?;
         let path = root.join(record);
-        if !path.is_dir() {
+        if !path.exists() {
             bail!("record {record} does not exist in catalog {catalog}");
         }
+        require_real_directory(&path)?;
         return Ok(vec![path]);
     }
-    let mut records = std::fs::read_dir(&root)
+    let mut records = Vec::new();
+    for entry in std::fs::read_dir(&root)
         .with_context(|| format!("read crawl catalog {}", root.display()))?
-        .filter_map(|entry| entry.ok())
-        .map(|entry| entry.path())
-        .filter(|path| path.is_dir())
-        .collect::<Vec<_>>();
+    {
+        let entry = entry.with_context(|| format!("read crawl catalog {}", root.display()))?;
+        let name = entry.file_name();
+        let name = name.to_str().with_context(|| {
+            format!("crawl catalog {} contains a non-UTF-8 record name", root.display())
+        })?;
+        if name.starts_with('.') {
+            continue;
+        }
+        safe_component(name, "record")?;
+        let path = entry.path();
+        require_real_directory(&path)?;
+        records.push(path);
+    }
     records.sort();
     Ok(records)
 }
@@ -1091,14 +1414,21 @@ fn anonymous_probe_account() -> Value {
     })
 }
 
-fn prohibited_action_constraints() -> Value {
+/// Every crawl refuses first-run consent, system permission prompts,
+/// notifications, purchases and final destructive actions.
+///
+/// `headless` is the one engine-specific control: only the Weles browser engine
+/// executes headless. `planned_record` requires `headless == (engine == "web")`,
+/// so a generator that hardcoded `true` made every documentation, terminal and
+/// native record permanently unavailable.
+fn prohibited_action_constraints(engine: &str) -> Value {
     json!({
         "no_first_run_consent": true,
         "no_system_permission_prompts": true,
         "no_notifications": true,
         "no_purchase": true,
         "no_final_destructive_action": true,
-        "headless": true,
+        "headless": engine == "web",
     })
 }
 
@@ -1183,7 +1513,7 @@ fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                     let mut object = serde_json::Map::new();
                     object.insert("configured".into(), json!(true));
                     object.insert("account".into(), anonymous_probe_account());
-                    object.insert("constraints".into(), prohibited_action_constraints());
+                    object.insert("constraints".into(), prohibited_action_constraints(engine));
                     object.insert("delivery".into(), delivery);
                     if *engine == "web" {
                         object.insert(
@@ -1217,21 +1547,7 @@ fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
     let mut with_newline = bytes;
     with_newline.push(b'\n');
     if let Some(path) = output_path {
-        if let Some(parent) = path.parent().filter(|value| !value.as_os_str().is_empty()) {
-            std::fs::create_dir_all(parent)?;
-        }
-        match OpenOptions::new().write(true).create_new(true).open(&path) {
-            Ok(mut file) => {
-                file.write_all(&with_newline)?;
-                file.sync_all()?;
-            }
-            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
-                if std::fs::read(&path)? != with_newline {
-                    bail!("refusing to replace differing runtime bindings {}", path.display());
-                }
-            }
-            Err(error) => return Err(error.into()),
-        }
+        let outcome = write_generated_bindings(&path, &with_newline)?;
         println!(
             "{}",
             serde_json::to_string(&json!({
@@ -1239,12 +1555,70 @@ fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                 "operation": "bindings_generate",
                 "path": path,
                 "sha256": crate::sha256_hex(&with_newline),
+                "outcome": outcome,
             }))?
         );
     } else {
         print!("{}", String::from_utf8(with_newline)?);
     }
     Ok(())
+}
+
+/// Install one freshly validated generated bindings document at `path`.
+///
+/// The document has already passed `validate_runtime_bindings_document`, so an
+/// existing file that differs is stale generated output, not a reason to refuse
+/// forever: stage the new bytes beside it, fsync, rename atomically, fsync the
+/// directory, then read the installed file back and prove the exact bytes. A
+/// crash therefore leaves either the previous or the new complete document, and
+/// regeneration after a catalog change is idempotent rather than blocked.
+fn write_generated_bindings(path: &Path, bytes: &[u8]) -> Result<&'static str> {
+    let parent = path
+        .parent()
+        .filter(|value| !value.as_os_str().is_empty())
+        .map(Path::to_path_buf)
+        .unwrap_or_else(|| PathBuf::from("."));
+    std::fs::create_dir_all(&parent)?;
+    match std::fs::symlink_metadata(path) {
+        Ok(metadata) if metadata.file_type().is_symlink() || !metadata.is_file() => {
+            bail!(
+                "refusing to replace {}: generated runtime bindings must be a regular file",
+                path.display()
+            );
+        }
+        Ok(_) if std::fs::read(path)? == bytes => return Ok("unchanged"),
+        Ok(_) => {}
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
+    }
+    let existed = path.exists();
+    let file_name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("generated runtime bindings path has no UTF-8 file name")?;
+    let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+    let staged = parent.join(format!(".{file_name}.{}.{}.tmp", std::process::id(), nonce));
+    let result = (|| -> Result<()> {
+        let mut file = OpenOptions::new().write(true).create_new(true).open(&staged)?;
+        file.write_all(bytes)?;
+        file.sync_all()?;
+        drop(file);
+        std::fs::rename(&staged, path)?;
+        File::open(&parent)?.sync_all()?;
+        Ok(())
+    })();
+    if result.is_err() {
+        let _ = std::fs::remove_file(&staged);
+    }
+    result?;
+    let installed = std::fs::read(path)?;
+    if installed != bytes {
+        bail!(
+            "generated runtime bindings read-back differs from the validated document at {}",
+            path.display()
+        );
+    }
+    Ok(if existed { "replaced" } else { "created" })
 }
 
 
@@ -1654,13 +2028,35 @@ fn runtime_product(
     } else {
         surface
     };
+    if matches!(engine, "desktop" | "cli" | "tui") && !is_host_query_literal(&identifier) {
+        bail!(
+            "{catalog}/{slug}: {engine} product identity {identifier:?} contains characters that cannot be embedded in a host resolution query"
+        );
+    }
     Ok(RuntimeProduct {
         kind: kind.into(),
+        declared_identifier: identifier.clone(),
         identifier,
         product_url,
         identity_source,
         surface,
     })
+}
+
+/// A display name, bundle id or binary name that is safe to embed verbatim in a
+/// Spotlight predicate or an argv element.
+///
+/// Escaping a single quote with a backslash is not how the Spotlight query
+/// language quotes literals, so the only safe posture is to refuse any identity
+/// that could close a literal or append a predicate.
+pub(crate) fn is_host_query_literal(value: &str) -> bool {
+    !value.is_empty()
+        && value.len() <= 128
+        && value
+            .chars()
+            .all(|character| character.is_ascii_alphanumeric() || matches!(character, ' ' | '.' | '_' | '-'))
+        && !value.starts_with(' ')
+        && !value.ends_with(' ')
 }
 fn docs_structure_sha256(catalog: &str, record: &str, engine: &str) -> Result<Option<String>> {
     if engine != "docs" {
@@ -1773,6 +2169,46 @@ pub(crate) fn native_attempt_root(
         .join(&manifest.attempt_id))
 }
 
+/// One explicit typed attempt entry for a record that cannot be planned.
+///
+/// An unconfigured native binding, an unreadable reference or an unbound Weles
+/// placement is still an attempted record: it keeps a deterministic attempt id so
+/// `sync_attempt_history` retains exactly one durable diagnostic instead of
+/// letting the record disappear from the run.
+fn unavailable_record(
+    run_id: &str,
+    catalog: &str,
+    slug: &str,
+    code: &str,
+    message: String,
+    detail: Value,
+) -> Value {
+    let attempt_id = format!(
+        "unattempted-{}",
+        &crate::sha256_hex(format!("{run_id}\0{catalog}\0{slug}\0{code}").as_bytes())[..16]
+    );
+    json!({
+        "record": slug,
+        "state": "unavailable",
+        "attempt": 1,
+        "attempt_id": attempt_id,
+        "manifest": Value::Null,
+        "command": Value::Null,
+        "stado_job_id": Value::Null,
+        "artifact_uri": Value::Null,
+        "output_uri": Value::Null,
+        "submission_receipt": Value::Null,
+        "preflight": Value::Null,
+        "diagnostic": {
+            "code": code,
+            "retryable": true,
+            "message": message,
+            "detail": detail,
+        },
+        "attempts": [],
+    })
+}
+
 fn planned_record(
     run_id: &str,
     source_revision: &str,
@@ -1792,47 +2228,74 @@ fn planned_record(
     let bytes = match std::fs::read(&path) {
         Ok(bytes) => bytes,
         Err(error) => {
-            return json!({"record": slug, "state": "unavailable", "diagnostic": {
-                "code": "reference_read_failed", "message": error.to_string(), "path": path
-            }});
+            return unavailable_record(
+                run_id,
+                catalog,
+                &slug,
+                "reference_read_failed",
+                error.to_string(),
+                json!({"path": path}),
+            );
         }
     };
     let reference: Value = match serde_json::from_slice(&bytes) {
         Ok(value) => value,
         Err(error) => {
-            return json!({"record": slug, "state": "unavailable", "diagnostic": {
-                "code": "reference_invalid", "message": error.to_string(), "path": path
-            }});
+            return unavailable_record(
+                run_id,
+                catalog,
+                &slug,
+                "reference_invalid",
+                error.to_string(),
+                json!({"path": path}),
+            );
         }
     };
     let binding = match runtime_binding(bindings, catalog, engine, &slug) {
         Ok(binding) => binding,
         Err(error) => {
-            return json!({"record": slug, "state": "unavailable", "diagnostic": {
-                "code": "runtime_binding_missing_or_invalid", "message": error.to_string()
-            }});
+            return unavailable_record(
+                run_id,
+                catalog,
+                &slug,
+                "runtime_binding_missing_or_invalid",
+                error.to_string(),
+                Value::Null,
+            );
         }
     };
     if binding.constraints.headless != (engine == "web") {
-        return json!({"record": slug, "state": "unavailable", "diagnostic": {
-            "code": "runtime_constraint_mismatch",
-            "message": format!("{catalog}/{slug}: headless constraint does not match engine {engine}")
-        }});
+        return unavailable_record(
+            run_id,
+            catalog,
+            &slug,
+            "runtime_constraint_mismatch",
+            format!("{catalog}/{slug}: headless constraint does not match engine {engine}"),
+            json!({"headless": binding.constraints.headless, "engine": engine}),
+        );
     }
     let service_identity = match (engine, service_identity) {
         ("web", Some(service)) if service.active_host == host => Some(service.clone()),
         ("web", _) => {
-            return json!({"record": slug, "state": "unavailable", "diagnostic": {
-                "code": "weles_service_identity_unbound",
-                "message": "authorized weles-admission/browser-evidence/generic_browser_task placement is unavailable"
-            }});
+            return unavailable_record(
+                run_id,
+                catalog,
+                &slug,
+                "weles_service_identity_unbound",
+                "authorized weles-admission/browser-evidence/generic_browser_task placement is unavailable".into(),
+                json!({"host": host}),
+            );
         }
         (_, None) => None,
         (_, Some(_)) => {
-            return json!({"record": slug, "state": "unavailable", "diagnostic": {
-                "code": "unexpected_service_identity",
-                "message": "non-web execution cannot carry a Weles service identity"
-            }});
+            return unavailable_record(
+                run_id,
+                catalog,
+                &slug,
+                "unexpected_service_identity",
+                "non-web execution cannot carry a Weles service identity".into(),
+                json!({"engine": engine}),
+            );
         }
     };
     let product = match runtime_product(
@@ -1844,18 +2307,27 @@ fn planned_record(
     ) {
         Ok(product) => product,
         Err(error) => {
-            return json!({"record": slug, "state": "unavailable", "diagnostic": {
-                "code": "runtime_product_unresolved", "message": error.to_string(),
-                "product_url": reference.get("product_url")
-            }});
+            return unavailable_record(
+                run_id,
+                catalog,
+                &slug,
+                "runtime_product_unresolved",
+                error.to_string(),
+                json!({"product_url": reference.get("product_url")}),
+            );
         }
     };
     let docs_structure_sha256 = match docs_structure_sha256(catalog, &slug, engine) {
         Ok(value) => value,
         Err(error) => {
-            return json!({"record": slug, "state": "unavailable", "diagnostic": {
-                "code": "docs_structure_missing_or_invalid", "message": error.to_string()
-            }});
+            return unavailable_record(
+                run_id,
+                catalog,
+                &slug,
+                "docs_structure_missing_or_invalid",
+                error.to_string(),
+                Value::Null,
+            );
         }
     };
     let bindings_sha256 = crate::sha256_hex(
@@ -1916,14 +2388,21 @@ fn planned_record(
         bindings_uri: bindings.uri.clone(),
         prepared_proof,
         execution_identity: None,
-        resource_lease: matches!(engine, "desktop" | "mobile")
+        // Terminal surfaces share the registry host's tmux namespace, PATH and CPU,
+        // so they need a host-level exclusivity lease even though they need no device.
+        resource_lease: matches!(engine, "desktop" | "mobile" | "cli" | "tui")
             .then(|| format!("stado-exclusive://{host}/{engine}")),
         service_identity,
     };
     if let Err(error) = finalize_manifest_identity(&mut manifest, &bytes) {
-        return json!({"record": slug, "state": "unavailable", "diagnostic": {
-            "code": "runtime_manifest_finalization_failed", "message": error.to_string()
-        }});
+        return unavailable_record(
+            run_id,
+            catalog,
+            &slug,
+            "runtime_manifest_finalization_failed",
+            error.to_string(),
+            Value::Null,
+        );
     }
     json!({
         "record": slug,
@@ -1938,8 +2417,38 @@ fn planned_record(
         "diagnostic": Value::Null,
     })
 }
+fn is_git_revision(value: &str) -> bool {
+    value.len() == 40
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+
+/// A canonical Weles API base is exactly `<scheme>://<host>[:port]/api/v1` with
+/// no credentials, query or fragment. Both the bridge and the Rust verifier
+/// enforce the same shape, so an endpoint that would be rejected downstream must
+/// never enter a plan.
+fn canonical_api_endpoint(value: &str) -> bool {
+    url::Url::parse(value).is_ok_and(|endpoint| {
+        matches!(endpoint.scheme(), "http" | "https")
+            && endpoint.username().is_empty()
+            && endpoint.password().is_none()
+            && endpoint.path() == "/api/v1"
+            && endpoint.query().is_none()
+            && endpoint.fragment().is_none()
+            && endpoint.as_str() == value
+    })
+}
+
 fn registry_placements() -> Result<(BTreeMap<String, String>, Option<RuntimeServiceIdentity>)> {
-    let output = stado_command().args(["registry", "pull"]).output()?;
+    let mut command = stado_command();
+    command.args(["registry", "pull"]);
+    let output = bounded_command_output(
+        &mut command,
+        "Stado registry pull",
+        Duration::from_secs(60),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "Stado registry could not select crawler hosts: {}",
@@ -1978,7 +2487,18 @@ fn registry_placements() -> Result<(BTreeMap<String, String>, Option<RuntimeServ
         }
         let endpoint = service
             .pointer(&format!("/endpoints/{active_host}/url"))
-            .and_then(Value::as_str)?;
+            .and_then(Value::as_str)
+            .filter(|value| canonical_api_endpoint(value))?;
+        let release_id = service
+            .pointer(&format!("/endpoints/{active_host}/release_id"))
+            .or_else(|| service.get("release_id"))
+            .and_then(Value::as_str)
+            .filter(|value| value.starts_with("weles-worker@") && *value != "weles-worker@")?;
+        let source_revision = service
+            .pointer(&format!("/endpoints/{active_host}/source_revision"))
+            .or_else(|| service.get("source_revision"))
+            .and_then(Value::as_str)
+            .filter(|value| is_git_revision(value))?;
         Some(RuntimeServiceIdentity {
             name: "weles-admission".into(),
             generation,
@@ -1987,6 +2507,8 @@ fn registry_placements() -> Result<(BTreeMap<String, String>, Option<RuntimeServ
             active_host: active_host.into(),
             endpoint: endpoint.into(),
             action: "generic_browser_task".into(),
+            release_id: release_id.into(),
+            source_revision: source_revision.into(),
         })
     });
     let always_on = targets
@@ -2129,7 +2651,66 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
     }
 }
 
-fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str) -> Value {
+/// Independently confirm the deployed Weles release on the pinned host.
+///
+/// The Stado service directory is one observation; `{endpoint}/version` on the
+/// selected host is the second. Both must report the same `release_id` and
+/// `source_revision`, and redirects are refused, so a relocated or rolled-back
+/// worker cannot silently sign attempts as the planned release.
+fn weles_version_check(host: &str, service: &RuntimeServiceIdentity) -> Value {
+    let url = format!("{}/version", service.endpoint);
+    let mut check = host_probe(
+        host,
+        &[
+            "curl",
+            "--fail",
+            "--silent",
+            "--show-error",
+            "--max-redirs",
+            "0",
+            "--max-time",
+            "20",
+            "--header",
+            "Accept: application/json",
+            url.as_str(),
+        ],
+    );
+    if check.get("ready").and_then(Value::as_bool) != Some(true) {
+        return check;
+    }
+    let reported: Option<Value> = check
+        .get("stdout")
+        .and_then(Value::as_str)
+        .and_then(|stdout| serde_json::from_str(stdout.trim()).ok());
+    let field = |document: &Value, snake: &str, camel: &str| -> Option<String> {
+        document
+            .get(snake)
+            .or_else(|| document.get(camel))
+            .and_then(Value::as_str)
+            .map(str::to_string)
+    };
+    let agreed = reported.as_ref().is_some_and(|document| {
+        field(document, "release_id", "releaseId").as_deref() == Some(service.release_id.as_str())
+            && field(document, "source_revision", "sourceRevision").as_deref()
+                == Some(service.source_revision.as_str())
+    });
+    if !agreed {
+        check["ready"] = json!(false);
+        check["error"] = json!(format!(
+            "{url} does not report the service-directory release {} at revision {}",
+            service.release_id, service.source_revision
+        ));
+    }
+    check["weles_version"] = reported.unwrap_or(Value::Null);
+    check
+}
+
+fn host_preflight(
+    catalog: &str,
+    engine: &str,
+    host: &str,
+    service_identity: Option<&RuntimeServiceIdentity>,
+) -> Value {
     let mut commands: Vec<Vec<&str>> = vec![vec!["hostname"]];
     commands.extend(match (engine, catalog) {
         ("mobile", "ios-app-examples") => vec![
@@ -2167,13 +2748,22 @@ fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str) 
     } else {
         true
     };
-    let admission_ready = engine != "web" || !admission_url.is_empty();
+    let admission = match (engine, service_identity) {
+        ("web", Some(service)) => {
+            let check = weles_version_check(host, service);
+            let ready = check.get("ready").and_then(Value::as_bool) == Some(true);
+            checks.push(check);
+            ready
+        }
+        ("web", None) => false,
+        _ => true,
+    };
     let ready = checks
         .iter()
         .take(commands.len())
         .all(|check| check.get("ready").and_then(Value::as_bool) == Some(true))
         && desktop_driver_ready
-        && admission_ready;
+        && admission;
     json!({
         "schema": "wisent.crawl-host-preflight.v2",
         "catalog": catalog,
@@ -2181,7 +2771,7 @@ fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str) 
         "host": host,
         "ready": ready,
         "checks": checks,
-        "service_endpoint": if engine == "web" { json!(admission_url) } else { Value::Null },
+        "service_identity": service_identity,
     })
 }
 
@@ -2208,23 +2798,21 @@ fn observed_hostname(host_report: &Value) -> Result<String> {
     Ok(value.to_string())
 }
 
-fn ios_booted_identity(host: &str, host_report: &Value) -> Result<RuntimeExecutionIdentity> {
-    let check = host_report
-        .get("checks")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-        .find(|check| {
-            check
-                .get("command")
-                .and_then(Value::as_array)
-                .is_some_and(|parts| parts.iter().any(|part| part.as_str() == Some("booted")))
-        })
-        .context("iOS host preflight has no booted-device report")?;
-    let document: Value = serde_json::from_str(
-        check.get("stdout").and_then(Value::as_str).unwrap_or_default(),
-    )
-    .context("simctl booted-device report is not JSON")?;
+/// Resolve the booted iOS simulator with a probe taken for THIS record.
+///
+/// The catalog-level host preflight is cached once per catalog, so parsing the
+/// device list out of it attributed every later record to a possibly shut-down
+/// simulator — and `resume` re-derived identity from the same stale text days
+/// later. The desktop and terminal resolvers already probe per record; these two
+/// now do the same and return the fresh check as retained evidence.
+fn ios_booted_identity(host: &str) -> Result<(RuntimeExecutionIdentity, Vec<Value>)> {
+    let check = host_probe(
+        host,
+        &["xcrun", "simctl", "list", "devices", "booted", "--json"],
+    );
+    let stdout = ready_output(&check, "fresh iOS booted-device probe")?;
+    let document: Value =
+        serde_json::from_str(&stdout).context("simctl booted-device report is not JSON")?;
     let mut devices = Vec::new();
     for values in document
         .get("devices")
@@ -2243,7 +2831,7 @@ fn ios_booted_identity(host: &str, host_report: &Value) -> Result<RuntimeExecuti
     if devices.len() != 1 {
         bail!("expected exactly one booted available iOS device, found {}", devices.len());
     }
-    Ok(RuntimeExecutionIdentity {
+    let identity = RuntimeExecutionIdentity {
         host: host.into(),
         observed_hostname: String::new(),
         platform: "ios".into(),
@@ -2260,49 +2848,39 @@ fn ios_booted_identity(host: &str, host_report: &Value) -> Result<RuntimeExecuti
         product_version: None,
         executable_sha256: None,
         effective_url: None,
-    })
+    };
+    Ok((identity, vec![check]))
 }
 
-fn android_device_identity(host: &str, host_report: &Value) -> Result<RuntimeExecutionIdentity> {
-    let check = host_report
-        .get("checks")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-        .find(|check| {
-            check
-                .get("command")
-                .and_then(Value::as_array)
-                .is_some_and(|parts| parts.iter().any(|part| part.as_str() == Some("devices")))
-        })
-        .context("Android host preflight has no device report")?;
-    let devices: Vec<(&str, &str)> = check
-        .get("stdout")
-        .and_then(Value::as_str)
-        .unwrap_or_default()
+/// Resolve the authorized Android device with a probe taken for THIS record.
+fn android_device_identity(host: &str) -> Result<(RuntimeExecutionIdentity, Vec<Value>)> {
+    let check = host_probe(host, &["adb", "devices", "-l"]);
+    let stdout = ready_output(&check, "fresh Android device probe")?;
+    let devices: Vec<&str> = stdout
         .lines()
         .filter_map(|line| {
             let mut fields = line.split_whitespace();
             let serial = fields.next()?;
             let state = fields.next()?;
-            (state == "device").then_some((serial, state))
+            (state == "device").then_some(serial)
         })
         .collect();
     if devices.len() != 1 {
         bail!("expected exactly one authorized Android device, found {}", devices.len());
     }
-    Ok(RuntimeExecutionIdentity {
+    let identity = RuntimeExecutionIdentity {
         host: host.into(),
         observed_hostname: String::new(),
         platform: "android".into(),
-        device_id: Some(devices[0].0.into()),
+        device_id: Some(devices[0].into()),
         resolved_product_identifier: String::new(),
         device_name: None,
         executable_path: None,
         product_version: None,
         executable_sha256: None,
         effective_url: None,
-    })
+    };
+    Ok((identity, vec![check]))
 }
 
 fn ready_output(check: &Value, context: &str) -> Result<String> {
@@ -2582,8 +3160,9 @@ fn prepared_runtime_check(
         || !proof.notification_delivery_disabled
         || !proof.permission_prompt_invocation_disabled
         || !proof.notification_prompt_invocation_disabled
+        || !is_rfc3339_utc(&proof.observed_at)
     {
-        bail!("prepared-runtime proof does not bind the exact product/device with first run completed, zero pending prompts, disabled permission/notification prompt invocation, and disabled notification delivery");
+        bail!("prepared-runtime proof does not bind the exact product/device with an RFC 3339 UTC observation time, first run completed, zero pending prompts, disabled permission/notification prompt invocation, and disabled notification delivery");
     }
     let check = host_probe(
         host,
@@ -2633,6 +3212,26 @@ fn prepared_runtime_check(
     Ok(check)
 }
 
+/// `YYYY-MM-DDTHH:MM:SSZ`, the exact shape `crate::now_iso_utc` emits.
+///
+/// The prepared-runtime proof's `observed_at` used to be a dead field that
+/// implied a staleness check nobody performed. Freshness itself still comes from
+/// the live `stado-runtime-readiness verify` re-check, but the timestamp is now
+/// required to be a well-formed UTC instant rather than arbitrary text.
+fn is_rfc3339_utc(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    bytes.len() == 20
+        && bytes[19] == b'Z'
+        && bytes[4] == b'-'
+        && bytes[7] == b'-'
+        && bytes[10] == b'T'
+        && bytes[13] == b':'
+        && bytes[16] == b':'
+        && [0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 14, 15, 17, 18]
+            .iter()
+            .all(|index| bytes[*index].is_ascii_digit())
+}
+
 fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Value {
     let host_ready = host_report.get("ready").and_then(Value::as_bool) == Some(true);
     if !host_ready {
@@ -2660,8 +3259,8 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
     let result = (|| -> Result<Vec<Value>> {
         let host = host_report.get("host").and_then(Value::as_str).context("host report has no host")?;
         let (mut identity, mut checks) = match manifest.runtime_product.kind.as_str() {
-            "ios-bundle" => (ios_booted_identity(host, host_report)?, Vec::new()),
-            "android-package" => (android_device_identity(host, host_report)?, Vec::new()),
+            "ios-bundle" => ios_booted_identity(host)?,
+            "android-package" => android_device_identity(host)?,
             "desktop-display-name" => resolve_desktop_identity(manifest, host)?,
             "cli-binary" | "tui-slug" => resolve_terminal_identity(manifest, host)?,
             "url" => (
@@ -2956,7 +3555,7 @@ fn ensure_host_preflight(
     catalog: &str,
     engine: &str,
     host: &str,
-    service_endpoint: &str,
+    service_identity: Option<&RuntimeServiceIdentity>,
 ) -> Result<Value> {
     let snapshot = load(Some(run_id))?;
     let existing = snapshot
@@ -2971,7 +3570,7 @@ fn ensure_host_preflight(
     if !existing.is_null() {
         return Ok(existing);
     }
-    let observed = host_preflight(catalog, engine, host, service_endpoint);
+    let observed = host_preflight(catalog, engine, host, service_identity);
     let _guard = RunMutationGuard::acquire(run_id)?;
     let mut run = load(Some(run_id))?;
     let catalog_index = run
@@ -3245,6 +3844,21 @@ fn continue_record(
             "Stado receipt does not bind the immutable Spis source revision".into(),
         );
     }
+    // The coordinator derived both attempt URIs from the record key. The child's
+    // reported values are checked against them and never adopted, so a divergent
+    // final JSON line cannot relocate where this attempt's evidence is expected.
+    if receipt.get("artifact_uri").and_then(Value::as_str) != Some(manifest.artifact_uri.as_str())
+        || receipt.get("output_uri").and_then(Value::as_str) != Some(manifest.output_uri.as_str())
+    {
+        return mark_record_failure(
+            run_id,
+            catalog,
+            record_name,
+            "submission_failed",
+            "submission_uri_mismatch",
+            "crawler submission reported artifact or output URIs that are not the canonical attempt coordinates".into(),
+        );
+    }
     if let Err(error) = persist_submission_receipt(
         run_id,
         catalog,
@@ -3266,14 +3880,8 @@ fn continue_record(
             .get("stado_job_id")
             .cloned()
             .unwrap_or(Value::Null);
-        entry["artifact_uri"] = receipt
-            .get("artifact_uri")
-            .cloned()
-            .unwrap_or_else(|| json!(manifest.artifact_uri));
-        entry["output_uri"] = receipt
-            .get("output_uri")
-            .cloned()
-            .unwrap_or_else(|| json!(manifest.output_uri));
+        entry["artifact_uri"] = json!(manifest.artifact_uri);
+        entry["output_uri"] = json!(manifest.output_uri);
         entry["submission_receipt"] = receipt;
         if entry.get("cancel_intent").is_some_and(Value::is_object) {
             entry["state"] = json!("cancel_pending");
@@ -3363,15 +3971,21 @@ fn continue_start(run_id: &str) -> Result<Value> {
         if host.is_empty() {
             continue;
         }
-        let endpoint = catalog_entry
+        let service_identity: Option<RuntimeServiceIdentity> = catalog_entry
             .get("records")
             .and_then(Value::as_array)
-            .and_then(|records| records.first())
-            .and_then(|record| record.pointer("/manifest/service_identity/endpoint"))
-            .and_then(Value::as_str)
-            .unwrap_or_default();
-        let host_report =
-            ensure_host_preflight(run_id, &catalog, &engine, &host, endpoint)?;
+            .into_iter()
+            .flatten()
+            .find_map(|record| record.pointer("/manifest/service_identity"))
+            .filter(|value| value.is_object())
+            .and_then(|value| serde_json::from_value(value.clone()).ok());
+        let host_report = ensure_host_preflight(
+            run_id,
+            &catalog,
+            &engine,
+            &host,
+            service_identity.as_ref(),
+        )?;
         let records = catalog_entry
             .get("records")
             .and_then(Value::as_array)
@@ -3510,16 +4124,16 @@ fn start(rest: &[String]) -> Result<()> {
             let records = paths
                 .iter()
                 .map(|path| {
-                    json!({
-                        "record": path.file_name().and_then(|name| name.to_str()).unwrap_or("invalid-record"),
-                        "state": "unavailable",
-                        "diagnostic": {
-                            "code": "runtime_placement_unavailable",
-                            "retryable": true,
-                            "message": message,
-                        },
-                        "attempts": [],
-                    })
+                    unavailable_record(
+                        &run_id,
+                        catalog,
+                        path.file_name()
+                            .and_then(|name| name.to_str())
+                            .unwrap_or("invalid-record"),
+                        "runtime_placement_unavailable",
+                        message.clone(),
+                        json!({"engine": engine}),
+                    )
                 })
                 .collect::<Vec<_>>();
             entries.push(json!({
@@ -3919,42 +4533,84 @@ fn cancel(rest: &[String]) -> Result<()> {
             })
             .cloned()
             .context("crawl record disappeared during cancellation")?;
-        let attempt_id = record
-            .pointer("/manifest/attempt_id")
+        let manifest = record
+            .get("manifest")
+            .filter(|value| value.is_object())
+            .cloned();
+        let attempt_id = manifest
+            .as_ref()
+            .and_then(|value| value.get("attempt_id"))
             .or_else(|| record.get("attempt_id"))
             .and_then(Value::as_str)
-            .unwrap_or("unsubmitted-attempt");
-        let attempt = record
-            .pointer("/manifest/attempt")
+            .context("crawl record has no attempt id to cancel")?
+            .to_string();
+        let attempt = manifest
+            .as_ref()
+            .and_then(|value| value.get("attempt"))
             .and_then(Value::as_u64)
-            .unwrap_or(1);
-        let job_id = record.get("stado_job_id").and_then(Value::as_str);
-        let stado_run_id = record
-            .pointer("/manifest/stado_run_id")
-            .and_then(Value::as_str);
+            .or_else(|| record.get("attempt").and_then(Value::as_u64))
+            .context("crawl record has no attempt number to cancel")?;
+        let job_id = record
+            .get("stado_job_id")
+            .and_then(Value::as_str)
+            .map(str::to_string);
+        let stado_run_id = manifest
+            .as_ref()
+            .and_then(|value| value.get("stado_run_id"))
+            .and_then(Value::as_str)
+            .map(str::to_string);
+        let record_key = manifest
+            .as_ref()
+            .and_then(|value| value.get("record_key"))
+            .cloned()
+            .unwrap_or(Value::Null);
         let intent = json!({
             "schema": "wisent.crawl-cancel-intent.v1",
             "run_id": run_id,
             "catalog": catalog_name,
             "record": record_name,
-            "record_key": record.pointer("/manifest/record_key").cloned().unwrap_or(Value::Null),
+            "record_key": record_key,
             "attempt": attempt,
             "attempt_id": attempt_id,
             "stado_run_id": stado_run_id,
             "stado_job_id": job_id,
             "reason": reason,
         });
-        let base_uri = record
-            .pointer("/manifest/artifact_uri")
+        // Persist the durable local intent BEFORE any external effect. Every
+        // submission path in `continue_record` refuses to submit, and refuses to
+        // leave a submitted job running, once this object exists — so a crash
+        // between here and the Stado cancellation can never resurrect the record.
+        mutate_record(&run_id, &catalog_name, &record_name, |entry| {
+            if !entry.get("cancel_intent").is_some_and(Value::is_object) {
+                entry["cancel_intent"] = intent.clone();
+            }
+            if matches!(
+                entry.get("state").and_then(Value::as_str),
+                Some("planned" | "preflighting" | "preflight_passed" | "unavailable")
+            ) {
+                entry["state"] = json!("cancelled");
+                entry["diagnostic"] = json!({
+                    "code": "cancelled_before_submission",
+                    "message": "durable cancel intent recorded before any submission",
+                });
+            }
+            Ok(())
+        })?;
+        let intent = record_snapshot(&run_id, &catalog_name, &record_name)?
+            .get("cancel_intent")
+            .cloned()
+            .context("durable cancel intent disappeared after persistence")?;
+        // The canonical attempt coordinate is the artifact URI's parent; a record
+        // with no manifest has no attempt to cancel and was rejected above.
+        let base_uri = manifest
+            .as_ref()
+            .and_then(|value| value.get("artifact_uri"))
             .and_then(Value::as_str)
             .and_then(|uri| uri.rsplit_once('/').map(|(parent, _)| parent.to_string()))
-            .unwrap_or_else(|| {
-                format!(
-                    "stado://spis-crawls/{run_id}/{catalog_name}/{record_name}/attempts/{attempt_id}"
-                )
-            });
+            .context("crawl record has no canonical attempt artifact coordinate")?;
         let intent_uri = format!("{base_uri}/cancel-intent.json");
         let intent_sha256 = publish_cancel_intent(&intent_uri, &intent)?;
+        let job_id = job_id.as_deref();
         let status_before = match job_id {
             Some(job_id) => match machine_status(job_id) {
                 Ok(job) => json!({"state": machine_state(&job), "job": job}),
@@ -4010,12 +4666,17 @@ fn cancel(rest: &[String]) -> Result<()> {
             "status_before": status_before,
             "stado_action": action,
             "status_after": status_after,
-            "weles_action": if record.pointer("/weles/task_id").is_some()
-                || record.get("weles_task_id").is_some()
-            {
-                json!({"state": "official_cancel_required", "diagnostic": "retained Weles task cancellation bridge is unavailable in this source revision"})
-            } else {
-                json!({"state": "no_retained_task_id"})
+            // The coordinator holds only secret *references*; the bearer is
+            // injected by Stado into the pinned worker. Cancelling the Stado job
+            // therefore terminates the process that owns the Weles task, and that
+            // is the authoritative boundary rather than a coordinator-side API call.
+            "weles_action": match record.get("weles_task_id").and_then(Value::as_str) {
+                Some(task_id) => json!({
+                    "state": "stado_job_cancellation_is_authoritative",
+                    "weles_task_id": task_id,
+                    "diagnostic": "the inner Weles task is owned by the cancelled Stado worker; the coordinator holds no admission bearer",
+                }),
+                None => json!({"state": "no_retained_task_id"}),
             },
         });
         let _guard = RunMutationGuard::acquire(&run_id)?;
@@ -4134,191 +4795,462 @@ fn parse_run_and_record(rest: &[String], require_run: bool) -> Result<(Option<St
     Ok((run, record))
 }
 
-fn rerun_job(job_id: &str) -> Result<String> {
-    let output = super::crawl::stado_command().args(["job", "rerun", job_id, "--json"]).output()?;
-    if !output.status.success() {
-        bail!("Stado refused rerun of {job_id}: {}", String::from_utf8_lossy(&output.stderr).trim());
-    }
-    let value: Value = serde_json::from_slice(&output.stdout)?;
-    value.get("new_job_id").or_else(|| value.get("job_id")).and_then(Value::as_str).map(str::to_string)
-        .context("Stado rerun returned no new job id")
-}
-
-fn submit_retained_command(entry: &Value) -> Result<Value> {
-    let arguments = entry
-        .get("command")
-        .and_then(Value::as_array)
-        .context("failed submission retained no original command")?
-        .iter()
-        .map(|value| value.as_str().map(str::to_string).context("retained command argument is not a string"))
-        .collect::<Result<Vec<_>>>()?;
-    let output = invoke_engine(&arguments)?;
-    if output.status.success() {
-        parse_submission(&output.stdout)
-    } else {
-        Err(anyhow!(String::from_utf8_lossy(&output.stderr).trim().to_string()))
-    }
+/// Re-arm one terminal-after-acceptance record as attempt N+1.
+///
+/// A `failed`, `cancelled`, `lost`, `submission_failed` or `preflight_failed`
+/// attempt is immutable history. Resumption never reruns the old Stado job:
+/// it increments the attempt, drops the previous execution identity, and
+/// recomputes every derived identity value — input digest, catalog and record
+/// keys, attempt id, correlation id, Stado run id and both attempt URIs — so the
+/// next submission is a genuinely distinct idempotent attempt. `queued`,
+/// `running`, `submitting`, `preflight_passed`, `cancel_pending`,
+/// `pending_review`, `completed`, `uploaded` and `imported` are left untouched.
+fn rearm_record_attempt(
+    run_id: &str,
+    catalog: &str,
+    record: &str,
+) -> Result<Option<u32>> {
+    let mut rearmed = None;
+    mutate_record(run_id, catalog, record, |entry| {
+        let state = entry
+            .get("state")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string();
+        if !matches!(
+            state.as_str(),
+            "failed" | "cancelled" | "lost" | "submission_failed" | "preflight_failed"
+        ) {
+            return Ok(());
+        }
+        if entry.get("cancel_intent").is_some_and(Value::is_object) {
+            entry["diagnostic"] = json!({
+                "code": "cancel_intent_blocks_resume",
+                "message": "a durable cancel intent exists; this record will not be re-armed",
+            });
+            return Ok(());
+        }
+        let mut manifest: RuntimeManifest =
+            serde_json::from_value(entry.get("manifest").cloned().unwrap_or(Value::Null))
+                .context("terminal record retains no typed runtime manifest to re-arm")?;
+        manifest.attempt = manifest
+            .attempt
+            .checked_add(1)
+            .context("record has exhausted the attempt counter")?;
+        manifest.execution_identity = None;
+        let reference = reference_path(&manifest.catalog, &manifest.record)?;
+        let bytes = std::fs::read(&reference)
+            .with_context(|| format!("read committed record {}", reference.display()))?;
+        finalize_manifest_identity(&mut manifest, &bytes)?;
+        entry["manifest"] = serde_json::to_value(&manifest)?;
+        entry["attempt"] = json!(manifest.attempt);
+        entry["attempt_id"] = json!(manifest.attempt_id);
+        entry["artifact_uri"] = json!(manifest.artifact_uri);
+        entry["output_uri"] = json!(manifest.output_uri);
+        entry["state"] = json!("planned");
+        for cleared in [
+            "command",
+            "stado_job_id",
+            "submission_receipt",
+            "submission_transition",
+            "preflight",
+            "job",
+            "lookup_error",
+            "cancel",
+            "cancel_result",
+            "error",
+            "import",
+        ] {
+            entry[cleared] = Value::Null;
+        }
+        entry["diagnostic"] = json!({
+            "code": "attempt_rearmed",
+            "message": format!(
+                "terminal {state} attempt retained in history; attempt {} planned with fresh identity",
+                manifest.attempt
+            ),
+        });
+        rearmed = Some(manifest.attempt);
+        Ok(())
+    })?;
+    Ok(rearmed)
 }
 
 fn resume(rest: &[String]) -> Result<()> {
-    let (run_id, _) = parse_run_and_record(rest, true)?;
-    let mut run = load(run_id.as_deref())?;
-    refresh(&mut run);
-    let retained_resubmit_needed = run.get("catalogs").and_then(Value::as_array).into_iter().flatten().any(|entry| {
-        matches!(entry.get("state").and_then(Value::as_str), Some("preflight_failed" | "submission_failed" | "lost"))
-    });
-    if retained_resubmit_needed {
-        let original = run.get("source_revision").and_then(Value::as_str).context("run has no source_revision")?;
-        let current = build_revision()?;
-        if original != current {
-            bail!("run {run_id:?} belongs to Spis revision {original}; retained-command resubmission with revision {current} is refused");
-        }
+    let (run_id, selected_record) = parse_run_and_record(rest, true)?;
+    let run_id = run_id.context("--run is required")?;
+    {
+        let _guard = RunMutationGuard::acquire(&run_id)?;
+        let mut run = load(Some(&run_id))?;
+        migrate_legacy_catalog_jobs(&mut run);
+        refresh(&mut run);
+        persist(&mut run)?;
     }
-    let admission_url = run.get("admission_url").and_then(Value::as_str).unwrap_or_default().to_string();
-    let mut reimport_partial = false;
-    if let Some(entries) = run.get_mut("catalogs").and_then(Value::as_array_mut) {
-        for entry in entries {
-            let state = entry.get("state").and_then(Value::as_str).unwrap_or("submission_failed").to_string();
-            if state == "partial" {
-                reimport_partial = true;
-                continue;
-            }
-            if state == "preflight_failed" {
-                let catalog = entry.get("catalog").and_then(Value::as_str).unwrap_or_default();
-                let engine = entry.get("engine").and_then(Value::as_str).unwrap_or_default();
-                let host = entry.get("host").and_then(Value::as_str).unwrap_or_default();
-                entry["preflight"] = host_preflight(catalog, engine, host, &admission_url);
-                if entry.pointer("/preflight/ready").and_then(Value::as_bool) != Some(true) {
-                    entry["error"] = json!("host preflight still fails; no crawler job was submitted");
-                    continue;
-                }
-            } else if !matches!(state.as_str(), "submission_failed" | "lost" | "failed" | "cancelled") {
-                continue;
-            }
-            let result = if state == "lost" || entry.get("stado_job_id").and_then(Value::as_str).is_none() {
-                submit_retained_command(entry)
-            } else {
-                rerun_job(entry.get("stado_job_id").and_then(Value::as_str).unwrap())
-                    .map(|fresh| json!({"stado_job_id": fresh}))
-            };
-            match result {
-                Ok(receipt) => {
-                    entry["stado_job_id"] = receipt.get("stado_job_id").cloned().unwrap_or(Value::Null);
-                    if receipt.get("artifact_uri").is_some() { entry["artifact_uri"] = receipt["artifact_uri"].clone(); }
-                    if receipt.get("output_uri").is_some() { entry["output_uri"] = receipt["output_uri"].clone(); }
-                    entry["state"] = json!("queued");
-                    entry["error"] = Value::Null;
-                    entry["job"] = Value::Null;
-                }
-                Err(error) => entry["error"] = json!(error.to_string()),
+    let snapshot = load(Some(&run_id))?;
+    let original = snapshot
+        .get("source_revision")
+        .and_then(Value::as_str)
+        .context("run has no source_revision")?
+        .to_string();
+    let current = build_revision()?;
+    if original != current {
+        bail!(
+            "run {run_id} belongs to Spis revision {original}; resumption with revision {current} is refused"
+        );
+    }
+    let mut targets = Vec::new();
+    for catalog in snapshot
+        .get("catalogs")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        let catalog_name = catalog
+            .get("catalog")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string();
+        for record in catalog
+            .get("records")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            let record_name = record
+                .get("record")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .to_string();
+            if selected_matches(&record_name, selected_record.as_deref()) {
+                targets.push((catalog_name.clone(), record_name));
             }
         }
     }
-    if reimport_partial {
-        let id = run.get("run_id").and_then(Value::as_str).context("run has no id")?.to_string();
-        let persisted_path = run_path(&id)?;
-        let run_dir = persisted_path.parent().context("run path has no parent")?.to_path_buf();
-        import_ready(&mut run, &id, &run_dir, true)?;
+    if targets.is_empty() {
+        bail!("no crawl record matches the resume selection");
     }
-    run["updated_at"] = json!(crate::now_iso_utc());
+    for (catalog, record) in &targets {
+        match RecordMutationGuard::acquire(&run_id, catalog, record) {
+            Ok(_guard) => {
+                rearm_record_attempt(&run_id, catalog, record)?;
+            }
+            Err(error) if error.downcast_ref::<RecordLockBusy>().is_some() => continue,
+            Err(error) => return Err(error),
+        }
+    }
+    continue_start(&run_id)?;
+    let mut run = import_ready(&run_id, selected_record.as_deref())?;
+    print_operation("resume", &run, selected_record.as_deref())?;
     update_run_state(&mut run);
-    persist(&mut run)?;
-    print_operation("resume", &run, None)?;
-    if has_failures(&run) { bail!("one or more crawler jobs could not be resumed"); }
+    if has_failures(&run) {
+        bail!("one or more crawl records remain unresumable");
+    }
     Ok(())
 }
+
+fn selected_matches(record: &str, selected: Option<&str>) -> bool {
+    selected.is_none_or(|wanted| {
+        record == wanted || record.split_once('-').map(|(_, tail)| tail) == Some(wanted)
+    })
+}
+
+const MAX_WORKER_OUTPUT_BYTES: u64 = 8 * 1024 * 1024;
+const MAX_EXTRACTED_ENTRIES: usize = 20_000;
+const MAX_EXTRACTED_BYTES: u64 = 512 * 1024 * 1024;
 
 fn download_uri(uri: &str, destination: &Path) -> Result<()> {
-    if let Some(parent) = destination.parent() { std::fs::create_dir_all(parent)?; }
-    let output = super::crawl::stado_command().args(["storage", "get", uri]).arg(destination).output()?;
+    if let Some(parent) = destination.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    match std::fs::symlink_metadata(destination) {
+        Ok(_) => std::fs::remove_file(destination)
+            .with_context(|| format!("clear stale download {}", destination.display()))?,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
+    }
+    let mut command = stado_command();
+    command.args(["storage", "get", uri]).arg(destination);
+    let output = bounded_command_output(
+        &mut command,
+        "download retained crawl object",
+        Duration::from_secs(600),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
-        bail!("download {uri}: {}", String::from_utf8_lossy(&output.stderr).trim());
+        bail!(
+            "download {uri}: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
     }
     Ok(())
 }
 
-fn unpack(archive: &Path, destination: &Path) -> Result<()> {
+/// Extract one crawl attempt archive into an empty staging directory.
+///
+/// Only ordinary files and directories are accepted. Absolute paths, `..`
+/// components, symlinks, hard links, devices, duplicate members and archives
+/// beyond the entry/byte bounds are refused, and every member is created with
+/// `create_new` so a pre-existing path can never be followed or overwritten.
+fn extract_attempt_archive(archive: &Path, destination: &Path) -> Result<Vec<String>> {
+    if destination.exists() {
+        std::fs::remove_dir_all(destination)?;
+    }
     std::fs::create_dir_all(destination)?;
-    let decoder = GzDecoder::new(File::open(archive)?);
-    let mut archive = tar::Archive::new(decoder);
-    for member in archive.entries()? {
+    let mut tar = tar::Archive::new(GzDecoder::new(File::open(archive)?));
+    let mut entries = 0_usize;
+    let mut total = 0_u64;
+    let mut extracted = Vec::new();
+    for member in tar.entries()? {
         let mut member = member?;
+        let kind = member.header().entry_type();
         let relative = member.path()?.into_owned();
-        if relative.is_absolute() || relative.components().any(|component| matches!(component, std::path::Component::ParentDir)) {
-            bail!("crawl archive contains an unsafe path");
+        if relative
+            .components()
+            .any(|component| !matches!(component, std::path::Component::Normal(_)))
+        {
+            bail!(
+                "crawl attempt archive contains the unsafe path {}",
+                relative.display()
+            );
         }
-        member.unpack_in(destination)?;
+        let target = destination.join(&relative);
+        if kind.is_dir() {
+            std::fs::create_dir_all(&target)?;
+            continue;
+        }
+        if !kind.is_file() {
+            bail!(
+                "crawl attempt archive member {} is not a regular file",
+                relative.display()
+            );
+        }
+        entries += 1;
+        if entries > MAX_EXTRACTED_ENTRIES {
+            bail!("crawl attempt archive exceeds the {MAX_EXTRACTED_ENTRIES}-entry bound");
+        }
+        let size = member.header().size()?;
+        total = total
+            .checked_add(size)
+            .filter(|value| *value <= MAX_EXTRACTED_BYTES)
+            .context("crawl attempt archive exceeds the extracted byte bound")?;
+        if let Some(parent) = target.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&target)
+            .with_context(|| format!("extract crawl member {}", relative.display()))?;
+        let written = std::io::copy(&mut member.by_ref().take(size), &mut file)?;
+        if written != size {
+            bail!(
+                "crawl attempt archive member {} is truncated",
+                relative.display()
+            );
+        }
+        file.sync_all()?;
+        extracted.push(
+            relative
+                .to_str()
+                .context("crawl attempt archive member name is not UTF-8")?
+                .to_string(),
+        );
+    }
+    extracted.sort();
+    Ok(extracted)
+}
+
+fn fsync_tree(root: &Path) -> Result<()> {
+    let mut directories = vec![root.to_path_buf()];
+    let mut index = 0;
+    while index < directories.len() {
+        let directory = directories[index].clone();
+        index += 1;
+        for entry in std::fs::read_dir(&directory)? {
+            let entry = entry?;
+            let path = entry.path();
+            let metadata = std::fs::symlink_metadata(&path)?;
+            if metadata.is_dir() {
+                directories.push(path);
+            } else if metadata.is_file() {
+                File::open(&path)?.sync_all()?;
+            }
+        }
+    }
+    for directory in directories.iter().rev() {
+        File::open(directory)?.sync_all()?;
     }
     Ok(())
 }
 
-fn collect_named(root: &Path, name: &str, out: &mut Vec<PathBuf>) -> Result<()> {
-    for entry in std::fs::read_dir(root)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.is_dir() { collect_named(&path, name, out)?; }
-        else if path.file_name().and_then(|value| value.to_str()) == Some(name) { out.push(path); }
+/// Atomically install a fully staged, fsynced tree over `destination`.
+///
+/// The staged tree is durable before the rename, the previous tree is moved
+/// aside rather than deleted in place, and the parent directory is fsynced, so a
+/// crash always leaves either the complete previous tree or the complete new
+/// one — never a half-copied record.
+fn install_staged_tree(staged: &Path, destination: &Path) -> Result<()> {
+    let parent = destination
+        .parent()
+        .context("import destination has no parent")?;
+    let name = destination
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("import destination has no UTF-8 name")?;
+    std::fs::create_dir_all(parent)?;
+    fsync_tree(staged)?;
+    let superseded = parent.join(format!(".{name}.superseded"));
+    if superseded.exists() {
+        std::fs::remove_dir_all(&superseded)?;
+    }
+    if destination.exists() {
+        std::fs::rename(destination, &superseded)?;
+    }
+    std::fs::rename(staged, destination)?;
+    File::open(parent)?.sync_all()?;
+    if superseded.exists() {
+        std::fs::remove_dir_all(&superseded)?;
     }
     Ok(())
 }
 
-fn copy_tree(source: &Path, destination: &Path) -> Result<()> {
-    std::fs::create_dir_all(destination)?;
-    for entry in std::fs::read_dir(source)? {
-        let entry = entry?;
-        let from = entry.path();
-        let to = destination.join(entry.file_name());
-        if from.is_dir() { copy_tree(&from, &to)?; } else { std::fs::copy(from, to)?; }
+fn worker_report_schema(engine: &str) -> &'static str {
+    match engine {
+        "web" => "wisent.web-worker-report.v1",
+        "docs" => "wisent.docs-worker-report.v1",
+        _ => "wisent.native-worker-report.v1",
     }
-    Ok(())
 }
 
-fn find_record_dir(catalog: &str, slug: &str) -> Option<PathBuf> {
-    let root = catalog_root(catalog).ok()?.join("references");
-    let entries = std::fs::read_dir(root).ok()?;
-    for entry in entries.flatten() {
-        let name = entry.file_name().to_string_lossy().to_string();
-        let tail = name.split_once('-').map(|(_, value)| value).unwrap_or(&name);
-        if name == slug || tail == slug { return Some(entry.path()); }
+/// Read the exact typed worker report out of one attempt's retained output log.
+///
+/// The importer accepts only the engine's declared report schema on its own
+/// line. There is no `command_output.log` fallback and no heuristic scan, so a
+/// worker that failed to print its typed report is an import failure rather than
+/// an invitation to guess.
+fn retained_worker_report(engine: &str, output_log: &Path) -> Result<Value> {
+    let metadata = std::fs::symlink_metadata(output_log)
+        .with_context(|| format!("read retained worker output {}", output_log.display()))?;
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        bail!(
+            "retained worker output {} is not a regular file",
+            output_log.display()
+        );
     }
-    None
+    if metadata.len() > MAX_WORKER_OUTPUT_BYTES {
+        bail!(
+            "retained worker output {} exceeds the {MAX_WORKER_OUTPUT_BYTES}-byte bound",
+            output_log.display()
+        );
+    }
+    let bytes = std::fs::read(output_log)?;
+    let text = String::from_utf8_lossy(&bytes);
+    let schema = worker_report_schema(engine);
+    text.lines()
+        .rev()
+        .filter_map(|line| serde_json::from_str::<Value>(line.trim()).ok())
+        .find(|value| value.get("schema").and_then(Value::as_str) == Some(schema))
+        .with_context(|| format!("retained worker output carries no {schema} report"))
 }
 
-fn record_slug(report: &Value, crawl_path: &Path) -> Option<String> {
-    report.get("record").or_else(|| report.get("slug")).and_then(Value::as_str).map(str::to_string)
-        .or_else(|| crawl_path.parent()?.file_name()?.to_str().map(str::to_string))
-}
-
-fn artifact_record(report: &Value, relative: &str, run_id: &str, job_id: Option<&str>, artifact_uri: Option<&str>) -> Value {
-    let persisted_run: Option<Value> = run_path(run_id)
-        .ok()
-        .and_then(|path| path.to_str().and_then(|value| crate::read_json(value).ok()));
-    let source_revision = persisted_run.and_then(|run| run.get("source_revision").cloned()).unwrap_or(Value::Null);
-    let job = report.get("job").unwrap_or(report);
-    json!({
-        "schema": "wisent.crawl-import.v1",
-        "run_id": run_id,
-        "source_revision": source_revision,
-        "stado_job_id": job_id,
-        "artifact_uri": artifact_uri,
-        "raw_report": relative,
-        "engine_schema": report.get("schema").or_else(|| job.get("schema")).cloned().unwrap_or(Value::Null),
-        "action": report.get("action").or_else(|| job.get("action")).cloned().unwrap_or(Value::Null),
-        "idempotency_key": report.get("idempotency_key").or_else(|| job.get("idempotency_key")).cloned().unwrap_or(Value::Null),
-        "receipt_evidence_digest": job.pointer("/receipt/evidence_digest").cloned().unwrap_or(Value::Null),
-        "imported_at": crate::now_iso_utc(),
-        "states_seen": report.get("states_seen").or_else(|| report.get("commands_crawled")).cloned().unwrap_or(json!(0)),
-        "status": report.get("status").cloned().unwrap_or_else(|| json!("completed")),
-        "error": report.get("error").cloned().unwrap_or(Value::Null),
-    })
+/// Prove the worker report describes exactly this attempt.
+///
+/// Every identity field must equal the immutable manifest, the artifact URI must
+/// be the canonical attempt coordinate, and the retained Stado submission
+/// receipt must bind the same job and source revision.
+fn verify_worker_report(
+    report: &Value,
+    manifest: &RuntimeManifest,
+    entry: &Value,
+    receipt: &Value,
+) -> Result<Value> {
+    let expected_strings = [
+        ("run_id", manifest.run_id.as_str()),
+        ("catalog", manifest.catalog.as_str()),
+        ("record", manifest.record.as_str()),
+        ("record_key", manifest.record_key.as_str()),
+        ("attempt_id", manifest.attempt_id.as_str()),
+        ("engine", manifest.engine.as_str()),
+        ("source_revision", manifest.source_revision.as_str()),
+        ("source_input_sha256", manifest.source_input_sha256.as_str()),
+        ("reference_sha256", manifest.reference_sha256.as_str()),
+        (
+            "bindings_file_sha256",
+            manifest.bindings_file_sha256.as_str(),
+        ),
+        ("bindings_sha256", manifest.bindings_sha256.as_str()),
+    ];
+    for (field, expected) in expected_strings {
+        let observed = report.get(field).and_then(Value::as_str);
+        if observed != Some(expected) {
+            bail!(
+                "worker report {field} is {observed:?} but the immutable attempt declares {expected:?}"
+            );
+        }
+    }
+    if report.get("attempt").and_then(Value::as_u64) != Some(u64::from(manifest.attempt)) {
+        bail!("worker report attempt differs from the immutable attempt");
+    }
+    if report.get("state").and_then(Value::as_str) != Some("artifact_published") {
+        bail!(
+            "worker report state is {:?}; only a published attempt artifact can be imported",
+            report.get("state")
+        );
+    }
+    let artifact = report
+        .get("artifact")
+        .filter(|value| value.is_object())
+        .cloned()
+        .context("worker report has no typed published artifact")?;
+    if artifact.get("uri").and_then(Value::as_str) != Some(manifest.artifact_uri.as_str()) {
+        bail!("worker report artifact URI is not the canonical attempt coordinate");
+    }
+    let sha256 = artifact
+        .get("sha256")
+        .and_then(Value::as_str)
+        .filter(|value| is_lower_sha256(value))
+        .context("worker report artifact has no lowercase SHA-256 digest")?;
+    let bytes = artifact
+        .get("bytes")
+        .and_then(Value::as_u64)
+        .filter(|value| *value > 0)
+        .context("worker report artifact has no positive byte count")?;
+    let job_id = entry
+        .get("stado_job_id")
+        .and_then(Value::as_str)
+        .context("imported record retains no Stado job id")?;
+    if receipt.get("stado_job_id").and_then(Value::as_str) != Some(job_id) {
+        bail!("retained submission receipt names a different Stado job");
+    }
+    if receipt
+        .pointer("/stado_receipt/source_revision")
+        .and_then(Value::as_str)
+        != Some(manifest.source_revision.as_str())
+    {
+        bail!("retained submission receipt does not bind the attempt source revision");
+    }
+    if receipt
+        .pointer("/stado_receipt/jobs/0/output_uri")
+        .and_then(Value::as_str)
+        != Some(manifest.output_uri.as_str())
+    {
+        bail!("retained submission receipt output URI is not the canonical attempt coordinate");
+    }
+    Ok(json!({"sha256": sha256, "bytes": bytes, "artifact": artifact}))
 }
 
 fn files_under(root: &Path) -> Vec<PathBuf> {
     fn walk(root: &Path, out: &mut Vec<PathBuf>) {
-        let Ok(entries) = std::fs::read_dir(root) else { return; };
+        let Ok(entries) = std::fs::read_dir(root) else {
+            return;
+        };
         for entry in entries.flatten() {
             let path = entry.path();
-            if path.is_dir() { walk(&path, out); } else { out.push(path); }
+            if path.is_dir() {
+                walk(&path, out);
+            } else {
+                out.push(path);
+            }
         }
     }
     let mut files = Vec::new();
@@ -4335,102 +5267,108 @@ fn media_kind(path: &Path) -> Option<&'static str> {
     }
 }
 
+fn declared_motion_kind(path: &Path) -> &'static str {
+    match path
+        .extension()
+        .and_then(|value| value.to_str())
+        .map(str::to_ascii_lowercase)
+        .as_deref()
+    {
+        Some("mp4") => "video-mp4",
+        Some("webm") => "video-webm",
+        Some("gif") => "animated-gif",
+        Some("webp") => "animated-webp",
+        Some("cast") => "terminal-cast",
+        _ => "unknown",
+    }
+}
+
 fn capture_method(engine: &str) -> &'static str {
     match engine {
         "mobile" => "Local product run through Appium with XCUITest or UiAutomator2; screen recording and accessibility source retained",
         "desktop" => "Local product run through Cua Driver; snapshot-bound actions, screenshots, action recording and accessibility tree retained",
-        "web" => "Local browser recording through Weles on a Stado-selected host; browser history, screenshots, recordings and signed result retained",
+        "web" => "Real browser session executed by Weles on a Stado-pinned host; signed receipt, evidence manifest, screenshot and accessibility tree retained",
         "tui" => "Local product run in an isolated tmux pseudo-terminal; raw terminal bytes and distinct screens retained",
         "cli" => "Local product run of the real executable in an isolated tmux pseudo-terminal; stdout/stderr, argv and exit status retained",
+        "docs" => "Rate-limited full-text documentation crawl; per-site gzipped JSONL corpus retained",
         _ => "Unclassified Spis crawl",
     }
 }
 
-fn copy_evidence_media(
+/// Retained media descriptors for one attempt, addressed relative to the record.
+fn attempt_media(
     engine: &str,
-    raw_source: &Path,
-    raw_destination: &Path,
+    attempt_dir: &Path,
     record_dir: &Path,
-    run_id: &str,
     source_url: &str,
 ) -> Result<(Vec<Value>, Vec<Value>)> {
-    let media_root = record_dir.join("media").join(run_id);
-    if media_root.exists() { std::fs::remove_dir_all(&media_root)?; }
-    std::fs::create_dir_all(&media_root)?;
     let mut motion = Vec::new();
     let mut states = Vec::new();
-    let fallback_motion = files_under(raw_source).into_iter()
-        .find(|candidate| media_kind(candidate) == Some("motion"))
-        .and_then(|candidate| candidate.strip_prefix(raw_source).ok().map(Path::to_path_buf))
-        .map(|relative| format!("media/{run_id}/{}", relative.to_string_lossy()));
-    for source in files_under(raw_source) {
-        let Some(kind) = media_kind(&source) else { continue; };
-        let relative = source.strip_prefix(raw_source).unwrap_or(&source);
-        let destination = media_root.join(relative);
-        if let Some(parent) = destination.parent() { std::fs::create_dir_all(parent)?; }
-        std::fs::copy(&source, &destination)?;
-        let local_path = destination.strip_prefix(record_dir).unwrap_or(&destination).to_string_lossy().to_string();
+    let files = files_under(attempt_dir);
+    let first_motion = files
+        .iter()
+        .find(|path| media_kind(path) == Some("motion"))
+        .and_then(|path| path.strip_prefix(record_dir).ok())
+        .map(|relative| relative.to_string_lossy().to_string());
+    for path in &files {
+        let Some(kind) = media_kind(path) else {
+            continue;
+        };
+        let relative = path
+            .strip_prefix(record_dir)
+            .context("retained media escaped the record directory")?
+            .to_string_lossy()
+            .to_string();
+        let bytes = std::fs::read(path)?;
         if kind == "motion" {
-            let declared = destination.extension().and_then(|value| value.to_str()).map(|ext| match ext.to_ascii_lowercase().as_str() {
-                "mp4" => "video-mp4",
-                "webm" => "video-webm",
-                "gif" => "animated-gif",
-                "webp" => "animated-webp",
-                "cast" => "terminal-cast",
-                _ => "unknown",
-            });
             motion.push(json!({
-                "local_path": local_path,
+                "local_path": relative,
+                "sha256": crate::sha256_hex(&bytes),
+                "bytes": bytes.len(),
                 "source_url": source_url,
-                "media_kind": declared,
+                "media_kind": declared_motion_kind(path),
                 "capture_method": capture_method(engine),
-                "crawl_evidence_path": raw_destination.strip_prefix(record_dir).unwrap_or(raw_destination).to_string_lossy(),
             }));
         } else {
-            let sibling_motion = files_under(source.parent().unwrap_or(raw_source))
-                .into_iter()
-                .find(|candidate| media_kind(candidate) == Some("motion"))
-                .and_then(|candidate| candidate.strip_prefix(raw_source).ok().map(Path::to_path_buf))
-                .map(|relative| format!("media/{run_id}/{}", relative.to_string_lossy()))
-                .or_else(|| fallback_motion.clone());
             states.push(json!({
-                "name": format!("Observed {}", relative.to_string_lossy()),
-                "local_path": local_path,
-                "source_motion_path": sibling_motion,
+                "name": format!("Observed {relative}"),
+                "local_path": relative,
+                "sha256": crate::sha256_hex(&bytes),
+                "bytes": bytes.len(),
+                "source_motion_path": first_motion,
             }));
         }
     }
     Ok((motion, states))
 }
 
-
-fn evidence_interactions(report: &Value) -> Vec<Value> {
-    report.pointer("/evidence_observations/canonical_interactions")
-        .and_then(Value::as_array).cloned().unwrap_or_default()
-}
-
-fn report_accessibility(report: &Value) -> Option<Value> {
-    report.pointer("/evidence_observations/canonical_accessibility")
-        .filter(|value| value.is_object())
-        .filter(|value| value.get("measured").and_then(Value::as_bool).is_some())
-        .filter(|value| value.get("observations").and_then(Value::as_array).is_some())
-        .filter(|value| value.get("unknowns").and_then(Value::as_array).is_some())
-        .cloned()
-}
-
-fn accessibility_evidence(raw_source: &Path, run_id: &str, report: &Value) -> Value {
-    if let Some(measurement) = report_accessibility(report) {
-        return measurement;
-    }
-    let files = files_under(raw_source);
-    let trees: Vec<&PathBuf> = files.iter().filter(|path| {
-        matches!(path.extension().and_then(|value| value.to_str()), Some("xml" | "html"))
-            || matches!(path.file_name().and_then(|value| value.to_str()), Some("snapshot.json" | "source.json" | "axe.json"))
-    }).collect();
-    let bytes: u64 = trees.iter().filter_map(|path| std::fs::metadata(path).ok().map(|metadata| metadata.len())).sum();
+fn accessibility_gap(engine: &str, attempt_dir: &Path) -> Value {
+    let trees: Vec<PathBuf> = files_under(attempt_dir)
+        .into_iter()
+        .filter(|path| {
+            matches!(
+                path.extension().and_then(|value| value.to_str()),
+                Some("xml" | "html" | "txt")
+            ) || matches!(
+                path.file_name().and_then(|value| value.to_str()),
+                Some("snapshot.json" | "source.json" | "axe.json")
+            )
+        })
+        .collect();
+    let bytes: u64 = trees
+        .iter()
+        .filter_map(|path| std::fs::metadata(path).ok().map(|value| value.len()))
+        .sum();
     json!({
         "measured": false,
-        "observations": if trees.is_empty() { vec![] } else { vec![format!("Retained {} accessibility/DOM source files totalling {bytes} bytes under crawl/{run_id}.", trees.len())] },
+        "observations": if trees.is_empty() {
+            Vec::new()
+        } else {
+            vec![format!(
+                "Retained {} accessibility or DOM source files totalling {bytes} bytes from the {engine} attempt.",
+                trees.len()
+            )]
+        },
         "unknowns": [
             "No engine-supplied canonical accessibility measurement was retained.",
             "Screen-reader traversal, focus order, live regions and reduced-motion preference remain unmeasured.",
@@ -4438,352 +5376,331 @@ fn accessibility_evidence(raw_source: &Path, run_id: &str, report: &Value) -> Va
     })
 }
 
-fn journey_evidence(report: &Value) -> Value {
-    report.pointer("/evidence_observations/canonical_journey")
-        .cloned().unwrap_or(Value::Null)
+/// One durable `crawl_runs` entry, keyed by the immutable attempt id.
+fn crawl_run_entry(
+    manifest: &RuntimeManifest,
+    entry: &Value,
+    report: &Value,
+    artifact: &Value,
+    relative_report: &str,
+) -> Value {
+    let mut run = json!({
+        "schema": "wisent.crawl-import.v2",
+        "run_id": manifest.run_id,
+        "catalog": manifest.catalog,
+        "record": manifest.record,
+        "record_key": manifest.record_key,
+        "attempt": manifest.attempt,
+        "attempt_id": manifest.attempt_id,
+        "engine": manifest.engine,
+        "state": "completed",
+        "outcome": "completed",
+        "source_revision": manifest.source_revision,
+        "source_input_sha256": manifest.source_input_sha256,
+        "reference_sha256": manifest.reference_sha256,
+        "bindings_file_sha256": manifest.bindings_file_sha256,
+        "bindings_sha256": manifest.bindings_sha256,
+        "stado_job_id": entry.get("stado_job_id").cloned().unwrap_or(Value::Null),
+        "stado_run_id": manifest.stado_run_id,
+        "artifact_uri": manifest.artifact_uri,
+        "artifact_sha256": artifact.get("sha256").cloned().unwrap_or(Value::Null),
+        "artifact_bytes": artifact.get("bytes").cloned().unwrap_or(Value::Null),
+        "output_uri": manifest.output_uri,
+        "worker_report": relative_report,
+        "capture_method": capture_method(&manifest.engine),
+        "imported_at": crate::now_iso_utc(),
+    });
+    if let Some(execution) = report.get("execution_identity") {
+        run["execution_identity"] = execution.clone();
+    }
+    run
 }
 
-fn motion_analysis(report: &Value) -> Value {
-    report.pointer("/evidence_observations/canonical_motion_analysis")
-        .cloned().unwrap_or(Value::Null)
-}
-
-fn adapt_canonical_record(engine: &str, run_id: &str, raw_source: &Path, raw_destination: &Path, record_dir: &Path, report: &Value, record: &mut Value) -> Result<()> {
-    let source_url = record.get("product_url").and_then(Value::as_str)
-        .context("reference record has no product_url")?.to_string();
-    let (motion, states) = copy_evidence_media(engine, raw_source, raw_destination, record_dir, run_id, &source_url)?;
-    let interactions = evidence_interactions(report);
-    let journey = journey_evidence(report);
-    let accessibility = accessibility_evidence(raw_source, run_id, report);
-    let analysis = motion_analysis(report);
-    let object = record.as_object_mut().context("reference record is not an object")?;
-    object.insert("captured_at".into(), json!(crate::now_iso_utc()));
-    object.insert("motion".into(), Value::Array(motion));
-    object.insert("states".into(), Value::Array(states));
-    object.insert("interactions".into(), Value::Array(interactions));
-    object.insert("journey".into(), journey);
-    object.insert("motion_analysis".into(), analysis);
-    object.insert("accessibility".into(), accessibility);
-    object.insert("evidence_status".into(), json!("partial"));
-    object.insert("evidence_gaps".into(), json!(["crawl evidence has not yet passed verify-reference-evidence"]));
+/// Copy the typed Weles attempt facts into the crawl-run entry and the record.
+///
+/// `verify_attempt_binding` in the receipt verifier compares every one of these
+/// outer fields with the inner `weles_attempt_envelope`, so they are written from
+/// the envelope itself rather than restated.
+fn apply_web_attempt(
+    record: &mut Value,
+    run: &mut Value,
+    report: &Value,
+    attempt_dir: &Path,
+    record_dir: &Path,
+) -> Result<()> {
+    let envelope = report
+        .get("weles_attempt_envelope")
+        .filter(|value| value.is_object())
+        .context("web worker report has no typed Weles attempt envelope")?;
+    let envelope: crate::weles_provenance::WelesAttemptEnvelope =
+        serde_json::from_value(envelope.clone())
+            .context("web worker report envelope does not match the typed schema")?;
+    let manifest_sha256 = envelope
+        .weles_evidence_manifest_sha256
+        .clone()
+        .context("web attempt envelope has no evidence manifest digest")?;
+    let artifact_sha256 = envelope
+        .artifact_document_sha256
+        .clone()
+        .context("web attempt envelope has no artifact document digest")?;
+    run["weles_task_id"] = json!(envelope.weles_task_id);
+    run["weles_request_digest"] = json!(envelope.weles_request_digest);
+    run["weles_result_digest"] = json!(envelope.weles_result_digest);
+    run["weles_evidence_manifest_uri"] = json!(envelope.weles_evidence_manifest_uri);
+    run["weles_evidence_manifest_sha256"] = json!(manifest_sha256);
+    run["artifact_document_uri"] = json!(envelope.artifact_document_uri);
+    run["artifact_document_sha256"] = json!(artifact_sha256);
+    run["observation_document_uri"] = json!(envelope.observation_document_uri);
+    run["observation_document_sha256"] = json!(envelope.observation_document_sha256);
+    run["requested_url"] = json!(envelope.requested_url);
+    run["final_url"] = json!(envelope.final_url);
+    run["state"] = json!(envelope.state);
+    run["outcome"] = json!(envelope.outcome);
+    run["weles_attempt_envelope"] = serde_json::to_value(&envelope)?;
+    let provenance = report
+        .get("provenance_document")
+        .filter(|value| value.is_object())
+        .context("web worker report has no official provenance document")?;
+    let provenance: crate::weles_provenance::WelesProvenanceDocument =
+        serde_json::from_value(provenance.clone())
+            .context("web provenance document does not match the typed schema")?;
+    let provenance_relative = format!("weles/provenance/{}.json", provenance.id);
+    let provenance_path = record_dir.join(&provenance_relative);
+    let provenance_bytes = serde_json::to_vec_pretty(&provenance)?;
+    if let Some(parent) = provenance_path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    std::fs::write(&provenance_path, &provenance_bytes)?;
+    let reference = crate::weles_provenance::WelesProvenanceDocumentRef {
+        schema: crate::weles_provenance::PROVENANCE_DOCUMENT_REF_SCHEMA.to_string(),
+        path: provenance_relative,
+        sha256: crate::sha256_hex(&provenance_bytes),
+    };
+    let references = record
+        .as_object_mut()
+        .context("reference record is not an object")?
+        .entry("provenance_documents")
+        .or_insert_with(|| json!([]))
+        .as_array_mut()
+        .context("provenance_documents is not a list")?;
+    let reference = serde_json::to_value(&reference)?;
+    if let Some(existing) = references.iter_mut().find(|value| {
+        value.get("path").and_then(Value::as_str) == reference.get("path").and_then(Value::as_str)
+    }) {
+        *existing = reference;
+    } else {
+        references.push(reference);
+    }
+    let inventory: Vec<Value> = envelope
+        .evidence_inventory
+        .iter()
+        .map(|item| {
+            let tail = item
+                .uri
+                .strip_prefix(&format!(
+                    "stado://weles/recordings/{}/",
+                    envelope.weles_task_id
+                ))
+                .context("evidence inventory URI is not bound to the attempt task")?;
+            let relative = format!("recordings/{}/{tail}", envelope.weles_task_id);
+            let retained = record_dir.join(&relative);
+            let bytes = std::fs::read(&retained).with_context(|| {
+                format!("read retained Weles evidence {}", retained.display())
+            })?;
+            if bytes.len() as u64 != item.bytes || crate::sha256_hex(&bytes) != item.sha256 {
+                bail!("retained Weles evidence {relative} differs from the signed inventory");
+            }
+            Ok(json!({
+                "kind": item.kind,
+                "uri": item.uri,
+                "local_path": relative,
+                "sha256": item.sha256,
+                "bytes": item.bytes,
+            }))
+        })
+        .collect::<Result<_>>()?;
+    run["evidence_inventory"] = Value::Array(inventory.clone());
+    let object = record
+        .as_object_mut()
+        .context("reference record is not an object")?;
+    object.insert("weles_evidence_inventory".into(), Value::Array(inventory));
+    let _ = attempt_dir;
     Ok(())
 }
 
-fn merge_report(catalog: &str, engine: &str, run_id: &str, job_id: Option<&str>, artifact_uri: Option<&str>, crawl_path: &Path, report: &Value) -> Result<Value> {
-    let slug = record_slug(report, crawl_path).context("crawl report has no record slug")?;
-    let record_dir = find_record_dir(catalog, &slug).ok_or_else(|| anyhow!("{catalog}: no record matches {slug}"))?;
-    let raw_source = crawl_path.parent().context("crawl report has no parent")?;
-    let raw_destination = record_dir.join("crawl").join(run_id);
-    if raw_destination.exists() { std::fs::remove_dir_all(&raw_destination)?; }
-    copy_tree(raw_source, &raw_destination)?;
+/// Import exactly one accepted attempt of one record.
+///
+/// The whole record transaction is staged and fsynced before any rename, so an
+/// interrupted import leaves the previous attempt content intact and can be
+/// retried; the previous attempts and their diagnostics are preserved because
+/// each attempt owns its own `crawl/{attempt_id}` subtree and its own
+/// `crawl_runs` entry keyed by `attempt_id`.
+fn import_record_attempt(
+    run_id: &str,
+    catalog: &str,
+    engine: &str,
+    entry: &Value,
+    run_dir: &Path,
+) -> Result<Value> {
+    let manifest: RuntimeManifest =
+        serde_json::from_value(entry.get("manifest").cloned().unwrap_or(Value::Null))
+            .context("accepted record retains no typed runtime manifest")?;
+    if manifest.engine != engine || manifest.catalog != catalog || manifest.run_id != run_id {
+        bail!("retained runtime manifest does not belong to this run, catalog and engine");
+    }
+    let receipt = load_submission_receipt(run_id, catalog, &manifest.record, &manifest.attempt_id)?
+        .context("accepted record has no immutable submission receipt")?;
+    let staging = run_dir
+        .join("imports")
+        .join(catalog)
+        .join(&manifest.record)
+        .join(&manifest.attempt_id);
+    if staging.exists() {
+        std::fs::remove_dir_all(&staging)?;
+    }
+    std::fs::create_dir_all(&staging)?;
+    let output_log = staging.join("worker-output.log");
+    download_uri(&manifest.output_uri, &output_log)?;
+    let report = retained_worker_report(engine, &output_log)?;
+    let proof = verify_worker_report(&report, &manifest, entry, &receipt)?;
+    let archive = staging.join("artifacts.tar.gz");
+    download_uri(&manifest.artifact_uri, &archive)?;
+    let expected_sha256 = proof
+        .get("sha256")
+        .and_then(Value::as_str)
+        .expect("verified artifact digest");
+    let expected_bytes = proof
+        .get("bytes")
+        .and_then(Value::as_u64)
+        .expect("verified artifact byte count");
+    let (observed_sha256, observed_bytes) =
+        hash_regular_file(&archive, MAX_ATTEMPT_ARCHIVE_BYTES)?;
+    if observed_sha256 != expected_sha256 || observed_bytes != expected_bytes {
+        bail!(
+            "retained attempt artifact differs from the worker report: expected sha256={expected_sha256} bytes={expected_bytes}, observed sha256={observed_sha256} bytes={observed_bytes}"
+        );
+    }
+    let extracted_root = staging.join("extracted");
+    let members = extract_attempt_archive(&archive, &extracted_root)?;
+    let record_dir = reference_path(catalog, &manifest.record)?
+        .parent()
+        .context("record reference has no directory")?
+        .to_path_buf();
+    let attempt_relative = format!("crawl/{}", manifest.attempt_id);
+    let attempt_destination = record_dir.join(&attempt_relative);
+    let attempt_staged = record_dir
+        .join("crawl")
+        .join(format!(".{}.staging", manifest.attempt_id));
+    if attempt_staged.exists() {
+        std::fs::remove_dir_all(&attempt_staged)?;
+    }
+    std::fs::create_dir_all(attempt_staged.parent().expect("crawl parent"))?;
+    std::fs::rename(&extracted_root, &attempt_staged)?;
+    atomic_json_write(&attempt_staged.join("worker-report.json"), &report)?;
+    install_staged_tree(&attempt_staged, &attempt_destination)?;
     let record_path = record_dir.join("reference.json");
-    let mut record: Value = crate::read_json(record_path.to_str().context("record path is not UTF-8")?)?;
-    adapt_canonical_record(engine, run_id, raw_source, &raw_destination, &record_dir, report, &mut record)?;
-    let relative_report = format!("crawl/{run_id}/{}", crawl_path.file_name().and_then(|value| value.to_str()).unwrap_or("crawl.json"));
-    let imported = artifact_record(report, &relative_report, run_id, job_id, artifact_uri);
-    let runs = record.as_object_mut().context("reference record is not an object")?.entry("crawl_runs").or_insert_with(|| json!([])).as_array_mut().context("crawl_runs is not a list")?;
-    if let Some(existing) = runs.iter_mut().find(|value| value.get("run_id").and_then(Value::as_str) == Some(run_id)) { *existing = imported; } else { runs.push(imported); }
+    let mut record: Value =
+        crate::read_json(record_path.to_str().context("record path is not UTF-8")?)?;
+    let source_url = record
+        .get("product_url")
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        .to_string();
+    let relative_report = format!("{attempt_relative}/worker-report.json");
+    let mut run = crawl_run_entry(&manifest, entry, &report, &proof, &relative_report);
+    run["retained_members"] = json!(members.len());
+    if engine == "web" {
+        let recordings = attempt_destination.join("recordings");
+        if recordings.is_dir() {
+            let staged = record_dir.join(".recordings.staging");
+            if staged.exists() {
+                std::fs::remove_dir_all(&staged)?;
+            }
+            copy_regular_tree(&recordings, &staged)?;
+            install_staged_tree(&staged, &record_dir.join("recordings"))?;
+        }
+        apply_web_attempt(&mut record, &mut run, &report, &attempt_destination, &record_dir)?;
+    }
+    let (motion, states) = attempt_media(engine, &attempt_destination, &record_dir, &source_url)?;
+    let accessibility = accessibility_gap(engine, &attempt_destination);
+    let object = record
+        .as_object_mut()
+        .context("reference record is not an object")?;
+    object.insert("captured_at".into(), json!(crate::now_iso_utc()));
+    object.insert("motion".into(), Value::Array(motion.clone()));
+    object.insert("states".into(), Value::Array(states.clone()));
+    object.insert("accessibility".into(), accessibility);
+    object.insert("evidence_status".into(), json!("partial"));
+    object.insert(
+        "evidence_gaps".into(),
+        json!(["crawl evidence has not yet passed verify-reference-evidence"]),
+    );
+    let runs = object
+        .entry("crawl_runs")
+        .or_insert_with(|| json!([]))
+        .as_array_mut()
+        .context("crawl_runs is not a list")?;
+    if let Some(existing) = runs.iter_mut().find(|value| {
+        value.get("attempt_id").and_then(Value::as_str) == Some(manifest.attempt_id.as_str())
+    }) {
+        *existing = run.clone();
+    } else {
+        runs.push(run.clone());
+    }
+    runs.sort_by(|left, right| {
+        left.get("attempt")
+            .and_then(Value::as_u64)
+            .cmp(&right.get("attempt").and_then(Value::as_u64))
+    });
     atomic_json_write(&record_path, &record)?;
-    let gaps = record.get("evidence_gaps").and_then(Value::as_array).cloned().unwrap_or_default();
+    let _ = std::fs::remove_dir_all(&staging);
     Ok(json!({
-        "record": record_dir.file_name().and_then(|value| value.to_str()).unwrap_or(&slug),
-        "state": if report.get("status").and_then(Value::as_str) == Some("failed") { "failed" } else { "imported" },
-        "states": record.get("states").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
-        "interactions": record.get("interactions").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
-        "media": count_media(raw_source),
-        "gaps": gaps,
-        "error": report.get("error").cloned().unwrap_or(Value::Null),
+        "state": "imported",
+        "attempt": manifest.attempt,
+        "attempt_id": manifest.attempt_id,
+        "artifact_uri": manifest.artifact_uri,
+        "artifact_sha256": expected_sha256,
+        "artifact_bytes": expected_bytes,
+        "retained_members": members.len(),
+        "states": states.len(),
+        "motion": motion.len(),
+        "worker_report": relative_report,
+        "weles_task_id": run.get("weles_task_id").cloned().unwrap_or(Value::Null),
+        "imported_at": crate::now_iso_utc(),
     }))
 }
 
-fn count_media(root: &Path) -> usize {
-    fn walk(path: &Path, count: &mut usize) {
-        let Ok(entries) = std::fs::read_dir(path) else { return; };
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.is_dir() { walk(&path, count); }
-            else if matches!(path.extension().and_then(|value| value.to_str()).map(str::to_ascii_lowercase).as_deref(), Some("png" | "jpg" | "jpeg" | "webp" | "gif" | "mp4" | "webm" | "cast")) { *count += 1; }
+fn copy_regular_tree(source: &Path, destination: &Path) -> Result<()> {
+    std::fs::create_dir_all(destination)?;
+    for entry in std::fs::read_dir(source)? {
+        let entry = entry?;
+        let from = entry.path();
+        let to = destination.join(entry.file_name());
+        let metadata = std::fs::symlink_metadata(&from)?;
+        if metadata.file_type().is_symlink() {
+            bail!("retained crawl content {} is a symbolic link", from.display());
         }
-    }
-    let mut count = 0;
-    walk(root, &mut count);
-    count
-}
-
-fn find_directory_named(root: &Path, name: &str) -> Option<PathBuf> {
-    if root.file_name().and_then(|value| value.to_str()) == Some(name) && root.is_dir() {
-        return Some(root.to_path_buf());
-    }
-    for entry in std::fs::read_dir(root).ok()?.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            if let Some(found) = find_directory_named(&path, name) { return Some(found); }
-        }
-    }
-    None
-}
-
-fn import_docs_corpus(catalog: &str, run_id: &str, job_id: Option<&str>, artifact_uri: Option<&str>, root: &Path) -> Result<Vec<Value>> {
-    let references = catalog_root(catalog)?.join("references");
-    let mut record_dirs: Vec<PathBuf> = std::fs::read_dir(&references)?
-        .filter_map(Result::ok).map(|entry| entry.path())
-        .filter(|path| path.join("reference.json").is_file()).collect();
-    record_dirs.sort();
-    let mut out = Vec::new();
-    for record_dir in record_dirs {
-        let directory_name = record_dir.file_name().and_then(|value| value.to_str()).context("record directory is not UTF-8")?;
-        let slug = directory_name.split_once('-').map(|(_, tail)| tail).unwrap_or(directory_name);
-        let source = find_directory_named(root, slug);
-        let destination = record_dir.join("crawl").join(run_id);
-        if destination.exists() { std::fs::remove_dir_all(&destination)?; }
-        std::fs::create_dir_all(&destination)?;
-        let (state, error) = if let Some(source) = source {
-            copy_tree(&source, &destination)?;
-            ("imported", Value::Null)
+        if metadata.is_dir() {
+            copy_regular_tree(&from, &to)?;
+        } else if metadata.is_file() {
+            std::fs::copy(&from, &to)?;
         } else {
-            ("missing", json!(format!("documentation crawl archive has no corpus directory for {slug}")))
-        };
-        let report = json!({
-            "schema": "wisent.docs-crawl-record.v1",
-            "record": slug,
-            "status": state,
-            "files": files_under(&destination).len(),
-        });
-        atomic_json_write(&destination.join("crawl.json"), &report)?;
-        let record_path = record_dir.join("reference.json");
-        let mut record: Value = crate::read_json(record_path.to_str().context("record path is not UTF-8")?)?;
-        let imported = artifact_record(&report, &format!("crawl/{run_id}/crawl.json"), run_id, job_id, artifact_uri);
-        let runs = record.as_object_mut().context("record is not an object")?.entry("crawl_runs").or_insert_with(|| json!([])).as_array_mut().context("crawl_runs is not a list")?;
-        if let Some(existing) = runs.iter_mut().find(|value| value.get("run_id").and_then(Value::as_str) == Some(run_id)) { *existing = imported; } else { runs.push(imported); }
-        atomic_json_write(&record_path, &record)?;
-        out.push(json!({
-            "record": directory_name,
-            "state": state,
-            "states": record.get("states").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
-            "interactions": record.get("interactions").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
-            "media": files_under(&destination).len(),
-            "gaps": record.get("evidence_gaps").cloned().unwrap_or_else(|| json!([])),
-            "error": error,
-        }));
-    }
-    Ok(out)
-}
-
-fn import_catalog(run_id: &str, entry: &mut Value, run_dir: &Path) -> Result<()> {
-    let catalog = entry.get("catalog").and_then(Value::as_str).context("catalog entry has no catalog")?.to_string();
-    let engine = entry.get("engine").and_then(Value::as_str).unwrap_or_default().to_string();
-    let job_id = entry.get("stado_job_id").and_then(Value::as_str).map(str::to_string);
-    let artifact_uri = entry.get("artifact_uri").and_then(Value::as_str).map(str::to_string);
-    let destination = run_dir.join("downloads").join(&catalog);
-    std::fs::create_dir_all(&destination)?;
-    if let Some(uri) = artifact_uri.as_deref() {
-        let archive = destination.join("crawl.tar.gz");
-        download_uri(uri, &archive)?;
-        let extracted = destination.join("extracted");
-        if extracted.exists() { std::fs::remove_dir_all(&extracted)?; }
-        unpack(&archive, &extracted)?;
-    } else if let Some(job_id) = job_id.as_deref() {
-        let output = super::crawl::stado_command().args(["machine", "artifacts", job_id, "--output-dir"]).arg(&destination).output()?;
-        if !output.status.success() {
-            bail!("download canonical artifacts for {catalog}: {}", String::from_utf8_lossy(&output.stderr).trim());
-        }
-    }
-    if engine == "docs" {
-        let records = import_docs_corpus(&catalog, run_id, job_id.as_deref(), artifact_uri.as_deref(), &destination)?;
-        entry["records"] = Value::Array(records);
-        entry["state"] = json!("imported");
-        entry["error"] = Value::Null;
-        return Ok(());
-    }
-    let mut reports = Vec::new();
-    collect_named(&destination, "crawl.json", &mut reports)?;
-    if engine == "web" && reports.is_empty() {
-        collect_named(&destination, "command_output.log", &mut reports)?;
-    }
-    let mut records = Vec::new();
-    for path in reports {
-        if path.file_name().and_then(|value| value.to_str()) == Some("command_output.log") {
-            let text = std::fs::read_to_string(&path)?;
-            let candidate = text.lines().rev().find_map(|line| serde_json::from_str::<Value>(line).ok());
-            if let Some(report) = candidate { records.extend(import_web_report(&catalog, run_id, job_id.as_deref(), &path, &report)?); }
-        } else {
-            let report: Value = crate::read_json(path.to_str().context("crawl report path is not UTF-8")?)?;
-            records.push(merge_report(&catalog, &engine, run_id, job_id.as_deref(), artifact_uri.as_deref(), &path, &report)?);
-        }
-    }
-    if records.is_empty() { bail!("{catalog}: downloaded artifacts contain no importable record reports"); }
-    entry["records"] = Value::Array(records);
-    entry["state"] = json!("imported");
-    entry["error"] = Value::Null;
-    Ok(())
-}
-
-fn collect_weles_uris(value: &Value, uris: &mut Vec<String>) {
-    fn collect_typed(value: &Value, uris: &mut Vec<String>) {
-        match value {
-            Value::String(text) if text.starts_with("stado://weles/")
-                && !text.contains("/../") && !text.ends_with("/..") => {
-                if !uris.contains(text) { uris.push(text.clone()); }
-            }
-            Value::Array(values) => values.iter().for_each(|value| collect_typed(value, uris)),
-            Value::Object(values) => values.values().for_each(|value| collect_typed(value, uris)),
-            _ => {}
-        }
-    }
-    for pointer in ["/receipt/artifacts", "/result/artifacts", "/artifacts"] {
-        if let Some(artifacts) = value.pointer(pointer) {
-            collect_typed(artifacts, uris);
-        }
-    }
-}
-
-fn verified_spis_evidence(
-    _value: &Value,
-    _expected_job_id: &str,
-    _expected_origin: &str,
-    _expected_action: &str,
-    _expected_idempotency_key: &str,
-) -> Option<Value> {
-    // Raw Weles results remain available for diagnosis. Canonical evidence is
-    // withheld unless a typed Weles receipt has been cryptographically verified.
-    None
-}
-
-fn web_observation(job: &Value, correlation: &Value) -> Value {
-    let history = job.pointer("/result/generic_browser_task/history")
-        .or_else(|| job.pointer("/result/history"))
-        .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default();
-    let states: Vec<Value> = history.iter().enumerate().flat_map(|(index, step)| {
-        ["before", "after"].into_iter().filter_map(move |phase| {
-            let artifact_id = step.get(format!("{phase}_artifact_id"))
-                .or_else(|| step.get(format!("{phase}_screenshot_uri")))
-                .or_else(|| step.get(format!("{phase}_state_uri")))
-                .and_then(Value::as_str)?;
-            Some(json!({
-                "step_index": index,
-                "phase": phase,
-                "artifact_id": artifact_id,
-                "action": step.get("tool"),
-            }))
-        })
-    }).collect();
-    let job_id = job.get("id").or_else(|| job.get("job_id")).and_then(Value::as_str).unwrap_or_default();
-    let evidence = verified_spis_evidence(
-        job,
-        job_id,
-        correlation.get("origin").and_then(Value::as_str).unwrap_or_default(),
-        correlation.get("action").and_then(Value::as_str).unwrap_or_default(),
-        correlation.get("idempotency_key").and_then(Value::as_str).unwrap_or_default(),
-    );
-    json!({
-        "schema": "wisent.web-crawl-record.v1",
-        "states": states,
-        "states_seen": states.len(),
-        "blocked_edges": job.get("error").into_iter().cloned().collect::<Vec<_>>(),
-        "status": job.get("status").cloned().unwrap_or_else(|| json!("failed")),
-        "error": job.get("error").cloned().unwrap_or(Value::Null),
-        "evidence_observations": {
-            "canonical_interactions": evidence.as_ref().and_then(|value| value.get("canonical_interactions")).cloned().unwrap_or_else(|| json!([])),
-            "canonical_journey": evidence.as_ref().and_then(|value| value.get("canonical_journey")).cloned().unwrap_or(Value::Null),
-            "canonical_motion_analysis": evidence.as_ref().and_then(|value| value.get("canonical_motion_analysis")).cloned().unwrap_or(Value::Null),
-            "canonical_accessibility": evidence.as_ref().and_then(|value| value.get("canonical_accessibility")).cloned().unwrap_or(Value::Null),
-            "surface_proof": evidence,
-        },
-    })
-}
-
-fn normalized_surface_url(value: &str) -> Result<String> {
-    let mut url = url::Url::parse(value).context("surface proof URL is invalid")?;
-    url.set_fragment(None);
-    if url.path() != "/" {
-        let trimmed = url.path().trim_end_matches('/').to_string();
-        url.set_path(&trimmed);
-    }
-    Ok(url.to_string())
-}
-
-fn validate_web_surface(catalog: &str, product_url: &str, observation: &Value) -> Result<()> {
-    let proof = observation.pointer("/evidence_observations/surface_proof")
-        .filter(|value| value.is_object())
-        .ok_or_else(|| anyhow!("{catalog}: Weles result has no machine-readable spis_evidence surface proof"))?;
-    let observed_url = proof.get("observed_url").and_then(Value::as_str)
-        .ok_or_else(|| anyhow!("{catalog}: spis_evidence has no observed_url"))?;
-    if catalog == "landing-page-examples" {
-        if proof.get("surface_kind").and_then(Value::as_str) != Some("landing") {
-            bail!("{catalog}: Weles did not identify the retained surface as a landing page");
-        }
-        if normalized_surface_url(observed_url)? != normalized_surface_url(product_url)? {
-            bail!("{catalog}: Weles observed {observed_url}, expected exact landing URL {product_url}");
-        }
-    }
-    if catalog == "pricing-page-examples" {
-        if proof.get("surface_kind").and_then(Value::as_str) != Some("pricing") {
-            bail!("{catalog}: Weles did not identify the retained surface as a pricing page");
-        }
-        if proof.get("visible_pricing_comparison").and_then(Value::as_bool) != Some(true) {
-            bail!("{catalog}: Weles did not prove a visible comparison of at least two plans or prices");
+            bail!("retained crawl content {} is not a regular file", from.display());
         }
     }
     Ok(())
-}
-
-fn import_web_report(catalog: &str, run_id: &str, job_id: Option<&str>, _path: &Path, report: &Value) -> Result<Vec<Value>> {
-    let records = report.get("records").and_then(Value::as_array).context("web report has no records mapping")?;
-    let mut out = Vec::new();
-    for item in records {
-        let slug = item.get("record").and_then(Value::as_str).context("web record mapping has no record")?;
-        let record_dir = find_record_dir(catalog, slug).ok_or_else(|| anyhow!("{catalog}: no record matches {slug}"))?;
-        let destination = record_dir.join("crawl").join(run_id);
-        if destination.exists() { std::fs::remove_dir_all(&destination)?; }
-        std::fs::create_dir_all(&destination)?;
-        let relative = format!("crawl/{run_id}/weles-result.json");
-        atomic_json_write(&destination.join("weles-result.json"), item)?;
-        let job = item.get("job").unwrap_or(item);
-        let mut uris = Vec::new();
-        collect_weles_uris(job, &mut uris);
-        let artifacts = destination.join("artifacts");
-        std::fs::create_dir_all(&artifacts)?;
-        let mut downloaded = Vec::new();
-        for (index, uri) in uris.iter().enumerate() {
-            let basename = uri.rsplit('/').find(|part| !part.is_empty()).unwrap_or("artifact");
-            let safe: String = basename.chars().map(|character| {
-                if character.is_ascii_alphanumeric() || matches!(character, '.' | '-' | '_') { character } else { '_' }
-            }).collect();
-            let local = artifacts.join(format!("{index:04}-{safe}"));
-            download_uri(uri, &local)?;
-            downloaded.push((uri.clone(), local));
-        }
-        let observation = web_observation(job, item);
-        atomic_json_write(&destination.join("crawl.json"), &observation)?;
-        let record_path = record_dir.join("reference.json");
-        let mut record: Value = crate::read_json(record_path.to_str().context("record path is not UTF-8")?)?;
-        validate_web_surface(catalog, record.get("product_url").and_then(Value::as_str).unwrap_or_default(), &observation)?;
-        update_web_source_visual(catalog, &record_dir, &record, &downloaded)?;
-        adapt_canonical_record("web", run_id, &destination, &destination, &record_dir, &observation, &mut record)?;
-        let imported = artifact_record(item, &relative, run_id, job_id, None);
-        let runs = record.as_object_mut().context("record is not an object")?.entry("crawl_runs").or_insert_with(|| json!([])).as_array_mut().context("crawl_runs is not a list")?;
-        if let Some(existing) = runs.iter_mut().find(|value| value.get("run_id").and_then(Value::as_str) == Some(run_id)) { *existing = imported; } else { runs.push(imported); }
-        atomic_json_write(&record_path, &record)?;
-        let state = job.get("status").and_then(Value::as_str).unwrap_or("failed");
-        let gaps = record.get("evidence_gaps").and_then(Value::as_array).cloned().unwrap_or_default();
-        out.push(json!({
-            "record": slug,
-            "state": if state == "completed" { "imported" } else { state },
-            "states": record.get("states").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
-            "interactions": record.get("interactions").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
-            "media": count_media(&destination),
-            "gaps": gaps,
-            "error": job.get("error").cloned().unwrap_or(Value::Null),
-        }));
-    }
-    Ok(out)
 }
 
 fn run_spis_command(arguments: &[&str]) -> Result<String> {
     let executable = std::env::current_exe().context("resolve current Spis executable")?;
-    let output = Command::new(executable).args(arguments).output()?;
+    let mut command = Command::new(executable);
+    command.args(arguments);
+    let output = bounded_command_output(
+        &mut command,
+        "Spis catalog maintenance command",
+        Duration::from_secs(900),
+        8 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "spis {} failed: {}{}",
@@ -4795,139 +5712,213 @@ fn run_spis_command(arguments: &[&str]) -> Result<String> {
     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
 }
 
-fn update_web_source_visual(catalog: &str, record_dir: &Path, record: &Value, artifacts: &[(String, PathBuf)]) -> Result<()> {
-    let Some((source_uri, source_path)) = artifacts.iter().find(|(_, path)| media_kind(path) == Some("state")) else {
-        return Ok(());
-    };
-    let extension = source_path.extension().and_then(|value| value.to_str()).unwrap_or("png").to_ascii_lowercase();
-    let image_name = format!("{}.{}", record_dir.file_name().and_then(|value| value.to_str()).unwrap_or("capture"), extension);
-    let image_path = catalog_root(catalog)?.join("images").join(image_name);
-    std::fs::copy(source_path, &image_path)?;
-    let bytes = std::fs::read(&image_path)?;
-    let decoded = image::open(&image_path)?;
-    let sources_path = catalog_root(catalog)?.join("sources.json");
-    let mut sources: Value = crate::read_json(sources_path.to_str().context("sources path is not UTF-8")?)?;
-    let product_url = record.get("product_url").and_then(Value::as_str).context("record has no product_url")?;
-    let examples = sources.get_mut("examples").and_then(Value::as_array_mut).context("sources examples are not a list")?;
-    let example = examples.iter_mut().find(|example| example.get("source_url").and_then(Value::as_str) == Some(product_url))
-        .ok_or_else(|| anyhow!("{catalog}: no source example matches {product_url}"))?;
-    example["visual"] = json!({
-        "source_page_url": product_url,
-        "source_artifact_uri": source_uri,
-        "local_path": image_path.strip_prefix(catalog).unwrap_or(&image_path).to_string_lossy(),
-        "capture_kind": "local-browser-screenshot",
-        "captured_at": crate::now_iso_utc(),
-        "format": extension,
-        "width": decoded.width(),
-        "height": decoded.height(),
-        "bytes": bytes.len(),
-        "sha256": crate::sha256_hex(&bytes),
-    });
-    let visual_count = examples.iter().filter(|example| {
-        example.pointer("/visual/capture_status").and_then(Value::as_str) != Some("pending-weles")
-    }).count();
-    sources["visual_count"] = json!(visual_count);
-    atomic_json_write(&sources_path, &sources)?;
-    Ok(())
-}
-
-fn summarize_catalog_records(catalog: &str, run_id: &str, entry: &mut Value) -> Result<()> {
-    let reference = catalog_root(catalog)?.join("references");
-    let mut summaries = Vec::new();
-    if reference.is_dir() {
-        let mut directories: Vec<PathBuf> = std::fs::read_dir(&reference)?
-            .filter_map(Result::ok)
-            .map(|item| item.path())
-            .filter(|path| path.join("reference.json").is_file())
-            .collect();
-        directories.sort();
-        for record_dir in directories {
-            let record: Value = crate::read_json(record_dir.join("reference.json").to_str().context("record path is not UTF-8")?)?;
-            let imported = record.get("crawl_runs").and_then(Value::as_array).is_some_and(|runs| {
-                runs.iter().any(|run| run.get("run_id").and_then(Value::as_str) == Some(run_id))
-            });
-            let complete = record.get("evidence_status").and_then(Value::as_str) == Some("complete");
-            let gaps = record.get("evidence_gaps").and_then(Value::as_array).cloned().unwrap_or_default();
-            summaries.push(json!({
-                "record": record_dir.file_name().and_then(|value| value.to_str()).unwrap_or("unknown"),
-                "state": if imported && complete { "complete" } else if imported { "partial" } else { "missing" },
-                "states": record.get("states").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
-                "interactions": record.get("interactions").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
-                "media": record.get("motion").and_then(Value::as_array).map(Vec::len).unwrap_or(0),
-                "gaps": gaps,
-                "error": Value::Null,
+/// Import every accepted attempt of one run, then run the catalog validators.
+///
+/// Each record is its own durable transaction under its own record lock, so a
+/// busy peer, a single failing record or a crash never blocks or corrupts the
+/// others. Validators and the catalog generator run once, after every record has
+/// been installed, and their failure is retained as a typed run diagnostic rather
+/// than left as unrecoverable dirty state.
+fn import_ready(run_id: &str, selected_record: Option<&str>) -> Result<Value> {
+    let run_dir = run_path(run_id)?
+        .parent()
+        .context("run path has no parent")?
+        .to_path_buf();
+    let snapshot = load(Some(run_id))?;
+    let mut touched_catalogs: BTreeMap<String, String> = BTreeMap::new();
+    for catalog in snapshot
+        .get("catalogs")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        let catalog_name = catalog
+            .get("catalog")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string();
+        let engine = catalog
+            .get("engine")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string();
+        for record in catalog
+            .get("records")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            let record_name = record
+                .get("record")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .to_string();
+            if !selected_matches(&record_name, selected_record) {
+                continue;
+            }
+            let state = record
+                .get("state")
+                .and_then(Value::as_str)
+                .unwrap_or_default();
+            if !matches!(state, "completed" | "uploaded") {
+                continue;
+            }
+            let guard = match RecordMutationGuard::acquire(run_id, &catalog_name, &record_name) {
+                Ok(guard) => guard,
+                Err(error) if error.downcast_ref::<RecordLockBusy>().is_some() => continue,
+                Err(error) => return Err(error),
+            };
+            let current = record_snapshot(run_id, &catalog_name, &record_name)?;
+            if !matches!(
+                current.get("state").and_then(Value::as_str),
+                Some("completed" | "uploaded")
+            ) {
+                continue;
+            }
+            let outcome =
+                import_record_attempt(run_id, &catalog_name, &engine, &current, &run_dir);
+            match outcome {
+                Ok(import) => {
+                    mutate_record(run_id, &catalog_name, &record_name, |entry| {
+                        entry["state"] = json!("imported");
+                        entry["weles_task_id"] =
+                            import.get("weles_task_id").cloned().unwrap_or(Value::Null);
+                        entry["import"] = import;
+                        entry["diagnostic"] = Value::Null;
+                        Ok(())
+                    })?;
+                    touched_catalogs.insert(catalog_name.clone(), engine.clone());
+                }
+                Err(error) => {
+                    mutate_record(run_id, &catalog_name, &record_name, |entry| {
+                        entry["state"] = json!("partial");
+                        entry["diagnostic"] = json!({
+                            "code": "attempt_import_failed",
+                            "message": format!("{error:#}"),
+                        });
+                        Ok(())
+                    })?;
+                }
+            }
+            drop(guard);
+        }
+    }
+    let mut maintenance = Vec::new();
+    for (catalog, engine) in &touched_catalogs {
+        if engine == "web" {
+            match run_spis_command(&["analyze-example-structures", catalog]) {
+                Ok(_) => {}
+                Err(error) => maintenance.push(json!({
+                    "command": format!("analyze-example-structures {catalog}"),
+                    "state": "failed",
+                    "message": format!("{error:#}"),
+                })),
+            }
+        }
+        if let Err(error) =
+            run_spis_command(&["verify-reference-evidence", "--catalog", catalog, "--apply"])
+        {
+            maintenance.push(json!({
+                "command": format!("verify-reference-evidence --catalog {catalog} --apply"),
+                "state": "failed",
+                "message": format!("{error:#}"),
             }));
         }
     }
-    entry["records"] = Value::Array(summaries);
-    Ok(())
-}
-
-fn import_ready(run: &mut Value, run_id: &str, run_dir: &Path, retry_partial_import: bool) -> Result<()> {
-    let mut imported_catalogs = Vec::new();
-    if let Some(entries) = run.get_mut("catalogs").and_then(Value::as_array_mut) {
-        for entry in entries {
-            let state = entry.get("state").and_then(Value::as_str).unwrap_or_default();
-            if state == "imported" { continue; }
-            if !matches!(state, "completed" | "uploaded") && !(retry_partial_import && state == "partial") { continue; }
-            let catalog = entry.get("catalog").and_then(Value::as_str).context("catalog entry has no catalog")?.to_string();
-            let engine = entry.get("engine").and_then(Value::as_str).unwrap_or_default().to_string();
-            match import_catalog(run_id, entry, run_dir)
-                .and_then(|_| {
-                    if engine == "web" {
-                        run_spis_command(&["analyze-example-structures", &catalog]).map(|_| ())
-                    } else {
-                        Ok(())
-                    }
-                })
-                .and_then(|_| run_spis_command(&["verify-reference-evidence", "--catalog", &catalog, "--apply"]).map(|_| ()))
-                .and_then(|_| summarize_catalog_records(&catalog, run_id, entry))
-            {
-                Ok(()) => imported_catalogs.push(catalog),
-                Err(error) => {
-                    entry["state"] = json!("partial");
-                    entry["error"] = json!(error.to_string());
-                }
-            }
+    if !touched_catalogs.is_empty() {
+        if let Err(error) = run_spis_command(&["generate-example-catalogs"]) {
+            maintenance.push(json!({
+                "command": "generate-example-catalogs",
+                "state": "failed",
+                "message": format!("{error:#}"),
+            }));
         }
     }
-    if !imported_catalogs.is_empty() {
-        run_spis_command(&["generate-example-catalogs"])?;
-    }
-    run["updated_at"] = json!(crate::now_iso_utc());
-    update_run_state(run);
-    Ok(())
-}
-
-fn import(rest: &[String]) -> Result<()> {
-    let (run_id, _) = parse_run_and_record(rest, true)?;
-    let mut run = load(run_id.as_deref())?;
-    refresh(&mut run);
-    let id = run.get("run_id").and_then(Value::as_str).context("run has no id")?.to_string();
-    let persisted_path = run_path(&id)?;
-    let run_dir = persisted_path.parent().context("run path has no parent")?.to_path_buf();
-    import_ready(&mut run, &id, &run_dir, true)?;
+    let _guard = RunMutationGuard::acquire(run_id)?;
+    let mut run = load(Some(run_id))?;
+    run["import_maintenance"] = json!({
+        "catalogs": touched_catalogs.keys().collect::<Vec<_>>(),
+        "failures": maintenance,
+    });
     if let Some(entries) = run.get_mut("catalogs").and_then(Value::as_array_mut) {
         for entry in entries {
-            let state = entry.get("state").and_then(Value::as_str).unwrap_or_default();
-            if !matches!(state, "imported" | "partial" | "lost" | "failed" | "cancelled" | "submission_failed" | "preflight_failed") {
-                entry["error"] = json!(format!("artifact import requires a terminal successful job, found {state}"));
-            }
+            aggregate_catalog_entry(entry);
         }
     }
     update_run_state(&mut run);
     persist(&mut run)?;
-    print_operation("import", &run, None)?;
-    if has_failures(&run) || run.get("state").and_then(Value::as_str) != Some("imported") {
-        bail!("one or more crawl artifacts were not imported");
+    Ok(run)
+}
+
+fn import(rest: &[String]) -> Result<()> {
+    let (run_id, selected_record) = parse_run_and_record(rest, true)?;
+    let run_id = run_id.context("--run is required")?;
+    {
+        let _guard = RunMutationGuard::acquire(&run_id)?;
+        let mut run = load(Some(&run_id))?;
+        migrate_legacy_catalog_jobs(&mut run);
+        refresh(&mut run);
+        persist(&mut run)?;
+    }
+    let run = import_ready(&run_id, selected_record.as_deref())?;
+    print_operation("import", &run, selected_record.as_deref())?;
+    let pending: Vec<String> = run
+        .get("catalogs")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .flat_map(|catalog| {
+            catalog
+                .get("records")
+                .and_then(Value::as_array)
+                .into_iter()
+                .flatten()
+        })
+        .filter(|record| {
+            selected_matches(
+                record.get("record").and_then(Value::as_str).unwrap_or_default(),
+                selected_record.as_deref(),
+            ) && record.get("state").and_then(Value::as_str) != Some("imported")
+        })
+        .filter_map(|record| {
+            record
+                .get("record")
+                .and_then(Value::as_str)
+                .map(str::to_string)
+        })
+        .collect();
+    if run
+        .pointer("/import_maintenance/failures")
+        .and_then(Value::as_array)
+        .is_some_and(|failures| !failures.is_empty())
+    {
+        bail!("crawl evidence was imported but a catalog validator or generator failed");
+    }
+    if !pending.is_empty() {
+        bail!("{} crawl records were not imported: {}", pending.len(), pending.join(", "));
     }
     Ok(())
 }
 
 fn has_failures(run: &Value) -> bool {
-    run.get("catalogs").and_then(Value::as_array).into_iter().flatten().any(|entry| {
-        matches!(entry.get("state").and_then(Value::as_str), Some("preflight_failed" | "submission_failed" | "lost" | "failed" | "cancelled" | "partial"))
-    })
+    run.get("catalogs")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .any(|entry| {
+            matches!(
+                entry.get("state").and_then(Value::as_str),
+                Some(
+                    "unavailable"
+                        | "preflight_failed"
+                        | "submission_failed"
+                        | "lost"
+                        | "failed"
+                        | "cancelled"
+                        | "partial"
+                )
+            )
+        })
 }
 
 fn print_operation(operation: &str, run: &Value, record_filter: Option<&str>) -> Result<()> {
@@ -4964,7 +5955,45 @@ fn print_operation(operation: &str, run: &Value, record_filter: Option<&str>) ->
 }
 
 fn usage() {
-    println!("usage:\n  spis crawl bindings generate --weles-token-ref ITEM#FIELD --organization-ref ITEM#FIELD [--output PATH]\n  spis crawl start [--host ENGINE=TARGET] [--catalog SLUG ...] [--record SLUG] [--bindings PATH]\n  spis crawl status [--run RUN_ID] [--record SLUG]\n  spis crawl cancel --run RUN_ID [--record SLUG | --record FILE] --reason TEXT\n  spis crawl resume --run RUN_ID\n  spis crawl import --run RUN_ID\n\nCommands emit one JSON document on stdout. The CLI is the process API; Spis does not expose a second HTTP /v1/crawl surface.");
+    println!(
+        "usage:
+  spis crawl bindings generate --weles-token-ref ITEM#FIELD --organization-ref ITEM#FIELD [--output PATH]
+  spis crawl start [--host ENGINE=TARGET] [--catalog SLUG ...] [--record SLUG] [--run-id ID] [--bindings PATH]
+  spis crawl status [--run RUN_ID] [--record SLUG]
+  spis crawl cancel --run RUN_ID [--record SLUG] --reason TEXT
+  spis crawl resume --run RUN_ID [--record SLUG]
+  spis crawl import --run RUN_ID [--record SLUG]
+
+Every command emits exactly one JSON document on stdout; the CLI is the process
+API and Spis exposes no second HTTP crawl surface.
+
+Each record is one immutable attempt: identity, both stado:// attempt URIs and
+the Stado run id are derived from the record key, and every state transition is
+persisted under a durable per-record lock before the external effect it authorizes.
+
+  bindings generate  Writes the exact typed binding for every checked-in record.
+                     With --output an existing generated document is replaced
+                     atomically after validation and read-back; the reported
+                     outcome is created, replaced or unchanged.
+  start              Idempotent. Re-running the same request digest continues the
+                     existing run; planned, preflight_passed and submitting
+                     records are driven forward and a record held by another
+                     process is skipped, never failed.
+  status             Refreshes from Stado when the run lock is free, otherwise
+                     returns a read-only snapshot.
+  cancel             Status-first, durable and idempotent. The intent is recorded
+                     locally and published immutably before any cancellation is
+                     dispatched, so a crash can never resurrect the record.
+  resume             Never reruns a Stado job. A terminal failed, cancelled, lost
+                     or submission_failed attempt becomes attempt N+1 with fully
+                     recomputed identity; queued and running records are left
+                     alone; completed records are imported.
+  import             Per record and per attempt. The typed worker report, the
+                     Stado submission receipt, the attempt artifact digest and
+                     byte count and every retained evidence hash are verified
+                     before a staged, fsynced, atomically installed record
+                     transaction; earlier attempts and their diagnostics are kept."
+    );
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
