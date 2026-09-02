@@ -1208,8 +1208,79 @@ fn retain_signed_inventory(
     Ok(retained_paths)
 }
 
+/// The outer Stado job this worker runs inside. `verify_attempt_binding` refuses an
+/// envelope whose outer job equals the inner Weles task, so both paths read it here.
+fn stado_job_id(weles_task_id: &str) -> Outcome<String> {
+    let job = ["STADO_JOB_ID", "STADO_MACHINE_JOB_ID", "STADO_JOB"]
+        .iter()
+        .find_map(|name| {
+            std::env::var(name)
+                .ok()
+                .filter(|value| !value.trim().is_empty())
+        })
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "stado_job_id_unavailable",
+                "the Stado job identifier was not delivered to this worker",
+            )
+        })?;
+    ensure(
+        job != weles_task_id,
+        "stado_job_id_unavailable",
+        "the Stado job identifier collides with the inner Weles task identifier",
+    )?;
+    Ok(job)
+}
+
+/// Writes this attempt's content-addressed observation document and answers its digest.
+///
+/// `navigation` is `Some` only for a completed attempt; a non-success observes no
+/// navigation and names the terminal outcome instead, so the document states what the
+/// attempt actually observed rather than carrying an empty URL pair.
+#[allow(clippy::too_many_arguments)]
+fn retain_observation_document(
+    attempt_root: &Path,
+    manifest: &super::crawl::RuntimeManifest,
+    weles_task_id: &str,
+    product_url: &str,
+    outcome: &str,
+    navigation: Option<(&str, &str)>,
+    inventory: &[weles::WelesEvidenceInventoryEntry],
+    retained_paths: &[String],
+) -> Outcome<String> {
+    let mut observation: BTreeMap<&str, Value> = BTreeMap::new();
+    observation.insert("schema", json!(OBSERVATION_SCHEMA));
+    observation.insert("run_id", json!(manifest.run_id));
+    observation.insert("catalog", json!(manifest.catalog));
+    observation.insert("record", json!(manifest.record));
+    observation.insert("record_key", json!(manifest.record_key));
+    observation.insert("attempt", json!(u64::from(manifest.attempt)));
+    observation.insert("attempt_id", json!(manifest.attempt_id));
+    observation.insert("weles_task_id", json!(weles_task_id));
+    observation.insert("outcome", json!(outcome));
+    observation.insert("requested_url", json!(product_url));
+    if let Some((effective_url, final_url)) = navigation {
+        observation.insert("effective_url", json!(effective_url));
+        observation.insert("final_url", json!(final_url));
+    }
+    observation.insert("evidence_inventory", serde_json::to_value(inventory)?);
+    observation.insert("retained_paths", json!(retained_paths));
+    // A BTreeMap serializes in sorted key order regardless of the serde_json feature set,
+    // so these bytes and their digest are stable.
+    let observation_bytes = serde_json::to_vec(&observation)?;
+    let observation_document_sha256 = crate::sha256_hex(&observation_bytes);
+    write_exact(
+        &attempt_root.join(format!(
+            "weles/observations/{observation_document_sha256}.json"
+        )),
+        &observation_bytes,
+    )?;
+    Ok(observation_document_sha256)
+}
+
 /// Retains the signed proof that this attempt's Weles task ended in a terminal
-/// NON-SUCCESS: failed, cancelled or rejected.
+/// NON-SUCCESS: failed, cancelled or rejected, together with the observation document and
+/// the attempt envelope that let a record re-verify that proof.
 ///
 /// The service signs and delivers a receipt for those outcomes exactly as it does for a
 /// completed one, and retains their evidence manifest in the v2 shape — the same
@@ -1220,11 +1291,14 @@ fn retain_signed_inventory(
 /// signature.
 #[allow(clippy::too_many_arguments)]
 fn retain_failure_provenance(
+    manifest: &super::crawl::RuntimeManifest,
     attempt_root: &Path,
     private: &PrivateBridge,
     status: &weles::WelesTaskStatus,
     submission: &weles::WelesSubmission,
     binding: &weles::WelesAttemptBinding,
+    identity: &weles::WelesServiceIdentity,
+    base: &str,
     organization_id: &str,
     origin: &str,
     product_url: &str,
@@ -1301,7 +1375,18 @@ fn retain_failure_provenance(
         "a non-success evidence manifest must carry no effective or final URL",
     )?;
     let inventory = signed_inventory(&evidence)?;
-    retain_signed_inventory(&recordings, weles_task_id, &prefix, &inventory, false)?;
+    let retained_paths =
+        retain_signed_inventory(&recordings, weles_task_id, &prefix, &inventory, false)?;
+    let observation_document_sha256 = retain_observation_document(
+        attempt_root,
+        manifest,
+        weles_task_id,
+        product_url,
+        outcome,
+        None,
+        &inventory,
+        &retained_paths,
+    )?;
 
     let expected_claims = weles::ExpectedReceiptClaims {
         task_id: weles_task_id.to_string(),
@@ -1356,6 +1441,50 @@ fn retain_failure_provenance(
         &serde_json::to_value(&provenance)?,
     )?;
     collected.provenance = Some(provenance.clone());
+
+    // The attempt envelope is what binds this proof to the record at verification time:
+    // `verify_attempt_binding` resolves a provenance document through the crawl run's
+    // envelope, so a failure proof without one could never be re-verified inside a record.
+    // It carries the signed outcome under both `state` and `outcome`, and NO final URL,
+    // because the v2 manifest signs no navigation for the verifier to compare against.
+    let envelope = weles::WelesAttemptEnvelope {
+        schema: weles::ATTEMPT_ENVELOPE_SCHEMA.to_string(),
+        run_id: manifest.run_id.clone(),
+        catalog: manifest.catalog.clone(),
+        record: manifest.record.clone(),
+        record_key: manifest.record_key.clone(),
+        attempt: manifest.attempt,
+        attempt_id: manifest.attempt_id.clone(),
+        stado_job_id: stado_job_id(weles_task_id)?,
+        weles_task_id: weles_task_id.to_string(),
+        state: outcome.to_string(),
+        outcome: Some(outcome.to_string()),
+        service_identity: identity.clone(),
+        source_revision: manifest.source_revision.clone(),
+        source_input_sha256: manifest.source_input_sha256.clone(),
+        reference_sha256: manifest.reference_sha256.clone(),
+        spis_binding: binding.clone(),
+        weles_request_document: submission.request_document.clone(),
+        weles_request_digest: submission.request_digest.clone(),
+        weles_result_digest: Some(provenance.expected_claims.result_digest.clone()),
+        requested_url: product_url.to_string(),
+        final_url: None,
+        evidence_inventory: inventory,
+        weles_evidence_manifest_uri: format!("{prefix}evidence-manifest.json"),
+        weles_evidence_manifest_sha256: Some(provenance.artifact.sha256.clone()),
+        artifact_document_uri: format!("{base}/weles/artifacts/{}.json", provenance.artifact.sha256),
+        artifact_document_sha256: Some(provenance.artifact.sha256.clone()),
+        observation_document_uri: format!(
+            "{base}/weles/observations/{observation_document_sha256}.json"
+        ),
+        observation_document_sha256,
+    };
+    retain_attempt_document(
+        attempt_root,
+        "attempt-envelope.json",
+        &serde_json::to_value(&envelope)?,
+    )?;
+    collected.envelope = Some(envelope);
     Ok(provenance)
 }
 
@@ -1837,11 +1966,14 @@ fn capture(
             status.status
         );
         let provenance = retain_failure_provenance(
+            manifest,
             attempt_root,
             private,
             &status,
             &submission,
             &binding,
+            &identity,
+            &base,
             &organization_id,
             &origin,
             &product_url,
@@ -1915,25 +2047,7 @@ fn capture(
         "the verified receipt does not sign this exact request, result and Spis binding",
     )?;
 
-    let stado_job_id = ["STADO_JOB_ID", "STADO_MACHINE_JOB_ID", "STADO_JOB"]
-        .iter()
-        .find_map(|name| {
-            std::env::var(name)
-                .ok()
-                .filter(|value| !value.trim().is_empty())
-        })
-        .ok_or_else(|| {
-            WorkerFailure::new(
-                "stado_job_id_unavailable",
-                "the Stado job identifier was not delivered to this worker",
-            )
-        })?;
-    // `verify_attempt_binding` refuses an envelope whose outer job equals the inner task.
-    ensure(
-        stado_job_id != weles_task_id,
-        "stado_job_id_unavailable",
-        "the Stado job identifier collides with the inner Weles task identifier",
-    )?;
+    let stado_job_id = stado_job_id(&weles_task_id)?;
 
     let recordings = attempt_root.join("recordings").join(&weles_task_id);
     let evidence_manifest_uri = format!("{prefix}evidence-manifest.json");
@@ -1977,29 +2091,15 @@ fn capture(
     let retained_paths =
         retain_signed_inventory(&recordings, &weles_task_id, &prefix, &inventory, true)?;
 
-    let mut observation: BTreeMap<&str, Value> = BTreeMap::new();
-    observation.insert("schema", json!(OBSERVATION_SCHEMA));
-    observation.insert("run_id", json!(manifest.run_id));
-    observation.insert("catalog", json!(manifest.catalog));
-    observation.insert("record", json!(manifest.record));
-    observation.insert("record_key", json!(manifest.record_key));
-    observation.insert("attempt", json!(u64::from(manifest.attempt)));
-    observation.insert("attempt_id", json!(manifest.attempt_id));
-    observation.insert("weles_task_id", json!(weles_task_id));
-    observation.insert("requested_url", json!(product_url));
-    observation.insert("effective_url", json!(effective_url));
-    observation.insert("final_url", json!(final_url));
-    observation.insert("evidence_inventory", serde_json::to_value(&inventory)?);
-    observation.insert("retained_paths", json!(retained_paths));
-    // A BTreeMap serializes in sorted key order regardless of the serde_json feature set,
-    // so these bytes and their digest are stable.
-    let observation_bytes = serde_json::to_vec(&observation)?;
-    let observation_document_sha256 = crate::sha256_hex(&observation_bytes);
-    write_exact(
-        &attempt_root.join(format!(
-            "weles/observations/{observation_document_sha256}.json"
-        )),
-        &observation_bytes,
+    let observation_document_sha256 = retain_observation_document(
+        attempt_root,
+        manifest,
+        &weles_task_id,
+        &product_url,
+        "completed",
+        Some((&effective_url, &final_url)),
+        &inventory,
+        &retained_paths,
     )?;
 
     let expected_claims = weles::ExpectedReceiptClaims {
