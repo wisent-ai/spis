@@ -10,9 +10,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
 use std::fs::{File, OpenOptions};
-use std::io::Write;
+use std::io::{Read, Write};
 use std::os::fd::AsRawFd;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 
@@ -379,12 +379,13 @@ fn source_root() -> PathBuf {
 
 fn safe_component(value: &str, name: &str) -> Result<()> {
     if value.is_empty()
+        || value.len() > 128
         || matches!(value, "." | "..")
-        || !value.chars().all(|character| {
-            character.is_ascii_alphanumeric() || matches!(character, '-' | '_' | '.')
+        || !value.bytes().all(|byte| {
+            byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.')
         })
     {
-        bail!("{name} must be one strict non-dot path component");
+        bail!("{name} must be one strict ASCII path component of at most 128 bytes");
     }
     Ok(())
 }
@@ -405,14 +406,13 @@ fn reference_path(catalog: &str, record: &str) -> Result<PathBuf> {
         .join("reference.json"))
 }
 
-fn run_root() -> PathBuf {
-    std::env::var_os("HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from("/.stado-home-unavailable"))
+fn run_root() -> Result<PathBuf> {
+    let home = std::env::var_os("HOME").context("HOME is required for durable crawl run state")?;
+    Ok(PathBuf::from(home)
         .join(".stado")
         .join("work")
         .join("spis")
-        .join("crawl-runs")
+        .join("crawl-runs"))
 }
 
 fn legacy_run_root() -> PathBuf {
@@ -437,7 +437,7 @@ fn migrate_run_state(run_id: Option<&str>) -> Result<()> {
     for id in selected {
         safe_component(&id, "run id")?;
         let source = legacy.join(&id).join("run.json");
-        let destination = run_root().join(&id).join("run.json");
+        let destination = run_root()?.join(&id).join("run.json");
         if !source.is_file() || destination.is_file() {
             continue;
         }
@@ -455,7 +455,7 @@ fn migrate_run_state(run_id: Option<&str>) -> Result<()> {
 
 fn run_path(run_id: &str) -> Result<PathBuf> {
     safe_component(run_id, "run id")?;
-    Ok(run_root().join(run_id).join("run.json"))
+    Ok(run_root()?.join(run_id).join("run.json"))
 }
 
 pub(crate) fn build_revision() -> Result<String> {
@@ -513,6 +513,81 @@ fn source_snapshot_revision() -> Result<String> {
 pub(crate) fn stado_command() -> Command {
     Command::new(std::env::var_os("SPIS_STADO_BIN").unwrap_or_else(|| "stado".into()))
 }
+fn read_bounded<R: Read>(mut reader: R, maximum: usize) -> std::io::Result<(Vec<u8>, bool)> {
+    let mut retained = Vec::with_capacity(maximum.min(64 * 1024));
+    let mut buffer = [0_u8; 16 * 1024];
+    let mut overflow = false;
+    loop {
+        let count = reader.read(&mut buffer)?;
+        if count == 0 {
+            break;
+        }
+        let remaining = maximum.saturating_sub(retained.len());
+        retained.extend_from_slice(&buffer[..count.min(remaining)]);
+        overflow |= count > remaining;
+    }
+    Ok((retained, overflow))
+}
+
+pub(crate) fn bounded_command_output(
+    command: &mut Command,
+    operation: &str,
+    timeout: Duration,
+    maximum_stream_bytes: usize,
+) -> Result<Output> {
+    use std::process::Stdio;
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::CommandExt;
+        command.process_group(0);
+    }
+    let mut child = command
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .with_context(|| format!("start {operation}"))?;
+    let stdout = child.stdout.take().context("capture bounded child stdout")?;
+    let stderr = child.stderr.take().context("capture bounded child stderr")?;
+    let stdout_reader = std::thread::spawn(move || read_bounded(stdout, maximum_stream_bytes));
+    let stderr_reader = std::thread::spawn(move || read_bounded(stderr, maximum_stream_bytes));
+    let deadline = Instant::now() + timeout;
+    let (status, timed_out) = loop {
+        if let Some(status) = child.try_wait()? {
+            break (status, false);
+        }
+        if Instant::now() >= deadline {
+            #[cfg(unix)]
+            unsafe {
+                libc::kill(-(child.id() as i32), libc::SIGKILL);
+            }
+            let _ = child.kill();
+            break (child.wait()?, true);
+        }
+        std::thread::sleep(Duration::from_millis(20));
+    };
+    let (stdout, stdout_overflow) = stdout_reader
+        .join()
+        .map_err(|_| anyhow!("{operation} stdout reader panicked"))??;
+    let (stderr, stderr_overflow) = stderr_reader
+        .join()
+        .map_err(|_| anyhow!("{operation} stderr reader panicked"))??;
+    if timed_out {
+        bail!(
+            "{operation} exceeded hard timeout {:?}; stdout={:?}; stderr={:?}",
+            timeout,
+            String::from_utf8_lossy(&stdout),
+            String::from_utf8_lossy(&stderr)
+        );
+    }
+    if stdout_overflow || stderr_overflow {
+        bail!("{operation} exceeded the {maximum_stream_bytes}-byte stdout/stderr bound");
+    }
+    Ok(Output {
+        status,
+        stdout,
+        stderr,
+    })
+}
 
 pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {
     let parent = path.parent().context("JSON path has no parent")?;
@@ -550,7 +625,7 @@ impl RecordMutationGuard {
         safe_component(run_id, "run id")?;
         safe_component(catalog, "catalog")?;
         safe_component(record, "record")?;
-        let directory = run_root()
+        let directory = run_root()?
             .join(run_id)
             .join("record-locks")
             .join(catalog);
@@ -580,7 +655,7 @@ struct RunMutationGuard {
 impl RunMutationGuard {
     fn acquire(run_id: &str) -> Result<Self> {
         safe_component(run_id, "run id")?;
-        let directory = run_root().join(run_id);
+        let directory = run_root()?.join(run_id);
         std::fs::create_dir_all(&directory)?;
         let file = OpenOptions::new()
             .read(true)
@@ -645,24 +720,67 @@ fn sync_attempt_history(run: &mut Value) {
 }
 
 fn persist(run: &mut Value) -> Result<()> {
-    let run_id = run.get("run_id").and_then(Value::as_str).context("run has no run_id")?;
+    let run_id = run
+        .get("run_id")
+        .and_then(Value::as_str)
+        .context("run has no run_id")?;
     let path = run_path(run_id)?;
-    let expected = run.get("mutation_revision").and_then(Value::as_u64).unwrap_or(0);
-    if path.is_file() {
-        let current: Value = crate::read_json(path.to_str().context("run path is not UTF-8")?)?;
-        let actual = current.get("mutation_revision").and_then(Value::as_u64).unwrap_or(0);
-        if actual != expected {
-            bail!("crawl run {run_id} changed concurrently: expected revision {expected}, found {actual}");
-        }
-    } else if expected != 0 {
-        bail!("crawl run {run_id} disappeared before revision {expected} could be persisted");
+    let parent = path.parent().context("crawl run path has no parent")?;
+    std::fs::create_dir_all(parent)?;
+    let lock = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(parent.join(".run.json.lock"))?;
+    if unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
+        bail!("crawl run {run_id} is already being persisted");
     }
-    let mut staged = run.clone();
-    sync_attempt_history(&mut staged);
-    staged["mutation_revision"] = json!(expected + 1);
-    staged["updated_at"] = json!(crate::now_iso_utc());
-    atomic_json_write(&path, &staged)?;
-    *run = staged;
+    let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+    let temporary = parent.join(format!(
+        ".run.json.{}.{}.tmp",
+        std::process::id(),
+        nonce
+    ));
+    let result = (|| -> Result<Value> {
+        let expected = run
+            .get("mutation_revision")
+            .and_then(Value::as_u64)
+            .unwrap_or(0);
+        if path.is_file() {
+            let current: Value =
+                crate::read_json(path.to_str().context("run path is not UTF-8")?)?;
+            let actual = current
+                .get("mutation_revision")
+                .and_then(Value::as_u64)
+                .unwrap_or(0);
+            if actual != expected {
+                bail!(
+                    "crawl run {run_id} changed concurrently: expected revision {expected}, found {actual}"
+                );
+            }
+        } else if expected != 0 {
+            bail!("crawl run {run_id} disappeared before revision {expected} could be persisted");
+        }
+        let mut staged = run.clone();
+        sync_attempt_history(&mut staged);
+        staged["mutation_revision"] = json!(expected + 1);
+        staged["updated_at"] = json!(crate::now_iso_utc());
+        let mut output = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary)?;
+        output.write_all((serde_json::to_string_pretty(&staged)? + "\n").as_bytes())?;
+        output.sync_all()?;
+        std::fs::rename(&temporary, &path)?;
+        File::open(parent)?.sync_all()?;
+        Ok(staged)
+    })();
+    let _ = unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_UN) };
+    drop(lock);
+    if result.is_err() {
+        let _ = std::fs::remove_file(&temporary);
+    }
+    *run = result?;
     Ok(())
 }
 
@@ -674,7 +792,7 @@ fn load(run_id: Option<&str>) -> Result<Value> {
             value.to_string()
         }
         None => {
-            let root = run_root();
+            let root = run_root()?;
             let mut ids: Vec<String> = std::fs::read_dir(&root)
                 .with_context(|| format!("no crawl runs exist under {}", root.display()))?
                 .filter_map(|entry| entry.ok())
@@ -1910,18 +2028,73 @@ fn host_for(
 
 
 fn host_probe(host: &str, arguments: &[&str]) -> Value {
-    let output = stado_command()
-        .args(["host", "exec", host, "--"])
-        .args(arguments)
-        .output();
-    match output {
-        Ok(output) => json!({
+    let mut command = stado_command();
+    command
+        .args(["host", "exec", host, "--json", "--"])
+        .args(arguments);
+    let result = (|| -> Result<Value> {
+        let output = bounded_command_output(
+            &mut command,
+            "Stado host probe",
+            Duration::from_secs(30),
+            1024 * 1024,
+        )?;
+        if !output.status.success() {
+            bail!(
+                "Stado host probe failed: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+        }
+        let receipt: Value =
+            serde_json::from_slice(&output.stdout).context("host probe receipt is not JSON")?;
+        let object = receipt
+            .as_object()
+            .context("host probe receipt must be an object")?;
+        let allowed = [
+            "schema",
+            "target",
+            "ssh",
+            "ssh_fallbacks",
+            "command",
+            "argv",
+            "stdout",
+            "stderr",
+            "exit_code",
+            "status",
+            "program_candidates",
+            "error",
+        ];
+        if object.keys().any(|key| !allowed.contains(&key.as_str()))
+            || receipt.get("schema").and_then(Value::as_str)
+                != Some("stado.host-exec-receipt.v1")
+            || receipt.get("target").and_then(Value::as_str) != Some(host)
+            || !receipt.get("ssh").is_some_and(|value| value.is_null() || value.is_string())
+            || !receipt.get("ssh_fallbacks").is_some_and(Value::is_array)
+            || !receipt.get("command").is_some_and(Value::is_string)
+            || !receipt.get("stdout").is_some_and(Value::is_string)
+            || !receipt.get("stderr").is_some_and(Value::is_string)
+            || !receipt.get("exit_code").is_some_and(Value::is_i64)
+        {
+            bail!("host probe receipt does not match the exact typed Stado contract");
+        }
+        let expected_argv = arguments.iter().map(|value| json!(value)).collect::<Vec<_>>();
+        if receipt.get("argv").and_then(Value::as_array) != Some(&expected_argv) {
+            bail!("host probe receipt argv differs from the approved exact command");
+        }
+        Ok(receipt)
+    })();
+    match result {
+        Ok(receipt) => json!({
             "command": arguments,
-            "ready": output.status.success(),
-            "stdout": String::from_utf8_lossy(&output.stdout).trim(),
-            "stderr": String::from_utf8_lossy(&output.stderr).trim(),
+            "ready": receipt.get("status").and_then(Value::as_str) == Some("ok")
+                && receipt.get("exit_code").and_then(Value::as_i64) == Some(0),
+            "stdout": receipt.get("stdout").and_then(Value::as_str).unwrap_or_default(),
+            "stderr": receipt.get("stderr").and_then(Value::as_str).unwrap_or_default(),
+            "stado_receipt": receipt,
         }),
-        Err(error) => json!({"command": arguments, "ready": false, "error": error.to_string()}),
+        Err(error) => {
+            json!({"command": arguments, "ready": false, "error": error.to_string()})
+        }
     }
 }
 
@@ -1939,9 +2112,9 @@ fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str) 
             vec!["adb", "version"],
             vec!["adb", "devices", "-l"],
         ],
-        ("desktop", _) => vec![vec!["mdfind", "kMDItemContentType == 'com.apple.application-bundle'"]],
-        ("web", _) => vec![vec!["node", "--version"], vec!["curl", "--version"]],
-        ("docs", _) => vec![vec!["curl", "--version"]],
+        ("desktop", _) => Vec::new(),
+        ("web", _) => vec![vec!["node", "--version"]],
+        ("docs", _) => Vec::new(),
         ("cli" | "tui", _) => vec![vec!["tmux", "-V"]],
         _ => Vec::new(),
     });
@@ -1963,15 +2136,7 @@ fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str) 
     } else {
         true
     };
-    let admission_ready = if engine == "web" {
-        let health_url = format!("{}/healthz", admission_url.trim_end_matches('/'));
-        let check = host_probe(host, &["curl", "--fail", "--silent", "--show-error", &health_url]);
-        let ready = check.get("ready").and_then(Value::as_bool) == Some(true);
-        checks.push(check);
-        ready
-    } else {
-        true
-    };
+    let admission_ready = engine != "web" || !admission_url.is_empty();
     let ready = checks
         .iter()
         .take(commands.len())
@@ -2505,23 +2670,24 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
                 let path = identity.executable_path.as_deref().context("terminal identity has no exact executable path")?;
                 host_probe(host, &["shasum", "-a", "256", path])
             }
-            "url" => host_probe(
-                host,
-                &[
-                    "curl",
-                    "--fail",
-                    "--silent",
-                    "--show-error",
-                    "--location",
-                    "--max-redirs",
-                    "5",
-                    "--output",
-                    "/dev/null",
-                    "--write-out",
-                    "%{http_code} %{url_effective}",
-                    product,
-                ],
-            ),
+            "url" => {
+                let parsed = url::Url::parse(product)
+                    .context("declared URL is invalid")?;
+                if parsed.scheme() != "https"
+                    || parsed.username() != ""
+                    || parsed.password().is_some()
+                    || parsed.host_str().is_none()
+                {
+                    bail!("URL identity must be an exact credential-free HTTPS URL");
+                }
+                json!({
+                    "command": [],
+                    "ready": true,
+                    "stdout": "",
+                    "network_policy_owner": manifest.engine,
+                    "declared_url": product,
+                })
+            }
             _ => unreachable!(),
         };
         let output = ready_output(&check, "verify exact runtime product")?;
@@ -2530,25 +2696,6 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
             if identity.executable_sha256.as_deref() != Some(observed) {
                 bail!("terminal executable changed during preflight");
             }
-        }
-        if manifest.runtime_product.kind == "url" {
-            let (status, effective) = output
-                .lines()
-                .last()
-                .unwrap_or_default()
-                .split_once(' ')
-                .context("URL identity probe has no status and effective URL")?;
-            let status: u16 = status.parse().context("URL identity probe status is invalid")?;
-            let declared = url::Url::parse(product).context("declared URL is invalid")?;
-            let effective = url::Url::parse(effective).context("effective URL is invalid")?;
-            if !(200..300).contains(&status)
-                || declared.origin() != effective.origin()
-                || effective.username() != ""
-                || effective.password().is_some()
-            {
-                bail!("URL probe left the exact declared origin or failed");
-            }
-            identity.effective_url = Some(effective.to_string());
         }
         if manifest.engine == "mobile" {
             checks.extend(resolve_mobile_install_identity(manifest, &mut identity, host, &check)?);
@@ -2659,7 +2806,7 @@ fn persist_submission_receipt(
     safe_component(catalog, "catalog")?;
     safe_component(record, "record")?;
     safe_component(attempt_id, "attempt id")?;
-    let path = run_root()
+    let path = run_root()?
         .join(run_id)
         .join("receipts")
         .join(catalog)
