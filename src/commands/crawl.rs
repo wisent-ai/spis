@@ -5416,6 +5416,73 @@ fn crawl_run_entry(
     run
 }
 
+/// Write one immutable retained document, or prove the existing bytes are identical.
+///
+/// Every path handled here is content-addressed or digest-verified, so a second
+/// attempt that legitimately retains the same object must find the same bytes. A
+/// staged temporary plus rename keeps the destination either absent or complete.
+fn write_immutable_file(path: &Path, bytes: &[u8]) -> Result<()> {
+    let parent = path.parent().context("retained document has no parent")?;
+    std::fs::create_dir_all(parent)?;
+    match std::fs::symlink_metadata(path) {
+        Ok(metadata) if metadata.file_type().is_symlink() || !metadata.is_file() => {
+            bail!("retained document {} is not a regular file", path.display());
+        }
+        Ok(_) => {
+            if std::fs::read(path)? != bytes {
+                bail!(
+                    "retained document {} already exists with different content",
+                    path.display()
+                );
+            }
+            return Ok(());
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
+    }
+    let file_name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("retained document has no UTF-8 name")?;
+    let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+    let staged = parent.join(format!(".{file_name}.{}.{}.tmp", std::process::id(), nonce));
+    let result = (|| -> Result<()> {
+        let mut file = OpenOptions::new().write(true).create_new(true).open(&staged)?;
+        file.write_all(bytes)?;
+        file.sync_all()?;
+        drop(file);
+        std::fs::rename(&staged, path)?;
+        File::open(parent)?.sync_all()?;
+        Ok(())
+    })();
+    if result.is_err() {
+        let _ = std::fs::remove_file(&staged);
+    }
+    result
+}
+
+/// Merge one immutable retained subtree into the record without disturbing the
+/// objects earlier attempts still reference.
+fn merge_immutable_tree(source: &Path, destination: &Path) -> Result<()> {
+    for entry in std::fs::read_dir(source)? {
+        let entry = entry?;
+        let from = entry.path();
+        let to = destination.join(entry.file_name());
+        let metadata = std::fs::symlink_metadata(&from)?;
+        if metadata.file_type().is_symlink() {
+            bail!("retained crawl content {} is a symbolic link", from.display());
+        }
+        if metadata.is_dir() {
+            merge_immutable_tree(&from, &to)?;
+        } else if metadata.is_file() {
+            write_immutable_file(&to, &std::fs::read(&from)?)?;
+        } else {
+            bail!("retained crawl content {} is not a regular file", from.display());
+        }
+    }
+    Ok(())
+}
+
 /// Copy the typed Weles attempt facts into the crawl-run entry and the record.
 ///
 /// `verify_attempt_binding` in the receipt verifier compares every one of these
@@ -5457,6 +5524,16 @@ fn apply_web_attempt(
     run["state"] = json!(envelope.state);
     run["outcome"] = json!(envelope.outcome);
     run["weles_attempt_envelope"] = serde_json::to_value(&envelope)?;
+    // The verifier resolves `artifact.path` and every inventory tail relative to the
+    // RECORD directory, so the attempt's content-addressed `weles/` documents and its
+    // task-scoped `recordings/` tree must exist there, merged rather than replaced:
+    // earlier attempts' provenance documents still point at their own digests.
+    for subtree in ["weles", "recordings"] {
+        let source = attempt_dir.join(subtree);
+        if source.is_dir() {
+            merge_immutable_tree(&source, &record_dir.join(subtree))?;
+        }
+    }
     let provenance = report
         .get("provenance_document")
         .filter(|value| value.is_object())
@@ -5464,13 +5541,15 @@ fn apply_web_attempt(
     let provenance: crate::weles_provenance::WelesProvenanceDocument =
         serde_json::from_value(provenance.clone())
             .context("web provenance document does not match the typed schema")?;
-    let provenance_relative = format!("weles/provenance/{}.json", provenance.id);
-    let provenance_path = record_dir.join(&provenance_relative);
+    let provenance_id = provenance
+        .id
+        .strip_prefix("sha256:")
+        .filter(|value| is_lower_sha256(value))
+        .context("official provenance document has no framed sha256: identifier")?
+        .to_string();
+    let provenance_relative = format!("weles/provenance/{provenance_id}.json");
     let provenance_bytes = serde_json::to_vec_pretty(&provenance)?;
-    if let Some(parent) = provenance_path.parent() {
-        std::fs::create_dir_all(parent)?;
-    }
-    std::fs::write(&provenance_path, &provenance_bytes)?;
+    write_immutable_file(&record_dir.join(&provenance_relative), &provenance_bytes)?;
     let reference = crate::weles_provenance::WelesProvenanceDocumentRef {
         schema: crate::weles_provenance::PROVENANCE_DOCUMENT_REF_SCHEMA.to_string(),
         path: provenance_relative,
@@ -5596,7 +5675,12 @@ fn import_record_attempt(
     }
     std::fs::create_dir_all(attempt_staged.parent().expect("crawl parent"))?;
     std::fs::rename(&extracted_root, &attempt_staged)?;
-    atomic_json_write(&attempt_staged.join("worker-report.json"), &report)?;
+    // A plain write, not `atomic_json_write`: that helper leaves a `.lock` sibling,
+    // and the staged tree is published verbatim as the attempt artifact.
+    std::fs::write(
+        attempt_staged.join("worker-report.json"),
+        serde_json::to_string_pretty(&report)? + "\n",
+    )?;
     install_staged_tree(&attempt_staged, &attempt_destination)?;
     let record_path = record_dir.join("reference.json");
     let mut record: Value =
@@ -5609,17 +5693,31 @@ fn import_record_attempt(
     let relative_report = format!("{attempt_relative}/worker-report.json");
     let mut run = crawl_run_entry(&manifest, entry, &report, &proof, &relative_report);
     run["retained_members"] = json!(members.len());
-    if engine == "web" {
-        let recordings = attempt_destination.join("recordings");
-        if recordings.is_dir() {
-            let staged = record_dir.join(".recordings.staging");
-            if staged.exists() {
-                std::fs::remove_dir_all(&staged)?;
-            }
-            copy_regular_tree(&recordings, &staged)?;
-            install_staged_tree(&staged, &record_dir.join("recordings"))?;
+    match engine {
+        "web" => {
+            apply_web_attempt(&mut record, &mut run, &report, &attempt_destination, &record_dir)?
         }
-        apply_web_attempt(&mut record, &mut run, &report, &attempt_destination, &record_dir)?;
+        "docs" => {
+            // One corpus attempt. The typed report is validated in exactly one
+            // place, shared with `docs-corpus import`, so this document is not
+            // checked twice by two independent rules; that validation also proves
+            // the artifact coordinates, digests and corpus/tree agreement.
+            super::docs_corpus::validate_docs_worker_report(&report)?;
+            let corpus = report
+                .get("corpus")
+                .cloned()
+                .context("docs worker report has no typed corpus summary")?;
+            // Manifest equality stays here: only this side knows the immutable
+            // attempt's committed content-structure digest.
+            if report.get("docs_structure_sha256").and_then(Value::as_str)
+                != manifest.docs_structure_sha256.as_deref()
+            {
+                bail!("docs worker report crawl-definition digest differs from the immutable attempt");
+            }
+            run["docs_structure_sha256"] = json!(manifest.docs_structure_sha256);
+            run["corpus"] = corpus;
+        }
+        _ => {}
     }
     let (motion, states) = attempt_media(engine, &attempt_destination, &record_dir, &source_url)?;
     let accessibility = accessibility_gap(engine, &attempt_destination);
@@ -5668,27 +5766,6 @@ fn import_record_attempt(
         "weles_task_id": run.get("weles_task_id").cloned().unwrap_or(Value::Null),
         "imported_at": crate::now_iso_utc(),
     }))
-}
-
-fn copy_regular_tree(source: &Path, destination: &Path) -> Result<()> {
-    std::fs::create_dir_all(destination)?;
-    for entry in std::fs::read_dir(source)? {
-        let entry = entry?;
-        let from = entry.path();
-        let to = destination.join(entry.file_name());
-        let metadata = std::fs::symlink_metadata(&from)?;
-        if metadata.file_type().is_symlink() {
-            bail!("retained crawl content {} is a symbolic link", from.display());
-        }
-        if metadata.is_dir() {
-            copy_regular_tree(&from, &to)?;
-        } else if metadata.is_file() {
-            std::fs::copy(&from, &to)?;
-        } else {
-            bail!("retained crawl content {} is not a regular file", from.display());
-        }
-    }
-    Ok(())
 }
 
 fn run_spis_command(arguments: &[&str]) -> Result<String> {

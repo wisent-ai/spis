@@ -1156,8 +1156,15 @@ fn import_artifact(
     }
     import_result
 }
-fn read_attempt_receipt(path: &Path) -> Result<(Value, String, String)> {
-    let receipt = read_last_worker_report(path)?;
+/// Validate one typed `wisent.docs-worker-report.v1` document in memory.
+///
+/// This is the single validation of a documentation worker report, shared by both
+/// import paths so the same document is never checked twice by two independent
+/// rules: `docs-corpus import --attempt-receipt`, which goes on to materialise the
+/// corpus bytes, and `crawl.rs::import_record_attempt`'s `docs` arm, which binds
+/// the typed corpus summary onto the reference record without installing a
+/// readable corpus. Returns the artifact URI and its SHA-256.
+pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, String)> {
     if receipt.get("schema").and_then(Value::as_str) != Some("wisent.docs-worker-report.v1")
         || receipt.get("engine").and_then(Value::as_str) != Some("docs")
         || receipt.get("state").and_then(Value::as_str) != Some("artifact_published")
@@ -1289,6 +1296,12 @@ fn read_attempt_receipt(path: &Path) -> Result<(Value, String, String)> {
         bail!("attempt receipt artifact URI does not match its immutable coordinates");
     }
     let _ = archive_bytes;
+    Ok((uri, archive_sha256))
+}
+
+fn read_attempt_receipt(path: &Path) -> Result<(Value, String, String)> {
+    let receipt = read_last_worker_report(path)?;
+    let (uri, archive_sha256) = validate_docs_worker_report(&receipt)?;
     Ok((receipt, uri, archive_sha256))
 }
 
