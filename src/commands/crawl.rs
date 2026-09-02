@@ -19,7 +19,6 @@ use std::process::{Command, Output};
 const OP_SCHEMA: &str = "wisent.crawl-operation.v1";
 const RUN_SCHEMA: &str = "wisent.crawl-run.v1";
 const SUBMISSION_SCHEMA: &str = "wisent.crawl-submission.v1";
-const RUN_ROOT: &str = ".wisent-output/crawl-runs";
 
 const CATALOGS: &[(&str, &str)] = &[
     ("ios-app-examples", "mobile"),
@@ -41,8 +40,7 @@ const CATALOGS: &[(&str, &str)] = &[
 
 const RUNTIME_MANIFEST_SCHEMA: &str = "wisent.crawl-runtime-manifest.v1";
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct RuntimeSurfaceIdentity {
     pub family: String,
     pub exact_url: String,
@@ -138,8 +136,10 @@ pub(crate) struct RuntimeServiceIdentity {
 #[serde(deny_unknown_fields)]
 pub(crate) struct RuntimeExecutionIdentity {
     pub host: String,
+    pub observed_hostname: String,
     pub platform: String,
     pub device_id: Option<String>,
+    pub resolved_product_identifier: String,
     pub device_name: Option<String>,
     #[serde(default)]
     pub executable_path: Option<String>,
@@ -147,6 +147,8 @@ pub(crate) struct RuntimeExecutionIdentity {
     pub product_version: Option<String>,
     #[serde(default)]
     pub executable_sha256: Option<String>,
+    #[serde(default)]
+    pub effective_url: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -171,6 +173,7 @@ pub(crate) struct RuntimeManifest {
     pub runtime_product: RuntimeProduct,
     pub account: RuntimeAccount,
     pub constraints: RuntimeConstraints,
+    pub docs_structure_sha256: Option<String>,
     pub bindings_file_sha256: String,
     pub bindings_source: String,
     pub bindings_sha256: String,
@@ -207,6 +210,10 @@ pub(crate) fn decode_runtime_manifest(
     {
         bail!("runtime manifest does not match this exact worker, record, engine and source revision");
     }
+    safe_component(&manifest.run_id, "run id")?;
+    safe_component(&manifest.catalog, "catalog")?;
+    safe_component(&manifest.record, "record")?;
+    safe_component(&manifest.attempt_id, "attempt id")?;
     if manifest.runtime_product.identifier.is_empty()
         || manifest.source_input_sha256.len() != 64
         || manifest.correlation_id.is_empty()
@@ -217,6 +224,33 @@ pub(crate) fn decode_runtime_manifest(
     }
     if manifest.attempt == 0 || manifest.attempt_id.is_empty() {
         bail!("runtime manifest has no immutable execution attempt");
+    }
+    let execution_identity = manifest
+        .execution_identity
+        .as_ref()
+        .context("runtime manifest has no execution identity")?;
+    if execution_identity.host.is_empty() || execution_identity.observed_hostname.is_empty() {
+        bail!("runtime manifest execution identity lacks registry host alias or observed hostname");
+    }
+    if manifest.engine == "web" {
+        let service = manifest
+            .service_identity
+            .as_ref()
+            .context("web runtime manifest has no exact Weles service identity")?;
+        if service.name != "weles-admission"
+            || service.consumer != "spis"
+            || service.capability != "browser-evidence"
+            || service.action != "generic_browser_task"
+            || service.active_host != execution_identity.host
+        {
+            bail!("web runtime manifest Weles service identity is invalid");
+        }
+        let (_, current) = registry_placements()?;
+        if serde_json::to_value(current)? != serde_json::to_value(&manifest.service_identity)? {
+            bail!("Weles service directory generation or exact placement changed after planning");
+        }
+    } else if manifest.service_identity.is_some() {
+        bail!("non-web runtime manifest cannot bind a Weles service identity");
     }
     let bindings = runtime_bindings_for_worker(&manifest)?;
     if bindings.sha256 != manifest.bindings_file_sha256 {
@@ -245,10 +279,7 @@ pub(crate) fn decode_runtime_manifest(
     {
         bail!("runtime manifest differs from the exact committed catalog+record binding");
     }
-    let reference_path = Path::new(&manifest.catalog)
-        .join("references")
-        .join(&manifest.record)
-        .join("reference.json");
+    let reference_path = reference_path(&manifest.catalog, &manifest.record)?;
     let reference_bytes = std::fs::read(&reference_path)
         .with_context(|| format!("read committed worker record {}", reference_path.display()))?;
     let reference: Value = serde_json::from_slice(&reference_bytes)?;
@@ -259,10 +290,80 @@ pub(crate) fn decode_runtime_manifest(
         &reference,
         manifest.runtime_product.surface.clone(),
     )?;
-    if matches!(manifest.engine.as_str(), "mobile" | "web" | "docs")
-        && expected_product.identifier != manifest.runtime_product.identifier
+    let expected_docs_structure =
+        docs_structure_sha256(&manifest.catalog, &manifest.record, &manifest.engine)?;
+    if expected_docs_structure != manifest.docs_structure_sha256 {
+        bail!("docs crawl definition digest differs from the committed exact structure");
+    }
+    let execution = manifest.execution_identity.as_ref().expect("checked above");
+    if execution.resolved_product_identifier != manifest.runtime_product.identifier
+        || expected_product.product_url != manifest.runtime_product.product_url
+        || expected_product.surface != manifest.runtime_product.surface
     {
-        bail!("runtime manifest product identifier differs from the committed record");
+        bail!("runtime product differs from the committed record or resolved execution identity");
+    }
+    match manifest.engine.as_str() {
+        "mobile" | "web" | "docs" => {
+            if serde_json::to_value(&expected_product)?
+                != serde_json::to_value(&manifest.runtime_product)?
+            {
+                bail!("canonical runtime product differs from the committed record");
+            }
+        }
+        "cli" => {
+            let path = execution.executable_path.as_deref().context("CLI identity has no path")?;
+            let digest = execution
+                .executable_sha256
+                .as_deref()
+                .context("CLI identity has no executable digest")?;
+            if expected_product.identifier != manifest.runtime_product.identifier
+                || manifest.runtime_product.kind != "cli-binary"
+                || manifest.runtime_product.identity_source
+                    != format!("typed isolated host path resolution: {path}; sha256={digest}")
+            {
+                bail!("canonical CLI runtime product is invalid");
+            }
+        }
+        "tui" => {
+            let path = execution.executable_path.as_deref().context("TUI identity has no path")?;
+            let digest = execution
+                .executable_sha256
+                .as_deref()
+                .context("TUI identity has no executable digest")?;
+            if execution.device_name.as_deref() != Some(expected_product.identifier.as_str())
+                || manifest.runtime_product.kind != "tui-binary"
+                || manifest.runtime_product.identity_source
+                    != format!("typed isolated host path resolution: {path}; sha256={digest}")
+            {
+                bail!("canonical TUI runtime product is invalid");
+            }
+        }
+        "desktop" => {
+            let path = execution
+                .executable_path
+                .as_deref()
+                .context("desktop identity has no executable path")?;
+            let version = execution
+                .product_version
+                .as_deref()
+                .context("desktop identity has no product version")?;
+            let digest = execution
+                .executable_sha256
+                .as_deref()
+                .context("desktop identity has no executable digest")?;
+            let app_path = path
+                .split_once("/Contents/MacOS/")
+                .map(|(value, _)| value)
+                .context("desktop executable is outside a canonical app bundle")?;
+            if execution.device_name.as_deref() != Some(expected_product.identifier.as_str())
+                || manifest.runtime_product.kind != "desktop-bundle"
+                || manifest.runtime_product.identity_source
+                    != format!("typed host display-name resolution: bundle={app_path}; executable={path}; version={version}; sha256={digest}")
+            {
+                bail!("canonical desktop runtime product is invalid");
+            }
+        }
+        _ => bail!("unsupported runtime engine"),
     }
     let mut recomputed = manifest.clone();
     finalize_manifest_identity(&mut recomputed, &reference_bytes)?;
@@ -272,8 +373,89 @@ pub(crate) fn decode_runtime_manifest(
     Ok(manifest)
 }
 
-fn run_path(run_id: &str) -> PathBuf {
-    Path::new(RUN_ROOT).join(run_id).join("run.json")
+fn source_root() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+}
+
+fn safe_component(value: &str, name: &str) -> Result<()> {
+    if value.is_empty()
+        || matches!(value, "." | "..")
+        || !value.chars().all(|character| {
+            character.is_ascii_alphanumeric() || matches!(character, '-' | '_' | '.')
+        })
+    {
+        bail!("{name} must be one strict non-dot path component");
+    }
+    Ok(())
+}
+
+fn catalog_root(catalog: &str) -> Result<PathBuf> {
+    safe_component(catalog, "catalog")?;
+    if !CATALOGS.iter().any(|(known, _)| *known == catalog) {
+        bail!("unknown crawl catalog {catalog}");
+    }
+    Ok(source_root().join(catalog))
+}
+
+fn reference_path(catalog: &str, record: &str) -> Result<PathBuf> {
+    safe_component(record, "record")?;
+    Ok(catalog_root(catalog)?
+        .join("references")
+        .join(record)
+        .join("reference.json"))
+}
+
+fn run_root() -> PathBuf {
+    std::env::var_os("HOME")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from("/.stado-home-unavailable"))
+        .join(".stado")
+        .join("work")
+        .join("spis")
+        .join("crawl-runs")
+}
+
+fn legacy_run_root() -> PathBuf {
+    source_root().join(".wisent-output").join("crawl-runs")
+}
+
+fn migrate_run_state(run_id: Option<&str>) -> Result<()> {
+    let legacy = legacy_run_root();
+    if !legacy.is_dir() {
+        return Ok(());
+    }
+    let selected = if let Some(run_id) = run_id {
+        safe_component(run_id, "run id")?;
+        vec![run_id.to_string()]
+    } else {
+        std::fs::read_dir(&legacy)?
+            .filter_map(Result::ok)
+            .filter(|entry| entry.path().join("run.json").is_file())
+            .filter_map(|entry| entry.file_name().to_str().map(str::to_string))
+            .collect()
+    };
+    for id in selected {
+        safe_component(&id, "run id")?;
+        let source = legacy.join(&id).join("run.json");
+        let destination = run_root().join(&id).join("run.json");
+        if !source.is_file() || destination.is_file() {
+            continue;
+        }
+        let document: Value =
+            crate::read_json(source.to_str().context("legacy run path is not UTF-8")?)?;
+        atomic_json_write(&destination, &document)?;
+        let recovered: Value =
+            crate::read_json(destination.to_str().context("migrated run path is not UTF-8")?)?;
+        if recovered != document {
+            bail!("legacy crawl run {id} migration read-back differs");
+        }
+    }
+    Ok(())
+}
+
+fn run_path(run_id: &str) -> Result<PathBuf> {
+    safe_component(run_id, "run id")?;
+    Ok(run_root().join(run_id).join("run.json"))
 }
 
 pub(crate) fn build_revision() -> Result<String> {
@@ -290,6 +472,8 @@ pub(crate) fn build_revision() -> Result<String> {
 fn source_snapshot_revision() -> Result<String> {
     let embedded = build_revision()?;
     let head = Command::new("git")
+        .arg("-C")
+        .arg(source_root())
         .args(["rev-parse", "--verify", "HEAD"])
         .output()
         .context("read current Spis source revision")?;
@@ -309,6 +493,8 @@ fn source_snapshot_revision() -> Result<String> {
         );
     }
     let status = Command::new("git")
+        .arg("-C")
+        .arg(source_root())
         .args(["status", "--porcelain=v1", "--untracked-files=all"])
         .output()
         .context("verify current Spis source snapshot")?;
@@ -355,20 +541,46 @@ pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {
     result
 }
 
+struct RecordMutationGuard {
+    file: File,
+}
+
+impl RecordMutationGuard {
+    fn acquire(run_id: &str, catalog: &str, record: &str) -> Result<Self> {
+        safe_component(run_id, "run id")?;
+        safe_component(catalog, "catalog")?;
+        safe_component(record, "record")?;
+        let directory = run_root()
+            .join(run_id)
+            .join("record-locks")
+            .join(catalog);
+        std::fs::create_dir_all(&directory)?;
+        let file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(directory.join(format!("{record}.lock")))?;
+        if unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
+            bail!("{run_id}/{catalog}/{record} is already being mutated");
+        }
+        Ok(Self { file })
+    }
+}
+
+impl Drop for RecordMutationGuard {
+    fn drop(&mut self) {
+        let _ = unsafe { libc::flock(self.file.as_raw_fd(), libc::LOCK_UN) };
+    }
+}
+
 struct RunMutationGuard {
     file: File,
 }
 
 impl RunMutationGuard {
     fn acquire(run_id: &str) -> Result<Self> {
-        if run_id.is_empty()
-            || !run_id.chars().all(|character| {
-                character.is_ascii_alphanumeric() || matches!(character, '-' | '_' | '.')
-            })
-        {
-            bail!("run id contains unsafe characters");
-        }
-        let directory = Path::new(RUN_ROOT).join(run_id);
+        safe_component(run_id, "run id")?;
+        let directory = run_root().join(run_id);
         std::fs::create_dir_all(&directory)?;
         let file = OpenOptions::new()
             .read(true)
@@ -405,7 +617,7 @@ fn sync_attempt_history(run: &mut Value) {
             .map(str::to_string)
             .or_else(|| {
                 record
-                    .get("job_id")
+                    .get("stado_job_id")
                     .and_then(Value::as_str)
                     .map(|job| format!("legacy-job-{job}"))
             });
@@ -433,9 +645,8 @@ fn sync_attempt_history(run: &mut Value) {
 }
 
 fn persist(run: &mut Value) -> Result<()> {
-    sync_attempt_history(run);
     let run_id = run.get("run_id").and_then(Value::as_str).context("run has no run_id")?;
-    let path = run_path(run_id);
+    let path = run_path(run_id)?;
     let expected = run.get("mutation_revision").and_then(Value::as_u64).unwrap_or(0);
     if path.is_file() {
         let current: Value = crate::read_json(path.to_str().context("run path is not UTF-8")?)?;
@@ -446,26 +657,37 @@ fn persist(run: &mut Value) -> Result<()> {
     } else if expected != 0 {
         bail!("crawl run {run_id} disappeared before revision {expected} could be persisted");
     }
-    run["mutation_revision"] = json!(expected + 1);
-    run["updated_at"] = json!(crate::now_iso_utc());
-    atomic_json_write(&path, run)
+    let mut staged = run.clone();
+    sync_attempt_history(&mut staged);
+    staged["mutation_revision"] = json!(expected + 1);
+    staged["updated_at"] = json!(crate::now_iso_utc());
+    atomic_json_write(&path, &staged)?;
+    *run = staged;
+    Ok(())
 }
 
 fn load(run_id: Option<&str>) -> Result<Value> {
+    migrate_run_state(run_id)?;
     let selected = match run_id {
-        Some(value) => value.to_string(),
+        Some(value) => {
+            safe_component(value, "run id")?;
+            value.to_string()
+        }
         None => {
-            let mut ids: Vec<String> = std::fs::read_dir(RUN_ROOT)
-                .with_context(|| format!("no crawl runs exist under {RUN_ROOT}"))?
+            let root = run_root();
+            let mut ids: Vec<String> = std::fs::read_dir(&root)
+                .with_context(|| format!("no crawl runs exist under {}", root.display()))?
                 .filter_map(|entry| entry.ok())
                 .filter(|entry| entry.path().join("run.json").is_file())
-                .map(|entry| entry.file_name().to_string_lossy().to_string())
+                .filter_map(|entry| entry.file_name().to_str().map(str::to_string))
+                .filter(|id| safe_component(id, "run id").is_ok())
                 .collect();
             ids.sort();
             ids.pop().context("no persisted crawl run exists")?
         }
     };
-    crate::read_json(run_path(&selected).to_str().context("run path is not UTF-8")?)
+    let path = run_path(&selected)?;
+    crate::read_json(path.to_str().context("run path is not UTF-8")?)
 }
 
 fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Option<&str>, output_uri: &str, stado_stdout: &str) -> Result<Value> {
@@ -511,7 +733,7 @@ fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Opt
         "catalog": catalog,
         "engine": engine,
         "host": host,
-        "job_id": job_id,
+        "stado_job_id": job_id,
         "artifact_uri": artifact_uri,
         "output_uri": output_uri,
         "state": "queued",
@@ -538,24 +760,28 @@ fn parse_submission(stdout: &[u8]) -> Result<Value> {
         .context("crawler returned no machine-readable submission")
 }
 
-fn engine_command(
-    manifest: &RuntimeManifest,
-    host: &str,
-    admission_url: &str,
-) -> Result<Vec<String>> {
+fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<Vec<String>> {
+    let execution = manifest
+        .execution_identity
+        .as_ref()
+        .context("cannot build worker command without execution identity")?;
+    if execution.host != host {
+        bail!("worker command host differs from the bound execution identity");
+    }
+    if manifest.engine == "web"
+        && manifest
+            .service_identity
+            .as_ref()
+            .is_none_or(|service| service.active_host != host)
+    {
+        bail!("web worker command host differs from the bound Weles service placement");
+    }
     let catalog = manifest.catalog.as_str();
     let engine = manifest.engine.as_str();
     let mut args = match engine {
         "mobile" => vec!["crawl-mobile".into(), catalog.into(), "--host".into(), host.into()],
         "desktop" => vec!["crawl-desktop".into(), catalog.into(), "--host".into(), host.into()],
-        "web" => vec![
-            "crawl-web".into(),
-            catalog.into(),
-            "--host".into(),
-            host.into(),
-            "--admission-url".into(),
-            admission_url.into(),
-        ],
+        "web" => vec!["crawl-web".into(), catalog.into(), "--host".into(), host.into()],
         "tui" => vec!["crawl-tui".into(), "--host".into(), host.into()],
         "cli" => vec!["crawl-cli".into(), "--host".into(), host.into()],
         "docs" => vec!["crawl-docs".into(), "--host".into(), host.into()],
@@ -589,14 +815,9 @@ fn selected_specs(selected: &[String]) -> Result<Vec<(&'static str, &'static str
 }
 
 fn record_directories(catalog: &str, selected: Option<&str>) -> Result<Vec<PathBuf>> {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join(catalog).join("references");
+    let root = catalog_root(catalog)?.join("references");
     if let Some(record) = selected {
-        if !matches!(
-            (Path::new(record).components().next(), Path::new(record).components().count()),
-            (Some(std::path::Component::Normal(_)), 1)
-        ) {
-            bail!("record must be one safe catalog directory name");
-        }
+        safe_component(record, "record")?;
         let path = root.join(record);
         if !path.is_dir() {
             bail!("record {record} does not exist in catalog {catalog}");
@@ -838,22 +1059,39 @@ fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()> {
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    let target = PathBuf::from(".wisent-output")
-        .join("runtime-bindings")
-        .join(format!("{}.verified.json", bindings.sha256));
-    std::fs::create_dir_all(target.parent().expect("binding target has a parent"))?;
+    let home = std::env::var_os("HOME").context("HOME is required for private Stado work cache")?;
+    let directory = PathBuf::from(home)
+        .join(".stado")
+        .join("work")
+        .join("spis")
+        .join("runtime-bindings");
+    std::fs::create_dir_all(&directory)?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+    }
+    let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+    let target = directory.join(format!(
+        ".{}.{}.{}.readback",
+        bindings.sha256,
+        std::process::id(),
+        nonce
+    ));
     let downloaded = stado_command()
         .args(["storage", "get", bindings.uri.as_str()])
         .arg(&target)
         .output()
         .context("read back immutable runtime bindings")?;
     if !downloaded.status.success() {
+        let _ = std::fs::remove_file(&target);
         bail!(
             "runtime bindings read-back failed: {}",
             String::from_utf8_lossy(&downloaded.stderr).trim()
         );
     }
     let stored = std::fs::read(&target)?;
+    let _ = std::fs::remove_file(&target);
     if crate::sha256_hex(&stored) != bindings.sha256 || stored != bytes {
         bail!("immutable runtime bindings read-back differs from the planned exact input");
     }
@@ -967,17 +1205,12 @@ fn runtime_binding(
         .context("prepared proof declaration is invalid")?;
     match engine {
         "web" => {
-            let expected = [
-                "WELES_TOKEN",
-                "WISENT_ORGANIZATION_ID",
-                "SPIS_WELES_RECEIPT_KEYS_JSON",
-                "SPIS_WELES_KEY_SET_VERSION",
-            ];
+            let expected = ["WELES_TOKEN", "WISENT_ORGANIZATION_ID"];
             if delivery.kind != "weles-service-env"
                 || delivery.secret_env.len() != expected.len()
                 || expected.iter().any(|name| !delivery.secret_env.contains_key(*name))
             {
-                bail!("{catalog}/{slug}: web binding needs the four exact official-bridge service env references");
+                bail!("{catalog}/{slug}: web binding needs only exact bearer and organization secret references; public receipt trust is checked in");
             }
         }
         "mobile" | "desktop" => {
@@ -1114,6 +1347,19 @@ fn runtime_product(
         surface,
     })
 }
+fn docs_structure_sha256(catalog: &str, record: &str, engine: &str) -> Result<Option<String>> {
+    if engine != "docs" {
+        return Ok(None);
+    }
+    safe_component(record, "record")?;
+    let path = catalog_root(catalog)?
+        .join("content-structure")
+        .join(format!("{record}.json"));
+    let bytes = std::fs::read(&path)
+        .with_context(|| format!("read docs crawl definition {}", path.display()))?;
+    Ok(Some(crate::sha256_hex(&bytes)))
+}
+
 fn finalize_manifest_identity(manifest: &mut RuntimeManifest, reference_bytes: &[u8]) -> Result<()> {
     manifest.reference_sha256 = crate::sha256_hex(reference_bytes);
     let input_identity = json!({
@@ -1123,9 +1369,12 @@ fn finalize_manifest_identity(manifest: &mut RuntimeManifest, reference_bytes: &
         "constraints": manifest.constraints,
         "delivery": manifest.delivery,
         "bindings_sha256": manifest.bindings_sha256,
+        "bindings_file_sha256": manifest.bindings_file_sha256,
         "prepared_proof": manifest.prepared_proof,
         "execution_identity": manifest.execution_identity,
         "resource_lease": manifest.resource_lease,
+        "docs_structure_sha256": manifest.docs_structure_sha256,
+        "service_identity": manifest.service_identity,
     });
     manifest.source_input_sha256 =
         crate::sha256_hex(&serde_json::to_vec(&input_identity)?);
@@ -1157,8 +1406,13 @@ fn finalize_manifest_identity(manifest: &mut RuntimeManifest, reference_bytes: &
     manifest.correlation_id = format!("spis-{}-{}", &manifest.record_key[..24], manifest.attempt);
     manifest.stado_run_id = format!("{}-{}", manifest.correlation_id, manifest.attempt_id);
     let base_uri = format!(
-        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}",
-        manifest.run_id, manifest.catalog, manifest.record, manifest.record_key, manifest.attempt_id
+        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
+        manifest.run_id,
+        manifest.catalog,
+        manifest.record,
+        manifest.record_key,
+        manifest.attempt,
+        manifest.attempt_id
     );
     manifest.artifact_uri = format!("{base_uri}/artifacts.tar.gz");
     manifest.output_uri = format!("{base_uri}/worker-output.log");
@@ -1173,6 +1427,7 @@ fn planned_record(
     host: &str,
     record_dir: &Path,
     bindings: &RuntimeBindings,
+    service_identity: Option<&RuntimeServiceIdentity>,
 ) -> Value {
     let slug = record_dir
         .file_name()
@@ -1210,6 +1465,22 @@ fn planned_record(
             "message": format!("{catalog}/{slug}: headless constraint does not match engine {engine}")
         }});
     }
+    let service_identity = match (engine, service_identity) {
+        ("web", Some(service)) if service.active_host == host => Some(service.clone()),
+        ("web", _) => {
+            return json!({"record": slug, "state": "unavailable", "diagnostic": {
+                "code": "weles_service_identity_unbound",
+                "message": "authorized weles-admission/browser-evidence/generic_browser_task placement is unavailable"
+            }});
+        }
+        (_, None) => None,
+        (_, Some(_)) => {
+            return json!({"record": slug, "state": "unavailable", "diagnostic": {
+                "code": "unexpected_service_identity",
+                "message": "non-web execution cannot carry a Weles service identity"
+            }});
+        }
+    };
     let product = match runtime_product(
         catalog,
         engine,
@@ -1222,6 +1493,14 @@ fn planned_record(
             return json!({"record": slug, "state": "unavailable", "diagnostic": {
                 "code": "runtime_product_unresolved", "message": error.to_string(),
                 "product_url": reference.get("product_url")
+            }});
+        }
+    };
+    let docs_structure_sha256 = match docs_structure_sha256(catalog, &slug, engine) {
+        Ok(value) => value,
+        Err(error) => {
+            return json!({"record": slug, "state": "unavailable", "diagnostic": {
+                "code": "docs_structure_missing_or_invalid", "message": error.to_string()
             }});
         }
     };
@@ -1241,6 +1520,8 @@ fn planned_record(
         "delivery": delivery,
         "bindings_file_sha256": bindings.sha256,
         "bindings_sha256": bindings_sha256,
+        "service_identity": service_identity,
+        "docs_structure_sha256": docs_structure_sha256,
     });
     let source_input_sha256 = crate::sha256_hex(
         &serde_json::to_vec(&input_identity).expect("typed runtime input serializes"),
@@ -1273,6 +1554,7 @@ fn planned_record(
         runtime_product: product,
         account,
         constraints,
+        docs_structure_sha256,
         delivery,
         bindings_file_sha256: bindings.sha256.clone(),
         bindings_source: bindings.source.clone(),
@@ -1282,7 +1564,7 @@ fn planned_record(
         execution_identity: None,
         resource_lease: matches!(engine, "desktop" | "mobile")
             .then(|| format!("stado-exclusive://{host}/{engine}")),
-        service_identity: None,
+        service_identity,
     };
     if let Err(error) = finalize_manifest_identity(&mut manifest, &bytes) {
         return json!({"record": slug, "state": "unavailable", "diagnostic": {
@@ -1294,7 +1576,7 @@ fn planned_record(
         "state": "planned",
         "manifest": manifest,
         "command": Value::Null,
-        "job_id": Value::Null,
+        "stado_job_id": Value::Null,
         "artifact_uri": manifest.artifact_uri,
         "output_uri": manifest.output_uri,
         "submission_receipt": Value::Null,
@@ -1302,8 +1584,8 @@ fn planned_record(
         "diagnostic": Value::Null,
     })
 }
-fn registry_placements() -> Result<(BTreeMap<String, String>, Option<String>)> {
-    let output = super::crawl::stado_command().args(["registry", "pull"]).output()?;
+fn registry_placements() -> Result<(BTreeMap<String, String>, Option<RuntimeServiceIdentity>)> {
+    let output = stado_command().args(["registry", "pull"]).output()?;
     if !output.status.success() {
         bail!(
             "Stado registry could not select crawler hosts: {}",
@@ -1315,42 +1597,92 @@ fn registry_placements() -> Result<(BTreeMap<String, String>, Option<String>)> {
         .get("targets")
         .and_then(Value::as_array)
         .context("Stado registry has no targets")?;
-    let web = registry
-        .pointer("/service_directory/services/weles-admission/active_host")
+    let service = registry.pointer("/service_directory/services/weles-admission");
+    let service_identity = service.and_then(|service| {
+        let generation = registry
+            .pointer("/service_directory/generation")
+            .and_then(Value::as_u64)?;
+        let capabilities = service
+            .pointer("/consumers/spis/capabilities")
+            .and_then(Value::as_array)?;
+        if !capabilities
+            .iter()
+            .any(|capability| capability.as_str() == Some("browser-evidence"))
+        {
+            return None;
+        }
+        let active_host = service.get("active_host").and_then(Value::as_str)?;
+        let target = targets.iter().find(|target| {
+            target.get("name").and_then(Value::as_str) == Some(active_host)
+        })?;
+        let actions = target.pointer("/weles/actions").and_then(Value::as_array)?;
+        if !actions
+            .iter()
+            .any(|action| action.as_str() == Some("generic_browser_task"))
+        {
+            return None;
+        }
+        let endpoint = service
+            .pointer(&format!("/endpoints/{active_host}/url"))
+            .and_then(Value::as_str)?;
+        Some(RuntimeServiceIdentity {
+            name: "weles-admission".into(),
+            generation,
+            consumer: "spis".into(),
+            capability: "browser-evidence".into(),
+            active_host: active_host.into(),
+            endpoint: endpoint.into(),
+            action: "generic_browser_task".into(),
+        })
+    });
+    let always_on = targets
+        .iter()
+        .find(|target| {
+            target.get("role").and_then(Value::as_str) == Some("always-on")
+                && target.pointer("/weles/enabled").and_then(Value::as_bool) == Some(true)
+        })
+        .and_then(|target| target.get("name"))
         .and_then(Value::as_str)
         .map(str::to_string);
-    let admission_url = web.as_deref().and_then(|host| {
-        registry.pointer(&format!("/service_directory/services/weles-admission/endpoints/{host}/url"))
-            .and_then(Value::as_str).map(str::to_string)
-    });
-    let always_on = targets.iter().find(|target| {
-        target.get("role").and_then(Value::as_str) == Some("always-on")
-            && target.pointer("/weles/enabled").and_then(Value::as_bool) == Some(true)
-    }).and_then(|target| target.get("name")).and_then(Value::as_str).map(str::to_string);
-    let cpu = targets.iter().find(|target| {
-        target.get("role").and_then(Value::as_str) == Some("always-on")
-    }).and_then(|target| target.get("name")).and_then(Value::as_str).map(str::to_string);
-    let mobile = targets.iter().find(|target| {
-        target.get("services").and_then(Value::as_array).is_some_and(|services| {
-            services.iter().any(|service| {
-                service.get("name").and_then(Value::as_str).is_some_and(|name| {
-                    name.to_ascii_lowercase().contains("appium")
+    let cpu = targets
+        .iter()
+        .find(|target| target.get("role").and_then(Value::as_str) == Some("always-on"))
+        .and_then(|target| target.get("name"))
+        .and_then(Value::as_str)
+        .map(str::to_string);
+    let mobile = targets
+        .iter()
+        .find(|target| {
+            target
+                .get("services")
+                .and_then(Value::as_array)
+                .is_some_and(|services| {
+                    services.iter().any(|service| {
+                        service.get("name").and_then(Value::as_str).is_some_and(|name| {
+                            name.to_ascii_lowercase().contains("appium")
+                        })
+                    })
                 })
-            })
         })
-    }).and_then(|target| target.get("name")).and_then(Value::as_str).map(str::to_string);
+        .and_then(|target| target.get("name"))
+        .and_then(Value::as_str)
+        .map(str::to_string);
     let mut placements = BTreeMap::new();
-    if let Some(host) = web { placements.insert("web".into(), host); }
+    if let Some(service) = &service_identity {
+        placements.insert("web".into(), service.active_host.clone());
+    }
     if let Some(host) = always_on {
         placements.insert("desktop".into(), host);
     }
-    if let Some(host) = mobile { placements.insert("mobile".into(), host); }
+    if let Some(host) = mobile {
+        placements.insert("mobile".into(), host);
+    }
     if let Some(host) = cpu {
         placements.insert("cli".into(), host.clone());
         placements.insert("tui".into(), host.clone());
         placements.insert("docs".into(), host);
     }
-    Ok((placements, admission_url))
+    Ok((placements, service_identity))
 }
 
 fn host_for(
@@ -1372,7 +1704,7 @@ fn host_for(
 
 
 fn preflight_catalog(catalog: &str, selected_record: Option<&str>) -> Result<()> {
-    let root = Path::new(catalog);
+    let root = catalog_root(catalog)?;
     let sources: Value = crate::read_json(root.join("sources.json").to_str().context("sources path is not UTF-8")?)
         .with_context(|| format!("{catalog}: read source manifest"))?;
     let examples = sources.get("examples").and_then(Value::as_array)
@@ -1429,7 +1761,8 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
 }
 
 fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str) -> Value {
-    let commands: Vec<Vec<&str>> = match (engine, catalog) {
+    let mut commands: Vec<Vec<&str>> = vec![vec!["hostname"]];
+    commands.extend(match (engine, catalog) {
         ("mobile", "ios-app-examples") => vec![
             vec!["appium", "--version"],
             vec!["appium", "driver", "list", "--installed"],
@@ -1442,11 +1775,11 @@ fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str) 
             vec!["adb", "devices", "-l"],
         ],
         ("desktop", _) => vec![vec!["mdfind", "kMDItemContentType == 'com.apple.application-bundle'"]],
-        ("web", _) => vec![vec!["node", "--version"], vec!["npm", "--version"], vec!["curl", "--version"]],
-        ("docs", _) => vec![vec!["git", "--version"], vec!["curl", "--version"], vec!["df", "-h"]],
+        ("web", _) => vec![vec!["node", "--version"], vec!["curl", "--version"]],
+        ("docs", _) => vec![vec!["curl", "--version"]],
         ("cli" | "tui", _) => vec![vec!["tmux", "-V"]],
         _ => Vec::new(),
-    };
+    });
     let mut checks: Vec<Value> = commands.iter().map(|command| host_probe(host, command)).collect();
     let desktop_driver_ready = if engine == "desktop" {
         let candidates = [
@@ -1491,6 +1824,29 @@ fn host_preflight(catalog: &str, engine: &str, host: &str, admission_url: &str) 
     })
 }
 
+fn observed_hostname(host_report: &Value) -> Result<String> {
+    let value = host_report
+        .get("checks")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .find(|check| {
+            check.get("command").and_then(Value::as_array).is_some_and(|command| {
+                command.len() == 1 && command[0].as_str() == Some("hostname")
+            })
+        })
+        .and_then(|check| check.get("stdout"))
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|value| {
+            !value.is_empty()
+                && !value.chars().any(char::is_whitespace)
+                && value.bytes().all(|byte| byte.is_ascii_alphanumeric() || b".-_".contains(&byte))
+        })
+        .context("host preflight has no exact observed hostname")?;
+    Ok(value.to_string())
+}
+
 fn ios_booted_identity(host: &str, host_report: &Value) -> Result<RuntimeExecutionIdentity> {
     let check = host_report
         .get("checks")
@@ -1528,6 +1884,7 @@ fn ios_booted_identity(host: &str, host_report: &Value) -> Result<RuntimeExecuti
     }
     Ok(RuntimeExecutionIdentity {
         host: host.into(),
+        observed_hostname: String::new(),
         platform: "ios".into(),
         device_id: Some(
             devices[0]
@@ -1537,9 +1894,11 @@ fn ios_booted_identity(host: &str, host_report: &Value) -> Result<RuntimeExecuti
                 .into(),
         ),
         device_name: devices[0].get("name").and_then(Value::as_str).map(str::to_string),
+        resolved_product_identifier: String::new(),
         executable_path: None,
         product_version: None,
         executable_sha256: None,
+        effective_url: None,
     })
 }
 
@@ -1573,12 +1932,15 @@ fn android_device_identity(host: &str, host_report: &Value) -> Result<RuntimeExe
     }
     Ok(RuntimeExecutionIdentity {
         host: host.into(),
+        observed_hostname: String::new(),
         platform: "android".into(),
         device_id: Some(devices[0].0.into()),
+        resolved_product_identifier: String::new(),
         device_name: None,
         executable_path: None,
         product_version: None,
         executable_sha256: None,
+        effective_url: None,
     })
 }
 
@@ -1676,6 +2038,7 @@ fn resolve_terminal_identity(
     manifest: &mut RuntimeManifest,
     host: &str,
 ) -> Result<(RuntimeExecutionIdentity, Vec<Value>)> {
+    let declared_identifier = manifest.runtime_product.identifier.clone();
     let candidates = if manifest.runtime_product.kind == "tui-slug" {
         super::crawl_tui::binary_candidates(&manifest.runtime_product.identifier)
     } else {
@@ -1707,9 +2070,6 @@ fn resolve_terminal_identity(
         );
     }
     let path = resolved.into_iter().next().expect("one executable");
-    let version_check = host_probe(host, &[&path, "--version"]);
-    let version = ready_output(&version_check, "read exact product version")?;
-    checks.push(version_check);
     let digest_check = host_probe(host, &["shasum", "-a", "256", &path]);
     let digest_output = ready_output(&digest_check, "hash exact executable")?;
     let digest = digest_output.split_whitespace().next().unwrap_or_default();
@@ -1729,16 +2089,19 @@ fn resolve_terminal_identity(
     };
     manifest.runtime_product.identifier = binary;
     manifest.runtime_product.identity_source =
-        format!("typed host resolution: {path}; version={version}; sha256={digest}");
+        format!("typed isolated host path resolution: {path}; sha256={digest}");
     Ok((
         RuntimeExecutionIdentity {
             host: host.into(),
+            observed_hostname: String::new(),
             platform: "terminal".into(),
             device_id: None,
-            device_name: None,
+            resolved_product_identifier: String::new(),
+            device_name: Some(declared_identifier),
             executable_path: Some(path),
-            product_version: Some(version),
+            product_version: None,
             executable_sha256: Some(digest.to_ascii_lowercase()),
+            effective_url: None,
         },
         checks,
     ))
@@ -1796,6 +2159,20 @@ fn resolve_desktop_identity(
     if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
         bail!("desktop executable SHA-256 is invalid");
     }
+    let hardware_check = host_probe(host, &["ioreg", "-rd1", "-c", "IOPlatformExpertDevice"]);
+    let hardware_output = ready_output(&hardware_check, "resolve exact desktop hardware identity")?;
+    let hardware_id = hardware_output
+        .lines()
+        .find(|line| line.contains("\"IOPlatformUUID\""))
+        .and_then(|line| line.split('"').nth(3))
+        .filter(|value| {
+            !value.is_empty()
+                && value
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+        })
+        .context("desktop hardware report has no valid IOPlatformUUID")?
+        .to_string();
     manifest.runtime_product.kind = "desktop-bundle".into();
     manifest.runtime_product.identifier = bundle.clone();
     manifest.runtime_product.identity_source =
@@ -1803,14 +2180,17 @@ fn resolve_desktop_identity(
     Ok((
         RuntimeExecutionIdentity {
             host: host.into(),
+            observed_hostname: String::new(),
             platform: "macos".into(),
-            device_id: None,
+            device_id: Some(hardware_id),
+            resolved_product_identifier: String::new(),
             device_name: Some(display_name),
             executable_path: Some(executable_path),
             product_version: Some(version),
             executable_sha256: Some(digest),
+            effective_url: None,
         },
-        vec![search, metadata, executable_check, version_check, digest_check],
+        vec![search, metadata, executable_check, version_check, digest_check, hardware_check],
     ))
 }
 
@@ -1926,17 +2306,22 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
             "url" => (
                 RuntimeExecutionIdentity {
                     host: host.into(),
+                    observed_hostname: String::new(),
                     platform: if manifest.engine == "web" { "weles".into() } else { "http".into() },
                     device_id: None,
+                    resolved_product_identifier: String::new(),
                     device_name: None,
                     executable_path: None,
                     product_version: None,
                     executable_sha256: None,
+                    effective_url: None,
                 },
                 Vec::new(),
             ),
             kind => bail!("unsupported unresolved runtime product kind {kind}"),
         };
+        identity.observed_hostname = observed_hostname(host_report)?;
+        identity.resolved_product_identifier = manifest.runtime_product.identifier.clone();
         let product = manifest.runtime_product.identifier.as_str();
         let check = match manifest.runtime_product.kind.as_str() {
             "ios-bundle" => {
@@ -1962,9 +2347,13 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
                     "--fail",
                     "--silent",
                     "--show-error",
-                    "--head",
+                    "--location",
+                    "--max-redirs",
+                    "5",
+                    "--output",
+                    "/dev/null",
                     "--write-out",
-                    "\n%{http_code} %{url_effective}",
+                    "%{http_code} %{url_effective}",
                     product,
                 ],
             ),
@@ -1978,12 +2367,23 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
             }
         }
         if manifest.runtime_product.kind == "url" {
-            let last = output.lines().last().unwrap_or_default();
-            let (status, effective) = last.split_once(' ').context("URL identity probe has no status and effective URL")?;
+            let (status, effective) = output
+                .lines()
+                .last()
+                .unwrap_or_default()
+                .split_once(' ')
+                .context("URL identity probe has no status and effective URL")?;
             let status: u16 = status.parse().context("URL identity probe status is invalid")?;
-            if !(200..300).contains(&status) || effective != product {
-                bail!("URL probe did not resolve the exact declared surface");
+            let declared = url::Url::parse(product).context("declared URL is invalid")?;
+            let effective = url::Url::parse(effective).context("effective URL is invalid")?;
+            if !(200..300).contains(&status)
+                || declared.origin() != effective.origin()
+                || effective.username() != ""
+                || effective.password().is_some()
+            {
+                bail!("URL probe left the exact declared origin or failed");
             }
+            identity.effective_url = Some(effective.to_string());
         }
         if manifest.engine == "mobile" {
             checks.extend(resolve_mobile_install_identity(manifest, &mut identity, host, &check)?);
@@ -2085,29 +2485,53 @@ fn persist_submission_receipt(
     run_id: &str,
     catalog: &str,
     record: &str,
+    attempt_id: &str,
     receipt: &Value,
 ) -> Result<()> {
-    atomic_json_write(
-        &Path::new(RUN_ROOT)
-            .join(run_id)
-            .join("receipts")
-            .join(catalog)
-            .join(format!("{record}.json")),
-        receipt,
-    )
+    safe_component(run_id, "run id")?;
+    safe_component(catalog, "catalog")?;
+    safe_component(record, "record")?;
+    safe_component(attempt_id, "attempt id")?;
+    let path = run_root()
+        .join(run_id)
+        .join("receipts")
+        .join(catalog)
+        .join(record)
+        .join(attempt_id)
+        .join("receipt.json");
+    if path.is_file() {
+        let existing: Value =
+            crate::read_json(path.to_str().context("receipt path is not UTF-8")?)?;
+        if existing == *receipt {
+            return Ok(());
+        }
+        bail!("immutable submission receipt already exists with different content");
+    }
+    atomic_json_write(&path, receipt)?;
+    let recovered: Value =
+        crate::read_json(path.to_str().context("receipt path is not UTF-8")?)?;
+    if recovered != *receipt {
+        bail!("submission receipt read-back differs from accepted content");
+    }
+    Ok(())
 }
 
 fn continue_start(run: &mut Value) -> Result<()> {
     let run_id = run.get("run_id").and_then(Value::as_str).context("run has no id")?.to_string();
-    let admission_url = run.get("admission_url").and_then(Value::as_str).unwrap_or_default().to_string();
     let catalog_count = run.get("catalogs").and_then(Value::as_array).map(Vec::len).unwrap_or(0);
     for catalog_index in 0..catalog_count {
         let catalog = run["catalogs"][catalog_index]["catalog"].as_str().unwrap_or_default().to_string();
         let engine = run["catalogs"][catalog_index]["engine"].as_str().unwrap_or_default().to_string();
         let host = run["catalogs"][catalog_index]["host"].as_str().unwrap_or_default().to_string();
         if run["catalogs"][catalog_index]["host_preflight"].is_null() {
+            let service_endpoint = run["catalogs"][catalog_index]["records"]
+                .as_array()
+                .and_then(|records| records.first())
+                .and_then(|record| record.pointer("/manifest/service_identity/endpoint"))
+                .and_then(Value::as_str)
+                .unwrap_or_default();
             run["catalogs"][catalog_index]["host_preflight"] =
-                host_preflight(&catalog, &engine, &host, &admission_url);
+                host_preflight(&catalog, &engine, &host, service_endpoint);
             run["catalogs"][catalog_index]["state"] = json!("preflighting");
             persist(run)?;
         }
@@ -2117,7 +2541,7 @@ fn continue_start(run: &mut Value) -> Result<()> {
         for record_index in 0..record_count {
             let state = run["catalogs"][catalog_index]["records"][record_index]["state"]
                 .as_str().unwrap_or("unavailable").to_string();
-            let has_job = run["catalogs"][catalog_index]["records"][record_index]["job_id"].as_str().is_some();
+            let has_job = run["catalogs"][catalog_index]["records"][record_index]["stado_job_id"].as_str().is_some();
             if has_job || matches!(
                 state.as_str(),
                 "unavailable" | "completed" | "uploaded" | "imported" | "running" | "queued" | "pending_review"
@@ -2136,19 +2560,54 @@ fn continue_start(run: &mut Value) -> Result<()> {
                     continue;
                 }
             };
-            let mut preflight = record_preflight(&mut manifest, &host_report);
-            let mut ready = preflight.get("ready").and_then(Value::as_bool) == Some(true);
-            if ready {
-                let reference_path = Path::new(&manifest.catalog)
-                    .join("references")
-                    .join(&manifest.record)
-                    .join("reference.json");
-                match std::fs::read(&reference_path)
-                    .map_err(anyhow::Error::from)
-                    .and_then(|bytes| finalize_manifest_identity(&mut manifest, &bytes))
-                {
-                    Ok(()) => {}
+            let already_preflighted = state == "preflight_passed";
+            let mut preflight = run["catalogs"][catalog_index]["records"][record_index]["preflight"].clone();
+            let mut ready = already_preflighted;
+            if already_preflighted {
+                let retained = run["catalogs"][catalog_index]["records"][record_index]["command"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .filter_map(Value::as_str)
+                    .map(str::to_string)
+                    .collect::<Vec<_>>();
+                match engine_command(&manifest, &host) {
+                    Ok(expected) if !retained.is_empty() && expected == retained => {}
+                    Ok(_) => {
+                        ready = false;
+                        preflight = json!({
+                            "ready": false,
+                            "diagnostic": {
+                                "code": "retained_command_mismatch",
+                                "message": "preflight-persisted command differs from the immutable attempt"
+                            }
+                        });
+                    }
                     Err(error) => {
+                        ready = false;
+                        preflight = json!({
+                            "ready": false,
+                            "diagnostic": {
+                                "code": "worker_command_unavailable",
+                                "message": error.to_string()
+                            }
+                        });
+                    }
+                }
+            } else {
+                preflight = record_preflight(&mut manifest, &host_report);
+                ready = preflight.get("ready").and_then(Value::as_bool) == Some(true);
+                if ready {
+                    let reference_path = reference_path(&manifest.catalog, &manifest.record);
+                    let reference_display = reference_path
+                        .as_ref()
+                        .map(|path| path.display().to_string())
+                        .unwrap_or_else(|error| error.to_string());
+                    if let Err(error) = reference_path.and_then(|path| {
+                        std::fs::read(&path)
+                            .map_err(anyhow::Error::from)
+                            .and_then(|bytes| finalize_manifest_identity(&mut manifest, &bytes))
+                    }) {
                         ready = false;
                         preflight = json!({
                             "schema": "wisent.crawl-record-preflight.v2",
@@ -2157,28 +2616,37 @@ fn continue_start(run: &mut Value) -> Result<()> {
                             "diagnostic": {
                                 "code": "runtime_manifest_finalization_failed",
                                 "message": error.to_string(),
-                                "path": reference_path,
+                                "path": reference_display,
                             },
                         });
                     }
                 }
+                run["catalogs"][catalog_index]["records"][record_index]["manifest"] =
+                    serde_json::to_value(&manifest)?;
+                run["catalogs"][catalog_index]["records"][record_index]["preflight"] = preflight.clone();
+                if ready {
+                    match engine_command(&manifest, &host) {
+                        Ok(command) => {
+                            run["catalogs"][catalog_index]["records"][record_index]["command"] = json!(command);
+                            run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("preflight_passed");
+                            run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] = Value::Null;
+                        }
+                        Err(error) => {
+                            ready = false;
+                            run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("unavailable");
+                            run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
+                                json!({"code": "worker_command_unavailable", "message": error.to_string()});
+                        }
+                    }
+                } else {
+                    run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("unavailable");
+                    run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
+                        preflight.get("diagnostic").cloned().unwrap_or_else(|| {
+                            json!({"code": "record_preflight_failed", "message": "exact record prerequisite failed"})
+                        });
+                }
+                persist(run)?;
             }
-            run["catalogs"][catalog_index]["records"][record_index]["manifest"] =
-                serde_json::to_value(&manifest)?;
-            run["catalogs"][catalog_index]["records"][record_index]["preflight"] = preflight.clone();
-            if ready {
-                let command = engine_command(&manifest, &host, &admission_url)?;
-                run["catalogs"][catalog_index]["records"][record_index]["command"] = json!(command);
-                run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("preflight_passed");
-                run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] = Value::Null;
-            } else {
-                run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("unavailable");
-                run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
-                    preflight.get("diagnostic").cloned().unwrap_or_else(|| {
-                        json!({"code": "record_preflight_failed", "message": "exact record prerequisite failed"})
-                    });
-            }
-            persist(run)?;
             if !ready {
                 continue;
             }
@@ -2197,9 +2665,15 @@ fn continue_start(run: &mut Value) -> Result<()> {
                             run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
                                 json!({"code": "submission_source_mismatch", "message": "Stado receipt does not bind the immutable Spis source revision"});
                         } else {
-                            persist_submission_receipt(&run_id, &catalog, &manifest.record, &receipt)?;
-                            run["catalogs"][catalog_index]["records"][record_index]["job_id"] =
-                                receipt.get("job_id").cloned().unwrap_or(Value::Null);
+                            persist_submission_receipt(
+                                &run_id,
+                                &catalog,
+                                &manifest.record,
+                                &manifest.attempt_id,
+                                &receipt,
+                            )?;
+                            run["catalogs"][catalog_index]["records"][record_index]["stado_job_id"] =
+                                receipt.get("stado_job_id").cloned().unwrap_or(Value::Null);
                             run["catalogs"][catalog_index]["records"][record_index]["artifact_uri"] =
                                 receipt.get("artifact_uri").cloned().unwrap_or_else(|| json!(manifest.artifact_uri));
                             run["catalogs"][catalog_index]["records"][record_index]["output_uri"] =
@@ -2241,7 +2715,6 @@ fn continue_start(run: &mut Value) -> Result<()> {
 
 fn start(rest: &[String]) -> Result<()> {
     let mut hosts: BTreeMap<String, String> = BTreeMap::new();
-    let mut admission_url = None;
     let mut catalogs = Vec::new();
     let mut record = None;
     let mut requested_run_id = None;
@@ -2273,10 +2746,6 @@ fn start(rest: &[String]) -> Result<()> {
                 i += 1;
                 requested_run_id = Some(rest.get(i).context("--run-id needs a value")?.clone());
             }
-            "--admission-url" => {
-                i += 1;
-                admission_url = Some(rest.get(i).context("--admission-url needs a value")?.clone());
-            }
             "--bindings" => {
                 i += 1;
                 bindings_path = Some(rest.get(i).context("--bindings needs a value")?.clone());
@@ -2291,13 +2760,15 @@ fn start(rest: &[String]) -> Result<()> {
     }
     let source_revision = source_snapshot_revision()?;
     let bindings = load_runtime_bindings(bindings_path.as_deref())?;
-    let (discovered_hosts, discovered_admission_url) = registry_placements()?;
-    let needs_web = specs.iter().any(|(_, engine)| *engine == "web");
-    let admission_url = admission_url.or(discovered_admission_url);
-    if needs_web && admission_url.is_none() {
-        bail!("Stado service directory does not expose the Weles endpoint for this caller");
-    }
-    let admission_url = admission_url.unwrap_or_default();
+    let (discovered_hosts, service_identity, registry_diagnostic) =
+        match registry_placements() {
+            Ok((hosts, service)) => (hosts, service, None),
+            Err(error) => (
+                BTreeMap::new(),
+                None,
+                Some(format!("Stado registry placement discovery failed: {error}")),
+            ),
+        };
     let run_id = requested_run_id.unwrap_or_else(|| {
         format!("crawl-{}", crate::now_iso_utc().replace(':', "-").replace('T', "-"))
     });
@@ -2306,13 +2777,13 @@ fn start(rest: &[String]) -> Result<()> {
         "catalogs": specs,
         "record": record,
         "hosts": hosts,
-        "admission_url": admission_url,
+        "service_identity": service_identity,
         "bindings_source": bindings.source,
         "bindings_sha256": bindings.sha256,
         "bindings_uri": bindings.uri,
     });
     let request_digest = crate::sha256_hex(&serde_json::to_vec(&request_identity)?);
-    if run_path(&run_id).is_file() {
+    if run_path(&run_id)?.is_file() {
         {
             let _guard = RunMutationGuard::acquire(&run_id)?;
             let run = load(Some(&run_id))?;
@@ -2335,8 +2806,56 @@ fn start(rest: &[String]) -> Result<()> {
     }
     let mut entries = Vec::new();
     for (catalog, engine) in specs {
-        let host = host_for(catalog, engine, &hosts, &discovered_hosts)?;
-        let records = record_directories(catalog, record.as_deref())?
+        let paths = record_directories(catalog, record.as_deref())?;
+        let host = host_for(catalog, engine, &hosts, &discovered_hosts);
+        let unavailable = host
+            .as_ref()
+            .err()
+            .map(ToString::to_string)
+            .or_else(|| {
+                (engine == "web" && service_identity.is_none()).then(|| {
+                    registry_diagnostic.clone().unwrap_or_else(|| {
+                        "Stado service directory does not authorize consumer spis for weles-admission browser-evidence on a host advertising generic_browser_task".into()
+                    })
+                })
+            });
+        if let Some(message) = unavailable {
+            let records = paths
+                .iter()
+                .map(|path| {
+                    json!({
+                        "record": path.file_name().and_then(|name| name.to_str()).unwrap_or("invalid-record"),
+                        "state": "unavailable",
+                        "diagnostic": {
+                            "code": "runtime_placement_unavailable",
+                            "retryable": true,
+                            "message": message,
+                        },
+                        "attempts": [],
+                    })
+                })
+                .collect::<Vec<_>>();
+            entries.push(json!({
+                "catalog": catalog,
+                "engine": engine,
+                "host": Value::Null,
+                "state": "unavailable",
+                "host_preflight": {
+                    "ready": false,
+                    "diagnostic": {
+                        "code": "runtime_placement_unavailable",
+                        "message": message,
+                    }
+                },
+                "records": records,
+            }));
+            continue;
+        }
+        let host = host.expect("placement error handled");
+        let service = (engine == "web")
+            .then_some(service_identity.as_ref())
+            .flatten();
+        let records = paths
             .iter()
             .map(|path| {
                 planned_record(
@@ -2347,6 +2866,7 @@ fn start(rest: &[String]) -> Result<()> {
                     &host,
                     path,
                     &bindings,
+                    service,
                 )
             })
             .collect::<Vec<_>>();
@@ -2369,7 +2889,6 @@ fn start(rest: &[String]) -> Result<()> {
         "updated_at": crate::now_iso_utc(),
         "mutation_revision": 0,
         "hosts": hosts,
-        "admission_url": admission_url,
         "bindings_source": bindings.source,
         "bindings_sha256": bindings.sha256,
         "bindings_uri": bindings.uri,
@@ -2378,7 +2897,7 @@ fn start(rest: &[String]) -> Result<()> {
     });
     {
         let _guard = RunMutationGuard::acquire(&run_id)?;
-        if run_path(&run_id).is_file() {
+        if run_path(&run_id)?.is_file() {
             bail!("run id {run_id} was concurrently created");
         }
         persist(&mut run)?;
@@ -2433,7 +2952,7 @@ fn machine_status(job_id: &str) -> std::result::Result<Value, LookupFailure> {
 }
 
 fn refresh_item(entry: &mut Value) {
-    let Some(job_id) = entry.get("job_id").and_then(Value::as_str).map(str::to_string) else {
+    let Some(job_id) = entry.get("stado_job_id").and_then(Value::as_str).map(str::to_string) else {
         return;
     };
     match machine_status(&job_id) {
@@ -2450,7 +2969,7 @@ fn refresh_item(entry: &mut Value) {
                         "code": "runtime_revision_mismatch",
                         "expected": expected,
                         "observed": observed,
-                        "job_id": job_id,
+                        "stado_job_id": job_id,
                     });
                     entry["job"] = job;
                     return;
@@ -2469,10 +2988,12 @@ fn refresh_item(entry: &mut Value) {
         Err(error) if error.not_found => {
             entry["state"] = json!("lost");
             entry["lookup_error"] = error.diagnostic.clone();
+
+
             entry["diagnostic"] = json!({
                 "code": "stado_job_not_found",
                 "message": format!("Stado returned semantic NOT_FOUND for job {job_id}"),
-                "job_id": job_id,
+                "stado_job_id": job_id,
             });
             entry["error"] = json!(format!("current Stado lookup confirmed that job {job_id} does not exist"));
             entry["job"] = Value::Null;
@@ -2498,6 +3019,361 @@ fn refresh(run: &mut Value) {
     }
     run["updated_at"] = json!(crate::now_iso_utc());
     update_run_state(run);
+}
+fn migrate_legacy_catalog_jobs(run: &mut Value) {
+    let Some(entries) = run.get_mut("catalogs").and_then(Value::as_array_mut) else {
+        return;
+    };
+    for entry in entries {
+        let has_records = entry
+            .get("records")
+            .and_then(Value::as_array)
+            .is_some_and(|records| !records.is_empty());
+        let Some(job_id) = entry.get("job_id").and_then(Value::as_str).map(str::to_string) else {
+            continue;
+        };
+        if has_records {
+            continue;
+        }
+        let suffix = job_id
+            .chars()
+            .filter(|character| character.is_ascii_alphanumeric() || matches!(character, '-' | '_'))
+            .collect::<String>();
+        let record = format!("legacy-job-{suffix}");
+        entry["records"] = json!([{
+            "record": record,
+            "state": entry.get("state").cloned().unwrap_or_else(|| json!("unknown")),
+            "stado_job_id": job_id,
+            "attempt_id": format!("legacy-attempt-{suffix}"),
+            "artifact_uri": entry.get("artifact_uri").cloned().unwrap_or(Value::Null),
+            "output_uri": entry.get("output_uri").cloned().unwrap_or(Value::Null),
+            "submission_receipt": entry.get("submission_receipt").cloned().unwrap_or(Value::Null),
+            "diagnostic": {
+                "code": "legacy_catalog_attempt_migrated",
+                "message": "legacy catalog-level job retained as one explicit synthetic record attempt"
+            },
+            "attempts": [],
+        }]);
+    }
+}
+
+fn machine_state(job: &Value) -> &str {
+    job.get("state")
+        .or_else(|| job.get("status"))
+        .and_then(Value::as_str)
+        .unwrap_or("unknown")
+}
+
+fn terminal_machine_state(state: &str) -> bool {
+    matches!(
+        state,
+        "completed"
+            | "succeeded"
+            | "failed"
+            | "cancelled"
+            | "canceled"
+            | "lost"
+            | "reaped"
+    )
+}
+
+fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String> {
+    let bytes = serde_json::to_vec(intent)?;
+    let digest = crate::sha256_hex(&bytes);
+    let home = std::env::var_os("HOME").context("HOME is required for private Stado work state")?;
+    let directory = PathBuf::from(home)
+        .join(".stado")
+        .join("work")
+        .join("spis")
+        .join("cancel-intents");
+    std::fs::create_dir_all(&directory)?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+    }
+    let source = directory.join(format!("{digest}.json"));
+    if source.is_file() {
+        if std::fs::read(&source)? != bytes {
+            bail!("private cancel-intent cache conflicts with its content digest");
+        }
+    } else {
+        let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+        let temporary = directory.join(format!(".{digest}.{}.{}.tmp", std::process::id(), nonce));
+        let mut file = OpenOptions::new().write(true).create_new(true).open(&temporary)?;
+        file.write_all(&bytes)?;
+        file.sync_all()?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&temporary, std::fs::Permissions::from_mode(0o600))?;
+        }
+        std::fs::rename(&temporary, &source)?;
+        File::open(&directory)?.sync_all()?;
+    }
+    let stored = stado_command()
+        .args(["storage", "put", "--if-absent", "--content-type", "application/json", uri])
+        .arg(&source)
+        .output()
+        .context("persist immutable crawl cancel intent")?;
+    if !stored.status.success() {
+        bail!(
+            "Stado refused immutable cancel intent: {}",
+            String::from_utf8_lossy(&stored.stderr).trim()
+        );
+    }
+    let readback = directory.join(format!(".{digest}.{}.readback", std::process::id()));
+    let output = stado_command()
+        .args(["storage", "get", uri])
+        .arg(&readback)
+        .output()
+        .context("read back immutable crawl cancel intent")?;
+    if !output.status.success() {
+        let _ = std::fs::remove_file(&readback);
+        bail!(
+            "cancel intent read-back failed: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let recovered = std::fs::read(&readback)?;
+    let _ = std::fs::remove_file(&readback);
+    if recovered != bytes || crate::sha256_hex(&recovered) != digest {
+        bail!("cancel intent read-back differs from the exact requested cancellation");
+    }
+    Ok(digest)
+}
+
+fn cancel(rest: &[String]) -> Result<()> {
+    let mut run_id = None;
+    let mut selected_record = None;
+    let mut reason = None;
+    let mut index = 0;
+    while index < rest.len() {
+        match rest[index].as_str() {
+            "--run" => {
+                index += 1;
+                run_id = Some(rest.get(index).context("--run needs a value")?.clone());
+            }
+            "--record" => {
+                index += 1;
+                selected_record = Some(rest.get(index).context("--record needs a value")?.clone());
+            }
+            "--reason" => {
+                index += 1;
+                reason = Some(rest.get(index).context("--reason needs a value")?.clone());
+            }
+            value => bail!("unknown argument: {value}"),
+        }
+        index += 1;
+    }
+    let run_id = run_id.context("--run is required")?;
+    let reason = reason
+        .filter(|value| !value.trim().is_empty() && value.len() <= 1024)
+        .context("--reason must be nonempty and at most 1024 bytes")?;
+    {
+        let _guard = RunMutationGuard::acquire(&run_id)?;
+        let mut run = load(Some(&run_id))?;
+        let before = run.clone();
+        migrate_legacy_catalog_jobs(&mut run);
+        if run != before {
+            persist(&mut run)?;
+        }
+    }
+    let snapshot = load(Some(&run_id))?;
+    let mut targets = Vec::new();
+    for catalog in snapshot
+        .get("catalogs")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+    {
+        let catalog_name = catalog
+            .get("catalog")
+            .and_then(Value::as_str)
+            .unwrap_or_default();
+        for record in catalog
+            .get("records")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            let record_name = record
+                .get("record")
+                .and_then(Value::as_str)
+                .unwrap_or_default();
+            if selected_record.as_deref().is_none_or(|wanted| {
+                record_name == wanted
+                    || record_name.split_once('-').map(|(_, tail)| tail) == Some(wanted)
+            }) {
+                targets.push((catalog_name.to_string(), record_name.to_string()));
+            }
+        }
+    }
+    if targets.is_empty() {
+        bail!("no crawl record matches the cancellation selection");
+    }
+    if selected_record.is_some() && targets.len() != 1 {
+        bail!("--record must resolve to exactly one retained crawl record");
+    }
+    for (catalog_name, record_name) in targets {
+        let _record_guard =
+            RecordMutationGuard::acquire(&run_id, &catalog_name, &record_name)?;
+        let current = load(Some(&run_id))?;
+        let record = current
+            .get("catalogs")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .find(|catalog| {
+                catalog.get("catalog").and_then(Value::as_str) == Some(catalog_name.as_str())
+            })
+            .and_then(|catalog| catalog.get("records"))
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .find(|record| {
+                record.get("record").and_then(Value::as_str) == Some(record_name.as_str())
+            })
+            .cloned()
+            .context("crawl record disappeared during cancellation")?;
+        let attempt_id = record
+            .pointer("/manifest/attempt_id")
+            .or_else(|| record.get("attempt_id"))
+            .and_then(Value::as_str)
+            .unwrap_or("unsubmitted-attempt");
+        let attempt = record
+            .pointer("/manifest/attempt")
+            .and_then(Value::as_u64)
+            .unwrap_or(1);
+        let job_id = record.get("stado_job_id").and_then(Value::as_str);
+        let stado_run_id = record
+            .pointer("/manifest/stado_run_id")
+            .and_then(Value::as_str);
+        let intent = json!({
+            "schema": "wisent.crawl-cancel-intent.v1",
+            "run_id": run_id,
+            "catalog": catalog_name,
+            "record": record_name,
+            "record_key": record.pointer("/manifest/record_key").cloned().unwrap_or(Value::Null),
+            "attempt": attempt,
+            "attempt_id": attempt_id,
+            "stado_run_id": stado_run_id,
+            "stado_job_id": job_id,
+            "reason": reason,
+        });
+        let base_uri = record
+            .pointer("/manifest/artifact_uri")
+            .and_then(Value::as_str)
+            .and_then(|uri| uri.rsplit_once('/').map(|(parent, _)| parent.to_string()))
+            .unwrap_or_else(|| {
+                format!(
+                    "stado://spis-crawls/{run_id}/{catalog_name}/{record_name}/attempts/{attempt_id}"
+                )
+            });
+        let intent_uri = format!("{base_uri}/cancel-intent.json");
+        let intent_sha256 = publish_cancel_intent(&intent_uri, &intent)?;
+        let status_before = match job_id {
+            Some(job_id) => match machine_status(job_id) {
+                Ok(job) => json!({"state": machine_state(&job), "job": job}),
+                Err(error) => json!({
+                    "state": if error.not_found { "not_found" } else { "lookup_failed" },
+                    "diagnostic": error.diagnostic,
+                }),
+            },
+            None => json!({"state": "not_submitted"}),
+        };
+        let before_state = status_before
+            .get("state")
+            .and_then(Value::as_str)
+            .unwrap_or("lookup_failed");
+        let (action, status_after) = if let Some(job_id) = job_id {
+            if matches!(before_state, "queued" | "running") {
+                let output = stado_command()
+                    .args(["machine", "cancel", job_id])
+                    .output()
+                    .context("cancel Stado machine job")?;
+                if !output.status.success() {
+                    (
+                        json!({
+                            "state": "cancel_failed",
+                            "stderr": String::from_utf8_lossy(&output.stderr).trim(),
+                        }),
+                        status_before.clone(),
+                    )
+                } else {
+                    let after = machine_status(job_id)
+                        .map(|job| json!({"state": machine_state(&job), "job": job}))
+                        .unwrap_or_else(|error| {
+                            json!({
+                                "state": if error.not_found { "not_found" } else { "lookup_failed" },
+                                "diagnostic": error.diagnostic,
+                            })
+                        });
+                    (json!({"state": "cancel_dispatched"}), after)
+                }
+            } else if terminal_machine_state(before_state) {
+                (json!({"state": "already_terminal"}), status_before.clone())
+            } else {
+                (json!({"state": "not_cancellable"}), status_before.clone())
+            }
+        } else {
+            (json!({"state": "cancelled_before_submission"}), status_before.clone())
+        };
+        let result = json!({
+            "schema": "wisent.crawl-cancel-result.v1",
+            "intent_uri": intent_uri,
+            "intent_sha256": intent_sha256,
+            "reason": reason,
+            "status_before": status_before,
+            "stado_action": action,
+            "status_after": status_after,
+            "weles_action": if record.pointer("/weles/task_id").is_some()
+                || record.get("weles_task_id").is_some()
+            {
+                json!({"state": "official_cancel_required", "diagnostic": "retained Weles task cancellation bridge is unavailable in this source revision"})
+            } else {
+                json!({"state": "no_retained_task_id"})
+            },
+        });
+        let _guard = RunMutationGuard::acquire(&run_id)?;
+        let mut run = load(Some(&run_id))?;
+        let target = run
+            .get_mut("catalogs")
+            .and_then(Value::as_array_mut)
+            .into_iter()
+            .flatten()
+            .find(|catalog| {
+                catalog.get("catalog").and_then(Value::as_str) == Some(catalog_name.as_str())
+            })
+            .and_then(|catalog| catalog.get_mut("records"))
+            .and_then(Value::as_array_mut)
+            .into_iter()
+            .flatten()
+            .find(|record| {
+                record.get("record").and_then(Value::as_str) == Some(record_name.as_str())
+            })
+            .context("crawl record disappeared before cancellation result persistence")?;
+        target["cancel"] = result;
+        let final_state = target
+            .pointer("/cancel/status_after/state")
+            .and_then(Value::as_str)
+            .unwrap_or("lookup_failed");
+        if matches!(final_state, "cancelled" | "canceled")
+            || target.pointer("/cancel/stado_action/state").and_then(Value::as_str)
+                == Some("cancelled_before_submission")
+        {
+            target["state"] = json!("cancelled");
+        }
+        if let Some(entries) = run.get_mut("catalogs").and_then(Value::as_array_mut) {
+            for entry in entries {
+                aggregate_catalog_entry(entry);
+            }
+        }
+        update_run_state(&mut run);
+        persist(&mut run)?;
+    }
+    let run = load(Some(&run_id))?;
+    print_operation("cancel", &run, selected_record.as_deref())
 }
 
 fn update_run_state(run: &mut Value) {
@@ -2634,15 +3510,15 @@ fn resume(rest: &[String]) -> Result<()> {
             } else if !matches!(state.as_str(), "submission_failed" | "lost" | "failed" | "cancelled") {
                 continue;
             }
-            let result = if state == "lost" || entry.get("job_id").and_then(Value::as_str).is_none() {
+            let result = if state == "lost" || entry.get("stado_job_id").and_then(Value::as_str).is_none() {
                 submit_retained_command(entry)
             } else {
-                rerun_job(entry.get("job_id").and_then(Value::as_str).unwrap())
-                    .map(|fresh| json!({"job_id": fresh}))
+                rerun_job(entry.get("stado_job_id").and_then(Value::as_str).unwrap())
+                    .map(|fresh| json!({"stado_job_id": fresh}))
             };
             match result {
                 Ok(receipt) => {
-                    entry["job_id"] = receipt.get("job_id").cloned().unwrap_or(Value::Null);
+                    entry["stado_job_id"] = receipt.get("stado_job_id").cloned().unwrap_or(Value::Null);
                     if receipt.get("artifact_uri").is_some() { entry["artifact_uri"] = receipt["artifact_uri"].clone(); }
                     if receipt.get("output_uri").is_some() { entry["output_uri"] = receipt["output_uri"].clone(); }
                     entry["state"] = json!("queued");
@@ -2655,7 +3531,8 @@ fn resume(rest: &[String]) -> Result<()> {
     }
     if reimport_partial {
         let id = run.get("run_id").and_then(Value::as_str).context("run has no id")?.to_string();
-        let run_dir = run_path(&id).parent().context("run path has no parent")?.to_path_buf();
+        let persisted_path = run_path(&id)?;
+        let run_dir = persisted_path.parent().context("run path has no parent")?.to_path_buf();
         import_ready(&mut run, &id, &run_dir, true)?;
     }
     run["updated_at"] = json!(crate::now_iso_utc());
@@ -2712,7 +3589,7 @@ fn copy_tree(source: &Path, destination: &Path) -> Result<()> {
 }
 
 fn find_record_dir(catalog: &str, slug: &str) -> Option<PathBuf> {
-    let root = Path::new(catalog).join("references");
+    let root = catalog_root(catalog).ok()?.join("references");
     let entries = std::fs::read_dir(root).ok()?;
     for entry in entries.flatten() {
         let name = entry.file_name().to_string_lossy().to_string();
@@ -2728,14 +3605,16 @@ fn record_slug(report: &Value, crawl_path: &Path) -> Option<String> {
 }
 
 fn artifact_record(report: &Value, relative: &str, run_id: &str, job_id: Option<&str>, artifact_uri: Option<&str>) -> Value {
-    let persisted_run: Option<Value> = crate::read_json(run_path(run_id).to_str().unwrap_or_default()).ok();
+    let persisted_run: Option<Value> = run_path(run_id)
+        .ok()
+        .and_then(|path| path.to_str().and_then(|value| crate::read_json(value).ok()));
     let source_revision = persisted_run.and_then(|run| run.get("source_revision").cloned()).unwrap_or(Value::Null);
     let job = report.get("job").unwrap_or(report);
     json!({
         "schema": "wisent.crawl-import.v1",
         "run_id": run_id,
         "source_revision": source_revision,
-        "job_id": job_id,
+        "stado_job_id": job_id,
         "artifact_uri": artifact_uri,
         "raw_report": relative,
         "engine_schema": report.get("schema").or_else(|| job.get("schema")).cloned().unwrap_or(Value::Null),
@@ -2960,7 +3839,7 @@ fn find_directory_named(root: &Path, name: &str) -> Option<PathBuf> {
 }
 
 fn import_docs_corpus(catalog: &str, run_id: &str, job_id: Option<&str>, artifact_uri: Option<&str>, root: &Path) -> Result<Vec<Value>> {
-    let references = Path::new(catalog).join("references");
+    let references = catalog_root(catalog)?.join("references");
     let mut record_dirs: Vec<PathBuf> = std::fs::read_dir(&references)?
         .filter_map(Result::ok).map(|entry| entry.path())
         .filter(|path| path.join("reference.json").is_file()).collect();
@@ -3008,7 +3887,7 @@ fn import_docs_corpus(catalog: &str, run_id: &str, job_id: Option<&str>, artifac
 fn import_catalog(run_id: &str, entry: &mut Value, run_dir: &Path) -> Result<()> {
     let catalog = entry.get("catalog").and_then(Value::as_str).context("catalog entry has no catalog")?.to_string();
     let engine = entry.get("engine").and_then(Value::as_str).unwrap_or_default().to_string();
-    let job_id = entry.get("job_id").and_then(Value::as_str).map(str::to_string);
+    let job_id = entry.get("stado_job_id").and_then(Value::as_str).map(str::to_string);
     let artifact_uri = entry.get("artifact_uri").and_then(Value::as_str).map(str::to_string);
     let destination = run_dir.join("downloads").join(&catalog);
     std::fs::create_dir_all(&destination)?;
@@ -3237,12 +4116,11 @@ fn update_web_source_visual(catalog: &str, record_dir: &Path, record: &Value, ar
     };
     let extension = source_path.extension().and_then(|value| value.to_str()).unwrap_or("png").to_ascii_lowercase();
     let image_name = format!("{}.{}", record_dir.file_name().and_then(|value| value.to_str()).unwrap_or("capture"), extension);
-    let image_path = Path::new(catalog).join("images").join(image_name);
-    if let Some(parent) = image_path.parent() { std::fs::create_dir_all(parent)?; }
+    let image_path = catalog_root(catalog)?.join("images").join(image_name);
     std::fs::copy(source_path, &image_path)?;
     let bytes = std::fs::read(&image_path)?;
     let decoded = image::open(&image_path)?;
-    let sources_path = Path::new(catalog).join("sources.json");
+    let sources_path = catalog_root(catalog)?.join("sources.json");
     let mut sources: Value = crate::read_json(sources_path.to_str().context("sources path is not UTF-8")?)?;
     let product_url = record.get("product_url").and_then(Value::as_str).context("record has no product_url")?;
     let examples = sources.get_mut("examples").and_then(Value::as_array_mut).context("sources examples are not a list")?;
@@ -3269,7 +4147,7 @@ fn update_web_source_visual(catalog: &str, record_dir: &Path, record: &Value, ar
 }
 
 fn summarize_catalog_records(catalog: &str, run_id: &str, entry: &mut Value) -> Result<()> {
-    let reference = Path::new(catalog).join("references");
+    let reference = catalog_root(catalog)?.join("references");
     let mut summaries = Vec::new();
     if reference.is_dir() {
         let mut directories: Vec<PathBuf> = std::fs::read_dir(&reference)?
@@ -3341,7 +4219,8 @@ fn import(rest: &[String]) -> Result<()> {
     let mut run = load(run_id.as_deref())?;
     refresh(&mut run);
     let id = run.get("run_id").and_then(Value::as_str).context("run has no id")?.to_string();
-    let run_dir = run_path(&id).parent().context("run path has no parent")?.to_path_buf();
+    let persisted_path = run_path(&id)?;
+    let run_dir = persisted_path.parent().context("run path has no parent")?.to_path_buf();
     import_ready(&mut run, &id, &run_dir, true)?;
     if let Some(entries) = run.get_mut("catalogs").and_then(Value::as_array_mut) {
         for entry in entries {
@@ -3400,13 +4279,14 @@ fn print_operation(operation: &str, run: &Value, record_filter: Option<&str>) ->
 }
 
 fn usage() {
-    println!("usage:\n  spis crawl start --host TARGET [--catalog SLUG ...] [--record SLUG] [--admission-url URL]\n  spis crawl status [--run RUN_ID] [--record SLUG]\n  spis crawl resume --run RUN_ID\n  spis crawl import --run RUN_ID\n\nAll commands emit one wisent.crawl-operation.v1 JSON document on stdout. The CLI is the process API; Spis does not expose a second HTTP /v1/crawl surface.");
+    println!("usage:\n  spis crawl start [--host ENGINE=TARGET] [--catalog SLUG ...] [--record SLUG] [--bindings PATH]\n  spis crawl status [--run RUN_ID] [--record SLUG]\n  spis crawl cancel --run RUN_ID [--record SLUG] --reason TEXT\n  spis crawl resume --run RUN_ID\n  spis crawl import --run RUN_ID\n\nAll commands emit one wisent.crawl-operation.v1 JSON document on stdout. The CLI is the process API; Spis does not expose a second HTTP /v1/crawl surface.");
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
     match rest.first().map(String::as_str) {
         Some("start") => start(&rest[1..]),
         Some("status") => status(&rest[1..]),
+        Some("cancel") => cancel(&rest[1..]),
         Some("resume") => resume(&rest[1..]),
         Some("import") => import(&rest[1..]),
         Some("--help" | "-h") | None => { usage(); Ok(()) }
