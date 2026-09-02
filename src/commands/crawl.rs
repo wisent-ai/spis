@@ -925,6 +925,178 @@ fn validate_runtime_bindings_document(document: &Value) -> Result<()> {
     }
     Ok(())
 }
+fn safe_unconfigured_binding(engine: &str) -> Value {
+    json!({
+        "configured": false,
+        "diagnostic": format!(
+            "{engine} requires an explicit record binding and independently observed authorization proof"
+        ),
+    })
+}
+
+fn anonymous_probe_account() -> Value {
+    json!({
+        "mode": "anonymous-read-only-probe",
+        "account_id": "anonymous-read-only-probe",
+        "credential_refs": [],
+    })
+}
+
+fn prohibited_action_constraints() -> Value {
+    json!({
+        "no_first_run_consent": true,
+        "no_system_permission_prompts": true,
+        "no_notifications": true,
+        "no_purchase": true,
+        "no_final_destructive_action": true,
+        "headless": true,
+    })
+}
+
+fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
+    let mut output_path: Option<PathBuf> = None;
+    let mut weles_token_ref: Option<String> = None;
+    let mut organization_ref: Option<String> = None;
+    let mut index = 0;
+    while index < rest.len() {
+        match rest[index].as_str() {
+            "--output" => {
+                index += 1;
+                output_path = Some(PathBuf::from(
+                    rest.get(index).context("--output needs a path")?,
+                ));
+            }
+            "--weles-token-ref" => {
+                index += 1;
+                weles_token_ref = Some(
+                    rest.get(index)
+                        .context("--weles-token-ref needs ITEM#FIELD")?
+                        .clone(),
+                );
+            }
+            "--organization-ref" => {
+                index += 1;
+                organization_ref = Some(
+                    rest.get(index)
+                        .context("--organization-ref needs ITEM#FIELD")?
+                        .clone(),
+                );
+            }
+            other => bail!("unknown crawl bindings generate option: {other}"),
+        }
+        index += 1;
+    }
+    let weles_token_ref =
+        weles_token_ref.context("--weles-token-ref is required; Spis will not guess a credential reference")?;
+    let organization_ref = organization_ref
+        .context("--organization-ref is required; Spis will not guess an organization reference")?;
+    if !valid_secret_reference(&weles_token_ref)
+        || !valid_secret_reference(&organization_ref)
+    {
+        bail!("binding secret references must use exact ITEM#FIELD syntax");
+    }
+
+    let mut catalogs = serde_json::Map::new();
+    for (catalog, engine) in CATALOGS {
+        let mut records = serde_json::Map::new();
+        for directory in record_directories(catalog, None)? {
+            let slug = directory
+                .file_name()
+                .and_then(|value| value.to_str())
+                .context("record directory name is not UTF-8")?
+                .to_string();
+            let binding = match *engine {
+                "web" | "docs" => {
+                    let reference: Value = crate::read_json(
+                        directory
+                            .join("reference.json")
+                            .to_str()
+                            .context("record path is not UTF-8")?,
+                    )?;
+                    let exact_url = reference
+                        .get("product_url")
+                        .and_then(Value::as_str)
+                        .filter(|value| !value.is_empty())
+                        .with_context(|| format!("{catalog}/{slug}: reference has no product_url"))?;
+                    let parsed = url::Url::parse(exact_url)
+                        .with_context(|| format!("{catalog}/{slug}: product_url is invalid"))?;
+                    let delivery = if *engine == "web" {
+                        json!({
+                            "kind": "weles-service-env",
+                            "secret_env": {
+                                "WELES_TOKEN": weles_token_ref,
+                                "WISENT_ORGANIZATION_ID": organization_ref,
+                            },
+                        })
+                    } else {
+                        json!({"kind": "none", "secret_env": {}})
+                    };
+                    let mut object = serde_json::Map::new();
+                    object.insert("configured".into(), json!(true));
+                    object.insert("account".into(), anonymous_probe_account());
+                    object.insert("constraints".into(), prohibited_action_constraints());
+                    object.insert("delivery".into(), delivery);
+                    if *engine == "web" {
+                        object.insert(
+                            "surface".into(),
+                            json!({
+                                "family": catalog.strip_suffix("-examples")
+                                    .context("web catalog has no canonical family")?,
+                                "exact_url": exact_url,
+                                "origin": parsed.origin().ascii_serialization(),
+                                "path": parsed.path(),
+                                "allowed_origins": [parsed.origin().ascii_serialization()],
+                                "allowed_actions": ["generic_browser_task"],
+                                "terminal_outcomes": ["blocked", "completed", "failed"],
+                            }),
+                        );
+                    }
+                    Value::Object(object)
+                }
+                other => safe_unconfigured_binding(other),
+            };
+            records.insert(slug, binding);
+        }
+        catalogs.insert((*catalog).to_string(), Value::Object(records));
+    }
+    let document = json!({
+        "schema": "wisent.crawl-runtime-bindings.v1",
+        "records": catalogs,
+    });
+    validate_runtime_bindings_document(&document)?;
+    let bytes = serde_json::to_vec_pretty(&document)?;
+    let mut with_newline = bytes;
+    with_newline.push(b'\n');
+    if let Some(path) = output_path {
+        if let Some(parent) = path.parent().filter(|value| !value.as_os_str().is_empty()) {
+            std::fs::create_dir_all(parent)?;
+        }
+        match OpenOptions::new().write(true).create_new(true).open(&path) {
+            Ok(mut file) => {
+                file.write_all(&with_newline)?;
+                file.sync_all()?;
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
+                if std::fs::read(&path)? != with_newline {
+                    bail!("refusing to replace differing runtime bindings {}", path.display());
+                }
+            }
+            Err(error) => return Err(error.into()),
+        }
+        println!(
+            "{}",
+            serde_json::to_string(&json!({
+                "schema": OP_SCHEMA,
+                "operation": "bindings_generate",
+                "path": path,
+                "sha256": crate::sha256_hex(&with_newline),
+            }))?
+        );
+    } else {
+        print!("{}", String::from_utf8(with_newline)?);
+    }
+    Ok(())
+}
 
 
 struct RuntimeBindings {
@@ -936,6 +1108,7 @@ struct RuntimeBindings {
 }
 
 fn load_runtime_bindings(explicit: Option<&str>) -> Result<RuntimeBindings> {
+    let project_template = source_root().join("crawl-runtime-bindings.json");
     let (source, selected) = if let Some(path) = explicit {
         ("explicit".to_string(), PathBuf::from(path))
     } else if let Some(path) = std::env::var_os("SPIS_RUNTIME_BINDINGS") {
@@ -946,10 +1119,10 @@ fn load_runtime_bindings(explicit: Option<&str>) -> Result<RuntimeBindings> {
         .filter(|path| path.is_file())
     {
         ("default:user-config".to_string(), path)
-    } else if Path::new("crawl-runtime-bindings.json").is_file() {
-        ("template:project".to_string(), PathBuf::from("crawl-runtime-bindings.json"))
+    } else if project_template.is_file() {
+        ("template:project".to_string(), project_template)
     } else {
-        bail!("no runtime bindings: pass --bindings PATH, set SPIS_RUNTIME_BINDINGS, or create ~/.config/spis/crawl-runtime-bindings.json");
+        bail!("no runtime bindings: pass --bindings PATH, set SPIS_RUNTIME_BINDINGS, generate ~/.config/spis/crawl-runtime-bindings.json, or provide the project template");
     };
     let bytes = std::fs::read(&selected)
         .with_context(|| format!("read runtime bindings {}", selected.display()))?;
@@ -1149,13 +1322,6 @@ fn runtime_binding(
                 || !account.credential_refs.is_empty()
             {
                 bail!("{catalog}/{slug}: anonymous read-only probe mode must be explicit and cannot carry credentials or an account claim");
-            }
-        }
-        "anonymous-public-surface" => {
-            if account.account_id.as_deref() != Some("anonymous-public-surface")
-                || !account.credential_refs.is_empty()
-            {
-                bail!("{catalog}/{slug}: anonymous public mode must be explicit and cannot carry credentials");
             }
         }
         "none" => {
@@ -4279,7 +4445,7 @@ fn print_operation(operation: &str, run: &Value, record_filter: Option<&str>) ->
 }
 
 fn usage() {
-    println!("usage:\n  spis crawl start [--host ENGINE=TARGET] [--catalog SLUG ...] [--record SLUG] [--bindings PATH]\n  spis crawl status [--run RUN_ID] [--record SLUG]\n  spis crawl cancel --run RUN_ID [--record SLUG] --reason TEXT\n  spis crawl resume --run RUN_ID\n  spis crawl import --run RUN_ID\n\nAll commands emit one wisent.crawl-operation.v1 JSON document on stdout. The CLI is the process API; Spis does not expose a second HTTP /v1/crawl surface.");
+    println!("usage:\n  spis crawl bindings generate --weles-token-ref ITEM#FIELD --organization-ref ITEM#FIELD [--output PATH]\n  spis crawl start [--host ENGINE=TARGET] [--catalog SLUG ...] [--record SLUG] [--bindings PATH]\n  spis crawl status [--run RUN_ID] [--record SLUG]\n  spis crawl cancel --run RUN_ID [--record SLUG | --record FILE] --reason TEXT\n  spis crawl resume --run RUN_ID\n  spis crawl import --run RUN_ID\n\nCommands emit one JSON document on stdout. The CLI is the process API; Spis does not expose a second HTTP /v1/crawl surface.");
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
@@ -4290,6 +4456,9 @@ pub fn run(rest: &[String]) -> Result<()> {
         Some("resume") => resume(&rest[1..]),
         Some("import") => import(&rest[1..]),
         Some("--help" | "-h") | None => { usage(); Ok(()) }
+        Some("bindings") if rest.get(1).map(String::as_str) == Some("generate") => {
+            generate_runtime_bindings(&rest[2..])
+        }
         Some(other) => bail!("unknown crawl operation: {other}"),
     }
 }
