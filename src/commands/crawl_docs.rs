@@ -20,7 +20,6 @@ use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::os::unix::fs::OpenOptionsExt;
 use std::os::fd::AsRawFd;
 use std::path::{Path, PathBuf};
-use std::process::{Command, ExitStatus, Stdio};
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{mpsc, Arc};
 use std::time::{Duration, Instant};
@@ -151,83 +150,18 @@ const MAX_TOTAL_INVENTORY_BYTES: u64 = 64 * 1024 * 1024;
 const MAX_TOTAL_DOWNLOAD_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 const MAX_CORPUS_BYTES: u64 = 1024 * 1024 * 1024;
 const WRITER_LIVENESS_TIMEOUT: Duration = Duration::from_secs(180);
-const STADO_OUTPUT_LIMIT: usize = 1024 * 1024;
+pub(crate) const STADO_OUTPUT_LIMIT: usize = 1024 * 1024;
 const STADO_COMMAND_TIMEOUT: Duration = Duration::from_secs(30 * 60);
 const DNS_LOOKUP_TIMEOUT: Duration = Duration::from_secs(15);
+/// Longest `Allow:`/`Disallow:` value accepted from a served robots.txt. Real
+/// robots.txt paths are far shorter; the cap keeps a hostile origin from handing
+/// us a rule whose compiled program is unbounded.
+const MAX_ROBOTS_PATTERN_BYTES: usize = 1024;
+/// Explicit compiled-program ceiling for one robots rule, so the bound is ours
+/// rather than whatever `regex` happens to default to.
+const MAX_ROBOTS_PROGRAM_BYTES: usize = 1024 * 1024;
 static STAGING_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
-pub(crate) struct BoundedCommandOutput {
-    pub(crate) status: ExitStatus,
-    pub(crate) stdout: Vec<u8>,
-    pub(crate) stderr: Vec<u8>,
-}
-
-fn read_capped_output(mut reader: impl Read) -> Result<(Vec<u8>, bool)> {
-    let mut output = Vec::new();
-    let mut exceeded = false;
-    let mut buffer = [0u8; 16 * 1024];
-    loop {
-        let read = reader.read(&mut buffer)?;
-        if read == 0 {
-            break;
-        }
-        let remaining = STADO_OUTPUT_LIMIT.saturating_sub(output.len());
-        output.extend_from_slice(&buffer[..read.min(remaining)]);
-        exceeded |= read > remaining;
-    }
-    Ok((output, exceeded))
-}
-
-pub(crate) fn run_stado_bounded(
-    command: &mut Command,
-    timeout: Duration,
-    context: &str,
-) -> Result<BoundedCommandOutput> {
-    command.stdout(Stdio::piped()).stderr(Stdio::piped());
-    let mut child = command
-        .spawn()
-        .with_context(|| format!("{context}: spawn Stado"))?;
-    let stdout = child.stdout.take().context("Stado stdout pipe is unavailable")?;
-    let stderr = child.stderr.take().context("Stado stderr pipe is unavailable")?;
-    let stdout_reader = std::thread::spawn(move || read_capped_output(stdout));
-    let stderr_reader = std::thread::spawn(move || read_capped_output(stderr));
-    let deadline = Instant::now() + timeout;
-    let status = loop {
-        if let Some(status) = child
-            .try_wait()
-            .with_context(|| format!("{context}: wait for Stado"))?
-        {
-            break status;
-        }
-        if Instant::now() >= deadline {
-            let _ = child.kill();
-            let _ = child.wait();
-            let _ = stdout_reader.join();
-            let _ = stderr_reader.join();
-            bail!(
-                "{context}: Stado exceeded the {}-second timeout",
-                timeout.as_secs()
-            );
-        }
-        std::thread::sleep(Duration::from_millis(50));
-    };
-    let (stdout, stdout_exceeded) = stdout_reader
-        .join()
-        .map_err(|_| anyhow::anyhow!("{context}: stdout reader panicked"))??;
-    let (stderr, stderr_exceeded) = stderr_reader
-        .join()
-        .map_err(|_| anyhow::anyhow!("{context}: stderr reader panicked"))??;
-    if stdout_exceeded || stderr_exceeded {
-        bail!(
-            "{context}: Stado output exceeded the {STADO_OUTPUT_LIMIT}-byte stream limit"
-        );
-    }
-    Ok(BoundedCommandOutput {
-        status,
-        stdout,
-        stderr,
-    })
-}
 const MAX_JOURNAL_BYTES: u64 = 256 * 1024 * 1024;
 const MAX_STATE_BYTES: u64 = 256 * 1024 * 1024;
 impl UrlPolicy {
@@ -592,20 +526,61 @@ struct RobotsSnapshot {
 }
 
 impl RobotsSnapshot {
+    /// The deny-all snapshot every robots failure path falls back to. Kept as one
+    /// constructor so the serialized shape cannot drift between failure paths; it
+    /// is persisted in `DurableState.robots` and feeds `inventory_sha256`.
+    fn deny_all() -> Self {
+        Self {
+            directives: vec![RobotsRule {
+                pattern: "^/".into(),
+                specificity: 1,
+                allow: false,
+            }],
+        }
+    }
+}
+
+/// `RobotsSnapshot` is the persisted wire form; this is the matcher. Patterns are
+/// compiled exactly once per run instead of once per rule per URL, which used to
+/// cost up to `MAX_ROBOTS_RULES * MAX_TARGETS` compilations of identical
+/// programs. Compilation is fallible here and never ignored, so a rule can no
+/// longer be silently dropped — dropping a `Disallow` would have turned it into
+/// an allow, the one fail-open path in this file.
+struct CompiledRobots {
+    rules: Vec<CompiledRobotsRule>,
+}
+
+struct CompiledRobotsRule {
+    pattern: regex::Regex,
+    specificity: usize,
+    allow: bool,
+}
+
+impl CompiledRobots {
+    fn compile(snapshot: &RobotsSnapshot) -> Result<Self> {
+        let rules = snapshot
+            .directives
+            .iter()
+            .map(|rule| {
+                Ok(CompiledRobotsRule {
+                    pattern: compile_robots_pattern(&rule.pattern)?,
+                    specificity: rule.specificity,
+                    allow: rule.allow,
+                })
+            })
+            .collect::<Result<Vec<_>>>()?;
+        Ok(Self { rules })
+    }
+
     fn allows(&self, url: &Url) -> bool {
         let mut path = url.path().to_string();
         if let Some(query) = url.query() {
             path.push('?');
             path.push_str(query);
         }
-        self.directives
+        self.rules
             .iter()
-            .filter_map(|rule| {
-                regex::Regex::new(&rule.pattern)
-                    .ok()
-                    .filter(|pattern| pattern.is_match(&path))
-                    .map(|_| rule)
-            })
+            .filter(|rule| rule.pattern.is_match(&path))
             .max_by(|left, right| {
                 left.specificity
                     .cmp(&right.specificity)
@@ -613,6 +588,15 @@ impl RobotsSnapshot {
             })
             .is_none_or(|rule| rule.allow)
     }
+}
+
+/// Compile one robots pattern under an explicit program-size ceiling, so the
+/// bound is ours rather than whatever `regex` defaults to.
+fn compile_robots_pattern(pattern: &str) -> Result<regex::Regex> {
+    regex::RegexBuilder::new(pattern)
+        .size_limit(MAX_ROBOTS_PROGRAM_BYTES)
+        .build()
+        .with_context(|| format!("robots pattern {pattern:?} does not compile"))
 }
 
 struct InventoryResolution {
@@ -645,29 +629,32 @@ fn push_inventory_diagnostic(
     }
 }
 
+/// Build the persisted snapshot *and* its compiled matcher together, so a
+/// snapshot can never reach the crawl loop without every pattern having compiled
+/// successfully. Every recoverable robots problem yields the deny-all policy plus
+/// a durable diagnostic; only a failure to compile our own deny-all constant is
+/// an error, and that is still fail-closed because it aborts the run.
 fn parse_robots(
     body: &[u8],
     diagnostics: &mut Vec<CrawlDiagnostic>,
     robots_url: &Url,
-) -> (RobotsSnapshot, Vec<String>) {
+) -> Result<(RobotsSnapshot, CompiledRobots, Vec<String>)> {
+    let deny_all = |diagnostics: &mut Vec<CrawlDiagnostic>,
+                    code: &str,
+                    message: String|
+     -> Result<(RobotsSnapshot, CompiledRobots, Vec<String>)> {
+        push_inventory_diagnostic(diagnostics, code, message, robots_url.as_str());
+        let snapshot = RobotsSnapshot::deny_all();
+        let compiled = CompiledRobots::compile(&snapshot)?;
+        Ok((snapshot, compiled, Vec::new()))
+    };
     let text = match std::str::from_utf8(body) {
         Ok(text) => text,
         Err(error) => {
-            push_inventory_diagnostic(
+            return deny_all(
                 diagnostics,
                 "robots_non_utf8",
                 format!("robots.txt is not valid UTF-8 at byte {}", error.valid_up_to()),
-                robots_url.as_str(),
-            );
-            return (
-                RobotsSnapshot {
-                    directives: vec![RobotsRule {
-                        pattern: "^/".into(),
-                        specificity: 1,
-                        allow: false,
-                    }],
-                },
-                Vec::new(),
             );
         }
     };
@@ -712,6 +699,20 @@ fn parse_robots(
             }
             let terminal = value.ends_with('$');
             let source = value.strip_suffix('$').unwrap_or(value);
+            // A robots.txt line is otherwise bounded only by MAX_ROBOTS_BYTES, so
+            // an origin could serve `Disallow: /` plus ~250 000 `*` characters and
+            // push the compiled program past any sane ceiling. Refuse the whole
+            // file fail-closed rather than dropping the offending rule, because a
+            // dropped `Disallow` reads as an allow.
+            if source.len() > MAX_ROBOTS_PATTERN_BYTES {
+                return deny_all(
+                    diagnostics,
+                    "robots_rule_too_long",
+                    format!(
+                        "robots directive exceeds the {MAX_ROBOTS_PATTERN_BYTES}-byte pattern limit"
+                    ),
+                );
+            }
             directives.push(RobotsRule {
                 pattern: format!(
                     "^{}{}",
@@ -757,7 +758,16 @@ fn parse_robots(
                 .collect()
         })
         .unwrap_or_default();
-    (RobotsSnapshot { directives }, sitemaps)
+    let snapshot = RobotsSnapshot { directives };
+    match CompiledRobots::compile(&snapshot) {
+        Ok(compiled) => Ok((snapshot, compiled, sitemaps)),
+        // A served rule that will not compile must deny, never allow.
+        Err(error) => deny_all(
+            diagnostics,
+            "robots_rule_uncompilable",
+            format!("robots directive could not be compiled: {error:#}"),
+        ),
+    }
 }
 
 fn path_is_in_scope(url: &Url, prefixes: &[String]) -> Result<bool> {
@@ -790,54 +800,44 @@ fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Resul
         limit: MAX_TOTAL_INVENTORY_BYTES,
     });
     let robots_url = policy.source_url.join("/robots.txt")?;
-    let (robots, discovered_sitemaps) = match bounded_http_get(
+    let (robots, compiled_robots, discovered_sitemaps) = match bounded_http_get(
         &robots_url,
         policy,
         MAX_ROBOTS_BYTES,
         "robots.txt",
         inventory_budget,
     ) {
-            Ok(response) if (200..300).contains(&response.status) => {
-                parse_robots(&response.body, &mut diagnostics, &robots_url)
-            }
-            Ok(response) if matches!(response.status, 401 | 403) => {
-                push_inventory_diagnostic(
-                    &mut diagnostics,
-                    "robots_access_denied",
-                    format!("robots.txt returned HTTP {}", response.status),
-                    robots_url.as_str(),
-                );
-                (
-                    RobotsSnapshot {
-                        directives: vec![RobotsRule {
-                            pattern: "^/".into(),
-                            specificity: 1,
-                            allow: false,
-                        }],
-                    },
-                    Vec::new(),
-                )
-            }
-            Ok(_) => (RobotsSnapshot::default(), Vec::new()),
-            Err(error) => {
-                push_inventory_diagnostic(
-                    &mut diagnostics,
-                    error.code,
-                    error.to_string(),
-                    robots_url.as_str(),
-                );
-                (
-                    RobotsSnapshot {
-                        directives: vec![RobotsRule {
-                            pattern: "^/".into(),
-                            specificity: 1,
-                            allow: false,
-                        }],
-                    },
-                    Vec::new(),
-                )
-            }
-        };
+        Ok(response) if (200..300).contains(&response.status) => {
+            parse_robots(&response.body, &mut diagnostics, &robots_url)?
+        }
+        Ok(response) if matches!(response.status, 401 | 403) => {
+            push_inventory_diagnostic(
+                &mut diagnostics,
+                "robots_access_denied",
+                format!("robots.txt returned HTTP {}", response.status),
+                robots_url.as_str(),
+            );
+            let snapshot = RobotsSnapshot::deny_all();
+            let compiled = CompiledRobots::compile(&snapshot)?;
+            (snapshot, compiled, Vec::new())
+        }
+        Ok(_) => {
+            let snapshot = RobotsSnapshot::default();
+            let compiled = CompiledRobots::compile(&snapshot)?;
+            (snapshot, compiled, Vec::new())
+        }
+        Err(error) => {
+            push_inventory_diagnostic(
+                &mut diagnostics,
+                error.code,
+                error.to_string(),
+                robots_url.as_str(),
+            );
+            let snapshot = RobotsSnapshot::deny_all();
+            let compiled = CompiledRobots::compile(&snapshot)?;
+            (snapshot, compiled, Vec::new())
+        }
+    };
 
     let mut pages = vec![(policy.source_url.as_str().to_string(), None)];
     let mut queue = VecDeque::<Url>::new();
@@ -881,7 +881,7 @@ fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Resul
             );
             break;
         }
-        if !robots.allows(&source) {
+        if !compiled_robots.allows(&source) {
             push_inventory_diagnostic(
                 &mut diagnostics,
                 "inventory_source_robots_disallowed",
@@ -1210,7 +1210,7 @@ struct FetchShared {
     policy: UrlPolicy,
     downloaded_bytes: AtomicU64,
     cancelled: Arc<AtomicBool>,
-    robots: RobotsSnapshot,
+    robots: CompiledRobots,
 }
 
 #[derive(Clone)]
@@ -1501,6 +1501,116 @@ pub(crate) fn staging_directory(root: &Path, label: &str) -> Result<PathBuf> {
     bail!("could not allocate a unique {label} staging directory")
 }
 
+/// The exact artifact set an attempt root may contain. `corpus_summary` enforces
+/// it and `audit_attempt_tree` archives it, so nothing else may ever be staged
+/// or left inside `layout.root`.
+const CORPUS_ARTIFACTS: [&str; 4] = [
+    "docs-retrieval-run.json",
+    "outcomes.jsonl",
+    "pages.jsonl.gz",
+    "state.json",
+];
+
+/// Name for a staged temp file, scoped by the owning attempt directory so two
+/// workers on sibling attempt_ids under the same `attempts/<n>` parent never
+/// share a temp namespace. This mirrors the `.{attempt}.crawl.lock` and
+/// `.{attempt}.archive.lock` names that already live in that directory.
+fn temporary_name(owner: &str, name: &str, sequence: u64) -> String {
+    format!(".{owner}.{name}.{}-{sequence}.tmp", std::process::id())
+}
+
+/// Does `file_name` denote a staged temp file for one of this attempt's own
+/// artifacts? Recognises the current attempt-scoped shape
+/// `.<owner>.<artifact>.<pid>-<sequence>.tmp` and the legacy in-root shape
+/// `.<artifact>.<pid>-<sequence>.tmp` that earlier workers left behind. Anything
+/// that does not match one of those exact shapes is never touched, so a sibling
+/// attempt's temp and every lock, archive and read-back file are left alone.
+fn is_own_temporary(file_name: &str, owner: &str) -> bool {
+    let Some(body) = file_name
+        .strip_prefix('.')
+        .and_then(|rest| rest.strip_suffix(".tmp"))
+    else {
+        return false;
+    };
+    let body = body
+        .strip_prefix(owner)
+        .and_then(|rest| rest.strip_prefix('.'))
+        .unwrap_or(body);
+    let Some(suffix) = CORPUS_ARTIFACTS
+        .iter()
+        .find_map(|artifact| body.strip_prefix(*artifact))
+    else {
+        return false;
+    };
+    let Some((pid, sequence)) = suffix
+        .strip_prefix('.')
+        .and_then(|rest| rest.split_once('-'))
+    else {
+        return false;
+    };
+    !pid.is_empty()
+        && !sequence.is_empty()
+        && pid.bytes().all(|byte| byte.is_ascii_digit())
+        && sequence.bytes().all(|byte| byte.is_ascii_digit())
+}
+
+/// Drop temp files this attempt orphaned in an earlier, killed run. Called at
+/// resume while the exclusive work lock is held, so no live writer can own a
+/// matching name. Without this, a SIGKILL inside the old in-root `write_all` +
+/// `sync_all` window left a `.state.json.<pid>-<n>.tmp` that made
+/// `corpus_summary` reject the attempt for good.
+fn prune_stale_temporaries(layout: &WorkLayout) -> Result<()> {
+    let owner = layout
+        .root
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("durable work directory has no UTF-8 name")?;
+    let staging_parent = layout
+        .root
+        .parent()
+        .context("durable work directory has no staging parent")?;
+    for directory in [staging_parent, layout.root.as_path()] {
+        let entries = match std::fs::read_dir(directory) {
+            Ok(entries) => entries,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(error) => {
+                return Err(error)
+                    .with_context(|| format!("list staging directory {}", directory.display()))
+            }
+        };
+        for entry in entries {
+            let entry = entry?;
+            let file_name = entry.file_name();
+            let Some(file_name) = file_name.to_str() else {
+                continue;
+            };
+            if !is_own_temporary(file_name, owner) || !entry.file_type()?.is_file() {
+                continue;
+            }
+            let path = entry.path();
+            std::fs::remove_file(&path)
+                .with_context(|| format!("remove stale staged file {}", path.display()))?;
+        }
+    }
+    Ok(())
+}
+
+/// Path of the retained worker failure diagnostic. It sits beside the attempt
+/// root, alongside `<attempt_id>.tar.gz`, so it is neither audited by
+/// `corpus_summary` nor archived by `publish_attempt_archive`.
+fn failure_diagnostic_path(layout: &WorkLayout) -> Result<PathBuf> {
+    let owner = layout
+        .root
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("durable work directory has no UTF-8 name")?;
+    let parent = layout
+        .root
+        .parent()
+        .context("durable work directory has no parent")?;
+    Ok(parent.join(format!("{owner}.failure.json")))
+}
+
 fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
     let parent = path.parent().context("durable file path has no parent")?;
     std::fs::create_dir_all(parent)
@@ -1510,11 +1620,28 @@ fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
         .file_name()
         .and_then(|value| value.to_str())
         .context("durable filename is not UTF-8")?;
+    // Stage outside the directory being written. `corpus_summary` and
+    // `audit_attempt_tree` both require the attempt root to hold exactly the four
+    // run artifacts, so a temp file orphaned there by SIGKILL/OOM would brick
+    // every later resume of the attempt. The parent already carries the crawl
+    // lock, the archive lock, the published archive and the read-back file, so it
+    // is the established staging location and is on the same filesystem, which
+    // keeps the `rename` below atomic.
+    let staging_parent = parent
+        .parent()
+        .context("durable file path has no staging parent")?;
+    let owner = parent
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("durable file path has no UTF-8 owning directory")?;
+    std::fs::create_dir_all(staging_parent).with_context(|| {
+        format!(
+            "create durable staging directory {}",
+            staging_parent.display()
+        )
+    })?;
     let sequence = STAGING_SEQUENCE.fetch_add(1, Ordering::SeqCst);
-    let temporary = parent.join(format!(
-        ".{name}.{}-{sequence}.tmp",
-        std::process::id()
-    ));
+    let temporary = staging_parent.join(temporary_name(owner, name, sequence));
     let result = (|| -> Result<()> {
         let mut output = OpenOptions::new()
             .write(true)
@@ -1997,7 +2124,7 @@ fn fetch_target(
     target: CrawlTarget,
     gate: &HostGate,
     policy: &UrlPolicy,
-    robots: &RobotsSnapshot,
+    robots: &CompiledRobots,
     downloaded_bytes: &AtomicU64,
 ) -> Result<FetchedOutcome> {
     let target_url = policy.canonical(&target.url, None, "documentation page target")?;
@@ -2477,10 +2604,14 @@ fn run_fetch_workers(
         .map(|target| target.sequence)
         .collect::<Vec<_>>();
     let policy = UrlPolicy::new(&state.source_url)?;
-    let robots = state
-        .robots
-        .clone()
-        .context("durable documentation inventory has no robots policy")?;
+    // Rebuild the matcher once per run from the persisted snapshot. A snapshot
+    // that will not compile aborts the run rather than degrading to allow.
+    let robots = CompiledRobots::compile(
+        state
+            .robots
+            .as_ref()
+            .context("durable documentation inventory has no robots policy")?,
+    )?;
     let page_downloaded_bytes = state
         .outcomes
         .values()
@@ -2667,6 +2798,7 @@ fn load_or_create_state(
             layout.corpus.display()
         )
     })?;
+    prune_stale_temporaries(layout)?;
     let policy = UrlPolicy::new(&meta.source_url)?;
     let existing = regular_file_exists(&layout.state, "durable state")?;
     let mut state = if existing {
@@ -2932,12 +3064,7 @@ fn finish_run(
 }
 
 fn corpus_summary(layout: &WorkLayout, state: &DurableState) -> Result<Value> {
-    let expected = [
-        "docs-retrieval-run.json",
-        "outcomes.jsonl",
-        "pages.jsonl.gz",
-        "state.json",
-    ];
+    let expected = CORPUS_ARTIFACTS;
     let mut observed = std::fs::read_dir(&layout.corpus)?
         .map(|entry| entry.map(|entry| entry.file_name().to_string_lossy().to_string()))
         .collect::<std::result::Result<Vec<_>, _>>()?;
@@ -3106,12 +3233,25 @@ fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManifest) -> Resu
                 "attempt": u64::from(manifest.attempt),
                 "attempt_id": manifest.attempt_id,
             });
-            if let Err(write_error) =
-                super::crawl::atomic_json_write(&layout.root.join("failure.json"), &failure)
-            {
-                eprintln!(
-                    "documentation worker failure artifact could not be retained: {write_error:#}"
-                );
+            // Retain the failure diagnostic *beside* the attempt root, never inside
+            // it. `corpus_summary` demands the root hold exactly CORPUS_ARTIFACTS,
+            // and `atomic_json_write` additionally leaves a permanent
+            // `.failure.json.lock` next to its target, so writing this into the root
+            // made every later resume of the attempt fail forever. Import refuses an
+            // archive carrying a `failure.json` member anyway, so keeping it inside
+            // bought nothing. The name matches the `<attempt_id>.tar.gz` convention
+            // already used in this directory.
+            match failure_diagnostic_path(&layout) {
+                Ok(path) => {
+                    if let Err(write_error) = super::crawl::atomic_json_write(&path, &failure) {
+                        eprintln!(
+                            "documentation worker failure artifact could not be retained: {write_error:#}"
+                        );
+                    }
+                }
+                Err(path_error) => eprintln!(
+                    "documentation worker failure artifact has no retainable path: {path_error:#}"
+                ),
             }
             let artifact =
                 super::crawl::publish_attempt_archive(&layout.root, &manifest.artifact_uri);
@@ -3157,7 +3297,12 @@ struct StorageStatReceipt {
 fn storage_artifact_present(uri: &str, context: &str) -> Result<bool> {
     let mut command = super::crawl::stado_command();
     command.args(["storage", "stat", uri, "--json"]);
-    let output = run_stado_bounded(&mut command, Duration::from_secs(60), context)?;
+    let output = super::crawl::bounded_command_output(
+        &mut command,
+        context,
+        Duration::from_secs(60),
+        STADO_OUTPUT_LIMIT,
+    )?;
     if !output.status.success() {
         bail!(
             "cannot determine whether immutable documentation attempt artifact is published: {}",
@@ -3263,10 +3408,11 @@ fn submit_worker(
         "--output-uri",
         &output_uri,
     ]);
-    let output = run_stado_bounded(
+    let output = super::crawl::bounded_command_output(
         &mut stado,
-        STADO_COMMAND_TIMEOUT,
         "submit documentation crawl through Stado",
+        STADO_COMMAND_TIMEOUT,
+        STADO_OUTPUT_LIMIT,
     )?;
     if !output.status.success() {
         bail!(

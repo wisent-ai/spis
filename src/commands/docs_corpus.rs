@@ -50,10 +50,21 @@ fn imports_root() -> Result<PathBuf> {
     Ok(home_dir()?.join(".stado/work/spis/docs-corpus-imports"))
 }
 
+/// Where a discovered corpus came from. `Imported` corpora were installed by
+/// `import_artifact` and therefore have a sibling `artifact.tar.gz` receipt
+/// archive; `Local` corpora were written in place by `crawl-docs --worker` and
+/// have no archive next to them.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum CorpusOrigin {
+    Local,
+    Imported,
+}
+
 #[derive(Clone)]
 struct AttemptCorpus {
     slug: String,
     corpus_dir: PathBuf,
+    origin: CorpusOrigin,
     completed_at: String,
     attempt: u64,
     attempt_id: String,
@@ -628,7 +639,11 @@ fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value) -> Result
     validate_journal(corpus_dir, state)
 }
 
-fn validate_corpus(corpus_dir: &Path, required_uri: Option<&str>) -> Result<AttemptCorpus> {
+fn validate_corpus(
+    corpus_dir: &Path,
+    required_uri: Option<&str>,
+    origin: CorpusOrigin,
+) -> Result<AttemptCorpus> {
     let mut observed = std::fs::read_dir(corpus_dir)
         .with_context(|| format!("list documentation corpus {}", corpus_dir.display()))?
         .map(|entry| entry.map(|value| value.file_name().to_string_lossy().to_string()))
@@ -730,6 +745,7 @@ fn validate_corpus(corpus_dir: &Path, required_uri: Option<&str>) -> Result<Atte
     Ok(AttemptCorpus {
         slug,
         corpus_dir: corpus_dir.to_path_buf(),
+        origin,
         completed_at,
         attempt: state_attempt,
         attempt_id,
@@ -744,6 +760,7 @@ fn visit_corpora(
     depth: usize,
     visited: &mut usize,
     corpora: &mut Vec<AttemptCorpus>,
+    origin: CorpusOrigin,
 ) -> Result<()> {
     if !directory.exists() {
         return Ok(());
@@ -756,10 +773,12 @@ fn visit_corpora(
     if !metadata.file_type().is_dir() || metadata.file_type().is_symlink() {
         return Ok(());
     }
-    if directory.file_name().and_then(|name| name.to_str()) == Some("corpus")
-        && CORPUS_FILES.iter().all(|name| directory.join(name).is_file())
-    {
-        corpora.push(validate_corpus(directory, None)?);
+    // A corpus is identified by its content, not by its directory name. The
+    // durable layout writes the four artifacts straight into the attempt root
+    // (`native_attempt_root`), while `import_artifact` stages them under a
+    // directory literally named `corpus`; only a content test sees both.
+    if CORPUS_FILES.iter().all(|name| directory.join(name).is_file()) {
+        corpora.push(validate_corpus(directory, None, origin)?);
         return Ok(());
     }
     if depth == 0 {
@@ -768,7 +787,7 @@ fn visit_corpora(
     for entry in std::fs::read_dir(directory)? {
         let entry = entry?;
         if entry.file_type()?.is_dir() {
-            visit_corpora(&entry.path(), depth - 1, visited, corpora)?;
+            visit_corpora(&entry.path(), depth - 1, visited, corpora, origin)?;
         }
     }
     Ok(())
@@ -782,12 +801,14 @@ fn selected_corpora() -> Result<HashMap<String, AttemptCorpus>> {
         MAX_DISCOVERY_DEPTH,
         &mut visited,
         &mut candidates,
+        CorpusOrigin::Local,
     )?;
     visit_corpora(
         &imports_root()?,
         MAX_DISCOVERY_DEPTH,
         &mut visited,
         &mut candidates,
+        CorpusOrigin::Imported,
     )?;
     let mut selected = HashMap::<String, AttemptCorpus>::new();
     for candidate in candidates {
@@ -982,7 +1003,6 @@ fn archive_member_name(path: &Path) -> Result<String> {
         .collect::<Result<Vec<_>>>()?;
     match components.as_slice() {
         [name] => Ok(name.clone()),
-        [directory, name] if directory == "corpus" => Ok(name.clone()),
         _ => bail!("retrieval archive member is outside its exact corpus directory"),
     }
 }
@@ -1038,7 +1058,11 @@ fn validate_installed_import(
     if archive_sha256 != expected_archive_sha256 || archive_bytes != expected_archive_bytes {
         bail!("installed immutable documentation artifact differs from the expected digest or length");
     }
-    validate_corpus(&destination.join("corpus"), Some(uri))
+    validate_corpus(
+        &destination.join("corpus"),
+        Some(uri),
+        CorpusOrigin::Imported,
+    )
 }
 
 fn import_artifact(
@@ -1067,10 +1091,11 @@ fn import_artifact(
     let import_result = (|| -> Result<AttemptCorpus> {
         let mut command = super::crawl::stado_command();
         command.args(["storage", "get", uri]).arg(&archive_path);
-        let output = super::crawl_docs::run_stado_bounded(
+        let output = super::crawl::bounded_command_output(
             &mut command,
-            std::time::Duration::from_secs(30 * 60),
             "download immutable documentation corpus artifact",
+            std::time::Duration::from_secs(30 * 60),
+            super::crawl_docs::STADO_OUTPUT_LIMIT,
         )?;
         if !output.status.success() {
             bail!(
@@ -1092,7 +1117,7 @@ fn import_artifact(
         }
         let staged_corpus = staging.join("corpus");
         extract_corpus_archive(&archive_path, &staged_corpus)?;
-        validate_corpus(&staged_corpus, Some(uri))?;
+        validate_corpus(&staged_corpus, Some(uri), CorpusOrigin::Imported)?;
         open_regular_read(&archive_path, "downloaded documentation archive")?.sync_all()?;
         File::open(&staging)?.sync_all()?;
         match std::fs::rename(&staging, &destination) {
@@ -1296,6 +1321,15 @@ fn validate_receipt_corpus(receipt: &Value, corpus: &AttemptCorpus) -> Result<()
         || receipt.get("docs_structure_sha256") != corpus.report.get("structure_sha256")
     {
         bail!("attempt receipt and retrieval corpus identity differ");
+    }
+    // The sibling `artifact.tar.gz` only exists for corpora that `import_artifact`
+    // installed. A locally crawled corpus has no archive next to it, so refuse it
+    // here rather than reporting a missing-file error from `hash_file`.
+    if corpus.origin != CorpusOrigin::Imported {
+        bail!(
+            "attempt receipt validation requires an imported documentation corpus; {} was crawled locally and has no immutable artifact archive",
+            corpus.corpus_dir.display()
+        );
     }
     let archive_path = corpus
         .corpus_dir
