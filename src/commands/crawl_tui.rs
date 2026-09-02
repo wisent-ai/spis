@@ -60,51 +60,7 @@ fn attempt_root(
     base: &Path,
     manifest: &super::crawl::RuntimeManifest,
 ) -> Result<PathBuf> {
-    let value = serde_json::to_value(manifest)?;
-    let attempt = value
-        .get("attempt")
-        .and_then(Value::as_u64)
-        .filter(|value| (1..=u32::MAX as u64).contains(value))
-        .context("TUI runtime manifest has no typed u32 attempt coordinate")?;
-    let attempt_id = value
-        .get("attempt_id")
-        .and_then(Value::as_str)
-        .context("TUI runtime manifest has no typed attempt_id coordinate")?;
-    for (name, component) in [
-        ("run_id", manifest.run_id.as_str()),
-        ("catalog", manifest.catalog.as_str()),
-        ("record", manifest.record.as_str()),
-        ("record_key", manifest.record_key.as_str()),
-        ("attempt_id", attempt_id),
-    ] {
-        safe_component(component, &format!("runtime manifest {name}"))?;
-    }
-    let coordinate = format!(
-        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}/",
-        manifest.run_id,
-        manifest.catalog,
-        manifest.record,
-        manifest.record_key,
-        attempt,
-        attempt_id,
-    );
-    for (name, observed, leaf) in [
-        ("artifact_uri", manifest.artifact_uri.as_str(), "artifact"),
-        ("output_uri", manifest.output_uri.as_str(), "output"),
-    ] {
-        let expected = format!("{coordinate}{leaf}");
-        if observed != expected {
-            bail!("TUI runtime manifest {name} must equal exact canonical coordinate {expected:?}");
-        }
-    }
-    Ok(base
-        .join(&manifest.run_id)
-        .join(&manifest.catalog)
-        .join(&manifest.record)
-        .join(&manifest.record_key)
-        .join("attempts")
-        .join(attempt.to_string())
-        .join(attempt_id))
+    super::crawl::native_attempt_root(base, manifest)
 }
 
 

@@ -1584,6 +1584,45 @@ fn finalize_manifest_identity(manifest: &mut RuntimeManifest, reference_bytes: &
     manifest.output_uri = format!("{base_uri}/worker-output.log");
     Ok(())
 }
+pub(crate) fn native_attempt_root(
+    base: &Path,
+    manifest: &RuntimeManifest,
+) -> Result<PathBuf> {
+    for (name, component) in [
+        ("run_id", manifest.run_id.as_str()),
+        ("catalog", manifest.catalog.as_str()),
+        ("record", manifest.record.as_str()),
+        ("record_key", manifest.record_key.as_str()),
+        ("attempt_id", manifest.attempt_id.as_str()),
+    ] {
+        safe_component(component, name)?;
+    }
+    if manifest.attempt == 0 {
+        bail!("runtime manifest attempt must be a nonzero u32");
+    }
+    let coordinate = format!(
+        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
+        manifest.run_id,
+        manifest.catalog,
+        manifest.record,
+        manifest.record_key,
+        manifest.attempt,
+        manifest.attempt_id,
+    );
+    let artifact_uri = format!("{coordinate}/artifacts.tar.gz");
+    let output_uri = format!("{coordinate}/worker-output.log");
+    if manifest.artifact_uri != artifact_uri || manifest.output_uri != output_uri {
+        bail!("runtime manifest artifact/output URIs are not the canonical attempt coordinates");
+    }
+    Ok(base
+        .join(&manifest.run_id)
+        .join(&manifest.catalog)
+        .join(&manifest.record)
+        .join(&manifest.record_key)
+        .join("attempts")
+        .join(manifest.attempt.to_string())
+        .join(&manifest.attempt_id))
+}
 
 fn planned_record(
     run_id: &str,
@@ -2577,6 +2616,8 @@ fn aggregate_catalog_entry(entry: &mut Value) {
     };
     let state = if states.iter().any(|state| *state == "running") {
         "running"
+    } else if states.iter().any(|state| *state == "cancel_pending") {
+        "cancel_pending"
     } else if states.iter().any(|state| *state == "pending_review") {
         "pending_review"
     } else if states.iter().any(|state| {
@@ -2642,207 +2683,503 @@ fn persist_submission_receipt(
     Ok(())
 }
 
-fn continue_start(run: &mut Value) -> Result<()> {
-    let run_id = run.get("run_id").and_then(Value::as_str).context("run has no id")?.to_string();
-    let catalog_count = run.get("catalogs").and_then(Value::as_array).map(Vec::len).unwrap_or(0);
-    for catalog_index in 0..catalog_count {
-        let catalog = run["catalogs"][catalog_index]["catalog"].as_str().unwrap_or_default().to_string();
-        let engine = run["catalogs"][catalog_index]["engine"].as_str().unwrap_or_default().to_string();
-        let host = run["catalogs"][catalog_index]["host"].as_str().unwrap_or_default().to_string();
-        if run["catalogs"][catalog_index]["host_preflight"].is_null() {
-            let service_endpoint = run["catalogs"][catalog_index]["records"]
-                .as_array()
-                .and_then(|records| records.first())
-                .and_then(|record| record.pointer("/manifest/service_identity/endpoint"))
-                .and_then(Value::as_str)
-                .unwrap_or_default();
-            run["catalogs"][catalog_index]["host_preflight"] =
-                host_preflight(&catalog, &engine, &host, service_endpoint);
-            run["catalogs"][catalog_index]["state"] = json!("preflighting");
-            persist(run)?;
+fn record_snapshot(run_id: &str, catalog: &str, record: &str) -> Result<Value> {
+    let run = load(Some(run_id))?;
+    run.get("catalogs")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .find(|entry| entry.get("catalog").and_then(Value::as_str) == Some(catalog))
+        .and_then(|entry| entry.get("records"))
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .find(|entry| entry.get("record").and_then(Value::as_str) == Some(record))
+        .cloned()
+        .with_context(|| format!("{catalog}/{record}: crawl record disappeared"))
+}
+
+fn mutate_record<F>(run_id: &str, catalog: &str, record: &str, mutation: F) -> Result<()>
+where
+    F: FnOnce(&mut Value) -> Result<()>,
+{
+    let _guard = RunMutationGuard::acquire(run_id)?;
+    let mut run = load(Some(run_id))?;
+    let catalog_index = run
+        .get("catalogs")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .position(|entry| entry.get("catalog").and_then(Value::as_str) == Some(catalog))
+        .with_context(|| format!("{catalog}: crawl catalog disappeared"))?;
+    let record_index = run["catalogs"][catalog_index]
+        .get("records")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .position(|entry| entry.get("record").and_then(Value::as_str) == Some(record))
+        .with_context(|| format!("{catalog}/{record}: crawl record disappeared"))?;
+    mutation(&mut run["catalogs"][catalog_index]["records"][record_index])?;
+    aggregate_catalog_entry(&mut run["catalogs"][catalog_index]);
+    update_run_state(&mut run);
+    persist(&mut run)
+}
+
+fn mark_record_failure(
+    run_id: &str,
+    catalog: &str,
+    record: &str,
+    state: &str,
+    code: &str,
+    message: String,
+) -> Result<()> {
+    mutate_record(run_id, catalog, record, |entry| {
+        if entry.get("cancel_intent").is_some_and(Value::is_object) {
+            entry["state"] = json!("cancelled");
+            entry["diagnostic"] = json!({
+                "code": "cancelled_during_submission",
+                "message": "durable cancel intent takes precedence over the coordinator result",
+                "underlying": {"code": code, "message": message},
+            });
+        } else {
+            entry["state"] = json!(state);
+            entry["diagnostic"] = json!({"code": code, "message": message});
         }
-        let host_report = run["catalogs"][catalog_index]["host_preflight"].clone();
-        let record_count = run["catalogs"][catalog_index]["records"]
-            .as_array().map(Vec::len).unwrap_or(0);
-        for record_index in 0..record_count {
-            let state = run["catalogs"][catalog_index]["records"][record_index]["state"]
-                .as_str().unwrap_or("unavailable").to_string();
-            let has_job = run["catalogs"][catalog_index]["records"][record_index]["stado_job_id"].as_str().is_some();
-            if has_job || matches!(
-                state.as_str(),
-                "unavailable" | "completed" | "uploaded" | "imported" | "running" | "queued" | "pending_review"
-            ) {
-                continue;
-            }
-            let mut manifest: RuntimeManifest = match serde_json::from_value(
-                run["catalogs"][catalog_index]["records"][record_index]["manifest"].clone(),
-            ) {
-                Ok(manifest) => manifest,
-                Err(error) => {
-                    run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("unavailable");
-                    run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
-                        json!({"code": "runtime_manifest_invalid", "message": error.to_string()});
-                    persist(run)?;
-                    continue;
-                }
-            };
-            let already_preflighted = state == "preflight_passed";
-            let ready = if already_preflighted {
-                let retained = run["catalogs"][catalog_index]["records"][record_index]["command"]
-                    .as_array()
-                    .into_iter()
-                    .flatten()
-                    .filter_map(Value::as_str)
-                    .map(str::to_string)
-                    .collect::<Vec<_>>();
-                let diagnostic = match engine_command(&manifest, &host) {
-                    Ok(expected) if !retained.is_empty() && expected == retained => None,
-                    Ok(_) => Some(json!({
-                        "code": "retained_command_mismatch",
-                        "message": "preflight-persisted command differs from the immutable attempt"
-                    })),
-                    Err(error) => Some(json!({
-                        "code": "worker_command_unavailable",
-                        "message": error.to_string()
-                    })),
-                };
-                if let Some(diagnostic) = diagnostic {
-                    run["catalogs"][catalog_index]["records"][record_index]["preflight"] = json!({
-                        "ready": false,
-                        "diagnostic": diagnostic.clone(),
-                    });
-                    run["catalogs"][catalog_index]["records"][record_index]["state"] =
-                        json!("unavailable");
-                    run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
-                        diagnostic;
-                    persist(run)?;
-                    continue;
-                }
-                true
-            } else {
-                let mut preflight = record_preflight(&mut manifest, &host_report);
-                let mut ready = preflight.get("ready").and_then(Value::as_bool) == Some(true);
-                if ready {
-                    let reference_path = reference_path(&manifest.catalog, &manifest.record);
-                    let reference_display = reference_path
-                        .as_ref()
-                        .map(|path| path.display().to_string())
-                        .unwrap_or_else(|error| error.to_string());
-                    if let Err(error) = reference_path.and_then(|path| {
-                        std::fs::read(&path)
-                            .map_err(anyhow::Error::from)
-                            .and_then(|bytes| finalize_manifest_identity(&mut manifest, &bytes))
-                    }) {
-                        ready = false;
-                        preflight = json!({
-                            "schema": "wisent.crawl-record-preflight.v2",
-                            "record": manifest.record,
-                            "ready": false,
-                            "diagnostic": {
-                                "code": "runtime_manifest_finalization_failed",
-                                "message": error.to_string(),
-                                "path": reference_display,
-                            },
-                        });
-                    }
-                }
-                run["catalogs"][catalog_index]["records"][record_index]["manifest"] =
-                    serde_json::to_value(&manifest)?;
-                run["catalogs"][catalog_index]["records"][record_index]["preflight"] =
-                    preflight.clone();
-                if ready {
-                    match engine_command(&manifest, &host) {
-                        Ok(command) => {
-                            run["catalogs"][catalog_index]["records"][record_index]["command"] =
-                                json!(command);
-                            run["catalogs"][catalog_index]["records"][record_index]["state"] =
-                                json!("preflight_passed");
-                            run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
-                                Value::Null;
-                        }
-                        Err(error) => {
-                            ready = false;
-                            run["catalogs"][catalog_index]["records"][record_index]["state"] =
-                                json!("unavailable");
-                            run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
-                                json!({"code": "worker_command_unavailable", "message": error.to_string()});
-                        }
-                    }
-                } else {
-                    run["catalogs"][catalog_index]["records"][record_index]["state"] =
-                        json!("unavailable");
-                    run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
-                        preflight.get("diagnostic").cloned().unwrap_or_else(|| {
-                            json!({"code": "record_preflight_failed", "message": "exact record prerequisite failed"})
-                        });
-                }
-                persist(run)?;
-                ready
-            };
-            if !ready {
-                continue;
-            }
-            let command = run["catalogs"][catalog_index]["records"][record_index]["command"]
-                .as_array().into_iter().flatten().filter_map(Value::as_str)
-                .map(str::to_string).collect::<Vec<_>>();
-            match invoke_engine(&command) {
-                Ok(output) if output.status.success() => match parse_submission(&output.stdout) {
-                    Ok(receipt) => {
-                        let stado = receipt.get("stado_receipt");
-                        if stado.and_then(|value| value.get("source_revision")).and_then(Value::as_str)
-                            != Some(manifest.source_revision.as_str())
-                        {
-                            run["catalogs"][catalog_index]["records"][record_index]["state"] =
-                                json!("submission_failed");
-                            run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
-                                json!({"code": "submission_source_mismatch", "message": "Stado receipt does not bind the immutable Spis source revision"});
-                        } else {
-                            persist_submission_receipt(
-                                &run_id,
-                                &catalog,
-                                &manifest.record,
-                                &manifest.attempt_id,
-                                &receipt,
-                            )?;
-                            run["catalogs"][catalog_index]["records"][record_index]["stado_job_id"] =
-                                receipt.get("stado_job_id").cloned().unwrap_or(Value::Null);
-                            run["catalogs"][catalog_index]["records"][record_index]["artifact_uri"] =
-                                receipt.get("artifact_uri").cloned().unwrap_or_else(|| json!(manifest.artifact_uri));
-                            run["catalogs"][catalog_index]["records"][record_index]["output_uri"] =
-                                receipt.get("output_uri").cloned().unwrap_or_else(|| json!(manifest.output_uri));
-                            run["catalogs"][catalog_index]["records"][record_index]["submission_receipt"] = receipt;
-                            run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("queued");
-                            run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] = Value::Null;
-                        }
-                    }
-                    Err(error) => {
-                        run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("submission_failed");
-                        run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
-                            json!({"code": "submission_receipt_invalid", "message": error.to_string()});
-                    }
-                },
-                Ok(output) => {
-                    run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("submission_failed");
-                    run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] = json!({
-                        "code": "stado_submission_failed",
-                        "message": String::from_utf8_lossy(&output.stderr).trim(),
-                        "stdout": String::from_utf8_lossy(&output.stdout).trim(),
-                    });
-                }
-                Err(error) => {
-                    run["catalogs"][catalog_index]["records"][record_index]["state"] = json!("submission_failed");
-                    run["catalogs"][catalog_index]["records"][record_index]["diagnostic"] =
-                        json!({"code": "crawler_coordinator_launch_failed", "message": format!("{error:#}")});
-                }
-            }
-            persist(run)?;
-        }
-        aggregate_catalog_entry(&mut run["catalogs"][catalog_index]);
-        update_run_state(run);
-        persist(run)?;
+        Ok(())
+    })
+}
+
+fn ensure_host_preflight(
+    run_id: &str,
+    catalog: &str,
+    engine: &str,
+    host: &str,
+    service_endpoint: &str,
+) -> Result<Value> {
+    let snapshot = load(Some(run_id))?;
+    let existing = snapshot
+        .get("catalogs")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .find(|entry| entry.get("catalog").and_then(Value::as_str) == Some(catalog))
+        .and_then(|entry| entry.get("host_preflight"))
+        .cloned()
+        .context("crawl catalog disappeared before host preflight")?;
+    if !existing.is_null() {
+        return Ok(existing);
     }
-    update_run_state(run);
-    Ok(())
+    let observed = host_preflight(catalog, engine, host, service_endpoint);
+    let _guard = RunMutationGuard::acquire(run_id)?;
+    let mut run = load(Some(run_id))?;
+    let catalog_index = run
+        .get("catalogs")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .position(|entry| entry.get("catalog").and_then(Value::as_str) == Some(catalog))
+        .context("crawl catalog disappeared while retaining host preflight")?;
+    if run["catalogs"][catalog_index]["host_preflight"].is_null() {
+        run["catalogs"][catalog_index]["host_preflight"] = observed;
+        run["catalogs"][catalog_index]["state"] = json!("preflighting");
+        persist(&mut run)?;
+    }
+    Ok(run["catalogs"][catalog_index]["host_preflight"].clone())
+}
+
+fn continue_record(
+    run_id: &str,
+    catalog: &str,
+    host: &str,
+    host_report: &Value,
+    record_name: &str,
+) -> Result<()> {
+    let record_guard = RecordMutationGuard::acquire(run_id, catalog, record_name)?;
+    let snapshot = record_snapshot(run_id, catalog, record_name)?;
+    let state = snapshot
+        .get("state")
+        .and_then(Value::as_str)
+        .unwrap_or("unavailable")
+        .to_string();
+    if snapshot.get("stado_job_id").and_then(Value::as_str).is_some()
+        || matches!(
+            state.as_str(),
+            "unavailable"
+                | "completed"
+                | "uploaded"
+                | "imported"
+                | "running"
+                | "queued"
+                | "submitting"
+                | "cancel_pending"
+                | "pending_review"
+                | "cancelled"
+        )
+    {
+        return Ok(());
+    }
+    if snapshot.get("cancel_intent").is_some_and(Value::is_object) {
+        return mark_record_failure(
+            run_id,
+            catalog,
+            record_name,
+            "cancelled",
+            "cancelled_before_submission",
+            "durable cancel intent exists; worker submission is prohibited".into(),
+        );
+    }
+    let mut manifest: RuntimeManifest = match serde_json::from_value(
+        snapshot.get("manifest").cloned().unwrap_or(Value::Null),
+    ) {
+        Ok(manifest) => manifest,
+        Err(error) => {
+            return mark_record_failure(
+                run_id,
+                catalog,
+                record_name,
+                "unavailable",
+                "runtime_manifest_invalid",
+                error.to_string(),
+            );
+        }
+    };
+
+    let command = if state == "preflight_passed" {
+        let retained = snapshot
+            .get("command")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+            .map(str::to_string)
+            .collect::<Vec<_>>();
+        match engine_command(&manifest, host) {
+            Ok(expected) if !retained.is_empty() && expected == retained => retained,
+            Ok(_) => {
+                return mark_record_failure(
+                    run_id,
+                    catalog,
+                    record_name,
+                    "unavailable",
+                    "retained_command_mismatch",
+                    "preflight-persisted command differs from the immutable attempt".into(),
+                );
+            }
+            Err(error) => {
+                return mark_record_failure(
+                    run_id,
+                    catalog,
+                    record_name,
+                    "unavailable",
+                    "worker_command_unavailable",
+                    error.to_string(),
+                );
+            }
+        }
+    } else {
+        let mut preflight = record_preflight(&mut manifest, host_report);
+        let mut ready = preflight.get("ready").and_then(Value::as_bool) == Some(true);
+        if ready {
+            let path = reference_path(&manifest.catalog, &manifest.record);
+            let display = path
+                .as_ref()
+                .map(|value| value.display().to_string())
+                .unwrap_or_else(|error| error.to_string());
+            if let Err(error) = path.and_then(|value| {
+                std::fs::read(&value)
+                    .map_err(anyhow::Error::from)
+                    .and_then(|bytes| finalize_manifest_identity(&mut manifest, &bytes))
+            }) {
+                ready = false;
+                preflight = json!({
+                    "schema": "wisent.crawl-record-preflight.v2",
+                    "record": manifest.record,
+                    "ready": false,
+                    "diagnostic": {
+                        "code": "runtime_manifest_finalization_failed",
+                        "message": error.to_string(),
+                        "path": display,
+                    },
+                });
+            }
+        }
+        let command = if ready {
+            engine_command(&manifest, host)
+        } else {
+            Err(anyhow!("exact record preflight failed"))
+        };
+        let command = match command {
+            Ok(command) => command,
+            Err(error) => {
+                let diagnostic = preflight
+                    .get("diagnostic")
+                    .cloned()
+                    .unwrap_or_else(|| {
+                        json!({"code": "worker_command_unavailable", "message": error.to_string()})
+                    });
+                mutate_record(run_id, catalog, record_name, |entry| {
+                    entry["manifest"] = serde_json::to_value(&manifest)?;
+                    entry["preflight"] = preflight;
+                    entry["state"] = json!("unavailable");
+                    entry["diagnostic"] = diagnostic;
+                    Ok(())
+                })?;
+                return Ok(());
+            }
+        };
+        mutate_record(run_id, catalog, record_name, |entry| {
+            if entry.get("stado_job_id").and_then(Value::as_str).is_some()
+                || entry.get("cancel_intent").is_some_and(Value::is_object)
+            {
+                return Ok(());
+            }
+            entry["manifest"] = serde_json::to_value(&manifest)?;
+            entry["preflight"] = preflight;
+            entry["command"] = json!(command);
+            entry["state"] = json!("preflight_passed");
+            entry["diagnostic"] = Value::Null;
+            Ok(())
+        })?;
+        command
+    };
+
+    let before_submit = record_snapshot(run_id, catalog, record_name)?;
+    if before_submit.get("cancel_intent").is_some_and(Value::is_object) {
+        return mark_record_failure(
+            run_id,
+            catalog,
+            record_name,
+            "cancelled",
+            "cancelled_before_submission",
+            "durable cancel intent won the submission race".into(),
+        );
+    }
+    if before_submit.get("state").and_then(Value::as_str) != Some("preflight_passed") {
+        return Ok(());
+    }
+    mutate_record(run_id, catalog, record_name, |entry| {
+        if entry.get("state").and_then(Value::as_str) == Some("preflight_passed")
+            && !entry.get("cancel_intent").is_some_and(Value::is_object)
+        {
+            entry["state"] = json!("submitting");
+        }
+        Ok(())
+    })?;
+    let armed = record_snapshot(run_id, catalog, record_name)?;
+    drop(record_guard);
+    if armed.get("state").and_then(Value::as_str) != Some("submitting") {
+        return Ok(());
+    }
+    let output = match invoke_engine(&command) {
+        Ok(output) => output,
+        Err(error) => {
+            return mark_record_failure(
+                run_id,
+                catalog,
+                record_name,
+                "submission_failed",
+                "crawler_coordinator_launch_failed",
+                format!("{error:#}"),
+            );
+        }
+    };
+    if !output.status.success() {
+        return mark_record_failure(
+            run_id,
+            catalog,
+            record_name,
+            "submission_failed",
+            "stado_submission_failed",
+            format!(
+                "{}{}",
+                String::from_utf8_lossy(&output.stdout).trim(),
+                String::from_utf8_lossy(&output.stderr).trim()
+            ),
+        );
+    }
+    let receipt = match parse_submission(&output.stdout) {
+        Ok(receipt) => receipt,
+        Err(error) => {
+            return mark_record_failure(
+                run_id,
+                catalog,
+                record_name,
+                "submission_failed",
+                "submission_receipt_invalid",
+                error.to_string(),
+            );
+        }
+    };
+    let stado = receipt.get("stado_receipt");
+    if stado
+        .and_then(|value| value.get("source_revision"))
+        .and_then(Value::as_str)
+        != Some(manifest.source_revision.as_str())
+    {
+        return mark_record_failure(
+            run_id,
+            catalog,
+            record_name,
+            "submission_failed",
+            "submission_source_mismatch",
+            "Stado receipt does not bind the immutable Spis source revision".into(),
+        );
+    }
+    if let Err(error) = persist_submission_receipt(
+        run_id,
+        catalog,
+        &manifest.record,
+        &manifest.attempt_id,
+        &receipt,
+    ) {
+        return mark_record_failure(
+            run_id,
+            catalog,
+            record_name,
+            "submission_failed",
+            "submission_receipt_persistence_failed",
+            error.to_string(),
+        );
+    }
+    mutate_record(run_id, catalog, record_name, |entry| {
+        entry["stado_job_id"] = receipt
+            .get("stado_job_id")
+            .cloned()
+            .unwrap_or(Value::Null);
+        entry["artifact_uri"] = receipt
+            .get("artifact_uri")
+            .cloned()
+            .unwrap_or_else(|| json!(manifest.artifact_uri));
+        entry["output_uri"] = receipt
+            .get("output_uri")
+            .cloned()
+            .unwrap_or_else(|| json!(manifest.output_uri));
+        entry["submission_receipt"] = receipt;
+        if entry.get("cancel_intent").is_some_and(Value::is_object) {
+            entry["state"] = json!("cancel_pending");
+            entry["diagnostic"] = json!({
+                "code": "cancel_won_submission_race",
+                "message": "the durable cancel intent will be dispatched against the retained Stado job",
+            });
+        } else {
+            entry["state"] = json!("queued");
+            entry["diagnostic"] = Value::Null;
+        }
+        Ok(())
+    })?;
+    let retained = record_snapshot(run_id, catalog, record_name)?;
+    if !retained.get("cancel_intent").is_some_and(Value::is_object) {
+        return Ok(());
+    }
+    let Some(job_id) = retained.get("stado_job_id").and_then(Value::as_str) else {
+        return Ok(());
+    };
+    let cancellation = match machine_status(job_id) {
+        Ok(job) if terminal_machine_state(machine_state(&job)) => {
+            Ok(json!({"state": "noop_terminal", "observed_job": job}))
+        }
+        Ok(job) => {
+            let output = stado_command()
+                .args(["machine", "cancel", job_id])
+                .output()
+                .context("cancel Stado job after submission race")?;
+            if output.status.success() {
+                let response = serde_json::from_slice(&output.stdout)
+                    .unwrap_or_else(|_| json!({"stdout": String::from_utf8_lossy(&output.stdout).trim()}));
+                Ok(json!({"state": "cancel_dispatched", "observed_job": job, "response": response}))
+            } else {
+                Err(anyhow!(
+                    "Stado refused race cancellation: {}",
+                    String::from_utf8_lossy(&output.stderr).trim()
+                ))
+            }
+        }
+        Err(error) => Err(anyhow!(
+            "status-first race cancellation failed: {}",
+            error.diagnostic
+        )),
+    };
+    mutate_record(run_id, catalog, record_name, |entry| {
+        match cancellation {
+            Ok(result) => {
+                entry["state"] = json!("cancelled");
+                entry["cancel_result"] = result;
+                entry["diagnostic"] = Value::Null;
+            }
+            Err(error) => {
+                entry["state"] = json!("cancel_pending");
+                entry["diagnostic"] = json!({
+                    "code": "cancel_dispatch_failed",
+                    "message": error.to_string(),
+                });
+            }
+        }
+        Ok(())
+    })
+}
+
+fn continue_start(run_id: &str) -> Result<Value> {
+    let catalogs = load(Some(run_id))?
+        .get("catalogs")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    for catalog_entry in catalogs {
+        let catalog = catalog_entry
+            .get("catalog")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string();
+        let engine = catalog_entry
+            .get("engine")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string();
+        let host = catalog_entry
+            .get("host")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_string();
+        if host.is_empty() {
+            continue;
+        }
+        let endpoint = catalog_entry
+            .get("records")
+            .and_then(Value::as_array)
+            .and_then(|records| records.first())
+            .and_then(|record| record.pointer("/manifest/service_identity/endpoint"))
+            .and_then(Value::as_str)
+            .unwrap_or_default();
+        let host_report =
+            ensure_host_preflight(run_id, &catalog, &engine, &host, endpoint)?;
+        let records = catalog_entry
+            .get("records")
+            .and_then(Value::as_array)
+            .cloned()
+            .unwrap_or_default();
+        for record in records {
+            let Some(record_name) = record.get("record").and_then(Value::as_str) else {
+                continue;
+            };
+            if let Err(error) = continue_record(
+                run_id,
+                &catalog,
+                &host,
+                &host_report,
+                record_name,
+            ) {
+                mark_record_failure(
+                    run_id,
+                    &catalog,
+                    record_name,
+                    "submission_failed",
+                    "record_coordinator_failed",
+                    format!("{error:#}"),
+                )?;
+            }
+        }
+    }
+    load(Some(run_id))
 }
 
 fn start(rest: &[String]) -> Result<()> {
@@ -2924,12 +3261,7 @@ fn start(rest: &[String]) -> Result<()> {
             }
         }
         publish_runtime_bindings(&bindings)?;
-        let run = {
-            let _guard = RunMutationGuard::acquire(&run_id)?;
-            let mut run = load(Some(&run_id))?;
-            continue_start(&mut run)?;
-            run
-        };
+        let run = continue_start(&run_id)?;
         print_operation("start", &run, None)?;
         if has_failures(&run) {
             bail!("one or more records remain unavailable or failed");
@@ -3035,11 +3367,7 @@ fn start(rest: &[String]) -> Result<()> {
         persist(&mut run)?;
     }
     publish_runtime_bindings(&bindings)?;
-    {
-        let _guard = RunMutationGuard::acquire(&run_id)?;
-        run = load(Some(&run_id))?;
-        continue_start(&mut run)?;
-    }
+    run = continue_start(&run_id)?;
     print_operation("start", &run, None)?;
     if has_failures(&run) {
         bail!("one or more records remain unavailable or failed");
@@ -3518,6 +3846,8 @@ fn update_run_state(run: &mut Value) {
         .collect();
     let state = if states.iter().any(|state| *state == "running") {
         "running"
+    } else if states.iter().any(|state| *state == "cancel_pending") {
+        "cancel_pending"
     } else if states.iter().any(|state| *state == "pending_review") {
         "pending_review"
     } else if states.iter().any(|state| *state == "queued") {
