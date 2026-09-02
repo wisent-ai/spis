@@ -21,6 +21,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const CLIENT_PACKAGE = '@wisent-ai/weles-client';
 const CLIENT_COMMIT = '37798a26022a040fbd0a4a4a25c99b5559d95a32';
 const CLIENT_SOURCE_SHA256 = '7cdfee8ae7d7ffc831c60d01e393640bf912d95adf0b06c9dd51a737f97ccada';
+const CANONICAL_TRUST_PATH = join(
+  dirname(fileURLToPath(import.meta.url)),
+  'weles-receipt-trust.json',
+);
 const CONFIG_SCHEMA = 'wisent.spis-weles-bridge-config.v1';
 const TRUST_SCHEMA = 'wisent.spis-weles-receipt-trust.v1';
 const COMMAND_SCHEMA = 'wisent.spis-weles-bridge-command.v1';
@@ -32,7 +36,12 @@ const CANCELLATION_SCHEMA = 'wisent.spis-weles-cancellation.v1';
 const ERROR_SCHEMA = 'wisent.spis-weles-bridge-error.v1';
 const MAX_JSON_BYTES = 1024 * 1024;
 const MAX_OUTPUT_BYTES = 4 * 1024 * 1024;
+const MAX_EVIDENCE_MANIFEST_BYTES = 4 * 1024 * 1024;
+const MAX_EVIDENCE_INVENTORY_BYTES = 8 * 1024 * 1024;
 const SHA256 = /^[0-9a-f]{64}$/;
+const SHA256_ID = /^sha256:[0-9a-f]{64}$/;
+const GIT_REVISION = /^[0-9a-f]{40}$/;
+const SPIS_BINDING_SCHEMA = 'weles.spis-browser-evidence-binding.v1';
 const NONTERMINAL_STATUSES = new Set(['queued', 'leased', 'running', 'pending_review']);
 const TERMINAL_OUTCOME_BY_STATUS = new Map([
   ['completed', 'completed'],
@@ -55,6 +64,48 @@ const KNOWN_TASK_FIELDS = Object.freeze([
   'organizationId',
   'origin',
   'action',
+]);
+const SERVICE_IDENTITY_FIELDS = Object.freeze([
+  'name',
+  'generation',
+  'consumer',
+  'capability',
+  'active_host',
+  'endpoint',
+  'action',
+  'release_id',
+  'source_revision',
+]);
+const SPIS_BINDING_FIELDS = Object.freeze([
+  'schema',
+  'run_id',
+  'catalog',
+  'record',
+  'record_key',
+  'attempt',
+  'attempt_id',
+  'source_revision',
+  'source_input_sha256',
+  'reference_sha256',
+  'artifact_uri',
+  'output_uri',
+  'service',
+]);
+const SPIS_BINDING_SERVICE_FIELDS = Object.freeze([
+  'name',
+  'consumer',
+  'capability',
+  'directory_generation',
+  'host',
+  'endpoint',
+  'action',
+  'release_id',
+  'source_revision',
+]);
+const SIGNED_SPIS_CLAIMS = Object.freeze([
+  'requestDigest',
+  'resultDigest',
+  'spisBinding',
 ]);
 const RECEIPT_FIELDS = Object.freeze([
   'schema',
@@ -90,11 +141,15 @@ function nonemptyString(value, name) {
   return value;
 }
 
-function stringArray(value, name) {
-  if (!Array.isArray(value) || value.length === 0) {
-    fail('invalid-config', `${name} must be a non-empty string array`);
+function possiblyEmptyStringArray(value, name) {
+  if (!Array.isArray(value)) {
+    fail('invalid-input', `${name} must be a string array`);
   }
-  return value.map((entry, index) => nonemptyString(entry, `${name}[${index}]`));
+  const entries = value.map((entry, index) => nonemptyString(entry, `${name}[${index}]`));
+  if (new Set(entries).size !== entries.length) {
+    fail('invalid-input', `${name} must not contain duplicates`);
+  }
+  return entries;
 }
 
 function onlyKeys(value, allowed, name) {
@@ -103,6 +158,124 @@ function onlyKeys(value, allowed, name) {
     fail('invalid-input', `${name} contains unsupported fields`);
   }
 }
+function exactOrigin(value, name) {
+  const origin = nonemptyString(value, name);
+  let parsed;
+  try {
+    parsed = new URL(origin);
+  } catch {
+    fail('invalid-input', `${name} must be an exact HTTP(S) origin`);
+  }
+  if (!['http:', 'https:'].includes(parsed.protocol)
+      || parsed.origin !== origin
+      || parsed.pathname !== '/'
+      || parsed.search
+      || parsed.hash
+      || parsed.username
+      || parsed.password) {
+    fail('invalid-input', `${name} must be an exact HTTP(S) origin`);
+  }
+  return origin;
+}
+
+function validateServiceIdentity(value, name) {
+  const identity = plainObject(value, name);
+  onlyKeys(identity, SERVICE_IDENTITY_FIELDS, name);
+  const validated = {};
+  for (const field of SERVICE_IDENTITY_FIELDS) {
+    if (field === 'generation') {
+      if (!Number.isSafeInteger(identity[field]) || identity[field] < 0) {
+        fail('invalid-input', `${name}.generation must be a non-negative integer`);
+      }
+      validated[field] = identity[field];
+    } else {
+      validated[field] = nonemptyString(identity[field], `${name}.${field}`);
+    }
+  }
+  validated.endpoint = canonicalApiEndpoint(validated.endpoint, `${name}.endpoint`);
+  if (validated.name !== 'weles-admission'
+      || validated.consumer !== 'spis'
+      || validated.capability !== 'browser-evidence'
+      || validated.action !== 'generic_browser_task'
+      || !validated.release_id.startsWith('weles-worker@')
+      || validated.release_id === 'weles-worker@'
+      || !GIT_REVISION.test(validated.source_revision)) {
+    fail('invalid-input', `${name} is not the exact Weles browser-evidence service identity`);
+  }
+  return validated;
+}
+
+function validateSpisBinding(value, name) {
+  const binding = plainObject(value, name);
+  onlyKeys(binding, SPIS_BINDING_FIELDS, name);
+  if (binding.schema !== SPIS_BINDING_SCHEMA) {
+    fail('invalid-input', `${name}.schema is unsupported`);
+  }
+  const validated = { schema: binding.schema };
+  for (const field of SPIS_BINDING_FIELDS.slice(1)) {
+    if (field === 'attempt') {
+      if (!Number.isSafeInteger(binding[field]) || binding[field] < 1) {
+        fail('invalid-input', `${name}.attempt must be a positive integer`);
+      }
+      validated[field] = binding[field];
+    } else if (field === 'service') {
+      const service = plainObject(binding.service, `${name}.service`);
+      onlyKeys(service, SPIS_BINDING_SERVICE_FIELDS, `${name}.service`);
+      const validatedService = {};
+      for (const serviceField of SPIS_BINDING_SERVICE_FIELDS) {
+        if (serviceField === 'directory_generation') {
+          if (!Number.isSafeInteger(service[serviceField]) || service[serviceField] < 0) {
+            fail('invalid-input', `${name}.service.directory_generation must be a non-negative integer`);
+          }
+          validatedService[serviceField] = service[serviceField];
+        } else {
+          validatedService[serviceField] = nonemptyString(
+            service[serviceField],
+            `${name}.service.${serviceField}`,
+          );
+        }
+      }
+      validatedService.endpoint = canonicalApiEndpoint(
+        validatedService.endpoint,
+        `${name}.service.endpoint`,
+      );
+      if (validatedService.name !== 'weles-admission'
+          || validatedService.consumer !== 'spis'
+          || validatedService.capability !== 'browser-evidence'
+          || validatedService.action !== 'generic_browser_task'
+          || !validatedService.release_id.startsWith('weles-worker@')
+          || validatedService.release_id === 'weles-worker@'
+          || !GIT_REVISION.test(validatedService.source_revision)) {
+        fail('invalid-input', `${name}.service is not the exact Weles browser-evidence identity`);
+      }
+      validated.service = validatedService;
+    } else {
+      validated[field] = nonemptyString(binding[field], `${name}.${field}`);
+    }
+  }
+  if (!SHA256.test(validated.source_input_sha256)
+      || !SHA256.test(validated.reference_sha256)
+      || !GIT_REVISION.test(validated.source_revision)) {
+    fail('invalid-input', `${name} source revision/digest fields are invalid`);
+  }
+  validateAttemptBindingUris(validated, name);
+  return validated;
+}
+
+function validateRequestIdentity(value, name) {
+  const identity = plainObject(value, name);
+  onlyKeys(identity, ['requestDigest', 'spisBinding'], name);
+  const requestDigest = nonemptyString(identity.requestDigest, `${name}.requestDigest`);
+  if (!SHA256_ID.test(requestDigest)) {
+    fail('invalid-input', `${name}.requestDigest must be a sha256: identifier`);
+  }
+  return {
+    requestDigest,
+    spisBinding: validateSpisBinding(identity.spisBinding, `${name}.spisBinding`),
+  };
+}
+
+
 
 function parseJson(text, name) {
   try {
@@ -171,9 +344,15 @@ function readPublicTrust(path) {
 }
 
 function loadTrust() {
-  const path = process.env.SPIS_WELES_TRUST_FILE;
-  if (!path) fail('trust-unavailable', 'SPIS_WELES_TRUST_FILE is required for receipt verification');
-  const trust = plainObject(readPublicTrust(path), 'public Weles receipt trust');
+  const configuredPath = process.env.SPIS_WELES_TRUST_FILE;
+  if (!configuredPath) fail('trust-unavailable', 'SPIS_WELES_TRUST_FILE is required');
+  if (resolve(configuredPath) !== resolve(CANONICAL_TRUST_PATH)) {
+    fail('invalid-trust', 'SPIS_WELES_TRUST_FILE must resolve to the checked-in canonical trust document');
+  }
+  const trust = plainObject(
+    readPublicTrust(CANONICAL_TRUST_PATH),
+    'public Weles receipt trust',
+  );
   onlyKeys(trust, [
     'schema',
     'organizationId',
@@ -193,74 +372,29 @@ function loadTrust() {
   }
   return {
     organizationId,
-    allowedOrigins: null,
-    allowedActions: [allowedAction],
-    terminalOutcomes: ['completed'],
+    allowedAction,
     receiptKeys,
     keySetVersion,
   };
 }
 
-
-function parseEnvironmentJson(name) {
-  const value = process.env[name];
-  if (!value) fail('config-unavailable', `${name} is required when SPIS_WELES_CONFIG_FILE is absent`);
-  return parseJson(value, name);
-}
-
-function loadConfig() {
-  let config;
-  if (process.env.SPIS_WELES_CONFIG_FILE) {
-    config = readProtectedConfig(process.env.SPIS_WELES_CONFIG_FILE);
-  } else {
-    config = {
-      schema: CONFIG_SCHEMA,
-      endpoint: process.env.WELES_API_BASE,
-      bearer: process.env.WELES_TOKEN,
-      organizationId: process.env.WISENT_ORGANIZATION_ID,
-      allowedOrigins: parseEnvironmentJson('SPIS_WELES_ALLOWED_ORIGINS_JSON'),
-      allowedActions: parseEnvironmentJson('SPIS_WELES_ALLOWED_ACTIONS_JSON'),
-      terminalOutcomes: parseEnvironmentJson('SPIS_WELES_TERMINAL_OUTCOMES_JSON'),
-      receiptKeys: parseEnvironmentJson('SPIS_WELES_RECEIPT_KEYS_JSON'),
-      keySetVersion: process.env.SPIS_WELES_KEY_SET_VERSION,
-    };
-  }
-  plainObject(config, 'config');
-  onlyKeys(config, [
-    'schema',
-    'endpoint',
-    'bearer',
-    'organizationId',
-    'allowedOrigins',
-    'allowedActions',
-    'terminalOutcomes',
-    'receiptKeys',
-    'keySetVersion',
-  ], 'config');
+function loadConfig(trust) {
+  const path = process.env.SPIS_WELES_CONFIG_FILE;
+  if (!path) fail('config-unavailable', 'SPIS_WELES_CONFIG_FILE is required for network operations');
+  const config = plainObject(readProtectedConfig(path), 'config');
+  onlyKeys(config, ['schema', 'endpoint', 'bearer', 'organizationId'], 'config');
   if (config.schema !== CONFIG_SCHEMA) fail('invalid-config', 'Weles bridge config schema is unsupported');
-  config.organizationId = nonemptyString(config.organizationId, 'config.organizationId');
-  config.allowedOrigins = stringArray(config.allowedOrigins, 'config.allowedOrigins');
-  config.allowedActions = stringArray(config.allowedActions, 'config.allowedActions');
-  config.terminalOutcomes = stringArray(config.terminalOutcomes, 'config.terminalOutcomes');
-  config.keySetVersion = nonemptyString(config.keySetVersion, 'config.keySetVersion');
-  plainObject(config.receiptKeys, 'config.receiptKeys');
-  if (Object.keys(config.receiptKeys).length === 0) fail('invalid-config', 'config.receiptKeys must not be empty');
-  for (const [keyId, publicKey] of Object.entries(config.receiptKeys)) {
-    nonemptyString(keyId, 'config.receiptKeys key ID');
-    nonemptyString(publicKey, `config.receiptKeys.${keyId}`);
+  const endpoint = canonicalApiEndpoint(config.endpoint, 'config.endpoint');
+  const bearer = nonemptyString(config.bearer, 'config.bearer');
+  const organizationId = nonemptyString(config.organizationId, 'config.organizationId');
+  if (organizationId !== trust.organizationId) {
+    fail('invalid-config', 'protected organizationId differs from public receipt trust');
   }
-  for (const origin of config.allowedOrigins) {
-    let parsed;
-    try {
-      parsed = new URL(origin);
-    } catch {
-      fail('invalid-config', 'config.allowedOrigins contains an invalid origin');
-    }
-    if (parsed.origin !== origin || parsed.pathname !== '/' || parsed.search || parsed.hash || parsed.username || parsed.password) {
-      fail('invalid-config', 'config.allowedOrigins must contain exact URL origins');
-    }
-  }
-  return config;
+  return {
+    ...trust,
+    endpoint,
+    bearer,
+  };
 }
 
 async function loadOfficialClient() {
@@ -303,22 +437,22 @@ function parseArgs(argv) {
 function validateExpectedTask(value, config) {
   const expected = plainObject(value, 'expectedTask');
   onlyKeys(expected, KNOWN_TASK_FIELDS, 'expectedTask');
-  for (const field of KNOWN_TASK_FIELDS) nonemptyString(expected[field], `expectedTask.${field}`);
+  nonemptyString(expected.taskId, 'expectedTask.taskId');
+  nonemptyString(expected.organizationId, 'expectedTask.organizationId');
+  exactOrigin(expected.origin, 'expectedTask.origin');
+  nonemptyString(expected.action, 'expectedTask.action');
   if (expected.organizationId !== config.organizationId) {
-    fail('expected-claim-mismatch', 'expected organizationId differs from configured receipt trust');
+    fail('expected-claim-mismatch', 'expected organizationId differs from public receipt trust');
   }
-  if (config.allowedOrigins !== null && !config.allowedOrigins.includes(expected.origin)) {
-    fail('expected-claim-mismatch', 'expected origin is not an exact protected allowlist member');
-  }
-  if (!config.allowedActions.includes(expected.action)) {
-    fail('expected-claim-mismatch', 'expected action is not an exact configured allowlist member');
+  if (expected.action !== config.allowedAction) {
+    fail('expected-claim-mismatch', 'expected action differs from public receipt trust');
   }
   return expected;
 }
 
 function validateExpectedClaims(value, config) {
   const expected = plainObject(value, 'expectedClaims');
-  onlyKeys(expected, CORE_CLAIMS, 'expectedClaims');
+  onlyKeys(expected, [...CORE_CLAIMS, ...SIGNED_SPIS_CLAIMS], 'expectedClaims');
   for (const field of CORE_CLAIMS) nonemptyString(expected[field], `expectedClaims.${field}`);
   validateExpectedTask({
     taskId: expected.taskId,
@@ -326,11 +460,23 @@ function validateExpectedClaims(value, config) {
     origin: expected.origin,
     action: expected.action,
   }, config);
-  if (!config.terminalOutcomes.includes(expected.outcome)) {
-    fail('expected-claim-mismatch', 'expected outcome is not a configured terminal outcome');
+  if (![...TERMINAL_OUTCOME_BY_STATUS.values()].includes(expected.outcome)) {
+    fail('expected-claim-mismatch', 'expected outcome is not in the typed terminal contract');
   }
   if (!SHA256.test(expected.evidenceDigest)) {
     fail('expected-claim-mismatch', 'expected evidenceDigest must be a lowercase SHA-256 digest');
+  }
+  for (const field of ['requestDigest', 'resultDigest']) {
+    if (!SHA256_ID.test(nonemptyString(expected[field], `expectedClaims.${field}`))) {
+      fail('expected-claim-mismatch', `expected ${field} must be a sha256: identifier`);
+    }
+  }
+  expected.spisBinding = validateSpisBinding(
+    expected.spisBinding,
+    'expectedClaims.spisBinding',
+  );
+  if (expected.spisBinding.service.action !== config.allowedAction) {
+    fail('expected-claim-mismatch', 'expected spisBinding action differs from public receipt trust');
   }
   return expected;
 }
@@ -381,14 +527,24 @@ async function digestArtifact(artifact) {
     handle = await open(actual, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0));
     const stat = await handle.stat();
     if (!stat.isFile()) fail('invalid-artifact', 'retained artifact must be a regular file');
+    if (stat.size > MAX_EVIDENCE_MANIFEST_BYTES) {
+      fail('artifact-too-large', 'retained evidence manifest exceeded the strict byte limit');
+    }
     const hash = createHash('sha256');
-    for await (const chunk of createReadStream(null, { fd: handle.fd, autoClose: false })) hash.update(chunk);
+    const chunks = [];
+    for await (const chunk of createReadStream(null, { fd: handle.fd, autoClose: false })) {
+      hash.update(chunk);
+      chunks.push(chunk);
+    }
     const sha256 = hash.digest('hex');
     if (sha256 !== artifact.sha256) fail('artifact-digest-mismatch', 'retained artifact digest differs from the caller expectation');
     if (artifact.bytes !== undefined && stat.size !== artifact.bytes) {
       fail('artifact-size-mismatch', 'retained artifact size differs from the persisted verification document');
     }
-    return { path: artifact.path, sha256, bytes: stat.size };
+    return {
+      artifact: { path: artifact.path, sha256, bytes: stat.size },
+      value: parseJson(Buffer.concat(chunks).toString('utf8'), 'retained evidence manifest'),
+    };
   } catch (error) {
     if (error instanceof BridgeError) throw error;
     fail('artifact-unavailable', 'retained artifact could not be read');
@@ -449,6 +605,124 @@ function buildReceiptCheckpoint(receiptValue, expectedTaskValue, config, verifyR
     claims,
   };
 }
+function validateSignedSpisClaims(claims, config, name) {
+  for (const field of ['requestDigest', 'resultDigest']) {
+    if (!SHA256_ID.test(nonemptyString(claims[field], `${name}.${field}`))) {
+      fail('invalid-receipt-payload', `${name}.${field} must be a sha256: identifier`);
+    }
+  }
+  claims.spisBinding = validateSpisBinding(claims.spisBinding, `${name}.spisBinding`);
+  if (claims.spisBinding.service.action !== config.allowedAction) {
+    fail('expected-claim-mismatch', 'signed spisBinding action differs from public receipt trust');
+  }
+  return claims;
+}
+
+function validateEvidenceManifest(value, expectedClaims) {
+  const manifest = plainObject(value, 'retained evidence manifest');
+  onlyKeys(manifest, [
+    'schema',
+    'taskId',
+    'organizationId',
+    'origin',
+    'action',
+    'outcome',
+    'requestDigest',
+    'resultDigest',
+    'spisBinding',
+    'requestedUrl',
+    'effectiveUrl',
+    'finalUrl',
+    'evidenceInventory',
+  ], 'retained evidence manifest');
+  const taskId = nonemptyString(manifest.taskId, 'retained evidence manifest.taskId');
+  const requestedUrl = canonicalHttpUrl(
+    manifest.requestedUrl,
+    'retained evidence manifest.requestedUrl',
+  );
+  if (!portableAttemptComponent(taskId)) {
+    fail('invalid-artifact', 'retained evidence manifest.taskId is not a portable recording component');
+  }
+  const effectiveUrl = canonicalHttpUrl(
+    manifest.effectiveUrl,
+    'retained evidence manifest.effectiveUrl',
+  );
+  const finalUrl = canonicalHttpUrl(
+    manifest.finalUrl,
+    'retained evidence manifest.finalUrl',
+  );
+  if (manifest.schema !== 'weles.browser-evidence-manifest.v1'
+      || taskId !== expectedClaims.taskId
+      || manifest.organizationId !== expectedClaims.organizationId
+      || manifest.origin !== expectedClaims.origin
+      || manifest.action !== expectedClaims.action
+      || manifest.outcome !== 'completed'
+      || manifest.requestDigest !== expectedClaims.requestDigest
+      || manifest.resultDigest !== expectedClaims.resultDigest
+      || canonicalJson(validateSpisBinding(
+        manifest.spisBinding,
+        'retained evidence manifest.spisBinding',
+      )) !== canonicalJson(expectedClaims.spisBinding)
+      || requestedUrl !== manifest.requestedUrl
+      || effectiveUrl !== manifest.effectiveUrl
+      || finalUrl !== manifest.finalUrl
+      || new URL(requestedUrl).origin !== expectedClaims.origin
+      || new URL(effectiveUrl).origin !== expectedClaims.origin
+      || new URL(finalUrl).origin !== expectedClaims.origin) {
+    fail('artifact-binding-mismatch', 'retained evidence manifest differs from signed claims');
+  }
+  if (!Array.isArray(manifest.evidenceInventory)) {
+    fail('invalid-artifact', 'retained evidence manifest inventory must be an array');
+  }
+  const prefix = `stado://weles/recordings/${taskId}/`;
+  const required = new Map([
+    ['screenshot', `${prefix}artifacts/browser_evidence_final.png`],
+    ['accessibility_tree', `${prefix}artifacts/browser_evidence_accessibility_tree.txt`],
+  ]);
+  const kinds = new Set();
+  const uris = new Set();
+  let totalBytes = 0;
+  const evidenceInventory = manifest.evidenceInventory.map((entryValue, index) => {
+    const name = `retained evidence manifest.evidenceInventory[${index}]`;
+    const entry = plainObject(entryValue, name);
+    onlyKeys(entry, ['kind', 'uri', 'sha256', 'bytes'], name);
+    const kind = nonemptyString(entry.kind, `${name}.kind`);
+    const uri = nonemptyString(entry.uri, `${name}.uri`);
+    const relative = uri.startsWith(prefix) ? uri.slice(prefix.length) : '';
+    const supported = required.has(kind)
+      ? uri === required.get(kind)
+      : kind.startsWith('artifact:') && kind.slice('artifact:'.length) === relative;
+    if (!supported
+        || !relative
+        || relative.includes('\\')
+        || relative.split('/').some((part) => !portableAttemptComponent(part))
+        || !SHA256.test(nonemptyString(entry.sha256, `${name}.sha256`))
+        || !Number.isSafeInteger(entry.bytes)
+        || entry.bytes < 1
+        || kinds.has(kind)
+        || uris.has(uri)) {
+      fail('invalid-artifact', `${name} is not a canonical immutable evidence entry`);
+    }
+    totalBytes += entry.bytes;
+    if (!Number.isSafeInteger(totalBytes) || totalBytes > MAX_EVIDENCE_INVENTORY_BYTES) {
+      fail('artifact-too-large', 'retained evidence inventory exceeded the total byte limit');
+    }
+    kinds.add(kind);
+    uris.add(uri);
+    return { kind, uri, sha256: entry.sha256, bytes: entry.bytes };
+  });
+  for (const kind of required.keys()) {
+    if (!kinds.has(kind)) fail('invalid-artifact', `retained evidence inventory lacks ${kind}`);
+  }
+  return {
+    ...manifest,
+    requestedUrl,
+    effectiveUrl,
+    finalUrl,
+    evidenceInventory,
+  };
+}
+
 
 async function buildProvenance(receiptValue, expectedValue, artifactValue, config, verifyReceipt) {
   const receipt = validateReceipt(receiptValue, false);
@@ -468,8 +742,15 @@ async function buildProvenance(receiptValue, expectedValue, artifactValue, confi
       fail('expected-claim-mismatch', `verified ${field} differs from the caller expectation`);
     }
   }
+  validateSignedSpisClaims(claims, config, 'verified claims');
+  if (claims.requestDigest !== expectedClaims.requestDigest
+      || claims.resultDigest !== expectedClaims.resultDigest
+      || canonicalJson(claims.spisBinding) !== canonicalJson(expectedClaims.spisBinding)) {
+    fail('expected-claim-mismatch', 'signed Spis request/result/binding claims differ from caller expectations');
+  }
   if (claims.keyId !== receipt.keyId) fail('receipt-key-mismatch', 'verified keyId differs from the retained receipt');
-  const artifact = await digestArtifact(artifactExpectation);
+  const { artifact, value: evidenceManifest } = await digestArtifact(artifactExpectation);
+  validateEvidenceManifest(evidenceManifest, expectedClaims);
   if (claims.evidenceDigest !== artifact.sha256) {
     fail('artifact-binding-mismatch', 'verified evidenceDigest does not equal the retained artifact digest');
   }
@@ -488,15 +769,24 @@ async function buildProvenance(receiptValue, expectedValue, artifactValue, confi
   };
 }
 
-function networkClient(config, WelesClient) {
-  const endpoint = nonemptyString(config.endpoint, 'config.endpoint');
-  const bearer = nonemptyString(config.bearer, 'config.bearer');
+function operationServiceIdentity(value, config, action) {
+  const identity = validateServiceIdentity(value, 'command.serviceIdentity');
+  if (identity.endpoint !== config.endpoint) {
+    fail('service-identity-mismatch', 'public service endpoint differs from protected network endpoint');
+  }
+  if (identity.action !== action || identity.action !== config.allowedAction) {
+    fail('service-identity-mismatch', 'public service action differs from task and receipt trust');
+  }
+  return identity;
+}
+
+function networkClient(config, WelesClient, serviceIdentity, origin, action) {
   return new WelesClient({
-    endpoint,
-    bearer,
+    endpoint: serviceIdentity.endpoint,
+    bearer: config.bearer,
     organizationId: config.organizationId,
-    allowedOrigins: config.allowedOrigins,
-    allowedActions: config.allowedActions,
+    allowedOrigins: [origin],
+    allowedActions: [action],
     receiptKeys: config.receiptKeys,
   });
 }
@@ -509,42 +799,193 @@ function canonicalJson(value) {
     .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)
     .join(',')}}`;
 }
+function canonicalHttpUrl(value, name) {
+  const raw = nonemptyString(value, name);
+  let parsed;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    fail('invalid-input', `${name} must be an absolute HTTP(S) URL`);
+  }
+  if (!['http:', 'https:'].includes(parsed.protocol)
+      || parsed.username
+      || parsed.password) {
+    fail('invalid-input', `${name} must be an absolute HTTP(S) URL without credentials`);
+  }
+  return parsed.href;
+}
+
+function canonicalApiEndpoint(value, name) {
+  const raw = nonemptyString(value, name);
+  const canonical = canonicalHttpUrl(raw, name);
+  const parsed = new URL(canonical);
+  if (canonical !== raw
+      || parsed.pathname !== '/api/v1'
+      || parsed.search
+      || parsed.hash) {
+    fail('invalid-input', `${name} must be the canonical exact /api/v1 service base`);
+  }
+  return raw;
+}
+
+function portableAttemptComponent(value) {
+  return typeof value === 'string'
+    && value !== ''
+    && value !== '.'
+    && value !== '..'
+    && /^[A-Za-z0-9._-]+$/.test(value);
+}
+
+function validateAttemptBindingUris(binding, name) {
+  for (const field of ['run_id', 'catalog', 'record', 'attempt_id']) {
+    if (!portableAttemptComponent(binding[field])) {
+      fail('invalid-input', `${name}.${field} is not a portable attempt URI component`);
+    }
+  }
+  if (!SHA256.test(binding.record_key)) {
+    fail('invalid-input', `${name}.record_key must be a lowercase SHA-256`);
+  }
+  const base = `stado://spis-crawls/${binding.run_id}/${binding.catalog}/${binding.record}`
+    + `/${binding.record_key}/attempts/${binding.attempt}/${binding.attempt_id}`;
+  if (binding.artifact_uri !== `${base}/artifacts.tar.gz`
+      || binding.output_uri !== `${base}/worker-output.log`) {
+    fail('invalid-input', `${name} artifact/output URIs are not canonical attempt coordinates`);
+  }
+}
+function validateBrowserTaskInput(value, name) {
+  const input = plainObject(value, name);
+  onlyKeys(input, ['product_url', 'objective', 'constraints', 'spisBinding'], name);
+  return {
+    product_url: canonicalHttpUrl(input.product_url, `${name}.product_url`),
+    objective: nonemptyString(input.objective, `${name}.objective`),
+    constraints: possiblyEmptyStringArray(input.constraints, `${name}.constraints`),
+    spisBinding: validateSpisBinding(input.spisBinding, `${name}.spisBinding`),
+  };
+}
+
+function validateOfficialTaskRequest(value, expectedClaims, config) {
+  const request = plainObject(value, 'command.requestDocument');
+  onlyKeys(request, [
+    'schema',
+    'organizationId',
+    'origin',
+    'action',
+    'input',
+    'credentialRefs',
+    'evidencePolicy',
+    'justification',
+  ], 'command.requestDocument');
+  const normalized = {
+    schema: request.schema,
+    organizationId: nonemptyString(request.organizationId, 'command.requestDocument.organizationId'),
+    origin: exactOrigin(request.origin, 'command.requestDocument.origin'),
+    action: nonemptyString(request.action, 'command.requestDocument.action'),
+    input: validateBrowserTaskInput(request.input, 'command.requestDocument.input'),
+    credentialRefs: possiblyEmptyStringArray(
+      request.credentialRefs,
+      'command.requestDocument.credentialRefs',
+    ),
+    evidencePolicy: nonemptyString(
+      request.evidencePolicy,
+      'command.requestDocument.evidencePolicy',
+    ),
+    justification: nonemptyString(
+      request.justification,
+      'command.requestDocument.justification',
+    ),
+  };
+  if (normalized.schema !== 'weles.task.current'
+      || normalized.organizationId !== config.organizationId
+      || normalized.organizationId !== expectedClaims.organizationId
+      || normalized.origin !== expectedClaims.origin
+      || normalized.origin !== new URL(normalized.input.product_url).origin
+      || normalized.action !== config.allowedAction
+      || normalized.action !== expectedClaims.action
+      || normalized.credentialRefs.length !== 0
+      || normalized.evidencePolicy !== 'full'
+      || canonicalJson(normalized.input.spisBinding)
+        !== canonicalJson(expectedClaims.spisBinding)) {
+    fail('expected-claim-mismatch', 'retained official request differs from signed expectations');
+  }
+  const requestDigest = `sha256:${createHash('sha256')
+    .update(canonicalJson(normalized))
+    .digest('hex')}`;
+  if (requestDigest !== expectedClaims.requestDigest) {
+    fail('expected-claim-mismatch', 'retained official request digest differs from the signed receipt');
+  }
+  return normalized;
+}
+function assertBindingServiceIdentity(binding, serviceIdentity) {
+  const service = binding.service;
+  if (service.name !== serviceIdentity.name
+      || service.consumer !== serviceIdentity.consumer
+      || service.capability !== serviceIdentity.capability
+      || service.directory_generation !== serviceIdentity.generation
+      || service.host !== serviceIdentity.active_host
+      || service.endpoint !== serviceIdentity.endpoint
+      || service.action !== serviceIdentity.action
+      || service.release_id !== serviceIdentity.release_id
+      || service.source_revision !== serviceIdentity.source_revision) {
+    fail('service-identity-mismatch', 'input spisBinding differs from the exact service-directory identity');
+  }
+}
+
 
 function prepareSubmission(commandValue, config) {
   const command = plainObject(commandValue, 'command');
   if (command.schema !== COMMAND_SCHEMA) fail('unsupported-command', 'bridge command schema is unsupported');
   if (command.operation !== 'submit') fail('unsupported-operation', 'submission preparation requires submit');
-  onlyKeys(command, ['schema', 'operation', 'request', 'idempotencyKey'], 'command');
+  onlyKeys(command, ['schema', 'operation', 'serviceIdentity', 'request', 'idempotencyKey'], 'command');
   const request = plainObject(command.request, 'command.request');
   onlyKeys(request, ['origin', 'action', 'input', 'credentialRefs', 'evidencePolicy', 'justification'], 'command.request');
-  const origin = nonemptyString(request.origin, 'command.request.origin');
+  const origin = exactOrigin(request.origin, 'command.request.origin');
   const action = nonemptyString(request.action, 'command.request.action');
-  if (!config.allowedOrigins.includes(origin)) {
-    fail('origin-denied', 'command.request.origin is not an exact protected allowlist member');
+  if (action !== config.allowedAction) {
+    fail('action-denied', 'command.request.action differs from public receipt trust');
   }
-  if (!config.allowedActions.includes(action)) {
-    fail('action-denied', 'command.request.action is not an exact protected allowlist member');
-  }
+  const serviceIdentity = operationServiceIdentity(command.serviceIdentity, config, action);
+  const input = validateBrowserTaskInput(request.input, 'command.request.input');
+  const { spisBinding } = input;
+  assertBindingServiceIdentity(spisBinding, serviceIdentity);
   const normalizedRequest = {
     origin,
     action,
-    input: request.input === undefined ? {} : plainObject(request.input, 'command.request.input'),
+    input,
     credentialRefs: request.credentialRefs === undefined
       ? []
-      : stringArray(request.credentialRefs, 'command.request.credentialRefs'),
+      : possiblyEmptyStringArray(request.credentialRefs, 'command.request.credentialRefs'),
     evidencePolicy: request.evidencePolicy === undefined
-      ? 'receipt'
+      ? 'full'
       : nonemptyString(request.evidencePolicy, 'command.request.evidencePolicy'),
     justification: nonemptyString(request.justification, 'command.request.justification'),
   };
+  if (normalizedRequest.credentialRefs.length !== 0
+      || normalizedRequest.evidencePolicy !== 'full'
+      || normalizedRequest.origin !== new URL(normalizedRequest.input.product_url).origin) {
+    fail(
+      'invalid-input',
+      'browser request must be anonymous, full-evidence, and use the product URL origin',
+    );
+  }
   const idempotencyKey = nonemptyString(command.idempotencyKey, 'command.idempotencyKey');
-  const requestDigest = `sha256:${createHash('sha256').update(canonicalJson({
-    schema: 'wisent.spis-weles-submit-request.v1',
+  const officialBody = {
+    schema: 'weles.task.current',
     organizationId: config.organizationId,
-    idempotencyKey,
+    ...normalizedRequest,
+  };
+  const requestDigest = `sha256:${createHash('sha256')
+    .update(canonicalJson(officialBody))
+    .digest('hex')}`;
+  return {
     request: normalizedRequest,
-  })).digest('hex')}`;
-  return { request: normalizedRequest, idempotencyKey, requestDigest, origin, action };
+    serviceIdentity,
+    spisBinding,
+    requestDocument: officialBody,
+    idempotencyKey,
+    requestDigest,
+    origin,
+    action,
+  };
 }
 
 function reusableSubmission(path, prepared, config) {
@@ -575,17 +1016,35 @@ function reusableSubmission(path, prepared, config) {
       'action',
       'idempotencyKey',
       'requestDigest',
+      'requestDocument',
+      'requestIdentity',
       'receiptCheckpoint',
+      'serviceIdentity',
     ], 'existing submission output');
   } catch {
     fail('output-conflict', 'existing submission output is not a retained bridge submission');
   }
+  const requestIdentity = validateRequestIdentity(
+    existing.requestIdentity,
+    'existing submission output.requestIdentity',
+  );
+  const requestDocument = validateOfficialTaskRequest(existing.requestDocument, {
+    organizationId: config.organizationId,
+    origin: prepared.origin,
+    action: prepared.action,
+    spisBinding: prepared.spisBinding,
+    requestDigest: prepared.requestDigest,
+  }, config);
   const sameRequest = existing.schema === SUBMISSION_SCHEMA
     && existing.requestDigest === prepared.requestDigest
     && existing.idempotencyKey === prepared.idempotencyKey
+    && canonicalJson(requestDocument) === canonicalJson(prepared.requestDocument)
+    && requestIdentity.requestDigest === prepared.requestDigest
+    && canonicalJson(requestIdentity.spisBinding) === canonicalJson(prepared.spisBinding)
     && existing.organizationId === config.organizationId
     && existing.origin === prepared.origin
     && existing.action === prepared.action
+    && canonicalJson(existing.serviceIdentity) === canonicalJson(prepared.serviceIdentity)
     && typeof existing.taskId === 'string'
     && existing.taskId.length > 0;
   if (!sameRequest) {
@@ -601,20 +1060,43 @@ function exactResultReferences(response, name) {
   }
   let artifactRefs = [];
   if (response.artifactRefs !== undefined) {
-    artifactRefs = stringArray(response.artifactRefs, `${name}.artifactRefs`);
-    if (new Set(artifactRefs).size !== artifactRefs.length) {
-      fail('invalid-response', `${name}.artifactRefs must not contain duplicates`);
-    }
+    artifactRefs = possiblyEmptyStringArray(response.artifactRefs, `${name}.artifactRefs`);
   }
   return { resultRef, artifactRefs };
 }
 
-function taskStatusDocument(schema, responseValue, expectedTask, config, verifyReceipt, responseName) {
+function taskStatusDocument(
+  schema,
+  responseValue,
+  expectedTask,
+  serviceIdentity,
+  config,
+  verifyReceipt,
+  responseName,
+) {
   const response = plainObject(responseValue, responseName);
   for (const field of KNOWN_TASK_FIELDS) {
     if (nonemptyString(response[field], `${responseName}.${field}`) !== expectedTask[field]) {
       fail('expected-claim-mismatch', `${responseName} ${field} differs from the known task`);
     }
+  }
+  const responseServiceIdentity = validateServiceIdentity(
+    response.serviceIdentity,
+    `${responseName}.serviceIdentity`,
+  );
+  if (canonicalJson(responseServiceIdentity) !== canonicalJson(serviceIdentity)) {
+    fail(
+      'service-identity-mismatch',
+      `${responseName}.serviceIdentity differs from the service-directory/version readback`,
+    );
+  }
+  const requestIdentity = validateRequestIdentity(
+    response.requestIdentity,
+    `${responseName}.requestIdentity`,
+  );
+  assertBindingServiceIdentity(requestIdentity.spisBinding, serviceIdentity);
+  if (requestIdentity.spisBinding.service.action !== expectedTask.action) {
+    fail('expected-claim-mismatch', 'status request identity action differs from the known task');
   }
   const status = nonemptyString(response.status, `${responseName}.status`);
   const mappedOutcome = TERMINAL_OUTCOME_BY_STATUS.get(status);
@@ -625,6 +1107,9 @@ function taskStatusDocument(schema, responseValue, expectedTask, config, verifyR
   const result = {
     schema,
     ...expectedTask,
+    serviceIdentity: responseServiceIdentity,
+    requestIdentity,
+    resultDigest: null,
     status,
     terminal,
     outcome: null,
@@ -634,11 +1119,14 @@ function taskStatusDocument(schema, responseValue, expectedTask, config, verifyR
     if (response.outcome !== undefined && response.outcome !== null) {
       fail('status-outcome-mismatch', 'a nonterminal task must not report a terminal outcome');
     }
+    if (response.resultDigest !== undefined && response.resultDigest !== null) {
+      fail('status-outcome-mismatch', 'a nonterminal task must not report a result digest');
+    }
     return result;
   }
   const outcome = nonemptyString(response.outcome, `${responseName}.outcome`);
-  if (outcome !== mappedOutcome || !config.terminalOutcomes.includes(outcome)) {
-    fail('status-outcome-mismatch', 'terminal status does not map to the configured terminal outcome');
+  if (outcome !== mappedOutcome) {
+    fail('status-outcome-mismatch', 'terminal status does not map to its exact outcome');
   }
   if (!response.receipt) {
     fail('missing-terminal-receipt', 'a terminal Weles task requires a fresh signed receipt checkpoint');
@@ -649,10 +1137,22 @@ function taskStatusDocument(schema, responseValue, expectedTask, config, verifyR
     config,
     verifyReceipt,
   );
+  validateSignedSpisClaims(receiptCheckpoint.claims, config, 'verified claims');
+  if (receiptCheckpoint.claims.requestDigest !== requestIdentity.requestDigest
+      || canonicalJson(receiptCheckpoint.claims.spisBinding)
+        !== canonicalJson(requestIdentity.spisBinding)) {
+    fail('expected-claim-mismatch', 'terminal receipt differs from the status request identity');
+  }
+  const resultDigest = nonemptyString(response.resultDigest, `${responseName}.resultDigest`);
+  if (!SHA256_ID.test(resultDigest)
+      || receiptCheckpoint.claims.resultDigest !== resultDigest) {
+    fail('status-outcome-mismatch', 'terminal result digest differs from the verified receipt');
+  }
   if (receiptCheckpoint.claims.outcome !== outcome) {
     fail('status-outcome-mismatch', 'terminal status/outcome differs from the freshly verified receipt');
   }
   result.outcome = outcome;
+  result.resultDigest = resultDigest;
   result.receiptCheckpoint = receiptCheckpoint;
   return result;
 }
@@ -666,13 +1166,24 @@ async function execute(commandValue, config, official, preparedSubmission) {
     return buildProvenance(command.receipt, command.expectedClaims, command.artifact, config, official.verifyReceipt);
   }
   if (operation === 'get') {
-    onlyKeys(command, ['schema', 'operation', 'taskId', 'expectedTask'], 'command');
+    onlyKeys(command, ['schema', 'operation', 'serviceIdentity', 'taskId', 'expectedTask'], 'command');
     const taskId = nonemptyString(command.taskId, 'command.taskId');
     const expectedTask = validateExpectedTask(command.expectedTask, config);
     if (taskId !== expectedTask.taskId) fail('expected-claim-mismatch', 'get taskId differs from expectedTask.taskId');
+    const serviceIdentity = operationServiceIdentity(
+      command.serviceIdentity,
+      config,
+      expectedTask.action,
+    );
     let response;
     try {
-      response = await networkClient(config, official.WelesClient).get(taskId);
+      response = await networkClient(
+        config,
+        official.WelesClient,
+        serviceIdentity,
+        expectedTask.origin,
+        expectedTask.action,
+      ).get(taskId);
     } catch (error) {
       const code = typeof error?.code === 'string' ? error.code : 'weles-request-failed';
       fail(code, 'the official Weles client get operation failed');
@@ -681,21 +1192,33 @@ async function execute(commandValue, config, official, preparedSubmission) {
       TASK_STATUS_SCHEMA,
       response,
       expectedTask,
+      serviceIdentity,
       config,
       official.verifyReceipt,
       'Weles get response',
     );
   }
   if (operation === 'cancel') {
-    onlyKeys(command, ['schema', 'operation', 'taskId', 'expectedTask', 'reason', 'idempotencyKey'], 'command');
+    onlyKeys(command, ['schema', 'operation', 'serviceIdentity', 'taskId', 'expectedTask', 'reason', 'idempotencyKey'], 'command');
     const taskId = nonemptyString(command.taskId, 'command.taskId');
     const expectedTask = validateExpectedTask(command.expectedTask, config);
     if (taskId !== expectedTask.taskId) fail('expected-claim-mismatch', 'cancel taskId differs from expectedTask.taskId');
+    const serviceIdentity = operationServiceIdentity(
+      command.serviceIdentity,
+      config,
+      expectedTask.action,
+    );
     const reason = nonemptyString(command.reason, 'command.reason');
     const idempotencyKey = nonemptyString(command.idempotencyKey, 'command.idempotencyKey');
     let response;
     try {
-      response = await networkClient(config, official.WelesClient).cancel(taskId, {
+      response = await networkClient(
+        config,
+        official.WelesClient,
+        serviceIdentity,
+        expectedTask.origin,
+        expectedTask.action,
+      ).cancel(taskId, {
         reason,
         idempotencyKey,
       });
@@ -708,6 +1231,7 @@ async function execute(commandValue, config, official, preparedSubmission) {
         CANCELLATION_SCHEMA,
         response,
         expectedTask,
+        serviceIdentity,
         config,
         official.verifyReceipt,
         'Weles cancel response',
@@ -719,7 +1243,13 @@ async function execute(commandValue, config, official, preparedSubmission) {
     const prepared = preparedSubmission ?? prepareSubmission(command, config);
     let response;
     try {
-      response = await networkClient(config, official.WelesClient).submit(
+      response = await networkClient(
+        config,
+        official.WelesClient,
+        prepared.serviceIdentity,
+        prepared.origin,
+        prepared.action,
+      ).submit(
         prepared.request,
         { idempotencyKey: prepared.idempotencyKey },
       );
@@ -729,6 +1259,28 @@ async function execute(commandValue, config, official, preparedSubmission) {
     }
     plainObject(response, 'Weles submit response');
     const taskId = nonemptyString(response.taskId, 'Weles submit response.taskId');
+    const responseServiceIdentity = validateServiceIdentity(
+      response.serviceIdentity,
+      'Weles submit response.serviceIdentity',
+    );
+    if (canonicalJson(responseServiceIdentity) !== canonicalJson(prepared.serviceIdentity)) {
+      fail(
+        'service-identity-mismatch',
+        'Weles submit response.serviceIdentity differs from the service-directory/version readback',
+      );
+    }
+    const responseRequestIdentity = validateRequestIdentity(
+      response.requestIdentity,
+      'Weles submit response.requestIdentity',
+    );
+    if (responseRequestIdentity.requestDigest !== prepared.requestDigest
+        || canonicalJson(responseRequestIdentity.spisBinding)
+          !== canonicalJson(prepared.spisBinding)) {
+      fail(
+        'expected-claim-mismatch',
+        'Weles submit response request identity differs from the canonical submitted request',
+      );
+    }
     const knownTask = {
       taskId,
       organizationId: config.organizationId,
@@ -738,8 +1290,11 @@ async function execute(commandValue, config, official, preparedSubmission) {
     const result = {
       schema: SUBMISSION_SCHEMA,
       ...knownTask,
+      serviceIdentity: responseServiceIdentity,
       idempotencyKey: prepared.idempotencyKey,
       requestDigest: prepared.requestDigest,
+      requestDocument: prepared.requestDocument,
+      requestIdentity: responseRequestIdentity,
     };
     if (response.receipt) {
       result.receiptCheckpoint = buildReceiptCheckpoint(
@@ -839,7 +1394,14 @@ try {
   if (!['submit', 'get', 'cancel', 'verify'].includes(operation)) {
     fail('unsupported-operation', 'bridge operation must be submit, get, cancel, or verify');
   }
-  const config = operation === 'verify' ? loadTrust() : loadConfig();
+  if (operation === 'get' && args.output !== '-') {
+    fail(
+      'poll-output-contract',
+      'get must return bounded stdout for caller-owned content-addressed immutable persistence',
+    );
+  }
+  const trust = loadTrust();
+  const config = operation === 'verify' ? trust : loadConfig(trust);
   const preparedSubmission = command?.operation === 'submit'
     ? prepareSubmission(command, config)
     : null;
