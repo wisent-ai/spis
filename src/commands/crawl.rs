@@ -5675,7 +5675,12 @@ fn import_record_attempt(
     }
     std::fs::create_dir_all(attempt_staged.parent().expect("crawl parent"))?;
     std::fs::rename(&extracted_root, &attempt_staged)?;
-    atomic_json_write(&attempt_staged.join("worker-report.json"), &report)?;
+    // A plain write, not `atomic_json_write`: that helper leaves a `.lock` sibling,
+    // and the staged tree is published verbatim as the attempt artifact.
+    std::fs::write(
+        attempt_staged.join("worker-report.json"),
+        serde_json::to_string_pretty(&report)? + "\n",
+    )?;
     install_staged_tree(&attempt_staged, &attempt_destination)?;
     let record_path = record_dir.join("reference.json");
     let mut record: Value =
@@ -5688,8 +5693,27 @@ fn import_record_attempt(
     let relative_report = format!("{attempt_relative}/worker-report.json");
     let mut run = crawl_run_entry(&manifest, entry, &report, &proof, &relative_report);
     run["retained_members"] = json!(members.len());
-    if engine == "web" {
-        apply_web_attempt(&mut record, &mut run, &report, &attempt_destination, &record_dir)?;
+    match engine {
+        "web" => {
+            apply_web_attempt(&mut record, &mut run, &report, &attempt_destination, &record_dir)?
+        }
+        "docs" => {
+            // One corpus attempt: the typed report's corpus counters and the
+            // committed content-structure digest, never a directory-name guess.
+            let corpus = report
+                .get("corpus")
+                .filter(|value| value.is_object())
+                .cloned()
+                .context("docs worker report has no typed corpus summary")?;
+            if report.get("docs_structure_sha256").and_then(Value::as_str)
+                != manifest.docs_structure_sha256.as_deref()
+            {
+                bail!("docs worker report crawl-definition digest differs from the immutable attempt");
+            }
+            run["docs_structure_sha256"] = json!(manifest.docs_structure_sha256);
+            run["corpus"] = corpus;
+        }
+        _ => {}
     }
     let (motion, states) = attempt_media(engine, &attempt_destination, &record_dir, &source_url)?;
     let accessibility = accessibility_gap(engine, &attempt_destination);
