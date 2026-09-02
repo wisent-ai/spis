@@ -50,6 +50,35 @@ const TERMINAL_OUTCOME_BY_STATUS = new Map([
   ['canceled', 'cancelled'],
   ['rejected', 'rejected'],
 ]);
+// Every outcome the service signs into a receipt. `completed` is the only one that can
+// carry browser evidence; the others are signed proofs of a terminal non-success, and
+// each of them is retained with its own manifest version below.
+const TERMINAL_OUTCOMES = new Set(TERMINAL_OUTCOME_BY_STATUS.values());
+const EVIDENCE_MANIFEST_SCHEMA = 'weles.browser-evidence-manifest.v1';
+const NON_SUCCESS_EVIDENCE_MANIFEST_SCHEMA = 'weles.browser-evidence-manifest.v2';
+// The service writes exactly these keys, canonically ordered, and nothing else:
+// `finalize` builds the manifest with effectiveUrl/finalUrl spread in only for a
+// succeeded task. Two exact lists, never one relaxed list, so a v1 manifest missing its
+// navigation URLs and a v2 manifest carrying them are both refused.
+const EVIDENCE_MANIFEST_COMMON_KEYS = Object.freeze([
+  'schema',
+  'taskId',
+  'organizationId',
+  'origin',
+  'action',
+  'outcome',
+  'requestDigest',
+  'resultDigest',
+  'spisBinding',
+  'requestedUrl',
+  'evidenceInventory',
+]);
+const EVIDENCE_MANIFEST_KEYS = Object.freeze([
+  ...EVIDENCE_MANIFEST_COMMON_KEYS,
+  'effectiveUrl',
+  'finalUrl',
+]);
+const NON_SUCCESS_EVIDENCE_MANIFEST_KEYS = EVIDENCE_MANIFEST_COMMON_KEYS;
 const CORE_CLAIMS = Object.freeze([
   'taskId',
   'organizationId',
@@ -558,8 +587,11 @@ function validateExpectedClaims(value, config) {
     origin: expected.origin,
     action: expected.action,
   }, config);
-  if (expected.outcome !== 'completed') {
-    fail('expected-claim-mismatch', 'Spis provenance requires the completed terminal outcome');
+  // Spis provenance covers every terminal outcome the service signs, not only the
+  // successful one: a failed, cancelled or rejected task is still delivered with a
+  // signed receipt and a retained manifest, and that is the proof of its failure.
+  if (!TERMINAL_OUTCOMES.has(expected.outcome)) {
+    fail('expected-claim-mismatch', 'Spis provenance requires an exact terminal outcome');
   }
   if (!SHA256.test(expected.evidenceDigest)) {
     fail('expected-claim-mismatch', 'expected evidenceDigest must be a lowercase SHA-256 digest');
@@ -749,23 +781,19 @@ function validateReceiptClaimCopies(receipt, claims) {
 }
 
 
+// The retained manifest of a successful task binds a real navigation and must carry the
+// required browser evidence; the manifest of a failed, cancelled or rejected task binds
+// no navigation at all, so it has no effective/final URL and no required evidence kind.
+// The outcome the caller expects, already proved to equal the signed claim, selects the
+// shape; neither shape is ever accepted in the other's place.
 function validateEvidenceManifest(value, expectedClaims) {
   const manifest = plainObject(value, 'retained evidence manifest');
-  onlyKeys(manifest, [
-    'schema',
-    'taskId',
-    'organizationId',
-    'origin',
-    'action',
-    'outcome',
-    'requestDigest',
-    'resultDigest',
-    'spisBinding',
-    'requestedUrl',
-    'effectiveUrl',
-    'finalUrl',
-    'evidenceInventory',
-  ], 'retained evidence manifest');
+  const successful = expectedClaims.outcome === 'completed';
+  onlyKeys(
+    manifest,
+    successful ? EVIDENCE_MANIFEST_KEYS : NON_SUCCESS_EVIDENCE_MANIFEST_KEYS,
+    'retained evidence manifest',
+  );
   const taskId = nonemptyString(manifest.taskId, 'retained evidence manifest.taskId');
   const requestedUrl = canonicalHttpUrl(
     manifest.requestedUrl,
@@ -774,20 +802,24 @@ function validateEvidenceManifest(value, expectedClaims) {
   if (!portableAttemptComponent(taskId)) {
     fail('invalid-artifact', 'retained evidence manifest.taskId is not a portable recording component');
   }
-  const effectiveUrl = canonicalHttpUrl(
-    manifest.effectiveUrl,
-    'retained evidence manifest.effectiveUrl',
-  );
-  const finalUrl = canonicalHttpUrl(
-    manifest.finalUrl,
-    'retained evidence manifest.finalUrl',
-  );
-  if (manifest.schema !== 'weles.browser-evidence-manifest.v1'
+  const navigation = successful
+    ? {
+      effectiveUrl: canonicalHttpUrl(
+        manifest.effectiveUrl,
+        'retained evidence manifest.effectiveUrl',
+      ),
+      finalUrl: canonicalHttpUrl(
+        manifest.finalUrl,
+        'retained evidence manifest.finalUrl',
+      ),
+    }
+    : null;
+  if (manifest.schema !== (successful ? EVIDENCE_MANIFEST_SCHEMA : NON_SUCCESS_EVIDENCE_MANIFEST_SCHEMA)
       || taskId !== expectedClaims.taskId
       || manifest.organizationId !== expectedClaims.organizationId
       || manifest.origin !== expectedClaims.origin
       || manifest.action !== expectedClaims.action
-      || manifest.outcome !== 'completed'
+      || manifest.outcome !== expectedClaims.outcome
       || manifest.requestDigest !== expectedClaims.requestDigest
       || manifest.resultDigest !== expectedClaims.resultDigest
       || canonicalJson(validateSpisBinding(
@@ -795,21 +827,26 @@ function validateEvidenceManifest(value, expectedClaims) {
         'retained evidence manifest.spisBinding',
       )) !== canonicalJson(expectedClaims.spisBinding)
       || requestedUrl !== manifest.requestedUrl
-      || effectiveUrl !== manifest.effectiveUrl
-      || finalUrl !== manifest.finalUrl
       || new URL(requestedUrl).origin !== expectedClaims.origin
-      || new URL(effectiveUrl).origin !== expectedClaims.origin
-      || new URL(finalUrl).origin !== expectedClaims.origin) {
+      || (navigation !== null
+        && (navigation.effectiveUrl !== manifest.effectiveUrl
+          || navigation.finalUrl !== manifest.finalUrl
+          || new URL(navigation.effectiveUrl).origin !== expectedClaims.origin
+          || new URL(navigation.finalUrl).origin !== expectedClaims.origin))) {
     fail('artifact-binding-mismatch', 'retained evidence manifest differs from signed claims');
   }
   if (!Array.isArray(manifest.evidenceInventory)) {
     fail('invalid-artifact', 'retained evidence manifest inventory must be an array');
   }
   const prefix = `stado://weles/recordings/${taskId}/`;
-  const required = new Map([
-    ['screenshot', `${prefix}artifacts/browser_evidence_final.png`],
-    ['accessibility_tree', `${prefix}artifacts/browser_evidence_accessibility_tree.txt`],
-  ]);
+  // `finalize` demands the screenshot and the accessibility tree only from a succeeded
+  // task; a non-success retains whatever the run produced, including nothing.
+  const required = successful
+    ? new Map([
+      ['screenshot', `${prefix}artifacts/browser_evidence_final.png`],
+      ['accessibility_tree', `${prefix}artifacts/browser_evidence_accessibility_tree.txt`],
+    ])
+    : new Map();
   const kinds = new Set();
   const uris = new Set();
   let totalBytes = 0;
@@ -848,8 +885,7 @@ function validateEvidenceManifest(value, expectedClaims) {
   return {
     ...manifest,
     requestedUrl,
-    effectiveUrl,
-    finalUrl,
+    ...(navigation ?? {}),
     evidenceInventory,
   };
 }
