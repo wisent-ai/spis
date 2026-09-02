@@ -34,8 +34,7 @@ pub const SPIS_WELES_ACTION: &str = "generic_browser_task";
 pub const OFFICIAL_CLIENT_PACKAGE: &str = "@wisent-ai/weles-client";
 pub const OFFICIAL_CLIENT_COMMIT: &str =
     "37798a26022a040fbd0a4a4a25c99b5559d95a32";
-const BRIDGE_SCRIPT_SHA256: &str =
-    "0d9220d5cf00634cac92a0c118634486001cdd687799151c029cc2475bd02653";
+const BRIDGE_SCRIPT_SHA256: &str = env!("SPIS_BRIDGE_SCRIPT_SHA256");
 const MAX_BRIDGE_SCRIPT_BYTES: u64 = 256 * 1024;
 
 const MAX_DOCUMENT_BYTES: u64 = 4 * 1024 * 1024;

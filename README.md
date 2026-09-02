@@ -116,8 +116,10 @@ Rust opens and validates the canonical trust document itself, then passes its
 already-read public bytes, its canonical path, a minimal `PATH`, and no inherited
 environment to the verification child. `NODE_OPTIONS`, `NODE_PATH`, network
 credentials, caller-selected trust, and a second trust-file read are excluded.
-Child stdin/stdout/stderr are bounded. Rust lstat-checks and
-hashes the bridge against an embedded source pin, then executes those verified
+Child stdin/stdout/stderr are bounded. The bridge SHA-256 pin is derived at build
+time by `build.rs` from `weles-bridge/spis-weles-bridge.mjs` in the source tree,
+so the compiled constant cannot drift from the checked-in bridge. Rust
+lstat-checks and hashes the bridge against that pin, then executes those verified
 bytes from a data URL in a new process group rather than reopening the path. A
 30-second timeout kills and drains the whole group.
 
