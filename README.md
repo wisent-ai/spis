@@ -135,10 +135,10 @@ and key-set version. It is not terminal artifact provenance.
 `get` requires `taskId` and exact `expectedTask`. Its
 `wisent.spis-weles-task-status.v1` result carries only typed task identity,
 `status`, `terminal`, `outcome`, exact `resultRef`/`artifactRefs`, and the
-receipt checkpoint. `queued`, `running`, and `pending_review` are nonterminal
-and have no outcome. Any other status is accepted only when it exactly equals
-a configured terminal outcome and a freshly verified receipt claim. Terminal
-status without that receipt fails closed; the raw service response is never
+receipt checkpoint. `queued`, `leased`, `running`, and `pending_review` are
+nonterminal and have no outcome. Known terminal statuses map exactly to a
+configured terminal outcome and require a freshly verified matching receipt.
+Terminal status without that receipt fails closed; the raw service response is
 retained.
 
 `cancel` uses the official `WelesClient.cancel` operation with `taskId`,

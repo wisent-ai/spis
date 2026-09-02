@@ -33,7 +33,15 @@ const ERROR_SCHEMA = 'wisent.spis-weles-bridge-error.v1';
 const MAX_JSON_BYTES = 1024 * 1024;
 const MAX_OUTPUT_BYTES = 4 * 1024 * 1024;
 const SHA256 = /^[0-9a-f]{64}$/;
-const NONTERMINAL_STATUSES = new Set(['queued', 'running', 'pending_review']);
+const NONTERMINAL_STATUSES = new Set(['queued', 'leased', 'running', 'pending_review']);
+const TERMINAL_OUTCOME_BY_STATUS = new Map([
+  ['completed', 'completed'],
+  ['succeeded', 'completed'],
+  ['failed', 'failed'],
+  ['cancelled', 'cancelled'],
+  ['canceled', 'cancelled'],
+  ['rejected', 'rejected'],
+]);
 const CORE_CLAIMS = Object.freeze([
   'taskId',
   'organizationId',
@@ -609,7 +617,11 @@ function taskStatusDocument(schema, responseValue, expectedTask, config, verifyR
     }
   }
   const status = nonemptyString(response.status, `${responseName}.status`);
-  const terminal = !NONTERMINAL_STATUSES.has(status);
+  const mappedOutcome = TERMINAL_OUTCOME_BY_STATUS.get(status);
+  if (!NONTERMINAL_STATUSES.has(status) && mappedOutcome === undefined) {
+    fail('unsupported-task-status', `${responseName}.status is not in the typed Weles status contract`);
+  }
+  const terminal = mappedOutcome !== undefined;
   const result = {
     schema,
     ...expectedTask,
@@ -625,8 +637,8 @@ function taskStatusDocument(schema, responseValue, expectedTask, config, verifyR
     return result;
   }
   const outcome = nonemptyString(response.outcome, `${responseName}.outcome`);
-  if (status !== outcome || !config.terminalOutcomes.includes(outcome)) {
-    fail('status-outcome-mismatch', 'terminal status and configured terminal outcome must match exactly');
+  if (outcome !== mappedOutcome || !config.terminalOutcomes.includes(outcome)) {
+    fail('status-outcome-mismatch', 'terminal status does not map to the configured terminal outcome');
   }
   if (!response.receipt) {
     fail('missing-terminal-receipt', 'a terminal Weles task requires a fresh signed receipt checkpoint');
