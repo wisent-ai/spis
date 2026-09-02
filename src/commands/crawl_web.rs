@@ -139,6 +139,36 @@ fn is_portable_relative(value: &str) -> bool {
             .all(|component| matches!(component, Component::Normal(_)))
 }
 
+/// `validatedServiceIdentity` in the deployed `scripts/worker/public-task-service.mjs`
+/// admits `active_host` only against `/^[A-Za-z0-9._-]+$/`, so a host this worker would
+/// accept but the service rejects must fail here, where the reason is typed, instead of
+/// at admission, where it is a bare refusal.
+fn is_service_host(value: &str) -> bool {
+    !value.is_empty()
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
+}
+
+/// The same admission rule requires `release_id` to be exactly
+/// `/^weles-worker@\d+\.\d+\.\d+$/`, compared against the release the service is running;
+/// a bare `weles-worker@` prefix is not enough.
+fn is_service_release_id(value: &str) -> bool {
+    let Some(version) = value.strip_prefix(RELEASE_PREFIX) else {
+        return false;
+    };
+    let mut fields = version.split('.');
+    let numeric = |field: Option<&str>| {
+        field.is_some_and(|field| {
+            !field.is_empty() && field.bytes().all(|byte| byte.is_ascii_digit())
+        })
+    };
+    numeric(fields.next())
+        && numeric(fields.next())
+        && numeric(fields.next())
+        && fields.next().is_none()
+}
+
 fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     if value.is_empty()
         || !value.chars().all(|character| {
@@ -348,6 +378,7 @@ impl PrivateBridge {
             use std::os::unix::fs::PermissionsExt;
             std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
         }
+        prune_orphaned_configs(&directory)?;
         let config = directory.join(format!(
             "config-{}-{}.json",
             manifest.attempt_id,
@@ -356,8 +387,10 @@ impl PrivateBridge {
         Ok(Self { config })
     }
 
-    /// Removes the delivered bearer token from the host. Called on every exit path,
-    /// successful or not.
+    /// Removes the delivered bearer token from the host. `Drop` guarantees this runs on
+    /// every exit this process controls, including a panic unwind; the explicit call in
+    /// `run_worker` only makes it prompt. A signal kill runs neither, which is why
+    /// `open` also prunes the configs earlier runs orphaned.
     fn discard(&self) {
         let _ = std::fs::remove_file(&self.config);
     }
@@ -371,7 +404,87 @@ impl PrivateBridge {
         });
         write_private(&self.config, &serde_json::to_vec(&document)?)
     }
+}
 
+impl Drop for PrivateBridge {
+    fn drop(&mut self) {
+        self.discard();
+    }
+}
+
+/// Is `file_name` one of this worker's own config names, `config-{attempt_id}-{pid}.json`,
+/// whose process is gone?
+///
+/// Only that exact shape is recognised, so no lock, no staged file and nothing another
+/// tool left in this directory is ever considered, and a config whose pid is still alive
+/// — a concurrent worker's delivered bearer — is always left alone.
+fn is_orphaned_config(file_name: &str) -> bool {
+    let Some(body) = file_name
+        .strip_prefix("config-")
+        .and_then(|rest| rest.strip_suffix(".json"))
+    else {
+        return false;
+    };
+    let Some((attempt_id, pid)) = body.rsplit_once('-') else {
+        return false;
+    };
+    if !is_portable_component(attempt_id) {
+        return false;
+    }
+    // Parsed as the signed `pid_t` the kernel takes: a value that does not fit is not a
+    // pid this worker ever wrote, and a wrapped negative would address a process group.
+    let Ok(pid) = pid.parse::<i32>() else {
+        return false;
+    };
+    pid > 0 && !process_is_live(pid)
+}
+
+/// A worker killed by a signal — which is exactly how a job that outruns its wait budget
+/// ends — runs no destructor, so its config file survives on the host with the delivered
+/// bearer in it. Nothing else sweeps this directory, so every worker sweeps it on the way
+/// in, mirroring `crawl_docs::prune_stale_temporaries`.
+fn prune_orphaned_configs(directory: &Path) -> Result<()> {
+    let entries = match std::fs::read_dir(directory) {
+        Ok(entries) => entries,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => {
+            return Err(error).with_context(|| {
+                format!(
+                    "list the private Weles bridge directory {}",
+                    directory.display()
+                )
+            })
+        }
+    };
+    for entry in entries {
+        let entry = entry?;
+        let file_name = entry.file_name();
+        let Some(file_name) = file_name.to_str() else {
+            continue;
+        };
+        if is_orphaned_config(file_name) && entry.file_type()?.is_file() {
+            let path = entry.path();
+            std::fs::remove_file(&path)
+                .with_context(|| format!("remove the orphaned Weles config {}", path.display()))?;
+        }
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn process_is_live(pid: i32) -> bool {
+    if unsafe { libc::kill(pid, 0) } == 0 {
+        return true;
+    }
+    // Only a definite `ESRCH` proves the process is gone. `EPERM` means it exists under
+    // another user, and any other errno is unexplained, so neither authorizes deleting a
+    // file that still names a live bearer.
+    std::io::Error::last_os_error().raw_os_error() != Some(libc::ESRCH)
+}
+
+#[cfg(not(unix))]
+fn process_is_live(_pid: i32) -> bool {
+    true
 }
 
 fn write_private(path: &Path, bytes: &[u8]) -> Outcome<()> {
@@ -410,6 +523,67 @@ fn write_exact(path: &Path, bytes: &[u8]) -> Outcome<()> {
     }
     std::fs::write(path, bytes)?;
     Ok(())
+}
+
+/// Retains one operational attempt document: the submission, the task status, the
+/// cancellation, the official provenance, the attempt envelope and the failure
+/// diagnostic.
+///
+/// `relative` must name a path OUTSIDE the `weles/` and `recordings/` subtrees.
+/// `crawl::apply_web_attempt` merges exactly those two subtrees into the shared record
+/// directory, and `crawl::write_immutable_file` refuses a destination that already holds
+/// different bytes. Every document written through here is named after its role instead
+/// of its content, and a second attempt of the same record carries a different attempt
+/// id, task id and digests, so a fixed name inside a merged subtree would permanently
+/// block the second import of that record. These documents therefore stay with the
+/// attempt: in the attempt root, in the published archive, and in the attempt-private
+/// `crawl/{attempt_id}` tree the importer installs verbatim.
+///
+/// The staged temp file lives BESIDE the attempt root, next to the published archive and
+/// its lock, so no `.tmp` byte is ever audited by `audit_attempt_tree`, archived, or
+/// installed into the record. Unlike `crawl::atomic_json_write` this leaves no
+/// `.{name}.lock` sibling either: the attempt root belongs to exactly one worker,
+/// because `native_attempt_root` derives it from the `attempt_id` that already binds the
+/// record key, the attempt number and the executing host, and the rename below is atomic,
+/// so the destination is always either absent or one complete document.
+fn retain_attempt_document(attempt_root: &Path, relative: &str, value: &Value) -> Outcome<()> {
+    use std::io::Write;
+    let io_failed = |message: &str| WorkerFailure::new("web_worker_io_failed", message);
+    let owner = attempt_root
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| io_failed("the attempt root has no UTF-8 name"))?;
+    let staging = attempt_root
+        .parent()
+        .ok_or_else(|| io_failed("the attempt root has no staging parent"))?;
+    let destination = attempt_root.join(relative);
+    let parent = destination
+        .parent()
+        .ok_or_else(|| io_failed("the retained document has no parent directory"))?;
+    std::fs::create_dir_all(parent)?;
+    let temporary = staging.join(format!(
+        ".{owner}.{}.{}.tmp",
+        relative.replace('/', "."),
+        std::process::id()
+    ));
+    let _ = std::fs::remove_file(&temporary);
+    let bytes = serde_json::to_vec_pretty(value)?;
+    let result = (|| -> Outcome<()> {
+        let mut file = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary)?;
+        file.write_all(&bytes)?;
+        file.write_all(b"\n")?;
+        file.sync_all()?;
+        std::fs::rename(&temporary, &destination)?;
+        std::fs::File::open(parent)?.sync_all()?;
+        Ok(())
+    })();
+    if result.is_err() {
+        let _ = std::fs::remove_file(&temporary);
+    }
+    result
 }
 
 /// Runs one bridge operation through the single shared invoker in
@@ -472,7 +646,6 @@ fn read_submission(path: &Path) -> Outcome<weles::WelesSubmission> {
 fn cancel_task(
     attempt_root: &Path,
     private: &PrivateBridge,
-    weles_directory: &Path,
     identity: &weles::WelesServiceIdentity,
     identity_value: &Value,
     expected_task: &Value,
@@ -497,8 +670,9 @@ fn cancel_task(
     let cancellation: weles::WelesCancellation = serde_json::from_slice(&stdout)?;
     // Retained before it is judged: a cancellation this worker refuses is still the exact
     // document Weles returned for this attempt.
-    super::crawl::atomic_json_write(
-        &weles_directory.join("cancellation.json"),
+    retain_attempt_document(
+        attempt_root,
+        "weles-cancellation.json",
         &serde_json::to_value(&cancellation)?,
     )?;
     collected.cancellation = Some(cancellation.clone());
@@ -551,14 +725,14 @@ fn service_identity(
             && identity.consumer == SERVICE_CONSUMER
             && identity.capability == SERVICE_CAPABILITY
             && identity.action == weles::SPIS_WELES_ACTION
-            && !identity.active_host.trim().is_empty(),
+            && is_service_host(&identity.active_host),
         "weles_service_identity_invalid",
         "the runtime manifest service identity is not the exact Weles browser-evidence identity",
     )?;
     ensure(
-        identity.release_id.starts_with(RELEASE_PREFIX) && identity.release_id != RELEASE_PREFIX,
+        is_service_release_id(&identity.release_id),
         "weles_service_identity_invalid",
-        "the Weles service release identifier is not a weles-worker@ release",
+        "the Weles service release identifier is not a weles-worker@<major>.<minor>.<patch> release",
     )?;
     ensure(
         is_git_revision(&identity.source_revision),
@@ -885,10 +1059,11 @@ fn run_worker(
         "attempt": u64::from(manifest.attempt),
         "attempt_id": manifest.attempt_id,
     });
-    if let Err(error) =
-        super::crawl::atomic_json_write(&attempt_root.join("failure.json"), &document)
-    {
-        eprintln!("web worker failure artifact could not be retained: {error:#}");
+    if let Err(retention) = retain_attempt_document(&attempt_root, "failure.json", &document) {
+        eprintln!(
+            "web worker failure artifact could not be retained ({}): {}",
+            retention.code, retention.message
+        );
     }
     let artifact = super::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri);
     let report = worker_report(
@@ -1064,9 +1239,11 @@ fn capture(
         },
         "idempotencyKey": idempotency_key,
     });
-    let weles_directory = attempt_root.join("weles");
-    std::fs::create_dir_all(&weles_directory)?;
-    let submission_path = weles_directory.join("submission.json");
+    // The bridge persists the request-bound submission itself, so its destination is the
+    // attempt root rather than the merged `weles/` subtree for the same reason
+    // `retain_attempt_document` explains: this name is fixed and its bytes are unique to
+    // this attempt. `weles/` is created by the content-addressed writes below.
+    let submission_path = attempt_root.join("weles-submission.json");
     run_bridge(
         attempt_root,
         private,
@@ -1161,8 +1338,9 @@ fn capture(
         }
         std::thread::sleep(POLL_INTERVAL);
     };
-    super::crawl::atomic_json_write(
-        &weles_directory.join("status.json"),
+    retain_attempt_document(
+        attempt_root,
+        "weles-status.json",
         &serde_json::to_value(&status)?,
     )?;
     collected.status = Some(status.clone());
@@ -1194,7 +1372,6 @@ fn capture(
         let cancellation = cancel_task(
             attempt_root,
             private,
-            &weles_directory,
             &identity,
             &identity_value,
             &expected_task,
@@ -1532,8 +1709,9 @@ fn capture(
         "weles_provenance_mismatch",
         "the fresh official verification differs from the assembled provenance document",
     )?;
-    super::crawl::atomic_json_write(
-        &weles_directory.join("provenance.json"),
+    retain_attempt_document(
+        attempt_root,
+        "weles-provenance.json",
         &serde_json::to_value(&provenance)?,
     )?;
     collected.provenance = Some(provenance);
@@ -1570,8 +1748,9 @@ fn capture(
         ),
         observation_document_sha256,
     };
-    super::crawl::atomic_json_write(
-        &attempt_root.join("attempt-envelope.json"),
+    retain_attempt_document(
+        attempt_root,
+        "attempt-envelope.json",
         &serde_json::to_value(&envelope)?,
     )?;
     collected.envelope = Some(envelope);
