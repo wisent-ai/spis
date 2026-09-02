@@ -37,6 +37,9 @@ const REPORT_SCHEMA: &str = "wisent.web-worker-report.v1";
 const FAILURE_SCHEMA: &str = "wisent.web-worker-failure.v1";
 const OBSERVATION_SCHEMA: &str = "wisent.spis-weles-observation.v1";
 const EVIDENCE_MANIFEST_SCHEMA: &str = "weles.browser-evidence-manifest.v1";
+/// The version the service retains for a terminal non-success: no navigation URLs, no
+/// required evidence kind, and the outcome its receipt signed.
+const NON_SUCCESS_EVIDENCE_MANIFEST_SCHEMA: &str = "weles.browser-evidence-manifest.v2";
 const OFFICIAL_REQUEST_SCHEMA: &str = "weles.task.current";
 const SERVICE_NAME: &str = "weles-admission";
 const SERVICE_CONSUMER: &str = "spis";
@@ -1039,6 +1042,323 @@ fn text<'a>(document: &'a Value, key: &str) -> Outcome<&'a str> {
         })
 }
 
+/// The identity every retained evidence manifest signs, in either version: v1 for a
+/// completed task, v2 for a failed, cancelled or rejected one. The version-specific part —
+/// the navigation pair v1 signs and v2 does not have — is checked by the caller.
+#[allow(clippy::too_many_arguments)]
+fn ensure_manifest_identity(
+    evidence: &Value,
+    schema: &str,
+    outcome: &str,
+    weles_task_id: &str,
+    claims: &weles::VerifiedReceiptClaims,
+    request_digest: &str,
+    result_digest: &str,
+    binding: &weles::WelesAttemptBinding,
+    product_url: &str,
+) -> Outcome<()> {
+    ensure(
+        text(evidence, "schema")? == schema,
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest schema is not the version this outcome mandates",
+    )?;
+    ensure(
+        text(evidence, "taskId")? == weles_task_id
+            && text(evidence, "organizationId")? == claims.organization_id
+            && text(evidence, "origin")? == claims.origin
+            && text(evidence, "action")? == claims.action
+            && text(evidence, "outcome")? == outcome,
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest does not name this exact task and outcome",
+    )?;
+    ensure(
+        text(evidence, "requestDigest")? == request_digest
+            && text(evidence, "resultDigest")? == result_digest,
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest request/result digests differ from the receipt",
+    )?;
+    let signed_binding: weles::WelesAttemptBinding =
+        serde_json::from_value(evidence.get("spisBinding").cloned().unwrap_or(Value::Null))?;
+    ensure(
+        signed_binding == *binding,
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest carries a different Spis binding",
+    )?;
+    ensure(
+        text(evidence, "requestedUrl")? == product_url,
+        "weles_evidence_manifest_invalid",
+        "the signed evidence manifest requestedUrl is not the exact product URL",
+    )
+}
+
+/// The signed inventory, typed. An empty inventory is a legitimate non-success shape: a
+/// task that failed before it produced anything still signs the manifest that says so.
+fn signed_inventory(evidence: &Value) -> Outcome<Vec<weles::WelesEvidenceInventoryEntry>> {
+    let entries = evidence
+        .get("evidenceInventory")
+        .and_then(Value::as_array)
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "weles_evidence_manifest_invalid",
+                "the signed evidence manifest has no evidenceInventory array",
+            )
+        })?;
+    let mut inventory = Vec::with_capacity(entries.len());
+    for entry in entries {
+        inventory.push(serde_json::from_value(entry.clone())?);
+    }
+    Ok(inventory)
+}
+
+/// Downloads and re-proves every signed inventory entry under the attempt's own recording
+/// tree, and answers the paths retained. The signed digest is never trusted on its own:
+/// the retained bytes are re-hashed exactly the way `validate_evidence_inventory` re-hashes
+/// them. `require_browser_evidence` is the v1-only rule — only a completed task must carry
+/// the final screenshot and the accessibility tree, because only for a completed task does
+/// the service demand them.
+fn retain_signed_inventory(
+    recordings: &Path,
+    weles_task_id: &str,
+    prefix: &str,
+    inventory: &[weles::WelesEvidenceInventoryEntry],
+    require_browser_evidence: bool,
+) -> Outcome<Vec<String>> {
+    let screenshot_uri = format!("{prefix}artifacts/browser_evidence_final.png");
+    let accessibility_uri = format!("{prefix}artifacts/browser_evidence_accessibility_tree.txt");
+    let mut retained_paths: Vec<String> =
+        vec![format!("recordings/{weles_task_id}/evidence-manifest.json")];
+    let mut kinds: BTreeSet<&str> = BTreeSet::new();
+    let mut uris: BTreeSet<&str> = BTreeSet::new();
+    let mut total_bytes = 0_u64;
+    for entry in inventory {
+        let relative = entry.uri.strip_prefix(prefix).ok_or_else(|| {
+            WorkerFailure::new(
+                "weles_evidence_uri_foreign",
+                "an evidence inventory URI is not bound to this exact Weles task",
+            )
+        })?;
+        ensure(
+            is_portable_relative(relative),
+            "weles_evidence_uri_invalid",
+            "an evidence inventory URI is not a canonical immutable path",
+        )?;
+        let kind_matches_uri = match entry.kind.as_str() {
+            SCREENSHOT_KIND => entry.uri == screenshot_uri,
+            ACCESSIBILITY_KIND => entry.uri == accessibility_uri,
+            kind => kind
+                .strip_prefix("artifact:")
+                .is_some_and(|tail| tail == relative),
+        };
+        ensure(
+            kind_matches_uri && is_sha256(&entry.sha256) && entry.bytes > 0,
+            "weles_evidence_entry_invalid",
+            "an evidence inventory entry kind, digest or length is not canonical",
+        )?;
+        ensure(
+            kinds.insert(entry.kind.as_str()) && uris.insert(entry.uri.as_str()),
+            "weles_evidence_entry_duplicate",
+            "the evidence inventory repeats a kind or URI",
+        )?;
+        total_bytes = total_bytes
+            .checked_add(entry.bytes)
+            .filter(|total| *total <= MAXIMUM_EVIDENCE_BYTES)
+            .ok_or_else(|| {
+                WorkerFailure::new(
+                    "weles_evidence_too_large",
+                    "the retained evidence inventory exceeds the total byte limit",
+                )
+            })?;
+        let destination = recordings.join(relative);
+        storage_get(&entry.uri, &destination)?;
+        let bytes = std::fs::read(&destination)?;
+        ensure(
+            bytes.len() as u64 == entry.bytes && crate::sha256_hex(&bytes) == entry.sha256,
+            "weles_evidence_bytes_differ",
+            "retained evidence bytes differ from the signed inventory entry",
+        )?;
+        if entry.kind == SCREENSHOT_KIND {
+            ensure(
+                bytes.starts_with(PNG_MAGIC),
+                "weles_evidence_screenshot_invalid",
+                "the retained final screenshot is not a PNG",
+            )?;
+        } else if entry.kind == ACCESSIBILITY_KIND {
+            let tree = String::from_utf8(bytes).map_err(|_| {
+                WorkerFailure::new(
+                    "weles_evidence_accessibility_invalid",
+                    "the retained accessibility tree is not valid UTF-8",
+                )
+            })?;
+            ensure(
+                !tree.trim().is_empty(),
+                "weles_evidence_accessibility_invalid",
+                "the retained accessibility tree is empty",
+            )?;
+        }
+        retained_paths.push(format!("recordings/{weles_task_id}/{relative}"));
+    }
+    if require_browser_evidence {
+        ensure(
+            kinds.contains(SCREENSHOT_KIND) && kinds.contains(ACCESSIBILITY_KIND),
+            "weles_evidence_incomplete",
+            "the evidence inventory lacks the required screenshot/accessibility_tree artifacts",
+        )?;
+    }
+    retained_paths.sort();
+    Ok(retained_paths)
+}
+
+/// Retains the signed proof that this attempt's Weles task ended in a terminal
+/// NON-SUCCESS: failed, cancelled or rejected.
+///
+/// The service signs and delivers a receipt for those outcomes exactly as it does for a
+/// completed one, and retains their evidence manifest in the v2 shape — the same
+/// contractual `evidence-manifest.json` address under the task's own recording prefix, with
+/// no navigation URLs and no required evidence kind, because there was no navigation and
+/// nothing is demanded of a run that failed. Without this the attempt would carry only the
+/// status text, so its failure would rest on this worker's word instead of the service's
+/// signature.
+#[allow(clippy::too_many_arguments)]
+fn retain_failure_provenance(
+    attempt_root: &Path,
+    private: &PrivateBridge,
+    status: &weles::WelesTaskStatus,
+    submission: &weles::WelesSubmission,
+    binding: &weles::WelesAttemptBinding,
+    organization_id: &str,
+    origin: &str,
+    product_url: &str,
+    weles_task_id: &str,
+    outcome: &str,
+    collected: &mut Collected,
+) -> Outcome<weles::WelesProvenanceDocument> {
+    let checkpoint = status.receipt_checkpoint.as_ref().ok_or_else(|| {
+        WorkerFailure::new(
+            "weles_receipt_checkpoint_absent",
+            "a terminal Weles task must carry a freshly verified receipt checkpoint",
+        )
+    })?;
+    let result_digest = status
+        .result_digest
+        .clone()
+        .filter(|digest| is_sha256_id(digest))
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "weles_status_invalid",
+                "the terminal task carries no sha256: result digest",
+            )
+        })?;
+    let claims = &checkpoint.claims;
+    ensure(
+        claims.task_id == weles_task_id
+            && claims.organization_id == organization_id
+            && claims.origin == origin
+            && claims.action == weles::SPIS_WELES_ACTION
+            && claims.outcome == outcome,
+        "weles_receipt_claims_mismatch",
+        "the verified receipt claims do not name this exact task and terminal outcome",
+    )?;
+    ensure(
+        claims.request_digest == submission.request_digest
+            && claims.result_digest == result_digest
+            && claims.spis_binding == *binding,
+        "weles_receipt_claims_mismatch",
+        "the verified receipt does not sign this exact request, result and Spis binding",
+    )?;
+
+    let prefix = format!("stado://weles/recordings/{weles_task_id}/");
+    let recordings = attempt_root.join("recordings").join(weles_task_id);
+    let evidence_manifest_path = recordings.join("evidence-manifest.json");
+    storage_get(&format!("{prefix}evidence-manifest.json"), &evidence_manifest_path)?;
+    // These exact bytes are the receipt-bound artifact, so they are only ever copied.
+    let manifest_bytes = std::fs::read(&evidence_manifest_path)?;
+    let artifact_document_sha256 = crate::sha256_hex(&manifest_bytes);
+    let artifact_relative = format!("weles/artifacts/{artifact_document_sha256}.json");
+    write_exact(&attempt_root.join(&artifact_relative), &manifest_bytes)?;
+    ensure(
+        claims.evidence_digest == artifact_document_sha256,
+        "weles_evidence_digest_mismatch",
+        "the verified receipt evidenceDigest is not the retained evidence manifest digest",
+    )?;
+
+    let evidence: Value = serde_json::from_slice(&manifest_bytes)?;
+    ensure_manifest_identity(
+        &evidence,
+        NON_SUCCESS_EVIDENCE_MANIFEST_SCHEMA,
+        outcome,
+        weles_task_id,
+        claims,
+        &submission.request_digest,
+        &result_digest,
+        binding,
+        product_url,
+    )?;
+    // Absent, not empty: the v2 shape carries no navigation, and the service refuses to
+    // write one, so a document that has either field is not the version it declares.
+    ensure(
+        evidence.get("effectiveUrl").is_none() && evidence.get("finalUrl").is_none(),
+        "weles_evidence_manifest_invalid",
+        "a non-success evidence manifest must carry no effective or final URL",
+    )?;
+    let inventory = signed_inventory(&evidence)?;
+    retain_signed_inventory(&recordings, weles_task_id, &prefix, &inventory, false)?;
+
+    let expected_claims = weles::ExpectedReceiptClaims {
+        task_id: weles_task_id.to_string(),
+        organization_id: organization_id.to_string(),
+        request_digest: submission.request_digest.clone(),
+        result_digest,
+        spis_binding: binding.clone(),
+        origin: origin.to_string(),
+        action: weles::SPIS_WELES_ACTION.to_string(),
+        outcome: outcome.to_string(),
+        evidence_digest: artifact_document_sha256.clone(),
+    };
+    let artifact = weles::RetainedArtifact {
+        path: artifact_relative,
+        sha256: artifact_document_sha256,
+        bytes: manifest_bytes.len() as u64,
+    };
+    // The same secretless verification the completed path runs: the bridge re-reads and
+    // re-digests the retained bytes and validates them in the version this outcome
+    // mandates.
+    let verify_command = json!({
+        "schema": weles::BRIDGE_COMMAND_SCHEMA,
+        "operation": "verify",
+        "receipt": serde_json::to_value(&checkpoint.receipt)?,
+        "expectedClaims": serde_json::to_value(&expected_claims)?,
+        "artifact": serde_json::to_value(&artifact)?,
+    });
+    let stdout = run_bridge(attempt_root, private, "verify", &verify_command, None, false)?;
+    let fresh: weles::WelesProvenanceDocument = serde_json::from_slice(&stdout)?;
+    ensure(
+        fresh.id.strip_prefix("sha256:").is_some_and(is_sha256),
+        "weles_provenance_id_invalid",
+        "the bridge verification document has no framed sha256: identifier",
+    )?;
+    let provenance = weles::WelesProvenanceDocument {
+        schema: weles::PROVENANCE_DOCUMENT_SCHEMA.to_string(),
+        id: fresh.id.clone(),
+        client: checkpoint.client.clone(),
+        receipt: checkpoint.receipt.clone(),
+        claims: claims.clone(),
+        expected_claims,
+        artifact,
+    };
+    ensure(
+        fresh == provenance,
+        "weles_provenance_mismatch",
+        "the fresh official verification differs from the assembled provenance document",
+    )?;
+    retain_attempt_document(
+        attempt_root,
+        "weles-provenance.json",
+        &serde_json::to_value(&provenance)?,
+    )?;
+    collected.provenance = Some(provenance.clone());
+    Ok(provenance)
+}
+
 fn storage_get(uri: &str, destination: &Path) -> Outcome<()> {
     if let Some(parent) = destination.parent() {
         std::fs::create_dir_all(parent)?;
@@ -1496,13 +1816,51 @@ fn capture(
             ),
         ));
     }
-    if status.outcome.as_deref() != Some("completed") {
+    let terminal_outcome = status
+        .outcome
+        .clone()
+        .filter(|outcome| !outcome.trim().is_empty())
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "weles_status_invalid",
+                format!(
+                    "Weles task {weles_task_id} reported status={} with no terminal outcome",
+                    status.status
+                ),
+            )
+        })?;
+    if terminal_outcome != "completed" {
+        // A non-success is still a signed, delivered result, so the attempt fails carrying
+        // the service's own proof of that failure rather than this worker's status text.
+        let summary = format!(
+            "Weles task {weles_task_id} finished as status={} outcome={terminal_outcome}",
+            status.status
+        );
+        let provenance = retain_failure_provenance(
+            attempt_root,
+            private,
+            &status,
+            &submission,
+            &binding,
+            &organization_id,
+            &origin,
+            &product_url,
+            &weles_task_id,
+            &terminal_outcome,
+            collected,
+        )
+        .map_err(|mut failure| {
+            failure.message = format!(
+                "{summary}; its signed failure provenance could not be retained: {}",
+                failure.message
+            );
+            failure
+        })?;
         return Err(WorkerFailure::new(
             "weles_task_not_completed",
             format!(
-                "Weles task {weles_task_id} finished as status={} outcome={}",
-                status.status,
-                status.outcome.as_deref().unwrap_or("none")
+                "{summary}; the signed failure provenance {} was retained with the attempt",
+                provenance.id
             ),
         ));
     }
@@ -1594,39 +1952,19 @@ fn capture(
     )?;
 
     let evidence: Value = serde_json::from_slice(&manifest_bytes)?;
-    ensure(
-        text(&evidence, "schema")? == EVIDENCE_MANIFEST_SCHEMA,
-        "weles_evidence_manifest_invalid",
-        "the signed evidence manifest schema is unsupported",
+    ensure_manifest_identity(
+        &evidence,
+        EVIDENCE_MANIFEST_SCHEMA,
+        "completed",
+        &weles_task_id,
+        claims,
+        &submission.request_digest,
+        &result_digest,
+        &binding,
+        &product_url,
     )?;
-    ensure(
-        text(&evidence, "taskId")? == weles_task_id
-            && text(&evidence, "organizationId")? == claims.organization_id
-            && text(&evidence, "origin")? == claims.origin
-            && text(&evidence, "action")? == claims.action
-            && text(&evidence, "outcome")? == "completed",
-        "weles_evidence_manifest_invalid",
-        "the signed evidence manifest does not name this completed task",
-    )?;
-    ensure(
-        text(&evidence, "requestDigest")? == submission.request_digest
-            && text(&evidence, "resultDigest")? == result_digest,
-        "weles_evidence_manifest_invalid",
-        "the signed evidence manifest request/result digests differ from the receipt",
-    )?;
-    let signed_binding: weles::WelesAttemptBinding =
-        serde_json::from_value(evidence.get("spisBinding").cloned().unwrap_or(Value::Null))?;
-    ensure(
-        signed_binding == binding,
-        "weles_evidence_manifest_invalid",
-        "the signed evidence manifest carries a different Spis binding",
-    )?;
-    let requested_url = text(&evidence, "requestedUrl")?;
-    ensure(
-        requested_url == product_url,
-        "weles_evidence_manifest_invalid",
-        "the signed evidence manifest requestedUrl is not the exact product URL",
-    )?;
+    // Only the successful version signs a navigation, so only here are the effective and
+    // final URL required and bound to the product origin.
     let effective_url = text(&evidence, "effectiveUrl")?.to_string();
     let final_url = text(&evidence, "finalUrl")?.to_string();
     ensure(
@@ -1635,105 +1973,9 @@ fn capture(
         "the signed effective/final URLs are not same-origin with the product URL",
     )?;
 
-    let entries = evidence
-        .get("evidenceInventory")
-        .and_then(Value::as_array)
-        .ok_or_else(|| {
-            WorkerFailure::new(
-                "weles_evidence_manifest_invalid",
-                "the signed evidence manifest has no evidenceInventory array",
-            )
-        })?;
-    let mut inventory: Vec<weles::WelesEvidenceInventoryEntry> = Vec::with_capacity(entries.len());
-    for entry in entries {
-        inventory.push(serde_json::from_value(entry.clone())?);
-    }
-    let screenshot_uri = format!("{prefix}artifacts/browser_evidence_final.png");
-    let accessibility_uri = format!("{prefix}artifacts/browser_evidence_accessibility_tree.txt");
-    let mut retained_paths: Vec<String> =
-        vec![format!("recordings/{weles_task_id}/evidence-manifest.json")];
-    // The uniqueness sets borrow the signed inventory, so they are scoped: the validated
-    // inventory then moves into the attempt envelope without being cloned.
-    {
-        let mut kinds: BTreeSet<&str> = BTreeSet::new();
-        let mut uris: BTreeSet<&str> = BTreeSet::new();
-        let mut total_bytes = 0_u64;
-        for entry in &inventory {
-            let relative = entry.uri.strip_prefix(&prefix).ok_or_else(|| {
-                WorkerFailure::new(
-                    "weles_evidence_uri_foreign",
-                    "an evidence inventory URI is not bound to this exact Weles task",
-                )
-            })?;
-            ensure(
-                is_portable_relative(relative),
-                "weles_evidence_uri_invalid",
-                "an evidence inventory URI is not a canonical immutable path",
-            )?;
-            let kind_matches_uri = match entry.kind.as_str() {
-                SCREENSHOT_KIND => entry.uri == screenshot_uri,
-                ACCESSIBILITY_KIND => entry.uri == accessibility_uri,
-                kind => kind
-                    .strip_prefix("artifact:")
-                    .is_some_and(|tail| tail == relative),
-            };
-            ensure(
-                kind_matches_uri && is_sha256(&entry.sha256) && entry.bytes > 0,
-                "weles_evidence_entry_invalid",
-                "an evidence inventory entry kind, digest or length is not canonical",
-            )?;
-            ensure(
-                kinds.insert(entry.kind.as_str()) && uris.insert(entry.uri.as_str()),
-                "weles_evidence_entry_duplicate",
-                "the evidence inventory repeats a kind or URI",
-            )?;
-            total_bytes = total_bytes
-                .checked_add(entry.bytes)
-                .filter(|total| *total <= MAXIMUM_EVIDENCE_BYTES)
-                .ok_or_else(|| {
-                    WorkerFailure::new(
-                        "weles_evidence_too_large",
-                        "the retained evidence inventory exceeds the total byte limit",
-                    )
-                })?;
-            let destination = recordings.join(relative);
-            storage_get(&entry.uri, &destination)?;
-            // The signed digest is never trusted on its own: the retained bytes are
-            // re-hashed exactly the way `validate_evidence_inventory` re-hashes them.
-            let bytes = std::fs::read(&destination)?;
-            ensure(
-                bytes.len() as u64 == entry.bytes && crate::sha256_hex(&bytes) == entry.sha256,
-                "weles_evidence_bytes_differ",
-                "retained evidence bytes differ from the signed inventory entry",
-            )?;
-            if entry.kind == SCREENSHOT_KIND {
-                ensure(
-                    bytes.starts_with(PNG_MAGIC),
-                    "weles_evidence_screenshot_invalid",
-                    "the retained final screenshot is not a PNG",
-                )?;
-            } else if entry.kind == ACCESSIBILITY_KIND {
-                let tree = String::from_utf8(bytes).map_err(|_| {
-                    WorkerFailure::new(
-                        "weles_evidence_accessibility_invalid",
-                        "the retained accessibility tree is not valid UTF-8",
-                    )
-                })?;
-                ensure(
-                    !tree.trim().is_empty(),
-                    "weles_evidence_accessibility_invalid",
-                    "the retained accessibility tree is empty",
-                )?;
-            }
-            retained_paths.push(format!("recordings/{weles_task_id}/{relative}"));
-        }
-        ensure(
-            kinds.contains(SCREENSHOT_KIND) && kinds.contains(ACCESSIBILITY_KIND),
-            "weles_evidence_incomplete",
-            "the evidence inventory lacks the required screenshot/accessibility_tree artifacts",
-        )?;
-    }
-    retained_paths.sort();
+    let inventory = signed_inventory(&evidence)?;
+    let retained_paths =
+        retain_signed_inventory(&recordings, &weles_task_id, &prefix, &inventory, true)?;
 
     let mut observation: BTreeMap<&str, Value> = BTreeMap::new();
     observation.insert("schema", json!(OBSERVATION_SCHEMA));
