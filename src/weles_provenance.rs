@@ -1171,8 +1171,13 @@ fn validate_evidence_inventory(
             .ok_or_else(|| {
                 "evidence inventory URI is not bound to the exact Weles task".to_string()
             })?;
+        // Both receiver layers must judge the same document by the same rule: the bridge
+        // requires every component to pass `portableAttemptComponent`, and the service
+        // refuses anything outside that alphabet at retention time, so accepting a merely
+        // `Component::Normal` name here would leave this layer the weaker of the two.
         if relative_uri.is_empty()
             || relative_uri.contains('\\')
+            || !relative_uri.split('/').all(is_portable_attempt_component)
             || !Path::new(relative_uri)
                 .components()
                 .all(|component| matches!(component, Component::Normal(_)))
