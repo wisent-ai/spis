@@ -48,6 +48,9 @@ pub(crate) struct RuntimeSurfaceIdentity {
     pub exact_url: String,
     pub origin: String,
     pub path: String,
+    pub allowed_origins: Vec<String>,
+    pub allowed_actions: Vec<String>,
+    pub terminal_outcomes: Vec<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -87,6 +90,8 @@ pub(crate) struct RuntimePreparedProof {
     pub product_identifier: String,
     pub device_id: Option<String>,
     pub observed_by: String,
+    pub product_version: String,
+    pub executable_sha256: String,
     pub observed_at: String,
     pub evidence_uri: String,
     pub evidence_sha256: String,
@@ -94,17 +99,43 @@ pub(crate) struct RuntimePreparedProof {
     pub first_run_completed: bool,
     pub pending_permission_prompts: u32,
     pub pending_notification_prompts: u32,
+    pub notification_delivery_disabled: bool,
+    pub permission_prompt_invocation_disabled: bool,
+    pub notification_prompt_invocation_disabled: bool,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct RuntimeDelivery {
+    pub kind: String,
+    #[serde(default)]
+    pub secret_env: BTreeMap<String, String>,
+}
+
+#[derive(Clone, Debug, Serialize)]
 struct RuntimeBinding {
     account: RuntimeAccount,
     constraints: RuntimeConstraints,
     prepared_proof: Option<RuntimePreparedProof>,
+    delivery: RuntimeDelivery,
     surface: Option<RuntimeSurfaceIdentity>,
 }
 
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct RuntimeServiceIdentity {
+    pub name: String,
+    pub generation: u64,
+    pub consumer: String,
+    pub capability: String,
+    pub active_host: String,
+    pub endpoint: String,
+    pub action: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct RuntimeExecutionIdentity {
     pub host: String,
     pub platform: String,
@@ -119,10 +150,13 @@ pub(crate) struct RuntimeExecutionIdentity {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct RuntimeManifest {
     pub schema: String,
     pub run_id: String,
     pub catalog: String,
+    pub attempt: u32,
+    pub attempt_id: String,
     pub record: String,
     pub engine: String,
     pub source_revision: String,
@@ -137,9 +171,15 @@ pub(crate) struct RuntimeManifest {
     pub runtime_product: RuntimeProduct,
     pub account: RuntimeAccount,
     pub constraints: RuntimeConstraints,
+    pub bindings_file_sha256: String,
+    pub bindings_source: String,
+    pub bindings_sha256: String,
+    pub bindings_uri: String,
+    pub delivery: RuntimeDelivery,
     pub prepared_proof: Option<RuntimePreparedProof>,
     pub execution_identity: Option<RuntimeExecutionIdentity>,
     pub resource_lease: Option<String>,
+    pub service_identity: Option<RuntimeServiceIdentity>,
 }
 
 impl RuntimeManifest {
@@ -174,6 +214,36 @@ pub(crate) fn decode_runtime_manifest(
         || manifest.execution_identity.is_none()
     {
         bail!("runtime manifest is incomplete and cannot authorize a worker");
+    }
+    if manifest.attempt == 0 || manifest.attempt_id.is_empty() {
+        bail!("runtime manifest has no immutable execution attempt");
+    }
+    let bindings = runtime_bindings_for_worker(&manifest)?;
+    if bindings.sha256 != manifest.bindings_file_sha256 {
+        bail!("runtime bindings whole-file digest differs from the immutable manifest");
+    }
+    let authoritative = runtime_binding(
+        &bindings,
+        &manifest.catalog,
+        &manifest.engine,
+        &manifest.record,
+    )?;
+    let authoritative_sha256 =
+        crate::sha256_hex(&serde_json::to_vec(&authoritative)?);
+    if authoritative_sha256 != manifest.bindings_sha256 {
+        bail!("normalized catalog+record binding digest differs from the immutable manifest");
+    }
+    if serde_json::to_value(&authoritative.account)? != serde_json::to_value(&manifest.account)?
+        || serde_json::to_value(&authoritative.constraints)?
+            != serde_json::to_value(&manifest.constraints)?
+        || serde_json::to_value(&authoritative.delivery)?
+            != serde_json::to_value(&manifest.delivery)?
+        || serde_json::to_value(&authoritative.prepared_proof)?
+            != serde_json::to_value(&manifest.prepared_proof)?
+        || serde_json::to_value(&authoritative.surface)?
+            != serde_json::to_value(&manifest.runtime_product.surface)?
+    {
+        bail!("runtime manifest differs from the exact committed catalog+record binding");
     }
     let reference_path = Path::new(&manifest.catalog)
         .join("references")
@@ -318,7 +388,52 @@ impl Drop for RunMutationGuard {
     }
 }
 
+fn sync_attempt_history(run: &mut Value) {
+    let Some(catalogs) = run.get_mut("catalogs").and_then(Value::as_array_mut) else {
+        return;
+    };
+    for record in catalogs
+        .iter_mut()
+        .filter_map(|catalog| catalog.get_mut("records").and_then(Value::as_array_mut))
+        .flatten()
+    {
+        let attempt_id = record
+            .get("manifest")
+            .and_then(|manifest| manifest.get("attempt_id"))
+            .and_then(Value::as_str)
+            .or_else(|| record.get("attempt_id").and_then(Value::as_str))
+            .map(str::to_string)
+            .or_else(|| {
+                record
+                    .get("job_id")
+                    .and_then(Value::as_str)
+                    .map(|job| format!("legacy-job-{job}"))
+            });
+        let Some(attempt_id) = attempt_id else {
+            continue;
+        };
+        let mut snapshot = record.clone();
+        snapshot.as_object_mut().map(|object| object.remove("attempts"));
+        snapshot["attempt_id"] = json!(attempt_id);
+        let attempts = record
+            .as_object_mut()
+            .expect("crawl record must be an object")
+            .entry("attempts")
+            .or_insert_with(|| json!([]))
+            .as_array_mut()
+            .expect("crawl record attempts must be an array");
+        if let Some(existing) = attempts.iter_mut().find(|attempt| {
+            attempt.get("attempt_id").and_then(Value::as_str) == Some(attempt_id.as_str())
+        }) {
+            *existing = snapshot;
+        } else {
+            attempts.push(snapshot);
+        }
+    }
+}
+
 fn persist(run: &mut Value) -> Result<()> {
+    sync_attempt_history(run);
     let run_id = run.get("run_id").and_then(Value::as_str).context("run has no run_id")?;
     let path = run_path(run_id);
     let expected = run.get("mutation_revision").and_then(Value::as_u64).unwrap_or(0);
@@ -474,42 +589,300 @@ fn selected_specs(selected: &[String]) -> Result<Vec<(&'static str, &'static str
 }
 
 fn record_directories(catalog: &str, selected: Option<&str>) -> Result<Vec<PathBuf>> {
-    let root = Path::new(catalog).join("references");
-    let mut paths: Vec<PathBuf> = std::fs::read_dir(&root)
-        .with_context(|| format!("read {}", root.display()))?
-        .filter_map(|entry| entry.ok().map(|entry| entry.path()))
-        .filter(|path| path.join("reference.json").is_file())
-        .collect();
-    paths.sort();
-    paths.retain(|path| {
-        let slug = path.file_name().and_then(|value| value.to_str()).unwrap_or_default();
-        selected.is_none_or(|wanted| {
-            wanted == slug || slug.split_once('-').map(|(_, tail)| tail) == Some(wanted)
-        })
-    });
-    if paths.is_empty() {
-        bail!("{catalog}: no matching reference records");
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join(catalog).join("references");
+    if let Some(record) = selected {
+        if !matches!(
+            (Path::new(record).components().next(), Path::new(record).components().count()),
+            (Some(std::path::Component::Normal(_)), 1)
+        ) {
+            bail!("record must be one safe catalog directory name");
+        }
+        let path = root.join(record);
+        if !path.is_dir() {
+            bail!("record {record} does not exist in catalog {catalog}");
+        }
+        return Ok(vec![path]);
     }
-    Ok(paths)
+    let mut records = std::fs::read_dir(&root)
+        .with_context(|| format!("read crawl catalog {}", root.display()))?
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.path())
+        .filter(|path| path.is_dir())
+        .collect::<Vec<_>>();
+    records.sort();
+    Ok(records)
 }
 
-fn runtime_binding(catalog: &str, slug: &str) -> Result<RuntimeBinding> {
-    let path = std::env::var_os("SPIS_RUNTIME_BINDINGS").ok_or_else(|| {
-        anyhow!(
-            "{catalog}/{slug}: SPIS_RUNTIME_BINDINGS has no typed account, credential and constraint binding"
-        )
-    })?;
-    let document: Value = crate::read_json(
-        Path::new(&path)
-            .to_str()
-            .context("SPIS_RUNTIME_BINDINGS path is not UTF-8")?,
-    )?;
+fn require_exact_object_keys(value: &Value, expected: &[&str], context: &str) -> Result<()> {
+    let object = value
+        .as_object()
+        .with_context(|| format!("{context} must be an object"))?;
+    let mut actual = object.keys().map(String::as_str).collect::<Vec<_>>();
+    let mut expected = expected.to_vec();
+    actual.sort_unstable();
+    expected.sort_unstable();
+    if actual != expected {
+        bail!(
+            "{context} fields differ: expected {}, found {}",
+            expected.join(", "),
+            actual.join(", ")
+        );
+    }
+    Ok(())
+}
+
+fn validate_runtime_bindings_document(document: &Value) -> Result<()> {
+    require_exact_object_keys(document, &["schema", "records"], "runtime bindings")?;
     if document.get("schema").and_then(Value::as_str)
         != Some("wisent.crawl-runtime-bindings.v1")
     {
-        bail!("SPIS_RUNTIME_BINDINGS must declare wisent.crawl-runtime-bindings.v1");
+        bail!("runtime bindings must declare wisent.crawl-runtime-bindings.v1");
     }
-    let binding = document
+    let catalogs = document
+        .get("records")
+        .and_then(Value::as_object)
+        .context("runtime bindings records must be an object")?;
+    let mut actual_catalogs = catalogs.keys().map(String::as_str).collect::<Vec<_>>();
+    let mut expected_catalogs = CATALOGS.iter().map(|(name, _)| *name).collect::<Vec<_>>();
+    actual_catalogs.sort_unstable();
+    expected_catalogs.sort_unstable();
+    if actual_catalogs != expected_catalogs {
+        bail!("runtime bindings must contain every and only the checked-in crawl catalogs");
+    }
+    for (catalog, _) in CATALOGS {
+        let records = catalogs
+            .get(*catalog)
+            .and_then(Value::as_object)
+            .with_context(|| format!("runtime bindings {catalog} must be a record object"))?;
+        let mut actual_records = records.keys().map(String::as_str).collect::<Vec<_>>();
+        let expected_paths = record_directories(catalog, None)?;
+        let mut expected_records = expected_paths
+            .iter()
+            .filter_map(|path| path.file_name().and_then(|name| name.to_str()))
+            .collect::<Vec<_>>();
+        actual_records.sort_unstable();
+        expected_records.sort_unstable();
+        if actual_records != expected_records {
+            bail!("{catalog}: runtime bindings must contain every and only checked-in record slug");
+        }
+        for (slug, binding) in records {
+            match binding.get("configured").and_then(Value::as_bool) {
+                Some(false) => require_exact_object_keys(
+                    binding,
+                    &["configured", "diagnostic"],
+                    &format!("{catalog}/{slug} binding"),
+                )?,
+                Some(true) => {
+                    let object = binding
+                        .as_object()
+                        .with_context(|| format!("{catalog}/{slug} binding must be an object"))?;
+                    let allowed = [
+                        "configured",
+                        "account",
+                        "constraints",
+                        "delivery",
+                        "prepared_proof",
+                        "surface",
+                    ];
+                    let unknown = object
+                        .keys()
+                        .filter(|key| !allowed.contains(&key.as_str()))
+                        .cloned()
+                        .collect::<Vec<_>>();
+                    if !unknown.is_empty() {
+                        bail!("{catalog}/{slug}: unknown runtime binding fields: {}", unknown.join(", "));
+                    }
+                    for required in ["account", "constraints", "delivery"] {
+                        if !object.contains_key(required) {
+                            bail!("{catalog}/{slug}: configured binding is missing {required}");
+                        }
+                    }
+                }
+                _ => bail!("{catalog}/{slug}: configured must be an explicit boolean"),
+            }
+        }
+    }
+    Ok(())
+}
+
+
+struct RuntimeBindings {
+    source: String,
+    local_path: Option<PathBuf>,
+    uri: String,
+    sha256: String,
+    document: Value,
+}
+
+fn load_runtime_bindings(explicit: Option<&str>) -> Result<RuntimeBindings> {
+    let (source, selected) = if let Some(path) = explicit {
+        ("explicit".to_string(), PathBuf::from(path))
+    } else if let Some(path) = std::env::var_os("SPIS_RUNTIME_BINDINGS") {
+        ("env:SPIS_RUNTIME_BINDINGS".to_string(), PathBuf::from(path))
+    } else if let Some(path) = std::env::var_os("HOME")
+        .map(PathBuf::from)
+        .map(|home| home.join(".config/spis/crawl-runtime-bindings.json"))
+        .filter(|path| path.is_file())
+    {
+        ("default:user-config".to_string(), path)
+    } else if Path::new("crawl-runtime-bindings.json").is_file() {
+        ("template:project".to_string(), PathBuf::from("crawl-runtime-bindings.json"))
+    } else {
+        bail!("no runtime bindings: pass --bindings PATH, set SPIS_RUNTIME_BINDINGS, or create ~/.config/spis/crawl-runtime-bindings.json");
+    };
+    let bytes = std::fs::read(&selected)
+        .with_context(|| format!("read runtime bindings {}", selected.display()))?;
+    let document: Value = serde_json::from_slice(&bytes)?;
+    validate_runtime_bindings_document(&document)?;
+    let sha256 = crate::sha256_hex(&bytes);
+    Ok(RuntimeBindings {
+        source,
+        local_path: Some(selected),
+        uri: format!("stado://spis-crawl-inputs/runtime-bindings/{sha256}.json"),
+        sha256,
+        document,
+    })
+}
+
+fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<RuntimeBindings> {
+    let home = std::env::var_os("HOME").context("HOME is required for private Stado work cache")?;
+    let directory = PathBuf::from(home)
+        .join(".stado")
+        .join("work")
+        .join("spis")
+        .join("runtime-bindings");
+    std::fs::create_dir_all(&directory)?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+    }
+    let cache = directory.join(format!("{}.json", manifest.bindings_file_sha256));
+    if !cache.is_file() {
+        let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+        let temporary = directory.join(format!(
+            ".{}.{}.{}.tmp",
+            manifest.bindings_file_sha256,
+            std::process::id(),
+            nonce
+        ));
+        let output = stado_command()
+            .args(["storage", "get", &manifest.bindings_uri])
+            .arg(&temporary)
+            .output()
+            .context("download immutable runtime bindings")?;
+        if !output.status.success() {
+            let _ = std::fs::remove_file(&temporary);
+            bail!(
+                "download runtime bindings {}: {}",
+                manifest.bindings_uri,
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+        }
+        let downloaded = std::fs::read(&temporary)?;
+        if crate::sha256_hex(&downloaded) != manifest.bindings_file_sha256 {
+            let _ = std::fs::remove_file(&temporary);
+            bail!("downloaded runtime bindings digest does not match manifest");
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&temporary, std::fs::Permissions::from_mode(0o600))?;
+        }
+        if cache.is_file() {
+            let _ = std::fs::remove_file(&temporary);
+        } else {
+            std::fs::rename(&temporary, &cache)?;
+            File::open(&directory)?.sync_all()?;
+        }
+    }
+    let bytes = std::fs::read(&cache)?;
+    if crate::sha256_hex(&bytes) != manifest.bindings_file_sha256 {
+        bail!("private runtime bindings cache conflicts with manifest digest");
+    }
+    let document: Value = serde_json::from_slice(&bytes)?;
+    validate_runtime_bindings_document(&document)?;
+    Ok(RuntimeBindings {
+        source: manifest.bindings_source.clone(),
+        local_path: None,
+        uri: manifest.bindings_uri.clone(),
+        sha256: manifest.bindings_file_sha256.clone(),
+        document,
+    })
+}
+
+fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()> {
+    let source = bindings
+        .local_path
+        .as_ref()
+        .context("runtime binding input has no local immutable source")?;
+    let bytes = std::fs::read(source)?;
+    if crate::sha256_hex(&bytes) != bindings.sha256 {
+        bail!("runtime binding input changed after planning");
+    }
+    let output = stado_command()
+        .args([
+            "storage",
+            "put",
+            "--if-absent",
+            "--content-type",
+            "application/json",
+            bindings.uri.as_str(),
+        ])
+        .arg(source)
+        .output()
+        .context("publish immutable runtime bindings")?;
+    if !output.status.success() {
+        bail!(
+            "Stado refused immutable runtime bindings: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let target = PathBuf::from(".wisent-output")
+        .join("runtime-bindings")
+        .join(format!("{}.verified.json", bindings.sha256));
+    std::fs::create_dir_all(target.parent().expect("binding target has a parent"))?;
+    let downloaded = stado_command()
+        .args(["storage", "get", bindings.uri.as_str()])
+        .arg(&target)
+        .output()
+        .context("read back immutable runtime bindings")?;
+    if !downloaded.status.success() {
+        bail!(
+            "runtime bindings read-back failed: {}",
+            String::from_utf8_lossy(&downloaded.stderr).trim()
+        );
+    }
+    let stored = std::fs::read(&target)?;
+    if crate::sha256_hex(&stored) != bindings.sha256 || stored != bytes {
+        bail!("immutable runtime bindings read-back differs from the planned exact input");
+    }
+    Ok(())
+}
+
+fn valid_secret_reference(reference: &str) -> bool {
+    reference
+        .split_once('#')
+        .is_some_and(|(item, field)| {
+            !item.is_empty()
+                && !field.is_empty()
+                && item
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || b"._:-".contains(&byte))
+                && field
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || b"._-".contains(&byte))
+        })
+}
+
+fn runtime_binding(
+    bindings: &RuntimeBindings,
+    catalog: &str,
+    engine: &str,
+    slug: &str,
+) -> Result<RuntimeBinding> {
+    let binding = bindings
+        .document
         .get("records")
         .and_then(Value::as_object)
         .and_then(|catalogs| catalogs.get(catalog))
@@ -519,16 +892,25 @@ fn runtime_binding(catalog: &str, slug: &str) -> Result<RuntimeBinding> {
         .ok_or_else(|| {
             anyhow!("{catalog}/{slug}: runtime bindings have no exact catalog and record key")
         })?;
+    if binding.get("configured").and_then(Value::as_bool) != Some(true) {
+        bail!(
+            "{catalog}/{slug}: {}",
+            binding
+                .get("diagnostic")
+                .and_then(Value::as_str)
+                .unwrap_or("runtime binding is explicitly unconfigured")
+        );
+    }
     let account: RuntimeAccount = serde_json::from_value(
         binding.get("account").cloned().context("record binding has no account declaration")?,
     )
     .context("record account declaration is invalid")?;
     match account.mode.as_str() {
-        "bound" => {
-            if account.account_id.as_deref().is_none_or(str::is_empty)
-                || account.credential_refs.is_empty()
+        "anonymous-read-only-probe" => {
+            if account.account_id.as_deref() != Some("anonymous-read-only-probe")
+                || !account.credential_refs.is_empty()
             {
-                bail!("{catalog}/{slug}: bound account needs an exact account_id and opaque credential_refs");
+                bail!("{catalog}/{slug}: anonymous read-only probe mode must be explicit and cannot carry credentials or an account claim");
             }
         }
         "anonymous-public-surface" => {
@@ -550,7 +932,7 @@ fn runtime_binding(catalog: &str, slug: &str) -> Result<RuntimeBinding> {
         .iter()
         .any(|reference| reference.is_empty() || reference.chars().any(char::is_whitespace))
     {
-        bail!("{catalog}/{slug}: credential_refs must be nonempty opaque references");
+        bail!("{catalog}/{slug}: credentialRefs must be nonempty opaque identifiers");
     }
     let constraints: RuntimeConstraints = serde_json::from_value(
         binding
@@ -567,12 +949,62 @@ fn runtime_binding(catalog: &str, slug: &str) -> Result<RuntimeBinding> {
     {
         bail!("{catalog}/{slug}: runtime constraints would permit a prohibited crawl action");
     }
+    let delivery: RuntimeDelivery = serde_json::from_value(
+        binding
+            .get("delivery")
+            .cloned()
+            .context("record binding has no typed credential delivery")?,
+    )
+    .context("record credential delivery is invalid")?;
+    if delivery.secret_env.values().any(|reference| !valid_secret_reference(reference)) {
+        bail!("{catalog}/{slug}: secret_env must contain exact NAME=item#field references");
+    }
     let prepared_proof = binding
         .get("prepared_proof")
         .cloned()
         .map(serde_json::from_value)
         .transpose()
         .context("prepared proof declaration is invalid")?;
+    match engine {
+        "web" => {
+            let expected = [
+                "WELES_TOKEN",
+                "WISENT_ORGANIZATION_ID",
+                "SPIS_WELES_RECEIPT_KEYS_JSON",
+                "SPIS_WELES_KEY_SET_VERSION",
+            ];
+            if delivery.kind != "weles-service-env"
+                || delivery.secret_env.len() != expected.len()
+                || expected.iter().any(|name| !delivery.secret_env.contains_key(*name))
+            {
+                bail!("{catalog}/{slug}: web binding needs the four exact official-bridge service env references");
+            }
+        }
+        "mobile" | "desktop" => {
+            if delivery.kind != "preauthenticated-device"
+                || !delivery.secret_env.is_empty()
+                || prepared_proof.is_none()
+            {
+                bail!("{catalog}/{slug}: native binding needs preauthenticated-device delivery, no secret injection, and prepared proof");
+            }
+        }
+        "cli" | "tui" => {
+            let expected = if delivery.secret_env.is_empty() { "none" } else { "stado-secret-env" };
+            let delivered: std::collections::BTreeSet<&str> =
+                delivery.secret_env.values().map(String::as_str).collect();
+            let declared: std::collections::BTreeSet<&str> =
+                account.credential_refs.iter().map(String::as_str).collect();
+            if delivery.kind != expected || delivered != declared {
+                bail!("{catalog}/{slug}: terminal delivery must exactly bind account refs through Stado secret-env");
+            }
+        }
+        "docs" => {
+            if delivery.kind != "none" || !delivery.secret_env.is_empty() {
+                bail!("{catalog}/{slug}: documentation public delivery must be explicit none");
+            }
+        }
+        _ => bail!("{catalog}/{slug}: unsupported engine delivery"),
+    }
     let surface = binding
         .get("surface")
         .cloned()
@@ -583,6 +1015,7 @@ fn runtime_binding(catalog: &str, slug: &str) -> Result<RuntimeBinding> {
         account,
         constraints,
         prepared_proof,
+        delivery,
         surface,
     })
 }
@@ -657,8 +1090,17 @@ fn runtime_product(
             || surface.exact_url != product_url
             || surface.origin != parsed.origin().ascii_serialization()
             || surface.path != parsed.path()
+            || surface.allowed_origins.is_empty()
+            || !surface.allowed_origins.iter().any(|origin| origin == &surface.origin)
+            || surface.allowed_origins.iter().any(|origin| url::Url::parse(origin).is_err())
+            || surface.allowed_actions.is_empty()
+            || surface.allowed_actions.iter().any(|action| action.is_empty() || action.chars().any(char::is_whitespace))
+            || surface.terminal_outcomes.is_empty()
+            || surface.terminal_outcomes.iter().any(|outcome| {
+                !matches!(outcome.as_str(), "completed" | "failed" | "blocked")
+            })
         {
-            bail!("{catalog}/{slug}: typed web surface family, origin, path or URL does not exactly match the record");
+            bail!("{catalog}/{slug}: typed web surface family, origin, path, URL, allowed actions or terminal outcomes are not exact");
         }
         Some(surface)
     } else {
@@ -679,6 +1121,8 @@ fn finalize_manifest_identity(manifest: &mut RuntimeManifest, reference_bytes: &
         "runtime_product": manifest.runtime_product,
         "account": manifest.account,
         "constraints": manifest.constraints,
+        "delivery": manifest.delivery,
+        "bindings_sha256": manifest.bindings_sha256,
         "prepared_proof": manifest.prepared_proof,
         "execution_identity": manifest.execution_identity,
         "resource_lease": manifest.resource_lease,
@@ -699,11 +1143,22 @@ fn finalize_manifest_identity(manifest: &mut RuntimeManifest, reference_bytes: &
         )
         .as_bytes(),
     );
-    manifest.correlation_id = format!("spis-{}", &manifest.record_key[..32]);
-    manifest.stado_run_id = manifest.correlation_id.clone();
+    manifest.attempt_id = format!(
+        "attempt-{}-{}",
+        manifest.attempt,
+        &crate::sha256_hex(
+            format!(
+                "{}\0{}\0{}",
+                manifest.record_key, manifest.attempt, manifest.execution_identity.as_ref().map(|value| value.host.as_str()).unwrap_or("")
+            )
+            .as_bytes()
+        )[..16]
+    );
+    manifest.correlation_id = format!("spis-{}-{}", &manifest.record_key[..24], manifest.attempt);
+    manifest.stado_run_id = format!("{}-{}", manifest.correlation_id, manifest.attempt_id);
     let base_uri = format!(
-        "stado://spis-crawls/{}/{}/{}/{}",
-        manifest.run_id, manifest.catalog, manifest.record, manifest.record_key
+        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}",
+        manifest.run_id, manifest.catalog, manifest.record, manifest.record_key, manifest.attempt_id
     );
     manifest.artifact_uri = format!("{base_uri}/artifacts.tar.gz");
     manifest.output_uri = format!("{base_uri}/worker-output.log");
@@ -717,6 +1172,7 @@ fn planned_record(
     engine: &str,
     host: &str,
     record_dir: &Path,
+    bindings: &RuntimeBindings,
 ) -> Value {
     let slug = record_dir
         .file_name()
@@ -740,7 +1196,7 @@ fn planned_record(
             }});
         }
     };
-    let binding = match runtime_binding(catalog, &slug) {
+    let binding = match runtime_binding(bindings, catalog, engine, &slug) {
         Ok(binding) => binding,
         Err(error) => {
             return json!({"record": slug, "state": "unavailable", "diagnostic": {
@@ -769,15 +1225,22 @@ fn planned_record(
             }});
         }
     };
+    let bindings_sha256 = crate::sha256_hex(
+        &serde_json::to_vec(&binding).expect("typed runtime binding serializes"),
+    );
     let account = binding.account;
     let constraints = binding.constraints;
     let prepared_proof = binding.prepared_proof;
+    let delivery = binding.delivery;
     let input_identity = json!({
         "reference_sha256": crate::sha256_hex(&bytes),
         "runtime_product": product,
         "account": account,
         "constraints": constraints,
         "prepared_proof": prepared_proof,
+        "delivery": delivery,
+        "bindings_file_sha256": bindings.sha256,
+        "bindings_sha256": bindings_sha256,
     });
     let source_input_sha256 = crate::sha256_hex(
         &serde_json::to_vec(&input_identity).expect("typed runtime input serializes"),
@@ -802,16 +1265,24 @@ fn planned_record(
         catalog_key,
         record_key,
         correlation_id: correlation_id.clone(),
+        attempt: 1,
+        attempt_id: String::new(),
         stado_run_id: correlation_id,
         artifact_uri: format!("{base_uri}/artifacts.tar.gz"),
         output_uri: format!("{base_uri}/worker-output.log"),
         runtime_product: product,
         account,
         constraints,
+        delivery,
+        bindings_file_sha256: bindings.sha256.clone(),
+        bindings_source: bindings.source.clone(),
+        bindings_sha256,
+        bindings_uri: bindings.uri.clone(),
         prepared_proof,
         execution_identity: None,
         resource_lease: matches!(engine, "desktop" | "mobile")
             .then(|| format!("stado-exclusive://{host}/{engine}")),
+        service_identity: None,
     };
     if let Err(error) = finalize_manifest_identity(&mut manifest, &bytes) {
         return json!({"record": slug, "state": "unavailable", "diagnostic": {
@@ -1127,6 +1598,80 @@ fn ready_output(check: &Value, context: &str) -> Result<String> {
     Ok(output)
 }
 
+fn resolve_mobile_install_identity(
+    manifest: &RuntimeManifest,
+    identity: &mut RuntimeExecutionIdentity,
+    host: &str,
+    install_check: &Value,
+) -> Result<Vec<Value>> {
+    let device = identity.device_id.as_deref().context("mobile identity has no device id")?;
+    let product = manifest.runtime_product.identifier.as_str();
+    if identity.platform == "ios" {
+        let app_path = ready_output(install_check, "resolve installed iOS app bundle")?;
+        if !app_path.ends_with(".app") {
+            bail!("iOS application container is not an app bundle");
+        }
+        let info = format!("{app_path}/Info.plist");
+        let executable_check = host_probe(
+            host,
+            &["/usr/libexec/PlistBuddy", "-c", "Print:CFBundleExecutable", &info],
+        );
+        let executable_name = ready_output(&executable_check, "resolve installed iOS executable")?;
+        if executable_name.contains('/') || executable_name.chars().any(char::is_whitespace) {
+            bail!("installed iOS executable name is invalid");
+        }
+        let executable_path = format!("{app_path}/{executable_name}");
+        let version_check = host_probe(
+            host,
+            &["/usr/libexec/PlistBuddy", "-c", "Print:CFBundleShortVersionString", &info],
+        );
+        let version = ready_output(&version_check, "resolve installed iOS version")?;
+        let digest_check = host_probe(
+            host,
+            &["shasum", "-a", "256", &executable_path],
+        );
+        let digest_output = ready_output(&digest_check, "hash installed iOS executable")?;
+        let digest = digest_output.split_whitespace().next().unwrap_or_default().to_ascii_lowercase();
+        if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+            bail!("installed iOS executable SHA-256 is invalid");
+        }
+        identity.executable_path = Some(executable_path);
+        identity.product_version = Some(version);
+        identity.executable_sha256 = Some(digest);
+        return Ok(vec![executable_check, version_check, digest_check]);
+    }
+    let package_path = ready_output(install_check, "resolve installed Android package")?
+        .lines()
+        .filter_map(|line| line.trim().strip_prefix("package:"))
+        .next()
+        .context("Android pm path returned no base package path")?
+        .to_string();
+    let version_check = host_probe(
+        host,
+        &["adb", "-s", device, "shell", "dumpsys", "package", product],
+    );
+    let version_output = ready_output(&version_check, "resolve installed Android version")?;
+    let version = version_output
+        .lines()
+        .find_map(|line| line.trim().strip_prefix("versionName="))
+        .filter(|value| !value.is_empty())
+        .context("Android package has no versionName")?
+        .to_string();
+    let digest_check = host_probe(
+        host,
+        &["adb", "-s", device, "shell", "sha256sum", &package_path],
+    );
+    let digest_output = ready_output(&digest_check, "hash installed Android package")?;
+    let digest = digest_output.split_whitespace().next().unwrap_or_default().to_ascii_lowercase();
+    if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        bail!("installed Android package SHA-256 is invalid");
+    }
+    identity.executable_path = Some(package_path);
+    identity.product_version = Some(version);
+    identity.executable_sha256 = Some(digest);
+    Ok(vec![version_check, digest_check])
+}
+
 fn resolve_terminal_identity(
     manifest: &mut RuntimeManifest,
     host: &str,
@@ -1230,21 +1775,42 @@ fn resolve_desktop_identity(
     if bundle == "(null)" || bundle.chars().any(char::is_whitespace) {
         bail!("desktop bundle identifier is missing or invalid");
     }
+    let info = format!("{app_path}/Contents/Info.plist");
+    let executable_check = host_probe(
+        host,
+        &["/usr/libexec/PlistBuddy", "-c", "Print:CFBundleExecutable", &info],
+    );
+    let executable_name = ready_output(&executable_check, "resolve desktop executable")?;
+    if executable_name.contains('/') || executable_name.chars().any(char::is_whitespace) {
+        bail!("desktop CFBundleExecutable is invalid");
+    }
+    let executable_path = format!("{app_path}/Contents/MacOS/{executable_name}");
+    let version_check = host_probe(
+        host,
+        &["/usr/libexec/PlistBuddy", "-c", "Print:CFBundleShortVersionString", &info],
+    );
+    let version = ready_output(&version_check, "resolve desktop product version")?;
+    let digest_check = host_probe(host, &["shasum", "-a", "256", &executable_path]);
+    let digest_output = ready_output(&digest_check, "hash desktop executable")?;
+    let digest = digest_output.split_whitespace().next().unwrap_or_default().to_ascii_lowercase();
+    if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        bail!("desktop executable SHA-256 is invalid");
+    }
     manifest.runtime_product.kind = "desktop-bundle".into();
     manifest.runtime_product.identifier = bundle.clone();
     manifest.runtime_product.identity_source =
-        format!("typed host display-name resolution: {app_path}");
+        format!("typed host display-name resolution: bundle={app_path}; executable={executable_path}; version={version}; sha256={digest}");
     Ok((
         RuntimeExecutionIdentity {
             host: host.into(),
             platform: "macos".into(),
             device_id: None,
-            device_name: Some(app_path),
-            executable_path: None,
-            product_version: None,
-            executable_sha256: None,
+            device_name: Some(display_name),
+            executable_path: Some(executable_path),
+            product_version: Some(version),
+            executable_sha256: Some(digest),
         },
-        vec![search, metadata],
+        vec![search, metadata, executable_check, version_check, digest_check],
     ))
 }
 
@@ -1264,14 +1830,19 @@ fn prepared_runtime_check(
         || proof.device_id.as_deref().unwrap_or("") != device
         || proof.observed_by != "stado-runtime-readiness"
         || !proof.evidence_uri.starts_with("stado://")
+        || identity.product_version.as_deref() != Some(proof.product_version.as_str())
+        || identity.executable_sha256.as_deref() != Some(proof.executable_sha256.as_str())
         || proof.evidence_sha256.len() != 64
         || !proof.evidence_sha256.bytes().all(|byte| byte.is_ascii_hexdigit())
         || !proof.installed
         || !proof.first_run_completed
         || proof.pending_permission_prompts != 0
         || proof.pending_notification_prompts != 0
+        || !proof.notification_delivery_disabled
+        || !proof.permission_prompt_invocation_disabled
+        || !proof.notification_prompt_invocation_disabled
     {
-        bail!("prepared-runtime proof does not bind exact product/device and zero pending prompts");
+        bail!("prepared-runtime proof does not bind the exact product/device with first run completed, zero pending prompts, disabled permission/notification prompt invocation, and disabled notification delivery");
     }
     let check = host_probe(
         host,
@@ -1301,8 +1872,22 @@ fn prepared_runtime_check(
             != Some(proof.evidence_sha256.as_str())
         || observation.get("pending_permission_prompts").and_then(Value::as_u64) != Some(0)
         || observation.get("pending_notification_prompts").and_then(Value::as_u64) != Some(0)
+        || observation.get("notification_delivery_disabled").and_then(Value::as_bool)
+            != Some(true)
+        || observation
+            .get("permission_prompt_invocation_disabled")
+            .and_then(Value::as_bool)
+            != Some(true)
+        || observation
+            .get("notification_prompt_invocation_disabled")
+            .and_then(Value::as_bool)
+            != Some(true)
+        || observation.get("product_version").and_then(Value::as_str)
+            != identity.product_version.as_deref()
+        || observation.get("executable_sha256").and_then(Value::as_str)
+            != identity.executable_sha256.as_deref()
     {
-        bail!("prepared-runtime helper did not prove the exact safe state");
+        bail!("prepared-runtime helper did not attest the exact safe state, version and executable/package digest, including disabled permission and notification prompt invocation");
     }
     Ok(check)
 }
@@ -1318,9 +1903,22 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
             "checks": [],
         });
     }
+    if manifest.engine == "web" && manifest.service_identity.is_none() {
+        return json!({
+            "schema": "wisent.crawl-record-preflight.v2",
+            "record": manifest.record,
+            "ready": false,
+            "diagnostic": {
+                "code": "weles_service_identity_unbound",
+                "message": "web execution is unavailable until the exact authorized Weles service directory generation, active host, endpoint, consumer capability and action are bound"
+            },
+            "checks": [],
+        });
+    }
+    let original_manifest = manifest.clone();
     let result = (|| -> Result<Vec<Value>> {
         let host = host_report.get("host").and_then(Value::as_str).context("host report has no host")?;
-        let (identity, mut checks) = match manifest.runtime_product.kind.as_str() {
+        let (mut identity, mut checks) = match manifest.runtime_product.kind.as_str() {
             "ios-bundle" => (ios_booted_identity(host, host_report)?, Vec::new()),
             "android-package" => (android_device_identity(host, host_report)?, Vec::new()),
             "desktop-display-name" => resolve_desktop_identity(manifest, host)?,
@@ -1343,7 +1941,7 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
         let check = match manifest.runtime_product.kind.as_str() {
             "ios-bundle" => {
                 let udid = identity.device_id.as_deref().context("iOS identity has no UDID")?;
-                host_probe(host, &["xcrun", "simctl", "get_app_container", udid, product])
+                host_probe(host, &["xcrun", "simctl", "get_app_container", udid, product, "app"])
             }
             "android-package" => {
                 let serial = identity.device_id.as_deref().context("Android identity has no serial")?;
@@ -1387,6 +1985,9 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
                 bail!("URL probe did not resolve the exact declared surface");
             }
         }
+        if manifest.engine == "mobile" {
+            checks.extend(resolve_mobile_install_identity(manifest, &mut identity, host, &check)?);
+        }
         checks.push(check);
         if matches!(manifest.engine.as_str(), "mobile" | "desktop") {
             checks.push(prepared_runtime_check(manifest, &identity, host)?);
@@ -1413,15 +2014,18 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
             "prepared_runtime_proof": manifest.prepared_proof,
             "checks": checks,
         }),
-        Err(error) => json!({
-            "schema": "wisent.crawl-record-preflight.v2",
-            "record": manifest.record,
-            "ready": false,
-            "runtime_product": manifest.runtime_product,
-            "account": manifest.account,
-            "diagnostic": {"code": "runtime_identity_or_readiness_unavailable", "message": error.to_string()},
-            "checks": [],
-        }),
+        Err(error) => {
+            *manifest = original_manifest;
+            json!({
+                "schema": "wisent.crawl-record-preflight.v2",
+                "record": manifest.record,
+                "ready": false,
+                "runtime_product": manifest.runtime_product,
+                "account": manifest.account,
+                "diagnostic": {"code": "runtime_identity_or_readiness_unavailable", "message": error.to_string()},
+                "checks": [],
+            })
+        }
     }
 }
 
@@ -1433,35 +2037,48 @@ fn aggregate_catalog_entry(entry: &mut Value) {
         .flatten()
         .filter_map(|record| record.get("state").and_then(Value::as_str))
         .collect();
-    let state = if states.iter().all(|state| *state == "imported") && !states.is_empty() {
-        "imported"
-    } else if states.iter().all(|state| matches!(*state, "completed" | "uploaded" | "imported"))
-        && !states.is_empty()
-    {
-        "completed"
-    } else if states.iter().any(|state| *state == "running") {
+    let failure = |state: &&str| {
+        matches!(
+            *state,
+            "unavailable"
+                | "preflight_failed"
+                | "submission_failed"
+                | "lost"
+                | "failed"
+                | "cancelled"
+                | "partial"
+        )
+    };
+    let state = if states.iter().any(|state| *state == "running") {
         "running"
     } else if states.iter().any(|state| *state == "pending_review") {
         "pending_review"
-    } else if states.iter().any(|state| *state == "queued") {
-        if states.iter().any(|state| {
-            matches!(
-                *state,
-                "unavailable" | "preflight_failed" | "submission_failed" | "lost" | "failed" | "cancelled"
-            )
-        }) {
-            "partial"
-        } else {
-            "queued"
-        }
-    } else if states.iter().any(|state| matches!(*state, "completed" | "uploaded" | "imported" | "partial")) {
-        "partial"
-    } else if states.iter().any(|state| *state == "planned") {
+    } else if states.iter().any(|state| {
+        matches!(*state, "queued" | "submitting" | "preflight_passed")
+    }) {
+        "queued"
+    } else if states.iter().any(|state| matches!(*state, "planned" | "preflighting")) {
         "planned"
+    } else if states.iter().all(|state| *state == "imported") && !states.is_empty() {
+        "imported"
+    } else if states
+        .iter()
+        .all(|state| matches!(*state, "completed" | "uploaded" | "imported"))
+        && !states.is_empty()
+    {
+        "completed"
+    } else if states.iter().any(failure) {
+        "partial"
     } else {
         "failed"
     };
+    let mut failures: BTreeMap<String, usize> = BTreeMap::new();
+    for value in states.iter().filter(|state| failure(state)) {
+        *failures.entry((*value).to_string()).or_default() += 1;
+    }
     entry["state"] = json!(state);
+    entry["partial"] = json!(!failures.is_empty());
+    entry["failure_counts"] = serde_json::to_value(failures).unwrap_or(Value::Null);
 }
 
 fn persist_submission_receipt(
@@ -1628,6 +2245,7 @@ fn start(rest: &[String]) -> Result<()> {
     let mut catalogs = Vec::new();
     let mut record = None;
     let mut requested_run_id = None;
+    let mut bindings_path = None;
     let mut i = 0;
     while i < rest.len() {
         match rest[i].as_str() {
@@ -1659,6 +2277,10 @@ fn start(rest: &[String]) -> Result<()> {
                 i += 1;
                 admission_url = Some(rest.get(i).context("--admission-url needs a value")?.clone());
             }
+            "--bindings" => {
+                i += 1;
+                bindings_path = Some(rest.get(i).context("--bindings needs a value")?.clone());
+            }
             value => bail!("unknown argument: {value}"),
         }
         i += 1;
@@ -1668,6 +2290,7 @@ fn start(rest: &[String]) -> Result<()> {
         bail!("--record requires exactly one --catalog");
     }
     let source_revision = source_snapshot_revision()?;
+    let bindings = load_runtime_bindings(bindings_path.as_deref())?;
     let (discovered_hosts, discovered_admission_url) = registry_placements()?;
     let needs_web = specs.iter().any(|(_, engine)| *engine == "web");
     let admission_url = admission_url.or(discovered_admission_url);
@@ -1678,21 +2301,32 @@ fn start(rest: &[String]) -> Result<()> {
     let run_id = requested_run_id.unwrap_or_else(|| {
         format!("crawl-{}", crate::now_iso_utc().replace(':', "-").replace('T', "-"))
     });
-    let _guard = RunMutationGuard::acquire(&run_id)?;
     let request_identity = json!({
         "source_revision": source_revision,
         "catalogs": specs,
         "record": record,
         "hosts": hosts,
         "admission_url": admission_url,
+        "bindings_source": bindings.source,
+        "bindings_sha256": bindings.sha256,
+        "bindings_uri": bindings.uri,
     });
     let request_digest = crate::sha256_hex(&serde_json::to_vec(&request_identity)?);
     if run_path(&run_id).is_file() {
-        let mut run = load(Some(&run_id))?;
-        if run.get("request_digest").and_then(Value::as_str) != Some(&request_digest) {
-            bail!("run id {run_id} already belongs to a different exact crawl request");
+        {
+            let _guard = RunMutationGuard::acquire(&run_id)?;
+            let run = load(Some(&run_id))?;
+            if run.get("request_digest").and_then(Value::as_str) != Some(&request_digest) {
+                bail!("run id {run_id} already belongs to a different exact crawl request");
+            }
         }
-        continue_start(&mut run)?;
+        publish_runtime_bindings(&bindings)?;
+        let mut run = {
+            let _guard = RunMutationGuard::acquire(&run_id)?;
+            let mut run = load(Some(&run_id))?;
+            continue_start(&mut run)?;
+            run
+        };
         print_operation("start", &run, None)?;
         if has_failures(&run) {
             bail!("one or more records remain unavailable or failed");
@@ -1704,7 +2338,17 @@ fn start(rest: &[String]) -> Result<()> {
         let host = host_for(catalog, engine, &hosts, &discovered_hosts)?;
         let records = record_directories(catalog, record.as_deref())?
             .iter()
-            .map(|path| planned_record(&run_id, &source_revision, catalog, engine, &host, path))
+            .map(|path| {
+                planned_record(
+                    &run_id,
+                    &source_revision,
+                    catalog,
+                    engine,
+                    &host,
+                    path,
+                    &bindings,
+                )
+            })
             .collect::<Vec<_>>();
         entries.push(json!({
             "catalog": catalog,
@@ -1726,11 +2370,25 @@ fn start(rest: &[String]) -> Result<()> {
         "mutation_revision": 0,
         "hosts": hosts,
         "admission_url": admission_url,
+        "bindings_source": bindings.source,
+        "bindings_sha256": bindings.sha256,
+        "bindings_uri": bindings.uri,
         "state": "planned",
         "catalogs": entries,
     });
-    persist(&mut run)?;
-    continue_start(&mut run)?;
+    {
+        let _guard = RunMutationGuard::acquire(&run_id)?;
+        if run_path(&run_id).is_file() {
+            bail!("run id {run_id} was concurrently created");
+        }
+        persist(&mut run)?;
+    }
+    publish_runtime_bindings(&bindings)?;
+    {
+        let _guard = RunMutationGuard::acquire(&run_id)?;
+        run = load(Some(&run_id))?;
+        continue_start(&mut run)?;
+    }
     print_operation("start", &run, None)?;
     if has_failures(&run) {
         bail!("one or more records remain unavailable or failed");
@@ -1850,39 +2508,53 @@ fn update_run_state(run: &mut Value) {
         .flatten()
         .filter_map(|entry| entry.get("state").and_then(Value::as_str))
         .collect();
-    let state = if states.iter().all(|state| *state == "imported") && !states.is_empty() {
-        "imported"
-    } else if states.iter().all(|state| matches!(*state, "completed" | "uploaded" | "imported"))
-        && !states.is_empty()
-    {
-        "completed"
-    } else if states.iter().any(|state| *state == "running") {
+    let state = if states.iter().any(|state| *state == "running") {
         "running"
     } else if states.iter().any(|state| *state == "pending_review") {
         "pending_review"
-    } else if states.iter().any(|state| matches!(*state, "queued" | "planned" | "preflighting")) {
-        if states.iter().any(|state| matches!(*state, "failed" | "partial")) {
-            "partial"
-        } else {
-            "queued"
-        }
-    } else if states.iter().any(|state| matches!(*state, "partial" | "completed" | "uploaded" | "imported")) {
+    } else if states.iter().any(|state| *state == "queued") {
+        "queued"
+    } else if states.iter().any(|state| *state == "planned") {
+        "planned"
+    } else if states.iter().all(|state| *state == "imported") && !states.is_empty() {
+        "imported"
+    } else if states
+        .iter()
+        .all(|state| matches!(*state, "completed" | "uploaded" | "imported"))
+        && !states.is_empty()
+    {
+        "completed"
+    } else if states
+        .iter()
+        .any(|state| matches!(*state, "partial" | "completed" | "uploaded" | "imported"))
+    {
         "partial"
     } else {
         "failed"
     };
+    let partial = states.iter().any(|state| *state == "partial");
     run["state"] = json!(state);
+    run["partial"] = json!(partial);
 }
 
 fn status(rest: &[String]) -> Result<()> {
     let (run_id, record) = parse_run_and_record(rest, false)?;
-    let selected = load(run_id.as_deref())?;
+    let mut selected = load(run_id.as_deref())?;
     let selected_id = selected.get("run_id").and_then(Value::as_str).context("run has no id")?.to_string();
-    let _guard = RunMutationGuard::acquire(&selected_id)?;
-    let mut run = load(Some(&selected_id))?;
-    refresh(&mut run);
-    persist(&mut run)?;
-    print_operation("status", &run, record.as_deref())
+    match RunMutationGuard::acquire(&selected_id) {
+        Ok(_guard) => {
+            selected = load(Some(&selected_id))?;
+            refresh(&mut selected);
+            persist(&mut selected)?;
+        }
+        Err(error) => {
+            selected["status_refresh"] = json!({
+                "state": "read_only_snapshot",
+                "diagnostic": error.to_string(),
+            });
+        }
+    }
+    print_operation("status", &selected, record.as_deref())
 }
 
 fn parse_run_and_record(rest: &[String], require_run: bool) -> Result<(Option<String>, Option<String>)> {
