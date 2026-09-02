@@ -39,27 +39,42 @@ cargo build --release
 
 Every crawler that opens a product runs as an exact-revision job on a host explicitly selected through Stado; the coordinator never opens a local browser, simulator, terminal application, or native application.
 
-Use `spis crawl start` as the durable public coordinator. It preflights every selected family before the first submission, resolves engine placement through Stado, retains the exact argv and job IDs, and exposes `status`, `resume`, and `import`. Terminal successful jobs are downloaded and imported idempotently; verifier/apply and the catalog generator run after import. The surface-specific commands below are execution engines.
+`spis crawl start` is the durable public coordinator and the only supported entry point. One record is one immutable attempt: its input digest, catalog and record keys, attempt id, correlation id, Stado run id and both `stado://` attempt URIs are derived from the record itself, and every state transition is persisted under a durable per-record lock *before* the external effect it authorizes. A record held by another process is skipped, never failed.
 
-| Product surface | Command | Real execution boundary |
+```
+spis crawl bindings generate --weles-token-ref ITEM#FIELD --organization-ref ITEM#FIELD [--output PATH]
+spis crawl start  [--host ENGINE=TARGET] [--catalog SLUG ...] [--record SLUG] [--run-id ID] [--bindings PATH]
+spis crawl status [--run RUN_ID] [--record SLUG]
+spis crawl cancel --run RUN_ID [--record SLUG] --reason TEXT
+spis crawl resume --run RUN_ID [--record SLUG]
+spis crawl import --run RUN_ID [--record SLUG]
+```
+
+`start` is idempotent: re-running the same request digest continues the existing run. `resume` never reruns a Stado job — a terminal `failed`, `cancelled`, `lost` or `submission_failed` attempt becomes attempt N+1 with a fresh execution identity and fully recomputed identity, while `queued` and `running` records are left alone and completed records are imported. `cancel` is status-first, durable and idempotent. `import` verifies the typed worker report, the retained Stado submission receipt, the attempt artifact digest and byte count and every retained evidence hash before a staged, fsynced, atomically installed record transaction; earlier attempts and their partial diagnostics are preserved. Only an exact typed `stado.submission-receipt.v3` for exactly one job is accepted, and the coordinator compares the child's reported artifact and output URIs against the values it derived itself rather than adopting them.
+
+The surface-specific commands below are execution engines. Each takes exactly one `--record` and the immutable `--runtime-manifest-base64` that `spis crawl start` produced; they are not a second operator interface.
+
+| Product surface | Engine command | Real execution boundary |
 |---|---|---|
-| iOS applications | `spis crawl-mobile ios-app-examples --host <host>` | installed app via Appium and XCUITest |
-| Android applications | `spis crawl-mobile android-app-examples --host <host>` | installed app via Appium and UiAutomator2 |
-| macOS applications | `spis crawl-desktop macos-app-examples --host <host>` | installed app via Cua Driver |
-| Cross-platform desktop applications | `spis crawl-desktop desktop-app-examples --host <host>` | installed app via Cua Driver |
-| Web applications | `spis crawl-web web-app-examples --host <host> --admission-url <url>` | signed-in product via Weles |
-| Dashboards and consoles | `spis crawl-web dashboard-console-examples --host <host> --admission-url <url>` | signed-in console via Weles |
-| Terminal applications | `spis crawl-tui --host <host>` | installed app in an isolated real tmux PTY |
-| Command-line applications | `spis crawl-cli --host <host>` | installed binary in an isolated real tmux PTY |
-| Onboarding and authentication | `spis crawl-web onboarding-auth-examples --host <host> --admission-url <url>` | account-bound journey via Weles |
-| Documentation sites | `spis crawl-docs --all --host <host>` | bounded HTTP crawl on Stado |
-| App-store listings | `spis crawl-web app-store-listing-examples --host <host> --admission-url <url>` | live store listing via Weles |
-| Design systems | `spis crawl-web design-system-examples --host <host> --admission-url <url>` | live docs and component explorer via Weles |
-| Reports and evidence | `spis crawl-web report-evidence-examples --host <host> --admission-url <url>` | interactive report via Weles |
-| Pricing pages | `spis crawl-web pricing-page-examples --host <host> --admission-url <url>` | live plan-selection surface via Weles |
-| Landing pages | `spis crawl-web landing-page-examples --host <host> --admission-url <url>` | live responsive page via Weles |
+| iOS applications | `spis crawl-mobile ios-app-examples` | installed app via Appium and XCUITest |
+| Android applications | `spis crawl-mobile android-app-examples` | installed app via Appium and UiAutomator2 |
+| macOS applications | `spis crawl-desktop macos-app-examples` | installed app via Cua Driver |
+| Cross-platform desktop applications | `spis crawl-desktop desktop-app-examples` | installed app via Cua Driver |
+| Web applications | `spis crawl-web web-app-examples` | real browser session via the official Weles task API |
+| Dashboards and consoles | `spis crawl-web dashboard-console-examples` | real browser session via the official Weles task API |
+| Terminal applications | `spis crawl-tui` | installed app in an isolated real tmux PTY |
+| Command-line applications | `spis crawl-cli` | installed binary in an isolated real tmux PTY |
+| Onboarding and authentication | `spis crawl-web onboarding-auth-examples` | real browser session via the official Weles task API |
+| Documentation sites | `spis crawl-docs` | bounded HTTP corpus crawl on Stado |
+| App-store listings | `spis crawl-web app-store-listing-examples` | real browser session via the official Weles task API |
+| Design systems | `spis crawl-web design-system-examples` | real browser session via the official Weles task API |
+| Reports and evidence | `spis crawl-web report-evidence-examples` | real browser session via the official Weles task API |
+| Pricing pages | `spis crawl-web pricing-page-examples` | real browser session via the official Weles task API |
+| Landing pages | `spis crawl-web landing-page-examples` | real browser session via the official Weles task API |
 
-Mobile and desktop crawlers accept fixture files whose values can come from environment variables. `--secret-env NAME=SKARBIEC_ITEM` asks Stado to inject those values from Skarbiec without placing credentials in a command line or artifact. CLI crawls accept declared non-destructive journeys; Weles account bindings select an existing product identity. Weles crawls wait for every queued action and retain the sanitized job result, receipt, and artifact pointers. Destructive paths stop at the final confirmation and retain that state without committing it.
+`spis crawl bindings generate` writes the exact typed binding for every checked-in record; with `--output` an existing generated document is replaced atomically after validation and read-back, and the reported outcome is `created`, `replaced` or `unchanged`. `headless` is set only for the web engine. Native records without an explicit binding and an independently observed authorization proof stay explicitly unconfigured and surface one typed `unavailable` attempt diagnostic rather than disappearing from the run.
+
+Browser crawls are anonymous: `credentialRefs` is always empty, `evidencePolicy` is always `full`, and the only secrets in play are the bearer and organization references that Stado injects into the pinned worker — the coordinator never holds either. The worker confirms the deployed Weles release against both the Stado service directory and `{endpoint}/api/v1/version`, requires the requested URL to be the exact committed `product_url` and the final URL to be same-origin, and requires a typed screenshot and accessibility-tree inventory whose signed digests match the bytes actually retained. Native crawls refuse first-run consent, system permission prompts, notifications, purchases and any final destructive action; destructive paths stop at the final confirmation and retain that state without committing it. Every crawler subprocess runs in its own process group under a hard timeout with capped output streams.
 
 ## Official Weles bridge and receipt provenance
 
@@ -226,9 +241,10 @@ checks independently.
 | `src/commands/` | Rust implementations of acquisition, measurement, validation, query, and monitoring commands |
 | `src/weles_provenance.rs` | typed, fail-closed Rust verification of receipt-bound record and observation provenance |
 | `weles-bridge/` | self-contained Node ESM bridge and exact vendored official Weles client source, license, and commit metadata |
+| `src/commands/crawl.rs` | durable per-record crawl coordinator: planning, runtime manifests, preflight, submission, cancellation, resumption and attempt import |
 | `src/commands/crawl_mobile.rs` | real iOS and Android application state-graph crawler |
 | `src/commands/crawl_desktop.rs` | real macOS and desktop application state-graph crawler |
-| `src/commands/crawl_web.rs` | Weles plan builder, completion wait, and Stado coordinator for browser products |
+| `src/commands/crawl_web.rs` | one-record official Weles browser-evidence task bridge and its Stado coordinator |
 | `src/commands/crawl_tui.rs` | terminal-application PTY crawler |
 | `src/commands/crawl_cli.rs` | recursive CLI command and journey crawler |
 | `src/commands/crawl_docs.rs` | documentation inventory and full-text crawler |
@@ -251,4 +267,4 @@ checks independently.
 
 ## Status
 
-The pricing-page and landing-page selectors now generate 50 exact official candidates per family. Their source manifests remain explicitly `pending-weles` until Weles returns a retained screenshot and machine-readable surface proof: pricing requires a visible comparison of at least two plans or prices, while landing requires the normalized observed URL to match the requested page exactly. Former family mismatches were removed rather than preserved beside valid work. `spis crawl start` validates every selected record, runs one durable host-capability preflight per engine/host, records diagnostics per record, and refuses expensive submission when its Appium/device, Cua Driver, terminal binary, Weles admission, or docs network/storage prerequisites are absent.
+The pricing-page and landing-page selectors generate 50 exact official candidates per family. Their source manifests remain explicitly `pending-weles` until an imported browser attempt carries a signed evidence manifest whose retained screenshot and accessibility-tree bytes match the digests inside the receipt, and whose requested URL is the exact committed `product_url` with a same-origin final URL. Nothing is inferred from crawler prose: a claim is either bound to a verified receipt or it stays a declared gap. Former family mismatches were removed rather than preserved beside valid work. `spis crawl start` validates every selected record, runs one durable host-capability preflight per engine/host — including an independent `{endpoint}/api/v1/version` release confirmation for browser crawls — records one typed diagnostic per record, and refuses expensive submission when its Appium/device, Cua Driver, terminal binary, Weles admission, or docs network/storage prerequisites are absent.
