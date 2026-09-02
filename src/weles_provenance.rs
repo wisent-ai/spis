@@ -1091,6 +1091,7 @@ fn validate_request_and_evidence_manifest(
         &envelope.evidence_inventory,
         &envelope.weles_task_id,
         record_dir,
+        document.expected_claims.outcome == SUCCESSFUL_OUTCOME,
     )?;
     let facts = manifest.facts();
     let manifest_requested_url = parse_http_url(facts.requested_url, "manifest requested URL")?;
@@ -1154,6 +1155,7 @@ fn validate_evidence_inventory(
     entries: &[WelesEvidenceInventoryEntry],
     task_id: &str,
     record_dir: &Path,
+    require_browser_evidence: bool,
 ) -> Result<(), String> {
     let prefix = format!("stado://weles/recordings/{task_id}/");
     let screenshot_uri = format!("{prefix}artifacts/browser_evidence_final.png");
@@ -1205,7 +1207,13 @@ fn validate_evidence_inventory(
             return Err("retained evidence bytes differ from the signed inventory".to_string());
         }
     }
-    if !kinds.contains("screenshot") || !kinds.contains("accessibility_tree") {
+    // Labelling above is by exact URI and outcome-independent; the DEMAND below applies
+    // only to a completed attempt, exactly as the service demands them only from a
+    // succeeded task and as the bridge and the worker already scope it. A cancelled task
+    // that never captured anything signs an inventory that is legitimately without them.
+    if require_browser_evidence
+        && (!kinds.contains("screenshot") || !kinds.contains("accessibility_tree"))
+    {
         return Err(
             "evidence inventory lacks the required screenshot/accessibility_tree artifacts"
                 .to_string(),
