@@ -545,8 +545,52 @@ fn source_snapshot_revision() -> Result<String> {
     Ok(runtime)
 }
 
+/// Environment Stado itself reads to find its configuration, authenticate, and
+/// select the backend a `stado://` URI resolves against. Nothing else reaches a
+/// crawl subprocess: the worker environment carries unrelated credentials that
+/// Stado has no use for, and a child that never receives them cannot leak them.
+///
+/// Every name here is a documented Stado binding, not a guess:
+/// `STADO_CONFIG` is `config_file::FILE_ENV`, the explicit config-file override
+/// that precedes `./stado.config.json` and `~/.config/stado/config.json`;
+/// `STADO_API_TOKEN` and `STADO_API_TOKEN_FILE` are the object API bearer, read
+/// directly by the storage client before it falls back to
+/// `storage.stado.token_file`; `WC_STORAGE_BACKEND` selects the storage adapter;
+/// `WC_STADO_STORAGE_URL`, `WC_STADO_STORAGE_TOKEN_FILE`,
+/// `WC_STADO_STORAGE_NAMESPACE` and `WC_STADO_STORAGE_CA_FILE` are that
+/// adapter's catalog fields (endpoint, token file, namespace, private CA root);
+/// `WC_LOCAL_STORAGE_PATH` is the same field for a device-local backend; and
+/// `STADO_RESOLVER_SSH_KEY_FILE` relocates the resolver key `stado host exec`
+/// authenticates with. Attribution-only variables (`USER`, `LOGNAME`,
+/// `HOSTNAME`) are deliberately excluded: they feed a registry actor string that
+/// already defaults to empty, and they are not needed to reach any backend.
+const STADO_PASSTHROUGH_ENV: [&str; 12] = [
+    "PATH",
+    "HOME",
+    "STADO_CONFIG",
+    "STADO_API_TOKEN",
+    "STADO_API_TOKEN_FILE",
+    "STADO_RESOLVER_SSH_KEY_FILE",
+    "WC_STORAGE_BACKEND",
+    "WC_STADO_STORAGE_URL",
+    "WC_STADO_STORAGE_TOKEN_FILE",
+    "WC_STADO_STORAGE_NAMESPACE",
+    "WC_STADO_STORAGE_CA_FILE",
+    "WC_LOCAL_STORAGE_PATH",
+];
+
 pub(crate) fn stado_command() -> Command {
-    Command::new(std::env::var_os("SPIS_STADO_BIN").unwrap_or_else(|| "stado".into()))
+    let mut command =
+        Command::new(std::env::var_os("SPIS_STADO_BIN").unwrap_or_else(|| "stado".into()));
+    command.env_clear();
+    for name in STADO_PASSTHROUGH_ENV {
+        // Only when set: an empty value is a configured value to Stado, and
+        // would mask the config file entry the operator actually wrote.
+        if let Some(value) = std::env::var_os(name) {
+            command.env(name, value);
+        }
+    }
+    command
 }
 fn read_bounded<R: Read>(mut reader: R, maximum: usize) -> std::io::Result<(Vec<u8>, bool)> {
     let mut retained = Vec::with_capacity(maximum.min(64 * 1024));
@@ -768,22 +812,45 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
     }
     let result = (|| -> Result<Value> {
         let archive = parent.join(format!("{attempt_name}.tar.gz"));
-        if !archive.exists() {
-            let mut stado = stado_command();
-            stado.args(["storage", "archive"]).arg(root).arg(&archive);
-            let output = bounded_command_output(
-                &mut stado,
-                "archive crawl attempt",
-                Duration::from_secs(600),
-                4 * 1024 * 1024,
-            )?;
-            if !output.status.success() {
-                bail!(
-                    "stado storage archive refused the crawl attempt: {}",
-                    String::from_utf8_lossy(&output.stderr).trim()
-                );
+        // Always rebuild. A surviving `<attempt_id>.tar.gz` proves nothing about
+        // the tree just audited above: an earlier publish attempt may have built
+        // it, the run may then have resumed and appended pages, and reusing that
+        // file would publish stale content under the current attempt's receipt.
+        // `storage archive` is deterministic (mtime 0, sorted members, symlinks
+        // refused), so rebuilding is cheap and always correct.
+        //
+        // It also refuses to overwrite (`create_new`), so build under a staged
+        // sibling and swap it in with a rename. That keeps the crash window safe:
+        // `archive` is only ever the previous complete archive or the new
+        // complete one, never a truncated stream. `flock` above still fences a
+        // second publisher, so the staged path cannot be contended.
+        let staged = parent.join(format!(".{attempt_name}.tar.gz.staged"));
+        match std::fs::remove_file(&staged) {
+            Ok(()) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => {
+                return Err(error).with_context(|| {
+                    format!("remove staged crawl attempt archive {}", staged.display())
+                })
             }
         }
+        let mut stado = stado_command();
+        stado.args(["storage", "archive"]).arg(root).arg(&staged);
+        let output = bounded_command_output(
+            &mut stado,
+            "archive crawl attempt",
+            Duration::from_secs(600),
+            4 * 1024 * 1024,
+        )?;
+        if !output.status.success() {
+            bail!(
+                "stado storage archive refused the crawl attempt: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+        }
+        std::fs::rename(&staged, &archive).with_context(|| {
+            format!("install rebuilt crawl attempt archive {}", archive.display())
+        })?;
         let (sha256, bytes) = hash_regular_file(&archive, MAX_ATTEMPT_ARCHIVE_BYTES)?;
         let mut stado = stado_command();
         stado
