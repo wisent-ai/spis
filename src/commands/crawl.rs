@@ -616,6 +616,25 @@ pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {
     result
 }
 
+#[derive(Debug)]
+struct RecordLockBusy {
+    run_id: String,
+    catalog: String,
+    record: String,
+}
+
+impl std::fmt::Display for RecordLockBusy {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            formatter,
+            "{}/{}/{} is already being mutated",
+            self.run_id, self.catalog, self.record
+        )
+    }
+}
+
+impl std::error::Error for RecordLockBusy {}
+
 struct RecordMutationGuard {
     file: File,
 }
@@ -636,7 +655,12 @@ impl RecordMutationGuard {
             .create(true)
             .open(directory.join(format!("{record}.lock")))?;
         if unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
-            bail!("{run_id}/{catalog}/{record} is already being mutated");
+            return Err(RecordLockBusy {
+                run_id: run_id.to_string(),
+                catalog: catalog.to_string(),
+                record: record.to_string(),
+            }
+            .into());
         }
         Ok(Self { file })
     }
@@ -914,7 +938,14 @@ fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<Vec<String>>
 
 fn invoke_engine(args: &[String]) -> Result<Output> {
     let executable = std::env::current_exe().context("locate running spis binary")?;
-    Command::new(executable).args(args).output().context("launch crawler coordinator")
+    let mut command = Command::new(executable);
+    command.args(args);
+    bounded_command_output(
+        &mut command,
+        "crawler coordinator",
+        Duration::from_secs(180),
+        8 * 1024 * 1024,
+    )
 }
 
 fn selected_specs(selected: &[String]) -> Result<Vec<(&'static str, &'static str)>> {
@@ -2795,6 +2826,40 @@ fn aggregate_catalog_entry(entry: &mut Value) {
     entry["failure_counts"] = serde_json::to_value(failures).unwrap_or(Value::Null);
 }
 
+fn submission_receipt_path(
+    run_id: &str,
+    catalog: &str,
+    record: &str,
+    attempt_id: &str,
+) -> Result<PathBuf> {
+    safe_component(run_id, "run id")?;
+    safe_component(catalog, "catalog")?;
+    safe_component(record, "record")?;
+    safe_component(attempt_id, "attempt id")?;
+    Ok(run_root()?
+        .join(run_id)
+        .join("receipts")
+        .join(catalog)
+        .join(record)
+        .join(attempt_id)
+        .join("receipt.json"))
+}
+
+fn load_submission_receipt(
+    run_id: &str,
+    catalog: &str,
+    record: &str,
+    attempt_id: &str,
+) -> Result<Option<Value>> {
+    let path = submission_receipt_path(run_id, catalog, record, attempt_id)?;
+    if !path.is_file() {
+        return Ok(None);
+    }
+    Ok(Some(crate::read_json(
+        path.to_str().context("receipt path is not UTF-8")?,
+    )?))
+}
+
 fn persist_submission_receipt(
     run_id: &str,
     catalog: &str,
@@ -2802,17 +2867,7 @@ fn persist_submission_receipt(
     attempt_id: &str,
     receipt: &Value,
 ) -> Result<()> {
-    safe_component(run_id, "run id")?;
-    safe_component(catalog, "catalog")?;
-    safe_component(record, "record")?;
-    safe_component(attempt_id, "attempt id")?;
-    let path = run_root()?
-        .join(run_id)
-        .join("receipts")
-        .join(catalog)
-        .join(record)
-        .join(attempt_id)
-        .join("receipt.json");
+    let path = submission_receipt_path(run_id, catalog, record, attempt_id)?;
     if path.is_file() {
         let existing: Value =
             crate::read_json(path.to_str().context("receipt path is not UTF-8")?)?;
@@ -2957,7 +3012,6 @@ fn continue_record(
                 | "imported"
                 | "running"
                 | "queued"
-                | "submitting"
                 | "cancel_pending"
                 | "pending_review"
                 | "cancelled"
@@ -2991,7 +3045,7 @@ fn continue_record(
         }
     };
 
-    let command = if state == "preflight_passed" {
+    let command = if matches!(state.as_str(), "preflight_passed" | "submitting") {
         let retained = snapshot
             .get("command")
             .and_then(Value::as_array)
@@ -3101,60 +3155,79 @@ fn continue_record(
             "durable cancel intent won the submission race".into(),
         );
     }
-    if before_submit.get("state").and_then(Value::as_str) != Some("preflight_passed") {
+    if !matches!(
+        before_submit.get("state").and_then(Value::as_str),
+        Some("preflight_passed" | "submitting")
+    ) {
         return Ok(());
     }
-    mutate_record(run_id, catalog, record_name, |entry| {
-        if entry.get("state").and_then(Value::as_str) == Some("preflight_passed")
-            && !entry.get("cancel_intent").is_some_and(Value::is_object)
-        {
-            entry["state"] = json!("submitting");
-        }
-        Ok(())
-    })?;
+    if before_submit.get("state").and_then(Value::as_str) == Some("preflight_passed") {
+        mutate_record(run_id, catalog, record_name, |entry| {
+            if entry.get("state").and_then(Value::as_str) == Some("preflight_passed")
+                && !entry.get("cancel_intent").is_some_and(Value::is_object)
+            {
+                entry["state"] = json!("submitting");
+                entry["submission_transition"] = json!({
+                    "state": "intent_persisted",
+                    "attempt_id": manifest.attempt_id,
+                });
+            }
+            Ok(())
+        })?;
+    }
     let armed = record_snapshot(run_id, catalog, record_name)?;
-    drop(record_guard);
     if armed.get("state").and_then(Value::as_str) != Some("submitting") {
         return Ok(());
     }
-    let output = match invoke_engine(&command) {
-        Ok(output) => output,
-        Err(error) => {
+    let recovered = load_submission_receipt(
+        run_id,
+        catalog,
+        &manifest.record,
+        &manifest.attempt_id,
+    )?;
+    drop(record_guard);
+    let receipt = if let Some(receipt) = recovered {
+        receipt
+    } else {
+        let output = match invoke_engine(&command) {
+            Ok(output) => output,
+            Err(error) => {
+                return mark_record_failure(
+                    run_id,
+                    catalog,
+                    record_name,
+                    "submission_failed",
+                    "crawler_coordinator_launch_failed",
+                    format!("{error:#}"),
+                );
+            }
+        };
+        if !output.status.success() {
             return mark_record_failure(
                 run_id,
                 catalog,
                 record_name,
                 "submission_failed",
-                "crawler_coordinator_launch_failed",
-                format!("{error:#}"),
+                "stado_submission_failed",
+                format!(
+                    "{}{}",
+                    String::from_utf8_lossy(&output.stdout).trim(),
+                    String::from_utf8_lossy(&output.stderr).trim()
+                ),
             );
         }
-    };
-    if !output.status.success() {
-        return mark_record_failure(
-            run_id,
-            catalog,
-            record_name,
-            "submission_failed",
-            "stado_submission_failed",
-            format!(
-                "{}{}",
-                String::from_utf8_lossy(&output.stdout).trim(),
-                String::from_utf8_lossy(&output.stderr).trim()
-            ),
-        );
-    }
-    let receipt = match parse_submission(&output.stdout) {
-        Ok(receipt) => receipt,
-        Err(error) => {
-            return mark_record_failure(
-                run_id,
-                catalog,
-                record_name,
-                "submission_failed",
-                "submission_receipt_invalid",
-                error.to_string(),
-            );
+        match parse_submission(&output.stdout) {
+            Ok(receipt) => receipt,
+            Err(error) => {
+                return mark_record_failure(
+                    run_id,
+                    catalog,
+                    record_name,
+                    "submission_failed",
+                    "submission_receipt_invalid",
+                    error.to_string(),
+                );
+            }
         }
     };
     let stado = receipt.get("stado_receipt");
@@ -3315,6 +3388,9 @@ fn continue_start(run_id: &str) -> Result<Value> {
                 &host_report,
                 record_name,
             ) {
+                if error.downcast_ref::<RecordLockBusy>().is_some() {
+                    continue;
+                }
                 mark_record_failure(
                     run_id,
                     &catalog,

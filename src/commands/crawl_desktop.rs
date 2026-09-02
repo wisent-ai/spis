@@ -11,6 +11,7 @@ use std::collections::HashSet;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::time::{Duration, SystemTime};
 const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
 
 #[derive(Clone, Debug)]
@@ -69,9 +70,12 @@ fn call_with_cli_options(
     let mut command = Command::new(cua_driver()?);
     command.arg(tool).arg(serde_json::to_string(payload)?);
     command.args(options);
-    let output = command
-        .output()
-        .with_context(|| format!("start cua-driver {tool}"))?;
+    let output = super::crawl::bounded_command_output(
+        &mut command,
+        &format!("cua-driver {tool}"),
+        Duration::from_secs(30),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "cua-driver {tool} failed: status={}; stdout={:?}; stderr={:?}",
@@ -80,13 +84,8 @@ fn call_with_cli_options(
             String::from_utf8_lossy(&output.stderr)
         );
     }
-    let text = String::from_utf8_lossy(&output.stdout);
-    text.lines()
-        .rev()
-        .filter_map(|line| serde_json::from_str(line).ok())
-        .next()
-        .or_else(|| serde_json::from_str(&text).ok())
-        .ok_or_else(|| anyhow!("cua-driver {tool} returned no JSON; stdout={text:?}"))
+    serde_json::from_slice(&output.stdout)
+        .with_context(|| format!("cua-driver {tool} returned no exact JSON document"))
 }
 
 struct SessionGuard {
@@ -123,44 +122,60 @@ impl Drop for RecordingGuard {
 }
 
 fn find_i64(value: &Value, key: &str) -> Option<i64> {
-    match value {
-        Value::Object(map) => map
-            .get(key)
-            .and_then(Value::as_i64)
-            .or_else(|| map.values().find_map(|value| find_i64(value, key))),
-        Value::Array(values) => values.iter().find_map(|value| find_i64(value, key)),
+    let object = value.as_object()?;
+    let direct = object.get(key).and_then(Value::as_i64);
+    let result = object
+        .get("result")
+        .and_then(Value::as_object)
+        .and_then(|result| result.get(key))
+        .and_then(Value::as_i64);
+    match (direct, result) {
+        (Some(left), Some(right)) if left != right => None,
+        (Some(value), _) | (_, Some(value)) => Some(value),
         _ => None,
     }
 }
 
 fn find_elements(value: &Value) -> Option<&Vec<Value>> {
-    match value {
-        Value::Object(map) => map
-            .get("elements")
-            .and_then(Value::as_array)
-            .or_else(|| map.values().find_map(find_elements)),
-        Value::Array(values) => values.iter().find_map(find_elements),
+    let object = value.as_object()?;
+    let direct = object.get("elements").and_then(Value::as_array);
+    let result = object
+        .get("result")
+        .and_then(Value::as_object)
+        .and_then(|result| result.get("elements"))
+        .and_then(Value::as_array);
+    match (direct, result) {
+        (Some(left), Some(right)) if left != right => None,
+        (Some(value), None) | (None, Some(value)) | (Some(value), Some(_)) => Some(value),
         _ => None,
     }
 }
 
 fn find_bool(value: &Value, key: &str) -> Option<bool> {
-    match value {
-        Value::Object(map) => map
-            .get(key)
-            .and_then(Value::as_bool)
-            .or_else(|| map.values().find_map(|value| find_bool(value, key))),
-        Value::Array(values) => values.iter().find_map(|value| find_bool(value, key)),
+    let object = value.as_object()?;
+    let direct = object.get(key).and_then(Value::as_bool);
+    let result = object
+        .get("result")
+        .and_then(Value::as_object)
+        .and_then(|result| result.get(key))
+        .and_then(Value::as_bool);
+    match (direct, result) {
+        (Some(left), Some(right)) if left != right => None,
+        (Some(value), _) | (_, Some(value)) => Some(value),
         _ => None,
     }
 }
 fn find_string<'a>(value: &'a Value, key: &str) -> Option<&'a str> {
-    match value {
-        Value::Object(map) => map
-            .get(key)
-            .and_then(Value::as_str)
-            .or_else(|| map.values().find_map(|value| find_string(value, key))),
-        Value::Array(values) => values.iter().find_map(|value| find_string(value, key)),
+    let object = value.as_object()?;
+    let direct = object.get(key).and_then(Value::as_str);
+    let result = object
+        .get("result")
+        .and_then(Value::as_object)
+        .and_then(|result| result.get(key))
+        .and_then(Value::as_str);
+    match (direct, result) {
+        (Some(left), Some(right)) if left != right => None,
+        (Some(value), _) | (_, Some(value)) => Some(value),
         _ => None,
     }
 }
@@ -169,10 +184,14 @@ fn preflight() -> Result<()> {
     if std::env::consts::OS != "macos" {
         return Ok(());
     }
-    let output = Command::new(cua_driver()?)
-        .args(["permissions", "status", "--json"])
-        .output()
-        .context("read Cua Driver permission status")?;
+    let mut command = Command::new(cua_driver()?);
+    command.args(["permissions", "status", "--json"]);
+    let output = super::crawl::bounded_command_output(
+        &mut command,
+        "Cua Driver permission status",
+        Duration::from_secs(15),
+        1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "cua-driver permission status failed: {}",
@@ -234,7 +253,17 @@ fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
 }
 
 fn snapshot(session: &str, pid: i64, window_id: i64, screenshot: &Path) -> Result<Value> {
-    call_with_cli_options(
+    if let Some(parent) = screenshot.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    match std::fs::symlink_metadata(screenshot) {
+        Ok(_) => std::fs::remove_file(screenshot)
+            .with_context(|| format!("remove stale screenshot {}", screenshot.display()))?,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
+    }
+    let started = SystemTime::now();
+    let mut response = call_with_cli_options(
         "get_window_state",
         &json!({
             "session": session,
@@ -247,7 +276,32 @@ fn snapshot(session: &str, pid: i64, window_id: i64, screenshot: &Path) -> Resul
             std::ffi::OsStr::new("--screenshot-out-file"),
             screenshot.as_os_str(),
         ],
-    )
+    )?;
+    let metadata = std::fs::symlink_metadata(screenshot)
+        .with_context(|| format!("read fresh screenshot metadata {}", screenshot.display()))?;
+    if metadata.file_type().is_symlink()
+        || !metadata.file_type().is_file()
+        || metadata.len() == 0
+        || metadata.len() > 16 * 1024 * 1024
+        || metadata.modified().is_ok_and(|modified| modified < started)
+    {
+        bail!("Cua screenshot is not a fresh bounded regular file");
+    }
+    let bytes = std::fs::read(screenshot)?;
+    if !bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
+        bail!("Cua screenshot is not an exact PNG byte stream");
+    }
+    let evidence = json!({
+        "path": screenshot,
+        "sha256": hex::encode(Sha256::digest(&bytes)),
+        "bytes": bytes.len(),
+        "media_type": "image/png",
+    });
+    response
+        .as_object_mut()
+        .context("Cua window-state response must be an object")?
+        .insert("screenshot_evidence".into(), evidence);
+    Ok(response)
 }
 
 fn normalize(value: &str) -> String {
@@ -1054,10 +1108,14 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
         "--output-uri".to_string(),
         output_uri.clone(),
     ];
-    let output = super::crawl::stado_command()
-        .args(arguments)
-        .output()
-        .context("submit desktop crawl through Stado")?;
+    let mut stado = super::crawl::stado_command();
+    stado.args(arguments);
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "submit desktop crawl through Stado",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "Stado refused desktop crawl: {}",
@@ -1100,12 +1158,17 @@ fn publish_artifact(run_root: &Path, uri: &str) -> Result<Value> {
         .context("desktop attempt artifact root has no UTF-8 name")?;
     let archive = run_root.with_file_name(format!("{attempt_name}.tar.gz"));
     if !archive.is_file() {
-        let output = super::crawl::stado_command()
+        let mut stado = super::crawl::stado_command();
+        stado
             .args(["storage", "archive"])
             .arg(run_root)
-            .arg(&archive)
-            .output()
-            .context("archive desktop crawl")?;
+            .arg(&archive);
+        let output = super::crawl::bounded_command_output(
+            &mut stado,
+            "archive desktop crawl",
+            Duration::from_secs(120),
+            4 * 1024 * 1024,
+        )?;
         if !output.status.success() {
             bail!(
                 "stado storage archive refused desktop crawl artifacts: {}",
@@ -1114,11 +1177,16 @@ fn publish_artifact(run_root: &Path, uri: &str) -> Result<Value> {
         }
     }
     let (sha256, bytes) = hash_artifact(&archive)?;
-    let output = super::crawl::stado_command()
+    let mut stado = super::crawl::stado_command();
+    stado
         .args(["storage", "put", "--if-absent", uri])
-        .arg(&archive)
-        .output()
-        .context("publish desktop crawl")?;
+        .arg(&archive);
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "publish desktop crawl",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "stado storage put refused desktop crawl artifacts: {}",
@@ -1129,11 +1197,14 @@ fn publish_artifact(run_root: &Path, uri: &str) -> Result<Value> {
     if readback.exists() {
         std::fs::remove_file(&readback)?;
     }
-    let output = super::crawl::stado_command()
-        .args(["storage", "get", uri])
-        .arg(&readback)
-        .output()
-        .context("read back desktop crawl")?;
+    let mut stado = super::crawl::stado_command();
+    stado.args(["storage", "get", uri]).arg(&readback);
+    let output = super::crawl::bounded_command_output(
+        &mut stado,
+        "read back desktop crawl",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
     if !output.status.success() {
         bail!(
             "stado storage readback refused desktop crawl artifacts: {}",
