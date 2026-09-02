@@ -13,6 +13,8 @@ use std::fs;
 use std::io::{Read, Write};
 use std::path::{Component, Path, PathBuf};
 use std::process::{Command, Stdio};
+#[cfg(unix)]
+use std::os::unix::process::CommandExt;
 
 pub const BRIDGE_COMMAND_SCHEMA: &str = "wisent.spis-weles-bridge-command.v1";
 pub const BRIDGE_CONFIG_SCHEMA: &str = "wisent.spis-weles-bridge-config.v1";
@@ -31,6 +33,9 @@ pub const SPIS_WELES_ACTION: &str = "generic_browser_task";
 pub const OFFICIAL_CLIENT_PACKAGE: &str = "@wisent-ai/weles-client";
 pub const OFFICIAL_CLIENT_COMMIT: &str =
     "37798a26022a040fbd0a4a4a25c99b5559d95a32";
+const BRIDGE_SCRIPT_SHA256: &str =
+    "9ace757ecf181add567dcf4b7eec501c9b9a4155866e86d42cbcf83c5ac262b1";
+const MAX_BRIDGE_SCRIPT_BYTES: u64 = 256 * 1024;
 
 const MAX_DOCUMENT_BYTES: u64 = 4 * 1024 * 1024;
 const MAX_RETAINED_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
@@ -79,6 +84,9 @@ pub struct RetainedReceipt {
     pub action: String,
     pub outcome: String,
     pub evidence_digest: String,
+    pub request_digest: String,
+    pub result_digest: String,
+    pub spis_binding: WelesAttemptBinding,
     pub key_id: String,
     pub signature: String,
     pub signed_payload: String,
@@ -497,7 +505,8 @@ impl VerifiedProvenanceSet {
                     return false;
                 };
                 let stripped = strip_provenance(value);
-                canonical_json_sha256(source_value) == expected_digest
+                canonical_json_sha256(source_value)
+                    .is_ok_and(|digest| digest == expected_digest)
                     && *source_value == stripped
                     && self.retained_member_matches(value)
             }
@@ -867,7 +876,7 @@ fn validate_request_and_evidence_manifest(
     validate_unique_nonempty(&request.input.constraints, "request constraints")?;
     let request_value = serde_json::to_value(request)
         .map_err(|_| "retained official request could not be canonicalized".to_string())?;
-    let request_digest = format!("sha256:{}", canonical_json_sha256(&request_value));
+    let request_digest = format!("sha256:{}", canonical_json_sha256(&request_value)?);
     if request_digest != envelope.weles_request_digest
         || request_digest != document.expected_claims.request_digest
     {
@@ -1017,21 +1026,50 @@ fn validate_document_shape(document: &WelesProvenanceDocument) -> Result<(), Str
     {
         return Err("verification document does not name the pinned official client and key set".to_string());
     }
-    if document.receipt.schema != "weles.receipt.current" {
-        return Err("retained receipt schema is unsupported".to_string());
-    }
-    if !is_sha256(&document.artifact.sha256)
-        || document.expected_claims.evidence_digest != document.artifact.sha256
+    let receipt = &document.receipt;
+    let expected = &document.expected_claims;
+    if receipt.schema != "weles.receipt.current"
+        || receipt.task_id.trim().is_empty()
+        || receipt.organization_id.trim().is_empty()
+        || receipt.origin.trim().is_empty()
+        || receipt.action.trim().is_empty()
+        || receipt.outcome != "completed"
+        || receipt.evidence_digest.trim().is_empty()
+        || receipt.key_id.trim().is_empty()
+        || receipt.signature.trim().is_empty()
+        || receipt.signed_payload.trim().is_empty()
+        || !is_sha256_id(&receipt.request_digest)
+        || !is_sha256_id(&receipt.result_digest)
     {
-        return Err("expected evidenceDigest is not bound to the retained artifact digest".to_string());
+        return Err("retained receipt shape is unsupported".to_string());
     }
-    if document.expected_claims.outcome != "completed"
-        || !is_sha256_id(&document.expected_claims.request_digest)
-        || !is_sha256_id(&document.expected_claims.result_digest)
+    if document.artifact.bytes == 0
+        || document.artifact.bytes > MAX_DOCUMENT_BYTES
+        || !is_sha256(&document.artifact.sha256)
+        || expected.evidence_digest != document.artifact.sha256
+    {
+        return Err("expected evidenceDigest is not bound to a bounded retained artifact".to_string());
+    }
+    if expected.outcome != "completed"
+        || !is_sha256_id(&expected.request_digest)
+        || !is_sha256_id(&expected.result_digest)
     {
         return Err("Spis provenance requires completed signed request/result digests".to_string());
     }
-    validate_spis_binding(&document.expected_claims.spis_binding)?;
+    validate_spis_binding(&expected.spis_binding)?;
+    validate_spis_binding(&receipt.spis_binding)?;
+    if receipt.task_id != expected.task_id
+        || receipt.organization_id != expected.organization_id
+        || receipt.origin != expected.origin
+        || receipt.action != expected.action
+        || receipt.outcome != expected.outcome
+        || receipt.evidence_digest != expected.evidence_digest
+        || receipt.request_digest != expected.request_digest
+        || receipt.result_digest != expected.result_digest
+        || receipt.spis_binding != expected.spis_binding
+    {
+        return Err("retained receipt claim copies differ from caller expectations".to_string());
+    }
     Ok(())
 }
 fn validate_document_trust(
@@ -1177,11 +1215,25 @@ fn invoke_bridge(
     record_dir: &Path,
     trust_path: &Path,
 ) -> Result<WelesProvenanceDocument, String> {
-    let script = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let script_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("weles-bridge")
         .join("spis-weles-bridge.mjs");
-    if !script.is_file() {
-        return Err("checked-in Weles bridge is absent".to_string());
+    let script_metadata = fs::symlink_metadata(&script_path)
+        .map_err(|_| "checked-in Weles bridge is absent".to_string())?;
+    if script_metadata.file_type().is_symlink() || !script_metadata.is_file() {
+        return Err("checked-in Weles bridge is not a regular non-symlink file".to_string());
+    }
+    let script = fs::canonicalize(&script_path)
+        .map_err(|_| "checked-in Weles bridge could not be resolved".to_string())?;
+    let script_file = fs::File::open(&script)
+        .map_err(|_| "checked-in Weles bridge could not be opened".to_string())?;
+    let script_bytes = read_stream_limited(
+        script_file,
+        MAX_BRIDGE_SCRIPT_BYTES as usize,
+        "checked-in Weles bridge",
+    )?;
+    if sha256_bytes(&script_bytes) != BRIDGE_SCRIPT_SHA256 {
+        return Err("checked-in Weles bridge differs from the embedded source pin".to_string());
     }
     let input = serde_json::json!({
         "schema": BRIDGE_COMMAND_SCHEMA,
@@ -1192,7 +1244,8 @@ fn invoke_bridge(
     });
     let input_bytes = serde_json::to_vec(&input)
         .map_err(|_| "could not serialize the bridge verification request".to_string())?;
-    let mut child = Command::new("node")
+    let mut command = Command::new("node");
+    command
         .arg(&script)
         .arg("--input")
         .arg("-")
@@ -1204,7 +1257,18 @@ fn invoke_bridge(
         .env("SPIS_WELES_TRUST_FILE", trust_path)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
+        .stderr(Stdio::piped());
+    #[cfg(unix)]
+    unsafe {
+        command.pre_exec(|| {
+            if libc::setpgid(0, 0) == -1 {
+                Err(std::io::Error::last_os_error())
+            } else {
+                Ok(())
+            }
+        });
+    }
+    let mut child = command
         .spawn()
         .map_err(|_| "could not start Node for the checked-in Weles bridge".to_string())?;
     let started = std::time::Instant::now();
@@ -1238,16 +1302,14 @@ fn invoke_bridge(
                 std::thread::sleep(std::time::Duration::from_millis(10));
             }
             Ok(None) => {
-                let _ = child.kill();
-                let _ = child.wait();
+                terminate_bridge_process_group(&mut child);
                 let _ = stdin_writer.join();
                 let _ = stdout_reader.join();
                 let _ = stderr_reader.join();
                 return Err("official Weles bridge exceeded the 30-second deadline".to_string());
             }
             Err(_) => {
-                let _ = child.kill();
-                let _ = child.wait();
+                terminate_bridge_process_group(&mut child);
                 let _ = stdin_writer.join();
                 let _ = stdout_reader.join();
                 let _ = stderr_reader.join();
@@ -1255,21 +1317,39 @@ fn invoke_bridge(
             }
         }
     };
-    stdin_writer
-        .join()
-        .map_err(|_| "official Weles bridge stdin writer failed".to_string())??;
-    let stdout = stdout_reader
-        .join()
-        .map_err(|_| "official Weles bridge stdout reader failed".to_string())??;
-    let stderr = stderr_reader
-        .join()
-        .map_err(|_| "official Weles bridge stderr reader failed".to_string())??;
+    let stdin_result = stdin_writer.join();
+    let stdout_result = stdout_reader.join();
+    let stderr_result = stderr_reader.join();
     if !status.success() {
+        let stderr = match stderr_result {
+            Ok(Ok(stderr)) => stderr,
+            _ => Vec::new(),
+        };
         let code = bridge_error_code(&stderr);
         return Err(format!("official Weles bridge failed closed ({code})"));
     }
+    stdin_result
+        .map_err(|_| "official Weles bridge stdin writer failed".to_string())??;
+    let stdout = stdout_result
+        .map_err(|_| "official Weles bridge stdout reader failed".to_string())??;
+    stderr_result
+        .map_err(|_| "official Weles bridge stderr reader failed".to_string())??;
     serde_json::from_slice(&stdout)
         .map_err(|_| "official Weles bridge returned a malformed verification document".to_string())
+}
+
+fn terminate_bridge_process_group(child: &mut std::process::Child) {
+    #[cfg(unix)]
+    unsafe {
+        if libc::killpg(child.id() as libc::pid_t, libc::SIGKILL) == -1 {
+            let _ = child.kill();
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = child.kill();
+    }
+    let _ = child.wait();
 }
 
 fn validate_fresh_document(
@@ -1305,7 +1385,7 @@ fn validate_fresh_document(
         &fresh.receipt,
         &fresh.client.key_set_version,
         &fresh.artifact,
-    );
+    )?;
     if fresh.id != expected_id || !is_sha256_id(&fresh.id) {
         return Err("verification document ID is not derived from verified receipt material".to_string());
     }
@@ -1452,20 +1532,27 @@ fn provenance_id(
     receipt: &RetainedReceipt,
     key_set_version: &str,
     artifact: &RetainedArtifact,
-) -> String {
+) -> Result<String, String> {
+    let binding_value = serde_json::to_value(&receipt.spis_binding)
+        .map_err(|_| "receipt spisBinding could not be canonicalized".to_string())?;
+    let binding_json = String::from_utf8(canonical_json_bytes(&binding_value)?)
+        .map_err(|_| "canonical receipt spisBinding was not UTF-8".to_string())?;
     let mut hash = Sha256::new();
     for (label, value) in [
         ("receipt.schema", receipt.schema.as_str()),
         ("receipt.keyId", receipt.key_id.as_str()),
         ("receipt.signedPayload", receipt.signed_payload.as_str()),
         ("receipt.signature", receipt.signature.as_str()),
+        ("receipt.requestDigest", receipt.request_digest.as_str()),
+        ("receipt.resultDigest", receipt.result_digest.as_str()),
+        ("receipt.spisBinding", binding_json.as_str()),
         ("keySetVersion", key_set_version),
         ("artifact.path", artifact.path.as_str()),
         ("artifact.sha256", artifact.sha256.as_str()),
     ] {
         update_framed(&mut hash, label, value);
     }
-    format!("sha256:{}", hex::encode(hash.finalize()))
+    Ok(format!("sha256:{}", hex::encode(hash.finalize())))
 }
 
 fn strip_provenance(value: &Value) -> Value {
@@ -1482,22 +1569,70 @@ fn strip_provenance(value: &Value) -> Value {
     }
 }
 
-fn canonical_json_sha256(value: &Value) -> String {
-    fn ordered(value: &Value) -> Value {
+fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
+    const MAX_SAFE_INTEGER: u64 = 9_007_199_254_740_991;
+
+    fn write_value(value: &Value, output: &mut String) -> Result<(), String> {
         match value {
-            Value::Array(entries) => Value::Array(entries.iter().map(ordered).collect()),
-            Value::Object(object) => {
-                let ordered_entries: BTreeMap<&String, &Value> = object.iter().collect();
-                Value::Object(
-                    ordered_entries
-                        .into_iter()
-                        .map(|(key, entry)| (key.clone(), ordered(entry)))
-                        .collect(),
-                )
+            Value::Null => output.push_str("null"),
+            Value::Bool(value) => output.push_str(if *value { "true" } else { "false" }),
+            Value::Number(number) => {
+                if let Some(value) = number.as_i64() {
+                    if value.unsigned_abs() > MAX_SAFE_INTEGER {
+                        return Err("JCS input integer exceeds the safe integer range".to_string());
+                    }
+                    output.push_str(&value.to_string());
+                } else if let Some(value) = number.as_u64() {
+                    if value > MAX_SAFE_INTEGER {
+                        return Err("JCS input integer exceeds the safe integer range".to_string());
+                    }
+                    output.push_str(&value.to_string());
+                } else {
+                    return Err("JCS input contains a floating-point number".to_string());
+                }
             }
-            scalar => scalar.clone(),
+            Value::String(value) => {
+                let serialized = serde_json::to_string(value)
+                    .map_err(|_| "JCS string could not be serialized".to_string())?;
+                output.push_str(&serialized);
+            }
+            Value::Array(entries) => {
+                output.push('[');
+                for (index, entry) in entries.iter().enumerate() {
+                    if index != 0 {
+                        output.push(',');
+                    }
+                    write_value(entry, output)?;
+                }
+                output.push(']');
+            }
+            Value::Object(object) => {
+                let mut entries: Vec<_> = object.iter().collect();
+                entries.sort_by(|(left, _), (right, _)| {
+                    left.encode_utf16().cmp(right.encode_utf16())
+                });
+                output.push('{');
+                for (index, (key, entry)) in entries.into_iter().enumerate() {
+                    if index != 0 {
+                        output.push(',');
+                    }
+                    let serialized_key = serde_json::to_string(key)
+                        .map_err(|_| "JCS object key could not be serialized".to_string())?;
+                    output.push_str(&serialized_key);
+                    output.push(':');
+                    write_value(entry, output)?;
+                }
+                output.push('}');
+            }
         }
+        Ok(())
     }
-    let bytes = serde_json::to_vec(&ordered(value)).unwrap_or_default();
-    sha256_bytes(&bytes)
+
+    let mut output = String::new();
+    write_value(value, &mut output)?;
+    Ok(output.into_bytes())
+}
+
+fn canonical_json_sha256(value: &Value) -> Result<String, String> {
+    Ok(sha256_bytes(&canonical_json_bytes(value)?))
 }

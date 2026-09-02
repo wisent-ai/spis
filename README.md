@@ -82,8 +82,10 @@ Browser crawls are anonymous: `credentialRefs` is always empty, `evidencePolicy`
 Spis submission, exact status reads, cancellation, and receipt verification.
 It loads the pinned official `WelesClient` and `verifyReceipt` implementation
 from `weles-bridge/vendor/weles-client/index.mjs`. `UPSTREAM.json` records the
-upstream commit, source digest, license, and license digest; the bridge verifies
-the vendored source SHA-256 before loading it.
+upstream commit, source digest, license, and license digest. The bridge rejects
+a symlink/non-file, opens one inode with no-follow where available, checks that
+inode against the pre-open identity, hashes its bytes, and imports those exact
+verified bytes through a data URL. The module loader never reopens the path.
 
 Commands use `wisent.spis-weles-bridge-command.v1`. Only `--input` and
 `--output` are accepted. Submit requires durable file output. An existing
@@ -113,8 +115,9 @@ Network authorization and public receipt trust are separate:
 Rust computes the canonical trust path itself and passes only that path, a
 minimal `PATH`, and no inherited environment to the verification child.
 `NODE_OPTIONS`, `NODE_PATH`, network credentials, and caller-selected trust are
-not inherited. Child stdin/stdout/stderr are bounded and the process is killed
-after 30 seconds.
+not inherited. Child stdin/stdout/stderr are bounded. Rust lstat-checks and
+hashes the bridge against an embedded source pin before spawning it in a new
+process group; a 30-second timeout kills and drains the whole group.
 
 ### Public service and request identity
 
@@ -160,10 +163,13 @@ sha256:<SHA-256(canonical JSON UTF-8 of the exact weles.task.current body)>
 
 That body contains schema, organization, origin, action, exact input,
 credential references, evidence policy, and justification. It excludes the
-idempotency key and service-added execution constraints. Canonical JSON sorts
-object keys recursively, preserves array order, emits compact JSON, and adds no
-newline. Submit retains the complete request as `requestDocument` and requires
-the service-returned `requestIdentity` to contain the same digest and binding.
+idempotency key and service-added execution constraints. Canonicalization is
+the shared RFC 8785/JCS subset: keys sort by UTF-16 code units, arrays preserve
+order, strings use JSON escaping and reject lone surrogates, and numbers must
+be safe integers (floating-point and out-of-range numbers are rejected). The
+result is compact UTF-8 JSON with no newline. Submit retains the complete
+request as `requestDocument` and requires the service-returned
+`requestIdentity` to contain the same digest and binding.
 
 `get` and `cancel` require exact known task identity and service identity. Every
 response must include the server-derived service identity and request identity.
@@ -176,8 +182,10 @@ duplicate entries.
 
 ### Receipt-bound evidence and attempt envelope
 
-Terminal receipts sign the core task claims plus `requestDigest`,
-`resultDigest`, and `spisBinding`. The retained evidence manifest is
+Terminal receipts contain exactly the core task claims, `requestDigest`,
+`resultDigest`, `spisBinding`, key ID, signature, and signed payload. The
+displayed extended claims must equal the freshly verified signed claims and are
+included in the provenance ID. The retained evidence manifest is
 `weles.browser-evidence-manifest.v1` and carries exact task/organization/origin/
 action/completed outcome, request/result digests, binding, requested/effective/
 final URLs, and `evidenceInventory`. Requested URL must equal the canonical
@@ -228,11 +236,12 @@ retain the `sha256:` prefix. No pre-submit URI is projected onto a post-submit
 artifact or observation coordinate.
 
 Only `verify` creates `wisent.spis-weles-provenance.v1`. It needs no network
-secret. The bridge re-runs the official verifier, requires every signed claim
-and the typed evidence manifest to match, hashes the manifest itself, and
-requires `claims.evidenceDigest == artifact.sha256`. Rust then repeats trust,
-claim, request digest, URL, envelope, manifest, inventory, and retained-byte
-checks independently.
+secret. `artifact.bytes` is required, positive, and at most 4 MiB. The bridge
+re-runs the official verifier, requires every signed claim and the typed
+evidence manifest to match, hashes the manifest itself, and requires
+`claims.evidenceDigest == artifact.sha256`. Rust independently enforces the
+artifact size before hashing, then repeats trust, claim, JCS request digest,
+URL, envelope, manifest, inventory, and retained-byte checks.
 
 ## Repository layout
 
