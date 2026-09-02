@@ -112,12 +112,14 @@ Network authorization and public receipt trust are separate:
   The repository intentionally carries no placeholder: onboarding must commit
   the real public trust before verification can succeed.
 
-Rust computes the canonical trust path itself and passes only that path, a
-minimal `PATH`, and no inherited environment to the verification child.
-`NODE_OPTIONS`, `NODE_PATH`, network credentials, and caller-selected trust are
-not inherited. Child stdin/stdout/stderr are bounded. Rust lstat-checks and
-hashes the bridge against an embedded source pin before spawning it in a new
-process group; a 30-second timeout kills and drains the whole group.
+Rust opens and validates the canonical trust document itself, then passes its
+already-read public bytes, its canonical path, a minimal `PATH`, and no inherited
+environment to the verification child. `NODE_OPTIONS`, `NODE_PATH`, network
+credentials, caller-selected trust, and a second trust-file read are excluded.
+Child stdin/stdout/stderr are bounded. Rust lstat-checks and
+hashes the bridge against an embedded source pin, then executes those verified
+bytes from a data URL in a new process group rather than reopening the path. A
+30-second timeout kills and drains the whole group.
 
 ### Public service and request identity
 

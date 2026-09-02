@@ -10,6 +10,7 @@ import {
   lstatSync,
   openSync,
   readFileSync,
+  readSync,
   realpathSync,
   linkSync,
   unlinkSync,
@@ -22,10 +23,6 @@ import { fileURLToPath } from 'node:url';
 const CLIENT_PACKAGE = '@wisent-ai/weles-client';
 const CLIENT_COMMIT = '37798a26022a040fbd0a4a4a25c99b5559d95a32';
 const CLIENT_SOURCE_SHA256 = '7cdfee8ae7d7ffc831c60d01e393640bf912d95adf0b06c9dd51a737f97ccada';
-const CANONICAL_TRUST_PATH = join(
-  dirname(fileURLToPath(import.meta.url)),
-  'weles-receipt-trust.json',
-);
 const CONFIG_SCHEMA = 'wisent.spis-weles-bridge-config.v1';
 const TRUST_SCHEMA = 'wisent.spis-weles-receipt-trust.v1';
 const COMMAND_SCHEMA = 'wisent.spis-weles-bridge-command.v1';
@@ -36,6 +33,7 @@ const TASK_STATUS_SCHEMA = 'wisent.spis-weles-task-status.v1';
 const CANCELLATION_SCHEMA = 'wisent.spis-weles-cancellation.v1';
 const ERROR_SCHEMA = 'wisent.spis-weles-bridge-error.v1';
 const MAX_JSON_BYTES = 1024 * 1024;
+const MAX_TRUST_BYTES = 64 * 1024;
 const MAX_OUTPUT_BYTES = 4 * 1024 * 1024;
 const MAX_EVIDENCE_MANIFEST_BYTES = 4 * 1024 * 1024;
 const MAX_EVIDENCE_INVENTORY_BYTES = 8 * 1024 * 1024;
@@ -128,6 +126,39 @@ class BridgeError extends Error {
 function fail(code, message) {
   throw new BridgeError(code, message);
 }
+
+const VERIFIED_DATA_EXECUTION = import.meta.url.startsWith('data:text/javascript;base64,');
+
+function resolveBridgeDirectory() {
+  if (!VERIFIED_DATA_EXECUTION) {
+    return dirname(fileURLToPath(import.meta.url));
+  }
+  const configured = process.env.SPIS_WELES_VERIFIED_BRIDGE_DIR;
+  if (!configured || !isAbsolute(configured)) {
+    fail(
+      'official-client-unavailable',
+      'verified in-memory bridge execution requires an absolute checked-in resource directory',
+    );
+  }
+  let resolved;
+  let stat;
+  try {
+    resolved = realpathSync(configured);
+    stat = lstatSync(resolved);
+  } catch {
+    fail('official-client-unavailable', 'the checked-in bridge resource directory is unavailable');
+  }
+  if (resolved !== configured || !stat.isDirectory() || stat.isSymbolicLink()) {
+    fail(
+      'official-client-unavailable',
+      'the checked-in bridge resource directory must be canonical and non-symlinked',
+    );
+  }
+  return resolved;
+}
+
+const BRIDGE_DIRECTORY = resolveBridgeDirectory();
+const CANONICAL_TRUST_PATH = join(BRIDGE_DIRECTORY, 'weles-receipt-trust.json');
 
 function plainObject(value, name) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -299,20 +330,35 @@ async function readStdin() {
 }
 
 function readBoundedFile(path, name) {
-  let stat;
+  let fd;
   try {
-    stat = lstatSync(path);
-  } catch {
-    fail('invalid-input-file', `${name} could not be inspected`);
-  }
-  if (!stat.isFile() || stat.isSymbolicLink()) {
-    fail('invalid-input-file', `${name} must be a regular non-symlink file`);
-  }
-  if (stat.size > MAX_JSON_BYTES) fail('input-too-large', `${name} exceeded the size limit`);
-  try {
-    return readFileSync(path, 'utf8');
-  } catch {
+    const pathStat = lstatSync(path);
+    if (!pathStat.isFile() || pathStat.isSymbolicLink()) {
+      fail('invalid-input-file', `${name} must be a regular non-symlink file`);
+    }
+    fd = openSync(path, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0));
+    const openedStat = fstatSync(fd);
+    if (!openedStat.isFile()
+        || openedStat.dev !== pathStat.dev
+        || openedStat.ino !== pathStat.ino) {
+      fail('invalid-input-file', `${name} changed during open`);
+    }
+    const bytes = Buffer.allocUnsafe(MAX_JSON_BYTES + 1);
+    let offset = 0;
+    while (offset < bytes.length) {
+      const count = readSync(fd, bytes, offset, bytes.length - offset, null);
+      if (count === 0) break;
+      offset += count;
+    }
+    if (offset > MAX_JSON_BYTES) fail('input-too-large', `${name} exceeded the size limit`);
+    return bytes.subarray(0, offset).toString('utf8');
+  } catch (error) {
+    if (error instanceof BridgeError) throw error;
     fail('invalid-input-file', `${name} could not be read`);
+  } finally {
+    if (fd !== undefined) {
+      try { closeSync(fd); } catch {}
+    }
   }
 }
 
@@ -362,10 +408,21 @@ function loadTrust() {
   if (resolve(configuredPath) !== resolve(CANONICAL_TRUST_PATH)) {
     fail('invalid-trust', 'SPIS_WELES_TRUST_FILE must resolve to the checked-in canonical trust document');
   }
-  const trust = plainObject(
-    readPublicTrust(CANONICAL_TRUST_PATH),
-    'public Weles receipt trust',
-  );
+  let trustValue;
+  if (VERIFIED_DATA_EXECUTION) {
+    const encoded = process.env.SPIS_WELES_VERIFIED_TRUST_BASE64;
+    if (typeof encoded !== 'string' || !encoded) {
+      fail('trust-unavailable', 'verified in-memory execution requires the checked-in public trust bytes');
+    }
+    const bytes = Buffer.from(encoded, 'base64');
+    if (bytes.toString('base64') !== encoded || bytes.length > MAX_TRUST_BYTES) {
+      fail('invalid-trust', 'verified public trust bytes are malformed or oversized');
+    }
+    trustValue = parseJson(bytes.toString('utf8'), 'verified public Weles receipt trust');
+  } else {
+    trustValue = readPublicTrust(CANONICAL_TRUST_PATH);
+  }
+  const trust = plainObject(trustValue, 'public Weles receipt trust');
   onlyKeys(trust, [
     'schema',
     'organizationId',
@@ -412,7 +469,7 @@ function loadConfig(trust) {
 
 async function loadOfficialClient() {
   const sourcePath = join(
-    dirname(fileURLToPath(import.meta.url)),
+    BRIDGE_DIRECTORY,
     'vendor',
     'weles-client',
     'index.mjs',
@@ -668,6 +725,7 @@ function buildReceiptCheckpoint(receiptValue, expectedTaskValue, config, verifyR
   };
 }
 function validateSignedSpisClaims(claims, config, name) {
+  onlyKeys(claims, [...CORE_CLAIMS, ...SIGNED_SPIS_CLAIMS, 'keyId'], name);
   for (const field of ['requestDigest', 'resultDigest']) {
     if (!SHA256_ID.test(nonemptyString(claims[field], `${name}.${field}`))) {
       fail('invalid-receipt-payload', `${name}.${field} must be a sha256: identifier`);

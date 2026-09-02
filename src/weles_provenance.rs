@@ -5,8 +5,9 @@
 //! which loads the exact pinned official `@wisent-ai/weles-client`, then independently
 //! rechecks the returned claims, receipt identity, and retained artifact digest here.
 
+use base64::{engine::general_purpose::STANDARD, Engine as _};
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -34,10 +35,11 @@ pub const OFFICIAL_CLIENT_PACKAGE: &str = "@wisent-ai/weles-client";
 pub const OFFICIAL_CLIENT_COMMIT: &str =
     "37798a26022a040fbd0a4a4a25c99b5559d95a32";
 const BRIDGE_SCRIPT_SHA256: &str =
-    "9ace757ecf181add567dcf4b7eec501c9b9a4155866e86d42cbcf83c5ac262b1";
+    "0d9220d5cf00634cac92a0c118634486001cdd687799151c029cc2475bd02653";
 const MAX_BRIDGE_SCRIPT_BYTES: u64 = 256 * 1024;
 
 const MAX_DOCUMENT_BYTES: u64 = 4 * 1024 * 1024;
+const MAX_TRUST_BYTES: u64 = 64 * 1024;
 const MAX_RETAINED_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
 const MAX_BRIDGE_ERROR_BYTES: usize = 64 * 1024;
 const BRIDGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
@@ -58,7 +60,7 @@ pub struct ExpectedReceiptClaims {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct VerifiedReceiptClaims {
     pub task_id: String,
     pub organization_id: String,
@@ -70,8 +72,6 @@ pub struct VerifiedReceiptClaims {
     pub outcome: String,
     pub evidence_digest: String,
     pub key_id: String,
-    #[serde(flatten)]
-    pub additional: Map<String, Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -387,6 +387,7 @@ struct VerifiedDocument {
 #[derive(Debug, Clone)]
 struct CanonicalTrust {
     path: PathBuf,
+    bytes: Vec<u8>,
     document: WelesReceiptTrust,
 }
 
@@ -575,7 +576,7 @@ fn verify_document_reference(
         .map_err(|_| "verification document does not match the typed schema".to_string())?;
     validate_document_shape(&persisted)?;
     validate_document_trust(&persisted, &trust.document)?;
-    let fresh = invoke_bridge(&persisted, record_dir, &trust.path)?;
+    let fresh = invoke_bridge(&persisted, record_dir, trust)?;
     validate_fresh_document(&persisted, &fresh, record_dir)?;
     let artifact_path = resolve_retained_file(record_dir, &fresh.artifact.path)?;
     let artifact_bytes = read_limited(&artifact_path, MAX_DOCUMENT_BYTES)?;
@@ -1188,7 +1189,7 @@ fn load_canonical_trust() -> Result<CanonicalTrust, String> {
     }
     let canonical = fs::canonicalize(&checked_in)
         .map_err(|_| "checked-in public trust document could not be resolved".to_string())?;
-    let bytes = read_limited(&canonical, MAX_DOCUMENT_BYTES)?;
+    let bytes = read_limited(&canonical, MAX_TRUST_BYTES)?;
     let document: WelesReceiptTrust = serde_json::from_slice(&bytes)
         .map_err(|_| "public trust document does not match the typed schema".to_string())?;
     if document.schema != BRIDGE_TRUST_SCHEMA
@@ -1205,6 +1206,7 @@ fn load_canonical_trust() -> Result<CanonicalTrust, String> {
     }
     Ok(CanonicalTrust {
         path: canonical,
+        bytes,
         document,
     })
 }
@@ -1213,11 +1215,17 @@ fn load_canonical_trust() -> Result<CanonicalTrust, String> {
 fn invoke_bridge(
     persisted: &WelesProvenanceDocument,
     record_dir: &Path,
-    trust_path: &Path,
+    trust: &CanonicalTrust,
 ) -> Result<WelesProvenanceDocument, String> {
     let script_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("weles-bridge")
         .join("spis-weles-bridge.mjs");
+    let bridge_directory = fs::canonicalize(
+        script_path
+            .parent()
+            .ok_or_else(|| "checked-in Weles bridge has no resource directory".to_string())?,
+    )
+    .map_err(|_| "checked-in Weles bridge resource directory could not be resolved".to_string())?;
     let script_metadata = fs::symlink_metadata(&script_path)
         .map_err(|_| "checked-in Weles bridge is absent".to_string())?;
     if script_metadata.file_type().is_symlink() || !script_metadata.is_file() {
@@ -1225,6 +1233,9 @@ fn invoke_bridge(
     }
     let script = fs::canonicalize(&script_path)
         .map_err(|_| "checked-in Weles bridge could not be resolved".to_string())?;
+    if script.parent() != Some(bridge_directory.as_path()) {
+        return Err("checked-in Weles bridge escaped its canonical resource directory".to_string());
+    }
     let script_file = fs::File::open(&script)
         .map_err(|_| "checked-in Weles bridge could not be opened".to_string())?;
     let script_bytes = read_stream_limited(
@@ -1235,6 +1246,10 @@ fn invoke_bridge(
     if sha256_bytes(&script_bytes) != BRIDGE_SCRIPT_SHA256 {
         return Err("checked-in Weles bridge differs from the embedded source pin".to_string());
     }
+    let bridge_module = format!(
+        "await import('data:text/javascript;base64,{}')",
+        STANDARD.encode(&script_bytes)
+    );
     let input = serde_json::json!({
         "schema": BRIDGE_COMMAND_SCHEMA,
         "operation": "verify",
@@ -1246,7 +1261,11 @@ fn invoke_bridge(
         .map_err(|_| "could not serialize the bridge verification request".to_string())?;
     let mut command = Command::new("node");
     command
-        .arg(&script)
+        .arg("--input-type=module")
+        .arg("--eval")
+        .arg(bridge_module)
+        .arg("--")
+        .arg("spis-weles-bridge.mjs")
         .arg("--input")
         .arg("-")
         .arg("--output")
@@ -1254,7 +1273,9 @@ fn invoke_bridge(
         .current_dir(record_dir)
         .env_clear()
         .env("PATH", BRIDGE_PATH)
-        .env("SPIS_WELES_TRUST_FILE", trust_path)
+        .env("SPIS_WELES_TRUST_FILE", &trust.path)
+        .env("SPIS_WELES_VERIFIED_TRUST_BASE64", STANDARD.encode(&trust.bytes))
+        .env("SPIS_WELES_VERIFIED_BRIDGE_DIR", bridge_directory)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
