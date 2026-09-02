@@ -169,10 +169,22 @@ That body contains schema, organization, origin, action, exact input,
 credential references, evidence policy, and justification. It excludes the
 idempotency key and service-added execution constraints. Canonicalization is
 the shared RFC 8785/JCS subset: keys sort by UTF-16 code units, arrays preserve
-order, strings use JSON escaping and reject lone surrogates, and numbers must
-be safe integers (floating-point and out-of-range numbers are rejected). The
-result is compact UTF-8 JSON with no newline. Submit retains the complete
-request as `requestDocument` and requires the service-returned
+order, and strings use JSON escaping and reject lone surrogates. The result is
+compact UTF-8 JSON with no newline.
+
+Numbers have one contract for both layers, stated on the parsed JSON value and
+never on the incoming spelling. A number canonicalizes only when it is an
+integer whose magnitude is at most 2^53-1, and it always canonicalizes to its
+shortest integer text. Fractional and out-of-range numbers are rejected. The
+spelling is therefore not significant: `1`, `1.0`, and `-0.0` are the same
+document, canonicalizing to `1`, `1`, and `0` on both sides. This is the
+resolvable direction, because the JSON parsers on both sides discard the
+original token — `JSON.parse("1.0")` returns the JS number `1`, and serde_json
+without `arbitrary_precision` returns the double `1.0` — so a raw-text rule
+could not be enforced on values that either layer constructs itself. Rust
+accordingly canonicalizes an integral double to the same integer text the
+bridge emits, instead of rejecting it as floating-point. Submit retains the
+complete request as `requestDocument` and requires the service-returned
 `requestIdentity` to contain the same digest and binding.
 
 `get` and `cancel` require exact known task identity and service identity. Every
@@ -226,7 +238,25 @@ stado://spis-crawls/{run_id}/{catalog}/{record}/{record_key}/attempts/{attempt}/
 Portable components use `[A-Za-z0-9._-]+` and are neither `.` nor `..`;
 `record_key` is lowercase 64-hex and attempt is a positive `u32`. Signed
 pre-submit binding URIs are exactly `{base}/artifacts.tar.gz` and
-`{base}/worker-output.log`. Post-submit coordinates are distinct:
+`{base}/worker-output.log`.
+
+Neither the shape of those components nor the shape of the URIs is the binding
+contract by itself. `record_key` and `attempt_id` are derived values, and both
+verification layers re-derive them exactly as the Weles public admission
+runtime does. All inputs come from the binding itself; `\0` is a single NUL
+byte and every digest is lowercase hex SHA-256 over UTF-8:
+
+```
+catalog_key = sha256(source_revision \0 run_id \0 catalog)
+record_key  = sha256(catalog_key \0 record \0 source_input_sha256)
+attempt_id  = "attempt-" attempt "-" sha256(record_key \0 attempt \0 service.host)[0:16]
+```
+
+`attempt` is rendered as its decimal integer text and the attempt fingerprint
+is the first 16 characters of the hex digest. The bridge and the Rust verifier
+each reject a binding whose `record_key` or `attempt_id` is not this exact
+derivation, so neither side can accept a weaker attempt binding than the
+runtime issues. Post-submit coordinates are distinct:
 
 - official evidence manifest:
   `stado://weles/recordings/{weles_task_id}/evidence-manifest.json`

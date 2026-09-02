@@ -132,7 +132,7 @@ pub struct WelesEvidenceInventoryEntry {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 struct ReceiptBoundEvidenceManifest {
     schema: String,
     task_id: String,
@@ -1144,6 +1144,7 @@ fn validate_spis_binding(binding: &WelesAttemptBinding) -> Result<(), String> {
         return Err("signed Spis binding is invalid".to_string());
     }
     validate_api_endpoint(&binding.service.endpoint, "signed Spis service endpoint")?;
+    validate_attempt_binding_derivation(binding)?;
     let base = format!(
         "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
         binding.run_id,
@@ -1157,6 +1158,46 @@ fn validate_spis_binding(binding: &WelesAttemptBinding) -> Result<(), String> {
         || binding.output_uri != format!("{base}/worker-output.log")
     {
         return Err("signed Spis artifact/output URIs are not canonical".to_string());
+    }
+    Ok(())
+}
+
+/// Re-derives the runtime record key and attempt identity exactly as the Weles
+/// public admission service does, so the Rust layer never accepts a weaker
+/// attempt binding than the runtime promises.
+fn validate_attempt_binding_derivation(binding: &WelesAttemptBinding) -> Result<(), String> {
+    let catalog_key = sha256_bytes(
+        format!(
+            "{}\0{}\0{}",
+            binding.source_revision, binding.run_id, binding.catalog
+        )
+        .as_bytes(),
+    );
+    let record_key = sha256_bytes(
+        format!(
+            "{}\0{}\0{}",
+            catalog_key, binding.record, binding.source_input_sha256
+        )
+        .as_bytes(),
+    );
+    if binding.record_key != record_key {
+        return Err("signed Spis record key is not the runtime derivation".to_string());
+    }
+    let attempt_fingerprint = sha256_bytes(
+        format!(
+            "{}\0{}\0{}",
+            binding.record_key, binding.attempt, binding.service.host
+        )
+        .as_bytes(),
+    );
+    if binding.attempt_id
+        != format!(
+            "attempt-{}-{}",
+            binding.attempt,
+            &attempt_fingerprint[..16]
+        )
+    {
+        return Err("signed Spis attempt identity is not the runtime derivation".to_string());
     }
     Ok(())
 }
@@ -1608,7 +1649,21 @@ fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
                     }
                     output.push_str(&value.to_string());
                 } else {
-                    return Err("JCS input contains a floating-point number".to_string());
+                    // One declared canonicalization, one behavior: `JSON.parse("1.0")`
+                    // yields the JS number 1 and the bridge emits `1`, so an integral
+                    // double inside the safe-integer range canonicalizes to the same
+                    // integer text here. Fractional and out-of-range numbers are
+                    // rejected on both sides.
+                    let float = number
+                        .as_f64()
+                        .ok_or_else(|| "JCS input contains an unrepresentable number".to_string())?;
+                    if !float.is_finite() || float.fract() != 0.0 {
+                        return Err("JCS input contains a fractional number".to_string());
+                    }
+                    if float.abs() > MAX_SAFE_INTEGER as f64 {
+                        return Err("JCS input integer exceeds the safe integer range".to_string());
+                    }
+                    output.push_str(&(float as i64).to_string());
                 }
             }
             Value::String(value) => {

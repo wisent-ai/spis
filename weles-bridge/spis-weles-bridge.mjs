@@ -710,7 +710,7 @@ function buildReceiptCheckpoint(receiptValue, expectedTaskValue, config, verifyR
       fail('expected-claim-mismatch', `verified ${field} differs from the known task`);
     }
   }
-  validateSignedSpisClaims(claims, config, 'verified claims');
+  claims = validateSignedSpisClaims(claims, config, 'verified claims');
   validateReceiptClaimCopies(receipt, claims);
   if (claims.keyId !== receipt.keyId) fail('receipt-key-mismatch', 'verified keyId differs from the retained receipt');
   return {
@@ -731,11 +731,11 @@ function validateSignedSpisClaims(claims, config, name) {
       fail('invalid-receipt-payload', `${name}.${field} must be a sha256: identifier`);
     }
   }
-  claims.spisBinding = validateSpisBinding(claims.spisBinding, `${name}.spisBinding`);
-  if (claims.spisBinding.service.action !== config.allowedAction) {
+  const spisBinding = validateSpisBinding(claims.spisBinding, `${name}.spisBinding`);
+  if (spisBinding.service.action !== config.allowedAction) {
     fail('expected-claim-mismatch', 'signed spisBinding action differs from public receipt trust');
   }
-  return claims;
+  return { ...claims, spisBinding };
 }
 function validateReceiptClaimCopies(receipt, claims) {
   for (const field of [...CORE_CLAIMS, 'requestDigest', 'resultDigest']) {
@@ -873,7 +873,7 @@ async function buildProvenance(receiptValue, expectedValue, artifactValue, confi
       fail('expected-claim-mismatch', `verified ${field} differs from the caller expectation`);
     }
   }
-  validateSignedSpisClaims(claims, config, 'verified claims');
+  claims = validateSignedSpisClaims(claims, config, 'verified claims');
   validateReceiptClaimCopies(receipt, claims);
   if (claims.requestDigest !== expectedClaims.requestDigest
       || claims.resultDigest !== expectedClaims.resultDigest
@@ -1011,6 +1011,28 @@ function portableAttemptComponent(value) {
     && /^[A-Za-z0-9._-]+$/.test(value);
 }
 
+function sha256Text(value) {
+  return createHash('sha256').update(value, 'utf8').digest('hex');
+}
+
+function validateAttemptBindingDerivation(binding, name) {
+  const catalogKey = sha256Text(
+    `${binding.source_revision}\0${binding.run_id}\0${binding.catalog}`,
+  );
+  const recordKey = sha256Text(
+    `${catalogKey}\0${binding.record}\0${binding.source_input_sha256}`,
+  );
+  if (binding.record_key !== recordKey) {
+    fail('invalid-input', `${name}.record_key is not the runtime record-key derivation`);
+  }
+  const attemptFingerprint = sha256Text(
+    `${binding.record_key}\0${binding.attempt}\0${binding.service.host}`,
+  ).slice(0, 16);
+  if (binding.attempt_id !== `attempt-${binding.attempt}-${attemptFingerprint}`) {
+    fail('invalid-input', `${name}.attempt_id is not the runtime attempt-identity derivation`);
+  }
+}
+
 function validateAttemptBindingUris(binding, name) {
   for (const field of ['run_id', 'catalog', 'record', 'attempt_id']) {
     if (!portableAttemptComponent(binding[field])) {
@@ -1020,6 +1042,7 @@ function validateAttemptBindingUris(binding, name) {
   if (!SHA256.test(binding.record_key)) {
     fail('invalid-input', `${name}.record_key must be a lowercase SHA-256`);
   }
+  validateAttemptBindingDerivation(binding, name);
   const base = `stado://spis-crawls/${binding.run_id}/${binding.catalog}/${binding.record}`
     + `/${binding.record_key}/attempts/${binding.attempt}/${binding.attempt_id}`;
   if (binding.artifact_uri !== `${base}/artifacts.tar.gz`
@@ -1312,7 +1335,6 @@ function taskStatusDocument(
     config,
     verifyReceipt,
   );
-  validateSignedSpisClaims(receiptCheckpoint.claims, config, 'verified claims');
   if (receiptCheckpoint.claims.requestDigest !== requestIdentity.requestDigest
       || canonicalJson(receiptCheckpoint.claims.spisBinding)
         !== canonicalJson(requestIdentity.spisBinding)) {
