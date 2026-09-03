@@ -2943,6 +2943,89 @@ fn weles_version_check(host: &str, service: &RuntimeServiceIdentity) -> Value {
     check
 }
 
+/// The program every Spis crawl worker IS, as an approved host-exec probe.
+///
+/// Every engine submits its worker as `cargo run --release -- <subcommand>`,
+/// so cargo is not the documentation engine's private precondition: it is the
+/// one precondition all six share, and the allowlist entry for it says so in
+/// its own justification. It is listed first for every engine by
+/// [`engine_preconditions`], and [`resolved_worker_program`] turns the same
+/// probe into the absolute path the submitted command is built from.
+pub(crate) const WORKER_PROGRAM: [&str; 2] = ["cargo", "--version"];
+
+/// What one engine's worker needs on the host before it may be given a slot.
+///
+/// One declaration, read by [`host_preflight`] and by every engine's submit
+/// path, because the alternative is what this fleet already paid for: the
+/// documentation engine preflighted `hostname -f` and nothing else, so
+/// job-545551889f9e88be30daa81f was declared ready, claimed a slot, ran for
+/// sixteen minutes and died with `/bin/sh: cargo: command not found`. That
+/// engine was fixed in place on 2026-09-03; the same hole was still open in
+/// the five others, which is why the requirement now lives here rather than
+/// in six separate match arms.
+///
+/// Every probe is an exact entry in Stado's host-exec allowlist and every one
+/// of them resolves an absolute path per host. Nothing here is answered
+/// through `PATH`: the submitted worker runs under a non-login `/bin/sh` that
+/// reads no profile, so a probe that consulted the login shell's search path
+/// would be answering a different question from the one the job asks.
+pub(crate) fn engine_preconditions(engine: &str, catalog: &str) -> Vec<Vec<&'static str>> {
+    let mut required = vec![WORKER_PROGRAM.to_vec()];
+    required.extend(match (engine, catalog) {
+        // The iOS worker drives a simulator through Appium's XCUITest
+        // driver, and `simctl` is how it learns the host has one at all.
+        //
+        // `list devices available` and NOT `list devices booted --json`: the
+        // allowlist matches an entry exactly, and the entry it carries is the
+        // `available` form. The `booted --json` spelling this side used to
+        // ask for came back "is not an approved host-exec command" on every
+        // iOS preflight, which reads as a host with no simulator support and
+        // is really a spelling this side chose -- the same defect the
+        // `hostname -f` comment above records, still live in a second place.
+        ("mobile", "ios-app-examples") => vec![
+            vec!["appium", "--version"],
+            vec!["appium", "driver", "list", "--installed"],
+            vec!["xcrun", "simctl", "list", "devices", "available"],
+        ],
+        ("mobile", _) => vec![
+            vec!["appium", "--version"],
+            vec!["appium", "driver", "list", "--installed"],
+            vec!["adb", "version"],
+            vec!["adb", "devices", "-l"],
+        ],
+        // The desktop worker execs the Cua Driver bundle directly, so its
+        // own readiness is checked by absolute candidate below rather than by
+        // an argument-free entry here.
+        ("desktop", _) => Vec::new(),
+        // The web worker talks to Weles over HTTP; Node is what that host
+        // runs the release with, and the release itself is checked by
+        // `weles_version_check`.
+        ("web", _) => vec![vec!["node", "--version"]],
+        ("docs", _) => Vec::new(),
+        // Both terminal engines drive the product inside a tmux session.
+        ("cli" | "tui", _) => vec![vec!["tmux", "-V"]],
+        _ => Vec::new(),
+    });
+    required
+}
+
+/// The absolute path this host will execute the worker's own program at.
+///
+/// One call for every engine, so a submitted command cannot name `cargo`
+/// bare in one place while another names the path the receipt reported.
+///
+/// Whitespace is refused rather than quoted. Five of the six engines
+/// interpolate this straight into a command string, so a path carrying a
+/// space would become two words and fail exactly the way the bare name did;
+/// refusing it here fails before a slot is claimed instead.
+pub(crate) fn resolved_worker_program(host: &str) -> Result<String> {
+    let path = resolved_program(host, &WORKER_PROGRAM)?;
+    if path.chars().any(char::is_whitespace) {
+        bail!("host {host} resolved the worker program to {path:?}, which a command cannot carry");
+    }
+    Ok(path)
+}
+
 fn host_preflight(
     catalog: &str,
     engine: &str,
@@ -2956,34 +3039,10 @@ fn host_preflight(
     // host-exec command", which reads as a missing host capability and is
     // really a spelling this side chose.
     let mut commands: Vec<Vec<&str>> = vec![vec!["hostname", "-f"]];
-    commands.extend(match (engine, catalog) {
-        ("mobile", "ios-app-examples") => vec![
-            vec!["appium", "--version"],
-            vec!["appium", "driver", "list", "--installed"],
-            vec!["xcrun", "simctl", "list", "devices", "booted", "--json"],
-        ],
-        ("mobile", _) => vec![
-            vec!["appium", "--version"],
-            vec!["appium", "driver", "list", "--installed"],
-            vec!["adb", "version"],
-            vec!["adb", "devices", "-l"],
-        ],
-        ("desktop", _) => Vec::new(),
-        ("web", _) => vec![vec!["node", "--version"]],
-        // The documentation worker runs as `cargo run --release` on the
-        // placement host, so cargo is this engine's one real precondition and
-        // it went unchecked. On 2026-09-03 job-545551889f9e88be30daa81f was
-        // claimed for `48-atlassian-design-system`, ran for sixteen minutes
-        // and died with `/bin/sh: cargo: command not found`, because the
-        // submitted command names the program bare and the job's shell is not
-        // a login shell. Probing it here refuses such a host in seconds with a
-        // typed check instead of after a claimed slot and a wasted attempt,
-        // and the receipt names the absolute path the command is then built
-        // from.
-        ("docs", _) => vec![vec!["cargo", "--version"]],
-        ("cli" | "tui", _) => vec![vec!["tmux", "-V"]],
-        _ => Vec::new(),
-    });
+    // Read from the one declaration rather than matched again here. It used
+    // to be matched here and nowhere else, which is exactly how five engines
+    // kept a hole the sixth had already closed.
+    commands.extend(engine_preconditions(engine, catalog));
     let mut checks: Vec<Value> = commands.iter().map(|command| host_probe(host, command)).collect();
     let desktop_driver_ready = if engine == "desktop" {
         let candidates = [
@@ -6641,9 +6700,106 @@ persisted under a durable per-record lock before the external effect it authoriz
     );
 }
 
+/// `spis crawl preflight --catalog C --host H [--json]` — can this host run
+/// this family's worker, asked without claiming anything.
+///
+/// Read-only: it runs the family's declared preconditions through the
+/// approved host-exec entries and prints the verdict. It touches no run
+/// store, submits no job and takes no slot, which is the whole point --
+/// before this the only way to find out was to drive a crawl, and the
+/// documentation engine proved what that costs when the answer is no:
+/// job-545551889f9e88be30daa81f held a slot for sixteen minutes to discover
+/// a missing program.
+///
+/// Exits non-zero when the host is not ready, so a placement script can ask
+/// this question in a condition.
+fn preflight(rest: &[String]) -> Result<()> {
+    let mut catalog = None;
+    let mut host = None;
+    let mut json_output = false;
+    let mut index = 0usize;
+    while index < rest.len() {
+        match rest[index].as_str() {
+            "--catalog" => {
+                index += 1;
+                catalog = Some(rest.get(index).context("--catalog needs a value")?.clone());
+            }
+            "--host" => {
+                index += 1;
+                host = Some(rest.get(index).context("--host needs a value")?.clone());
+            }
+            "--json" => json_output = true,
+            other => bail!("unknown argument: {other}"),
+        }
+        index += 1;
+    }
+    let catalog = catalog.context("preflight needs --catalog")?;
+    let host = host.context("preflight needs --host")?;
+    safe_component(&catalog, "--catalog")?;
+    safe_component(&host, "--host")?;
+    let engine = CATALOGS
+        .iter()
+        .find(|(name, _)| *name == catalog.as_str())
+        .map(|(_, engine)| *engine)
+        .with_context(|| format!("{catalog} is not a Spis catalog"))?;
+    // No service identity: the Weles release check belongs to a run that has
+    // resolved one, and inventing it here would report a readiness this
+    // command cannot stand behind. The web engine therefore reports its
+    // program preconditions and says the admission check is unresolved.
+    let report = host_preflight(&catalog, engine, &host, None);
+    let ready = report.get("ready").and_then(Value::as_bool) == Some(true);
+    if json_output {
+        println!("{}", serde_json::to_string_pretty(&report)?);
+    } else {
+        println!("catalog:  {catalog}");
+        println!("engine:   {engine}");
+        println!("host:     {host}");
+        println!("ready:    {ready}");
+        for check in report
+            .get("checks")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            let command = check
+                .get("command")
+                .and_then(Value::as_array)
+                .map(|words| {
+                    words
+                        .iter()
+                        .filter_map(Value::as_str)
+                        .collect::<Vec<&str>>()
+                        .join(" ")
+                })
+                .unwrap_or_default();
+            let verdict = if check.get("ready").and_then(Value::as_bool) == Some(true) {
+                "ok"
+            } else {
+                "MISSING"
+            };
+            let detail = check
+                .get("error")
+                .and_then(Value::as_str)
+                .or_else(|| check.get("stdout").and_then(Value::as_str))
+                .unwrap_or_default()
+                .lines()
+                .next()
+                .unwrap_or_default()
+                .trim()
+                .to_string();
+            println!("  {verdict:<8} {command:<52} {detail}");
+        }
+    }
+    if !ready {
+        bail!("host {host} cannot run the {catalog} worker; every MISSING line above is a precondition this family declares");
+    }
+    Ok(())
+}
+
 pub fn run(rest: &[String]) -> Result<()> {
     match rest.first().map(String::as_str) {
         Some("start") => start(&rest[1..]),
+        Some("preflight") => preflight(&rest[1..]),
         Some("status") => status(&rest[1..]),
         Some("cancel") => cancel(&rest[1..]),
         Some("resume") => resume(&rest[1..]),
@@ -6653,5 +6809,87 @@ pub fn run(rest: &[String]) -> Result<()> {
             generate_runtime_bindings(&rest[2..])
         }
         Some(other) => bail!("unknown crawl operation: {other}"),
+    }
+}
+
+#[cfg(test)]
+mod preflight_tests {
+    use super::*;
+
+    #[test]
+    fn every_family_declares_the_worker_program_it_actually_runs() {
+        // The defect this closes: the documentation engine was the only one
+        // probing cargo, while all six submit `cargo run --release`.
+        for (catalog, engine) in CATALOGS {
+            let required = engine_preconditions(engine, catalog);
+            assert!(
+                required.contains(&WORKER_PROGRAM.to_vec()),
+                "{catalog} ({engine}) does not declare the worker program"
+            );
+        }
+        assert_eq!(CATALOGS.len(), 15, "the family count is part of this claim");
+    }
+
+    #[test]
+    fn each_engine_declares_the_runtime_its_worker_drives() {
+        let required = |catalog: &str| {
+            let engine = CATALOGS
+                .iter()
+                .find(|(name, _)| *name == catalog)
+                .map(|(_, engine)| *engine)
+                .expect("a known catalog");
+            engine_preconditions(engine, catalog)
+                .into_iter()
+                .map(|command| command.join(" "))
+                .collect::<Vec<String>>()
+        };
+        let ios = required("ios-app-examples");
+        assert!(ios.iter().any(|command| command.starts_with("appium --version")));
+        assert!(ios.iter().any(|command| command.contains("simctl")));
+        // iOS drives a simulator, so it must NOT demand the Android bridge.
+        assert!(!ios.iter().any(|command| command.starts_with("adb ")));
+        let android = required("android-app-examples");
+        assert!(android.iter().any(|command| command == "adb version"));
+        assert!(android.iter().any(|command| command == "adb devices -l"));
+        assert!(!android.iter().any(|command| command.contains("simctl")));
+        for terminal in ["cli-examples", "tui-examples"] {
+            assert!(required(terminal).iter().any(|command| command == "tmux -V"));
+        }
+        for web in [
+            "web-app-examples",
+            "dashboard-console-examples",
+            "onboarding-auth-examples",
+            "app-store-listing-examples",
+            "design-system-examples",
+            "report-evidence-examples",
+            "pricing-page-examples",
+            "landing-page-examples",
+        ] {
+            assert!(required(web).iter().any(|command| command == "node --version"));
+        }
+        // Desktop's driver is checked by absolute bundle candidate inside
+        // `host_preflight`, so its declared set is the worker program alone.
+        assert_eq!(required("macos-app-examples"), vec!["cargo --version".to_string()]);
+    }
+
+    #[test]
+    fn every_declared_precondition_names_a_program_and_never_a_bare_search() {
+        // A probe must be an exact approved entry, never something a shell
+        // would have to resolve through PATH at job time.
+        for (catalog, engine) in CATALOGS {
+            for command in engine_preconditions(engine, catalog) {
+                assert!(!command.is_empty(), "{catalog}: empty precondition");
+                assert!(
+                    !command[0].contains('/') || command[0].starts_with('/'),
+                    "{catalog}: {} is neither a program name nor an absolute path",
+                    command[0]
+                );
+                assert!(
+                    !command.iter().any(|word| word.contains('~')),
+                    "{catalog}: {} carries a tilde no shell will expand here",
+                    command.join(" ")
+                );
+            }
+        }
     }
 }

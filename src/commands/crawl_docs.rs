@@ -3393,8 +3393,10 @@ fn submit_worker(
     // submitted command runs under a non-login `/bin/sh` that reads no
     // profile, so `cargo` alone resolved to nothing and
     // job-545551889f9e88be30daa81f died sixteen minutes into a claimed slot
-    // with `/bin/sh: cargo: command not found`.
-    let cargo = super::crawl::resolved_program(host, &["cargo", "--version"])?;
+    // with `/bin/sh: cargo: command not found`. Through the shared helper now
+    // that all six engines do this, so no engine can drift back to naming it
+    // bare while another names the resolved path.
+    let cargo = super::crawl::resolved_worker_program(host)?;
     let mut command_arguments = vec![
         cargo,
         "run".to_string(),

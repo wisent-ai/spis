@@ -1540,8 +1540,15 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
     let encoded = request.manifest.encoded()?;
     let artifact = request.manifest.artifact_uri.clone();
     let output_uri = request.manifest.output_uri.clone();
+    // The absolute path this host executes cargo at, never the bare name.
+    // Every worker in this repository is `cargo run --release`, and the job's
+    // shell is a non-login `/bin/sh` that reads no profile, so a bare name
+    // resolves to nothing however the host installs Rust -- the defect that
+    // cost job-545551889f9e88be30daa81f sixteen minutes of a claimed slot in
+    // the documentation engine, still open in this one.
+    let cargo = super::crawl::resolved_worker_program(request.host)?;
     let command = format!(
-        "cargo run --release -- crawl-desktop {} --worker --record {} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawl-desktop {} --worker --record {} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.catalog,
         request.record,
         request.max_states,

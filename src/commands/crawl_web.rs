@@ -305,8 +305,15 @@ fn submit_worker(
     {
         bail!("web delivery must carry exactly the WELES_TOKEN and WISENT_ORGANIZATION_ID secret references");
     }
+    // The absolute path this host executes cargo at, never the bare name.
+    // Every worker in this repository is `cargo run --release`, and the job's
+    // shell is a non-login `/bin/sh` that reads no profile, so a bare name
+    // resolves to nothing however the host installs Rust -- the defect that
+    // cost job-545551889f9e88be30daa81f sixteen minutes of a claimed slot in
+    // the documentation engine, still open in this one.
+    let cargo = super::crawl::resolved_worker_program(host)?;
     let command = format!(
-        "cargo run --release -- crawl-web {catalog} --worker --record {record} --artifact-uri {} --wait-seconds {wait_seconds} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawl-web {catalog} --worker --record {record} --artifact-uri {} --wait-seconds {wait_seconds} --runtime-manifest-base64 '{}'",
         manifest.artifact_uri,
         manifest.encoded()?,
     );
