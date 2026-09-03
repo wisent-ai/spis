@@ -2798,7 +2798,13 @@ fn host_preflight(
     host: &str,
     service_identity: Option<&RuntimeServiceIdentity>,
 ) -> Value {
-    let mut commands: Vec<Vec<&str>> = vec![vec!["hostname"]];
+    // `hostname -f` and not bare `hostname`: Stado's host-exec allowlist
+    // matches an entry exactly and never appends operator words, and the entry
+    // it carries is the fully-qualified form. Asking for the bare program made
+    // every placement preflight fail with "'hostname' is not an approved
+    // host-exec command", which reads as a missing host capability and is
+    // really a spelling this side chose.
+    let mut commands: Vec<Vec<&str>> = vec![vec!["hostname", "-f"]];
     commands.extend(match (engine, catalog) {
         ("mobile", "ios-app-examples") => vec![
             vec!["appium", "--version"],
