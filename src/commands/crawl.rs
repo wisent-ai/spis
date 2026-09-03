@@ -6677,6 +6677,7 @@ fn usage() {
         "usage:
   spis crawl bindings generate --weles-token-ref ITEM#FIELD --organization-ref ITEM#FIELD [--output PATH]
   spis crawl start [--host ENGINE=TARGET] [--catalog SLUG ...] [--record SLUG] [--run-id ID] [--bindings PATH]
+  spis crawl preflight --catalog SLUG --host HOST [--json]
   spis crawl status [--run RUN_ID] [--record SLUG]
   spis crawl cancel --run RUN_ID [--record SLUG] --reason TEXT
   spis crawl resume --run RUN_ID [--record SLUG]
@@ -6693,6 +6694,10 @@ persisted under a durable per-record lock before the external effect it authoriz
                      With --output an existing generated document is replaced
                      atomically after validation and read-back; the reported
                      outcome is created, replaced or unchanged.
+  preflight          Read-only. Runs one family's declared host preconditions
+                     through the approved read-only probes and reports each
+                     one with the host's own words. Starts nothing, claims no
+                     slot, and exits non-zero when the host is not ready.
   start              Idempotent. Re-running the same request digest continues the
                      existing run; planned, preflight_passed and submitting
                      records are driven forward and a record held by another
