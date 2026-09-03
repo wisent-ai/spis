@@ -132,6 +132,11 @@ const MAX_INVENTORY_BYTES: usize = 8 * 1024 * 1024;
 const MAX_ROBOTS_BYTES: usize = 512 * 1024;
 const MAX_PAGE_BYTES: usize = 16 * 1024 * 1024;
 const MAX_TARGETS: usize = 50_000;
+/// How many distinct excluded URLs one run will count before it reports a
+/// floor instead of a total. Held well above the largest inventory this
+/// family declares (216,092) so every real site yields an exact number, and
+/// bounded regardless because the count must not become its own memory leak.
+const MAX_COUNTED_EXCLUDED_KEYS: usize = 1_000_000;
 const MAX_INVENTORY_SOURCES: usize = 256;
 const MAX_INVENTORY_DIAGNOSTICS: usize = 512;
 const MAX_ROBOTS_RULES: usize = 4_096;
@@ -599,11 +604,53 @@ fn compile_robots_pattern(pattern: &str) -> Result<regex::Regex> {
         .with_context(|| format!("robots pattern {pattern:?} does not compile"))
 }
 
+/// What one record's inventory could not fit, and whether that number is
+/// exact.
+///
+/// A documentation corpus holds at most [`MAX_TARGETS`] page records. Four
+/// sites in the documentation family declare inventories far past it -- Google
+/// Cloud at 216,092 canonical URLs, .NET at 201,460, Azure at 201,009 and MDN
+/// at 54,594 -- so for those four the bound is not a safety margin, it decides
+/// what the record can ever contain. Until this existed the bound was applied
+/// and never stated: the inventory walk stopped at the 50,000th URL and the
+/// run recorded one diagnostic naming the limit but no quantity, so nothing
+/// downstream could say whether a record was missing ten pages or a hundred
+/// and sixty thousand.
+///
+/// `exact` is false only when the excluded set itself hit
+/// [`MAX_COUNTED_EXCLUDED_KEYS`], in which case `pages_outside_corpus` is a
+/// floor and says so rather than a number pretending to be the total.
+#[derive(Clone, Copy, Deserialize, Serialize)]
+struct CorpusCapacity {
+    pages_outside_corpus: u64,
+    exact: bool,
+}
+
 struct InventoryResolution {
     pages: Vec<(String, Option<String>)>,
     diagnostics: Vec<CrawlDiagnostic>,
     robots: RobotsSnapshot,
     downloaded_bytes: u64,
+    capacity: Option<CorpusCapacity>,
+}
+
+/// Record one in-scope URL that did not fit, by digest rather than by string.
+///
+/// Digests, not URLs, because the whole point of [`MAX_TARGETS`] is that this
+/// process does not hold the excluded material: a set of digests counts the
+/// distinct remainder without retaining what it names. The set is itself
+/// bounded, so an inventory larger than anything this fleet has measured
+/// degrades to a stated floor instead of unbounded memory.
+fn note_excluded(
+    excluded: &mut std::collections::HashSet<String>,
+    exact: &mut bool,
+    url: &str,
+) {
+    if excluded.len() >= MAX_COUNTED_EXCLUDED_KEYS {
+        *exact = false;
+        return;
+    }
+    excluded.insert(lib::sha256_hex(url.as_bytes()));
 }
 
 fn push_inventory_diagnostic(
@@ -885,7 +932,8 @@ fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Resul
     }
 
     let mut visited = HashSet::new();
-    let mut target_limit_reported = false;
+    let mut excluded_keys = HashSet::<String>::new();
+    let mut excluded_exact = true;
     while let Some(source) = queue.pop_front() {
         if !visited.insert(source.as_str().to_string()) {
             continue;
@@ -977,23 +1025,22 @@ fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Resul
                 }
             }
             for (raw, lastmod) in discovered_pages {
-                if pages.len() >= MAX_TARGETS {
-                    if !target_limit_reported {
-                        push_inventory_diagnostic(
-                            &mut diagnostics,
-                            "target_limit",
-                            format!(
-                                "documentation targets exceeded the {MAX_TARGETS}-target limit"
-                            ),
-                            source.as_str(),
-                        );
-                        target_limit_reported = true;
-                    }
-                    break;
-                }
                 match policy.canonical(&raw, Some(&response.final_url), "sitemap page") {
                     Ok(url) if path_is_in_scope(&url, &rules.prefixes)? => {
-                        pages.push((url.to_string(), lastmod))
+                        // In scope, so it belongs in the material this record is
+                        // supposed to hold. Whether it fits is the next
+                        // question, and the answer is counted either way --
+                        // before this, the walk stopped at the bound and the
+                        // run could not say how much it had left behind.
+                        if pages.len() < MAX_TARGETS {
+                            pages.push((url.to_string(), lastmod));
+                        } else {
+                            note_excluded(
+                                &mut excluded_keys,
+                                &mut excluded_exact,
+                                url.as_str(),
+                            );
+                        }
                     }
                     Ok(_) => {}
                     Err(error) => push_inventory_diagnostic(
@@ -1018,23 +1065,17 @@ fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Resul
                     continue;
                 };
                 let raw = &after[..end];
-                if pages.len() >= MAX_TARGETS {
-                    if !target_limit_reported {
-                        push_inventory_diagnostic(
-                            &mut diagnostics,
-                            "target_limit",
-                            format!(
-                                "documentation targets exceeded the {MAX_TARGETS}-target limit"
-                            ),
-                            source.as_str(),
-                        );
-                        target_limit_reported = true;
-                    }
-                    break;
-                }
                 match policy.canonical(raw, Some(&response.final_url), "llms.txt page") {
                     Ok(url) if path_is_in_scope(&url, &rules.prefixes)? => {
-                        pages.push((url.to_string(), None))
+                        if pages.len() < MAX_TARGETS {
+                            pages.push((url.to_string(), None));
+                        } else {
+                            note_excluded(
+                                &mut excluded_keys,
+                                &mut excluded_exact,
+                                url.as_str(),
+                            );
+                        }
                     }
                     Ok(_) => {}
                     Err(error) => push_inventory_diagnostic(
@@ -1058,18 +1099,13 @@ fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Resul
 
     if pages.len() == 1 && meta.inventory_source.starts_with("landing-nav") {
         for item in &meta.landing_nav {
-            if pages.len() >= MAX_TARGETS {
-                push_inventory_diagnostic(
-                    &mut diagnostics,
-                    "target_limit",
-                    format!("documentation targets exceeded the {MAX_TARGETS}-target limit"),
-                    policy.source_url.as_str(),
-                );
-                break;
-            }
             match policy.canonical(&item.path, Some(&policy.source_url), "landing navigation page") {
                 Ok(url) if path_is_in_scope(&url, &rules.prefixes)? => {
-                    pages.push((url.to_string(), None))
+                    if pages.len() < MAX_TARGETS {
+                        pages.push((url.to_string(), None));
+                    } else {
+                        note_excluded(&mut excluded_keys, &mut excluded_exact, url.as_str());
+                    }
                 }
                 Ok(_) => {}
                 Err(error) => push_inventory_diagnostic(
@@ -1089,11 +1125,38 @@ fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Resul
             policy.source_url.as_str(),
         );
     }
+    // The bound, stated with its quantity, and stated where the inventory
+    // digest already covers it. `target_limit` used to be pushed the moment
+    // the walk hit the bound, naming the limit and nothing else; it is now
+    // pushed once, at the end, when the whole in-scope inventory has been
+    // counted, so the sentence carries the number an operator has to decide
+    // about.
+    let capacity = (!excluded_keys.is_empty()).then(|| CorpusCapacity {
+        pages_outside_corpus: excluded_keys.len() as u64,
+        exact: excluded_exact,
+    });
+    if let Some(capacity) = capacity {
+        let qualifier = if capacity.exact { "" } else { "at least " };
+        push_inventory_diagnostic(
+            &mut diagnostics,
+            "target_limit",
+            format!(
+                "this site declares more in-scope pages than one corpus holds: {} retrieved \
+                 against the {MAX_TARGETS}-page corpus bound, leaving {qualifier}{} pages \
+                 outside this record. The bound is per corpus and one site is one corpus, so \
+                 the remainder cannot be delivered by this record at all",
+                pages.len(),
+                capacity.pages_outside_corpus
+            ),
+            policy.source_url.as_str(),
+        );
+    }
     Ok(InventoryResolution {
         pages,
         diagnostics,
         robots,
         downloaded_bytes: total_inventory_bytes.load(Ordering::SeqCst),
+        capacity,
     })
 }
 
@@ -1192,6 +1255,14 @@ struct DurableState {
     inventory_downloaded_bytes: u64,
     inventory_sha256: Option<String>,
     inventory_diagnostics: Vec<CrawlDiagnostic>,
+    /// What the inventory could not fit, absent for every record that fits.
+    ///
+    /// Optional and `skip_serializing_if` so a corpus written before this
+    /// existed serialises byte-identically and keeps its inventory digest;
+    /// present, it is folded into that digest, because a count of what a
+    /// record is missing is part of what the record's inventory says.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    corpus_capacity: Option<CorpusCapacity>,
     robots: Option<RobotsSnapshot>,
     targets: Vec<CrawlTarget>,
     outcomes: BTreeMap<String, PageOutcome>,
@@ -1856,6 +1927,7 @@ fn fresh_state(
         inventory_complete: false,
         inventory_sha256: None,
         inventory_diagnostics: Vec::new(),
+        corpus_capacity: None,
         inventory_downloaded_bytes: 0,
         robots: None,
         targets: Vec::new(),
@@ -1872,13 +1944,28 @@ fn inventory_sha256(
     diagnostics: &[CrawlDiagnostic],
     robots: &RobotsSnapshot,
     downloaded_bytes: u64,
+    capacity: Option<CorpusCapacity>,
 ) -> Result<String> {
-    Ok(lib::sha256_hex(&serde_json::to_vec(&json!({
-        "targets": targets,
-        "diagnostics": diagnostics,
-        "robots": robots,
-        "downloaded_bytes": downloaded_bytes,
-    }))?))
+    let mut descriptor = serde_json::Map::new();
+    descriptor.insert("targets".into(), serde_json::to_value(targets)?);
+    descriptor.insert("diagnostics".into(), serde_json::to_value(diagnostics)?);
+    descriptor.insert("robots".into(), serde_json::to_value(robots)?);
+    descriptor.insert("downloaded_bytes".into(), json!(downloaded_bytes));
+    // Inserted only when the bound actually bit, so every corpus written
+    // before this field existed hashes to exactly the digest it already
+    // carries and stays valid.
+    if let Some(capacity) = capacity {
+        descriptor.insert(
+            "corpus_capacity".into(),
+            json!({
+                "pages_outside_corpus": capacity.pages_outside_corpus,
+                "exact": capacity.exact,
+            }),
+        );
+    }
+    Ok(lib::sha256_hex(&serde_json::to_vec(&Value::Object(
+        descriptor,
+    ))?))
 }
 
 fn validate_state(
@@ -1952,6 +2039,7 @@ fn validate_state(
         &state.inventory_diagnostics,
         robots,
         state.inventory_downloaded_bytes,
+        state.corpus_capacity,
     )?;
     if state.inventory_sha256.as_deref() != Some(expected_inventory_sha256.as_str()) {
         bail!("durable documentation target inventory digest does not match its contents");
@@ -2868,6 +2956,7 @@ fn load_or_create_state(
             })
             .collect();
         state.inventory_diagnostics = resolution.diagnostics;
+        state.corpus_capacity = resolution.capacity;
         state.robots = Some(resolution.robots);
         state.inventory_downloaded_bytes = resolution.downloaded_bytes;
         state.inventory_sha256 = Some(inventory_sha256(
@@ -2878,6 +2967,7 @@ fn load_or_create_state(
                 .as_ref()
                 .context("resolved documentation inventory has no robots policy")?,
             state.inventory_downloaded_bytes,
+            state.corpus_capacity,
         )?);
         state.inventory_complete = true;
         checkpoint_state(&layout.state, &state)?;
@@ -2897,6 +2987,48 @@ fn report_bytes(report: &Value) -> Result<Vec<u8>> {
     let mut bytes = serde_json::to_vec_pretty(report)?;
     bytes.push(b'\n');
     Ok(bytes)
+}
+
+/// Everything the terminal state of one documentation run is decided from.
+pub(crate) struct RetrievalCounts {
+    pub target_count: usize,
+    pub retrieved_count: usize,
+    pub ok_count: usize,
+    pub text_page_count: usize,
+    pub diagnostic_count: usize,
+    pub pages_outside_corpus: u64,
+}
+
+/// The one derivation of a run's terminal state, called by the producer here
+/// and by `docs_corpus`'s validator.
+///
+/// It is one function because it was two expressions, and they disagreed: the
+/// producer read only per-page diagnostics while the validator also counted
+/// inventory diagnostics, so an over-bound site whose pages all fetched
+/// cleanly was written `retrieval_complete` and then refused on import with
+/// "counts or completion status differ from durable outcomes". Two readings of
+/// one rule is how a site ends up neither retrieved nor reported.
+///
+/// `retrieval_over_capacity` outranks `retrieval_partial` deliberately. A
+/// partial run can be completed by retrying it; a run over capacity cannot be
+/// completed by any number of retries, because the material does not fit the
+/// record. They are different states and the operator's decision differs.
+pub(crate) fn retrieval_status(counts: &RetrievalCounts) -> &'static str {
+    if counts.target_count == 0 || counts.retrieved_count == 0 {
+        "retrieval_empty"
+    } else if counts.text_page_count == 0 {
+        "retrieval_no_text"
+    } else if counts.pages_outside_corpus > 0 {
+        "retrieval_over_capacity"
+    } else if counts.diagnostic_count != 0
+        || counts.retrieved_count != counts.target_count
+        || counts.ok_count != counts.target_count
+        || counts.text_page_count != counts.target_count
+    {
+        "retrieval_partial"
+    } else {
+        "retrieval_complete"
+    }
 }
 
 fn build_report(
@@ -2945,19 +3077,15 @@ fn build_report(
             diagnostics.push(serde_json::to_value(diagnostic)?);
         }
     }
-    let retrieval_status = if state.targets.is_empty() || retrieved_count == 0 {
-        "retrieval_empty"
-    } else if text_page_count == 0 {
-        "retrieval_no_text"
-    } else if !diagnostics.is_empty()
-        || retrieved_count != state.targets.len()
-        || ok_count != state.targets.len()
-        || text_page_count != state.targets.len()
-    {
-        "retrieval_partial"
-    } else {
-        "retrieval_complete"
-    };
+    let capacity = state.corpus_capacity;
+    let retrieval_status = retrieval_status(&RetrievalCounts {
+        target_count: state.targets.len(),
+        retrieved_count,
+        ok_count,
+        text_page_count,
+        diagnostic_count: diagnostics.len(),
+        pages_outside_corpus: capacity.map_or(0, |value| value.pages_outside_corpus),
+    });
     let records = vec![json!({
         "page_downloaded_bytes": page_downloaded_bytes,
         "record": manifest.record,
@@ -2969,6 +3097,9 @@ fn build_report(
         "pages_sha256": state.committed_sha256,
         "pages_bytes": state.committed_bytes,
         "retrieval_status": retrieval_status,
+        "corpus_bound": MAX_TARGETS,
+        "pages_outside_corpus": capacity.map_or(0, |value| value.pages_outside_corpus),
+        "pages_outside_corpus_exact": capacity.is_none_or(|value| value.exact),
         "diagnostics": diagnostics,
     })];
     let (attempt, attempt_id) = manifest_attempt(manifest)?;
@@ -3517,4 +3648,101 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
     run_worker(&forwarded, &manifest)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn counts(target_count: usize, outside: u64) -> RetrievalCounts {
+        RetrievalCounts {
+            target_count,
+            retrieved_count: target_count,
+            ok_count: target_count,
+            text_page_count: target_count,
+            diagnostic_count: 0,
+            pages_outside_corpus: outside,
+        }
+    }
+
+    #[test]
+    fn a_record_that_fits_and_retrieved_cleanly_is_complete() {
+        assert_eq!(retrieval_status(&counts(472, 0)), "retrieval_complete");
+    }
+
+    #[test]
+    fn a_record_over_the_bound_is_never_complete_however_clean_its_pages_are() {
+        // Google Cloud: 216,092 in-scope URLs, 50,000 of them retrieved with
+        // no per-page diagnostic at all. Before this it read `complete`.
+        let over = counts(MAX_TARGETS, 216_092 - MAX_TARGETS as u64);
+        assert_eq!(retrieval_status(&over), "retrieval_over_capacity");
+    }
+
+    #[test]
+    fn over_capacity_outranks_partial_because_a_retry_cannot_fix_it() {
+        let mut over = counts(MAX_TARGETS, 1);
+        over.diagnostic_count = 7;
+        over.ok_count = MAX_TARGETS - 7;
+        assert_eq!(retrieval_status(&over), "retrieval_over_capacity");
+    }
+
+    #[test]
+    fn a_page_level_failure_without_the_bound_is_still_partial() {
+        let mut partial = counts(100, 0);
+        partial.ok_count = 99;
+        partial.diagnostic_count = 1;
+        assert_eq!(retrieval_status(&partial), "retrieval_partial");
+    }
+
+    #[test]
+    fn an_empty_or_textless_run_keeps_its_own_state() {
+        assert_eq!(retrieval_status(&counts(0, 0)), "retrieval_empty");
+        let mut textless = counts(10, 5);
+        textless.text_page_count = 0;
+        // Even over the bound: a run that retrieved no text has a different
+        // fault, and naming capacity first would hide it.
+        assert_eq!(retrieval_status(&textless), "retrieval_no_text");
+    }
+
+    #[test]
+    fn the_inventory_digest_is_unchanged_for_a_record_that_fits() {
+        // The compatibility guarantee: `corpus_capacity` is absent from the
+        // hashed descriptor when nothing was excluded, so every corpus
+        // written before the field existed keeps its digest.
+        let robots = RobotsSnapshot::default();
+        let legacy = lib::sha256_hex(
+            &serde_json::to_vec(&json!({
+                "targets": Vec::<CrawlTarget>::new(),
+                "diagnostics": Vec::<CrawlDiagnostic>::new(),
+                "robots": robots,
+                "downloaded_bytes": 11u64,
+            }))
+            .expect("legacy descriptor"),
+        );
+        let current = inventory_sha256(&[], &[], &robots, 11, None).expect("digest");
+        assert_eq!(current, legacy);
+        let excluded = inventory_sha256(
+            &[],
+            &[],
+            &robots,
+            11,
+            Some(CorpusCapacity {
+                pages_outside_corpus: 166_092,
+                exact: true,
+            }),
+        )
+        .expect("digest");
+        assert_ne!(excluded, legacy, "an excluded count must be covered");
+    }
+
+    #[test]
+    fn the_excluded_count_is_distinct_and_bounded() {
+        let mut excluded = std::collections::HashSet::new();
+        let mut exact = true;
+        note_excluded(&mut excluded, &mut exact, "https://example.com/a");
+        note_excluded(&mut excluded, &mut exact, "https://example.com/a");
+        note_excluded(&mut excluded, &mut exact, "https://example.com/b");
+        assert_eq!(excluded.len(), 2, "the same URL twice is one page");
+        assert!(exact);
+    }
 }
