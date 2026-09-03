@@ -791,7 +791,7 @@ fn hash_regular_file(path: &Path, maximum: u64) -> Result<(String, u64)> {
 /// and prove the stored bytes. Every engine shares this path so archive content
 /// safety, the exclusive per-archive lock and the digest proof cannot drift.
 pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
-    if !uri.starts_with("stado://spis-crawls/") {
+    if !uri.starts_with(&format!("{}/", crate::CRAWL_ATTEMPT_ROOT)) {
         bail!("attempt artifact URI is outside the Spis crawl namespace");
     }
     let attempt_name = root
@@ -2205,14 +2205,13 @@ fn finalize_manifest_identity(manifest: &mut RuntimeManifest, reference_bytes: &
     );
     manifest.correlation_id = format!("spis-{}-{}", &manifest.record_key[..24], manifest.attempt);
     manifest.stado_run_id = format!("{}-{}", manifest.correlation_id, manifest.attempt_id);
-    let base_uri = format!(
-        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
-        manifest.run_id,
-        manifest.catalog,
-        manifest.record,
-        manifest.record_key,
+    let base_uri = crate::crawl_attempt_base_uri(
+        &manifest.run_id,
+        &manifest.catalog,
+        &manifest.record,
+        &manifest.record_key,
         manifest.attempt,
-        manifest.attempt_id
+        &manifest.attempt_id,
     );
     manifest.artifact_uri = format!("{base_uri}/artifacts.tar.gz");
     manifest.output_uri = format!("{base_uri}/worker-output.log");
@@ -2234,14 +2233,13 @@ pub(crate) fn native_attempt_root(
     if manifest.attempt == 0 {
         bail!("runtime manifest attempt must be a nonzero u32");
     }
-    let coordinate = format!(
-        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
-        manifest.run_id,
-        manifest.catalog,
-        manifest.record,
-        manifest.record_key,
+    let coordinate = crate::crawl_attempt_base_uri(
+        &manifest.run_id,
+        &manifest.catalog,
+        &manifest.record,
+        &manifest.record_key,
         manifest.attempt,
-        manifest.attempt_id,
+        &manifest.attempt_id,
     );
     let artifact_uri = format!("{coordinate}/artifacts.tar.gz");
     let output_uri = format!("{coordinate}/worker-output.log");
@@ -2448,7 +2446,7 @@ fn planned_record(
         format!("{catalog_key}\0{slug}\0{source_input_sha256}").as_bytes(),
     );
     let correlation_id = format!("spis-{}", &record_key[..32]);
-    let base_uri = format!("stado://spis-crawls/{run_id}/{catalog}/{slug}/{record_key}");
+    let base_uri = crate::crawl_record_base_uri(run_id, catalog, &slug, &record_key);
     let mut manifest = RuntimeManifest {
         schema: RUNTIME_MANIFEST_SCHEMA.into(),
         run_id: run_id.into(),

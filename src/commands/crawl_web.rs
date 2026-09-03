@@ -210,14 +210,13 @@ fn same_origin(value: &str, product_url: &url::Url) -> bool {
 }
 
 fn attempt_base(binding: &weles::WelesAttemptBinding) -> String {
-    format!(
-        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
-        binding.run_id,
-        binding.catalog,
-        binding.record,
-        binding.record_key,
+    crate::crawl_attempt_base_uri(
+        &binding.run_id,
+        &binding.catalog,
+        &binding.record,
+        &binding.record_key,
         binding.attempt,
-        binding.attempt_id,
+        &binding.attempt_id,
     )
 }
 

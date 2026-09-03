@@ -293,8 +293,13 @@ fn validate_manifest_coordinates(report: &Value, required_uri: Option<&str>) -> 
         safe_component(value, label)?;
     }
     exact_lower_hex(record_key, "record_key")?;
-    let base = format!(
-        "stado://spis-crawls/{run_id}/{catalog}/{record}/{record_key}/attempts/{attempt}/{attempt_id}"
+    let base = crate::crawl_attempt_base_uri(
+        run_id,
+        catalog,
+        record,
+        record_key,
+        attempt,
+        attempt_id,
     );
     let artifact_uri = manifest
         .get("artifact_uri")
@@ -1070,7 +1075,9 @@ fn import_artifact(
     expected_archive_sha256: &str,
     expected_archive_bytes: u64,
 ) -> Result<AttemptCorpus> {
-    if !uri.starts_with("stado://spis-crawls/") || !uri.ends_with("/artifacts.tar.gz") {
+    if !uri.starts_with(&format!("{}/", crate::CRAWL_ATTEMPT_ROOT))
+        || !uri.ends_with("/artifacts.tar.gz")
+    {
         bail!("--artifact-uri must be an immutable Spis crawl artifact URI");
     }
     exact_lower_hex(expected_archive_sha256, "--archive-sha256")?;
@@ -1290,7 +1297,8 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
         safe_component(value, label)?;
     }
     let expected_uri = format!(
-        "stado://spis-crawls/{run_id}/{catalog}/{record}/{record_key}/attempts/{attempt}/{attempt_id}/artifacts.tar.gz"
+        "{}/artifacts.tar.gz",
+        crate::crawl_attempt_base_uri(run_id, catalog, record, record_key, attempt, attempt_id)
     );
     if uri != expected_uri {
         bail!("attempt receipt artifact URI does not match its immutable coordinates");

@@ -245,13 +245,22 @@ including attempt/state/outcome and every URI/digest.
 The canonical attempt base is:
 
 ```
-stado://spis-crawls/{run_id}/{catalog}/{record}/{record_key}/attempts/{attempt}/{attempt_id}
+stado://spis-crawls/runs/{run_id}/{catalog}/{record}/{record_key}/attempts/{attempt}/{attempt_id}
 ```
 
 Portable components use `[A-Za-z0-9._-]+` and are neither `.` nor `..`;
 `record_key` is lowercase 64-hex and attempt is a positive `u32`. Signed
 pre-submit binding URIs are exactly `{base}/artifacts.tar.gz` and
 `{base}/worker-output.log`.
+
+Every producer and every verifier derives that base through
+`crawl_attempt_base_uri` in `src/lib.rs`, so the two sides of a digest
+comparison can never spell it differently. The fixed `runs/` segment exists so
+Stado can authorize the namespace by prefix: object policies match a prefix
+only when it ends in `/`, so a key beginning with a per-run identifier could be
+granted by nothing narrower than the whole namespace. `spis-crawls` is
+therefore granted exactly `runs/` with `get`, `put` and `stat`, and
+`spis-crawl-inputs` exactly `runtime-bindings/` with the same three.
 
 Neither the shape of those components nor the shape of the URIs is the binding
 contract by itself. `record_key` and `attempt_id` are derived values, and both

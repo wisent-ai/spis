@@ -992,14 +992,13 @@ fn validate_attempt_uris(envelope: &WelesAttemptEnvelope) -> Result<(), String> 
             return Err(format!("{label} is not a portable attempt URI component"));
         }
     }
-    let base = format!(
-        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
-        envelope.run_id,
-        envelope.catalog,
-        envelope.record,
-        envelope.record_key,
+    let base = crate::crawl_attempt_base_uri(
+        &envelope.run_id,
+        &envelope.catalog,
+        &envelope.record,
+        &envelope.record_key,
         envelope.attempt,
-        envelope.attempt_id,
+        &envelope.attempt_id,
     );
     let artifact_sha256 = envelope
         .artifact_document_sha256
@@ -1362,14 +1361,13 @@ fn validate_spis_binding(binding: &WelesAttemptBinding) -> Result<(), String> {
     }
     validate_api_endpoint(&binding.service.endpoint, "signed Spis service endpoint")?;
     validate_attempt_binding_derivation(binding)?;
-    let base = format!(
-        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
-        binding.run_id,
-        binding.catalog,
-        binding.record,
-        binding.record_key,
+    let base = crate::crawl_attempt_base_uri(
+        &binding.run_id,
+        &binding.catalog,
+        &binding.record,
+        &binding.record_key,
         binding.attempt,
-        binding.attempt_id,
+        &binding.attempt_id,
     );
     if binding.artifact_uri != format!("{base}/artifacts.tar.gz")
         || binding.output_uri != format!("{base}/worker-output.log")

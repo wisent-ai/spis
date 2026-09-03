@@ -1393,14 +1393,13 @@ fn manifest_attempt(manifest: &super::crawl::RuntimeManifest) -> Result<(u32, St
         safe_path_component(value, label)?;
     }
     exact_lower_hex(&manifest.record_key, 64, "runtime manifest record_key")?;
-    let base = format!(
-        "stado://spis-crawls/{}/{}/{}/{}/attempts/{}/{}",
-        manifest.run_id,
-        manifest.catalog,
-        manifest.record,
-        manifest.record_key,
+    let base = crate::crawl_attempt_base_uri(
+        &manifest.run_id,
+        &manifest.catalog,
+        &manifest.record,
+        &manifest.record_key,
         attempt,
-        attempt_id
+        &attempt_id,
     );
     if manifest.artifact_uri != format!("{base}/artifacts.tar.gz")
         || manifest.output_uri != format!("{base}/worker-output.log")
