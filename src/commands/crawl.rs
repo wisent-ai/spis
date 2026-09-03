@@ -2912,8 +2912,14 @@ fn observed_hostname(host_report: &Value) -> Result<String> {
         .into_iter()
         .flatten()
         .find(|check| {
+            // The approved spelling is `hostname -f`, so the retained check
+            // carries two words. Matching only the one-word form silently
+            // dropped the observed hostname and every record then refused with
+            // runtime_identity_or_readiness_unavailable.
             check.get("command").and_then(Value::as_array).is_some_and(|command| {
-                command.len() == 1 && command[0].as_str() == Some("hostname")
+                command.len() == 2
+                    && command[0].as_str() == Some("hostname")
+                    && command[1].as_str() == Some("-f")
             })
         })
         .and_then(|check| check.get("stdout"))
