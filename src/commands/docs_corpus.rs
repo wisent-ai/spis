@@ -83,6 +83,11 @@ struct SiteInfo {
     cumulative_ok: usize,
     noise: usize,
     retrieval_status: Option<String>,
+    /// How many in-scope pages this site declares that no attempt of this
+    /// record can hold, and whether that number is exact. `0` for every site
+    /// that fits, which is 47 of the 51 in this family.
+    pages_outside_corpus: u64,
+    pages_outside_corpus_exact: bool,
     attempt: Option<u64>,
     attempt_id: Option<String>,
     corpus_dir: Option<PathBuf>,
@@ -448,17 +453,24 @@ fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value) -> Result
         .get("inventory_downloaded_bytes")
         .and_then(Value::as_u64)
         .context("durable state has no inventory_downloaded_bytes")?;
-    let inventory_descriptor = json!({
-        "targets": targets,
-        "diagnostics": state
+    // The same derivation the producer hashes, called rather than copied.
+    let capacity = state
+        .get("corpus_capacity")
+        .filter(|value| !value.is_null())
+        .cloned();
+    let inventory_sha256 = super::crawl_docs::inventory_digest(
+        Value::Array(targets.clone()),
+        state
             .get("inventory_diagnostics")
-            .context("durable state has no inventory diagnostics")?,
-        "robots": state
+            .context("durable state has no inventory diagnostics")?
+            .clone(),
+        state
             .get("robots")
-            .context("durable state has no robots policy")?,
-        "downloaded_bytes": inventory_downloaded_bytes,
-    });
-    let inventory_sha256 = lib::sha256_hex(&serde_json::to_vec(&inventory_descriptor)?);
+            .context("durable state has no robots policy")?
+            .clone(),
+        inventory_downloaded_bytes,
+        capacity.clone(),
+    )?;
     if state.get("inventory_sha256").and_then(Value::as_str)
         != Some(inventory_sha256.as_str())
     {
@@ -614,19 +626,30 @@ fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value) -> Result
         .get("inventory_diagnostics")
         .and_then(Value::as_array)
         .map_or(0, Vec::len);
-    let expected_status = if retrieved_count == 0 {
-        "retrieval_empty"
-    } else if text_page_count == 0 {
-        "retrieval_no_text"
-    } else if inventory_diagnostics + outcome_diagnostic_count != 0
-        || retrieved_count != targets.len()
-        || ok_count != targets.len()
-        || text_page_count != targets.len()
-    {
-        "retrieval_partial"
-    } else {
-        "retrieval_complete"
-    };
+    // One derivation, two callers. This side used to re-implement the rule
+    // and the two implementations disagreed, which is what made an over-bound
+    // site both unretrievable and unreportable: the producer wrote
+    // `retrieval_complete` and this refused it with "counts or completion
+    // status differ from durable outcomes", a sentence about arithmetic for a
+    // fact about capacity.
+    let declared_outside = capacity
+        .as_ref()
+        .and_then(|value| value.get("pages_outside_corpus"))
+        .and_then(Value::as_u64)
+        .unwrap_or(0);
+    let declared_exact = capacity
+        .as_ref()
+        .and_then(|value| value.get("exact"))
+        .and_then(Value::as_bool)
+        .unwrap_or(true);
+    let expected_status = super::crawl_docs::retrieval_status(&super::crawl_docs::RetrievalCounts {
+        target_count: targets.len(),
+        retrieved_count,
+        ok_count,
+        text_page_count,
+        diagnostic_count: inventory_diagnostics + outcome_diagnostic_count,
+        pages_outside_corpus: declared_outside,
+    });
     if report.get("retrieval_status").and_then(Value::as_str) != Some(expected_status)
         || report.pointer("/retrieval/target_count").and_then(Value::as_u64)
             != Some(targets.len() as u64)
@@ -638,6 +661,17 @@ fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value) -> Result
             != Some(text_page_count as u64)
         || report.pointer("/retrieval/page_downloaded_bytes").and_then(Value::as_u64)
             != Some(downloaded_bytes)
+        // The quantity is held to the durable inventory exactly as every
+        // other count is. A report free to name its own remainder is a
+        // report that can under-state what a record is missing.
+        || report.pointer("/retrieval/pages_outside_corpus").and_then(Value::as_u64)
+            != Some(declared_outside)
+        || report
+            .pointer("/retrieval/pages_outside_corpus_exact")
+            .and_then(Value::as_bool)
+            != Some(declared_exact)
+        || report.pointer("/retrieval/corpus_bound").and_then(Value::as_u64)
+            != Some(MAX_PAGE_RECORDS as u64)
     {
         bail!("retrieval report counts or completion status differ from durable outcomes");
     }
@@ -743,7 +777,11 @@ fn validate_corpus(
         .to_string();
     if !matches!(
         retrieval_status.as_str(),
-        "retrieval_complete" | "retrieval_partial" | "retrieval_no_text" | "retrieval_empty"
+        "retrieval_complete"
+            | "retrieval_over_capacity"
+            | "retrieval_partial"
+            | "retrieval_no_text"
+            | "retrieval_empty"
     ) {
         bail!("retrieval report has an unsupported retrieval_status");
     }
@@ -878,6 +916,25 @@ fn collect_sites() -> Result<Vec<SiteInfo>> {
             cumulative_ok,
             noise: seen.saturating_sub(cumulative_ok),
             retrieval_status: corpus.map(|attempt| attempt.retrieval_status.clone()),
+            // Read off the durable state, which is the copy the inventory
+            // digest covers, rather than off the report, which is derived
+            // from it.
+            pages_outside_corpus: corpus
+                .and_then(|attempt| {
+                    attempt
+                        .state
+                        .pointer("/corpus_capacity/pages_outside_corpus")
+                        .and_then(Value::as_u64)
+                })
+                .unwrap_or(0),
+            pages_outside_corpus_exact: corpus
+                .and_then(|attempt| {
+                    attempt
+                        .state
+                        .pointer("/corpus_capacity/exact")
+                        .and_then(Value::as_bool)
+                })
+                .unwrap_or(true),
             attempt: corpus.map(|attempt| attempt.attempt),
             attempt_id: corpus.map(|attempt| attempt.attempt_id.clone()),
             corpus_dir: corpus.map(|attempt| attempt.corpus_dir.clone()),
@@ -1449,8 +1506,15 @@ pub fn run(rest: &[String]) -> Result<()> {
                         "seen": site.seen,
                         "cumulative_ok": site.cumulative_ok,
                         "noise": site.noise,
+                        // `done` stays exactly "is this record complete", and
+                        // an over-capacity record is not: it is as retrieved
+                        // as this contract can make it, with a stated number
+                        // of pages that no attempt of this record can hold.
                         "done": site.retrieval_status.as_deref() == Some("retrieval_complete"),
                         "retrieval_status": site.retrieval_status,
+                        "corpus_bound": MAX_PAGE_RECORDS,
+                        "pages_outside_corpus": site.pages_outside_corpus,
+                        "pages_outside_corpus_exact": site.pages_outside_corpus_exact,
                         "attempt": site.attempt,
                         "attempt_id": site.attempt_id,
                     })
