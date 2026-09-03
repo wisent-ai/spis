@@ -1562,7 +1562,7 @@ fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
         "--repo-ref".to_string(),
         request.manifest.source_revision.clone(),
         "--repo-workdir".to_string(),
-        "spis".to_string(),
+        super::crawl::STADO_REPO_WORKDIR.to_string(),
         "--repo-extras".to_string(),
         String::new(),
         "--output-uri".to_string(),

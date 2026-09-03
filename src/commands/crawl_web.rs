@@ -322,7 +322,7 @@ fn submit_worker(
         "--repo-ref".to_string(),
         manifest.source_revision.clone(),
         "--repo-workdir".to_string(),
-        "spis".to_string(),
+        super::crawl::STADO_REPO_WORKDIR.to_string(),
         "--repo-extras".to_string(),
         String::new(),
         "--output-uri".to_string(),

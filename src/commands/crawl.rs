@@ -1149,27 +1149,50 @@ fn load(run_id: Option<&str>) -> Result<Value> {
 
 const STADO_SUBMISSION_RECEIPT_SCHEMA: &str = "stado.submission-receipt.v3";
 pub(crate) const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
-const STADO_REPO_WORKDIR: &str = "spis";
+/// The checkout subdirectory every crawl worker runs from. It is no longer a
+/// receipt field, so it is asserted where it is actually declared: the
+/// `--repo-workdir` each engine passes to `stado submit`.
+pub(crate) const STADO_REPO_WORKDIR: &str = "spis";
 
+/// Where the executor Stado resolved for a job is reported. Retained whole:
+/// the placement a crawl actually ran on is evidence, and refusing to read it
+/// would be refusing the receipt.
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StadoResolvedExecutor {
+    provider: String,
+    machine_type: String,
+    gpu_type: String,
+    platform_os: String,
+    architecture: String,
+}
+
+/// One job of a `stado.submission-receipt.v3` document, field for field as
+/// `stado-rs/src/cli/submit.rs` serialises it.
+///
+/// This side denies unknown fields on purpose, so it has to name every field
+/// the producer emits and no field it does not. Three that were declared here
+/// never existed in the receipt — `repo`, `executor` and `state` at job level —
+/// and three that do exist were missing: `command`, `job_key` and
+/// `resolved_executor`. The result was that a receipt proving a successful
+/// submission read as a contract violation while the job was already queued on
+/// the host.
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct StadoSubmissionJob {
-    job_id: String,
     command_index: u64,
-    command_digest: String,
-    /// The exact command line Stado accepted for this job. Retained rather
-    /// than denied: the receipt is proof of what was submitted, and the digest
-    /// beside it is already compared, so refusing the plaintext of the very
-    /// command this attempt asked for turned an accepted submission into
-    /// `submission_failed` with the job already queued on the host.
+    /// The exact command line Stado accepted. Verified below against
+    /// `command_digest`, so it is proof rather than decoration.
     command: String,
+    command_digest: String,
+    /// Stado derives `job_id` from this key, which is checked below.
+    job_key: String,
+    job_id: String,
     output_uri: String,
-    repo: String,
-    repo_ref: String,
     pinned_host: String,
-    executor: String,
+    resolved_executor: StadoResolvedExecutor,
+    repo_ref: String,
     submission_request_digest: String,
-    state: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -1181,12 +1204,8 @@ struct StadoSubmissionReceipt {
     request_digest: String,
     source_digest: String,
     input_digest: String,
-    command_digest: String,
     repo: String,
     repo_ref: String,
-    repo_workdir: String,
-    pinned_host: String,
-    executor: String,
     jobs: Vec<StadoSubmissionJob>,
 }
 
@@ -1221,7 +1240,6 @@ fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Opt
         ("request_digest", receipt.request_digest.as_str()),
         ("source_digest", receipt.source_digest.as_str()),
         ("input_digest", receipt.input_digest.as_str()),
-        ("command_digest", receipt.command_digest.as_str()),
     ] {
         if !is_lower_sha256(digest) {
             bail!("Stado submission receipt {label} is not a lowercase SHA-256 digest");
@@ -1229,15 +1247,12 @@ fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Opt
     }
     if receipt.schema != STADO_SUBMISSION_RECEIPT_SCHEMA
         || receipt.run_id.trim().is_empty()
-        || receipt.executor.trim().is_empty()
         || receipt.repo != REPOSITORY
-        || receipt.repo_workdir != STADO_REPO_WORKDIR
         || receipt.repo_ref != expected_revision
         || receipt.source_revision != expected_revision
-        || receipt.pinned_host != host
     {
         bail!(
-            "Stado submission receipt run/executor/repository/ref/host does not bind this exact attempt"
+            "Stado submission receipt run/repository/ref does not bind this exact attempt"
         );
     }
     if receipt.jobs.len() != 1 {
@@ -1247,26 +1262,31 @@ fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Opt
     if job.job_id.trim().is_empty() || safe_component(&job.job_id, "stado job id").is_err() {
         bail!("Stado submission receipt has no portable exact job id");
     }
+    // The pinned host and the repository ref are per job in the emitted
+    // receipt, not per receipt, so they are compared where they live.
     if job.command_index != 0
-        || job.command_digest != receipt.command_digest
+        || !is_lower_sha256(&job.command_digest)
+        || !is_lower_sha256(&job.job_key)
         || job.submission_request_digest != receipt.request_digest
-        || job.repo != receipt.repo
         || job.repo_ref != receipt.repo_ref
-        || job.pinned_host != receipt.pinned_host
-        || job.executor != receipt.executor
+        || job.pinned_host != host
         || job.output_uri != output_uri
-        || !matches!(job.state.as_str(), "queued" | "pending")
+        || job.resolved_executor.provider.trim().is_empty()
+        || job.resolved_executor.platform_os.trim().is_empty()
+        || job.resolved_executor.architecture.trim().is_empty()
     {
         bail!(
-            "Stado receipt job mapping, command digest, request digest, host, executor, output URI or initial state does not match the submitted attempt"
+            "Stado receipt job mapping, digests, host, executor or output URI does not match the submitted attempt"
         );
     }
-    // The retained command is proof only if it is the command its digest
-    // covers, so it is verified rather than trusted: SHA-256 over the exact
-    // accepted command line equals `command_digest`, measured against a real
-    // Stado v3 receipt.
+    // Two derivations Stado performs and this side re-performs, so the receipt
+    // is proof and not a claim: the accepted command line hashes to its own
+    // command digest, and the job id is the first 24 hex of the job key.
     if crate::sha256_hex(job.command.as_bytes()) != job.command_digest {
         bail!("Stado receipt job command does not hash to its own command digest");
+    }
+    if job.job_key.len() < 24 || job.job_id != format!("job-{}", &job.job_key[..24]) {
+        bail!("Stado receipt job id is not derived from its own job key");
     }
     Ok(json!({
         "schema": SUBMISSION_SCHEMA,
@@ -1278,6 +1298,16 @@ fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Opt
         "artifact_uri": artifact_uri,
         "output_uri": output_uri,
         "state": "queued",
+        // The placement a crawl actually ran on, lifted out of the receipt so
+        // a reader of the compact line does not have to parse the whole one.
+        "stado_executor": {
+            "provider": job.resolved_executor.provider,
+            "machine_type": job.resolved_executor.machine_type,
+            "gpu_type": job.resolved_executor.gpu_type,
+            "platform_os": job.resolved_executor.platform_os,
+            "architecture": job.resolved_executor.architecture,
+        },
+        "stado_job_key": job.job_key,
         "stado_receipt": raw,
     }))
 }

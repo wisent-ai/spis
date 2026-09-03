@@ -3420,7 +3420,7 @@ fn submit_worker(
         "--repo-ref",
         &manifest.source_revision,
         "--repo-workdir",
-        "spis",
+        super::crawl::STADO_REPO_WORKDIR,
         "--repo-extras",
         "",
         "--output-uri",
