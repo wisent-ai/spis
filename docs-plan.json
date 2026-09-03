@@ -1,126 +1,43 @@
 {
   "product": "spis",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "generated_by": "spis docs-site",
   "sources": {
-    "reference-help": {
-      "kind": "command",
-      "location": "spis --help"
+    "subcommands": {
+      "kind": "code",
+      "location": "src/commands/mod.rs SUBCOMMANDS"
     },
-    "reference-version": {
-      "kind": "command",
-      "location": "spis --version"
+    "families": {
+      "kind": "code",
+      "location": "src/commands/crawl.rs CATALOGS"
     },
-    "contract": {
-      "kind": "file",
-      "location": "full-reference-contract.md"
+    "preconditions": {
+      "kind": "code",
+      "location": "src/commands/crawl.rs engine_preconditions"
     },
-    "pipeline-doc": {
-      "kind": "file",
-      "location": "docs/pipeline.md"
+    "corpus-bound": {
+      "kind": "code",
+      "location": "src/commands/docs_corpus.rs MAX_PAGE_RECORDS"
     }
   },
-  "terms": [
-    {
-      "term": "record",
-      "definedOn": "overview"
-    },
-    {
-      "term": "provenance class",
-      "definedOn": "overview"
-    },
-    {
-      "term": "evidence gap",
-      "definedOn": "overview"
-    },
-    {
-      "term": "catalog",
-      "definedOn": "overview"
-    },
-    {
-      "term": "corpus",
-      "definedOn": "overview"
-    }
-  ],
   "pages": [
     {
       "slug": "overview",
       "nav": "Overview",
-      "group": "Getting started",
-      "kind": "overview",
+      "eyebrow": "Getting started",
       "title": "Spis overview",
-      "description": "What Spis is and how every record earns its place in the corpus.",
+      "description": "What Spis is, and the two surfaces that drive it.",
       "sections": [
         {
           "title": "What Spis is",
-          "blocks": [
-            {
-              "type": "paragraph",
-              "claim": {
-                "source": "reference-help",
-                "evidence": "usage: spis <command> [tool flags]"
-              },
-              "text": "Spis is an evidence-grade reference corpus: 700 records across 13 interface families, each carrying its source, hashes, provenance class, and measured state."
-            },
-            {
-              "type": "paragraph",
-              "claim": {
-                "source": "contract",
-                "evidence": "Per-example completion floor"
-              },
-              "text": "A record exists only with its evidence. A missing observation is recorded as an evidence gap and is never promoted into prose."
-            }
+          "paragraphs": [
+            "Spis is an evidence-grade reference corpus: every record carries its source, hashes, provenance class, and measured state. A record exists only with its evidence, and a missing observation is recorded as an evidence gap rather than promoted into prose."
           ]
         },
         {
-          "title": "Words this documentation uses",
-          "blocks": [
-            {
-              "type": "bullets",
-              "claim": {
-                "source": "contract",
-                "evidence": "provenance class"
-              },
-              "items": [
-                "`record` \u2014 one measured reference: media, source URL, hashes, provenance class, and status.",
-                "`provenance class` \u2014 how the media was obtained: `local-product-run`, `local-browser-run`, or `upstream-owner-media`.",
-                "`evidence gap` \u2014 something the corpus does not know, recorded instead of guessed.",
-                "`catalog` \u2014 one family of records, such as web-app-examples or cli-examples."
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "slug": "quick-start",
-      "nav": "Quick start",
-      "group": "Getting started",
-      "kind": "quick-start",
-      "title": "Quick start",
-      "description": "Clone the corpus and run your first command in under a minute.",
-      "sections": [
-        {
-          "title": "Run the CLI",
-          "blocks": [
-            {
-              "type": "code",
-              "code": {
-                "label": "clone and run the consistency gate",
-                "code": "$ git clone https://github.com/wisent-ai/spis && cd spis\n$ bin/spis\n$ bin/spis catalogs --check"
-              },
-              "claim": {
-                "source": "reference-version",
-                "evidence": "reference 1.0.0"
-              }
-            },
-            {
-              "type": "paragraph",
-              "claim": {
-                "source": "pipeline-doc",
-                "evidence": "capture \u2500\u2500\u25ba collect-images \u2500\u2500\u25ba verify \u2500\u2500\u25ba catalogs"
-              },
-              "text": "`collect-images` and `analyze-structures` need Pillow; every other command runs on the Python standard library."
-            }
+          "title": "Two surfaces, one set of operations",
+          "paragraphs": [
+            "Every operation below is available from both surfaces. The command line and the desktop application are two ways to reach the same commands, not a full product and a viewer: if a command can do something, the application can too."
           ]
         }
       ]
@@ -128,65 +45,106 @@
     {
       "slug": "cli-reference",
       "nav": "CLI reference",
-      "group": "Reference",
-      "kind": "cli-reference",
+      "eyebrow": "Reference",
       "title": "CLI reference",
-      "description": "Every `reference` command and what it owns.",
+      "description": "Every subcommand the shipped binary dispatches.",
       "sections": [
         {
           "title": "Commands",
-          "blocks": [
-            {
-              "type": "table",
-              "claim": {
-                "source": "reference-help",
-                "evidence": "usage: spis <command> [tool flags]"
-              },
-              "table": {
-                "columns": [
-                  "command",
-                  "owns"
-                ],
-                "rows": [
-                  [
-                    "capture",
-                    "own-product references from installed binaries"
-                  ],
-                  [
-                    "audit-accessibility",
-                    "accessibility audit of captured references"
-                  ],
-                  [
-                    "collect-images",
-                    "attributable official imagery"
-                  ],
-                  [
-                    "analyze-structures",
-                    "panel and layout analysis"
-                  ],
-                  [
-                    "sync-readmes",
-                    "upstream README snapshots refresh"
-                  ],
-                  [
-                    "analyze-readmes",
-                    "README corpus structural analysis"
-                  ],
-                  [
-                    "verify",
-                    "rewrite records to what the bytes prove"
-                  ],
-                  [
-                    "catalogs",
-                    "regenerate the index; refuses disagreement"
-                  ],
-                  [
-                    "drift",
-                    "upstream README and URL drift report"
-                  ]
-                ]
-              }
-            }
+          "bullets": [
+            "`docs-site` — generate this product's documentation from its own tables.",
+            "`crawl` — plan, submit, track, resume and import every crawler.",
+            "`crawl-cli` — crawl real CLI products through a PTY on Stado.",
+            "`crawl-docs` — full-text crawl of the 50-reference documentation set.",
+            "`crawl-mobile` — crawl real iOS or Android apps through Appium.",
+            "`crawl-desktop` — crawl real macOS or desktop apps through Cua Driver.",
+            "`crawl-web` — crawl real browser products through Weles on Stado.",
+            "`crawl-tui` — crawl real terminal applications through a PTY on Stado.",
+            "`docs-corpus` — read and import immutable documentation retrieval corpora.",
+            "`discover` — discover important pages behind a start URL.",
+            "`reference-record` — manage numbered reference records in a catalog.",
+            "`verify-reference-evidence` — measure and verify evidence fields of records.",
+            "`check-upstream-drift` — detect drift between corpus and upstream sources.",
+            "`catalog-type` — manage typed catalogs (add/edit/rename/remove).",
+            "`generate-example-catalogs` — validate catalogs and write the JSON index.",
+            "`analyze-example-structures` — structural analysis of example screenshots.",
+            "`collect-example-images` — collect cover images for examples.",
+            "`capture-widths` — enqueue multi-width Weles capture batches.",
+            "`audit-reference-accessibility` — run axe audits over captured references.",
+            "`capture-wisent-references` — pty-capture product CLIs into records.",
+            "`curate-marketing-catalogs` — write validated pricing and landing candidates for Weles capture."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "running-crawls",
+      "nav": "Running a crawl",
+      "eyebrow": "Operating",
+      "title": "Running a crawl",
+      "description": "Start a run for one family or all of them, from either surface, and ask a host whether it can carry the work first.",
+      "sections": [
+        {
+          "title": "Ask before you claim",
+          "paragraphs": [
+            "`spis crawl preflight --catalog FAMILY --host HOST` runs that family's declared preconditions through Stado's approved read-only probes. It starts nothing, claims no slot, and exits non-zero when the host cannot run the family. The desktop application asks the same question through Check host readiness and shows each refusal in the host's own words."
+          ]
+        },
+        {
+          "title": "Start and track a run",
+          "code": [
+            "spis crawl start --catalog documentation-site-examples",
+            "spis crawl status --run RUN_ID",
+            "spis crawl resume --run RUN_ID",
+            "spis crawl import --run RUN_ID"
+          ],
+          "paragraphs": [
+            "The desktop application starts a run for one family or for all fifteen, tracks the run and its per-record jobs, and resumes or imports the same run."
+          ]
+        },
+        {
+          "title": "What each family requires of a host",
+          "bullets": [
+            "`ios-app-examples` — mobile engine; the host must answer `cargo --version`, `appium --version`, `appium driver list --installed`, `xcrun simctl list devices available`.",
+            "`android-app-examples` — mobile engine; the host must answer `cargo --version`, `appium --version`, `appium driver list --installed`, `adb version`, `adb devices -l`.",
+            "`macos-app-examples` — desktop engine; the host must answer `cargo --version`.",
+            "`desktop-app-examples` — desktop engine; the host must answer `cargo --version`.",
+            "`web-app-examples` — web engine; the host must answer `cargo --version`, `node --version`.",
+            "`dashboard-console-examples` — web engine; the host must answer `cargo --version`, `node --version`.",
+            "`tui-examples` — tui engine; the host must answer `cargo --version`, `tmux -V`, `git --version`.",
+            "`cli-examples` — cli engine; the host must answer `cargo --version`, `tmux -V`.",
+            "`onboarding-auth-examples` — web engine; the host must answer `cargo --version`, `node --version`.",
+            "`documentation-site-examples` — docs engine; the host must answer `cargo --version`.",
+            "`app-store-listing-examples` — web engine; the host must answer `cargo --version`, `node --version`.",
+            "`design-system-examples` — web engine; the host must answer `cargo --version`, `node --version`.",
+            "`report-evidence-examples` — web engine; the host must answer `cargo --version`, `node --version`.",
+            "`pricing-page-examples` — web engine; the host must answer `cargo --version`, `node --version`.",
+            "`landing-page-examples` — web engine; the host must answer `cargo --version`, `node --version`."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "corpus-limits",
+      "nav": "Corpus limits",
+      "eyebrow": "Operating",
+      "title": "Corpus limits",
+      "description": "One site is one corpus, and a corpus holds a bounded number of pages.",
+      "sections": [
+        {
+          "title": "The bound, and what falls outside it",
+          "paragraphs": [
+            "A documentation corpus holds at most 50000 page records. One site is one corpus: the record identity, the corpus selection and the catalog's refusal of a duplicate source URL all assume it, so a site declaring more in-scope pages than the bound cannot deliver the remainder under another record.",
+            "A run in that position ends in the named state `retrieval_over_capacity`, and its report carries `corpus_bound`, `pages_outside_corpus` and `pages_outside_corpus_exact`. That is a capacity decision for an operator, not a failed retrieval: no number of retries makes the material fit. `spis docs-corpus status` and the desktop application both show those three numbers per site."
+          ]
+        },
+        {
+          "title": "Sites that exceed the bound today",
+          "bullets": [
+            "`21-google-cloud-documentation` declares 216092 in-scope pages against the 50000-page bound.",
+            "`12-net-documentation` declares 201460 in-scope pages against the 50000-page bound.",
+            "`22-microsoft-azure-documentation` declares 201009 in-scope pages against the 50000-page bound.",
+            "`01-mdn-web-docs` declares 54594 in-scope pages against the 50000-page bound."
           ]
         }
       ]

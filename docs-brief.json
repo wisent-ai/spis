@@ -1,24 +1,45 @@
 {
   "ok": true,
   "product": "spis",
-  "version": "1.0.0",
-  "repo": "/Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis",
+  "version": "0.1.0",
+  "generated_by": "spis docs-site",
   "surfaces": {
     "cli": {
       "declared": true,
-      "binary": "/Users/lukaszbartoszcze/Documents/CodingProjects/Wisent/spis/bin/spis",
-      "ok": true,
-      "version": "1.0.0",
+      "binary": "target/release/spis",
       "commands": [
-        "analyze-readmes",
-        "analyze-structures",
-        "audit-accessibility",
-        "capture",
-        "catalogs",
-        "collect-images",
-        "drift",
-        "sync-readmes",
-        "verify"
+        "docs-site",
+        "crawl",
+        "crawl-cli",
+        "crawl-docs",
+        "crawl-mobile",
+        "crawl-desktop",
+        "crawl-web",
+        "crawl-tui",
+        "docs-corpus",
+        "discover",
+        "reference-record",
+        "verify-reference-evidence",
+        "check-upstream-drift",
+        "catalog-type",
+        "generate-example-catalogs",
+        "analyze-example-structures",
+        "collect-example-images",
+        "capture-widths",
+        "audit-reference-accessibility",
+        "capture-wisent-references",
+        "curate-marketing-catalogs"
+      ]
+    },
+    "desktop": {
+      "declared": true,
+      "repository": "https://github.com/wisent-ai/spis-desktop",
+      "parity_with": "cli",
+      "operations": [
+        "start a crawl for one product family or for all of them",
+        "track a run and its per-record jobs",
+        "ask whether one host can run one family, before anything is claimed",
+        "read the documentation corpus, including the corpus bound and what falls outside it"
       ]
     },
     "api": {
@@ -26,19 +47,133 @@
     },
     "config": {
       "declared": false
-    },
-    "changelog": {
-      "declared": false
-    },
-    "limits": {
-      "declared": false
     }
   },
-  "docs": {},
-  "requiredKinds": [
-    "overview",
-    "quick-start",
-    "cli-reference"
+  "families": [
+    {
+      "family": "ios-app-examples",
+      "engine": "mobile",
+      "requires": [
+        "cargo --version",
+        "appium --version",
+        "appium driver list --installed",
+        "xcrun simctl list devices available"
+      ]
+    },
+    {
+      "family": "android-app-examples",
+      "engine": "mobile",
+      "requires": [
+        "cargo --version",
+        "appium --version",
+        "appium driver list --installed",
+        "adb version",
+        "adb devices -l"
+      ]
+    },
+    {
+      "family": "macos-app-examples",
+      "engine": "desktop",
+      "requires": [
+        "cargo --version"
+      ]
+    },
+    {
+      "family": "desktop-app-examples",
+      "engine": "desktop",
+      "requires": [
+        "cargo --version"
+      ]
+    },
+    {
+      "family": "web-app-examples",
+      "engine": "web",
+      "requires": [
+        "cargo --version",
+        "node --version"
+      ]
+    },
+    {
+      "family": "dashboard-console-examples",
+      "engine": "web",
+      "requires": [
+        "cargo --version",
+        "node --version"
+      ]
+    },
+    {
+      "family": "tui-examples",
+      "engine": "tui",
+      "requires": [
+        "cargo --version",
+        "tmux -V",
+        "git --version"
+      ]
+    },
+    {
+      "family": "cli-examples",
+      "engine": "cli",
+      "requires": [
+        "cargo --version",
+        "tmux -V"
+      ]
+    },
+    {
+      "family": "onboarding-auth-examples",
+      "engine": "web",
+      "requires": [
+        "cargo --version",
+        "node --version"
+      ]
+    },
+    {
+      "family": "documentation-site-examples",
+      "engine": "docs",
+      "requires": [
+        "cargo --version"
+      ]
+    },
+    {
+      "family": "app-store-listing-examples",
+      "engine": "web",
+      "requires": [
+        "cargo --version",
+        "node --version"
+      ]
+    },
+    {
+      "family": "design-system-examples",
+      "engine": "web",
+      "requires": [
+        "cargo --version",
+        "node --version"
+      ]
+    },
+    {
+      "family": "report-evidence-examples",
+      "engine": "web",
+      "requires": [
+        "cargo --version",
+        "node --version"
+      ]
+    },
+    {
+      "family": "pricing-page-examples",
+      "engine": "web",
+      "requires": [
+        "cargo --version",
+        "node --version"
+      ]
+    },
+    {
+      "family": "landing-page-examples",
+      "engine": "web",
+      "requires": [
+        "cargo --version",
+        "node --version"
+      ]
+    }
   ],
+  "corpus_bound": 50000,
   "problems": []
 }

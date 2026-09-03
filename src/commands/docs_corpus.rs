@@ -16,7 +16,13 @@ const MAX_DISCOVERY_DIRECTORIES: usize = 100_000;
 const MAX_IMPORTED_ARCHIVE_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 const MAX_IMPORTED_CORPUS_BYTES: u64 = 1536 * 1024 * 1024;
 const MAX_OUTCOME_JOURNAL_BYTES: u64 = 256 * 1024 * 1024;
-const MAX_PAGE_RECORDS: usize = 50_000;
+/// The per-corpus page bound. One site is one corpus, so this is also the
+/// most pages one documentation record can ever hold.
+///
+/// Public because the generated documentation states it: `docs_site` reads it
+/// here rather than repeating the number in prose, so a documented bound
+/// cannot drift from the enforced one.
+pub(crate) const MAX_PAGE_RECORDS: usize = 50_000;
 const MAX_PAGE_RECORD_BYTES: usize = 128 * 1024 * 1024;
 const MAX_DECOMPRESSED_CORPUS_BYTES: u64 = 3 * 1024 * 1024 * 1024;
 const MAX_TOTAL_PAGE_DOWNLOAD_BYTES: u64 = 2 * 1024 * 1024 * 1024;
@@ -864,6 +870,41 @@ fn selected_corpora() -> Result<HashMap<String, AttemptCorpus>> {
         }
     }
     Ok(selected)
+}
+
+/// Every documentation site whose declared inventory exceeds
+/// [`MAX_PAGE_RECORDS`], with that declared count.
+///
+/// Read from the checked-in structure files, not from a crawl: the fact is a
+/// property of the site's own sitemap and is true before any attempt. The
+/// generated documentation names these sites instead of describing them,
+/// because "some sites are large" is what let four of them read as failures.
+pub(crate) fn sites_over_corpus_bound() -> Vec<(String, i64)> {
+    let mut found = Vec::new();
+    let Ok(entries) = std::fs::read_dir(engine_root()) else {
+        return found;
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.extension().and_then(|value| value.to_str()) != Some("json")
+            || path.file_name().and_then(|value| value.to_str()) == Some("full-text-manifest.json")
+        {
+            continue;
+        }
+        let Ok(meta) = read_json(&path) else { continue };
+        let declared = meta
+            .get("inventory_url_count")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        if declared <= MAX_PAGE_RECORDS as i64 {
+            continue;
+        }
+        if let Some(slug) = path.file_stem().and_then(|value| value.to_str()) {
+            found.push((slug.to_string(), declared));
+        }
+    }
+    found.sort_by(|left, right| right.1.cmp(&left.1));
+    found
 }
 
 fn collect_sites() -> Result<Vec<SiteInfo>> {

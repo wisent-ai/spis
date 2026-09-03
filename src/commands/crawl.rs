@@ -20,7 +20,12 @@ const OP_SCHEMA: &str = "wisent.crawl-operation.v1";
 const RUN_SCHEMA: &str = "wisent.crawl-run.v1";
 const SUBMISSION_SCHEMA: &str = "wisent.crawl-submission.v1";
 
-const CATALOGS: &[(&str, &str)] = &[
+/// Every product family and the engine that crawls it.
+///
+/// Public because the generated documentation enumerates it: `docs_site`
+/// reads this table rather than restating a count in prose, which is how the
+/// published documentation came to claim thirteen families.
+pub(crate) const CATALOGS: &[(&str, &str)] = &[
     ("ios-app-examples", "mobile"),
     ("android-app-examples", "mobile"),
     ("macos-app-examples", "desktop"),

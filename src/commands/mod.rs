@@ -15,6 +15,7 @@ pub mod crawl_web;
 pub mod curate_marketing_catalogs;
 pub mod discover;
 pub mod docs_corpus;
+pub mod docs_site;
 pub mod generate_example_catalogs;
 pub mod reference_contract;
 pub mod reference_record;
@@ -23,6 +24,10 @@ pub mod verify_reference_evidence;
 use anyhow::Result;
 
 const SUBCOMMANDS: &[(&str, &str)] = &[
+    (
+        "docs-site",
+        "generate this product's documentation from its own tables",
+    ),
     (
         "crawl",
         "plan, submit, track, resume and import every crawler",
@@ -113,6 +118,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "crawl-tui" => crawl_tui::run(rest)?,
         "curate-marketing-catalogs" => curate_marketing_catalogs::run(rest)?,
         "docs-corpus" => docs_corpus::run(rest)?,
+        "docs-site" => docs_site::run(rest)?,
         "discover" => discover::run(rest)?,
         "reference-record" => reference_record::run(rest)?,
         "verify-reference-evidence" => verify_reference_evidence::run(rest)?,
