@@ -1532,12 +1532,29 @@ fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
         }
         index += 1;
     }
-    let weles_token_ref =
-        weles_token_ref.context("--weles-token-ref is required; Spis will not guess a credential reference")?;
-    let organization_ref = organization_ref
-        .context("--organization-ref is required; Spis will not guess an organization reference")?;
-    if !valid_secret_reference(&weles_token_ref)
-        || !valid_secret_reference(&organization_ref)
+    // The two references authorize exactly one engine: the Weles browser
+    // engine. Requiring them for the whole document made every other family
+    // hostage to a credential coordinate it never reads — a documentation
+    // crawl is bounded HTTP on a Stado host and its delivery is
+    // `{"kind": "none"}` — so a fleet without a provisioned Weles bearer could
+    // not plan a docs record at all. Supply them and the web families are
+    // configured exactly as before; omit them and the web records become
+    // explicitly unconfigured with a typed diagnostic, which is the same
+    // treatment a native record without an authorization proof already gets
+    // and which `planned_record` already turns into one `unavailable` attempt
+    // rather than a silent crawl. Both must still be supplied together: half a
+    // browser credential is a misconfiguration, not a narrower plan.
+    if weles_token_ref.is_some() != organization_ref.is_some() {
+        bail!(
+            "--weles-token-ref and --organization-ref are supplied together or not at all; \
+             one without the other cannot authorize a browser record"
+        );
+    }
+    if weles_token_ref
+        .as_deref()
+        .into_iter()
+        .chain(organization_ref.as_deref())
+        .any(|value| !valid_secret_reference(value))
     {
         bail!("binding secret references must use exact ITEM#FIELD syntax");
     }
@@ -1552,6 +1569,11 @@ fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                 .context("record directory name is not UTF-8")?
                 .to_string();
             let binding = match *engine {
+                // A web record without the pair of references has no
+                // authorized delivery, so it is declared unconfigured here
+                // rather than written as a configured record whose secret
+                // environment names nothing.
+                "web" if weles_token_ref.is_none() => safe_unconfigured_binding(engine),
                 "web" | "docs" => {
                     let reference: Value = crate::read_json(
                         directory
