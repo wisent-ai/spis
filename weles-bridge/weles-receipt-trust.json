@@ -1,0 +1,9 @@
+{
+  "schema": "wisent.spis-weles-receipt-trust.v1",
+  "organizationId": "f04e35c2-f8aa-4add-9c29-750bfdc390cd",
+  "allowedAction": "generic_browser_task",
+  "receiptKeys": {
+    "spis-263c401913bd1edd6d0ac594": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA8GLhO81dz5pCOOkuQkbsKUWoSWCKs/2nBr+X7wmQGwI=\n-----END PUBLIC KEY-----\n"
+  },
+  "keySetVersion": "spis-b80bc0a2bf1ab70db28f3bff"
+}
