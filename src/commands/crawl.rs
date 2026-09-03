@@ -1744,7 +1744,7 @@ fn load_runtime_bindings(explicit: Option<&str>) -> Result<RuntimeBindings> {
     Ok(RuntimeBindings {
         source,
         local_path: Some(selected),
-        uri: format!("stado://spis-crawl-inputs/runtime-bindings/{sha256}.json"),
+        uri: format!("{}/{sha256}.json", crate::CRAWL_INPUT_ROOT),
         sha256,
         document,
     })

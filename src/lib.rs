@@ -7,18 +7,27 @@ use std::time::Duration;
 pub const USER_AGENT: &str =
     concat!("Spis/", env!("CARGO_PKG_VERSION"), " (evidence-grade interface corpus; +https://spis.wisent.com/docs)");
 
-/// Every object a crawl attempt publishes lives under this one prefix.
+/// Every object a crawl publishes lives under one namespace and one of its two
+/// named roots.
 ///
-/// The `runs/` segment is not decoration. Stado authorizes object traffic per
-/// namespace *prefix* (`object_api.namespaces`, `ObjectPrefixPolicy`), and a
-/// prefix only matches as a prefix when it ends in `/`; a key that begins with
-/// a per-run identifier can therefore be granted by nothing narrower than the
-/// empty prefix, which is the whole namespace. Every one of the seventeen
-/// namespaces Stado already declares grants a named first segment instead, so
-/// the attempt tree carries one too and `spis-crawls` can be granted exactly
-/// `runs/` with exactly `get`, `put` and `stat`.
+/// Stado authorizes object traffic per namespace *prefix*
+/// (`object_api.namespaces`, `ObjectPrefixPolicy`), and a prefix only matches
+/// as a prefix when it ends in `/`; a key that begins with a per-run or
+/// per-digest identifier can therefore be granted by nothing narrower than the
+/// empty prefix, which is the whole namespace. Every namespace Stado declares
+/// grants named first segments instead, so the crawl tree carries two: one
+/// attempt root and one input root. They share a namespace deliberately — the
+/// caller sends exactly one bearer per request and the service compares it
+/// against the credential item of the namespace being addressed, so a second
+/// namespace would mean a second bearer for the same coordinator run.
+pub const CRAWL_NAMESPACE: &str = "stado://spis-crawls";
+
+/// Immutable attempt trees: `{CRAWL_ATTEMPT_ROOT}/{run_id}/...`.
 pub const CRAWL_ATTEMPT_ROOT: &str = "stado://spis-crawls/runs";
 
+/// Immutable coordinator inputs, addressed by content digest. Today that is
+/// the generated runtime-bindings document every worker re-downloads.
+pub const CRAWL_INPUT_ROOT: &str = "stado://spis-crawls/inputs/runtime-bindings";
 /// The immutable coordinate of one record inside one run.
 pub fn crawl_record_base_uri(
     run_id: &str,

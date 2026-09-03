@@ -258,9 +258,13 @@ Every producer and every verifier derives that base through
 comparison can never spell it differently. The fixed `runs/` segment exists so
 Stado can authorize the namespace by prefix: object policies match a prefix
 only when it ends in `/`, so a key beginning with a per-run identifier could be
-granted by nothing narrower than the whole namespace. `spis-crawls` is
-therefore granted exactly `runs/` with `get`, `put` and `stat`, and
-`spis-crawl-inputs` exactly `runtime-bindings/` with the same three.
+granted by nothing narrower than the whole namespace. Everything a crawl
+publishes therefore lives in one namespace, `spis-crawls`, under two named
+roots — `runs/` for attempt trees and `inputs/` for the digest-addressed
+runtime-bindings document — each granted exactly `get`, `put` and `stat`. One
+namespace, not two, because a caller sends exactly one bearer per request and
+the service compares it against the credential item of the namespace being
+addressed.
 
 Neither the shape of those components nor the shape of the URIs is the binding
 contract by itself. `record_key` and `attempt_id` are derived values, and both
