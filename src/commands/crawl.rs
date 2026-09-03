@@ -2844,6 +2844,42 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
     }
 }
 
+/// The absolute program path Stado exec'd for an approved probe.
+///
+/// A submitted worker command must never name a program bare. `stado host
+/// exec` resolves a multi-candidate entry per host and its receipt reports
+/// which path it used, so this turns a verified probe into the exact spelling
+/// the job can execute. The job runs under a non-login `/bin/sh` that reads no
+/// profile, so `~/.cargo/bin` is not on its PATH however the host is set up.
+pub(crate) fn resolved_program(host: &str, arguments: &[&str]) -> Result<String> {
+    let check = host_probe(host, arguments);
+    if check.get("ready").and_then(Value::as_bool) != Some(true) {
+        bail!(
+            "host {host} cannot run `{}`: {}",
+            arguments.join(" "),
+            check
+                .get("error")
+                .and_then(Value::as_str)
+                .or_else(|| check.get("stderr").and_then(Value::as_str))
+                .unwrap_or("probe was not ready")
+                .trim()
+        );
+    }
+    let path = check
+        .get("stado_receipt")
+        .and_then(|receipt| receipt.get("resolved_executable"))
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|path| path.starts_with('/'))
+        .with_context(|| {
+            format!(
+                "host {host} probe for `{}` reported no absolute resolved executable",
+                arguments.join(" ")
+            )
+        })?;
+    Ok(path.to_string())
+}
+
 /// Independently confirm the deployed Weles release on the pinned host.
 ///
 /// The Stado service directory is one observation; `{endpoint}/version` on the
@@ -2925,7 +2961,17 @@ fn host_preflight(
         ],
         ("desktop", _) => Vec::new(),
         ("web", _) => vec![vec!["node", "--version"]],
-        ("docs", _) => Vec::new(),
+        // The documentation worker runs as `cargo run --release` on the
+        // placement host, so cargo is this engine's one real precondition and
+        // it went unchecked. On 2026-09-03 job-545551889f9e88be30daa81f was
+        // claimed for `48-atlassian-design-system`, ran for sixteen minutes
+        // and died with `/bin/sh: cargo: command not found`, because the
+        // submitted command names the program bare and the job's shell is not
+        // a login shell. Probing it here refuses such a host in seconds with a
+        // typed check instead of after a claimed slot and a wasted attempt,
+        // and the receipt names the absolute path the command is then built
+        // from.
+        ("docs", _) => vec![vec!["cargo", "--version"]],
         ("cli" | "tui", _) => vec![vec!["tmux", "-V"]],
         _ => Vec::new(),
     });

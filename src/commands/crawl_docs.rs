@@ -3389,8 +3389,14 @@ fn submit_worker(
     }
     let artifact = manifest.artifact_uri.clone();
     let output_uri = manifest.output_uri.clone();
+    // The absolute path Stado resolved on this host, never the bare name. The
+    // submitted command runs under a non-login `/bin/sh` that reads no
+    // profile, so `cargo` alone resolved to nothing and
+    // job-545551889f9e88be30daa81f died sixteen minutes into a claimed slot
+    // with `/bin/sh: cargo: command not found`.
+    let cargo = super::crawl::resolved_program(host, &["cargo", "--version"])?;
     let mut command_arguments = vec![
-        "cargo".to_string(),
+        cargo,
         "run".to_string(),
         "--release".to_string(),
         "--".to_string(),
