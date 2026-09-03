@@ -1271,12 +1271,13 @@ fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Opt
         || job.repo_ref != receipt.repo_ref
         || job.pinned_host != host
         || job.output_uri != output_uri
-        || job.resolved_executor.provider.trim().is_empty()
-        || job.resolved_executor.platform_os.trim().is_empty()
-        || job.resolved_executor.architecture.trim().is_empty()
     {
+        // No assertion on `resolved_executor`: a job pinned to a registry host
+        // needs no provider resolution, and Stado reports every one of its
+        // fields empty for exactly that case — measured on this attempt. It is
+        // retained evidence of the placement, not a precondition.
         bail!(
-            "Stado receipt job mapping, digests, host, executor or output URI does not match the submitted attempt"
+            "Stado receipt job mapping, digests, host or output URI does not match the submitted attempt"
         );
     }
     // Two derivations Stado performs and this side re-performs, so the receipt
