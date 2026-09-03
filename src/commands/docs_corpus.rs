@@ -1096,7 +1096,7 @@ fn import_artifact(
     let staging = super::crawl_docs::staging_directory(&root, "corpus-import-stage")?;
     let archive_path = staging.join("artifact.tar.gz");
     let import_result = (|| -> Result<AttemptCorpus> {
-        let mut command = super::crawl::stado_command();
+        let mut command = super::crawl::crawl_storage_command();
         command.args(["storage", "get", uri]).arg(&archive_path);
         let output = super::crawl::bounded_command_output(
             &mut command,

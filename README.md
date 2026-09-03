@@ -74,6 +74,15 @@ The surface-specific commands below are execution engines. Each takes exactly on
 
 `spis crawl bindings generate` writes the exact typed binding for every checked-in record; with `--output` an existing generated document is replaced atomically after validation and read-back, and the reported outcome is `created`, `replaced` or `unchanged`. `headless` is set only for the web engine. Native records without an explicit binding and an independently observed authorization proof stay explicitly unconfigured and surface one typed `unavailable` attempt diagnostic rather than disappearing from the run.
 
+`SPIS_CRAWL_OBJECT_TOKEN_FILE` names the owner-only file holding the bearer of
+the `spis-crawls` object namespace. One object request carries exactly one
+bearer and Stado compares it against the credential item of the namespace being
+addressed, so the coordinator needs two: this one for everything it publishes,
+and the host's configured bearer for the queue plane a job submission reads and
+writes. Spis injects it on exactly the invocations that address its own objects
+and on no other. Unset, every call uses the configured bearer, which is correct
+for a deployment where one credential covers both.
+
 Browser crawls are anonymous: `credentialRefs` is always empty, `evidencePolicy` is always `full`, and the only secrets in play are the bearer and organization references that Stado injects into the pinned worker — the coordinator never holds either. The worker confirms the deployed Weles release against both the Stado service directory and the unauthenticated `{endpoint}/version` readback, requires the requested URL to be the exact committed `product_url` and the final URL to be same-origin, and requires a typed screenshot and accessibility-tree inventory whose signed digests match the bytes actually retained. A task that is still nonterminal when `--wait-seconds` runs out is cancelled through the bridge's `cancel` operation under an idempotency key derived from the same immutable attempt, and the typed cancellation is retained beside the status before the attempt fails, so no browser session outlives the attempt that can no longer publish evidence. Native crawls refuse first-run consent, system permission prompts, notifications, purchases and any final destructive action; destructive paths stop at the final confirmation and retain that state without committing it. Every crawler subprocess runs in its own process group under a hard timeout with capped output streams.
 
 ## Official Weles bridge and receipt provenance

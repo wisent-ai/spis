@@ -3313,7 +3313,7 @@ struct StorageStatReceipt {
 }
 
 fn storage_artifact_present(uri: &str, context: &str) -> Result<bool> {
-    let mut command = super::crawl::stado_command();
+    let mut command = super::crawl::crawl_storage_command();
     command.args(["storage", "stat", uri, "--json"]);
     let output = super::crawl::bounded_command_output(
         &mut command,

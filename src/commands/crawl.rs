@@ -592,6 +592,31 @@ pub(crate) fn stado_command() -> Command {
     }
     command
 }
+
+/// Stado invocation for objects Spis owns, i.e. everything under
+/// [`crate::CRAWL_NAMESPACE`].
+///
+/// One object request carries exactly one bearer, and Stado compares it against
+/// the credential item of the namespace being addressed. The coordinator
+/// therefore needs two: its own for `spis-crawls`, and whatever the host
+/// already uses for the queue plane the job submission reads and writes
+/// (`probierz/...`). Forcing one bearer for both made `crawl start` choose
+/// which half to break: with the crawl bearer the queue write was refused,
+/// without it the runtime-bindings read-back was.
+///
+/// `SPIS_CRAWL_OBJECT_TOKEN_FILE` names the owner-only file holding the crawl
+/// namespace bearer. It is injected as `STADO_API_TOKEN_FILE` on exactly the
+/// invocations that address Spis's own objects and on no other, so the queue
+/// plane keeps the host's configured bearer. Unset, everything behaves as
+/// before and a single-bearer deployment is unaffected.
+pub(crate) fn crawl_storage_command() -> Command {
+    let mut command = stado_command();
+    if let Some(token_file) = std::env::var_os("SPIS_CRAWL_OBJECT_TOKEN_FILE") {
+        command.env("STADO_API_TOKEN_FILE", token_file);
+        command.env_remove("STADO_API_TOKEN");
+    }
+    command
+}
 fn read_bounded<R: Read>(mut reader: R, maximum: usize) -> std::io::Result<(Vec<u8>, bool)> {
     let mut retained = Vec::with_capacity(maximum.min(64 * 1024));
     let mut buffer = [0_u8; 16 * 1024];
@@ -852,7 +877,7 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
             format!("install rebuilt crawl attempt archive {}", archive.display())
         })?;
         let (sha256, bytes) = hash_regular_file(&archive, MAX_ATTEMPT_ARCHIVE_BYTES)?;
-        let mut stado = stado_command();
+        let mut stado = crawl_storage_command();
         stado
             .args(["storage", "put", "--if-absent", "--content-type", "application/gzip", uri])
             .arg(&archive);
@@ -870,7 +895,7 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         }
         let readback = parent.join(format!(".{attempt_name}.{}.readback", std::process::id()));
         let _ = std::fs::remove_file(&readback);
-        let mut stado = stado_command();
+        let mut stado = crawl_storage_command();
         stado.args(["storage", "get", uri]).arg(&readback);
         let output = bounded_command_output(
             &mut stado,
@@ -1772,7 +1797,7 @@ fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<RuntimeBind
             std::process::id(),
             nonce
         ));
-        let output = stado_command()
+        let output = crawl_storage_command()
             .args(["storage", "get", &manifest.bindings_uri])
             .arg(&temporary)
             .output()
@@ -1826,7 +1851,7 @@ fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()> {
     if crate::sha256_hex(&bytes) != bindings.sha256 {
         bail!("runtime binding input changed after planning");
     }
-    let output = stado_command()
+    let output = crawl_storage_command()
         .args([
             "storage",
             "put",
@@ -1863,7 +1888,7 @@ fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()> {
         std::process::id(),
         nonce
     ));
-    let downloaded = stado_command()
+    let downloaded = crawl_storage_command()
         .args(["storage", "get", bindings.uri.as_str()])
         .arg(&target)
         .output()
@@ -4568,7 +4593,7 @@ fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String> {
         std::fs::rename(&temporary, &source)?;
         File::open(&directory)?.sync_all()?;
     }
-    let stored = stado_command()
+    let stored = crawl_storage_command()
         .args(["storage", "put", "--if-absent", "--content-type", "application/json", uri])
         .arg(&source)
         .output()
@@ -4580,7 +4605,7 @@ fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String> {
         );
     }
     let readback = directory.join(format!(".{digest}.{}.readback", std::process::id()));
-    let output = stado_command()
+    let output = crawl_storage_command()
         .args(["storage", "get", uri])
         .arg(&readback)
         .output()
@@ -5128,7 +5153,7 @@ fn download_uri(uri: &str, destination: &Path) -> Result<()> {
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
         Err(error) => return Err(error.into()),
     }
-    let mut command = stado_command();
+    let mut command = crawl_storage_command();
     command.args(["storage", "get", uri]).arg(destination);
     let output = bounded_command_output(
         &mut command,
