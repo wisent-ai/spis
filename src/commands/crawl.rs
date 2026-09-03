@@ -2702,6 +2702,11 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
             "exit_code",
             "status",
             "program_candidates",
+            // Stado reports which of an entry's candidate paths the host
+            // actually execed. It is retained evidence, not a surprise: a
+            // strict allowlist means the field can only ever name a path the
+            // entry itself declares.
+            "resolved_executable",
             "error",
         ];
         if object.keys().any(|key| !allowed.contains(&key.as_str()))
@@ -2717,8 +2722,40 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
         {
             bail!("host probe receipt does not match the exact typed Stado contract");
         }
-        let expected_argv = arguments.iter().map(|value| json!(value)).collect::<Vec<_>>();
-        if receipt.get("argv").and_then(Value::as_array) != Some(&expected_argv) {
+        // `argv` is what the HOST ran: an absolute program path followed by the
+        // entry's fixed arguments. Comparing it word-for-word against the
+        // requested spelling refused every receipt whose program Stado resolves
+        // per host — which is every multi-candidate entry, and even
+        // `hostname -f`, resolved to `/bin/hostname`. What must hold is that
+        // the receipt answers exactly the command that was requested and that
+        // no argument was added, removed or rewritten on the way.
+        if receipt.get("command").and_then(Value::as_str) != Some(arguments.join(" ").as_str()) {
+            bail!("host probe receipt answers a different command than the one requested");
+        }
+        let argv = receipt
+            .get("argv")
+            .and_then(Value::as_array)
+            .context("host probe receipt has no argv")?;
+        let (program, rest) = argv
+            .split_first()
+            .context("host probe receipt argv is empty")?;
+        let program = program
+            .as_str()
+            .context("host probe receipt argv program is not a string")?;
+        let requested_program = arguments
+            .first()
+            .context("host probe requires at least one word")?;
+        let program_matches = program == *requested_program
+            || program
+                .rsplit('/')
+                .next()
+                .is_some_and(|name| name == *requested_program);
+        let arguments_match = rest.len() == arguments.len() - 1
+            && rest
+                .iter()
+                .zip(arguments.iter().skip(1))
+                .all(|(observed, expected)| observed.as_str() == Some(*expected));
+        if !program_matches || !arguments_match {
             bail!("host probe receipt argv differs from the approved exact command");
         }
         Ok(receipt)
