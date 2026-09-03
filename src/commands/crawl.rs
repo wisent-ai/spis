@@ -1157,6 +1157,12 @@ struct StadoSubmissionJob {
     job_id: String,
     command_index: u64,
     command_digest: String,
+    /// The exact command line Stado accepted for this job. Retained rather
+    /// than denied: the receipt is proof of what was submitted, and the digest
+    /// beside it is already compared, so refusing the plaintext of the very
+    /// command this attempt asked for turned an accepted submission into
+    /// `submission_failed` with the job already queued on the host.
+    command: String,
     output_uri: String,
     repo: String,
     repo_ref: String,
@@ -1254,6 +1260,13 @@ fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Opt
         bail!(
             "Stado receipt job mapping, command digest, request digest, host, executor, output URI or initial state does not match the submitted attempt"
         );
+    }
+    // The retained command is proof only if it is the command its digest
+    // covers, so it is verified rather than trusted: SHA-256 over the exact
+    // accepted command line equals `command_digest`, measured against a real
+    // Stado v3 receipt.
+    if crate::sha256_hex(job.command.as_bytes()) != job.command_digest {
+        bail!("Stado receipt job command does not hash to its own command digest");
     }
     Ok(json!({
         "schema": SUBMISSION_SCHEMA,
