@@ -392,7 +392,7 @@ fn hash(value: &str) -> String {
 fn shell_quote(value: &str) -> String {
     format!("'{}'", value.replace('\'', "'\\''"))
 }
-fn prepare_fixture(fixture: &Path) -> Result<()> {
+fn prepare_fixture(fixture: &Path, git: &Path) -> Result<()> {
     let home = fixture.join("home");
     std::fs::create_dir_all(&home)?;
     for directory in [
@@ -407,7 +407,11 @@ fn prepare_fixture(fixture: &Path) -> Result<()> {
     std::fs::write(fixture.join("seed.txt"), "Spis TUI crawl fixture\n")?;
     std::fs::write(fixture.join("tracked.txt"), "committed fixture state\n")?;
     let run_git = |arguments: &[&str]| -> Result<()> {
-        let mut command = Command::new("git");
+        // The absolute git the host resolved, never a name this PATH would
+        // have to search. `/usr/bin/git` is refused upstream because on macOS
+        // it is the `xcode-select` shim, which opens the Command Line Tools
+        // installer window on a host that has none.
+        let mut command = Command::new(git);
         command
             .env_clear()
             .env("PATH", "/usr/bin:/bin")
@@ -543,6 +547,7 @@ fn crawl_one(
     name: &str,
     manifest: &super::crawl::RuntimeManifest,
     output: &Path,
+    git: &Path,
 ) -> Result<Value> {
     let configured_path = manifest
         .execution_identity
@@ -572,7 +577,7 @@ fn crawl_one(
     let raw = trajectory_root.join("terminal.raw");
     std::fs::create_dir_all(&states)?;
     std::fs::create_dir_all(&fixture)?;
-    prepare_fixture(&fixture)?;
+    prepare_fixture(&fixture, git)?;
     let environment = isolated_environment(manifest, &fixture)?;
     let binary = verify_exact_executable(manifest, &expected_filename, &environment)?;
     let session = launch(slug, &binary, &fixture, &raw, 1, environment)?;
@@ -757,8 +762,18 @@ fn submit(
     // cost job-545551889f9e88be30daa81f sixteen minutes of a claimed slot in
     // the documentation engine, still open in this one.
     let cargo = super::crawl::resolved_worker_program(host)?;
+    // Git the same way, and for the same reason: the worker builds a fixture
+    // repository with it, the job's shell finds nothing by bare name, and
+    // `/usr/bin/git` must never be the answer because on a host without the
+    // Command Line Tools that path opens the installer window rather than
+    // running git. The allowlist resolves it to a real installation and the
+    // worker is handed that exact path.
+    let git = super::crawl::resolved_program(host, &["git", "--version"])?;
+    if git.chars().any(char::is_whitespace) || git == "/usr/bin/git" {
+        bail!("host {host} resolved git to {git:?}, which this worker must not be handed");
+    }
     let worker = format!(
-        "{cargo} run --release -- crawl-tui --worker --record {selected} --artifact-uri {artifact} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawl-tui --worker --record {selected} --artifact-uri {artifact} --git-path {git} --runtime-manifest-base64 '{}'",
         manifest.encoded()?
     );
     let mut stado = super::crawl::stado_command();
@@ -807,6 +822,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut selected: Option<String> = None;
     let mut worker = false;
     let mut artifact_uri: Option<String> = None;
+    let mut git_path: Option<String> = None;
     let mut runtime_manifest_base64: Option<String> = None;
     let mut i = 0;
     while i < rest.len() {
@@ -822,6 +838,10 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--artifact-uri" => {
                 i += 1;
                 artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
+            }
+            "--git-path" => {
+                i += 1;
+                git_path = Some(rest.get(i).context("--git-path needs a value")?.clone());
             }
             "--runtime-manifest-base64" => {
                 i += 1;
@@ -858,6 +878,18 @@ pub fn run(rest: &[String]) -> Result<()> {
     if artifact_uri != manifest.artifact_uri {
         bail!("worker artifact URI does not match immutable runtime manifest");
     }
+    // The path the host itself resolved, handed down by the coordinator. The
+    // worker never searches for git: this job's shell reads no profile, and
+    // `/usr/bin/git` on macOS is the `xcode-select` shim that opens the
+    // Command Line Tools installer window instead of running git, which is
+    // not something an unattended fleet host may be made to do.
+    let git_path = git_path.context("--git-path is required in worker mode")?;
+    if !git_path.starts_with('/')
+        || git_path.chars().any(char::is_whitespace)
+        || git_path == "/usr/bin/git"
+    {
+        bail!("--git-path must be an absolute real git, never the /usr/bin shim: {git_path:?}");
+    }
     let root = attempt_root(
         &Path::new("target").join("spis-tui-crawls"),
         &manifest,
@@ -866,7 +898,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let (slug, name) = records(Some(&selected))?.into_iter().next().context("runtime manifest record is absent")?;
     let output = root.join(&slug);
     std::fs::create_dir_all(&output)?;
-    let (record_report, failure) = match crawl_one(&slug, &name, &manifest, &output) {
+    let (record_report, failure) = match crawl_one(&slug, &name, &manifest, &output, Path::new(&git_path)) {
         Ok(report) => (report, None),
         Err(error) => {
             let code = failure_code(&error);

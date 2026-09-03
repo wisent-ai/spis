@@ -3003,7 +3003,16 @@ pub(crate) fn engine_preconditions(engine: &str, catalog: &str) -> Vec<Vec<&'sta
         ("web", _) => vec![vec!["node", "--version"]],
         ("docs", _) => Vec::new(),
         // Both terminal engines drive the product inside a tmux session.
-        ("cli" | "tui", _) => vec![vec!["tmux", "-V"]],
+        ("cli", _) => vec![vec!["tmux", "-V"]],
+        // The TUI worker additionally builds a fixture git repository
+        // before it starts the product, so git is that family's second
+        // precondition. It is probed at the paths a real installation uses
+        // and never at `/usr/bin/git`, which on macOS is the `xcode-select`
+        // shim and opens the Command Line Tools installer WINDOW on a host
+        // that has none -- the allowlist entry excludes that path for
+        // exactly this reason, so the probe cannot raise a dialog on an
+        // unattended host.
+        ("tui", _) => vec![vec!["tmux", "-V"], vec!["git", "--version"]],
         _ => Vec::new(),
     });
     required
@@ -6870,6 +6879,34 @@ mod preflight_tests {
         // Desktop's driver is checked by absolute bundle candidate inside
         // `host_preflight`, so its declared set is the worker program alone.
         assert_eq!(required("macos-app-examples"), vec!["cargo --version".to_string()]);
+    }
+
+    #[test]
+    fn the_terminal_family_declares_the_git_its_worker_builds_a_fixture_with() {
+        let tui = engine_preconditions("tui", "tui-examples")
+            .into_iter()
+            .map(|command| command.join(" "))
+            .collect::<Vec<String>>();
+        assert!(tui.iter().any(|command| command == "git --version"));
+        assert!(tui.iter().any(|command| command == "tmux -V"));
+        // The CLI worker builds no repository, so it must not demand git.
+        let cli = engine_preconditions("cli", "cli-examples")
+            .into_iter()
+            .map(|command| command.join(" "))
+            .collect::<Vec<String>>();
+        assert!(!cli.iter().any(|command| command.starts_with("git ")));
+    }
+
+    #[test]
+    fn no_declared_precondition_names_the_xcode_select_shim() {
+        // The probe must never be the `/usr/bin/git` shim: on a host without
+        // the Command Line Tools it opens the installer WINDOW. The allowlist
+        // excludes that path, and nothing here may ask for it directly.
+        for (catalog, engine) in CATALOGS {
+            for command in engine_preconditions(engine, catalog) {
+                assert_ne!(command[0], "/usr/bin/git", "{catalog}");
+            }
+        }
     }
 
     #[test]
