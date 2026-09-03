@@ -4483,12 +4483,26 @@ fn refresh_item(entry: &mut Value) {
     };
     match machine_status(&job_id) {
         Ok(job) => {
-            if let Some(expected) = entry
+            // The revision binding is proven at submission time:
+            // `compact_submission` refuses a receipt whose repo_ref and
+            // source_revision are not this exact build, and that receipt is
+            // retained with the attempt. `stado machine status` does not report
+            // repo_ref at all, so treating its absence as an observation made
+            // `observed` the empty string, which never equals the expected
+            // revision: every queued record was driven to a terminal
+            // runtime_revision_mismatch on its first status refresh. The
+            // comparison now happens only when Stado actually reports a
+            // revision, and still fails loudly when it reports a different one.
+            let expected = entry
                 .pointer("/manifest/source_revision")
                 .and_then(Value::as_str)
-                .map(str::to_string)
-            {
-                let observed = job.get("repo_ref").and_then(Value::as_str).unwrap_or_default();
+                .map(str::to_string);
+            let observed = job
+                .get("repo_ref")
+                .and_then(Value::as_str)
+                .filter(|value| !value.is_empty())
+                .map(str::to_string);
+            if let (Some(expected), Some(observed)) = (expected, observed) {
                 if observed != expected {
                     entry["state"] = json!("failed");
                     entry["diagnostic"] = json!({
