@@ -3446,10 +3446,18 @@ fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Value) -> Valu
                 {
                     bail!("URL identity must be an exact credential-free HTTPS URL");
                 }
+                // A URL product has no host command to run: the identity IS
+                // the exact committed URL, already parsed and refused above if
+                // it carried credentials or a non-HTTPS scheme. It is reported
+                // as this check's observed output because the caller proves
+                // readiness through `ready_output`, and a synthetic check with
+                // empty stdout made every documentation and browser record
+                // refuse with "verify exact runtime product: command returned
+                // no identity".
                 json!({
                     "command": [],
                     "ready": true,
-                    "stdout": "",
+                    "stdout": product,
                     "network_policy_owner": manifest.engine,
                     "declared_url": product,
                 })
