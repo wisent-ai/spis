@@ -2865,15 +2865,24 @@ pub(crate) fn resolved_program(host: &str, arguments: &[&str]) -> Result<String>
                 .trim()
         );
     }
+    // `argv[0]`, not `resolved_executable`. The receipt reports both and they
+    // are not the same kind of string: for `cargo --version` on
+    // charless-mac-mini `resolved_executable` is the candidate spelling
+    // `~/.cargo/bin/cargo`, while `argv[0]` is `/opt/homebrew/bin/cargo`,
+    // which is the path the host actually exec'd. A submitted command must
+    // carry a path that needs no shell to expand it, so the absolute one is
+    // the only usable answer.
     let path = check
         .get("stado_receipt")
-        .and_then(|receipt| receipt.get("resolved_executable"))
+        .and_then(|receipt| receipt.get("argv"))
+        .and_then(Value::as_array)
+        .and_then(|argv| argv.first())
         .and_then(Value::as_str)
         .map(str::trim)
         .filter(|path| path.starts_with('/'))
         .with_context(|| {
             format!(
-                "host {host} probe for `{}` reported no absolute resolved executable",
+                "host {host} probe for `{}` reported no absolute executed program",
                 arguments.join(" ")
             )
         })?;
