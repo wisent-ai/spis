@@ -1939,6 +1939,38 @@ fn fresh_state(
     })
 }
 
+/// The one derivation of a record's inventory digest, called by the producer
+/// through [`inventory_sha256`] and by `docs_corpus`'s validator directly.
+///
+/// One function for the same reason [`retrieval_status`] is one: the digest
+/// is a contract between two modules, and a second implementation of it is a
+/// second opinion about whether a corpus is authentic.
+///
+/// `capacity` is inserted only when the corpus bound actually excluded
+/// pages, so every corpus written before that member existed hashes to
+/// exactly the digest it already carries and stays valid. `serde_json` runs
+/// with `preserve_order`, so the insertion order below is part of the
+/// contract.
+pub(crate) fn inventory_digest(
+    targets: Value,
+    diagnostics: Value,
+    robots: Value,
+    downloaded_bytes: u64,
+    capacity: Option<Value>,
+) -> Result<String> {
+    let mut descriptor = serde_json::Map::new();
+    descriptor.insert("targets".into(), targets);
+    descriptor.insert("diagnostics".into(), diagnostics);
+    descriptor.insert("robots".into(), robots);
+    descriptor.insert("downloaded_bytes".into(), json!(downloaded_bytes));
+    if let Some(capacity) = capacity {
+        descriptor.insert("corpus_capacity".into(), capacity);
+    }
+    Ok(lib::sha256_hex(&serde_json::to_vec(&Value::Object(
+        descriptor,
+    ))?))
+}
+
 fn inventory_sha256(
     targets: &[CrawlTarget],
     diagnostics: &[CrawlDiagnostic],
@@ -1946,26 +1978,15 @@ fn inventory_sha256(
     downloaded_bytes: u64,
     capacity: Option<CorpusCapacity>,
 ) -> Result<String> {
-    let mut descriptor = serde_json::Map::new();
-    descriptor.insert("targets".into(), serde_json::to_value(targets)?);
-    descriptor.insert("diagnostics".into(), serde_json::to_value(diagnostics)?);
-    descriptor.insert("robots".into(), serde_json::to_value(robots)?);
-    descriptor.insert("downloaded_bytes".into(), json!(downloaded_bytes));
-    // Inserted only when the bound actually bit, so every corpus written
-    // before this field existed hashes to exactly the digest it already
-    // carries and stays valid.
-    if let Some(capacity) = capacity {
-        descriptor.insert(
-            "corpus_capacity".into(),
-            json!({
-                "pages_outside_corpus": capacity.pages_outside_corpus,
-                "exact": capacity.exact,
-            }),
-        );
-    }
-    Ok(lib::sha256_hex(&serde_json::to_vec(&Value::Object(
-        descriptor,
-    ))?))
+    inventory_digest(
+        serde_json::to_value(targets)?,
+        serde_json::to_value(diagnostics)?,
+        serde_json::to_value(robots)?,
+        downloaded_bytes,
+        capacity
+            .map(|value| -> Result<Value> { Ok(serde_json::to_value(value)?) })
+            .transpose()?,
+    )
 }
 
 fn validate_state(

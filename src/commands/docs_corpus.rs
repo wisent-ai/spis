@@ -453,33 +453,24 @@ fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value) -> Result
         .get("inventory_downloaded_bytes")
         .and_then(Value::as_u64)
         .context("durable state has no inventory_downloaded_bytes")?;
-    // The exact descriptor `crawl_docs::inventory_sha256` hashes, including
-    // the `corpus_capacity` member it inserts only when the corpus bound
-    // actually excluded pages -- so a corpus written before that member
-    // existed hashes identically and stays valid.
-    let mut inventory_descriptor = serde_json::Map::new();
-    inventory_descriptor.insert("targets".into(), Value::Array(targets.clone()));
-    inventory_descriptor.insert(
-        "diagnostics".into(),
+    // The same derivation the producer hashes, called rather than copied.
+    let capacity = state
+        .get("corpus_capacity")
+        .filter(|value| !value.is_null())
+        .cloned();
+    let inventory_sha256 = super::crawl_docs::inventory_digest(
+        Value::Array(targets.clone()),
         state
             .get("inventory_diagnostics")
             .context("durable state has no inventory diagnostics")?
             .clone(),
-    );
-    inventory_descriptor.insert(
-        "robots".into(),
         state
             .get("robots")
             .context("durable state has no robots policy")?
             .clone(),
-    );
-    inventory_descriptor.insert("downloaded_bytes".into(), json!(inventory_downloaded_bytes));
-    let capacity = state.get("corpus_capacity").filter(|value| !value.is_null());
-    if let Some(capacity) = capacity {
-        inventory_descriptor.insert("corpus_capacity".into(), capacity.clone());
-    }
-    let inventory_sha256 =
-        lib::sha256_hex(&serde_json::to_vec(&Value::Object(inventory_descriptor))?);
+        inventory_downloaded_bytes,
+        capacity.clone(),
+    )?;
     if state.get("inventory_sha256").and_then(Value::as_str)
         != Some(inventory_sha256.as_str())
     {
@@ -642,9 +633,15 @@ fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value) -> Result
     // status differ from durable outcomes", a sentence about arithmetic for a
     // fact about capacity.
     let declared_outside = capacity
+        .as_ref()
         .and_then(|value| value.get("pages_outside_corpus"))
         .and_then(Value::as_u64)
         .unwrap_or(0);
+    let declared_exact = capacity
+        .as_ref()
+        .and_then(|value| value.get("exact"))
+        .and_then(Value::as_bool)
+        .unwrap_or(true);
     let expected_status = super::crawl_docs::retrieval_status(&super::crawl_docs::RetrievalCounts {
         target_count: targets.len(),
         retrieved_count,
@@ -653,10 +650,6 @@ fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value) -> Result
         diagnostic_count: inventory_diagnostics + outcome_diagnostic_count,
         pages_outside_corpus: declared_outside,
     });
-    let declared_exact = capacity
-        .and_then(|value| value.get("exact"))
-        .and_then(Value::as_bool)
-        .unwrap_or(true);
     if report.get("retrieval_status").and_then(Value::as_str) != Some(expected_status)
         || report.pointer("/retrieval/target_count").and_then(Value::as_u64)
             != Some(targets.len() as u64)
