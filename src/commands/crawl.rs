@@ -3505,6 +3505,8 @@ fn aggregate_catalog_entry(entry: &mut Value) {
     } else {
         "failed"
     };
+    // Captured while `states` still borrows `entry`, used after the writes.
+    let no_planned_records = states.is_empty();
     let mut failures: BTreeMap<String, usize> = BTreeMap::new();
     for value in states.iter().filter(|state| failure(state)) {
         *failures.entry((*value).to_string()).or_default() += 1;
@@ -3512,6 +3514,20 @@ fn aggregate_catalog_entry(entry: &mut Value) {
     entry["state"] = json!(state);
     entry["partial"] = json!(!failures.is_empty());
     entry["failure_counts"] = serde_json::to_value(failures).unwrap_or(Value::Null);
+    // A catalog with no records at all reaches the final `else` above and is
+    // reported `failed` with `error: null` and no failure counts, which is
+    // what the 2026-09-01 documentation catalog looked like after a refresh:
+    // a whole family declared failed with nothing anywhere saying why. That
+    // state is not a crawl outcome, it is an empty plan — a run written in the
+    // retired catalog-level shape, or a checked-out catalog whose references
+    // directory is empty — so it says so, in the same typed diagnostic shape
+    // every record-level refusal uses.
+    if no_planned_records {
+        entry["diagnostic"] = json!({
+            "code": "no_planned_records",
+            "message": "catalog carries no record attempts; nothing was planned, submitted or imported for it",
+        });
+    }
 }
 
 fn submission_receipt_path(
