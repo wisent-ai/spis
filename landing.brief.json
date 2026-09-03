@@ -4,6 +4,17 @@
   "audience": "Designers, product engineers, and teams building AI agents who need real interface references they are allowed to trust.",
   "problem": "Screenshot libraries show pictures of interfaces with no way to tell what was measured, where the media came from, or whether the numbers attached to them mean anything. A designer quoting a pattern cannot say what evidence stands behind it.",
   "promise": "Every record states its source, hashes, provenance class, and measured state — complete or partial — so you can cite the reference and its evidence together.",
+  "hero": {
+    "headline": "Spis — interface references you can cite",
+    "lede": "An open corpus of {{record_count}} real-interface records across {{catalog_count}} families. Every record states its source, hashes, provenance class, and measured state, so the reference and its evidence travel together.",
+    "decidedBy": "adopted from plan 2fc2dfcedded40ee"
+  },
+  "measured": {
+    "record_count": { "artifact": "catalog-stats.json", "field": "record_count" },
+    "catalog_count": { "artifact": "catalog-stats.json", "field": "catalog_count" },
+    "complete_count": { "artifact": "catalog-stats.json", "field": "complete_record_count" },
+    "partial_count": { "artifact": "catalog-stats.json", "field": "partial_record_count" }
+  },
   "primaryAction": {
     "label": "Browse the corpus",
     "kind": "url",
