@@ -4,108 +4,27 @@
   "product_url": "https://atlassian.design/",
   "evidence_status": "partial",
   "upstream_owner": "Atlassian Design System (atlassian.design)",
-  "captured_at": "2026-08-16T23:06:22.683Z",
-  "motion": [
-    {
-      "local_path": "media/motion.webm",
-      "source_url": "https://atlassian.design/",
-      "media_kind": "video-webm",
-      "width": 640,
-      "height": 360,
-      "duration_seconds": 13.36,
-      "frame_count": 334,
-      "bytes": 260235,
-      "sha256": "ea8df4071318b7806aa613303d730f4bb7aee8e4c94a0ae087cee69b2a6fa1b7",
-      "capture_method": "Weles AsyncNewBrowser with checksum-verified Weles Chromium 147.0.7727.108-weles.1 on Stado-selected dedicated host charless-mac-mini",
-      "analysis": {
-        "trigger": "Official page navigation followed by product search/learn interaction",
-        "start_state": "public documentation landing/article",
-        "end_state": "first useful canonical answer",
-        "continuity": "single real-browser context video; no synthesized or interpolated frames",
-        "timing_class": "brief",
-        "interruption_reversal": "the deliberately impossible route is abandoned before the useful query/route",
-        "feedback": "landing, open, failed, recovered, and answer frames retain the visible state changes",
-        "reduced_motion_or_nonanimated_equivalent": "reduced-motion behavior was not observed; five local states are retained as nonanimated inspection equivalents"
-      },
-      "declared_media_kind": "video-webm",
-      "measured": true,
-      "measurement_method": "ffprobe -count_frames",
-      "provenance_class": "unverified-source-media"
-    }
-  ],
-  "states": [
-    {
-      "name": "Observed state 1",
-      "local_path": "media/state-01-landing.png",
-      "sha256": "07f0d55dde180401188cd32dd4725d9891086ed9b3c8d9119be17c99e62df05c",
-      "width": 960,
-      "height": 540,
-      "bytes": 7025
-    },
-    {
-      "name": "Observed state 2",
-      "local_path": "media/state-02-search-open.png",
-      "sha256": "5b14d79790fe1ea614fa49f24827026feed0df867c885a12cbcb5a123bc1ee2d",
-      "width": 960,
-      "height": 540,
-      "bytes": 11941
-    },
-    {
-      "name": "Observed state 3",
-      "local_path": "media/state-03-failed-search.png",
-      "sha256": "a3d47f6c6c59ca9261483acd63b34b999a4fccd534c4ed899cba5acf8c8d2bef",
-      "width": 960,
-      "height": 540,
-      "bytes": 50513
-    },
-    {
-      "name": "Observed state 4",
-      "local_path": "media/state-04-results.png",
-      "sha256": "a3d47f6c6c59ca9261483acd63b34b999a4fccd534c4ed899cba5acf8c8d2bef",
-      "width": 960,
-      "height": 540,
-      "bytes": 50513
-    },
-    {
-      "name": "Observed state 5",
-      "local_path": "media/state-05-answer.png",
-      "sha256": "df7d1bc49239001a76cf56d3a3ac45997deacf9bf1003fb1c7da79d53fce9888",
-      "width": 960,
-      "height": 540,
-      "bytes": 63760
-    }
-  ],
+  "captured_at": "2026-09-04T14:13:28Z",
+  "motion": [],
+  "states": [],
   "interactions": [],
   "journey": null,
   "accessibility": {
+    "measured": false,
     "observations": [],
     "unknowns": [
-      "Screen-reader names, roles, live-region announcements, and reading order were not audited.",
-      "Focus styling and focus restoration after cancellation were not independently audited.",
-      "Reduced motion, 400% zoom reflow, high contrast, and switch-device access were not tested."
-    ],
-    "measured": false
+      "No engine-supplied canonical accessibility measurement was retained.",
+      "Screen-reader traversal, focus order, live regions and reduced-motion preference remain unmeasured."
+    ]
   },
-  "motion_provenance": [
-    "unverified-source-media"
-  ],
+  "motion_provenance": [],
   "evidence_gaps": [
     "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent",
     "semantic state names preserved as unverified source notes; pixels and digests do not prove labels",
     "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
     "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
     "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
-    "motion provenance unverified: media/motion.webm has no typed verified crawl or owner observation",
-    "state semantic name unverified: media/state-01-landing.png; pixels and digest prove only an observed frame",
-    "state source relationship unproven: media/state-01-landing.png; no threshold match against independently verified motion",
-    "state semantic name unverified: media/state-02-search-open.png; pixels and digest prove only an observed frame",
-    "state source relationship unproven: media/state-02-search-open.png; no threshold match against independently verified motion",
-    "state semantic name unverified: media/state-03-failed-search.png; pixels and digest prove only an observed frame",
-    "state source relationship unproven: media/state-03-failed-search.png; no threshold match against independently verified motion",
-    "state semantic name unverified: media/state-04-results.png; pixels and digest prove only an observed frame",
-    "state source relationship unproven: media/state-04-results.png; no threshold match against independently verified motion",
-    "state semantic name unverified: media/state-05-answer.png; pixels and digest prove only an observed frame",
-    "state source relationship unproven: media/state-05-answer.png; no threshold match against independently verified motion",
+    "fewer than 3 states for document-navigation profile",
     "journey exposes fewer than 5 observed steps for document-navigation profile",
     "journey missing actor",
     "journey missing goal",
@@ -116,7 +35,8 @@
     "fewer than 8 mapped interactions for document-navigation profile",
     "motion analysis absent",
     "fewer than 3 accessibility observations for document-navigation profile",
-    "accessibility never measured against the product"
+    "accessibility never measured against the product",
+    "no measured motion evidence"
   ],
   "measured_at": "2026-09-01",
   "motion_analysis": null,
@@ -424,6 +344,53 @@
           "motion_path": "media/state-05-answer.png",
           "method": "16x16 grayscale mean-absolute-difference frame search"
         }
+      }
+    }
+  ],
+  "crawl_runs": [
+    {
+      "schema": "wisent.crawl-import.v2",
+      "run_id": "crawl-2026-09-04-13-27-50Z-main-b8abe3e",
+      "catalog": "documentation-site-examples",
+      "record": "48-atlassian-design-system",
+      "record_key": "720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a",
+      "attempt": 1,
+      "attempt_id": "attempt-1-c8b4972c28e0aff6",
+      "engine": "docs",
+      "state": "completed",
+      "outcome": "completed",
+      "source_revision": "b8abe3e64af165db7f9f7d3ebb41afd8f68318e8",
+      "source_input_sha256": "0ac91590a9f227818025e1f618cde967b458d911c9de585e43a5724b542e5455",
+      "reference_sha256": "ab420b26a5398c7762b983b3e83e899428a23dffedfe8107f9d22b09b0462485",
+      "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+      "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+      "stado_job_id": "job-b253ac0646f08df1250cc4f4",
+      "stado_run_id": "spis-720437e9a5b266b3b24d3951-1-attempt-1-c8b4972c28e0aff6",
+      "artifact_uri": "stado://spis-crawls/runs/crawl-2026-09-04-13-27-50Z-main-b8abe3e/documentation-site-examples/48-atlassian-design-system/720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a/attempts/1/attempt-1-c8b4972c28e0aff6/artifacts.tar.gz",
+      "artifact_sha256": "cc2beb9b7b297f50a72ad23ec44a98f76590861cc139fd4f05083b31dd5b1fdc",
+      "artifact_bytes": 275201,
+      "output_uri": "stado://spis-crawls/runs/crawl-2026-09-04-13-27-50Z-main-b8abe3e/documentation-site-examples/48-atlassian-design-system/720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a/attempts/1/attempt-1-c8b4972c28e0aff6/worker-output.log",
+      "worker_report": "crawl/attempt-1-c8b4972c28e0aff6/worker-report.json",
+      "capture_method": "Rate-limited full-text documentation crawl; per-site gzipped JSONL corpus retained",
+      "imported_at": "2026-09-04T14:13:28Z",
+      "execution_identity": {
+        "host": "charless-mac-mini",
+        "observed_hostname": "Charless-Mac-mini.local",
+        "platform": "http",
+        "device_id": null,
+        "resolved_product_identifier": "https://atlassian.design/",
+        "device_name": null,
+        "executable_path": null,
+        "product_version": null,
+        "executable_sha256": null,
+        "effective_url": null
+      },
+      "retained_members": 4,
+      "docs_structure_sha256": "a9c145aef3430a6e0163a75a027df6aecdd8f68ca1609e347b2def7c6d3100eb",
+      "corpus": {
+        "files": 4,
+        "bytes": 289538,
+        "pages": 12
       }
     }
   ]

@@ -1,0 +1,43 @@
+{
+  "schema": "wisent.docs-worker-report.v1",
+  "run_id": "crawl-2026-09-04-13-27-50Z-main-b8abe3e",
+  "catalog": "documentation-site-examples",
+  "record": "48-atlassian-design-system",
+  "record_key": "720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a",
+  "attempt": 1,
+  "attempt_id": "attempt-1-c8b4972c28e0aff6",
+  "engine": "docs",
+  "state": "artifact_published",
+  "source_revision": "b8abe3e64af165db7f9f7d3ebb41afd8f68318e8",
+  "source_input_sha256": "0ac91590a9f227818025e1f618cde967b458d911c9de585e43a5724b542e5455",
+  "reference_sha256": "ab420b26a5398c7762b983b3e83e899428a23dffedfe8107f9d22b09b0462485",
+  "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+  "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+  "docs_structure_sha256": "a9c145aef3430a6e0163a75a027df6aecdd8f68ca1609e347b2def7c6d3100eb",
+  "execution_identity": {
+    "host": "charless-mac-mini",
+    "observed_hostname": "Charless-Mac-mini.local",
+    "platform": "http",
+    "device_id": null,
+    "resolved_product_identifier": "https://atlassian.design/",
+    "device_name": null,
+    "executable_path": null,
+    "product_version": null,
+    "executable_sha256": null,
+    "effective_url": null
+  },
+  "artifact": {
+    "uri": "stado://spis-crawls/runs/crawl-2026-09-04-13-27-50Z-main-b8abe3e/documentation-site-examples/48-atlassian-design-system/720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a/attempts/1/attempt-1-c8b4972c28e0aff6/artifacts.tar.gz",
+    "sha256": "cc2beb9b7b297f50a72ad23ec44a98f76590861cc139fd4f05083b31dd5b1fdc",
+    "bytes": 275201,
+    "media_type": "application/gzip",
+    "tree_entries": 4,
+    "tree_bytes": 289538
+  },
+  "corpus": {
+    "files": 4,
+    "bytes": 289538,
+    "pages": 12
+  },
+  "failure": null
+}

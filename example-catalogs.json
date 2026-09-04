@@ -155,7 +155,7 @@
       "complete_record_count": 0,
       "partial_record_count": 50,
       "measured_provenance": {
-        "unverified-source-media": 50
+        "unverified-source-media": 49
       },
       "source": "documentation-site-examples/sources.json",
       "full_reference_source": "documentation-site-examples/references.json"

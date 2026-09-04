@@ -1,0 +1,252 @@
+{
+  "schema": "wisent.docs-crawl-state.v3",
+  "run_id": "crawl-2026-09-04-13-27-50Z-main-b8abe3e",
+  "source_revision": "b8abe3e64af165db7f9f7d3ebb41afd8f68318e8",
+  "source_input_sha256": "0ac91590a9f227818025e1f618cde967b458d911c9de585e43a5724b542e5455",
+  "record_key": "720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a",
+  "record": "48-atlassian-design-system",
+  "attempt": 1,
+  "attempt_id": "attempt-1-c8b4972c28e0aff6",
+  "source_url": "https://atlassian.design/",
+  "started_at": "2026-09-04T13:40:00Z",
+  "effective_source_url": "https://atlassian.design/",
+  "inventory_complete": true,
+  "inventory_downloaded_bytes": 172871,
+  "inventory_sha256": "6b17fc8a2df20d8b1464b1f4445c2cfc7e34fe0b05cecc08a939aba1160de073",
+  "inventory_diagnostics": [],
+  "robots": {
+    "directives": []
+  },
+  "targets": [
+    {
+      "sequence": 0,
+      "key": "70803a415e0d1d7de7a8ffbf7886b8e44c422727e54130b68b619d2893b003b3",
+      "url": "https://atlassian.design/",
+      "lastmod": null
+    },
+    {
+      "sequence": 1,
+      "key": "d9d206610ec3ad31b9881ec602e1545eaf188333f1653bb9257054a21712fa36",
+      "url": "https://atlassian.design/components",
+      "lastmod": null
+    },
+    {
+      "sequence": 2,
+      "key": "10e03313aa5efaaaa47f4fc7b3e0eb5fbb8355dff707ff397856ace75cb74825",
+      "url": "https://atlassian.design/foundations/accessibility",
+      "lastmod": null
+    },
+    {
+      "sequence": 3,
+      "key": "ea197402bc908da63f59352d190f67c04675ddab3661ef1f122089ef7d0214b2",
+      "url": "https://atlassian.design/foundations/design-tokens",
+      "lastmod": null
+    },
+    {
+      "sequence": 4,
+      "key": "729dc4251fa918446047b3acff0883112e4d4b79b84db093d4daba90f52d813e",
+      "url": "https://atlassian.design/get-started/figma-libraries",
+      "lastmod": null
+    },
+    {
+      "sequence": 5,
+      "key": "ac9bb3e7f1c42460febb9ded1b1e3cf4dfe9332a6b56565b1da7813e1484b4b2",
+      "url": "https://atlassian.design/llms-a11y.txt",
+      "lastmod": null
+    },
+    {
+      "sequence": 6,
+      "key": "50e7b48412b3221c45fa498ac955f06b48f18b7f9ffa9192d3362d03c48e643c",
+      "url": "https://atlassian.design/llms-components.txt",
+      "lastmod": null
+    },
+    {
+      "sequence": 7,
+      "key": "b2c1b8758913a504d885dfed32484536883039e27c3bf7364d1350d70ba9cba9",
+      "url": "https://atlassian.design/llms-content.txt",
+      "lastmod": null
+    },
+    {
+      "sequence": 8,
+      "key": "c0eb194433327927d3a23f2d5f5333cfcc71371b68cc6341c35284cfe73ed895",
+      "url": "https://atlassian.design/llms-full.txt",
+      "lastmod": null
+    },
+    {
+      "sequence": 9,
+      "key": "d690dcf4bd11468f355c11670c2a2b1efe849448bac33535e10722a7bd66bfa9",
+      "url": "https://atlassian.design/llms-primitives.txt",
+      "lastmod": null
+    },
+    {
+      "sequence": 10,
+      "key": "8da97889acc99dd1165c62eb0c8bd71991ca8d6d2412619d93428ffeeaba38da",
+      "url": "https://atlassian.design/llms-styling.txt",
+      "lastmod": null
+    },
+    {
+      "sequence": 11,
+      "key": "8d13075b929860391a5ad439a289fbf7b5788f13c896cd50278279971c8174af",
+      "url": "https://atlassian.design/llms-tokens.txt",
+      "lastmod": null
+    }
+  ],
+  "outcomes": {
+    "10e03313aa5efaaaa47f4fc7b3e0eb5fbb8355dff707ff397856ace75cb74825": {
+      "sequence": 2,
+      "url": "https://atlassian.design/foundations/accessibility",
+      "resolved_url": "https://atlassian.design/foundations/accessibility",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 5932,
+      "downloaded_bytes": 261413,
+      "record_sha256": "7a1d31dd98469c3634c7020227c303d9f893e2b42b1b5238885d7dd3c3de3627",
+      "corpus_start": 5037,
+      "corpus_end": 7724
+    },
+    "50e7b48412b3221c45fa498ac955f06b48f18b7f9ffa9192d3362d03c48e643c": {
+      "sequence": 6,
+      "url": "https://atlassian.design/llms-components.txt",
+      "resolved_url": "https://atlassian.design/llms-components.txt",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 761378,
+      "downloaded_bytes": 761378,
+      "record_sha256": "c4201ae7b73e3800e3b6a1aee6c38cee4f29457f85c704e5b82220e76e6db168",
+      "corpus_start": 15014,
+      "corpus_end": 115170
+    },
+    "70803a415e0d1d7de7a8ffbf7886b8e44c422727e54130b68b619d2893b003b3": {
+      "sequence": 0,
+      "url": "https://atlassian.design/",
+      "resolved_url": "https://atlassian.design/",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 2668,
+      "downloaded_bytes": 256810,
+      "record_sha256": "90b89ca7226056b375607a8eea15bc72ddb24a819df0d8eaedad9949f19e174c",
+      "corpus_start": 0,
+      "corpus_end": 1436
+    },
+    "729dc4251fa918446047b3acff0883112e4d4b79b84db093d4daba90f52d813e": {
+      "sequence": 4,
+      "url": "https://atlassian.design/get-started/figma-libraries",
+      "resolved_url": "https://atlassian.design/get-started/figma-libraries",
+      "status": 200,
+      "diagnostic": {
+        "code": "no_text",
+        "message": "documentation page yielded no meaningful text",
+        "url": "https://atlassian.design/get-started/figma-libraries"
+      },
+      "text_bytes": 0,
+      "downloaded_bytes": 75,
+      "record_sha256": "d1fb0d4f099c4f9b099918a50ae0a153ae3651f009bfd92646dcafd41908bc77",
+      "corpus_start": 7964,
+      "corpus_end": 8207
+    },
+    "8d13075b929860391a5ad439a289fbf7b5788f13c896cd50278279971c8174af": {
+      "sequence": 11,
+      "url": "https://atlassian.design/llms-tokens.txt",
+      "resolved_url": "https://atlassian.design/llms-tokens.txt",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 16707,
+      "downloaded_bytes": 16707,
+      "record_sha256": "d4197c61d15c0f819243fcc6bc83b2f3a41267c6ab0689067d76124a6e7d89c5",
+      "corpus_start": 262941,
+      "corpus_end": 267097
+    },
+    "8da97889acc99dd1165c62eb0c8bd71991ca8d6d2412619d93428ffeeaba38da": {
+      "sequence": 10,
+      "url": "https://atlassian.design/llms-styling.txt",
+      "resolved_url": "https://atlassian.design/llms-styling.txt",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 5882,
+      "downloaded_bytes": 5882,
+      "record_sha256": "e40130ecb690301340f7d32f0d6c9970d1434c737df956c608b658e9defe8627",
+      "corpus_start": 260478,
+      "corpus_end": 262941
+    },
+    "ac9bb3e7f1c42460febb9ded1b1e3cf4dfe9332a6b56565b1da7813e1484b4b2": {
+      "sequence": 5,
+      "url": "https://atlassian.design/llms-a11y.txt",
+      "resolved_url": "https://atlassian.design/llms-a11y.txt",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 20929,
+      "downloaded_bytes": 20929,
+      "record_sha256": "d48e9b8cda4592b7114e0387a0b1a7e5d0cf013731f00a386fcc56c7275abaa2",
+      "corpus_start": 8207,
+      "corpus_end": 15014
+    },
+    "b2c1b8758913a504d885dfed32484536883039e27c3bf7364d1350d70ba9cba9": {
+      "sequence": 7,
+      "url": "https://atlassian.design/llms-content.txt",
+      "resolved_url": "https://atlassian.design/llms-content.txt",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 29123,
+      "downloaded_bytes": 29123,
+      "record_sha256": "d4f0356ebb082da92151fd24f26d6aa668b7eb4fbf31d2565f39d3f7ab71d555",
+      "corpus_start": 115170,
+      "corpus_end": 125452
+    },
+    "c0eb194433327927d3a23f2d5f5333cfcc71371b68cc6341c35284cfe73ed895": {
+      "sequence": 8,
+      "url": "https://atlassian.design/llms-full.txt",
+      "resolved_url": "https://atlassian.design/llms-full.txt",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 878066,
+      "downloaded_bytes": 878066,
+      "record_sha256": "e6f4c0d15c129f3db8b1fd80e0ff12a4a9510b24b75ad82b6ebe755c17b01d48",
+      "corpus_start": 125452,
+      "corpus_end": 254174
+    },
+    "d690dcf4bd11468f355c11670c2a2b1efe849448bac33535e10722a7bd66bfa9": {
+      "sequence": 9,
+      "url": "https://atlassian.design/llms-primitives.txt",
+      "resolved_url": "https://atlassian.design/llms-primitives.txt",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 24580,
+      "downloaded_bytes": 24580,
+      "record_sha256": "d02b0cb4eb496fb692def7f71fac3b5d9dc6e317abdb22e1de5ee8026cbba001",
+      "corpus_start": 254174,
+      "corpus_end": 260478
+    },
+    "d9d206610ec3ad31b9881ec602e1545eaf188333f1653bb9257054a21712fa36": {
+      "sequence": 1,
+      "url": "https://atlassian.design/components",
+      "resolved_url": "https://atlassian.design/components",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 9154,
+      "downloaded_bytes": 513982,
+      "record_sha256": "42ac1dcb4ed456a1797cf2c7c2e56e4a43718e3b1f9da19d5727b5df501fad02",
+      "corpus_start": 1436,
+      "corpus_end": 5037
+    },
+    "ea197402bc908da63f59352d190f67c04675ddab3661ef1f122089ef7d0214b2": {
+      "sequence": 3,
+      "url": "https://atlassian.design/foundations/design-tokens",
+      "resolved_url": "https://atlassian.design/foundations/design-tokens",
+      "status": 200,
+      "diagnostic": {
+        "code": "no_text",
+        "message": "documentation page yielded no meaningful text",
+        "url": "https://atlassian.design/foundations/design-tokens"
+      },
+      "text_bytes": 0,
+      "downloaded_bytes": 61,
+      "record_sha256": "e1902df1742d0ac2a85f8ae90dffdee671f5cf71392b88b096c95ed8d3c17198",
+      "corpus_start": 7724,
+      "corpus_end": 7964
+    }
+  },
+  "committed_bytes": 267097,
+  "committed_sha256": "600f13a2857c8106561f8ba70744333bbcc86e0cf92085cca858aa13c73458d8",
+  "completed_at": "2026-09-04T13:40:07Z",
+  "report_sha256": "a44b323d42750b21983d9d7d7a986803ec803cf1f84a5260b4d2a23dee67e634"
+}

@@ -1,0 +1,157 @@
+{
+  "schema": "wisent.docs-retrieval-run.v2",
+  "tool": "spis crawl-docs",
+  "tool_commit": "b8abe3e64af165db7f9f7d3ebb41afd8f68318e8",
+  "run_id": "crawl-2026-09-04-13-27-50Z-main-b8abe3e",
+  "record": "48-atlassian-design-system",
+  "record_key": "720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a",
+  "attempt": 1,
+  "attempt_id": "attempt-1-c8b4972c28e0aff6",
+  "source_revision": "b8abe3e64af165db7f9f7d3ebb41afd8f68318e8",
+  "source_input_sha256": "0ac91590a9f227818025e1f618cde967b458d911c9de585e43a5724b542e5455",
+  "source_url": "https://atlassian.design/",
+  "declared_source_url": "https://atlassian.design/",
+  "effective_source_url": "https://atlassian.design/",
+  "runtime_manifest": {
+    "schema": "wisent.crawl-runtime-manifest.v1",
+    "run_id": "crawl-2026-09-04-13-27-50Z-main-b8abe3e",
+    "catalog": "documentation-site-examples",
+    "attempt": 1,
+    "attempt_id": "attempt-1-c8b4972c28e0aff6",
+    "record": "48-atlassian-design-system",
+    "engine": "docs",
+    "source_revision": "b8abe3e64af165db7f9f7d3ebb41afd8f68318e8",
+    "source_input_sha256": "0ac91590a9f227818025e1f618cde967b458d911c9de585e43a5724b542e5455",
+    "reference_sha256": "ab420b26a5398c7762b983b3e83e899428a23dffedfe8107f9d22b09b0462485",
+    "catalog_key": "29c8f15a6d2f55968fa5cef3c421d7d0b83cfdd46c99863bf0d005fea9a6198e",
+    "record_key": "720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a",
+    "correlation_id": "spis-720437e9a5b266b3b24d3951-1",
+    "stado_run_id": "spis-720437e9a5b266b3b24d3951-1-attempt-1-c8b4972c28e0aff6",
+    "artifact_uri": "stado://spis-crawls/runs/crawl-2026-09-04-13-27-50Z-main-b8abe3e/documentation-site-examples/48-atlassian-design-system/720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a/attempts/1/attempt-1-c8b4972c28e0aff6/artifacts.tar.gz",
+    "output_uri": "stado://spis-crawls/runs/crawl-2026-09-04-13-27-50Z-main-b8abe3e/documentation-site-examples/48-atlassian-design-system/720437e9a5b266b3b24d395167f58ceb2e8f71900b8ad98cd50b860e5035639a/attempts/1/attempt-1-c8b4972c28e0aff6/worker-output.log",
+    "runtime_product": {
+      "kind": "url",
+      "declared_identifier": "https://atlassian.design/",
+      "identifier": "https://atlassian.design/",
+      "product_url": "https://atlassian.design/",
+      "identity_source": "reference.json product_url",
+      "surface": null
+    },
+    "account": {
+      "mode": "anonymous-read-only-probe",
+      "account_id": "anonymous-read-only-probe",
+      "credential_refs": []
+    },
+    "constraints": {
+      "no_first_run_consent": true,
+      "no_system_permission_prompts": true,
+      "no_notifications": true,
+      "no_purchase": true,
+      "no_final_destructive_action": true,
+      "headless": false
+    },
+    "docs_structure_sha256": "a9c145aef3430a6e0163a75a027df6aecdd8f68ca1609e347b2def7c6d3100eb",
+    "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+    "bindings_source": "default:user-config",
+    "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+    "bindings_uri": "stado://spis-crawls/inputs/runtime-bindings/2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522.json",
+    "delivery": {
+      "kind": "none",
+      "secret_env": {}
+    },
+    "prepared_proof": null,
+    "execution_identity": {
+      "host": "charless-mac-mini",
+      "observed_hostname": "Charless-Mac-mini.local",
+      "platform": "http",
+      "device_id": null,
+      "resolved_product_identifier": "https://atlassian.design/",
+      "device_name": null,
+      "executable_path": null,
+      "product_version": null,
+      "executable_sha256": null,
+      "effective_url": null
+    },
+    "resource_lease": null,
+    "service_identity": null
+  },
+  "runtime_execution_identity": {
+    "host": "charless-mac-mini",
+    "observed_hostname": "Charless-Mac-mini.local",
+    "platform": "http",
+    "device_id": null,
+    "resolved_product_identifier": "https://atlassian.design/",
+    "device_name": null,
+    "executable_path": null,
+    "product_version": null,
+    "executable_sha256": null,
+    "effective_url": null
+  },
+  "definition_sha256": "bccb60c1863db5d986780d586497b6ec5fe2a67db3c4ae72b93e5d110b87dcc4",
+  "structure_sha256": "a9c145aef3430a6e0163a75a027df6aecdd8f68ca1609e347b2def7c6d3100eb",
+  "inventory_sha256": "6b17fc8a2df20d8b1464b1f4445c2cfc7e34fe0b05cecc08a939aba1160de073",
+  "pages_sha256": "600f13a2857c8106561f8ba70744333bbcc86e0cf92085cca858aa13c73458d8",
+  "pages_bytes": 267097,
+  "started_at": "2026-09-04T13:40:00Z",
+  "completed_at": "2026-09-04T13:40:07Z",
+  "retrieval_status": "retrieval_partial",
+  "inventory_downloaded_bytes": 172871,
+  "page_downloaded_bytes": 2769006,
+  "downloaded_bytes": 2941877,
+  "retrieval": {
+    "records": [
+      {
+        "page_downloaded_bytes": 2769006,
+        "record": "48-atlassian-design-system",
+        "target_count": 12,
+        "outcome_count": 12,
+        "retrieved_count": 12,
+        "http_200_count": 12,
+        "text_page_count": 10,
+        "pages_sha256": "600f13a2857c8106561f8ba70744333bbcc86e0cf92085cca858aa13c73458d8",
+        "pages_bytes": 267097,
+        "retrieval_status": "retrieval_partial",
+        "corpus_bound": 50000,
+        "pages_outside_corpus": 0,
+        "pages_outside_corpus_exact": true,
+        "diagnostics": [
+          {
+            "code": "no_text",
+            "message": "documentation page yielded no meaningful text",
+            "url": "https://atlassian.design/foundations/design-tokens"
+          },
+          {
+            "code": "no_text",
+            "message": "documentation page yielded no meaningful text",
+            "url": "https://atlassian.design/get-started/figma-libraries"
+          }
+        ]
+      }
+    ],
+    "target_count": 12,
+    "outcome_count": 12,
+    "retrieved_count": 12,
+    "text_page_count": 10,
+    "pages_sha256": "600f13a2857c8106561f8ba70744333bbcc86e0cf92085cca858aa13c73458d8",
+    "pages_bytes": 267097,
+    "inventory_downloaded_bytes": 172871,
+    "page_downloaded_bytes": 2769006,
+    "downloaded_bytes": 2941877,
+    "diagnostics": [
+      {
+        "code": "no_text",
+        "message": "documentation page yielded no meaningful text",
+        "url": "https://atlassian.design/foundations/design-tokens"
+      },
+      {
+        "code": "no_text",
+        "message": "documentation page yielded no meaningful text",
+        "url": "https://atlassian.design/get-started/figma-libraries"
+      }
+    ]
+  },
+  "limitations": [
+    "The documentation retrieval engine measures bounded HTTP retrieval and retained response text only.",
+    "No interactive journey, accessibility traversal, or motion variant is part of this engine."
+  ]
+}
