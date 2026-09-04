@@ -19,6 +19,30 @@ use std::process::{Command, Output};
 const OP_SCHEMA: &str = "wisent.crawl-operation.v1";
 const RUN_SCHEMA: &str = "wisent.crawl-run.v1";
 const SUBMISSION_SCHEMA: &str = "wisent.crawl-submission.v1";
+const HOST_PROBE_TIMEOUT: Duration = Duration::from_secs(30);
+
+#[derive(Debug)]
+struct CommandTimedOut {
+    operation: String,
+    timeout: Duration,
+    stdout: Vec<u8>,
+    stderr: Vec<u8>,
+}
+
+impl std::fmt::Display for CommandTimedOut {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            formatter,
+            "{} exceeded hard timeout {:?}; stdout={:?}; stderr={:?}",
+            self.operation,
+            self.timeout,
+            String::from_utf8_lossy(&self.stdout),
+            String::from_utf8_lossy(&self.stderr)
+        )
+    }
+}
+
+impl std::error::Error for CommandTimedOut {}
 
 /// Every product family and the engine that crawls it.
 ///
@@ -681,12 +705,13 @@ pub(crate) fn bounded_command_output(
         .join()
         .map_err(|_| anyhow!("{operation} stderr reader panicked"))??;
     if timed_out {
-        bail!(
-            "{operation} exceeded hard timeout {:?}; stdout={:?}; stderr={:?}",
+        return Err(CommandTimedOut {
+            operation: operation.to_string(),
             timeout,
-            String::from_utf8_lossy(&stdout),
-            String::from_utf8_lossy(&stderr)
-        );
+            stdout,
+            stderr,
+        }
+        .into());
     }
     if stdout_overflow || stderr_overflow {
         bail!("{operation} exceeded the {maximum_stream_bytes}-byte stdout/stderr bound");
@@ -2750,7 +2775,7 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
         let output = bounded_command_output(
             &mut command,
             "Stado host probe",
-            Duration::from_secs(30),
+            HOST_PROBE_TIMEOUT,
             1024 * 1024,
         )?;
         if !output.status.success() {
@@ -2843,6 +2868,13 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
     match result {
         Ok(receipt) => json!({
             "command": arguments,
+            "outcome": if receipt.get("status").and_then(Value::as_str) == Some("ok")
+                && receipt.get("exit_code").and_then(Value::as_i64) == Some(0)
+            {
+                "ready"
+            } else {
+                "unavailable"
+            },
             "ready": receipt.get("status").and_then(Value::as_str) == Some("ok")
                 && receipt.get("exit_code").and_then(Value::as_i64) == Some(0),
             "stdout": receipt.get("stdout").and_then(Value::as_str).unwrap_or_default(),
@@ -2850,8 +2882,63 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
             "stado_receipt": receipt,
         }),
         Err(error) => {
-            json!({"command": arguments, "ready": false, "error": error.to_string()})
+            if let Some(timeout) = error.downcast_ref::<CommandTimedOut>() {
+                return host_probe_timeout_report(arguments, timeout.timeout.as_secs());
+            }
+            json!({
+                "command": arguments,
+                "outcome": "failed",
+                "ready": false,
+                "diagnostic": {
+                    "code": "host_probe_failed",
+                    "retryable": false,
+                    "message": error.to_string(),
+                },
+                "error": error.to_string(),
+            })
         }
+    }
+}
+
+/// Typed evidence that a host probe gave no answer before its hard deadline.
+#[doc(hidden)]
+pub fn host_probe_timeout_report(arguments: &[&str], timeout_seconds: u64) -> Value {
+    let command = arguments.join(" ");
+    let message =
+        format!("host did not answer probe `{command}` within {timeout_seconds} seconds");
+    json!({
+        "command": arguments,
+        "outcome": "timed_out",
+        "ready": false,
+        "diagnostic": {
+            "code": "host_probe_timed_out",
+            "retryable": true,
+            "message": message,
+            "probe": arguments,
+            "timeout_seconds": timeout_seconds,
+        },
+        "error": message,
+    })
+}
+
+fn host_preflight_is_retryable(report: &Value) -> bool {
+    report
+        .get("checks")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .any(|check| {
+            check.pointer("/diagnostic/retryable").and_then(Value::as_bool) == Some(true)
+        })
+}
+
+/// Record state selected when a host preflight has not passed.
+#[doc(hidden)]
+pub fn failed_host_preflight_record_state(report: &Value) -> &'static str {
+    if host_preflight_is_retryable(report) {
+        "planned"
+    } else {
+        "unavailable"
     }
 }
 
@@ -3070,14 +3157,8 @@ fn host_preflight(
 ) -> Value {
     // `hostname -f` and not bare `hostname`: Stado's host-exec allowlist
     // matches an entry exactly and never appends operator words, and the entry
-    // it carries is the fully-qualified form. Asking for the bare program made
-    // every placement preflight fail with "'hostname' is not an approved
-    // host-exec command", which reads as a missing host capability and is
-    // really a spelling this side chose.
+    // it carries is the fully-qualified form.
     let mut commands: Vec<Vec<&str>> = vec![vec!["hostname", "-f"]];
-    // Read from the one declaration rather than matched again here. It used
-    // to be matched here and nowhere else, which is exactly how five engines
-    // kept a hole the sixth had already closed.
     commands.extend(engine_preconditions(engine, catalog));
     let mut checks: Vec<Value> = commands.iter().map(|command| host_probe(host, command)).collect();
     let desktop_driver_ready = if engine == "desktop" {
@@ -3113,12 +3194,29 @@ fn host_preflight(
         .all(|check| check.get("ready").and_then(Value::as_bool) == Some(true))
         && desktop_driver_ready
         && admission;
+    let retryable = !ready && host_preflight_is_retryable(&json!({"checks": checks}));
+    let diagnostic = retryable.then(|| {
+        let timed_out_probes = checks
+            .iter()
+            .filter(|check| check.get("outcome").and_then(Value::as_str) == Some("timed_out"))
+            .filter_map(|check| check.get("command").cloned())
+            .collect::<Vec<_>>();
+        json!({
+            "code": "host_probe_timed_out",
+            "retryable": true,
+            "message": "host did not answer every capability probe before its hard deadline",
+            "timed_out_probes": timed_out_probes,
+            "timeout_seconds": HOST_PROBE_TIMEOUT.as_secs(),
+        })
+    });
     json!({
         "schema": "wisent.crawl-host-preflight.v2",
         "catalog": catalog,
         "engine": engine,
         "host": host,
         "ready": ready,
+        "retryable": retryable,
+        "diagnostic": diagnostic,
         "checks": checks,
         "service_identity": service_identity,
     })
@@ -3946,7 +4044,7 @@ fn ensure_host_preflight(
         .and_then(|entry| entry.get("host_preflight"))
         .cloned()
         .context("crawl catalog disappeared before host preflight")?;
-    if !existing.is_null() {
+    if !existing.is_null() && !host_preflight_is_retryable(&existing) {
         return Ok(existing);
     }
     let observed = host_preflight(catalog, engine, host, service_identity);
@@ -3959,7 +4057,8 @@ fn ensure_host_preflight(
         .flatten()
         .position(|entry| entry.get("catalog").and_then(Value::as_str) == Some(catalog))
         .context("crawl catalog disappeared while retaining host preflight")?;
-    if run["catalogs"][catalog_index]["host_preflight"].is_null() {
+    let current = &run["catalogs"][catalog_index]["host_preflight"];
+    if current.is_null() || host_preflight_is_retryable(current) {
         run["catalogs"][catalog_index]["host_preflight"] = observed;
         run["catalogs"][catalog_index]["state"] = json!("preflighting");
         persist(&mut run)?;
@@ -4006,6 +4105,25 @@ fn continue_record(
             "cancelled_before_submission",
             "durable cancel intent exists; worker submission is prohibited".into(),
         );
+    }
+    if host_preflight_is_retryable(host_report) {
+        let diagnostic = host_report
+            .get("diagnostic")
+            .cloned()
+            .unwrap_or_else(|| {
+                json!({
+                    "code": "host_probe_timed_out",
+                    "retryable": true,
+                    "message": "host capability probe timed out",
+                })
+            });
+        mutate_record(run_id, catalog, record_name, |entry| {
+            entry["preflight"] = host_report.clone();
+            entry["state"] = json!(failed_host_preflight_record_state(host_report));
+            entry["diagnostic"] = diagnostic;
+            Ok(())
+        })?;
+        return Ok(());
     }
     let mut manifest: RuntimeManifest = match serde_json::from_value(
         snapshot.get("manifest").cloned().unwrap_or(Value::Null),
