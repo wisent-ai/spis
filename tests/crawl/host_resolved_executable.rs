@@ -1,7 +1,8 @@
 use serde_json::json;
 use spis::commands::crawl::{
-    executable_word_from_host_receipt, failed_host_preflight_record_state,
-    host_home_crawl_token_path, host_probe_timeout_report, validate_worker_runtime_files,
+    active_worker_stado_programs, executable_word_from_host_receipt,
+    failed_host_preflight_record_state, host_home_crawl_token_path, host_probe_timeout_report,
+    validate_worker_runtime_files, worker_agent_program_retry_diagnostic,
 };
 use std::path::Path;
 
@@ -78,4 +79,41 @@ fn missing_worker_runtime_files_have_distinct_named_failures() {
         host_home_crawl_token_path(Path::new("/Users/charles")),
         token
     );
+}
+
+#[test]
+fn overlapping_agent_declarations_are_unambiguous_when_the_program_matches() {
+    let services = json!([
+        {
+            "host": "charless-mac-mini",
+            "state": "active",
+            "program": "/Users/charles/.stado/bin/stado",
+            "args": ["agent", "--target", "charless-mac-mini"]
+        },
+        {
+            "host": "charless-mac-mini",
+            "state": "active",
+            "program": "/Users/charles/.stado/bin/stado",
+            "args": ["agent", "--target", "charless-mac-mini"]
+        }
+    ]);
+
+    let programs = active_worker_stado_programs(&services, "charless-mac-mini");
+
+    assert_eq!(
+        programs.into_iter().collect::<Vec<_>>(),
+        vec!["/Users/charles/.stado/bin/stado"]
+    );
+}
+
+#[test]
+fn unstable_agent_cardinality_is_named_counted_and_retryable() {
+    let diagnostic = worker_agent_program_retry_diagnostic(
+        "worker_agent_program_unstable: host=charless-mac-mini observed_count=0 observations=6 retryable=true",
+    )
+    .unwrap();
+
+    assert_eq!(diagnostic["code"], "worker_agent_program_unstable");
+    assert_eq!(diagnostic["retryable"], true);
+    assert_eq!(diagnostic["observed_count"], 0);
 }

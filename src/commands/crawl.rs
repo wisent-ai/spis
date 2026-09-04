@@ -8,7 +8,7 @@ use anyhow::{anyhow, bail, Context, Result};
 use flate2::read::GzDecoder;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
 use std::os::fd::AsRawFd;
@@ -3311,47 +3311,89 @@ fn resolved_program_from_host_preflight(
 /// boundary. It may temporarily point at a private repair build and later move
 /// during a normal release; reading it for every submission follows either
 /// transition without baking a shared or repair path into Spis.
-fn declared_worker_stado_program(host: &str) -> Result<String> {
-    let mut command = stado_command();
-    command.args(["service", "list", "--json"]);
-    let output = bounded_command_output(
-        &mut command,
-        "read declared Stado agent program",
-        Duration::from_secs(120),
-        16 * 1024 * 1024,
-    )?;
-    if !output.status.success() {
-        bail!(
-            "Stado service registry refused the managed binary lookup: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    let services: Value =
-        serde_json::from_slice(&output.stdout).context("Stado service list is not JSON")?;
-    let programs = services
+pub fn active_worker_stado_programs(services: &Value, host: &str) -> BTreeSet<String> {
+    services
         .as_array()
         .into_iter()
         .flatten()
         .filter(|service| service.get("host").and_then(Value::as_str) == Some(host))
         .filter(|service| service.get("state").and_then(Value::as_str) == Some("active"))
         .filter(|service| {
-            service.get("args").and_then(Value::as_array).is_some_and(|arguments| {
-                arguments.first().and_then(Value::as_str) == Some("agent")
-                    && arguments.windows(2).any(|pair| {
-                        pair[0].as_str() == Some("--target") && pair[1].as_str() == Some(host)
-                    })
-            })
+            service
+                .get("args")
+                .and_then(Value::as_array)
+                .is_some_and(|arguments| {
+                    arguments.first().and_then(Value::as_str) == Some("agent")
+                        && arguments.windows(2).any(|pair| {
+                            pair[0].as_str() == Some("--target")
+                                && pair[1].as_str() == Some(host)
+                        })
+                })
         })
         .filter_map(|service| service.get("program").and_then(Value::as_str))
         .filter(|program| program.starts_with('/') && !program.chars().any(char::is_whitespace))
-        .collect::<Vec<_>>();
-    if programs.len() != 1 {
-        bail!(
-            "host {host} declares {} active Stado agent programs; exactly one is required",
-            programs.len()
-        );
+        .map(str::to_string)
+        .collect()
+}
+
+pub fn worker_agent_program_retry_diagnostic(message: &str) -> Option<Value> {
+    if !message.contains("worker_agent_program_unstable:") {
+        return None;
     }
-    Ok(programs[0].to_string())
+    let observed_count = message
+        .split_once("observed_count=")
+        .and_then(|(_, tail)| tail.split_whitespace().next())
+        .and_then(|count| count.parse::<usize>().ok());
+    Some(json!({
+        "code": "worker_agent_program_unstable",
+        "retryable": true,
+        "observed_count": observed_count,
+        "message": message,
+    }))
+}
+
+fn declared_worker_stado_program(host: &str) -> Result<String> {
+    const POLLS: usize = 6;
+    const POLL_DELAY: Duration = Duration::from_secs(2);
+    let mut programs = BTreeSet::new();
+    for poll in 0..POLLS {
+        let mut command = stado_command();
+        command.args(["service", "list", "--json"]);
+        let output = bounded_command_output(
+            &mut command,
+            "read declared Stado agent program",
+            Duration::from_secs(120),
+            16 * 1024 * 1024,
+        )?;
+        if !output.status.success() {
+            bail!(
+                "Stado service registry refused the managed binary lookup: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+        }
+        let services: Value =
+            serde_json::from_slice(&output.stdout).context("Stado service list is not JSON")?;
+        programs = active_worker_stado_programs(&services, host);
+        // Two overlapping service declarations that execute the same program
+        // are still unambiguous. A release cutover can briefly expose zero
+        // active declarations, or old and new declarations together; neither
+        // is a permanent property of the host, so observe it again instead of
+        // burning the record.
+        if programs.len() == 1 {
+            return Ok(programs
+                .iter()
+                .next()
+                .expect("one active program")
+                .clone());
+        }
+        if poll + 1 < POLLS {
+            std::thread::sleep(POLL_DELAY);
+        }
+    }
+    bail!(
+        "worker_agent_program_unstable: host={host} observed_count={} observations={POLLS} retryable=true",
+        programs.len()
+    )
 }
 
 /// Shell prefix built from the retained cargo receipt and Stado's service declaration.
@@ -4518,17 +4560,26 @@ fn continue_record(
             }
         };
         if !output.status.success() {
+            let message = format!(
+                "{}{}",
+                String::from_utf8_lossy(&output.stdout).trim(),
+                String::from_utf8_lossy(&output.stderr).trim()
+            );
+            if let Some(diagnostic) = worker_agent_program_retry_diagnostic(&message) {
+                mutate_record(run_id, catalog, record_name, |entry| {
+                    entry["state"] = json!("planned");
+                    entry["diagnostic"] = diagnostic;
+                    Ok(())
+                })?;
+                return Ok(());
+            }
             return mark_record_failure(
                 run_id,
                 catalog,
                 record_name,
                 "submission_failed",
                 "stado_submission_failed",
-                format!(
-                    "{}{}",
-                    String::from_utf8_lossy(&output.stdout).trim(),
-                    String::from_utf8_lossy(&output.stderr).trim()
-                ),
+                message,
             );
         }
         match parse_submission(&output.stdout) {
