@@ -3387,6 +3387,7 @@ fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManifest) -> Resu
                 Some(corpus),
                 None,
             )?;
+            super::crawl::publish_worker_report(manifest, &report)?;
             println!("{}", serde_json::to_string(&report)?);
             Ok(())
         }
@@ -3432,6 +3433,7 @@ fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManifest) -> Resu
                 None,
                 Some(("docs_crawl_failed", &message)),
             )?;
+            super::crawl::publish_worker_report(manifest, &report)?;
             println!("{}", serde_json::to_string(&report)?);
             match artifact {
                 Ok(_) => bail!("documentation worker failed: {message}"),

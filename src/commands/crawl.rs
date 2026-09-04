@@ -992,6 +992,92 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
     let _ = unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_UN) };
     result
 }
+/// Publish the worker's typed terminal report independently of the queue
+/// agent's best-effort stdout retention.
+///
+/// The queue receipt commits `output_uri` before execution, but a local agent
+/// can finish the workload after failing to persist its captured stdout. The
+/// worker already owns the crawl namespace bearer because it publishes the
+/// attempt archive there, so it also writes and reads back the one report line
+/// the importer treats as the terminal receipt. Stdout remains useful for
+/// humans and queue diagnostics, but is no longer the only copy of proof.
+pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) -> Result<()> {
+    if !manifest
+        .output_uri
+        .starts_with(&format!("{}/", crate::CRAWL_ATTEMPT_ROOT))
+        || !manifest.output_uri.ends_with("/worker-output.log")
+    {
+        bail!("worker report URI is outside the canonical Spis attempt coordinates");
+    }
+    let home = std::env::var_os("HOME").context("HOME is required for worker report cache")?;
+    let directory = PathBuf::from(home)
+        .join(".stado")
+        .join("work")
+        .join("spis")
+        .join("worker-reports");
+    std::fs::create_dir_all(&directory)?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+    }
+    let source = directory.join(format!("{}.log", manifest.attempt_id));
+    let bytes = (serde_json::to_string(report)? + "\n").into_bytes();
+    write_immutable_file(&source, &bytes)?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(&source, std::fs::Permissions::from_mode(0o600))?;
+    }
+    let output = bounded_command_output(
+        crawl_storage_command()
+            .args([
+                "storage",
+                "put",
+                "--if-absent",
+                "--content-type",
+                "application/x-ndjson",
+                &manifest.output_uri,
+            ])
+            .arg(&source),
+        "publish worker report",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
+    if !output.status.success() {
+        bail!(
+            "stado storage put refused the worker report: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let readback = directory.join(format!(
+        ".{}.{}.readback",
+        manifest.attempt_id,
+        std::process::id()
+    ));
+    let _ = std::fs::remove_file(&readback);
+    let output = bounded_command_output(
+        crawl_storage_command()
+            .args(["storage", "get", &manifest.output_uri])
+            .arg(&readback),
+        "read back worker report",
+        Duration::from_secs(120),
+        4 * 1024 * 1024,
+    )?;
+    if !output.status.success() {
+        let _ = std::fs::remove_file(&readback);
+        bail!(
+            "stado storage get refused the published worker report: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let observed = std::fs::read(&readback);
+    let _ = std::fs::remove_file(&readback);
+    if observed? != bytes {
+        bail!("published worker report read-back differs from the typed report");
+    }
+    Ok(())
+}
 
 #[derive(Debug)]
 struct RecordLockBusy {

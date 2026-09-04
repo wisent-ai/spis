@@ -1595,6 +1595,7 @@ fn run_worker(
                         &collected,
                         None,
                     );
+                    super::crawl::publish_worker_report(manifest, &report)?;
                     println!("{}", serde_json::to_string(&report)?);
                     return Ok(());
                 }
@@ -1630,6 +1631,7 @@ fn run_worker(
         &collected,
         Some(&failure),
     );
+    super::crawl::publish_worker_report(manifest, &report)?;
     println!("{}", serde_json::to_string(&report)?);
     match artifact {
         Ok(_) => bail!("web worker failed ({}): {}", failure.code, failure.message),

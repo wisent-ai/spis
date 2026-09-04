@@ -1815,6 +1815,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let artifact = super::crawl::publish_attempt_archive(&run_root, &artifact_uri)?;
     let failure = failure.map(|(code, message)| json!({"code": code, "message": message}));
     let report = worker_report(&manifest, Some(artifact), failure.clone())?;
+    super::crawl::publish_worker_report(&manifest, &report)?;
     println!("{}", serde_json::to_string(&report)?);
     if failure.is_some() {
         bail!("the exact desktop record could not be crawled");
