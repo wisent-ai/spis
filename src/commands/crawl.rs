@@ -3209,6 +3209,13 @@ fn resolved_program_from_host_preflight(
     executable_word_from_host_receipt(host, receipt)
 }
 
+/// Read the Stado program from the active queue-agent declaration for this host.
+///
+/// The agent is the component that will execute the job, so its managed service
+/// declaration is the authoritative executable available inside that execution
+/// boundary. It may temporarily point at a private repair build and later move
+/// during a normal release; reading it for every submission follows either
+/// transition without baking a shared or repair path into Spis.
 fn declared_worker_stado_program(host: &str) -> Result<String> {
     let mut command = stado_command();
     command.args(["service", "list", "--json"]);
