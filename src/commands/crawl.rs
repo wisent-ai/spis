@@ -608,33 +608,9 @@ const STADO_PASSTHROUGH_ENV: [&str; 12] = [
     "WC_LOCAL_STORAGE_PATH",
 ];
 
-#[doc(hidden)]
-pub fn host_home_stado_path(home: &Path) -> PathBuf {
-    home.join(".stado").join("bin").join("stado")
-}
-
-#[doc(hidden)]
-pub fn host_home_crawl_token_path(home: &Path) -> PathBuf {
-    home.join(".stado").join("spis-crawls-object-api-token")
-}
-
-/// Prefer the Stado binary installed in the current process's own home.
-///
-/// A queued worker has a deliberately narrow non-login `PATH`; relying on the
-/// bare name let cargo start correctly on Charless and then failed the first
-/// object read because the worker could not spawn `stado`. The worker evaluates
-/// `HOME` on the placement host, never on the coordinator.
 pub(crate) fn stado_command() -> Command {
-    let configured = std::env::var_os("SPIS_STADO_BIN");
-    let home_binary = std::env::var_os("HOME")
-        .map(PathBuf::from)
-        .map(|home| host_home_stado_path(&home))
-        .filter(|path| path.is_file());
-    let mut command = Command::new(
-        configured
-            .or_else(|| home_binary.map(Into::into))
-            .unwrap_or_else(|| "stado".into()),
-    );
+    let mut command =
+        Command::new(std::env::var_os("SPIS_STADO_BIN").unwrap_or_else(|| "stado".into()));
     command.env_clear();
     for name in STADO_PASSTHROUGH_ENV {
         // Only when set: an empty value is a configured value to Stado, and
@@ -644,6 +620,32 @@ pub(crate) fn stado_command() -> Command {
         }
     }
     command
+}
+#[doc(hidden)]
+pub fn host_home_crawl_token_path(home: &Path) -> PathBuf {
+    home.join(".stado").join("spis-crawls-object-api-token")
+}
+
+#[doc(hidden)]
+pub fn validate_worker_runtime_files(
+    stado_path: &Path,
+    stado_present: bool,
+    token_path: &Path,
+    token_present: bool,
+) -> Result<()> {
+    if !stado_present {
+        bail!(
+            "worker_stado_binary_missing: Stado's declared worker binary is missing at {}",
+            stado_path.display()
+        );
+    }
+    if !token_present {
+        bail!(
+            "worker_crawl_token_missing: the spis-crawls bearer file is missing at {}",
+            token_path.display()
+        );
+    }
+    Ok(())
 }
 
 /// Stado invocation for objects Spis owns, i.e. everything under
@@ -1426,10 +1428,13 @@ fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<Vec<String>>
     Ok(args)
 }
 
-fn invoke_engine(args: &[String]) -> Result<Output> {
+fn invoke_engine(args: &[String], host: &str, host_report: &Value) -> Result<Output> {
     let executable = std::env::current_exe().context("locate running spis binary")?;
+    let worker_program = resolved_program_from_host_preflight(host, &WORKER_PROGRAM, host_report)?;
     let mut command = Command::new(executable);
-    command.args(args);
+    command
+        .args(args)
+        .env("SPIS_PREFLIGHT_WORKER_PROGRAM", worker_program);
     bounded_command_output(
         &mut command,
         "crawler coordinator",
@@ -1880,6 +1885,23 @@ fn load_runtime_bindings(explicit: Option<&str>) -> Result<RuntimeBindings> {
 }
 
 fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<RuntimeBindings> {
+    let stado_path = std::env::var_os("SPIS_STADO_BIN")
+        .map(PathBuf::from)
+        .context("worker_stado_binary_undeclared: the coordinator passed no Stado binary")?;
+    let token_path = std::env::var_os("SPIS_CRAWL_OBJECT_TOKEN_FILE")
+        .map(PathBuf::from)
+        .or_else(|| {
+            std::env::var_os("HOME")
+                .map(PathBuf::from)
+                .map(|home| host_home_crawl_token_path(&home))
+        })
+        .context("worker_crawl_token_undeclared: HOME and SPIS_CRAWL_OBJECT_TOKEN_FILE are absent")?;
+    validate_worker_runtime_files(
+        &stado_path,
+        stado_path.is_file(),
+        &token_path,
+        token_path.is_file(),
+    )?;
     let home = std::env::var_os("HOME").context("HOME is required for private Stado work cache")?;
     let directory = PathBuf::from(home)
         .join(".stado")
@@ -3166,21 +3188,82 @@ pub(crate) fn engine_preconditions(engine: &str, catalog: &str) -> Vec<Vec<&'sta
     required
 }
 
-/// The absolute path this host will execute the worker's own program at.
-///
-/// One call for every engine, so a submitted command cannot name `cargo`
-/// bare in one place while another names the path the receipt reported.
-///
-/// Whitespace is refused rather than quoted. Five of the six engines
-/// interpolate this straight into a command string, so a path carrying a
-/// space would become two words and fail exactly the way the bare name did;
-/// refusing it here fails before a slot is claimed instead.
-pub(crate) fn resolved_worker_program(host: &str) -> Result<String> {
-    let path = resolved_program(host, &WORKER_PROGRAM)?;
-    if path.chars().any(char::is_whitespace) {
-        bail!("host {host} resolved the worker program to {path:?}, which a command cannot carry");
+fn resolved_program_from_host_preflight(
+    host: &str,
+    arguments: &[&str],
+    host_report: &Value,
+) -> Result<String> {
+    let check = host_report
+        .get("checks")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .find(|check| check.get("command") == Some(&json!(arguments)))
+        .with_context(|| format!("host preflight retained no `{}` probe", arguments.join(" ")))?;
+    if check.get("ready").and_then(Value::as_bool) != Some(true) {
+        bail!("host preflight `{}` probe was not ready", arguments.join(" "));
     }
-    Ok(path)
+    let receipt = check
+        .get("stado_receipt")
+        .context("ready host preflight probe retained no Stado receipt")?;
+    executable_word_from_host_receipt(host, receipt)
+}
+
+fn declared_worker_stado_program(host: &str) -> Result<String> {
+    let mut command = stado_command();
+    command.args(["service", "list", "--json"]);
+    let output = bounded_command_output(
+        &mut command,
+        "read declared Stado agent program",
+        Duration::from_secs(120),
+        16 * 1024 * 1024,
+    )?;
+    if !output.status.success() {
+        bail!(
+            "Stado service registry refused the managed binary lookup: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let services: Value =
+        serde_json::from_slice(&output.stdout).context("Stado service list is not JSON")?;
+    let programs = services
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter(|service| service.get("host").and_then(Value::as_str) == Some(host))
+        .filter(|service| service.get("state").and_then(Value::as_str) == Some("active"))
+        .filter(|service| {
+            service.get("args").and_then(Value::as_array).is_some_and(|arguments| {
+                arguments.first().and_then(Value::as_str) == Some("agent")
+                    && arguments.windows(2).any(|pair| {
+                        pair[0].as_str() == Some("--target") && pair[1].as_str() == Some(host)
+                    })
+            })
+        })
+        .filter_map(|service| service.get("program").and_then(Value::as_str))
+        .filter(|program| program.starts_with('/') && !program.chars().any(char::is_whitespace))
+        .collect::<Vec<_>>();
+    if programs.len() != 1 {
+        bail!(
+            "host {host} declares {} active Stado agent programs; exactly one is required",
+            programs.len()
+        );
+    }
+    Ok(programs[0].to_string())
+}
+
+/// Shell prefix built from the retained cargo receipt and Stado's service declaration.
+pub(crate) fn resolved_worker_program(host: &str) -> Result<String> {
+    let cargo = std::env::var("SPIS_PREFLIGHT_WORKER_PROGRAM")
+        .context("crawler coordinator did not pass the retained worker-program receipt")?;
+    if cargo.chars().any(char::is_whitespace) {
+        bail!("host {host} resolved the worker program to {cargo:?}, which a command cannot carry");
+    }
+    let stado = declared_worker_stado_program(host)?;
+    Ok(format!(
+        "SPIS_STADO_BIN='{}' {cargo}",
+        stado.replace('\'', "'\\''")
+    ))
 }
 
 fn host_preflight(
@@ -4319,7 +4402,7 @@ fn continue_record(
     let receipt = if let Some(receipt) = recovered {
         receipt
     } else {
-        let output = match invoke_engine(&command) {
+        let output = match invoke_engine(&command, host, host_report) {
             Ok(output) => output,
             Err(error) => {
                 return mark_record_failure(

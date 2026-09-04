@@ -1,7 +1,7 @@
 use serde_json::json;
 use spis::commands::crawl::{
     executable_word_from_host_receipt, failed_host_preflight_record_state,
-    host_home_crawl_token_path, host_home_stado_path, host_probe_timeout_report,
+    host_home_crawl_token_path, host_probe_timeout_report, validate_worker_runtime_files,
 };
 use std::path::Path;
 
@@ -59,15 +59,23 @@ fn unanswered_probe_is_retryable_and_keeps_the_record_planned() {
 }
 
 #[test]
-fn worker_resolves_stado_resources_from_the_placement_home() {
-    let home = Path::new("/Users/charles");
+fn missing_worker_runtime_files_have_distinct_named_failures() {
+    let stado = Path::new("/declared/stado");
+    let token = Path::new("/Users/charles/.stado/spis-crawls-object-api-token");
 
+    let binary_error = validate_worker_runtime_files(stado, false, token, true).unwrap_err();
     assert_eq!(
-        host_home_stado_path(home),
-        Path::new("/Users/charles/.stado/bin/stado")
+        binary_error.to_string(),
+        "worker_stado_binary_missing: Stado's declared worker binary is missing at /declared/stado"
+    );
+
+    let token_error = validate_worker_runtime_files(stado, true, token, false).unwrap_err();
+    assert_eq!(
+        token_error.to_string(),
+        "worker_crawl_token_missing: the spis-crawls bearer file is missing at /Users/charles/.stado/spis-crawls-object-api-token"
     );
     assert_eq!(
-        host_home_crawl_token_path(home),
-        Path::new("/Users/charles/.stado/spis-crawls-object-api-token")
+        host_home_crawl_token_path(Path::new("/Users/charles")),
+        token
     );
 }
