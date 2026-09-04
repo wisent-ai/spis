@@ -3164,6 +3164,9 @@ fn build_report(
             "pages_bytes": state.committed_bytes,
             "inventory_downloaded_bytes": state.inventory_downloaded_bytes,
             "page_downloaded_bytes": page_downloaded_bytes,
+            "corpus_bound": MAX_TARGETS,
+            "pages_outside_corpus": capacity.map_or(0, |value| value.pages_outside_corpus),
+            "pages_outside_corpus_exact": capacity.is_none_or(|value| value.exact),
             "downloaded_bytes": state
                 .inventory_downloaded_bytes
                 .checked_add(page_downloaded_bytes)
