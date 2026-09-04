@@ -1168,10 +1168,11 @@ fn validate_installed_import(
     )
 }
 
-fn import_artifact(
+fn import_artifact_from_archive(
     uri: &str,
     expected_archive_sha256: &str,
     expected_archive_bytes: u64,
+    source_archive: Option<&Path>,
 ) -> Result<AttemptCorpus> {
     if !uri.starts_with(&format!("{}/", crate::CRAWL_ATTEMPT_ROOT))
         || !uri.ends_with("/artifacts.tar.gz")
@@ -1194,19 +1195,25 @@ fn import_artifact(
     let staging = super::crawl_docs::staging_directory(&root, "corpus-import-stage")?;
     let archive_path = staging.join("artifact.tar.gz");
     let import_result = (|| -> Result<AttemptCorpus> {
-        let mut command = super::crawl::crawl_storage_command();
-        command.args(["storage", "get", uri]).arg(&archive_path);
-        let output = super::crawl::bounded_command_output(
-            &mut command,
-            "download immutable documentation corpus artifact",
-            std::time::Duration::from_secs(30 * 60),
-            super::crawl_docs::STADO_OUTPUT_LIMIT,
-        )?;
-        if !output.status.success() {
-            bail!(
-                "stado storage get refused documentation corpus artifact: {}",
-                String::from_utf8_lossy(&output.stderr).trim()
-            );
+        if let Some(source) = source_archive {
+            open_regular_read(source, "already downloaded documentation archive")?;
+            std::fs::copy(source, &archive_path)
+                .context("stage already downloaded documentation corpus artifact")?;
+        } else {
+            let mut command = super::crawl::crawl_storage_command();
+            command.args(["storage", "get", uri]).arg(&archive_path);
+            let output = super::crawl::bounded_command_output(
+                &mut command,
+                "download immutable documentation corpus artifact",
+                std::time::Duration::from_secs(30 * 60),
+                super::crawl_docs::STADO_OUTPUT_LIMIT,
+            )?;
+            if !output.status.success() {
+                bail!(
+                    "stado storage get refused documentation corpus artifact: {}",
+                    String::from_utf8_lossy(&output.stderr).trim()
+                );
+            }
         }
         let archive = open_regular_read(&archive_path, "downloaded documentation archive")?;
         let archive_length = archive.metadata()?.len();
@@ -1261,14 +1268,15 @@ fn import_artifact(
     }
     import_result
 }
+
 /// Validate one typed `wisent.docs-worker-report.v1` document in memory.
 ///
-/// This is the single validation of a documentation worker report, shared by both
-/// import paths so the same document is never checked twice by two independent
-/// rules: `docs-corpus import --attempt-receipt`, which goes on to materialise the
-/// corpus bytes, and `crawl.rs::import_record_attempt`'s `docs` arm, which binds
-/// the typed corpus summary onto the reference record without installing a
-/// readable corpus. Returns the artifact URI and its SHA-256.
+/// This is the single validation of a documentation worker report, shared by
+/// both import paths. `docs-corpus import --attempt-receipt` and
+/// `crawl.rs::import_record_attempt` both continue through
+/// [`import_worker_report`] so a crawl reported as imported is immediately
+/// visible to the product's corpus status, search, and show commands.
+/// Returns the artifact URI and its SHA-256.
 pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, String)> {
     if receipt.get("schema").and_then(Value::as_str) != Some("wisent.docs-worker-report.v1")
         || receipt.get("engine").and_then(Value::as_str) != Some("docs")
@@ -1486,6 +1494,38 @@ fn validate_receipt_corpus(receipt: &Value, corpus: &AttemptCorpus) -> Result<()
     }
     Ok(())
 }
+fn import_verified_worker_report(receipt: &Value, source_archive: Option<&Path>) -> Result<Value> {
+    let (uri, expected_sha256) = validate_docs_worker_report(receipt)?;
+    let expected_bytes = receipt
+        .pointer("/artifact/bytes")
+        .and_then(Value::as_u64)
+        .context("validated attempt receipt artifact has no bytes")?;
+    let attempt =
+        import_artifact_from_archive(&uri, &expected_sha256, expected_bytes, source_archive)?;
+    validate_receipt_corpus(receipt, &attempt)?;
+    Ok(json!({
+        "artifact_uri": uri,
+        "archive_sha256": expected_sha256,
+        "record": attempt.slug,
+        "attempt": attempt.attempt,
+        "attempt_id": attempt.attempt_id,
+        "completed_at": attempt.completed_at,
+        "retrieval_status": attempt.retrieval_status,
+        "corpus_dir": attempt.corpus_dir,
+    }))
+}
+
+pub(crate) fn import_worker_report(receipt: &Value) -> Result<Value> {
+    import_verified_worker_report(receipt, None)
+}
+
+pub(crate) fn import_worker_report_from_archive(
+    receipt: &Value,
+    source_archive: &Path,
+) -> Result<Value> {
+    import_verified_worker_report(receipt, Some(source_archive))
+}
+
 
 pub fn run(rest: &[String]) -> Result<()> {
     let mut sub = "";
@@ -1614,27 +1654,10 @@ pub fn run(rest: &[String]) -> Result<()> {
         "import" => {
             let receipt_path =
                 attempt_receipt.context("import needs --attempt-receipt <file>")?;
-            let (receipt, uri, expected_sha256) = read_attempt_receipt(&receipt_path)?;
-            let expected_bytes = receipt
-                .pointer("/artifact/bytes")
-                .and_then(Value::as_u64)
-                .context("validated attempt receipt artifact has no bytes")?;
-            let attempt = import_artifact(&uri, &expected_sha256, expected_bytes)?;
-            validate_receipt_corpus(&receipt, &attempt)?;
-            println!(
-                "{}",
-                serde_json::to_string_pretty(&json!({
-                    "attempt_receipt": receipt_path,
-                    "artifact_uri": uri,
-                    "archive_sha256": expected_sha256,
-                    "record": attempt.slug,
-                    "attempt": attempt.attempt,
-                    "attempt_id": attempt.attempt_id,
-                    "completed_at": attempt.completed_at,
-                    "retrieval_status": attempt.retrieval_status,
-                    "corpus_dir": attempt.corpus_dir,
-                }))?
-            );
+            let (receipt, _, _) = read_attempt_receipt(&receipt_path)?;
+            let mut imported = import_worker_report(&receipt)?;
+            imported["attempt_receipt"] = json!(receipt_path);
+            println!("{}", serde_json::to_string_pretty(&imported)?);
             Ok(())
         }
         _ => unreachable!(),

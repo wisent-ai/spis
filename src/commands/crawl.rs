@@ -6663,25 +6663,24 @@ fn import_record_attempt(
             true,
         )?,
         "docs" => {
-            // One corpus attempt. The typed report is validated in exactly one
-            // place, shared with `docs-corpus import`, so this document is not
-            // checked twice by two independent rules; that validation also proves
-            // the artifact coordinates, digests and corpus/tree agreement, and it
-            // returns them, so the artifact this attempt actually downloaded is
-            // compared here rather than through transitivity via the manifest URI
-            // equality above and the archive readback.
-            let (artifact_uri, artifact_sha256) =
-                super::docs_corpus::validate_docs_worker_report(&report)?;
-            if artifact_uri != manifest.artifact_uri || artifact_sha256 != expected_sha256 {
-                bail!(
-                    "docs worker report artifact ({artifact_uri} {artifact_sha256}) is not the immutable attempt artifact ({} {expected_sha256})",
-                    manifest.artifact_uri
-                );
+            // Materialise the same verified artifact into the product corpus
+            // store before recording this attempt as imported. Reusing the
+            // archive already downloaded above avoids a second object request;
+            // the corpus importer independently checks its digest, length,
+            // extraction bounds and typed report/tree agreement.
+            let readable_corpus =
+                super::docs_corpus::import_worker_report_from_archive(&report, &archive)?;
+            if readable_corpus
+                .get("artifact_uri")
+                .and_then(Value::as_str)
+                != Some(manifest.artifact_uri.as_str())
+                || readable_corpus
+                    .get("archive_sha256")
+                    .and_then(Value::as_str)
+                    != Some(expected_sha256)
+            {
+                bail!("installed documentation corpus does not identify the immutable attempt artifact");
             }
-            let corpus = report
-                .get("corpus")
-                .cloned()
-                .context("docs worker report has no typed corpus summary")?;
             // Manifest equality stays here: only this side knows the immutable
             // attempt's committed content-structure digest.
             if report.get("docs_structure_sha256").and_then(Value::as_str)
@@ -6690,7 +6689,11 @@ fn import_record_attempt(
                 bail!("docs worker report crawl-definition digest differs from the immutable attempt");
             }
             run["docs_structure_sha256"] = json!(manifest.docs_structure_sha256);
-            run["corpus"] = corpus;
+            run["corpus"] = report
+                .get("corpus")
+                .cloned()
+                .context("docs worker report has no typed corpus summary")?;
+            run["readable_corpus"] = readable_corpus;
         }
         _ => {}
     }
