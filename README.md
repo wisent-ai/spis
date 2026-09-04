@@ -30,6 +30,7 @@ The maintained implementation is the Rust binary in `src/`:
 ```bash
 cargo build --release
 ./target/release/spis --help
+./target/release/spis onboarding
 ./target/release/spis generate-example-catalogs --check
 ```
 

@@ -25,6 +25,10 @@ use anyhow::Result;
 
 const SUBCOMMANDS: &[(&str, &str)] = &[
     (
+        "onboarding",
+        "show or reset the first-use walkthrough",
+    ),
+    (
         "docs-site",
         "generate this product's documentation from its own tables",
     ),
@@ -109,6 +113,7 @@ const SUBCOMMANDS: &[(&str, &str)] = &[
 
 fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
     match name {
+        "onboarding" => crate::onboarding::run(rest)?,
         "crawl" => crawl::run(rest)?,
         "crawl-docs" => crawl_docs::run(rest)?,
         "crawl-cli" => crawl_cli::run(rest)?,

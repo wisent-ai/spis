@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "product_id": "spis",
+  "journey_id": "first-use",
+  "journey_version": "2026-09-03.1",
+  "entry_screen_id": "evidence-corpus",
+  "first_success_fact": "catalog_validation_reported",
+  "published_at": "2026-09-03T00:00:00Z",
+  "source_revision": "spis-first-use-2026-09-03.1",
+  "screens": [
+    {
+      "screen_id": "evidence-corpus",
+      "screen_kind": "explanation",
+      "title_key": "spis.onboarding.evidence_corpus.title",
+      "body_key": "spis.onboarding.evidence_corpus.body",
+      "required": true,
+      "actions": [
+        "continue"
+      ],
+      "transitions": [
+        {
+          "next_screen_id": "command-surface",
+          "reason_code": "canonical_progression",
+          "priority": 10
+        }
+      ],
+      "presentation": {
+        "title": "Build evidence-grade interface corpora",
+        "body": "Spis discovers, captures, verifies, and indexes reference material for product interfaces. Its checked-in catalogs join source identity, real interaction evidence, accessibility observations, and immutable crawl receipts so later design work can trace every claim to the material that supports it."
+      }
+    },
+    {
+      "screen_id": "command-surface",
+      "screen_kind": "explanation",
+      "title_key": "spis.onboarding.command_surface.title",
+      "body_key": "spis.onboarding.command_surface.body",
+      "required": true,
+      "actions": [
+        "continue"
+      ],
+      "transitions": [
+        {
+          "next_screen_id": "read-catalog-validation",
+          "reason_code": "canonical_progression",
+          "priority": 10
+        }
+      ],
+      "presentation": {
+        "title": "Choose the command for the evidence boundary",
+        "body": "Use `spis crawl` to coordinate durable capture runs, the `crawl-*` commands for their surface-specific execution engines, `docs-corpus` to read imported documentation corpora, and the reference, verification, analysis, image, and catalog commands to maintain checked-in evidence. Run `spis --help` whenever you need the complete command surface."
+      }
+    },
+    {
+      "screen_id": "read-catalog-validation",
+      "screen_kind": "first_success",
+      "title_key": "spis.onboarding.read_catalog_validation.title",
+      "body_key": "spis.onboarding.read_catalog_validation.body",
+      "required": true,
+      "completion_evidence": {
+        "kind": "fact",
+        "fact": "catalog_validation_reported",
+        "operator": "eq",
+        "value": true
+      },
+      "actions": [
+        "run_catalog_validation"
+      ],
+      "transitions": [],
+      "presentation": {
+        "title": "Read one real catalog validation result",
+        "body": "From the Spis repository, run `spis generate-example-catalogs --check`. The command validates every checked-in catalog and prints its complete and partial record counts without modifying catalog files. This walkthrough records success only after those real summaries are produced; then run `spis onboarding` again to finish."
+      }
+    }
+  ],
+  "analytics_contract": {
+    "contract_version": "1",
+    "surface": "cli_first_use",
+    "exposure_event": "onboarding_step_viewed",
+    "primary_action_event": "onboarding_step_completed",
+    "completion_event": "onboarding_completed",
+    "first_success_event": "onboarding_first_success_observed"
+  }
+}
