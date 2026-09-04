@@ -608,9 +608,33 @@ const STADO_PASSTHROUGH_ENV: [&str; 12] = [
     "WC_LOCAL_STORAGE_PATH",
 ];
 
+#[doc(hidden)]
+pub fn host_home_stado_path(home: &Path) -> PathBuf {
+    home.join(".stado").join("bin").join("stado")
+}
+
+#[doc(hidden)]
+pub fn host_home_crawl_token_path(home: &Path) -> PathBuf {
+    home.join(".stado").join("spis-crawls-object-api-token")
+}
+
+/// Prefer the Stado binary installed in the current process's own home.
+///
+/// A queued worker has a deliberately narrow non-login `PATH`; relying on the
+/// bare name let cargo start correctly on Charless and then failed the first
+/// object read because the worker could not spawn `stado`. The worker evaluates
+/// `HOME` on the placement host, never on the coordinator.
 pub(crate) fn stado_command() -> Command {
-    let mut command =
-        Command::new(std::env::var_os("SPIS_STADO_BIN").unwrap_or_else(|| "stado".into()));
+    let configured = std::env::var_os("SPIS_STADO_BIN");
+    let home_binary = std::env::var_os("HOME")
+        .map(PathBuf::from)
+        .map(|home| host_home_stado_path(&home))
+        .filter(|path| path.is_file());
+    let mut command = Command::new(
+        configured
+            .or_else(|| home_binary.map(Into::into))
+            .unwrap_or_else(|| "stado".into()),
+    );
     command.env_clear();
     for name in STADO_PASSTHROUGH_ENV {
         // Only when set: an empty value is a configured value to Stado, and
@@ -633,14 +657,20 @@ pub(crate) fn stado_command() -> Command {
 /// which half to break: with the crawl bearer the queue write was refused,
 /// without it the runtime-bindings read-back was.
 ///
-/// `SPIS_CRAWL_OBJECT_TOKEN_FILE` names the owner-only file holding the crawl
-/// namespace bearer. It is injected as `STADO_API_TOKEN_FILE` on exactly the
-/// invocations that address Spis's own objects and on no other, so the queue
-/// plane keeps the host's configured bearer. Unset, everything behaves as
-/// before and a single-bearer deployment is unaffected.
+/// `SPIS_CRAWL_OBJECT_TOKEN_FILE` explicitly names the owner-only file holding
+/// the crawl namespace bearer. When it is unset, a worker uses the canonical
+/// file under its own host `HOME` when present. It is injected as
+/// `STADO_API_TOKEN_FILE` on exactly the invocations that address Spis's own
+/// objects and on no other, so the queue plane keeps the host's configured
+/// bearer.
 pub(crate) fn crawl_storage_command() -> Command {
     let mut command = stado_command();
-    if let Some(token_file) = std::env::var_os("SPIS_CRAWL_OBJECT_TOKEN_FILE") {
+    let configured = std::env::var_os("SPIS_CRAWL_OBJECT_TOKEN_FILE");
+    let host_home_token = std::env::var_os("HOME")
+        .map(PathBuf::from)
+        .map(|home| host_home_crawl_token_path(&home))
+        .filter(|path| path.is_file());
+    if let Some(token_file) = configured.or_else(|| host_home_token.map(Into::into)) {
         command.env("STADO_API_TOKEN_FILE", token_file);
         command.env_remove("STADO_API_TOKEN");
     }

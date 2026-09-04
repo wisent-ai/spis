@@ -1,8 +1,9 @@
 use serde_json::json;
 use spis::commands::crawl::{
     executable_word_from_host_receipt, failed_host_preflight_record_state,
-    host_probe_timeout_report,
+    host_home_crawl_token_path, host_home_stado_path, host_probe_timeout_report,
 };
+use std::path::Path;
 
 #[test]
 fn home_relative_executable_is_expanded_by_the_placement_host() {
@@ -55,4 +56,18 @@ fn unanswered_probe_is_retryable_and_keeps_the_record_planned() {
     );
     assert_eq!(failed_host_preflight_record_state(&report), "planned");
     assert_ne!(failed_host_preflight_record_state(&report), "unavailable");
+}
+
+#[test]
+fn worker_resolves_stado_resources_from_the_placement_home() {
+    let home = Path::new("/Users/charles");
+
+    assert_eq!(
+        host_home_stado_path(home),
+        Path::new("/Users/charles/.stado/bin/stado")
+    );
+    assert_eq!(
+        host_home_crawl_token_path(home),
+        Path::new("/Users/charles/.stado/spis-crawls-object-api-token")
+    );
 }
