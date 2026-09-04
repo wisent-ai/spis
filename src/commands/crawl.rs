@@ -2850,23 +2850,34 @@ fn registry_placements() -> Result<(BTreeMap<String, String>, Option<RuntimeServ
         .and_then(|target| target.get("name"))
         .and_then(Value::as_str)
         .map(str::to_string);
-    let mobile = targets
-        .iter()
-        .find(|target| {
-            target
-                .get("services")
-                .and_then(Value::as_array)
-                .is_some_and(|services| {
-                    services.iter().any(|service| {
-                        service.get("name").and_then(Value::as_str).is_some_and(|name| {
-                            name.to_ascii_lowercase().contains("appium")
-                        })
+    // Mobile placement is declared by `targets[].mobile_runtime`, and the
+    // required Appium driver is the family route: XCUITest for iOS,
+    // UiAutomator2 for Android. Looking for a service whose name happened to
+    // contain "appium" ignored the registry's typed runtime declaration and
+    // reported no placement even while both fleet hosts declared one.
+    let mobile = [
+        ("ios-app-examples", "xcuitest"),
+        ("android-app-examples", "uiautomator2"),
+    ]
+    .into_iter()
+    .filter_map(|(catalog, driver)| {
+        targets
+            .iter()
+            .find(|target| {
+                target
+                    .pointer("/mobile_runtime/drivers")
+                    .and_then(Value::as_array)
+                    .is_some_and(|drivers| {
+                        drivers
+                            .iter()
+                            .any(|declared| declared.as_str() == Some(driver))
                     })
-                })
-        })
-        .and_then(|target| target.get("name"))
-        .and_then(Value::as_str)
-        .map(str::to_string);
+            })
+            .and_then(|target| target.get("name"))
+            .and_then(Value::as_str)
+            .map(|host| (catalog.to_string(), host.to_string()))
+    })
+    .collect::<BTreeMap<_, _>>();
     let mut placements = BTreeMap::new();
     if let Some(service) = &service_identity {
         placements.insert("web".into(), service.active_host.clone());
@@ -2874,9 +2885,7 @@ fn registry_placements() -> Result<(BTreeMap<String, String>, Option<RuntimeServ
     if let Some(host) = always_on {
         placements.insert("desktop".into(), host);
     }
-    if let Some(host) = mobile {
-        placements.insert("mobile".into(), host);
-    }
+    placements.extend(mobile);
     if let Some(host) = cpu {
         placements.insert("cli".into(), host.clone());
         placements.insert("tui".into(), host.clone());
