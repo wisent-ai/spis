@@ -2944,10 +2944,14 @@ pub fn failed_host_preflight_record_state(report: &Value) -> &'static str {
 
 /// Turn the program candidate selected by the placement host into one shell word.
 ///
-/// Stado keeps the approved command spelling in `argv` and reports the candidate
-/// that the host actually selected in `resolved_executable`. A home-relative
-/// candidate stays home-relative until the submitted shell runs on that host:
-/// the coordinator must never expand another machine's `~`.
+/// Stado keeps the coordinator-approved command spelling in `argv` and reports
+/// the candidate the placement host actually selected in `resolved_executable`.
+/// Reading `argv[0]` put the coordinator's `/opt/homebrew/bin/cargo` into a
+/// Charless job even though that host selected `~/.cargo/bin/cargo`; the worker
+/// then failed before crawling a page because the baked-in path did not exist.
+/// A home-relative selected candidate stays home-relative until the submitted
+/// shell runs on that host: the coordinator must never expand another machine's
+/// `~`.
 pub fn executable_word_from_host_receipt(host: &str, receipt: &Value) -> Result<String> {
     let receipt_target = receipt
         .get("target")
