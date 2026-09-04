@@ -1,9 +1,9 @@
 {
   "schema": "wisent.spis-weles-receipt-trust.v1",
-  "organizationId": "f04e35c2-f8aa-4add-9c29-750bfdc390cd",
+  "organizationId": "b2152133-6f67-4261-8aa2-aa1a1422e512",
   "allowedAction": "generic_browser_task",
   "receiptKeys": {
-    "spis-263c401913bd1edd6d0ac594": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA8GLhO81dz5pCOOkuQkbsKUWoSWCKs/2nBr+X7wmQGwI=\n-----END PUBLIC KEY-----\n"
+    "spis-760049a7a38e33d825811015": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAtNH6dINLbHqu+wFXel2Y8Pr9LyOrfmDMvYOx/1g5nZY=\n-----END PUBLIC KEY-----\n"
   },
-  "keySetVersion": "spis-b80bc0a2bf1ab70db28f3bff"
+  "keySetVersion": "spis-0d4fa0e411eb29216984527b"
 }

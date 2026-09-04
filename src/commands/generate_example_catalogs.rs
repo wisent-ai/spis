@@ -1014,6 +1014,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 provenance_sentence(&index["measured_provenance"])
             );
         }
+        crate::onboarding::record_first_success()?;
         return Ok(());
     }
 
