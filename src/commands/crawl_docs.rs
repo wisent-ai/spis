@@ -3449,6 +3449,13 @@ fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManifest) -> Resu
 }
 
 const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
+// A documentation record can retain up to 1 GiB of corpus and builds Spis in
+// its own immutable Stado checkout. Ten default one-core claims filled 2.5 GiB
+// of the production Mac's remaining disk on 2026-09-04 before the disk gate
+// could close. Declaring the job exclusive makes the agent's existing resource
+// accounting admit one such checkout at a time and keep the remaining records
+// in the queue.
+const STADO_RESOURCE_ARGS: [&str; 1] = ["--exclusive"];
 
 fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     safe_path_component(value, flag)
@@ -3594,6 +3601,7 @@ fn submit_worker(
         "--output-uri",
         &output_uri,
     ]);
+    stado.args(STADO_RESOURCE_ARGS);
     let output = super::crawl::bounded_command_output(
         &mut stado,
         "submit documentation crawl through Stado",
@@ -3775,5 +3783,10 @@ mod tests {
         note_excluded(&mut excluded, &mut exact, "https://example.com/b");
         assert_eq!(excluded.len(), 2, "the same URL twice is one page");
         assert!(exact);
+    }
+
+    #[test]
+    fn documentation_workers_claim_one_host_slot_at_a_time() {
+        assert_eq!(STADO_RESOURCE_ARGS, ["--exclusive"]);
     }
 }
