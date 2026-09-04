@@ -4,7 +4,7 @@
   "product_url": "https://atlassian.design/",
   "evidence_status": "partial",
   "upstream_owner": "Atlassian Design System (atlassian.design)",
-  "captured_at": "2026-09-04T14:13:28Z",
+  "captured_at": "2026-09-04T16:09:05Z",
   "motion": [],
   "states": [],
   "interactions": [],
@@ -391,6 +391,61 @@
         "files": 4,
         "bytes": 289538,
         "pages": 12
+      }
+    },
+    {
+      "schema": "wisent.crawl-import.v2",
+      "run_id": "crawl-2026-09-04-16-05-00Z-full-proof-eb39640",
+      "catalog": "documentation-site-examples",
+      "record": "48-atlassian-design-system",
+      "record_key": "4bcca4db0c63c5622ce26adab56f58ed3469a993b816361374a1ce2a924e3e90",
+      "attempt": 1,
+      "attempt_id": "attempt-1-625d9b706e05218b",
+      "engine": "docs",
+      "state": "completed",
+      "outcome": "completed",
+      "source_revision": "eb39640047b88f360ea9d6b27f409355d3a8e909",
+      "source_input_sha256": "0cb34406278c73dd843dbe9608d919cf2ccada126b377d0243d5b691481ef6ac",
+      "reference_sha256": "22813a02d8af5d0a0463643f3a666214ca2155e84563fff5970186e5c96982b1",
+      "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+      "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+      "stado_job_id": "job-8de4d43edff456a54e954052",
+      "stado_run_id": "spis-4bcca4db0c63c5622ce26ada-1-attempt-1-625d9b706e05218b",
+      "artifact_uri": "stado://spis-crawls/runs/crawl-2026-09-04-16-05-00Z-full-proof-eb39640/documentation-site-examples/48-atlassian-design-system/4bcca4db0c63c5622ce26adab56f58ed3469a993b816361374a1ce2a924e3e90/attempts/1/attempt-1-625d9b706e05218b/artifacts.tar.gz",
+      "artifact_sha256": "6e0d2686ccf245cb6fa282c5d68c5063fea84a72c88f97ac3f39366c256cee7a",
+      "artifact_bytes": 275137,
+      "output_uri": "stado://spis-crawls/runs/crawl-2026-09-04-16-05-00Z-full-proof-eb39640/documentation-site-examples/48-atlassian-design-system/4bcca4db0c63c5622ce26adab56f58ed3469a993b816361374a1ce2a924e3e90/attempts/1/attempt-1-625d9b706e05218b/worker-output.log",
+      "worker_report": "crawl/attempt-1-625d9b706e05218b/worker-report.json",
+      "capture_method": "Rate-limited full-text documentation crawl; per-site gzipped JSONL corpus retained",
+      "imported_at": "2026-09-04T16:09:05Z",
+      "execution_identity": {
+        "host": "charless-mac-mini",
+        "observed_hostname": "Charless-Mac-mini.local",
+        "platform": "http",
+        "device_id": null,
+        "resolved_product_identifier": "https://atlassian.design/",
+        "device_name": null,
+        "executable_path": null,
+        "product_version": null,
+        "executable_sha256": null,
+        "effective_url": null
+      },
+      "retained_members": 4,
+      "docs_structure_sha256": "a9c145aef3430a6e0163a75a027df6aecdd8f68ca1609e347b2def7c6d3100eb",
+      "corpus": {
+        "files": 4,
+        "bytes": 289464,
+        "pages": 12
+      },
+      "readable_corpus": {
+        "artifact_uri": "stado://spis-crawls/runs/crawl-2026-09-04-16-05-00Z-full-proof-eb39640/documentation-site-examples/48-atlassian-design-system/4bcca4db0c63c5622ce26adab56f58ed3469a993b816361374a1ce2a924e3e90/attempts/1/attempt-1-625d9b706e05218b/artifacts.tar.gz",
+        "archive_sha256": "6e0d2686ccf245cb6fa282c5d68c5063fea84a72c88f97ac3f39366c256cee7a",
+        "record": "48-atlassian-design-system",
+        "attempt": 1,
+        "attempt_id": "attempt-1-625d9b706e05218b",
+        "completed_at": "2026-09-04T16:08:03Z",
+        "retrieval_status": "retrieval_partial",
+        "corpus_dir": "/Users/lukaszbartoszcze/.stado/work/spis/docs-corpus-imports/18bc5e22524cfd6ba493681934cfcef1d95ca481313a705765f940822e0a1b6a/corpus"
       }
     }
   ]
