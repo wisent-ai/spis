@@ -3562,11 +3562,14 @@ fn submit_worker(
         manifest.encoded()?,
     ];
     command_arguments.extend(worker_options);
-    let command = command_arguments
-        .iter()
-        .map(|argument| shell_quote(argument))
-        .collect::<Result<Vec<_>>>()?
-        .join(" ");
+    let mut command_words = vec![command_arguments[0].clone()];
+    command_words.extend(
+        command_arguments[1..]
+            .iter()
+            .map(|argument| shell_quote(argument))
+            .collect::<Result<Vec<_>>>()?,
+    );
+    let command = command_words.join(" ");
     let mut stado = super::crawl::stado_command();
     stado.args([
         "submit",

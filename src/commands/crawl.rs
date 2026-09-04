@@ -2783,10 +2783,19 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
             "resolved_executable",
             "error",
         ];
+        let receipt_target = receipt
+            .get("target")
+            .and_then(Value::as_str)
+            .context("host probe receipt has no target identity")?;
+        if receipt_target != host {
+            bail!(
+                "host probe receipt target {receipt_target:?} does not match placement host {host:?}"
+            );
+        }
         if object.keys().any(|key| !allowed.contains(&key.as_str()))
             || receipt.get("schema").and_then(Value::as_str)
                 != Some("stado.host-exec-receipt.v1")
-            || receipt.get("target").and_then(Value::as_str) != Some(host)
+            || !receipt.get("target").is_some_and(Value::is_string)
             || !receipt.get("ssh").is_some_and(|value| value.is_null() || value.is_string())
             || !receipt.get("ssh_fallbacks").is_some_and(Value::is_array)
             || !receipt.get("command").is_some_and(Value::is_string)
@@ -2796,13 +2805,10 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
         {
             bail!("host probe receipt does not match the exact typed Stado contract");
         }
-        // `argv` is what the HOST ran: an absolute program path followed by the
-        // entry's fixed arguments. Comparing it word-for-word against the
-        // requested spelling refused every receipt whose program Stado resolves
-        // per host — which is every multi-candidate entry, and even
-        // `hostname -f`, resolved to `/bin/hostname`. What must hold is that
-        // the receipt answers exactly the command that was requested and that
-        // no argument was added, removed or rewritten on the way.
+        // `argv` is the entry's approved absolute spelling followed by its
+        // fixed arguments. `resolved_executable` separately records the
+        // candidate the host selected. The receipt must still answer exactly
+        // the requested command and must not add, remove, or rewrite arguments.
         if receipt.get("command").and_then(Value::as_str) != Some(arguments.join(" ").as_str()) {
             bail!("host probe receipt answers a different command than the one requested");
         }
@@ -2849,13 +2855,47 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
     }
 }
 
-/// The absolute program path Stado exec'd for an approved probe.
+/// Turn the program candidate selected by the placement host into one shell word.
 ///
-/// A submitted worker command must never name a program bare. `stado host
-/// exec` resolves a multi-candidate entry per host and its receipt reports
-/// which path it used, so this turns a verified probe into the exact spelling
-/// the job can execute. The job runs under a non-login `/bin/sh` that reads no
-/// profile, so `~/.cargo/bin` is not on its PATH however the host is set up.
+/// Stado keeps the approved command spelling in `argv` and reports the candidate
+/// that the host actually selected in `resolved_executable`. A home-relative
+/// candidate stays home-relative until the submitted shell runs on that host:
+/// the coordinator must never expand another machine's `~`.
+pub fn executable_word_from_host_receipt(host: &str, receipt: &Value) -> Result<String> {
+    let receipt_target = receipt
+        .get("target")
+        .and_then(Value::as_str)
+        .context("host probe receipt has no target identity")?;
+    if receipt_target != host {
+        bail!(
+            "host probe receipt target {receipt_target:?} does not match placement host {host:?}"
+        );
+    }
+    let selected = receipt
+        .get("resolved_executable")
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|path| !path.is_empty())
+        .with_context(|| format!("host {host} probe reported no selected executable"))?;
+    if selected.contains('\0') || selected.chars().any(|character| character.is_whitespace()) {
+        bail!("host {host} probe reported unsafe selected executable {selected:?}");
+    }
+    if let Some(rest) = selected.strip_prefix("~/") {
+        if rest.is_empty() {
+            bail!("host {host} probe reported incomplete selected executable {selected:?}");
+        }
+        return Ok(format!(
+            "\"$HOME\"/'{}'",
+            rest.replace('\'', "'\\''")
+        ));
+    }
+    if selected.starts_with('/') {
+        return Ok(selected.to_string());
+    }
+    bail!("host {host} probe reported non-absolute selected executable {selected:?}")
+}
+
+/// The shell word for the program that the placement host actually selected.
 pub(crate) fn resolved_program(host: &str, arguments: &[&str]) -> Result<String> {
     let check = host_probe(host, arguments);
     if check.get("ready").and_then(Value::as_bool) != Some(true) {
@@ -2870,28 +2910,10 @@ pub(crate) fn resolved_program(host: &str, arguments: &[&str]) -> Result<String>
                 .trim()
         );
     }
-    // `argv[0]`, not `resolved_executable`. The receipt reports both and they
-    // are not the same kind of string: for `cargo --version` on
-    // charless-mac-mini `resolved_executable` is the candidate spelling
-    // `~/.cargo/bin/cargo`, while `argv[0]` is `/opt/homebrew/bin/cargo`,
-    // which is the path the host actually exec'd. A submitted command must
-    // carry a path that needs no shell to expand it, so the absolute one is
-    // the only usable answer.
-    let path = check
+    let receipt = check
         .get("stado_receipt")
-        .and_then(|receipt| receipt.get("argv"))
-        .and_then(Value::as_array)
-        .and_then(|argv| argv.first())
-        .and_then(Value::as_str)
-        .map(str::trim)
-        .filter(|path| path.starts_with('/'))
-        .with_context(|| {
-            format!(
-                "host {host} probe for `{}` reported no absolute executed program",
-                arguments.join(" ")
-            )
-        })?;
-    Ok(path.to_string())
+        .context("ready host probe retained no Stado receipt")?;
+    executable_word_from_host_receipt(host, receipt)
 }
 
 /// Independently confirm the deployed Weles release on the pinned host.

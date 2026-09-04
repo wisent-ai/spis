@@ -9,6 +9,10 @@ license = "Apache-2.0"
 name = "spis"
 path = "src/main.rs"
 
+[[test]]
+name = "crawl_host_resolved_executable"
+path = "tests/crawl/host_resolved_executable.rs"
+
 [dependencies]
 ureq = { version = "2", features = ["gzip", "json"] }
 serde = { version = "1", features = ["derive"] }
