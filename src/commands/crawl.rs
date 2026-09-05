@@ -1357,6 +1357,33 @@ struct StadoSubmissionReceipt {
     jobs: Vec<StadoSubmissionJob>,
 }
 
+/// Whether the pinned host a Stado receipt echoes is the placement host.
+///
+/// Stado pins a job to a registry host and then reports the pin in its
+/// CONSUMER spelling: `charless-mac-mini` was submitted and the receipt came
+/// back `local-charless-mac-mini.local`, which is the name that host's own
+/// capacity beacon publishes. A literal comparison therefore refused a
+/// submission that had already been accepted — measured on run
+/// `docs-50-222852`, where thirty-seven records carried a real `job_id` and an
+/// `output_uri` inside their own attempt prefix and were still recorded
+/// `submission_failed`, so the queue ran work no record admitted owning.
+///
+/// The registry name is the identity; the consumer spelling is a rendering of
+/// it. Both are accepted, nothing else is, and the comparison stays
+/// case-insensitive because the beacon capitalizes the hostname the way macOS
+/// reports it.
+fn pinned_host_is(pinned: &str, host: &str) -> bool {
+    let pinned = pinned.trim();
+    let host = host.trim();
+    if pinned.eq_ignore_ascii_case(host) {
+        return true;
+    }
+    pinned
+        .strip_prefix("local-")
+        .and_then(|rest| rest.strip_suffix(".local"))
+        .is_some_and(|rest| rest.eq_ignore_ascii_case(host))
+}
+
 fn is_lower_sha256(value: &str) -> bool {
     value.len() == 64
         && value
@@ -1417,7 +1444,7 @@ fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Opt
         || !is_lower_sha256(&job.job_key)
         || job.submission_request_digest != receipt.request_digest
         || job.repo_ref != receipt.repo_ref
-        || job.pinned_host != host
+        || !pinned_host_is(&job.pinned_host, host)
         || job.output_uri != output_uri
     {
         // No assertion on `resolved_executor`: a job pinned to a registry host
@@ -7346,5 +7373,30 @@ mod preflight_tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn a_receipt_pin_is_read_in_the_consumer_spelling_stado_answers_with() {
+        // Measured on run `docs-50-222852`: the pin was submitted as
+        // `charless-mac-mini` and echoed as `local-charless-mac-mini.local`,
+        // and the literal comparison recorded thirty-seven accepted
+        // submissions as failures while their jobs ran.
+        assert!(super::pinned_host_is("charless-mac-mini", "charless-mac-mini"));
+        assert!(super::pinned_host_is(
+            "local-charless-mac-mini.local",
+            "charless-mac-mini"
+        ));
+        assert!(super::pinned_host_is(
+            "local-Charless-Mac-mini.local",
+            "charless-mac-mini"
+        ));
+        // A different host, and the two shapes that only look like the
+        // consumer spelling, are still refused.
+        assert!(!super::pinned_host_is(
+            "local-lukasz-macbook.local",
+            "charless-mac-mini"
+        ));
+        assert!(!super::pinned_host_is("charless-mac-mini.local", "charless-mac-mini"));
+        assert!(!super::pinned_host_is("local-charless-mac-mini", "charless-mac-mini"));
     }
 }
