@@ -6802,10 +6802,22 @@ fn import_record_attempt(
     let object = record
         .as_object_mut()
         .context("reference record is not an object")?;
-    object.insert("captured_at".into(), json!(crate::now_iso_utc()));
-    object.insert("motion".into(), Value::Array(motion.clone()));
-    object.insert("states".into(), Value::Array(states.clone()));
-    object.insert("accessibility".into(), accessibility);
+    // An import writes the evidence ITS OWN attempt produced and nothing else.
+    // A documentation attempt retains a corpus and no browser media, and these
+    // four lines used to write its empty media sections over the record: the
+    // 2026-09-05 imports of `01-mdn-web-docs` and `17-swift-documentation`
+    // deleted the Weles motion recording and the five local states captured on
+    // 2026-08-16 - inside a transaction whose own report said `motion: 0`,
+    // `states: 0`, so the record lost evidence the import never claimed to
+    // have. Evidence another engine captured is not this attempt's to clear,
+    // and `captured_at` names when the material that is there was captured, so
+    // it only moves when the material does.
+    if !motion.is_empty() || !states.is_empty() {
+        object.insert("captured_at".into(), json!(crate::now_iso_utc()));
+        object.insert("motion".into(), Value::Array(motion.clone()));
+        object.insert("states".into(), Value::Array(states.clone()));
+        object.insert("accessibility".into(), accessibility);
+    }
     object.insert("evidence_status".into(), json!("partial"));
     object.insert(
         "evidence_gaps".into(),
