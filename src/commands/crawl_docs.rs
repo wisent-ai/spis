@@ -3457,6 +3457,17 @@ const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
 // in the queue.
 const STADO_RESOURCE_ARGS: [&str; 1] = ["--exclusive"];
 
+// Every record is submitted with its own immutable checkout of the run's exact
+// revision, and each one used to build Spis from scratch inside it: fifty
+// records meant fifty identical `cargo build` passes, each writing about 5 GiB
+// of `target/` on a host with 15 GiB to spare, before a single page was
+// fetched. Sharing one target directory under the host's declared build-cache
+// root keeps the evidence identical - cargo rebuilds whenever the revision
+// differs, and the run is bound to one revision - while the fleet pays for
+// that build once and the host's own janitor owns the cache's lifetime.
+const STADO_REPO_EXTRAS: &str =
+    "export CARGO_TARGET_DIR=\"$HOME/.stado/build/spis-cargo-target\"";
+
 fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     safe_path_component(value, flag)
         .map_err(|_| anyhow::anyhow!("{flag} contains characters that cannot be submitted to a worker"))
@@ -3597,7 +3608,7 @@ fn submit_worker(
         "--repo-workdir",
         super::crawl::STADO_REPO_WORKDIR,
         "--repo-extras",
-        "",
+        STADO_REPO_EXTRAS,
         "--output-uri",
         &output_uri,
     ]);
