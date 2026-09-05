@@ -3449,13 +3449,22 @@ fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManifest) -> Resu
 }
 
 const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
-// A documentation record can retain up to 1 GiB of corpus and builds Spis in
-// its own immutable Stado checkout. Ten default one-core claims filled 2.5 GiB
-// of the production Mac's remaining disk on 2026-09-04 before the disk gate
-// could close. Declaring the job exclusive makes the agent's existing resource
-// accounting admit one such checkout at a time and keep the remaining records
-// in the queue.
-const STADO_RESOURCE_ARGS: [&str; 1] = ["--exclusive"];
+// What filled 2.5 GiB of the production Mac's remaining disk on 2026-09-04 was
+// not the corpus: it was ten simultaneous `cargo build` passes, one per record,
+// each writing its own 5 GiB `target/` inside its own immutable checkout. That
+// is now one shared target directory per revision, and a finished record's own
+// retained corpus is tens of megabytes - MDN, the largest site in the catalog,
+// imported 36 MB from 12,248 pages. So the host's declared disk gate is the
+// right control for what remains, and it already is: below its low watermark
+// the agent claims nothing.
+//
+// `--exclusive` is not that control. It means "claim the whole GPU: start only
+// while idle and admit no other job", and on a host that also carries release
+// qualification and Probierz work it means the family waits for an idle
+// machine. On 2026-09-05 forty-nine records sat queued from 18:30 to 19:25
+// behind foreign jobs, with 17 GiB free and six cores idle, because every one
+// of them demanded the machine to itself.
+const STADO_RESOURCE_ARGS: [&str; 0] = [];
 
 fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     safe_path_component(value, flag)
@@ -3783,10 +3792,5 @@ mod tests {
         note_excluded(&mut excluded, &mut exact, "https://example.com/b");
         assert_eq!(excluded.len(), 2, "the same URL twice is one page");
         assert!(exact);
-    }
-
-    #[test]
-    fn documentation_workers_claim_one_host_slot_at_a_time() {
-        assert_eq!(STADO_RESOURCE_ARGS, ["--exclusive"]);
     }
 }
