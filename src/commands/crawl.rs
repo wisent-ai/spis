@@ -3424,6 +3424,19 @@ fn declared_worker_stado_program(host: &str) -> Result<String> {
 }
 
 /// Shell prefix built from the retained cargo receipt and Stado's service declaration.
+///
+/// `CARGO_TARGET_DIR` is part of the prefix because every record is submitted
+/// with its own immutable checkout of the run's exact revision, and each one
+/// otherwise rebuilds Spis inside it: fifty documentation records meant fifty
+/// identical builds, each writing about 5 GiB of `target/` on a host with
+/// 15 GiB to spare, before a page was fetched. One shared directory under the
+/// host's declared build-cache root keeps the evidence identical - the run is
+/// bound to one revision and cargo rebuilds whenever the revision differs -
+/// while the fleet pays for the build once and the host's own janitor owns the
+/// cache. It travels in the command, not in `--repo-extras`: the CLI
+/// documents that flag as a shell snippet, the agent on charless-mac-mini
+/// renders it as pip extras, and six records died on
+/// `/bin/sh: pip: command not found` before a single page was fetched.
 pub(crate) fn resolved_worker_program(host: &str) -> Result<String> {
     let cargo = std::env::var("SPIS_PREFLIGHT_WORKER_PROGRAM")
         .context("crawler coordinator did not pass the retained worker-program receipt")?;
@@ -3432,7 +3445,7 @@ pub(crate) fn resolved_worker_program(host: &str) -> Result<String> {
     }
     let stado = declared_worker_stado_program(host)?;
     Ok(format!(
-        "SPIS_STADO_BIN='{}' {cargo}",
+        "CARGO_TARGET_DIR=\"$HOME/.stado/build/spis-cargo-target\" SPIS_STADO_BIN='{}' {cargo}",
         stado.replace('\'', "'\\''")
     ))
 }
