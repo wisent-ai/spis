@@ -8,8 +8,8 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 const PRODUCT_ID: &str = "spis";
 const JOURNEY_ID: &str = "first-use";
-const JOURNEY_VERSION: &str = "2026-09-03.1";
-const FIRST_SUCCESS_FACT: &str = "catalog_validation_reported";
+const JOURNEY_VERSION: &str = "2026-09-05.1";
+const FIRST_SUCCESS_FACT: &str = "corpus_adopted";
 const STATE_SCHEMA: &str = "spis.onboarding-state.v1";
 const FALLBACK: &str = include_str!("onboarding_first_use.json");
 
@@ -68,22 +68,42 @@ pub fn run(rest: &[String]) -> Result<()> {
 }
 
 pub fn record_first_success() -> Result<()> {
+    let definition = canonical_definition()?;
+    let entry = definition
+        .get("entry_screen_id")
+        .and_then(Value::as_str)
+        .context("canonical onboarding journey has no entry screen")?;
     let path = state_path();
-    if !path.exists() {
-        return Ok(());
-    }
-
-    let mut state = read_state(&path)?;
-    validate_state_identity(&state)?;
-    if state.get("status").and_then(Value::as_str) == Some("completed") {
-        return Ok(());
-    }
-
+    let mut state = if path.exists() {
+        match read_state(&path) {
+            Ok(state) if validate_state_identity(&state).is_ok() => state,
+            _ => json!({
+                "schema": STATE_SCHEMA,
+                "product_id": PRODUCT_ID,
+                "journey_id": JOURNEY_ID,
+                "journey_version": JOURNEY_VERSION,
+                "current_screen_id": entry,
+                "status": "in_progress",
+                "evidence": Map::<String, Value>::new(),
+            }),
+        }
+    } else {
+        json!({
+            "schema": STATE_SCHEMA,
+            "product_id": PRODUCT_ID,
+            "journey_id": JOURNEY_ID,
+            "journey_version": JOURNEY_VERSION,
+            "current_screen_id": entry,
+            "status": "in_progress",
+            "evidence": Map::<String, Value>::new(),
+        })
+    };
     let evidence = state
         .get_mut("evidence")
         .and_then(Value::as_object_mut)
-        .context("onboarding state has no evidence object; use `spis onboarding --reset`")?;
+        .context("onboarding state has no evidence object")?;
     evidence.insert(FIRST_SUCCESS_FACT.to_string(), Value::Bool(true));
+    state["status"] = Value::String("completed".to_string());
     save_state(&state)
 }
 

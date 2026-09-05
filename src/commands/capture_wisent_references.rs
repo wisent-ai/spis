@@ -37,7 +37,7 @@ const FONT_PX: usize = 15;
 // The former script wrote its scratch under ~/.stado/work/wisent-capture; this
 // checkout is confined to the spis tree and ~/.spis, so the scratch moves with it.
 fn root() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+    super::corpus::data_root()
 }
 
 fn catalog_dir() -> PathBuf {

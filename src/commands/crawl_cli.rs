@@ -112,7 +112,7 @@ pub(crate) fn binary_for(slug: &str) -> String {
 }
 
 fn records(selected: Option<&str>) -> Result<Vec<Record>> {
-    let directory = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let directory = super::corpus::data_root()
         .join(CATALOG)
         .join("references");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)?

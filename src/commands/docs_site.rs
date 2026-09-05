@@ -157,10 +157,15 @@ fn brief(version: &str) -> Value {
                     "track a run and its per-record jobs",
                     "ask whether one host can run one family, before anything is claimed",
                     "read the documentation corpus, including the corpus bound and what falls outside it",
+                    "adopt an existing canonical corpus through the same product operation as the CLI",
                 ],
             },
             "api": { "declared": false },
-            "config": { "declared": false },
+            "config": {
+                "declared": true,
+                "path": "~/.config/spis/corpus.json",
+                "owner": "spis corpus adopt",
+            },
         },
         "families": family_rows(),
         "corpus_bound": super::docs_corpus::MAX_PAGE_RECORDS,
@@ -194,6 +199,10 @@ fn plan(version: &str) -> Value {
                 "kind": "code",
                 "location": "src/commands/docs_corpus.rs MAX_PAGE_RECORDS",
             },
+            "corpus-adoption": {
+                "kind": "code",
+                "location": "src/commands/corpus.rs",
+            },
         },
         "pages": [
             {
@@ -207,6 +216,40 @@ fn plan(version: &str) -> Value {
                     {
                         "title": "Two surfaces, one set of operations",
                         "paragraphs": [authored("parity")],
+                    },
+                ],
+            },
+            {
+                "slug": "corpus-adoption",
+                "nav": "Adopt a corpus",
+                "eyebrow": "Getting started",
+                "title": "Start with an existing corpus",
+                "description": "Adopt one complete canonical corpus in place, from the CLI or the desktop application.",
+                "sections": [
+                    {
+                        "title": "Accepted input",
+                        "code": [
+                            "spis corpus adopt /absolute/path/to/unpacked-corpus",
+                            "spis corpus status",
+                        ],
+                        "paragraphs": [
+                            "The selected directory must contain canonical `example-catalogs.json`; each indexed catalog must carry matching `sources.json` and `references.json`; and every indexed `reference.json` file must retain the full-product-reference schema, evidence status, and evidence gaps. Spis validates that complete graph before atomically writing `~/.config/spis/corpus.json`.",
+                            "The corpus stays in place. Subsequent corpus commands and Spis Desktop resolve the saved root, so original provenance, screenshots, recordings, receipts, and other referenced files are not copied into a reduced store. Re-adopting the same canonical path reports every reference unchanged and creates no duplicate.",
+                        ],
+                    },
+                    {
+                        "title": "Desktop first use and replay",
+                        "paragraphs": [
+                            "On first launch, Choose Corpus opens a native directory picker and sends only the selected path to Spis's loopback API. The API invokes the same `corpus adopt` operation as the CLI; Swift does not parse or copy a corpus. The same control remains under Manage, beside Show it again for replaying onboarding.",
+                        ],
+                    },
+                    {
+                        "title": "Refusals",
+                        "bullets": [
+                            "ZIP, tar, gzip, bzip2, xz, zstd, 7z, and rar archives are refused with an instruction to unpack them first.",
+                            "A missing or noncanonical index, duplicate or unsafe catalog slug, escaping path or symlink, mismatched schema or catalog identity, missing record file, count mismatch, or record without evidence status and evidence gaps refuses the whole adoption. The previous saved corpus remains active.",
+                            "CLI JSON reports state, root, catalog, reference and file counts, index SHA-256, imported, unchanged, conflicting, rejected, and a result message. Desktop keeps that exact output or refusal selectable.",
+                        ],
                     },
                 ],
             },

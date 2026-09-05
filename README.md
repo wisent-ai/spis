@@ -34,6 +34,24 @@ cargo build --release
 ./target/release/spis generate-example-catalogs --check
 ```
 
+### Adopt an existing corpus
+
+First use can begin with an unpacked canonical corpus already on disk:
+
+```bash
+./target/release/spis corpus adopt /absolute/path/to/corpus
+./target/release/spis corpus status
+```
+
+`corpus adopt` validates `example-catalogs.json`, every catalog's
+`sources.json` and `references.json`, and every indexed reference record before
+atomically saving `~/.config/spis/corpus.json`. The corpus remains in place, so
+its original provenance, screenshots, recordings, receipts, and other evidence
+files remain the files subsequent commands read. Re-adopting the same path
+reports every reference unchanged. Archives are refused and must be unpacked
+before Spis can validate them. The desktop first-run and Manage controls call
+this exact operation through the loopback API.
+
 `scripts/build-release.sh` builds and ships that same binary, so the release archive and the `stado-release` install are the Rust command surface. `Cargo.toml` is the single package and release version source.
 
 ## Real product crawlers

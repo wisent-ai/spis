@@ -27,6 +27,7 @@ Endpoints:
     POST /v1/docs-search        {"query": "...", "site": "...", "limit": 25}
     POST /v1/docs-show          {"site": "...", "url": "..."}
     POST /v1/catalogs-check     {} — consistency gate over index and records
+    POST /v1/corpus-adopt      {"path": "/absolute/unpacked/corpus"}
     POST /v1/drift              {} — upstream README and URL drift report
     POST /v1/verify             {} — measure stored evidence (dry run)
     POST /v1/capture-dry-run    {"catalog": "landing-page-examples"}
@@ -87,6 +88,11 @@ def require_text(body: dict, key: str, sentence: str) -> str:
 
 def operation_argv(name: str, body: dict) -> list[str]:
     """Map one endpoint to the exact spis subcommand invocation it replaces."""
+    if name == "corpus-adopt":
+        path = require_text(body, "path", "adopting a corpus requires its directory path")
+        if not Path(path).is_absolute():
+            raise bad_request("adopting a corpus requires an absolute directory path")
+        return ["corpus", "adopt", path]
     if name == "catalogs-check":
         return ["generate-example-catalogs", "--check"]
     if name == "drift":

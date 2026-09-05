@@ -4,6 +4,7 @@ pub mod capture_widths;
 pub mod capture_wisent_references;
 pub mod catalog_type;
 pub mod check_upstream_drift;
+pub mod corpus;
 pub mod collect_example_images;
 pub mod crawl;
 pub mod crawl_cli;
@@ -27,6 +28,10 @@ const SUBCOMMANDS: &[(&str, &str)] = &[
     (
         "onboarding",
         "show or reset the first-use walkthrough",
+    ),
+    (
+        "corpus",
+        "adopt or inspect an existing canonical reference corpus",
     ),
     (
         "docs-site",
@@ -112,8 +117,14 @@ const SUBCOMMANDS: &[(&str, &str)] = &[
 ];
 
 fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
+    if !matches!(name, "onboarding" | "corpus" | "docs-site")
+        && SUBCOMMANDS.iter().any(|(candidate, _)| *candidate == name)
+    {
+        corpus::activate_configured_root()?;
+    }
     match name {
         "onboarding" => crate::onboarding::run(rest)?,
+        "corpus" => corpus::run(rest)?,
         "crawl" => crawl::run(rest)?,
         "crawl-docs" => crawl_docs::run(rest)?,
         "crawl-cli" => crawl_cli::run(rest)?,

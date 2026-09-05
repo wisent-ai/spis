@@ -2,11 +2,11 @@
   "schema_version": 1,
   "product_id": "spis",
   "journey_id": "first-use",
-  "journey_version": "2026-09-03.1",
+  "journey_version": "2026-09-05.1",
   "entry_screen_id": "evidence-corpus",
-  "first_success_fact": "catalog_validation_reported",
-  "published_at": "2026-09-03T00:00:00Z",
-  "source_revision": "spis-first-use-2026-09-03.1",
+  "first_success_fact": "corpus_adopted",
+  "published_at": "2026-09-05T00:00:00Z",
+  "source_revision": "spis-first-use-2026-09-05.1",
   "screens": [
     {
       "screen_id": "evidence-corpus",
@@ -25,8 +25,8 @@
         }
       ],
       "presentation": {
-        "title": "Build evidence-grade interface corpora",
-        "body": "Spis discovers, captures, verifies, and indexes reference material for product interfaces. Its checked-in catalogs join source identity, real interaction evidence, accessibility observations, and immutable crawl receipts so later design work can trace every claim to the material that supports it."
+        "title": "Start from an evidence corpus you already have",
+        "body": "Spis can adopt an unpacked canonical corpus in place. It validates the catalog index, every source and reference index, every referenced record, and the evidence provenance fields before saving the location. It never copies away or rewrites the original files."
       }
     },
     {
@@ -40,35 +40,36 @@
       ],
       "transitions": [
         {
-          "next_screen_id": "read-catalog-validation",
+          "next_screen_id": "adopt-corpus",
           "reason_code": "canonical_progression",
           "priority": 10
         }
       ],
       "presentation": {
-        "title": "Choose the command for the evidence boundary",
-        "body": "Use `spis crawl` to coordinate durable capture runs, the `crawl-*` commands for their surface-specific execution engines, `docs-corpus` to read imported documentation corpora, and the reference, verification, analysis, image, and catalog commands to maintain checked-in evidence. Run `spis --help` whenever you need the complete command surface."
+        "title": "One corpus path for every command",
+        "body": "After adoption, CLI commands and Spis Desktop resolve the same persisted corpus root. Re-adopting the exact path reports every reference unchanged. ZIP, tar, gzip, 7z, rar, xz and zstd archives are refused explicitly; unpack one first so Spis can validate its files."
       }
     },
     {
-      "screen_id": "read-catalog-validation",
+      "screen_id": "adopt-corpus",
       "screen_kind": "first_success",
-      "title_key": "spis.onboarding.read_catalog_validation.title",
-      "body_key": "spis.onboarding.read_catalog_validation.body",
+      "title_key": "spis.onboarding.adopt_corpus.title",
+      "body_key": "spis.onboarding.adopt_corpus.body",
       "required": true,
       "completion_evidence": {
         "kind": "fact",
-        "fact": "catalog_validation_reported",
+        "fact": "corpus_adopted",
         "operator": "eq",
         "value": true
       },
       "actions": [
-        "run_catalog_validation"
+        "adopt_corpus"
       ],
       "transitions": [],
       "presentation": {
-        "title": "Read one real catalog validation result",
-        "body": "From the Spis repository, run `spis generate-example-catalogs --check`. The command validates every checked-in catalog and prints its complete and partial record counts without modifying catalog files. This walkthrough records success only after those real summaries are produced; then run `spis onboarding` again to finish."
+        "title": "Adopt your existing corpus",
+        "body": "Run `spis corpus adopt PATH` with a directory containing canonical `example-catalogs.json`, catalog `sources.json` and `references.json`, and the referenced evidence files. Success is recorded only after the location is persisted.",
+        "command": "spis corpus adopt PATH"
       }
     }
   ],

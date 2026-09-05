@@ -395,7 +395,7 @@ impl Appium {
 }
 
 fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
-    let directory = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let directory = super::corpus::data_root()
         .join(catalog)
         .join("references");
     let mut entries: Vec<PathBuf> = std::fs::read_dir(&directory)
