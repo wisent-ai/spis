@@ -4888,12 +4888,13 @@ const HOST_RECORD_WINDOW: usize = 3;
 ///
 /// A record holds its whole crawl on the host until the attempt artifact is
 /// published, and the object store keeps a same-disk backup twin of what it
-/// then stores. MDN, the largest site in the documentation catalog, moved the
-/// disk by about five gigabytes while it ran and gave it back on import; three
-/// smaller records together moved it by seven. Six is that peak rounded up,
-/// and it is deliberately the cost of the largest record rather than the
-/// average: the average is what filled the disk twice.
-const RECORD_PEAK_GIB: f64 = 6.0;
+/// then stores. Measured on `charless-mac-mini` on 2026-09-05 and 2026-09-06:
+/// MDN, the largest site in the catalog, moved the disk from 17.7 to 13.8 GiB
+/// while it ran and gave it back on import; three records together moved it
+/// from 11 to 2.1 GiB. That is 3.9 GiB for the largest and about 3 GiB each
+/// for a mixed three, so four is the largest record rounded up rather than the
+/// average - the average is what filled the disk twice.
+const RECORD_PEAK_GIB: f64 = 4.0;
 
 /// How many records may be submitted against the free space this host just
 /// reported, keeping one record's worth of it unspent.
