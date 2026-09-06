@@ -3379,10 +3379,23 @@ pub fn worker_agent_program_retry_diagnostic(message: &str) -> Option<Value> {
     }))
 }
 
+/// The absolute program Stado's own service declaration names for this host's
+/// queue agent, observed until it is unambiguous.
+///
+/// A failed read is not a refusal. The lookup goes through the host's object
+/// API, and that endpoint drops connections when the machine is busy: on
+/// 2026-09-05 fifty-one documentation attempts died on
+/// `error sending request for url (http://127.0.0.1:18776/api/object?...)`
+/// while release qualification work shared the same store, and each one burned
+/// a record's attempt and forced `crawl resume` to plan a new identity. The
+/// registry answering nothing this second says nothing about the declaration,
+/// so a transport-level failure is observed again on the same schedule as an
+/// unstable declaration, and only a persistent one is reported.
 fn declared_worker_stado_program(host: &str) -> Result<String> {
     const POLLS: usize = 6;
     const POLL_DELAY: Duration = Duration::from_secs(2);
     let mut programs = BTreeSet::new();
+    let mut last_failure = String::new();
     for poll in 0..POLLS {
         let mut command = stado_command();
         command.args(["service", "list", "--json"]);
@@ -3391,31 +3404,42 @@ fn declared_worker_stado_program(host: &str) -> Result<String> {
             "read declared Stado agent program",
             Duration::from_secs(120),
             16 * 1024 * 1024,
-        )?;
-        if !output.status.success() {
-            bail!(
-                "Stado service registry refused the managed binary lookup: {}",
-                String::from_utf8_lossy(&output.stderr).trim()
-            );
-        }
-        let services: Value =
-            serde_json::from_slice(&output.stdout).context("Stado service list is not JSON")?;
-        programs = active_worker_stado_programs(&services, host);
-        // Two overlapping service declarations that execute the same program
-        // are still unambiguous. A release cutover can briefly expose zero
-        // active declarations, or old and new declarations together; neither
-        // is a permanent property of the host, so observe it again instead of
-        // burning the record.
-        if programs.len() == 1 {
-            return Ok(programs
-                .iter()
-                .next()
-                .expect("one active program")
-                .clone());
+        );
+        match output {
+            Ok(output) if output.status.success() => {
+                let services: Value = serde_json::from_slice(&output.stdout)
+                    .context("Stado service list is not JSON")?;
+                programs = active_worker_stado_programs(&services, host);
+                // Two overlapping service declarations that execute the same
+                // program are still unambiguous. A release cutover can briefly
+                // expose zero active declarations, or old and new declarations
+                // together; neither is a permanent property of the host, so
+                // observe it again instead of burning the record.
+                if programs.len() == 1 {
+                    return Ok(programs
+                        .iter()
+                        .next()
+                        .expect("one active program")
+                        .clone());
+                }
+            }
+            Ok(output) => {
+                last_failure = String::from_utf8_lossy(&output.stderr).trim().to_string();
+                programs.clear();
+            }
+            Err(error) => {
+                last_failure = error.to_string();
+                programs.clear();
+            }
         }
         if poll + 1 < POLLS {
             std::thread::sleep(POLL_DELAY);
         }
+    }
+    if !last_failure.is_empty() && programs.is_empty() {
+        bail!(
+            "worker_agent_program_unstable: host={host} observed_count=0 observations={POLLS} retryable=true last_failure={last_failure}"
+        )
     }
     bail!(
         "worker_agent_program_unstable: host={host} observed_count={} observations={POLLS} retryable=true",
@@ -6802,10 +6826,22 @@ fn import_record_attempt(
     let object = record
         .as_object_mut()
         .context("reference record is not an object")?;
-    object.insert("captured_at".into(), json!(crate::now_iso_utc()));
-    object.insert("motion".into(), Value::Array(motion.clone()));
-    object.insert("states".into(), Value::Array(states.clone()));
-    object.insert("accessibility".into(), accessibility);
+    // An import writes the evidence ITS OWN attempt produced and nothing else.
+    // A documentation attempt retains a corpus and no browser media, and these
+    // four lines used to write its empty media sections over the record: the
+    // 2026-09-05 imports of `01-mdn-web-docs` and `17-swift-documentation`
+    // deleted the Weles motion recording and the five local states captured on
+    // 2026-08-16 - inside a transaction whose own report said `motion: 0`,
+    // `states: 0`, so the record lost evidence the import never claimed to
+    // have. Evidence another engine captured is not this attempt's to clear,
+    // and `captured_at` names when the material that is there was captured, so
+    // it only moves when the material does.
+    if !motion.is_empty() || !states.is_empty() {
+        object.insert("captured_at".into(), json!(crate::now_iso_utc()));
+        object.insert("motion".into(), Value::Array(motion.clone()));
+        object.insert("states".into(), Value::Array(states.clone()));
+        object.insert("accessibility".into(), accessibility);
+    }
     object.insert("evidence_status".into(), json!("partial"));
     object.insert(
         "evidence_gaps".into(),
