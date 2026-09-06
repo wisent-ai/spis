@@ -37,8 +37,7 @@ const CORPUS_FILES: [&str; 4] = [
 ];
 
 fn engine_root() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("documentation-site-examples/content-structure")
+    super::corpus::data_root().join("documentation-site-examples/content-structure")
 }
 
 fn home_dir() -> Result<PathBuf> {

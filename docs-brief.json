@@ -8,6 +8,8 @@
       "declared": true,
       "binary": "target/release/spis",
       "commands": [
+        "onboarding",
+        "corpus",
         "docs-site",
         "crawl",
         "crawl-cli",
@@ -39,14 +41,17 @@
         "start a crawl for one product family or for all of them",
         "track a run and its per-record jobs",
         "ask whether one host can run one family, before anything is claimed",
-        "read the documentation corpus, including the corpus bound and what falls outside it"
+        "read the documentation corpus, including the corpus bound and what falls outside it",
+        "adopt an existing canonical corpus through the same product operation as the CLI"
       ]
     },
     "api": {
       "declared": false
     },
     "config": {
-      "declared": false
+      "declared": true,
+      "path": "~/.config/spis/corpus.json",
+      "owner": "spis corpus adopt"
     }
   },
   "families": [

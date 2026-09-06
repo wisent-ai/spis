@@ -657,7 +657,7 @@ fn crawl_one(
 }
 
 fn records(selected: Option<&str>) -> Result<Vec<(String, String)>> {
-    let directory = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let directory = super::corpus::data_root()
         .join("tui-examples")
         .join("references");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(directory)?

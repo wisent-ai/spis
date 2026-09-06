@@ -2861,8 +2861,8 @@ fn run_fetch_workers(
     worker_result?;
     Ok(state)
 }
-fn source_root() -> &'static Path {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
+fn source_root() -> PathBuf {
+    super::corpus::data_root()
 }
 
 fn validate_worker_source(

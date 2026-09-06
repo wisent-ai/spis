@@ -473,7 +473,7 @@ fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
     if !matches!(catalog, "macos-app-examples" | "desktop-app-examples") {
         bail!("crawl-desktop accepts macos-app-examples or desktop-app-examples");
     }
-    let directory = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let directory = super::corpus::data_root()
         .join(catalog)
         .join("references");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)?

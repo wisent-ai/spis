@@ -452,7 +452,7 @@ fn catalog_root(catalog: &str) -> Result<PathBuf> {
     if !CATALOGS.iter().any(|(known, _)| *known == catalog) {
         bail!("unknown crawl catalog {catalog}");
     }
-    Ok(source_root().join(catalog))
+    Ok(super::corpus::data_root().join(catalog))
 }
 
 fn reference_path(catalog: &str, record: &str) -> Result<PathBuf> {
