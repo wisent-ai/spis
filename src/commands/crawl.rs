@@ -3136,9 +3136,23 @@ pub fn executable_word_from_host_receipt(host: &str, receipt: &Value) -> Result<
             "host probe receipt target {receipt_target:?} does not match placement host {host:?}"
         );
     }
+    // `resolved_executable` is what a probe of a bare program word reports:
+    // Stado searched the host's own PATH and says which file it picked. An
+    // allowlisted command that Stado itself rewrites - `stado registry doctor`
+    // becomes `~/.stado/bin/stado registry doctor` - reports the same fact in
+    // the receipt's own `argv[0]` and carries no separate field, so both are
+    // read here. The exit code is irrelevant to either: which file the host
+    // resolved is not a claim about what that file then did.
     let selected = receipt
         .get("resolved_executable")
         .and_then(Value::as_str)
+        .or_else(|| {
+            receipt
+                .get("argv")
+                .and_then(Value::as_array)
+                .and_then(|argv| argv.first())
+                .and_then(Value::as_str)
+        })
         .map(str::trim)
         .filter(|path| !path.is_empty())
         .with_context(|| format!("host {host} probe reported no selected executable"))?;
@@ -3338,6 +3352,14 @@ fn resolved_program_from_host_preflight(
 /// boundary. It may temporarily point at a private repair build and later move
 /// during a normal release; reading it for every submission follows either
 /// transition without baking a shared or repair path into Spis.
+///
+/// Two spellings name the same thing and both are accepted. `agent --target
+/// <host>` is what a coordinator declares for a machine it addresses by name,
+/// and `agent --auto` is what a machine declares for itself - the shape
+/// `lukasz-macbook` runs. Reading only the first refused every record on any
+/// self-declared host with `worker_agent_program_unstable: observed_count=0`,
+/// which reads as an unstable declaration rather than as a filter that never
+/// matched.
 pub fn active_worker_stado_programs(services: &Value, host: &str) -> BTreeSet<String> {
     services
         .as_array()
@@ -3350,11 +3372,13 @@ pub fn active_worker_stado_programs(services: &Value, host: &str) -> BTreeSet<St
                 .get("args")
                 .and_then(Value::as_array)
                 .is_some_and(|arguments| {
+                    let targets_this_host = arguments.windows(2).any(|pair| {
+                        pair[0].as_str() == Some("--target") && pair[1].as_str() == Some(host)
+                    });
+                    let serves_its_own_host =
+                        arguments.iter().any(|argument| argument.as_str() == Some("--auto"));
                     arguments.first().and_then(Value::as_str) == Some("agent")
-                        && arguments.windows(2).any(|pair| {
-                            pair[0].as_str() == Some("--target")
-                                && pair[1].as_str() == Some(host)
-                        })
+                        && (targets_this_host || serves_its_own_host)
                 })
         })
         .filter_map(|service| service.get("program").and_then(Value::as_str))
@@ -3434,6 +3458,26 @@ fn declared_worker_stado_program(host: &str) -> Result<String> {
         }
         if poll + 1 < POLLS {
             std::thread::sleep(POLL_DELAY);
+        }
+    }
+    if programs.is_empty() {
+        // The registry can manage a unit while its declaration says nothing
+        // about what that unit runs, and no command completes such an entry:
+        // `service declare` demands an endpoint a queue agent does not have,
+        // and `service adopt` refuses a name the registry already manages. On
+        // `lukasz-macbook` that left every record refused with
+        // `observed_count=0` while the agent was running and visible to
+        // `service label-print`. So ask the host the same way this crawl asks
+        // it for `cargo`: one allowlisted Stado probe, whose receipt names the
+        // absolute executable the host itself resolved. An observation from
+        // the host is evidence; a conventional path would be a guess.
+        if let Ok(program) = executable_word_from_host_receipt(
+            host,
+            host_probe(host, &["stado", "registry", "doctor"])
+                .get("stado_receipt")
+                .unwrap_or(&Value::Null),
+        ) {
+            return Ok(program);
         }
     }
     if !last_failure.is_empty() && programs.is_empty() {
