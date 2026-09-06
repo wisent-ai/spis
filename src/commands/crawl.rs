@@ -4852,7 +4852,7 @@ const HOST_RECORD_WINDOW: usize = 3;
 const RECORD_PEAK_GIB: f64 = 6.0;
 
 /// How many records may be submitted against the free space this host just
-/// reported.
+/// reported, keeping one record's worth of it unspent.
 ///
 /// A window that ignores the disk is a guess, and both guesses were wrong: one
 /// starved the family behind foreign work, ten and then three killed the
@@ -4860,11 +4860,19 @@ const RECORD_PEAK_GIB: f64 = 6.0;
 /// slots is arithmetic rather than a constant, and an unreadable answer yields
 /// no slots at all - the family waits and says why, instead of finding out by
 /// filling a production disk.
+///
+/// The reserved slot is the difference between planning to use the disk and
+/// planning to use all of it. With 12 GiB free and a 6 GiB peak the naive
+/// division admits two records whose combined peak is exactly the whole
+/// volume; this admits one and leaves the other 6 GiB for the host's own work,
+/// which on `charless-mac-mini` is a release store, a queue, and everyone
+/// else's jobs.
 fn host_record_window(host_report: &Value) -> usize {
     let Some(free_gib) = observed_free_gib(host_report) else {
         return 0;
     };
-    ((free_gib / RECORD_PEAK_GIB).floor().max(0.0) as usize).min(HOST_RECORD_WINDOW)
+    let affordable = (free_gib / RECORD_PEAK_GIB).floor() - 1.0;
+    (affordable.max(0.0) as usize).min(HOST_RECORD_WINDOW)
 }
 
 /// Whether this record is holding a slot on the host right now: submitted and
