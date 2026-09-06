@@ -1,0 +1,118 @@
+{
+  "schema": "wisent.docs-crawl-state.v3",
+  "run_id": "docs-50-09052106",
+  "source_revision": "3183e566e5260bc92eff0a51224d3360f89eb278",
+  "source_input_sha256": "7d8f2c8d392531171614f290ab6e115f235a2ceafaa3436e82adacf4e8d4255e",
+  "record_key": "8549a4e7c53014be0d48a7b2716f7cb96544a52efb62a0eb6c625f3f3fec6f09",
+  "record": "19-apple-developer-documentation",
+  "attempt": 1,
+  "attempt_id": "attempt-1-8beb7438d983df23",
+  "source_url": "https://developer.apple.com/documentation/",
+  "started_at": "2026-09-06T04:27:27Z",
+  "effective_source_url": "https://developer.apple.com/documentation/",
+  "inventory_complete": true,
+  "inventory_downloaded_bytes": 83656,
+  "inventory_sha256": "143897bbe1b86a98b0772a9b911c76c583df76acf985a4526348f75fdf0fe0af",
+  "inventory_diagnostics": [
+    {
+      "code": "inventory_source_http_status",
+      "message": "inventory source returned HTTP 404",
+      "url": "https://developer.apple.com/sitemap.xml"
+    },
+    {
+      "code": "inventory_degraded",
+      "message": "inventory resolution produced no canonical targets beyond exact source_url",
+      "url": "https://developer.apple.com/documentation/"
+    }
+  ],
+  "robots": {
+    "directives": [
+      {
+        "pattern": "^/click/",
+        "specificity": 7,
+        "allow": false
+      },
+      {
+        "pattern": "^/cgi\\-bin/",
+        "specificity": 9,
+        "allow": false
+      },
+      {
+        "pattern": "^/survey/",
+        "specificity": 8,
+        "allow": false
+      },
+      {
+        "pattern": "^/temp/",
+        "specificity": 6,
+        "allow": false
+      },
+      {
+        "pattern": "^/search/",
+        "specificity": 8,
+        "allow": false
+      },
+      {
+        "pattern": "^/unsubscribe/",
+        "specificity": 13,
+        "allow": false
+      },
+      {
+        "pattern": "^/reference/",
+        "specificity": 11,
+        "allow": false
+      },
+      {
+        "pattern": "^/forums/create/question",
+        "specificity": 23,
+        "allow": false
+      },
+      {
+        "pattern": "^/forums/login",
+        "specificity": 13,
+        "allow": false
+      },
+      {
+        "pattern": "^/forums/preferences",
+        "specificity": 19,
+        "allow": false
+      },
+      {
+        "pattern": "^/forums/profile",
+        "specificity": 15,
+        "allow": false
+      },
+      {
+        "pattern": "^/forums/.*\\?view",
+        "specificity": 13,
+        "allow": false
+      }
+    ]
+  },
+  "targets": [
+    {
+      "sequence": 0,
+      "key": "2db07768511b21c33c2d0f592d5a4a33f3fe58e2856a28ffc42e849a3cafee19",
+      "url": "https://developer.apple.com/documentation/",
+      "lastmod": null
+    }
+  ],
+  "outcomes": {
+    "2db07768511b21c33c2d0f592d5a4a33f3fe58e2856a28ffc42e849a3cafee19": {
+      "sequence": 0,
+      "url": "https://developer.apple.com/documentation/",
+      "resolved_url": "https://developer.apple.com/documentation/",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 1,
+      "downloaded_bytes": 16963,
+      "record_sha256": "2bc3943c5bc41ba9648d494e1b68ba9b8a634698cdd1d6124f3ffb08c14f97ad",
+      "corpus_start": 0,
+      "corpus_end": 262
+    }
+  },
+  "committed_bytes": 262,
+  "committed_sha256": "46d87f6d7436c28d313325c778e2624c42d351642cdb9aa59a8e4a628a412d8f",
+  "completed_at": "2026-09-06T04:27:35Z",
+  "report_sha256": "ece500683715cc953e102d6fb4b212fa5c3ae01355bef4fe50bea9e4e02494a5"
+}

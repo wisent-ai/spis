@@ -1,0 +1,43 @@
+{
+  "schema": "wisent.docs-worker-report.v1",
+  "run_id": "docs-50-09052106",
+  "catalog": "documentation-site-examples",
+  "record": "19-apple-developer-documentation",
+  "record_key": "8549a4e7c53014be0d48a7b2716f7cb96544a52efb62a0eb6c625f3f3fec6f09",
+  "attempt": 1,
+  "attempt_id": "attempt-1-8beb7438d983df23",
+  "engine": "docs",
+  "state": "artifact_published",
+  "source_revision": "3183e566e5260bc92eff0a51224d3360f89eb278",
+  "source_input_sha256": "7d8f2c8d392531171614f290ab6e115f235a2ceafaa3436e82adacf4e8d4255e",
+  "reference_sha256": "8d638286435d96d3ae6edf77d911c0037d654b754b15f82250f66435c02c7499",
+  "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+  "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+  "docs_structure_sha256": "493f08d866e610908bd3f4a3f50e08e2964dafdda40dfa067ffb3bc93c05c7a6",
+  "execution_identity": {
+    "host": "charless-mac-mini",
+    "observed_hostname": "Charless-Mac-mini.local",
+    "platform": "http",
+    "device_id": null,
+    "resolved_product_identifier": "https://developer.apple.com/documentation/",
+    "device_name": null,
+    "executable_path": null,
+    "product_version": null,
+    "executable_sha256": null,
+    "effective_url": null
+  },
+  "artifact": {
+    "uri": "stado://spis-crawls/runs/docs-50-09052106/documentation-site-examples/19-apple-developer-documentation/8549a4e7c53014be0d48a7b2716f7cb96544a52efb62a0eb6c625f3f3fec6f09/attempts/1/attempt-1-8beb7438d983df23/artifacts.tar.gz",
+    "sha256": "f97ab9ebacd6235ea972fe5f4a85e02e822b76026b757d52180b8cc30c02f9f1",
+    "bytes": 3177,
+    "media_type": "application/gzip",
+    "tree_entries": 4,
+    "tree_bytes": 11193
+  },
+  "corpus": {
+    "files": 4,
+    "bytes": 11193,
+    "pages": 1
+  },
+  "failure": null
+}

@@ -1,0 +1,160 @@
+{
+  "schema": "wisent.docs-retrieval-run.v2",
+  "tool": "spis crawl-docs",
+  "tool_commit": "3183e566e5260bc92eff0a51224d3360f89eb278",
+  "run_id": "docs-50-09052106",
+  "record": "19-apple-developer-documentation",
+  "record_key": "8549a4e7c53014be0d48a7b2716f7cb96544a52efb62a0eb6c625f3f3fec6f09",
+  "attempt": 1,
+  "attempt_id": "attempt-1-8beb7438d983df23",
+  "source_revision": "3183e566e5260bc92eff0a51224d3360f89eb278",
+  "source_input_sha256": "7d8f2c8d392531171614f290ab6e115f235a2ceafaa3436e82adacf4e8d4255e",
+  "source_url": "https://developer.apple.com/documentation/",
+  "declared_source_url": "https://developer.apple.com/documentation/",
+  "effective_source_url": "https://developer.apple.com/documentation/",
+  "runtime_manifest": {
+    "schema": "wisent.crawl-runtime-manifest.v1",
+    "run_id": "docs-50-09052106",
+    "catalog": "documentation-site-examples",
+    "attempt": 1,
+    "attempt_id": "attempt-1-8beb7438d983df23",
+    "record": "19-apple-developer-documentation",
+    "engine": "docs",
+    "source_revision": "3183e566e5260bc92eff0a51224d3360f89eb278",
+    "source_input_sha256": "7d8f2c8d392531171614f290ab6e115f235a2ceafaa3436e82adacf4e8d4255e",
+    "reference_sha256": "8d638286435d96d3ae6edf77d911c0037d654b754b15f82250f66435c02c7499",
+    "catalog_key": "a189a08a9a7e0ae3a817a65676055f902d9fd80eaad39cf884155ef42f2b880a",
+    "record_key": "8549a4e7c53014be0d48a7b2716f7cb96544a52efb62a0eb6c625f3f3fec6f09",
+    "correlation_id": "spis-8549a4e7c53014be0d48a7b2-1",
+    "stado_run_id": "spis-8549a4e7c53014be0d48a7b2-1-attempt-1-8beb7438d983df23",
+    "artifact_uri": "stado://spis-crawls/runs/docs-50-09052106/documentation-site-examples/19-apple-developer-documentation/8549a4e7c53014be0d48a7b2716f7cb96544a52efb62a0eb6c625f3f3fec6f09/attempts/1/attempt-1-8beb7438d983df23/artifacts.tar.gz",
+    "output_uri": "stado://spis-crawls/runs/docs-50-09052106/documentation-site-examples/19-apple-developer-documentation/8549a4e7c53014be0d48a7b2716f7cb96544a52efb62a0eb6c625f3f3fec6f09/attempts/1/attempt-1-8beb7438d983df23/worker-output.log",
+    "runtime_product": {
+      "kind": "url",
+      "declared_identifier": "https://developer.apple.com/documentation/",
+      "identifier": "https://developer.apple.com/documentation/",
+      "product_url": "https://developer.apple.com/documentation/",
+      "identity_source": "reference.json product_url",
+      "surface": null
+    },
+    "account": {
+      "mode": "anonymous-read-only-probe",
+      "account_id": "anonymous-read-only-probe",
+      "credential_refs": []
+    },
+    "constraints": {
+      "no_first_run_consent": true,
+      "no_system_permission_prompts": true,
+      "no_notifications": true,
+      "no_purchase": true,
+      "no_final_destructive_action": true,
+      "headless": false
+    },
+    "docs_structure_sha256": "493f08d866e610908bd3f4a3f50e08e2964dafdda40dfa067ffb3bc93c05c7a6",
+    "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+    "bindings_source": "default:user-config",
+    "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+    "bindings_uri": "stado://spis-crawls/inputs/runtime-bindings/2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522.json",
+    "delivery": {
+      "kind": "none",
+      "secret_env": {}
+    },
+    "prepared_proof": null,
+    "execution_identity": {
+      "host": "charless-mac-mini",
+      "observed_hostname": "Charless-Mac-mini.local",
+      "platform": "http",
+      "device_id": null,
+      "resolved_product_identifier": "https://developer.apple.com/documentation/",
+      "device_name": null,
+      "executable_path": null,
+      "product_version": null,
+      "executable_sha256": null,
+      "effective_url": null
+    },
+    "resource_lease": null,
+    "service_identity": null
+  },
+  "runtime_execution_identity": {
+    "host": "charless-mac-mini",
+    "observed_hostname": "Charless-Mac-mini.local",
+    "platform": "http",
+    "device_id": null,
+    "resolved_product_identifier": "https://developer.apple.com/documentation/",
+    "device_name": null,
+    "executable_path": null,
+    "product_version": null,
+    "executable_sha256": null,
+    "effective_url": null
+  },
+  "definition_sha256": "bccb60c1863db5d986780d586497b6ec5fe2a67db3c4ae72b93e5d110b87dcc4",
+  "structure_sha256": "493f08d866e610908bd3f4a3f50e08e2964dafdda40dfa067ffb3bc93c05c7a6",
+  "inventory_sha256": "143897bbe1b86a98b0772a9b911c76c583df76acf985a4526348f75fdf0fe0af",
+  "pages_sha256": "46d87f6d7436c28d313325c778e2624c42d351642cdb9aa59a8e4a628a412d8f",
+  "pages_bytes": 262,
+  "started_at": "2026-09-06T04:27:27Z",
+  "completed_at": "2026-09-06T04:27:35Z",
+  "retrieval_status": "retrieval_partial",
+  "inventory_downloaded_bytes": 83656,
+  "page_downloaded_bytes": 16963,
+  "downloaded_bytes": 100619,
+  "retrieval": {
+    "records": [
+      {
+        "page_downloaded_bytes": 16963,
+        "record": "19-apple-developer-documentation",
+        "target_count": 1,
+        "outcome_count": 1,
+        "retrieved_count": 1,
+        "http_200_count": 1,
+        "text_page_count": 1,
+        "pages_sha256": "46d87f6d7436c28d313325c778e2624c42d351642cdb9aa59a8e4a628a412d8f",
+        "pages_bytes": 262,
+        "retrieval_status": "retrieval_partial",
+        "corpus_bound": 50000,
+        "pages_outside_corpus": 0,
+        "pages_outside_corpus_exact": true,
+        "diagnostics": [
+          {
+            "code": "inventory_source_http_status",
+            "message": "inventory source returned HTTP 404",
+            "url": "https://developer.apple.com/sitemap.xml"
+          },
+          {
+            "code": "inventory_degraded",
+            "message": "inventory resolution produced no canonical targets beyond exact source_url",
+            "url": "https://developer.apple.com/documentation/"
+          }
+        ]
+      }
+    ],
+    "target_count": 1,
+    "outcome_count": 1,
+    "retrieved_count": 1,
+    "text_page_count": 1,
+    "pages_sha256": "46d87f6d7436c28d313325c778e2624c42d351642cdb9aa59a8e4a628a412d8f",
+    "pages_bytes": 262,
+    "inventory_downloaded_bytes": 83656,
+    "page_downloaded_bytes": 16963,
+    "corpus_bound": 50000,
+    "pages_outside_corpus": 0,
+    "pages_outside_corpus_exact": true,
+    "downloaded_bytes": 100619,
+    "diagnostics": [
+      {
+        "code": "inventory_source_http_status",
+        "message": "inventory source returned HTTP 404",
+        "url": "https://developer.apple.com/sitemap.xml"
+      },
+      {
+        "code": "inventory_degraded",
+        "message": "inventory resolution produced no canonical targets beyond exact source_url",
+        "url": "https://developer.apple.com/documentation/"
+      }
+    ]
+  },
+  "limitations": [
+    "The documentation retrieval engine measures bounded HTTP retrieval and retained response text only.",
+    "No interactive journey, accessibility traversal, or motion variant is part of this engine."
+  ]
+}

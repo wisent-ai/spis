@@ -1,0 +1,2448 @@
+{
+  "schema": "wisent.docs-crawl-state.v3",
+  "run_id": "docs-50-09052106",
+  "source_revision": "3183e566e5260bc92eff0a51224d3360f89eb278",
+  "source_input_sha256": "4eda13ee7ccf394edf3c90ce8bf669e327b4d1e1f59b2bea3020208baeac6006",
+  "record_key": "6f57ffb3fc24fd1cf0b2ef5fa0c2fc20b439172f0633550df7ebac6b51dc8013",
+  "record": "17-swift-documentation",
+  "attempt": 1,
+  "attempt_id": "attempt-1-31616c046fcaa2db",
+  "source_url": "https://www.swift.org/documentation/",
+  "started_at": "2026-09-06T04:28:24Z",
+  "effective_source_url": "https://www.swift.org/documentation/",
+  "inventory_complete": true,
+  "inventory_downloaded_bytes": 86656,
+  "inventory_sha256": "4e05e8b3d2731dd014b9c7b142e957325d4533ee0ed5611e55b3149d3b14fbd0",
+  "inventory_diagnostics": [
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/404.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/500.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/about/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/android-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.0/amazonlinux2.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.0/centos7.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.0/macos.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.0/static-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.0/ubi9.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.0/ubuntu2004.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.0/ubuntu2204.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.0/windows10.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/amazonlinux2.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/centos7.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/debian12.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/fedora39.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/macos.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/static-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/ubi9.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/ubuntu2004.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/ubuntu2204.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/ubuntu2404.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.1/windows10.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/amazonlinux2.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/centos7.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/debian12.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/fedora39.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/macos.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/static-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/ubi9.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/ubuntu2004.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/ubuntu2204.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/ubuntu2404.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/wasm-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.2/windows10.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/amazonlinux2.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/amazonlinux2023.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/android-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/debian12.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/fedora41.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/macos.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/static-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/ubi9.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/ubuntu2204.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/ubuntu2404.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/wasm-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.3/windows10.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/amazonlinux2.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/amazonlinux2023.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/android-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/debian12.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/fedora41.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/macos.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/static-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/ubi10.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/ubi9.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/ubuntu2204.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/ubuntu2404.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/wasm-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/6.4.x/windows10.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/amazonlinux2.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/amazonlinux2023.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/android-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/centos7.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/debian12.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/debian13.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/fedora39.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/fedora41.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/macos.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/static-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/ubi10.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/ubi9.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/ubuntu2004.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/ubuntu2204.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/ubuntu2404.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/ubuntu2604.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/wasm-sdk.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/dev/main/windows10.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/install/releases.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/sswg/incubation/all.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/sswg/incubation/graduated.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/sswg/incubation/incubating.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/sswg/incubation/sandbox.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/api/v1/swiftly.json"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/assets/javascripts/application.js"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/assets/stylesheets/application.css"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/assets/stylesheets/application.css.map"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/assets/stylesheets/new-stylesheets/application.css"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/assets/stylesheets/new-stylesheets/application.css.map"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog-post-contributions/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/build-and-packaging-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/code-of-conduct/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/community/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/community/how-we-work/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/compiler-stdlib/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/continuous-integration/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/contributing/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/contributor-experience-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/core-libraries/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/cxx-interop-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/diversity/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/api-design-guidelines.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/api-design-guidelines/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/articles/getting-started-with-cursor-swift.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/articles/getting-started-with-vscode-swift.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/articles/static-linux-getting-started.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/articles/swift-sdk-for-android-getting-started.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/articles/value-and-reference-types.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/articles/wasm-getting-started.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/articles/wrapping-c-cpp-library-in-swift.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/articles/zero-to-swift-emacs.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/articles/zero-to-swift-nvim.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/concurrency/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/continuous-integration/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/core-libraries/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/cxx-interop.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/cxx-interop/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/cxx-interop/project-build-setup.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/cxx-interop/project-build-setup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/cxx-interop/safe-interop.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/cxx-interop/safe-interop/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/cxx-interop/status.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/cxx-interop/status/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/lldb/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/monthly-non-darwin-release/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/package-manager/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/allocations.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/building.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/deploying/aws-copilot-fargate-vapor-mongo.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/deploying/aws-sam-lambda.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/deploying/aws.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/deploying/digital-ocean.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/deploying/gcp.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/deploying/heroku.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/deploying/ubuntu.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/deployment.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/libraries/concurrency-adoption-guidelines.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/libraries/log-levels.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/linux-perf.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/llvm-sanitizers.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/memory-leaks-and-usage.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/packaging.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/passkeys.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/performance.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/server/guides/testing.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/source-code/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/source-compatibility/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/standard-library/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/swift-compiler/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/documentation/tspl/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/download/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/download/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/download/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/download/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/ecosystem-steering-group/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/foundation-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/get-started/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/get-started/cloud-services/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/get-started/command-line-tools/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/get-started/embedded/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/getting-started/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/getting-started/cli-swiftpm/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/getting-started/embedded-swift"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/getting-started/library-swiftpm/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/getting-started/swiftui/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/getting-started/vapor-web-server/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/gsoc2019/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/gsoc2020/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/gsoc2021/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/gsoc2022/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/gsoc2023/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/gsoc2024/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/gsoc2025/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/gsoc2026/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/amazonlinux/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/amazonlinux/2/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/amazonlinux/2023/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/debian/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/debian/12/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/docker/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/fedora/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/fedora/39/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/fedora/41/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/rpm/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/swiftly/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/tarball/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/ubi/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/ubi/9/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/ubuntu/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/ubuntu/20_04/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/ubuntu/22_04/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/linux/ubuntu/24_04/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/macos/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/macos/package_installer/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/macos/swiftly/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/windows/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/windows/archived/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/windows/manual/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/windows/scoop/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/install/windows/winget/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/keys/active/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/keys/expired/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/language-steering-group/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/legal/license.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/lldb/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/mentorship-interest-survey/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/mentorship-tos/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/mentorship/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/migration-guide-swift3/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/migration-guide-swift3/se-0107-migrate.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/migration-guide-swift4.2/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/migration-guide-swift4/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/migration-guide-swift5/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/migration-guide/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/monthly-non-darwin-release/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/networking-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/openapi/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/package-manager/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/database.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/logging.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/macros.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/networking.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/server.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-april-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-april-2025.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-august-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-august-2025.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-december-2023.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-december-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-february-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-february-2025.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-january-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-january-2025.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-july-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-july-2025.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-june-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-june-2025.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-march-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-march-2025.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-may-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-may-2025.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-november-2023.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-november-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-october-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-september-2024.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase-september-2025.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/showcase.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/packages/testing.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/platform-steering-group/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/platform-support/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/project-ideas/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/quickstart-contribution/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server-apis/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/allocations"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/building"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/deploying/aws"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/deploying/aws-copilot-fargate-vapor-mongo"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/deploying/aws-sam-lambda"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/deploying/digital-ocean"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/deploying/gcp"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/deploying/heruko"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/deploying/ubuntu"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/deployment"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/libraries/concurrency-adoption-guidelines"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/libraries/log-levels"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/linux-perf"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/llvm-sanitizers"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/memory-leaks-and-usage"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/packaging"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/performance"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/server/guides/testing"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/source-code/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/source-compatibility/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/sswg-survey-2023/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/sswg/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/sswg/incubated-packages.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/sswg/incubation-process.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/sswg/security/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/sswg/security/contributor-found-vulnerability.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/sswg/security/package-maintainer-received-vulnerability-report.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/sswg/security/package-requirements.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/standard-library/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/support/security.html"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/swift-compiler/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/swift-evolution/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/testing-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/tools/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/tspl/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/use-case/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/website-governance/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/website-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/website/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/windows-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-august-2026/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/embedded-swift-improvements-coming-in-swift-6.4/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-july-2026/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-june-2026/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-package-index-update/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/migrating-truetype-hinting-to-swift/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/announcing-networking-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-may-2026/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/bringing-goodnotes-to-web-with-swift/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-april-2026/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/expanding-swift-ide-support/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-march-2026/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-6.3-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/building-privacy-first-analytics-with-swift/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-february-2026/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-system-metrics-1.0-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-january-2026/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/announcing-windows-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/improving-usability-of-c-libraries-in-swift/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-december-2025/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/exploring-the-swift-sdk-for-android/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-configuration-1.0-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/embedded-swift-improvements-coming-in-swift-6.3/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/gsoc-2025-showcase-swift-testing-output/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/gsoc-2025-showcase-code-completion/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-temporal-sdk/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/gsoc-2025-showcase-swift-java/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/gsoc-2025-showcase-swiftly-support-in-vscode/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-in-swift-october-2025/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/nightly-swift-sdk-for-android/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-profile-recorder/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-on-the-server-ecosystem/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-6.2-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/redesigned-swift-org-is-now-live/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-at-apple-migrating-the-password-monitoring-service-from-java/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/memory-safety-ecosystem-talks-java-interoperability-fosdem-2025/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-6.1-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/introducing-swiftly_10/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/how-swifts-server-support-powers-things-cloud/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/grpc-swift-2/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/vscode-swift-2/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/the-next-chapter-in-swift-build-technologies/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/announcing-swift-6/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/introducing-swift-nio-oblivious-http/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/announcing-swift-homomorphic-encryption/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/ready-for-swift-6/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swiftlang-github/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/embedded-swift-examples/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/sswg-update-2024/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/adwaita-swift/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/benchmarks/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/byte-sized-swift-tiny-games-playdate/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/pack-iteration/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.10-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-google-summer-of-code-2024/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/mlx-swift/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/summer-of-code-2023-summary/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-openapi-generator-1.0/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.9-backtraces/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/packages-page/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-everywhere-windows-interop/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whats-new-swift-debugging-5.9/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.9-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/sswg-update-2023/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/introducing-swift-http-types/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/introducing-swift-openapi-generator/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/using-upcoming-feature-flags/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/evolving-swift-project-workgroups/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/foundation-preview-now-available/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.8-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-package-index-developer-spotlight/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-certificates-and-asn1/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/tspl-on-docc/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/future-of-foundation/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-summer-of-code-2022-summary/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/focus-areas-2023/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.7-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-nio-imap/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/sswg-server-guides/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/documentation-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/vscode-extension/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-language-updates-from-wwdc22/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/graphing-calculator/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/property-wrappers/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/language-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/mentorship-2022/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/sswg-update/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-async-algorithms/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/website-open-source/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.6-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/distributed-actors/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-docc/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.5-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/package-collections/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-mentorship-program/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.4-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-collections/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/womens-history-month/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/black-history-month/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/diversity-in-swift/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/accessibility-and-inclusion/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swiftnio-ssh/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-service-discovery/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-algorithms/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-atomics/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-system/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-on-windows/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.3-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-cluster-membership/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-service-lifecycle/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/AWS-lambda-runtime/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/additional-linux-distros/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/5.3-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.2-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/argument-parser/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/preview-package/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/library-evolution/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/crypto/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/numerics/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/sswg-update-2019/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/new-diagnostic-arch-overview/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/5.2-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5.1-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/tsan-support-on-linux/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/utf8-string/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/behind-SE-0200/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/5.1-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/abi-stability-and-apple/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/abi-stability-and-more/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/sourcekitd-stress-tester/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-5-exclusivity/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swiftpm-repl-support/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/how-mirror-works/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/5.0-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-4.2-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/related-projects/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-community-hosted-CI/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/iuo/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-4.1-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/4.2-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/osize/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/forums/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/conditional-conformance/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-4.1-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/xcode-9.1-improves-display-of-fatal-errors/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/dictionary-and-set-improvements/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-4.0-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-local-refactoring/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-package-manager-manifest-api-redesign/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-source-compatibility-test-suite/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-3.1-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-4.0-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/bridging-pch/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-evolution-status-page/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-3.1-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/server-api-workgroup/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/whole-module-optimizations/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-3.0-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-xcode-playground-support/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-3.0-preview-1-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-2.3/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-3.0-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-2.2-new-features/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-2.2-released/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-commit-access/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-benchmark-suite/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-CI/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-api-transformation/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-2.2-release-process/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-3-api-design/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/swift-linux-port/"
+    },
+    {
+      "code": "sitemap_page_rejected",
+      "message": "sitemap page is outside the exact declared documentation origin",
+      "url": "https://swift.org/blog/welcome/"
+    },
+    {
+      "code": "inventory_degraded",
+      "message": "inventory resolution produced no canonical targets beyond exact source_url",
+      "url": "https://www.swift.org/documentation/"
+    }
+  ],
+  "robots": {
+    "directives": [
+      {
+        "pattern": "^/builds/",
+        "specificity": 8,
+        "allow": false
+      }
+    ]
+  },
+  "targets": [
+    {
+      "sequence": 0,
+      "key": "cef9a8c5bd310b8782a73dfff119326020d6e21d68be8b40b83edd3c65bb5f20",
+      "url": "https://www.swift.org/documentation/",
+      "lastmod": null
+    }
+  ],
+  "outcomes": {
+    "cef9a8c5bd310b8782a73dfff119326020d6e21d68be8b40b83edd3c65bb5f20": {
+      "sequence": 0,
+      "url": "https://www.swift.org/documentation/",
+      "resolved_url": "https://www.swift.org/documentation/",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 60,
+      "downloaded_bytes": 473,
+      "record_sha256": "9a2d49a407afa69680b5e604ee466da7ab60cfd2b49730feebf0cbcd9eb1d7d8",
+      "corpus_start": 0,
+      "corpus_end": 279
+    }
+  },
+  "committed_bytes": 279,
+  "committed_sha256": "94d2922adc4dc9bebfb570c3143907e3e5e4fe96c05cdb4687796d2e59691cb9",
+  "completed_at": "2026-09-06T04:28:30Z",
+  "report_sha256": "ee223e06fbd2b65bdc3557ff56a8436dd0d39e4bb48e6ea7966af4ebe4bebc0d"
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "wisent.docs-worker-report.v1",
+  "run_id": "docs-50-09052106",
+  "catalog": "documentation-site-examples",
+  "record": "17-swift-documentation",
+  "record_key": "6f57ffb3fc24fd1cf0b2ef5fa0c2fc20b439172f0633550df7ebac6b51dc8013",
+  "attempt": 1,
+  "attempt_id": "attempt-1-31616c046fcaa2db",
+  "engine": "docs",
+  "state": "artifact_published",
+  "source_revision": "3183e566e5260bc92eff0a51224d3360f89eb278",
+  "source_input_sha256": "4eda13ee7ccf394edf3c90ce8bf669e327b4d1e1f59b2bea3020208baeac6006",
+  "reference_sha256": "56e4b20093b14d0e9a4714f46be89e73cdf306ce02fbfa8503fba5c9b7cdf9e8",
+  "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+  "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+  "docs_structure_sha256": "5661c637bdb88513eed3764c44967df1d97110dd0aa8d60c1c78c954c8e5d067",
+  "execution_identity": {
+    "host": "charless-mac-mini",
+    "observed_hostname": "Charless-Mac-mini.local",
+    "platform": "http",
+    "device_id": null,
+    "resolved_product_identifier": "https://www.swift.org/documentation/",
+    "device_name": null,
+    "executable_path": null,
+    "product_version": null,
+    "executable_sha256": null,
+    "effective_url": null
+  },
+  "artifact": {
+    "uri": "stado://spis-crawls/runs/docs-50-09052106/documentation-site-examples/17-swift-documentation/6f57ffb3fc24fd1cf0b2ef5fa0c2fc20b439172f0633550df7ebac6b51dc8013/attempts/1/attempt-1-31616c046fcaa2db/artifacts.tar.gz",
+    "sha256": "e1efa6e0ae66aa37c52645adf0a35917444ddef1a386b085d2ef8615224e39b0",
+    "bytes": 16003,
+    "media_type": "application/gzip",
+    "tree_entries": 4,
+    "tree_bytes": 314809
+  },
+  "corpus": {
+    "files": 4,
+    "bytes": 314809,
+    "pages": 1
+  },
+  "failure": null
+}
