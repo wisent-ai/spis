@@ -18,8 +18,7 @@
     "corpus-bound": {
       "kind": "code",
       "location": "src/commands/docs_corpus.rs MAX_PAGE_RECORDS"
-    }
-    ,
+    },
     "corpus-adoption": {
       "kind": "code",
       "location": "src/commands/corpus.rs"
