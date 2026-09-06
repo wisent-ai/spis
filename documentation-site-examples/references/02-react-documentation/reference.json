@@ -426,5 +426,62 @@
         }
       }
     }
+  ],
+  "crawl_runs": [
+    {
+      "schema": "wisent.crawl-import.v2",
+      "run_id": "docs-50-09061939",
+      "catalog": "documentation-site-examples",
+      "record": "02-react-documentation",
+      "record_key": "284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697",
+      "attempt": 1,
+      "attempt_id": "attempt-1-bed5a84cc12c1fd2",
+      "engine": "docs",
+      "state": "completed",
+      "outcome": "completed",
+      "source_revision": "a0d717a0ece48828deec3aefc13745bcde5718aa",
+      "source_input_sha256": "4ef2872eab120abc2938c2eb9f7b3653564e44bce75291f1091269809da454e8",
+      "reference_sha256": "1e8330f1b2b88dd5891640dc38ee1ca9fe95dd6537deab36e98cd451c24e7d30",
+      "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+      "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+      "stado_job_id": "job-db1f1266b98b1e0c99cf3881",
+      "stado_run_id": "spis-284b3e7505bdaba9f9bb3756-1-attempt-1-bed5a84cc12c1fd2",
+      "artifact_uri": "stado://spis-crawls/runs/docs-50-09061939/documentation-site-examples/02-react-documentation/284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697/attempts/1/attempt-1-bed5a84cc12c1fd2/artifacts.tar.gz",
+      "artifact_sha256": "98d8938bad30f0dc3e9eca6c91af7a8f33da9b42de8171f928e88a5a48327538",
+      "artifact_bytes": 6751,
+      "output_uri": "stado://spis-crawls/runs/docs-50-09061939/documentation-site-examples/02-react-documentation/284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697/attempts/1/attempt-1-bed5a84cc12c1fd2/worker-output.log",
+      "worker_report": "crawl/attempt-1-bed5a84cc12c1fd2/worker-report.json",
+      "capture_method": "Rate-limited full-text documentation crawl; per-site gzipped JSONL corpus retained",
+      "imported_at": "2026-09-06T20:08:38Z",
+      "execution_identity": {
+        "host": "charless-mac-mini",
+        "observed_hostname": "Charless-Mac-mini.local",
+        "platform": "http",
+        "device_id": null,
+        "resolved_product_identifier": "https://react.dev/",
+        "device_name": null,
+        "executable_path": null,
+        "product_version": null,
+        "executable_sha256": null,
+        "effective_url": null
+      },
+      "retained_members": 4,
+      "docs_structure_sha256": "baf06608665883f3f713b45133e1568228b08cd16dca36c359a961094e91d5ae",
+      "corpus": {
+        "files": 4,
+        "bytes": 12846,
+        "pages": 1
+      },
+      "readable_corpus": {
+        "artifact_uri": "stado://spis-crawls/runs/docs-50-09061939/documentation-site-examples/02-react-documentation/284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697/attempts/1/attempt-1-bed5a84cc12c1fd2/artifacts.tar.gz",
+        "archive_sha256": "98d8938bad30f0dc3e9eca6c91af7a8f33da9b42de8171f928e88a5a48327538",
+        "record": "02-react-documentation",
+        "attempt": 1,
+        "attempt_id": "attempt-1-bed5a84cc12c1fd2",
+        "completed_at": "2026-09-06T20:07:00Z",
+        "retrieval_status": "retrieval_partial",
+        "corpus_dir": "/Users/lukaszbartoszcze/.stado/work/spis/docs-corpus-imports/329b1a4fc15e36de1e54f623668daf2f66c212a8243c39401eeae3940ee6bb1c/corpus"
+      }
+    }
   ]
 }

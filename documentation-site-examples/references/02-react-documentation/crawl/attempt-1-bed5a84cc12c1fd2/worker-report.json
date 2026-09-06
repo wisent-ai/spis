@@ -1,0 +1,43 @@
+{
+  "schema": "wisent.docs-worker-report.v1",
+  "run_id": "docs-50-09061939",
+  "catalog": "documentation-site-examples",
+  "record": "02-react-documentation",
+  "record_key": "284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697",
+  "attempt": 1,
+  "attempt_id": "attempt-1-bed5a84cc12c1fd2",
+  "engine": "docs",
+  "state": "artifact_published",
+  "source_revision": "a0d717a0ece48828deec3aefc13745bcde5718aa",
+  "source_input_sha256": "4ef2872eab120abc2938c2eb9f7b3653564e44bce75291f1091269809da454e8",
+  "reference_sha256": "1e8330f1b2b88dd5891640dc38ee1ca9fe95dd6537deab36e98cd451c24e7d30",
+  "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+  "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+  "docs_structure_sha256": "baf06608665883f3f713b45133e1568228b08cd16dca36c359a961094e91d5ae",
+  "execution_identity": {
+    "host": "charless-mac-mini",
+    "observed_hostname": "Charless-Mac-mini.local",
+    "platform": "http",
+    "device_id": null,
+    "resolved_product_identifier": "https://react.dev/",
+    "device_name": null,
+    "executable_path": null,
+    "product_version": null,
+    "executable_sha256": null,
+    "effective_url": null
+  },
+  "artifact": {
+    "uri": "stado://spis-crawls/runs/docs-50-09061939/documentation-site-examples/02-react-documentation/284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697/attempts/1/attempt-1-bed5a84cc12c1fd2/artifacts.tar.gz",
+    "sha256": "98d8938bad30f0dc3e9eca6c91af7a8f33da9b42de8171f928e88a5a48327538",
+    "bytes": 6751,
+    "media_type": "application/gzip",
+    "tree_entries": 4,
+    "tree_bytes": 12846
+  },
+  "corpus": {
+    "files": 4,
+    "bytes": 12846,
+    "pages": 1
+  },
+  "failure": null
+}

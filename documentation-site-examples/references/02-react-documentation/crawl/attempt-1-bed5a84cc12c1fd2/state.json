@@ -1,0 +1,57 @@
+{
+  "schema": "wisent.docs-crawl-state.v3",
+  "run_id": "docs-50-09061939",
+  "source_revision": "a0d717a0ece48828deec3aefc13745bcde5718aa",
+  "source_input_sha256": "4ef2872eab120abc2938c2eb9f7b3653564e44bce75291f1091269809da454e8",
+  "record_key": "284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697",
+  "record": "02-react-documentation",
+  "attempt": 1,
+  "attempt_id": "attempt-1-bed5a84cc12c1fd2",
+  "source_url": "https://react.dev/",
+  "started_at": "2026-09-06T20:06:59Z",
+  "effective_source_url": "https://react.dev/",
+  "inventory_complete": true,
+  "inventory_downloaded_bytes": 86051,
+  "inventory_sha256": "932494d2f567478ad720654648ef998aa3fe3fa25243767a5e819c0afd3ffe06",
+  "inventory_diagnostics": [
+    {
+      "code": "inventory_source_http_status",
+      "message": "inventory source returned HTTP 404",
+      "url": "https://react.dev/sitemap.xml"
+    },
+    {
+      "code": "inventory_degraded",
+      "message": "inventory resolution produced no canonical targets beyond exact source_url",
+      "url": "https://react.dev/"
+    }
+  ],
+  "robots": {
+    "directives": []
+  },
+  "targets": [
+    {
+      "sequence": 0,
+      "key": "ddc6a11b6e0607cf0fced41dbc927d3f8e8cc05491223bb082beae0cd2b4bdef",
+      "url": "https://react.dev/",
+      "lastmod": null
+    }
+  ],
+  "outcomes": {
+    "ddc6a11b6e0607cf0fced41dbc927d3f8e8cc05491223bb082beae0cd2b4bdef": {
+      "sequence": 0,
+      "url": "https://react.dev/",
+      "resolved_url": "https://react.dev/",
+      "status": 200,
+      "diagnostic": null,
+      "text_bytes": 7961,
+      "downloaded_bytes": 272458,
+      "record_sha256": "8aa28fd6ad2f172736807cd6ff96eb5a63a9b9c17885b08f0fc470e031cdf4c6",
+      "corpus_start": 0,
+      "corpus_end": 3661
+    }
+  },
+  "committed_bytes": 3661,
+  "committed_sha256": "9bbf1ef818f9184656ac81adbc0036e7e65f270efc80015cfad5ca960e89bee7",
+  "completed_at": "2026-09-06T20:07:00Z",
+  "report_sha256": "786abeab82def94cecfaabb254296cb0161a4c9126f9e938054ba63778ed2429"
+}

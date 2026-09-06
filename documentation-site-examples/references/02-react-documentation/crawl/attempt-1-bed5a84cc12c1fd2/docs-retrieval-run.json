@@ -1,0 +1,160 @@
+{
+  "schema": "wisent.docs-retrieval-run.v2",
+  "tool": "spis crawl-docs",
+  "tool_commit": "a0d717a0ece48828deec3aefc13745bcde5718aa",
+  "run_id": "docs-50-09061939",
+  "record": "02-react-documentation",
+  "record_key": "284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697",
+  "attempt": 1,
+  "attempt_id": "attempt-1-bed5a84cc12c1fd2",
+  "source_revision": "a0d717a0ece48828deec3aefc13745bcde5718aa",
+  "source_input_sha256": "4ef2872eab120abc2938c2eb9f7b3653564e44bce75291f1091269809da454e8",
+  "source_url": "https://react.dev/",
+  "declared_source_url": "https://react.dev/",
+  "effective_source_url": "https://react.dev/",
+  "runtime_manifest": {
+    "schema": "wisent.crawl-runtime-manifest.v1",
+    "run_id": "docs-50-09061939",
+    "catalog": "documentation-site-examples",
+    "attempt": 1,
+    "attempt_id": "attempt-1-bed5a84cc12c1fd2",
+    "record": "02-react-documentation",
+    "engine": "docs",
+    "source_revision": "a0d717a0ece48828deec3aefc13745bcde5718aa",
+    "source_input_sha256": "4ef2872eab120abc2938c2eb9f7b3653564e44bce75291f1091269809da454e8",
+    "reference_sha256": "1e8330f1b2b88dd5891640dc38ee1ca9fe95dd6537deab36e98cd451c24e7d30",
+    "catalog_key": "7aa54652f358b82d56666f0240e43ba300d852c03c5b94752d5f1fbf84a81b4f",
+    "record_key": "284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697",
+    "correlation_id": "spis-284b3e7505bdaba9f9bb3756-1",
+    "stado_run_id": "spis-284b3e7505bdaba9f9bb3756-1-attempt-1-bed5a84cc12c1fd2",
+    "artifact_uri": "stado://spis-crawls/runs/docs-50-09061939/documentation-site-examples/02-react-documentation/284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697/attempts/1/attempt-1-bed5a84cc12c1fd2/artifacts.tar.gz",
+    "output_uri": "stado://spis-crawls/runs/docs-50-09061939/documentation-site-examples/02-react-documentation/284b3e7505bdaba9f9bb37560b1c25a294f543808dc6be7fd15a54cf726a1697/attempts/1/attempt-1-bed5a84cc12c1fd2/worker-output.log",
+    "runtime_product": {
+      "kind": "url",
+      "declared_identifier": "https://react.dev/",
+      "identifier": "https://react.dev/",
+      "product_url": "https://react.dev/",
+      "identity_source": "reference.json product_url",
+      "surface": null
+    },
+    "account": {
+      "mode": "anonymous-read-only-probe",
+      "account_id": "anonymous-read-only-probe",
+      "credential_refs": []
+    },
+    "constraints": {
+      "no_first_run_consent": true,
+      "no_system_permission_prompts": true,
+      "no_notifications": true,
+      "no_purchase": true,
+      "no_final_destructive_action": true,
+      "headless": false
+    },
+    "docs_structure_sha256": "baf06608665883f3f713b45133e1568228b08cd16dca36c359a961094e91d5ae",
+    "bindings_file_sha256": "2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522",
+    "bindings_source": "default:user-config",
+    "bindings_sha256": "937dfda15bdf375c1c8d936b4121f999f761e845df9f6a77976c8d18f5bfb02e",
+    "bindings_uri": "stado://spis-crawls/inputs/runtime-bindings/2c2b3109f087d012037545295defa9cf838795630701b45e322667fb2da45522.json",
+    "delivery": {
+      "kind": "none",
+      "secret_env": {}
+    },
+    "prepared_proof": null,
+    "execution_identity": {
+      "host": "charless-mac-mini",
+      "observed_hostname": "Charless-Mac-mini.local",
+      "platform": "http",
+      "device_id": null,
+      "resolved_product_identifier": "https://react.dev/",
+      "device_name": null,
+      "executable_path": null,
+      "product_version": null,
+      "executable_sha256": null,
+      "effective_url": null
+    },
+    "resource_lease": null,
+    "service_identity": null
+  },
+  "runtime_execution_identity": {
+    "host": "charless-mac-mini",
+    "observed_hostname": "Charless-Mac-mini.local",
+    "platform": "http",
+    "device_id": null,
+    "resolved_product_identifier": "https://react.dev/",
+    "device_name": null,
+    "executable_path": null,
+    "product_version": null,
+    "executable_sha256": null,
+    "effective_url": null
+  },
+  "definition_sha256": "bccb60c1863db5d986780d586497b6ec5fe2a67db3c4ae72b93e5d110b87dcc4",
+  "structure_sha256": "baf06608665883f3f713b45133e1568228b08cd16dca36c359a961094e91d5ae",
+  "inventory_sha256": "932494d2f567478ad720654648ef998aa3fe3fa25243767a5e819c0afd3ffe06",
+  "pages_sha256": "9bbf1ef818f9184656ac81adbc0036e7e65f270efc80015cfad5ca960e89bee7",
+  "pages_bytes": 3661,
+  "started_at": "2026-09-06T20:06:59Z",
+  "completed_at": "2026-09-06T20:07:00Z",
+  "retrieval_status": "retrieval_partial",
+  "inventory_downloaded_bytes": 86051,
+  "page_downloaded_bytes": 272458,
+  "downloaded_bytes": 358509,
+  "retrieval": {
+    "records": [
+      {
+        "page_downloaded_bytes": 272458,
+        "record": "02-react-documentation",
+        "target_count": 1,
+        "outcome_count": 1,
+        "retrieved_count": 1,
+        "http_200_count": 1,
+        "text_page_count": 1,
+        "pages_sha256": "9bbf1ef818f9184656ac81adbc0036e7e65f270efc80015cfad5ca960e89bee7",
+        "pages_bytes": 3661,
+        "retrieval_status": "retrieval_partial",
+        "corpus_bound": 50000,
+        "pages_outside_corpus": 0,
+        "pages_outside_corpus_exact": true,
+        "diagnostics": [
+          {
+            "code": "inventory_source_http_status",
+            "message": "inventory source returned HTTP 404",
+            "url": "https://react.dev/sitemap.xml"
+          },
+          {
+            "code": "inventory_degraded",
+            "message": "inventory resolution produced no canonical targets beyond exact source_url",
+            "url": "https://react.dev/"
+          }
+        ]
+      }
+    ],
+    "target_count": 1,
+    "outcome_count": 1,
+    "retrieved_count": 1,
+    "text_page_count": 1,
+    "pages_sha256": "9bbf1ef818f9184656ac81adbc0036e7e65f270efc80015cfad5ca960e89bee7",
+    "pages_bytes": 3661,
+    "inventory_downloaded_bytes": 86051,
+    "page_downloaded_bytes": 272458,
+    "corpus_bound": 50000,
+    "pages_outside_corpus": 0,
+    "pages_outside_corpus_exact": true,
+    "downloaded_bytes": 358509,
+    "diagnostics": [
+      {
+        "code": "inventory_source_http_status",
+        "message": "inventory source returned HTTP 404",
+        "url": "https://react.dev/sitemap.xml"
+      },
+      {
+        "code": "inventory_degraded",
+        "message": "inventory resolution produced no canonical targets beyond exact source_url",
+        "url": "https://react.dev/"
+      }
+    ]
+  },
+  "limitations": [
+    "The documentation retrieval engine measures bounded HTTP retrieval and retained response text only.",
+    "No interactive journey, accessibility traversal, or motion variant is part of this engine."
+  ]
+}
