@@ -3482,8 +3482,11 @@ fn host_preflight(
 ) -> Value {
     // `hostname -f` and not bare `hostname`: Stado's host-exec allowlist
     // matches an entry exactly and never appends operator words, and the entry
-    // it carries is the fully-qualified form.
-    let mut commands: Vec<Vec<&str>> = vec![vec!["hostname", "-f"]];
+    // it carries is the fully-qualified form. `df -h` is the same kind of
+    // observation and the coordinator needs it: how many records may be in
+    // flight at once is a question about this host's free space, and nothing
+    // else in the crawl ever asked it.
+    let mut commands: Vec<Vec<&str>> = vec![vec!["hostname", "-f"], vec!["df", "-h"]];
     commands.extend(engine_preconditions(engine, catalog));
     let mut checks: Vec<Value> = commands.iter().map(|command| host_probe(host, command)).collect();
     let desktop_driver_ready = if engine == "desktop" {
@@ -3574,6 +3577,54 @@ fn observed_hostname(host_report: &Value) -> Result<String> {
         })
         .context("host preflight has no exact observed hostname")?;
     Ok(value.to_string())
+}
+
+/// The host's free space on the volume its work lands on, in GiB, as the
+/// retained `df -h` probe of this preflight reported it.
+///
+/// `None` when the probe is missing or unparseable, and the caller treats that
+/// as "assume the tightest case" rather than "assume room".
+fn observed_free_gib(host_report: &Value) -> Option<f64> {
+    let stdout = host_report
+        .get("checks")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .find(|check| {
+            check.get("command").and_then(Value::as_array).is_some_and(|command| {
+                command.len() == 2
+                    && command[0].as_str() == Some("df")
+                    && command[1].as_str() == Some("-h")
+            })
+        })
+        .and_then(|check| check.get("stdout"))
+        .and_then(Value::as_str)?;
+    // The root volume's line, whatever its device is called: the mount point
+    // is the last field and the available size is the fourth.
+    stdout
+        .lines()
+        .filter_map(|line| {
+            let fields: Vec<&str> = line.split_whitespace().collect();
+            (fields.len() >= 6 && fields.last() == Some(&"/")).then(|| fields[3].to_string())
+        })
+        .find_map(|available| parse_size_gib(&available))
+}
+
+/// A `df -h` size such as `12Gi`, `980Mi` or `1.2Ti` in GiB.
+fn parse_size_gib(value: &str) -> Option<f64> {
+    let trimmed = value.trim();
+    let (number, scale) = match trimmed.chars().last()? {
+        'K' | 'k' => (&trimmed[..trimmed.len() - 1], 1.0 / (1024.0 * 1024.0)),
+        'M' | 'm' => (&trimmed[..trimmed.len() - 1], 1.0 / 1024.0),
+        'G' | 'g' => (&trimmed[..trimmed.len() - 1], 1.0),
+        'T' | 't' => (&trimmed[..trimmed.len() - 1], 1024.0),
+        'i' => {
+            let head = &trimmed[..trimmed.len() - 1];
+            return parse_size_gib(head);
+        }
+        _ => (trimmed, 1.0 / (1024.0 * 1024.0 * 1024.0)),
+    };
+    number.parse::<f64>().ok().map(|size| size * scale)
 }
 
 /// Resolve the booted iOS simulator with a probe taken for THIS record.
@@ -4777,24 +4828,44 @@ fn continue_record(
     })
 }
 
-/// How many records of one catalog may occupy a host at the same time.
+/// The most records of one catalog that may occupy a host at the same time,
+/// whatever its disk says.
 ///
-/// A record retains its whole crawl on the host before the attempt artifact is
-/// published, and the object store keeps a same-disk backup twin of everything
-/// it stores, so one record's peak cost is a couple of gigabytes and ten
-/// records' peak cost is the machine. Both ends were measured on
-/// `charless-mac-mini`: with one record at a time the disk sat between 17 and
-/// 19 GiB free for an hour, and on 2026-09-06 with ten it fell from 18.4 GiB
-/// to 0.1 GiB in fifty minutes. The fleet's disk gate cannot prevent that -
-/// it stops new claims below the watermark and has no say over claims already
-/// running - and `--exclusive` prevents it only by demanding an idle machine,
-/// which on a host that also carries release and qualification work means the
-/// family never starts at all.
-///
-/// So the number of records in flight is this coordinator's decision, made
-/// where the per-record cost is known. Records already in flight are always
-/// driven forward; only new submissions wait for a slot.
+/// Measured on `charless-mac-mini` on 2026-09-06: ten records in flight took
+/// the disk from 18.4 GiB to 0.1 GiB in fifty minutes, and three took it from
+/// 11 GiB to 2.1 GiB in fifteen. The fleet's disk gate cannot prevent either -
+/// it stops new claims below the watermark and has no say over the growth of
+/// claims already running - and `--exclusive` prevents it only by demanding an
+/// idle machine, which on a host that also carries release and qualification
+/// work means the family never starts at all.
 const HOST_RECORD_WINDOW: usize = 3;
+
+/// What one record in flight costs the host at its peak, in GiB.
+///
+/// A record holds its whole crawl on the host until the attempt artifact is
+/// published, and the object store keeps a same-disk backup twin of what it
+/// then stores. MDN, the largest site in the documentation catalog, moved the
+/// disk by about five gigabytes while it ran and gave it back on import; three
+/// smaller records together moved it by seven. Six is that peak rounded up,
+/// and it is deliberately the cost of the largest record rather than the
+/// average: the average is what filled the disk twice.
+const RECORD_PEAK_GIB: f64 = 6.0;
+
+/// How many records may be submitted against the free space this host just
+/// reported.
+///
+/// A window that ignores the disk is a guess, and both guesses were wrong: one
+/// starved the family behind foreign work, ten and then three killed the
+/// machine. The host answers `df -h` in its own preflight, so the number of
+/// slots is arithmetic rather than a constant, and an unreadable answer yields
+/// no slots at all - the family waits and says why, instead of finding out by
+/// filling a production disk.
+fn host_record_window(host_report: &Value) -> usize {
+    let Some(free_gib) = observed_free_gib(host_report) else {
+        return 0;
+    };
+    ((free_gib / RECORD_PEAK_GIB).floor().max(0.0) as usize).min(HOST_RECORD_WINDOW)
+}
 
 /// Whether this record is holding a slot on the host right now: submitted and
 /// not yet terminal, or mid-submission with a job that may already exist.
@@ -4850,13 +4921,14 @@ fn continue_start(run_id: &str) -> Result<Value> {
             .and_then(Value::as_array)
             .cloned()
             .unwrap_or_default();
+        let window = host_record_window(&host_report);
         let mut occupied = records.iter().filter(|record| record_occupies_host(record)).count();
         for record in records {
             let Some(record_name) = record.get("record").and_then(Value::as_str) else {
                 continue;
             };
             let occupies = record_occupies_host(&record);
-            if !occupies && occupied >= HOST_RECORD_WINDOW {
+            if !occupies && occupied >= window {
                 continue;
             }
             if !occupies {
