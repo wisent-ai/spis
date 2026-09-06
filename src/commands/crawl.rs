@@ -4777,6 +4777,34 @@ fn continue_record(
     })
 }
 
+/// How many records of one catalog may occupy a host at the same time.
+///
+/// A record retains its whole crawl on the host before the attempt artifact is
+/// published, and the object store keeps a same-disk backup twin of everything
+/// it stores, so one record's peak cost is a couple of gigabytes and ten
+/// records' peak cost is the machine. Both ends were measured on
+/// `charless-mac-mini`: with one record at a time the disk sat between 17 and
+/// 19 GiB free for an hour, and on 2026-09-06 with ten it fell from 18.4 GiB
+/// to 0.1 GiB in fifty minutes. The fleet's disk gate cannot prevent that -
+/// it stops new claims below the watermark and has no say over claims already
+/// running - and `--exclusive` prevents it only by demanding an idle machine,
+/// which on a host that also carries release and qualification work means the
+/// family never starts at all.
+///
+/// So the number of records in flight is this coordinator's decision, made
+/// where the per-record cost is known. Records already in flight are always
+/// driven forward; only new submissions wait for a slot.
+const HOST_RECORD_WINDOW: usize = 3;
+
+/// Whether this record is holding a slot on the host right now: submitted and
+/// not yet terminal, or mid-submission with a job that may already exist.
+fn record_occupies_host(record: &Value) -> bool {
+    matches!(
+        record.get("state").and_then(Value::as_str),
+        Some("preflight_passed" | "submitting" | "queued" | "running")
+    )
+}
+
 fn continue_start(run_id: &str) -> Result<Value> {
     let catalogs = load(Some(run_id))?
         .get("catalogs")
@@ -4822,10 +4850,18 @@ fn continue_start(run_id: &str) -> Result<Value> {
             .and_then(Value::as_array)
             .cloned()
             .unwrap_or_default();
+        let mut occupied = records.iter().filter(|record| record_occupies_host(record)).count();
         for record in records {
             let Some(record_name) = record.get("record").and_then(Value::as_str) else {
                 continue;
             };
+            let occupies = record_occupies_host(&record);
+            if !occupies && occupied >= HOST_RECORD_WINDOW {
+                continue;
+            }
+            if !occupies {
+                occupied += 1;
+            }
             if let Err(error) = continue_record(
                 run_id,
                 &catalog,
