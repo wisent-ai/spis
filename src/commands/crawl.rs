@@ -2952,14 +2952,22 @@ fn host_probe(host: &str, arguments: &[&str]) -> Value {
             HOST_PROBE_TIMEOUT,
             1024 * 1024,
         )?;
-        if !output.status.success() {
-            bail!(
-                "Stado host probe failed: {}",
+        // A non-zero exit is an answer, not a missing one: `stado host exec`
+        // prints its typed receipt on stdout either way, and that receipt is
+        // where the host records which executable it resolved for the command.
+        // Bailing on the exit status first threw that away and left the caller
+        // with an opaque "probe failed" - on `lukasz-macbook` it discarded the
+        // one receipt that names the host's own Stado binary, because
+        // `stado registry doctor` exits 1 while reporting 24 registry
+        // divergences. Readiness below is still exactly `status == ok` and
+        // `exit_code == 0`; only the evidence survives the failure now.
+        let receipt: Value = serde_json::from_slice(&output.stdout).with_context(|| {
+            format!(
+                "host probe receipt is not JSON (exit {}): {}",
+                output.status.code().unwrap_or(-1),
                 String::from_utf8_lossy(&output.stderr).trim()
-            );
-        }
-        let receipt: Value =
-            serde_json::from_slice(&output.stdout).context("host probe receipt is not JSON")?;
+            )
+        })?;
         let object = receipt
             .as_object()
             .context("host probe receipt must be an object")?;
