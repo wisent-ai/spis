@@ -1,0 +1,7 @@
+# Files Spis itself reads from the root of the corpus this checkout is (README: "Repository layout").
+example-catalogs.json — spis corpus adopt and validate read the canonical corpus index from the corpus root
+catalog-stats.json — spis generate-example-catalogs writes the catalog statistics at the corpus root, which publish-catalog-stats.yml watches
+accessibility-audit-index.json — spis audit-reference-accessibility reads and writes its index at the corpus root
+docs-plan.json — spis docs-site reads the documentation plan from the corpus root
+docs-brief.json — spis docs-site reads the CLI surface brief from the corpus root
+docs-sources.json — spis docs-site reads the documentation sources from the corpus root
