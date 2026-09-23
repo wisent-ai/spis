@@ -1,0 +1,11 @@
+# Terminal recordings asciinema wrote while each referenced TUI ran: one JSON event per line,
+# replayed by the example pages as they were captured, not source a person edits.
+tui-examples/references/11-k9s/media/product-motion.cast
+tui-examples/references/33-iredis/media/product-motion.cast
+tui-examples/references/42-spotify-player/media/product-motion.cast
+# The documentation-site examples the corpus holds, one measured JSON record per documentation site.
+documentation-site-examples/content-structure
+# The Weles bridge is one file by design: build.rs pins its SHA-256 as SPIS_BRIDGE_SCRIPT_SHA256 and
+# weles_provenance compares the running bridge against that pin, so code split into other files
+# would run outside the provenance check.
+weles-bridge/spis-weles-bridge.mjs
