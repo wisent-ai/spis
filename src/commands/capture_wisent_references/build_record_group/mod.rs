@@ -1,9 +1,9 @@
 use super::*;
 
-mod build_record;
+mod record;
 mod digest;
 mod write_sources;
 
-pub use build_record::*;
+pub use record::*;
 pub use digest::*;
 pub use write_sources::*;

@@ -1,5 +1,8 @@
 use super::*;
 
+mod cancel_race;
+mod command;
+
 pub(crate) fn continue_record(
     run_id: &str,
     catalog: &str,
@@ -75,103 +78,18 @@ pub(crate) fn continue_record(
         }
     };
 
-    let command = if matches!(state.as_str(), "preflight_passed" | "submitting") {
-        let retained = snapshot
-            .get("command")
-            .and_then(Value::as_array)
-            .into_iter()
-            .flatten()
-            .filter_map(Value::as_str)
-            .map(str::to_string)
-            .collect::<Vec<_>>();
-        match engine_command(&manifest, host) {
-            Ok(expected) if !retained.is_empty() && expected == retained => retained,
-            Ok(_) => {
-                return mark_record_failure(
-                    run_id,
-                    catalog,
-                    record_name,
-                    "unavailable",
-                    "retained_command_mismatch",
-                    "preflight-persisted command differs from the immutable attempt".into(),
-                );
-            }
-            Err(error) => {
-                return mark_record_failure(
-                    run_id,
-                    catalog,
-                    record_name,
-                    "unavailable",
-                    "worker_command_unavailable",
-                    error.to_string(),
-                );
-            }
-        }
-    } else {
-        let mut preflight = record_preflight(&mut manifest, host_report);
-        let mut ready = preflight.get("ready").and_then(Value::as_bool) == Some(true);
-        if ready {
-            let path = reference_path(&manifest.catalog, &manifest.record);
-            let display = path
-                .as_ref()
-                .map(|value| value.display().to_string())
-                .unwrap_or_else(|error| error.to_string());
-            if let Err(error) = path.and_then(|value| {
-                std::fs::read(&value)
-                    .map_err(anyhow::Error::from)
-                    .and_then(|bytes| finalize_manifest_identity(&mut manifest, &bytes))
-            }) {
-                ready = false;
-                preflight = json!({
-                    "schema": "wisent.crawl-record-preflight.v2",
-                    "record": manifest.record,
-                    "ready": false,
-                    "diagnostic": {
-                        "code": "runtime_manifest_finalization_failed",
-                        "message": error.to_string(),
-                        "path": display,
-                    },
-                });
-            }
-        }
-        let command = if ready {
-            engine_command(&manifest, host)
-        } else {
-            Err(anyhow!("exact record preflight failed"))
-        };
-        let command = match command {
-            Ok(command) => command,
-            Err(error) => {
-                let diagnostic = preflight
-                    .get("diagnostic")
-                    .cloned()
-                    .unwrap_or_else(|| {
-                        json!({"code": "worker_command_unavailable", "message": error.to_string()})
-                    });
-                mutate_record(run_id, catalog, record_name, |entry| {
-                    entry["manifest"] = serde_json::to_value(&manifest)?;
-                    entry["preflight"] = preflight;
-                    entry["state"] = json!("unavailable");
-                    entry["diagnostic"] = diagnostic;
-                    Ok(())
-                })?;
-                return Ok(());
-            }
-        };
-        mutate_record(run_id, catalog, record_name, |entry| {
-            if entry.get("stado_job_id").and_then(Value::as_str).is_some()
-                || entry.get("cancel_intent").is_some_and(Value::is_object)
-            {
-                return Ok(());
-            }
-            entry["manifest"] = serde_json::to_value(&manifest)?;
-            entry["preflight"] = preflight;
-            entry["command"] = json!(command);
-            entry["state"] = json!("preflight_passed");
-            entry["diagnostic"] = Value::Null;
-            Ok(())
-        })?;
-        command
+    let Some(command) = command::prepared_command(
+        &snapshot,
+        &state,
+        run_id,
+        catalog,
+        host,
+        host_report,
+        record_name,
+        &mut manifest,
+    )?
+    else {
+        return Ok(());
     };
 
     let before_submit = record_snapshot(run_id, catalog, record_name)?;
@@ -335,53 +253,5 @@ pub(crate) fn continue_record(
         }
         Ok(())
     })?;
-    let retained = record_snapshot(run_id, catalog, record_name)?;
-    if !retained.get("cancel_intent").is_some_and(Value::is_object) {
-        return Ok(());
-    }
-    let Some(job_id) = retained.get("stado_job_id").and_then(Value::as_str) else {
-        return Ok(());
-    };
-    let cancellation = match machine_status(job_id) {
-        Ok(job) if terminal_machine_state(machine_state(&job)) => {
-            Ok(json!({"state": "noop_terminal", "observed_job": job}))
-        }
-        Ok(job) => {
-            let output = stado_command()
-                .args(["machine", "cancel", job_id])
-                .output()
-                .context("cancel Stado job after submission race")?;
-            if output.status.success() {
-                let response = serde_json::from_slice(&output.stdout)
-                    .unwrap_or_else(|_| json!({"stdout": String::from_utf8_lossy(&output.stdout).trim()}));
-                Ok(json!({"state": "cancel_dispatched", "observed_job": job, "response": response}))
-            } else {
-                Err(anyhow!(
-                    "Stado refused race cancellation: {}",
-                    String::from_utf8_lossy(&output.stderr).trim()
-                ))
-            }
-        }
-        Err(error) => Err(anyhow!(
-            "status-first race cancellation failed: {}",
-            error.diagnostic
-        )),
-    };
-    mutate_record(run_id, catalog, record_name, |entry| {
-        match cancellation {
-            Ok(result) => {
-                entry["state"] = json!("cancelled");
-                entry["cancel_result"] = result;
-                entry["diagnostic"] = Value::Null;
-            }
-            Err(error) => {
-                entry["state"] = json!("cancel_pending");
-                entry["diagnostic"] = json!({
-                    "code": "cancel_dispatch_failed",
-                    "message": error.to_string(),
-                });
-            }
-        }
-        Ok(())
-    })
+    cancel_race::settle_cancel_race(run_id, catalog, record_name)
 }
