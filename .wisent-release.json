@@ -14,6 +14,9 @@
       "build": {
         "argv": ["sh", "scripts/build-release.sh"]
       },
+      "tests": [
+        {"name": "crawl", "argv": ["cargo", "test", "--locked", "--test", "crawl_host_resolved_executable"]}
+      ],
       "stage": {
         "release/bin/spis": "bin/spis",
         "release/spis-darwin-arm64.tar.gz": "release/spis-darwin-arm64.tar.gz",
