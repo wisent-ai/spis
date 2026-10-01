@@ -219,7 +219,6 @@ pub(crate) fn storage_get(uri: &str, destination: &Path) -> Outcome<()> {
     let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "download retained Weles evidence",
-        Duration::from_secs(300),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

@@ -255,7 +255,6 @@ pub(crate) fn download_uri(uri: &str, destination: &Path) -> Result<()> {
     let output = bounded_command_output(
         &mut command,
         "download retained crawl object",
-        Duration::from_secs(600),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

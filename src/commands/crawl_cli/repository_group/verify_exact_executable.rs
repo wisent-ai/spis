@@ -35,7 +35,6 @@ pub(crate) fn verify_exact_executable(
     let hostname = crate::commands::crawl::bounded_command_output(
         &mut hostname_command,
         "read CLI worker hostname",
-        Duration::from_secs(10),
         64 * 1024,
     )?;
     if !hostname.status.success() {
@@ -110,7 +109,6 @@ pub(crate) fn verify_exact_executable(
     let version = crate::commands::crawl::bounded_command_output(
         &mut version_command,
         "read exact CLI version",
-        Duration::from_secs(30),
         1024 * 1024,
     )
     .with_context(|| format!("read exact CLI version from {}", path.display()))?;
@@ -150,7 +148,6 @@ pub(crate) fn tmux(
     let output = crate::commands::crawl::bounded_command_output(
         &mut command,
         context,
-        Duration::from_secs(30),
         MAXIMUM_CAPTURE_BYTES,
     )?;
     if !output.status.success() {
@@ -180,7 +177,6 @@ impl Drop for TmuxSession {
         let _ = crate::commands::crawl::bounded_command_output(
             &mut command,
             "close private CLI PTY",
-            Duration::from_secs(5),
             64 * 1024,
         );
     }

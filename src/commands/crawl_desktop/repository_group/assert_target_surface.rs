@@ -78,7 +78,6 @@ pub(crate) fn readiness_observation(
     let output = crate::commands::crawl::bounded_command_output(
         &mut readiness,
         "run fresh desktop runtime-readiness verification",
-        Duration::from_secs(120),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {
@@ -137,7 +136,6 @@ pub(crate) fn verify_desktop_executable(
         let output = crate::commands::crawl::bounded_command_output(
             &mut command,
             "read desktop bundle metadata",
-            Duration::from_secs(30),
             1024 * 1024,
         )
         .with_context(|| format!("read {key} from {}", info.display()))?;
@@ -251,7 +249,7 @@ pub(crate) fn terminate_pre_existing(
 ) -> Result<Vec<i64>> {
     let pre_existing = running_instances(driver, session, bundle_id)?;
     for pid in &pre_existing {
-        call_briefly(
+        call(
             driver,
             "terminate_app",
             &json!({"session": session, "pid": pid}),

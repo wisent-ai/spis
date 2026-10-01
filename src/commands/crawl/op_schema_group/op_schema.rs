@@ -6,31 +6,6 @@ pub(crate) const RUN_SCHEMA: &str = "wisent.crawl-run.v1";
 
 pub(crate) const SUBMISSION_SCHEMA: &str = "wisent.crawl-submission.v1";
 
-pub(crate) const HOST_PROBE_TIMEOUT: Duration = Duration::from_secs(30);
-
-#[derive(Debug)]
-pub(crate) struct CommandTimedOut {
-    pub(crate) operation: String,
-    pub(crate) timeout: Duration,
-    pub(crate) stdout: Vec<u8>,
-    pub(crate) stderr: Vec<u8>,
-}
-
-impl std::fmt::Display for CommandTimedOut {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            formatter,
-            "{} exceeded hard timeout {:?}; stdout={:?}; stderr={:?}",
-            self.operation,
-            self.timeout,
-            String::from_utf8_lossy(&self.stdout),
-            String::from_utf8_lossy(&self.stderr)
-        )
-    }
-}
-
-impl std::error::Error for CommandTimedOut {}
-
 /// Every product family and the engine that crawls it.
 ///
 /// Public because the generated documentation enumerates it: `docs_site`

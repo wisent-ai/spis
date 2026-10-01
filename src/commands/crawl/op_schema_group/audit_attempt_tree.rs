@@ -140,7 +140,6 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         let output = bounded_command_output(
             &mut stado,
             "archive crawl attempt",
-            Duration::from_secs(600),
             4 * 1024 * 1024,
         )?;
         if !output.status.success() {
@@ -160,7 +159,6 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         let output = bounded_command_output(
             &mut stado,
             "publish crawl attempt",
-            Duration::from_secs(600),
             4 * 1024 * 1024,
         )?;
         if !output.status.success() {
@@ -176,7 +174,6 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         let output = bounded_command_output(
             &mut stado,
             "read back crawl attempt",
-            Duration::from_secs(600),
             4 * 1024 * 1024,
         )?;
         if !output.status.success() {

@@ -42,7 +42,6 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
     let output = crate::commands::crawl::bounded_command_output(
         &mut version_command,
         "read pinned mobile readiness helper version",
-        Duration::from_secs(15),
         64 * 1024,
     )?;
     if !output.status.success() {
@@ -115,7 +114,6 @@ pub(crate) fn readiness_observation(
     let output = crate::commands::crawl::bounded_command_output(
         &mut readiness,
         "run fresh mobile runtime-readiness verification",
-        Duration::from_secs(120),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

@@ -147,8 +147,6 @@ pub(crate) const WRITER_LIVENESS_TIMEOUT: Duration = Duration::from_secs(180);
 
 pub(crate) const STADO_OUTPUT_LIMIT: usize = 1024 * 1024;
 
-pub(crate) const STADO_COMMAND_TIMEOUT: Duration = Duration::from_secs(30 * 60);
-
 pub(crate) const DNS_LOOKUP_TIMEOUT: Duration = Duration::from_secs(15);
 
 /// Longest `Allow:`/`Disallow:` value accepted from a served robots.txt. Real

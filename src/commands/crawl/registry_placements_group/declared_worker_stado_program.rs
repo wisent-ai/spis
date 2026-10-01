@@ -23,7 +23,6 @@ pub(crate) fn declared_worker_stado_program(host: &str) -> Result<String> {
         let output = bounded_command_output(
             &mut command,
             "read declared Stado agent program",
-            Duration::from_secs(120),
             16 * 1024 * 1024,
         );
         match output {
@@ -165,17 +164,16 @@ pub(crate) fn host_preflight(
         && admission;
     let retryable = !ready && host_preflight_is_retryable(&json!({"checks": checks}));
     let diagnostic = retryable.then(|| {
-        let timed_out_probes = checks
+        let retryable_checks = checks
             .iter()
-            .filter(|check| check.get("outcome").and_then(Value::as_str) == Some("timed_out"))
-            .filter_map(|check| check.get("command").cloned())
+            .filter(|check| check.pointer("/diagnostic/retryable").and_then(Value::as_bool) == Some(true))
+            .filter_map(|check| check.get("diagnostic").cloned())
             .collect::<Vec<_>>();
         json!({
-            "code": "host_probe_timed_out",
+            "code": "host_check_retryable",
             "retryable": true,
-            "message": "host did not answer every capability probe before its hard deadline",
-            "timed_out_probes": timed_out_probes,
-            "timeout_seconds": HOST_PROBE_TIMEOUT.as_secs(),
+            "message": "a host capability check answered with a refusal it marks retryable",
+            "checks": retryable_checks,
         })
     });
     json!({

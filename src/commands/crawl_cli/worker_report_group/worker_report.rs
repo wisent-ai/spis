@@ -108,7 +108,6 @@ pub(crate) fn submit(request: Submission<'_>) -> Result<()> {
     let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit CLI crawl through Stado",
-        Duration::from_secs(120),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

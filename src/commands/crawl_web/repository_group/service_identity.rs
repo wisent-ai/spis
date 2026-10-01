@@ -65,7 +65,6 @@ pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) ->
     let output = crate::commands::crawl::bounded_command_output(
         &mut curl,
         "read the Weles service release identity",
-        Duration::from_secs(30),
         256 * 1024,
     )?;
     if !output.status.success() {

@@ -81,7 +81,6 @@ pub(crate) fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
     let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit desktop crawl through Stado",
-        Duration::from_secs(120),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

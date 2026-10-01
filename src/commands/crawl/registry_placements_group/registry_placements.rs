@@ -6,7 +6,6 @@ pub(crate) fn registry_placements() -> Result<(BTreeMap<String, String>, Option<
     let output = bounded_command_output(
         &mut command,
         "Stado registry pull",
-        Duration::from_secs(60),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

@@ -49,9 +49,9 @@ pub(crate) fn continue_record(
             .cloned()
             .unwrap_or_else(|| {
                 json!({
-                    "code": "host_probe_timed_out",
+                    "code": "host_check_retryable",
                     "retryable": true,
-                    "message": "host capability probe timed out",
+                    "message": "a host capability check answered with a refusal it marks retryable",
                 })
             });
         mutate_record(run_id, catalog, record_name, |entry| {

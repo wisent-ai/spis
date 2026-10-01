@@ -37,7 +37,6 @@ pub(crate) fn import_artifact_from_archive(
             let output = crate::commands::crawl::bounded_command_output(
                 &mut command,
                 "download immutable documentation corpus artifact",
-                std::time::Duration::from_secs(30 * 60),
                 super::crawl_docs::STADO_OUTPUT_LIMIT,
             )?;
             if !output.status.success() {

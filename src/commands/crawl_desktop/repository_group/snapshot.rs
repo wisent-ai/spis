@@ -31,7 +31,6 @@ pub(crate) fn snapshot(
             std::ffi::OsStr::new("--screenshot-out-file"),
             screenshot.as_os_str(),
         ],
-        Duration::from_secs(30),
     )?;
     let metadata = std::fs::symlink_metadata(screenshot)
         .with_context(|| format!("read fresh screenshot metadata {}", screenshot.display()))?;

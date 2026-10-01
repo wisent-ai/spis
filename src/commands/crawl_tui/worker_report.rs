@@ -112,7 +112,6 @@ pub(crate) fn submit(
     let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit TUI crawl through Stado",
-        Duration::from_secs(120),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

@@ -49,7 +49,6 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
             ])
             .arg(&source),
         "publish worker report",
-        Duration::from_secs(120),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {
@@ -69,7 +68,6 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
             .args(["storage", "get", &manifest.output_uri])
             .arg(&readback),
         "read back worker report",
-        Duration::from_secs(120),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

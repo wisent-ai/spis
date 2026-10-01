@@ -9,7 +9,6 @@ pub(crate) fn host_probe(host: &str, arguments: &[&str]) -> Value {
         let output = bounded_command_output(
             &mut command,
             "Stado host probe",
-            HOST_PROBE_TIMEOUT,
             1024 * 1024,
         )?;
         // A non-zero exit is an answer, not a missing one: `stado host exec`
@@ -124,9 +123,6 @@ pub(crate) fn host_probe(host: &str, arguments: &[&str]) -> Value {
             "stado_receipt": receipt,
         }),
         Err(error) => {
-            if let Some(timeout) = error.downcast_ref::<CommandTimedOut>() {
-                return host_probe_timeout_report(arguments, timeout.timeout.as_secs());
-            }
             json!({
                 "command": arguments,
                 "outcome": "failed",
@@ -140,27 +136,6 @@ pub(crate) fn host_probe(host: &str, arguments: &[&str]) -> Value {
             })
         }
     }
-}
-
-/// Typed evidence that a host probe gave no answer before its hard deadline.
-#[doc(hidden)]
-pub fn host_probe_timeout_report(arguments: &[&str], timeout_seconds: u64) -> Value {
-    let command = arguments.join(" ");
-    let message =
-        format!("host did not answer probe `{command}` within {timeout_seconds} seconds");
-    json!({
-        "command": arguments,
-        "outcome": "timed_out",
-        "ready": false,
-        "diagnostic": {
-            "code": "host_probe_timed_out",
-            "retryable": true,
-            "message": message,
-            "probe": arguments,
-            "timeout_seconds": timeout_seconds,
-        },
-        "error": message,
-    })
 }
 
 pub(crate) fn host_preflight_is_retryable(report: &Value) -> bool {

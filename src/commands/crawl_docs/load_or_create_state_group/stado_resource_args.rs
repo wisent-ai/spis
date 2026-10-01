@@ -40,7 +40,6 @@ pub(crate) fn storage_artifact_present(uri: &str, context: &str) -> Result<bool>
     let output = crate::commands::crawl::bounded_command_output(
         &mut command,
         context,
-        Duration::from_secs(60),
         STADO_OUTPUT_LIMIT,
     )?;
     if !output.status.success() {
@@ -163,7 +162,6 @@ pub(crate) fn submit_worker(
     let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit documentation crawl through Stado",
-        STADO_COMMAND_TIMEOUT,
         STADO_OUTPUT_LIMIT,
     )?;
     if !output.status.success() {

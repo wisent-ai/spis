@@ -72,7 +72,6 @@ pub(crate) fn submit_worker(
     let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit web crawl through Stado",
-        Duration::from_secs(120),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

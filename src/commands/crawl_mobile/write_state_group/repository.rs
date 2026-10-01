@@ -139,7 +139,6 @@ pub(crate) fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
     let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit mobile crawl through Stado",
-        Duration::from_secs(120),
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {

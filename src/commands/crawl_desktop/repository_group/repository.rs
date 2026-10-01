@@ -87,7 +87,6 @@ pub(crate) fn pin_cua_driver() -> Result<CuaDriver> {
     let output = crate::commands::crawl::bounded_command_output(
         &mut version_command,
         "read pinned Cua Driver version",
-        Duration::from_secs(15),
         64 * 1024,
     )?;
     if !output.status.success() {
@@ -146,7 +145,6 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
     let output = crate::commands::crawl::bounded_command_output(
         &mut version_command,
         "read pinned desktop readiness helper version",
-        Duration::from_secs(15),
         64 * 1024,
     )?;
     if !output.status.success() {
@@ -164,12 +162,7 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
 }
 
 pub(crate) fn call(driver: &CuaDriver, tool: &str, payload: &Value) -> Result<Value> {
-    call_with_cli_options(driver, tool, payload, &[], Duration::from_secs(30))
-}
-
-/// Cleanup deadline. A guard must never block the worker (finding 4).
-pub(crate) fn call_briefly(driver: &CuaDriver, tool: &str, payload: &Value) -> Result<Value> {
-    call_with_cli_options(driver, tool, payload, &[], Duration::from_secs(5))
+    call_with_cli_options(driver, tool, payload, &[])
 }
 
 pub(crate) fn call_with_cli_options(
@@ -177,7 +170,6 @@ pub(crate) fn call_with_cli_options(
     tool: &str,
     payload: &Value,
     options: &[&std::ffi::OsStr],
-    timeout: Duration,
 ) -> Result<Value> {
     let mut command = Command::new(&driver.path);
     command.arg(tool).arg(serde_json::to_string(payload)?);
@@ -185,7 +177,6 @@ pub(crate) fn call_with_cli_options(
     let output = crate::commands::crawl::bounded_command_output(
         &mut command,
         &format!("cua-driver {tool}"),
-        timeout,
         4 * 1024 * 1024,
     )?;
     if !output.status.success() {
@@ -207,7 +198,7 @@ pub(crate) struct SessionGuard {
 
 impl Drop for SessionGuard {
     fn drop(&mut self) {
-        let _ = call_briefly(&self.driver, "end_session", &json!({"session": self.session}));
+        let _ = call(&self.driver, "end_session", &json!({"session": self.session}));
     }
 }
 
@@ -222,7 +213,7 @@ pub(crate) struct AppGuard {
 
 impl Drop for AppGuard {
     fn drop(&mut self) {
-        let _ = call_briefly(
+        let _ = call(
             &self.driver,
             "terminate_app",
             &json!({"session": self.session, "pid": self.pid}),
@@ -253,7 +244,7 @@ impl RecordingGuard {
 impl Drop for RecordingGuard {
     fn drop(&mut self) {
         if self.active {
-            let _ = call_briefly(
+            let _ = call(
                 &self.driver,
                 "stop_recording",
                 &json!({"session": self.session}),

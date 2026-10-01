@@ -18,7 +18,6 @@ pub(crate) fn bounded_git(arguments: &[&str], operation: &str) -> Result<Output>
     bounded_command_output(
         &mut command,
         operation,
-        Duration::from_secs(30),
         4 * 1024 * 1024,
     )
 }
@@ -182,10 +181,12 @@ pub(crate) fn read_bounded<R: Read>(mut reader: R, maximum: usize) -> std::io::R
     Ok((retained, overflow))
 }
 
+/// Runs `command` to completion with its stdout and stderr captured up to
+/// `maximum_stream_bytes` each. There is no deadline: the child's own exit,
+/// or its own error, is the answer (cli.md rule 8).
 pub(crate) fn bounded_command_output(
     command: &mut Command,
     operation: &str,
-    timeout: Duration,
     maximum_stream_bytes: usize,
 ) -> Result<Output> {
     use std::process::Stdio;
@@ -203,36 +204,13 @@ pub(crate) fn bounded_command_output(
     let stderr = child.stderr.take().context("capture bounded child stderr")?;
     let stdout_reader = std::thread::spawn(move || read_bounded(stdout, maximum_stream_bytes));
     let stderr_reader = std::thread::spawn(move || read_bounded(stderr, maximum_stream_bytes));
-    let deadline = Instant::now() + timeout;
-    let (status, timed_out) = loop {
-        if let Some(status) = child.try_wait()? {
-            break (status, false);
-        }
-        if Instant::now() >= deadline {
-            #[cfg(unix)]
-            unsafe {
-                libc::kill(-(child.id() as i32), libc::SIGKILL);
-            }
-            let _ = child.kill();
-            break (child.wait()?, true);
-        }
-        std::thread::sleep(Duration::from_millis(20));
-    };
+    let status = child.wait().with_context(|| format!("{operation} did not report an exit status"))?;
     let (stdout, stdout_overflow) = stdout_reader
         .join()
         .map_err(|_| anyhow!("{operation} stdout reader panicked"))??;
     let (stderr, stderr_overflow) = stderr_reader
         .join()
         .map_err(|_| anyhow!("{operation} stderr reader panicked"))??;
-    if timed_out {
-        return Err(CommandTimedOut {
-            operation: operation.to_string(),
-            timeout,
-            stdout,
-            stderr,
-        }
-        .into());
-    }
     if stdout_overflow || stderr_overflow {
         bail!("{operation} exceeded the {maximum_stream_bytes}-byte stdout/stderr bound");
     }

@@ -32,7 +32,6 @@ impl Drop for TmuxSession {
         let _ = crate::commands::crawl::bounded_command_output(
             &mut command,
             "close private TUI PTY",
-            Duration::from_secs(5),
             64 * 1024,
         );
     }

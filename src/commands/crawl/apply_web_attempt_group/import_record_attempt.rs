@@ -215,7 +215,6 @@ pub(crate) fn run_spis_command(arguments: &[&str]) -> Result<String> {
     let output = bounded_command_output(
         &mut command,
         "Spis catalog maintenance command",
-        Duration::from_secs(900),
         8 * 1024 * 1024,
     )?;
     if !output.status.success() {

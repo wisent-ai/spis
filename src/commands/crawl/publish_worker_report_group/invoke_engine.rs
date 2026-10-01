@@ -10,7 +10,6 @@ pub(crate) fn invoke_engine(args: &[String], host: &str, host_report: &Value) ->
     bounded_command_output(
         &mut command,
         "crawler coordinator",
-        Duration::from_secs(180),
         8 * 1024 * 1024,
     )
 }

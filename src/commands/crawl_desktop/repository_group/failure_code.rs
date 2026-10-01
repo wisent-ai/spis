@@ -156,7 +156,6 @@ pub(crate) fn preflight(driver: &CuaDriver) -> Result<()> {
     let output = crate::commands::crawl::bounded_command_output(
         &mut command,
         "Cua Driver permission status",
-        Duration::from_secs(15),
         1024 * 1024,
     )?;
     if !output.status.success() {
