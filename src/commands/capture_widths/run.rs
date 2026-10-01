@@ -74,7 +74,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 "artifact_prefix": format!("{NAMESPACE}{batch}/{catalog}/{slug}/{width}/"),
                 "full_page": true,
                 "record_seconds": 0,
-                "steps": [{"op": "wait_ms", "value": 2500}],
+                "steps": [{"op": "settle"}],
             }));
         }
     }
