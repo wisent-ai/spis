@@ -98,12 +98,34 @@ pub(crate) const ADD_SPECS: &[FlagSpec] = &[
     },
 ];
 
-const USAGE: &str = "usage: spis reference-record <add|get|remove> [flags]
+/// The flags `edit` takes: the metadata `add` set, without the name and the
+/// image, which are the record's identity.
+pub(crate) const EDIT_SPECS: &[FlagSpec] = &[
+    FlagSpec {
+        name: "--source-url",
+        takes_value: true,
+    },
+    FlagSpec {
+        name: "--category",
+        takes_value: true,
+    },
+    FlagSpec {
+        name: "--selection-note",
+        takes_value: true,
+    },
+    FlagSpec {
+        name: "--owner",
+        takes_value: true,
+    },
+];
+
+const USAGE: &str = "usage: spis reference-record <add|get|edit|remove> [flags]
   spis reference-record add <catalog> --name N --source-url U --category C --selection-note S --visual F [--owner O]
   spis reference-record get <catalog> <NN|slug>
+  spis reference-record edit <catalog> <NN|slug> [--source-url U] [--category C] [--selection-note S] [--owner O]
   spis reference-record remove <catalog> <NN|slug> [--force]";
 
-/// `spis reference-record <add|get|remove> ...`
+/// `spis reference-record <add|get|edit|remove> ...`
 pub fn run(rest: &[String]) -> Result<()> {
     // `--help` anywhere answers with the usage and never reads or changes a catalog.
     if rest.iter().any(|arg| arg == "--help" || arg == "-h") {
@@ -130,6 +152,18 @@ pub fn run(rest: &[String]) -> Result<()> {
                 owner: optional_flag(&flags, "--owner"),
             })
         }
+        "edit" => {
+            let (positionals, flags) = parse_flags(&rest[1..], EDIT_SPECS, &[])?;
+            let pos = require_positionals(&positionals, &["catalog", "identifier"])?;
+            edit(&EditArgs {
+                catalog: pos[0].clone(),
+                identifier: pos[1].clone(),
+                source_url: optional_flag(&flags, "--source-url"),
+                category: optional_flag(&flags, "--category"),
+                selection_note: optional_flag(&flags, "--selection-note"),
+                owner: optional_flag(&flags, "--owner"),
+            })
+        }
         "get" | "remove" => {
             let extra_specs: &[FlagSpec] = if command == "get" {
                 &[]
@@ -148,6 +182,6 @@ pub fn run(rest: &[String]) -> Result<()> {
                 remove(&pos[0], &pos[1], force)
             }
         }
-        other => Err(crate::commands::usage(format!("reference: unknown command {other:?}; it takes add, get or remove\n{USAGE}"))),
+        other => Err(crate::commands::usage(format!("reference: unknown command {other:?}; it takes add, get, edit or remove\n{USAGE}"))),
     }
 }

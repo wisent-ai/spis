@@ -1,6 +1,6 @@
 //! `spis reference-record` — Rust port of `reference-record.py`.
 //!
-//! Add, get, or remove a single reference record inside a product-type catalog.
+//! Add, get, edit or remove a single reference record inside a product-type catalog.
 //!
 //! A record is one numbered product reference: an overview image plus
 //! `references/<NN-slug>/reference.json`. Adding scaffolds the record honestly —
@@ -18,8 +18,10 @@ use crate::commands::reference_contract;
 
 mod catalog_dir;
 mod add;
+mod edit;
 mod parse_flags;
 
 pub use catalog_dir::*;
 pub use add::*;
+pub use edit::*;
 pub use parse_flags::*;
