@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "Spis",
-  "decidedBy": "Lukasz Bartoszcze (operator instruction, session 2026-08-21)",
+  "decidedBy": "operator",
   "components": [
     {
       "id": "landing.header",
