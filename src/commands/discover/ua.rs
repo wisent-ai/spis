@@ -9,9 +9,8 @@ pub(crate) const FAMILIES: &[&str] = &[
 ];
 
 /// GET raw bytes with the discovery User-Agent; returns (body, content type).
-pub(crate) fn fetch(url: &str, timeout_secs: u64) -> Result<(Vec<u8>, String)> {
+pub(crate) fn fetch(url: &str) -> Result<(Vec<u8>, String)> {
     let resp = ureq::get(url)
-        .timeout(Duration::from_secs(timeout_secs))
         .set("User-Agent", UA)
         .call()
         .map_err(|e| anyhow::anyhow!("{e}"))?;

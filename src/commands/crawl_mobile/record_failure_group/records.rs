@@ -53,7 +53,6 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
         // Same bounded, redirect-free treatment as every Appium read: no
         // unbounded into_json and no cross-origin redirect (findings 12/12b).
         let agent = ureq::AgentBuilder::new()
-            .timeout(Duration::from_secs(20))
             .redirects(0)
             .build();
         let response = agent

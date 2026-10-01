@@ -6,8 +6,6 @@ pub(crate) const USER_AGENT: &str = crate::USER_AGENT;
 
 pub(crate) const SCHEMA: &str = "wisent.upstream-drift-report.v1";
 
-pub(crate) const TIMEOUT_SECS: u64 = 20;
-
 pub(crate) const GONE_CODES: &[u16] = &[400, 404, 410];
 
 pub(crate) const GUARDED_CODES: &[u16] = &[401, 403, 405, 429, 451, 501, 503];
@@ -42,7 +40,6 @@ impl Drift {
 
 pub(crate) fn agent() -> ureq::Agent {
     ureq::AgentBuilder::new()
-        .timeout(Duration::from_secs(TIMEOUT_SECS))
         .user_agent(USER_AGENT)
         .build()
 }

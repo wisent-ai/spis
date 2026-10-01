@@ -54,7 +54,6 @@ pub(crate) struct Fetched {
 
 pub(crate) fn fetch(url: &str, maximum: usize, accept: &str) -> Result<Fetched> {
     let resp = ureq::get(url)
-        .timeout(std::time::Duration::from_secs(15))
         .set("User-Agent", USER_AGENT)
         .set("Accept", accept)
         .call()

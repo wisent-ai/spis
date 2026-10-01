@@ -202,7 +202,6 @@ pub(crate) fn bounded_http_get(
         .redirects(0)
         .try_proxy_from_env(false)
         .resolver(move |_netloc: &str| Ok(pinned_addresses.as_ref().clone()))
-        .timeout(Duration::from_secs(45))
         .build();
     let mut current = requested.clone();
     for redirect in 0..=MAX_REDIRECTS {

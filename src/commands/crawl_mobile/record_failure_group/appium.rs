@@ -7,7 +7,6 @@ impl Appium {
             // Zero redirects: an Appium reply may not send this worker, its
             // session id or its screenshots to another origin (finding 12b).
             agent: ureq::AgentBuilder::new()
-                .timeout(Duration::from_secs(45))
                 .redirects(0)
                 .build(),
         })

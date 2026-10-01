@@ -60,7 +60,6 @@ pub(crate) mod robots {
     use super::USER_AGENT;
     use parking_lot::Mutex;
     use std::collections::HashMap;
-    use std::time::Duration;
 
     #[derive(Clone)]
     struct Rule {
@@ -87,7 +86,6 @@ pub(crate) mod robots {
         let mut groups: Vec<(Vec<String>, Vec<Rule>)> = Vec::new();
         let url = format!("{origin}/robots.txt");
         let response = ureq::get(&url)
-            .timeout(Duration::from_secs(15))
             .set("User-Agent", USER_AGENT)
             .call();
         let body = match response {
@@ -210,59 +208,6 @@ pub fn maybe_gunzip(body: &[u8]) -> Vec<u8> {
     } else {
         body.to_vec()
     }
-}
-
-pub fn http_get_with_retry(url: &str, tries: u32) -> Result<(u16, String)> {
-    // Some servers stream bodies slower than any sane timeout; ureq's own
-    // deadline does not always fire during body streaming, so each attempt
-    // runs under a hard join-timeout. A timed-out attempt leaks its thread
-    // until the server closes — accepted because such stragglers are rare.
-    const ATTEMPT_DEADLINE: Duration = Duration::from_secs(45);
-
-    for attempt in 1..=tries {
-        let (tx, rx) = std::sync::mpsc::channel::<Result<(u16, String)>>();
-        let url_owned = url.to_string();
-        std::thread::spawn(move || {
-            use std::io::Read as _;
-            let resp = ureq::get(&url_owned)
-                .timeout(ATTEMPT_DEADLINE)
-                .set("User-Agent", USER_AGENT)
-                .call();
-            let result = match resp {
-                Ok(r) => {
-                    let status = r.status() as u16;
-                    let mut body = Vec::new();
-                    let read = r.into_reader().take(256 << 20).read_to_end(&mut body);
-                    match read {
-                        Ok(_) => Ok((status, String::from_utf8_lossy(&body).to_string())),
-                        Err(e) => Err(anyhow::anyhow!("body read: {e}")),
-                    }
-                }
-                Err(ureq::Error::Status(code, _)) => Err(anyhow::anyhow!("HTTP {code}")),
-                Err(e) => Err(anyhow::anyhow!("{e}")),
-            };
-            let _ = tx.send(result);
-        });
-        match rx.recv_timeout(ATTEMPT_DEADLINE) {
-            Ok(Ok(pair)) => return Ok(pair),
-            Ok(Err(e)) => {
-                let msg = format!("{e:#}");
-                let retryable = ["HTTP 429", "HTTP 500", "HTTP 502", "HTTP 503", "HTTP 504"]
-                    .iter()
-                    .any(|m| msg.contains(m));
-                if retryable && attempt < tries {
-                    std::thread::sleep(Duration::from_secs(2));
-                    continue;
-                }
-                bail!("{msg}");
-            }
-            Err(_) => bail!(
-                "attempt timed out after {}s: {url}",
-                ATTEMPT_DEADLINE.as_secs()
-            ),
-        }
-    }
-    unreachable!("retry loop always returns or bails")
 }
 
 pub fn robots_allows(url: &str) -> bool {

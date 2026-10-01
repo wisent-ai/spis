@@ -70,7 +70,6 @@ pub(crate) fn brama_rank(start_url: &str, links: &Links, limit: usize) -> Option
     };
     let parsed: Result<serde_json::Value> = (|| {
         let mut request = ureq::post(&endpoint)
-            .timeout(Duration::from_secs(60))
             .set("Content-Type", "application/json");
         if let Some(token) = &router_token {
             request = request.set("Authorization", &format!("Bearer {token}"));
@@ -169,7 +168,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     };
     let directory = std::path::PathBuf::from(&slug);
 
-    let (html_bytes, _) = fetch(&start_url, 25)?;
+    let (html_bytes, _) = fetch(&start_url)?;
     let links = extract_links(&start_url, &html_bytes, max_links);
     println!(
         "discovered {} same-origin links on {start_url}",
@@ -224,7 +223,7 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     for (url, family) in &selected {
         let thumb_url = format!("{THUMB}{url}");
-        let (image_bytes, _) = fetch(&thumb_url, 40)?;
+        let (image_bytes, _) = fetch(&thumb_url)?;
         let tmp_name: String = url
             .to_lowercase()
             .chars()
