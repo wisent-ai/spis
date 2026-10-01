@@ -256,22 +256,17 @@ pub(crate) fn terminate_pre_existing(
         )
         .with_context(|| format!("terminate pre-existing {bundle_id} instance {pid}"))?;
     }
+    // One read after the terminations, no polling loop (cli.md rule 8): an
+    // instance still listed is the named failure, and the record is retried.
     if !pre_existing.is_empty() {
-        let deadline = SystemTime::now() + Duration::from_secs(15);
-        loop {
-            let remaining = running_instances(driver, session, bundle_id)?;
-            if remaining.is_empty() {
-                break;
-            }
-            if SystemTime::now() >= deadline {
-                return Err(anyhow::Error::new(RecordFailure {
-                    code: "desktop_stale_instance_survived",
-                    message: format!(
-                        "{bundle_id} instances {remaining:?} survived termination; the launch would not be cold"
-                    ),
-                }));
-            }
-            std::thread::sleep(Duration::from_millis(200));
+        let remaining = running_instances(driver, session, bundle_id)?;
+        if !remaining.is_empty() {
+            return Err(anyhow::Error::new(RecordFailure {
+                code: "desktop_stale_instance_survived",
+                message: format!(
+                    "{bundle_id} instances {remaining:?} were still running after terminate_app; the launch would not be cold"
+                ),
+            }));
         }
     }
     Ok(pre_existing)
