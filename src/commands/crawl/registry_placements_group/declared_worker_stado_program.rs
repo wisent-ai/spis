@@ -61,10 +61,10 @@ pub(crate) fn declared_worker_stado_program(host: &str) -> Result<String> {
         // The registry can manage a unit while its declaration says nothing
         // about what that unit runs, and no command completes such an entry:
         // `service declare` demands an endpoint a queue agent does not have,
-        // and `service adopt` refuses a name the registry already manages. On
-        // `lukasz-macbook` that left every record refused with
-        // `observed_count=0` while the agent was running and visible to
-        // `service label-print`. So ask the host the same way this crawl asks
+        // and `service adopt` refuses a name the registry already manages.
+        // Such a host would refuse every record with `observed_count=0` while
+        // the agent runs and is visible to `service label-print`. So ask the
+        // host the same way this crawl asks
         // it for `cargo`: one allowlisted Stado probe, whose receipt names the
         // absolute executable the host itself resolved. An observation from
         // the host is evidence; a conventional path would be a guess.
@@ -99,9 +99,9 @@ pub(crate) fn declared_worker_stado_program(host: &str) -> Result<String> {
 /// bound to one revision and cargo rebuilds whenever the revision differs -
 /// while the fleet pays for the build once and the host's own janitor owns the
 /// cache. It travels in the command, not in `--repo-extras`: the CLI
-/// documents that flag as a shell snippet, the agent on charless-mac-mini
-/// renders it as pip extras, and six records died on
-/// `/bin/sh: pip: command not found` before a single page was fetched.
+/// documents that flag as a shell snippet, the fleet agent renders it as pip
+/// extras, and a record dies on `/bin/sh: pip: command not found` before a
+/// single page is fetched.
 pub(crate) fn resolved_worker_program(host: &str) -> Result<String> {
     let cargo = std::env::var("SPIS_PREFLIGHT_WORKER_PROGRAM")
         .context("crawler coordinator did not pass the retained worker-program receipt")?;

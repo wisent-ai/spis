@@ -16,11 +16,11 @@ pub(crate) fn host_probe(host: &str, arguments: &[&str]) -> Value {
         // prints its typed receipt on stdout either way, and that receipt is
         // where the host records which executable it resolved for the command.
         // Bailing on the exit status first threw that away and left the caller
-        // with an opaque "probe failed" - on `lukasz-macbook` it discarded the
-        // one receipt that names the host's own Stado binary, because
-        // `stado registry doctor` exits 1 while reporting 24 registry
-        // divergences. Readiness below is still exactly `status == ok` and
-        // `exit_code == 0`; only the evidence survives the failure now.
+        // with an opaque "probe failed" - it discarded the one receipt that
+        // names the host's own Stado binary, because `stado registry doctor`
+        // exits 1 while it reports registry divergences. Readiness below is
+        // still exactly `status == ok` and `exit_code == 0`; only the evidence
+        // survives the failure now.
         let receipt: Value = serde_json::from_slice(&output.stdout).with_context(|| {
             format!(
                 "host probe receipt is not JSON (exit {}): {}",
@@ -188,9 +188,9 @@ pub fn failed_host_preflight_record_state(report: &Value) -> &'static str {
 ///
 /// Stado keeps the coordinator-approved command spelling in `argv` and reports
 /// the candidate the placement host actually selected in `resolved_executable`.
-/// Reading `argv[0]` put the coordinator's `/opt/homebrew/bin/cargo` into a
-/// Charless job even though that host selected `~/.cargo/bin/cargo`; the worker
-/// then failed before crawling a page because the baked-in path did not exist.
+/// Reading `argv[0]` would put the coordinator's `/opt/homebrew/bin/cargo` into
+/// a job on a host that selected `~/.cargo/bin/cargo`, and the worker would
+/// fail before crawling a page because the baked-in path does not exist there.
 /// A home-relative selected candidate stays home-relative until the submitted
 /// shell runs on that host: the coordinator must never expand another machine's
 /// `~`.

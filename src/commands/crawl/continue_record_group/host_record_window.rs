@@ -3,9 +3,9 @@ use super::*;
 /// The most records of one catalog that may occupy a host at the same time,
 /// whatever its disk says.
 ///
-/// Measured on `charless-mac-mini` on 2026-09-06: ten records in flight took
-/// the disk from 18.4 GiB to 0.1 GiB in fifty minutes, and three took it from
-/// 11 GiB to 2.1 GiB in fifteen. The fleet's disk gate cannot prevent either -
+/// Measured on a shared fleet host: ten records in flight took the disk from
+/// 18.4 GiB to 0.1 GiB in fifty minutes, and three took it from 11 GiB to
+/// 2.1 GiB in fifteen. The fleet's disk gate cannot prevent either -
 /// it stops new claims below the watermark and has no say over the growth of
 /// claims already running - and `--exclusive` prevents it only by demanding an
 /// idle machine, which on a host that also carries release and qualification
@@ -16,7 +16,7 @@ pub(crate) const HOST_RECORD_WINDOW: usize = 3;
 ///
 /// A record holds its whole crawl on the host until the attempt artifact is
 /// published, and the object store keeps a same-disk backup twin of what it
-/// then stores. Measured on `charless-mac-mini` on 2026-09-05 and 2026-09-06:
+/// then stores. Measured on a shared fleet host:
 /// MDN, the largest site in the catalog, moved the disk from 17.7 to 13.8 GiB
 /// while it ran and gave it back on import; three records together moved it
 /// from 11 to 2.1 GiB. That is 3.9 GiB for the largest and about 3 GiB each
@@ -38,8 +38,8 @@ pub(crate) const RECORD_PEAK_GIB: f64 = 4.0;
 /// planning to use all of it. With 12 GiB free and a 6 GiB peak the naive
 /// division admits two records whose combined peak is exactly the whole
 /// volume; this admits one and leaves the other 6 GiB for the host's own work,
-/// which on `charless-mac-mini` is a release store, a queue, and everyone
-/// else's jobs.
+/// which on a shared host is a release store, a queue, and everyone else's
+/// jobs.
 pub(crate) fn host_record_window(host_report: &Value) -> usize {
     let Some(free_gib) = observed_free_gib(host_report) else {
         return 0;

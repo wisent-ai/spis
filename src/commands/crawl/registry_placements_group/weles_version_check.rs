@@ -160,9 +160,9 @@ pub(crate) fn resolved_program_from_host_preflight(
 ///
 /// Two spellings name the same thing and both are accepted. `agent --target
 /// <host>` is what a coordinator declares for a machine it addresses by name,
-/// and `agent --auto` is what a machine declares for itself - the shape
-/// `lukasz-macbook` runs. Reading only the first refused every record on any
-/// self-declared host with `worker_agent_program_unstable: observed_count=0`,
+/// and `agent --auto` is what a machine declares for itself. Reading only the
+/// first would refuse every record on any self-declared host with
+/// `worker_agent_program_unstable: observed_count=0`,
 /// which reads as an unstable declaration rather than as a filter that never
 /// matched.
 pub fn active_worker_stado_programs(services: &Value, host: &str) -> BTreeSet<String> {

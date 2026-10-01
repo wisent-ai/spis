@@ -146,3 +146,17 @@ pub(crate) fn host_for(
             "no Stado host advertises the {engine} execution boundary for {catalog}; pass --host {engine}=TARGET after registering that capability"
         ))
 }
+
+/// The host a Weles capture plan runs on when the operator names none: the
+/// active host of the registry's weles-admission service, the same placement
+/// the web crawl uses. Keeping the answer in the registry means a moved
+/// browser host is followed by every command instead of being edited into each.
+pub(crate) fn weles_capture_host(explicit: Option<String>) -> Result<String> {
+    if let Some(host) = explicit {
+        return Ok(host);
+    }
+    let (placements, _) = registry_placements()?;
+    placements.get("web").cloned().ok_or_else(|| {
+        anyhow!("the Stado registry names no active host for the weles-admission service; pass --host TARGET")
+    })
+}

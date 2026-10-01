@@ -6,7 +6,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut catalogs_arg: Vec<String> = Vec::new();
     let mut records: Option<String> = None;
     let mut batch_arg: Option<String> = None;
-    let mut target = DEFAULT_TARGET.to_string();
+    let mut target: Option<String> = None;
     let mut plan_arg: Option<String> = None;
     let mut dry_run = false;
     let mut poll_seconds: u64 = 15;
@@ -29,7 +29,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--target" => {
                 i += 1;
-                target = rest.get(i).context("--target needs a value")?.clone();
+                target = Some(rest.get(i).context("--target needs a value")?.clone());
             }
             "--plan" => {
                 i += 1;
@@ -58,6 +58,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
         i += 1;
     }
+    let target = crate::commands::crawl::weles_capture_host(target)?;
 
     let log = |line: &str| {
         eprintln!("{line}");

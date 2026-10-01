@@ -10,8 +10,6 @@ pub(crate) const ACTION: &str = "generic_accessibility_audit";
 
 pub(crate) const NAMESPACE: &str = "stado://weles-captures/";
 
-pub(crate) const DEFAULT_TARGET: &str = "charless-mac-mini";
-
 pub(crate) const DEFAULT_CATALOGS: &[&str] = &[
     "web-app-examples",
     "dashboard-console-examples",

@@ -87,17 +87,17 @@ fn validates_plan_shape() {
     let plan = json!({
         "schema": PLAN_SCHEMA,
         "batch": "batch-1",
-        "target": DEFAULT_TARGET,
+        "target": "capture-host",
         "captures": [Value::Object(action.clone())],
     });
-    assert!(validate_plan(&plan, DEFAULT_TARGET, &[reference.clone()]).is_ok());
+    assert!(validate_plan(&plan, "capture-host", &[reference.clone()]).is_ok());
 
     // Extra key → rejected.
     let mut bad = plan.clone();
     bad.as_object_mut()
         .unwrap()
         .insert("extra".into(), Value::Null);
-    assert!(validate_plan(&bad, DEFAULT_TARGET, &[reference.clone()]).is_err());
+    assert!(validate_plan(&bad, "capture-host", &[reference.clone()]).is_err());
 
     // Wrong target → rejected.
     assert!(validate_plan(&plan, "other-host", &[reference.clone()]).is_err());
@@ -105,7 +105,7 @@ fn validates_plan_shape() {
     // Mutated field → rejected.
     let mut mutated = plan.clone();
     mutated["captures"][0]["source_url"] = Value::String("https://evil.example/".into());
-    assert!(validate_plan(&mutated, DEFAULT_TARGET, &[reference]).is_err());
+    assert!(validate_plan(&mutated, "capture-host", &[reference]).is_err());
 }
 
 #[test]

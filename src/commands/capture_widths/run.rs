@@ -3,7 +3,7 @@ use super::*;
 pub fn run(rest: &[String]) -> Result<()> {
     let mut catalog: Option<String> = None;
     let mut record: Option<String> = None;
-    let mut host = DEFAULT_HOST.to_string();
+    let mut host: Option<String> = None;
     let mut dry_run = false;
 
     let mut i = 0;
@@ -15,7 +15,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--host" => {
                 i += 1;
-                host = rest.get(i).context("--host needs a value")?.clone();
+                host = Some(rest.get(i).context("--host needs a value")?.clone());
             }
             "--dry-run" => dry_run = true,
             other => {
@@ -79,6 +79,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
     }
 
+    let host = crate::commands::crawl::weles_capture_host(host)?;
     let plan = json!({
         "schema": PLAN_SCHEMA,
         "batch": batch,
@@ -133,7 +134,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         let script = format!(
             "#!/bin/sh\nset -eu\ncp {plan} /tmp/spis-widths-plan.json\n\
              STADO=$HOME/.stado/bin/stado; [ -x \"$STADO\" ] || STADO=$(command -v stado)\n\
-             \"$STADO\" host weles-capture charless-mac-mini --plan /tmp/spis-widths-plan.json --json\n",
+             \"$STADO\" host weles-capture {host} --plan /tmp/spis-widths-plan.json --json\n",
             plan = plan_path.display(),
         );
         let job_dir = work_root();

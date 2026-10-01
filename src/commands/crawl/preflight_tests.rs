@@ -107,25 +107,24 @@ fn every_declared_precondition_names_a_program_and_never_a_bare_search() {
 
 #[test]
 fn a_receipt_pin_is_read_in_the_consumer_spelling_stado_answers_with() {
-    // Measured on run `docs-50-222852`: the pin was submitted as
-    // `charless-mac-mini` and echoed as `local-charless-mac-mini.local`,
-    // and the literal comparison recorded thirty-seven accepted
-    // submissions as failures while their jobs ran.
-    assert!(super::pinned_host_is("charless-mac-mini", "charless-mac-mini"));
+    // A pin submitted as `build-host` comes back as `local-build-host.local`;
+    // a literal comparison would record accepted submissions as failures
+    // while their jobs ran.
+    assert!(super::pinned_host_is("build-host", "build-host"));
     assert!(super::pinned_host_is(
-        "local-charless-mac-mini.local",
-        "charless-mac-mini"
+        "local-build-host.local",
+        "build-host"
     ));
     assert!(super::pinned_host_is(
-        "local-Charless-Mac-mini.local",
-        "charless-mac-mini"
+        "local-Build-Host.local",
+        "build-host"
     ));
     // A different host, and the two shapes that only look like the
     // consumer spelling, are still refused.
     assert!(!super::pinned_host_is(
-        "local-lukasz-macbook.local",
-        "charless-mac-mini"
+        "local-other-host.local",
+        "build-host"
     ));
-    assert!(!super::pinned_host_is("charless-mac-mini.local", "charless-mac-mini"));
-    assert!(!super::pinned_host_is("local-charless-mac-mini", "charless-mac-mini"));
+    assert!(!super::pinned_host_is("build-host.local", "build-host"));
+    assert!(!super::pinned_host_is("local-build-host", "build-host"));
 }

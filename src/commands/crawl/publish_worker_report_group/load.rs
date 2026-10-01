@@ -91,13 +91,12 @@ pub(crate) struct StadoSubmissionReceipt {
 /// Whether the pinned host a Stado receipt echoes is the placement host.
 ///
 /// Stado pins a job to a registry host and then reports the pin in its
-/// CONSUMER spelling: `charless-mac-mini` was submitted and the receipt came
-/// back `local-charless-mac-mini.local`, which is the name that host's own
-/// capacity beacon publishes. A literal comparison therefore refused a
-/// submission that had already been accepted — measured on run
-/// `docs-50-222852`, where thirty-seven records carried a real `job_id` and an
-/// `output_uri` inside their own attempt prefix and were still recorded
-/// `submission_failed`, so the queue ran work no record admitted owning.
+/// CONSUMER spelling: `build-host` is submitted and the receipt comes back
+/// `local-build-host.local`, which is the name that host's own capacity
+/// beacon publishes. A literal comparison therefore refuses a submission that
+/// has already been accepted: records carrying a real `job_id` and an
+/// `output_uri` inside their own attempt prefix would be recorded
+/// `submission_failed`, and the queue would run work no record admits owning.
 ///
 /// The registry name is the identity; the consumer spelling is a rendering of
 /// it. Both are accepted, nothing else is, and the comparison stays

@@ -6,8 +6,6 @@ pub(crate) const NAMESPACE: &str = "stado://weles-captures/";
 
 pub(crate) const WIDTHS: &[(u32, u32)] = &[(390, 844), (768, 1024), (1440, 1000)];
 
-pub(crate) const DEFAULT_HOST: &str = "charless-mac-mini";
-
 /// Deviation from the Python original, which used ~/.stado/work: this port
 /// keeps all generated working files under ~/.spis/work per harness policy.
 pub(crate) fn work_root() -> PathBuf {

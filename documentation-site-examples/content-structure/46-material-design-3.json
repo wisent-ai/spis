@@ -134,5 +134,5 @@
       ]
     }
   ],
-  "anatomy_note": "Content is client-rendered and bundled in JS; section/heading labels extracted from the route table in the shipped bundles (105 titles). Page-level heading anatomy needs a browser pass (Weles on charless-mac-mini); inventory itself is complete from sitemap.xml."
+  "anatomy_note": "Content is client-rendered and bundled in JS; section/heading labels extracted from the route table in the shipped bundles (105 titles). Page-level heading anatomy needs a browser pass through Weles; inventory itself is complete from sitemap.xml."
 }
