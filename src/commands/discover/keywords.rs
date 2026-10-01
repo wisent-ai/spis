@@ -54,14 +54,20 @@ pub(crate) fn brama_rank(start_url: &str, links: &Links, limit: usize) -> Option
     })
     .to_string();
 
+    // Read before the request so a bad reference is named, never sent anonymously.
+    let router_token = match crate::commands::skarbiec_secret("MODEL_ROUTER_TOKEN_REF") {
+        Ok(token) => token,
+        Err(error) => {
+            eprintln!("discover: Brama ranking unavailable ({error:#}); using keyword fallback");
+            return None;
+        }
+    };
     let parsed: Result<serde_json::Value> = (|| {
         let mut request = ureq::post(&endpoint)
             .timeout(Duration::from_secs(60))
             .set("Content-Type", "application/json");
-        if let Ok(token) = std::env::var("MODEL_ROUTER_TOKEN") {
-            if !token.is_empty() {
-                request = request.set("Authorization", &format!("Bearer {token}"));
-            }
+        if let Some(token) = &router_token {
+            request = request.set("Authorization", &format!("Bearer {token}"));
         }
         let response = request.send_string(&payload)?;
         let mut body_bytes = Vec::new();

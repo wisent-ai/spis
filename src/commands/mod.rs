@@ -67,6 +67,39 @@ where
         .map_err(|error| usage(format!("{flag}: {raw:?} is not valid: {error}")))
 }
 
+/// The secret a Skarbiec `ITEM#FIELD` reference in `variable` names, `None`
+/// when the variable is unset. Only the reference travels in the
+/// environment; the value is read from `skarbiec get` (cli.md rule 15).
+/// `SKARBIEC_BIN` names another executable.
+pub fn skarbiec_secret(variable: &str) -> Result<Option<String>> {
+    let Some(reference) = std::env::var(variable).ok().filter(|value| !value.trim().is_empty()) else {
+        return Ok(None);
+    };
+    let reference = reference.trim();
+    let Some((item, field)) = reference.rsplit_once('#').filter(|(item, field)| !item.is_empty() && !field.is_empty()) else {
+        return Err(usage(format!("{variable} must be a Skarbiec reference ITEM#FIELD, not {reference:?}")));
+    };
+    let binary = std::env::var("SKARBIEC_BIN").unwrap_or_else(|_| "skarbiec".into());
+    let output = std::process::Command::new(&binary)
+        .args(["get", item, "--field", field])
+        .output()
+        .map_err(|error| anyhow::anyhow!("{variable}: {binary} could not be run: {error}"))?;
+    if !output.status.success() {
+        anyhow::bail!(
+            "{variable}: skarbiec get {item} --field {field} failed: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let secret = String::from_utf8(output.stdout)
+        .map_err(|_| anyhow::anyhow!("{variable}: skarbiec returned a value that is not UTF-8"))?
+        .trim_end_matches('\n')
+        .to_string();
+    if secret.is_empty() {
+        anyhow::bail!("{variable}: Skarbiec item {item} field {field} is empty");
+    }
+    Ok(Some(secret))
+}
+
 /// One subcommand: its name, what it does, and whether its own module
 /// answers `--help` with its flags. A module that does not is answered here,
 /// so `--help` never reaches code that would do the command's work.
