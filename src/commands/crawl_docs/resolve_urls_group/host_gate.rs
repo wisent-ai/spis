@@ -1,38 +1,5 @@
 use super::*;
 
-// ---------- parallel fetch engine ----------
-
-pub(crate) struct HostGate {
-    pub(crate) next_allowed: Mutex<HashMap<String, std::time::Instant>>,
-    pub(crate) host_delay: f64,
-}
-
-impl HostGate {
-    pub(crate) fn new(host_delay: f64) -> Self {
-        Self {
-            next_allowed: Mutex::new(HashMap::new()),
-            host_delay,
-        }
-    }
-
-    /// Block until this host's next slot, then reserve it.
-    pub(crate) fn wait_turn(&self, url: &str) {
-        loop {
-            let now = std::time::Instant::now();
-            let host = lib::origin_of(url);
-            let mut slots = self.next_allowed.lock();
-            let slot = slots.entry(host).or_insert(now);
-            if *slot <= now {
-                *slot = now + std::time::Duration::from_secs_f64(self.host_delay);
-                return;
-            }
-            let wait = *slot - now;
-            drop(slots);
-            std::thread::sleep(wait);
-        }
-    }
-}
-
 #[derive(Clone, Deserialize, Serialize)]
 pub(crate) struct CrawlTarget {
     pub(crate) sequence: usize,
@@ -135,7 +102,6 @@ pub(crate) enum WriterMessage {
 pub(crate) struct FetchShared {
     pub(crate) queue: Mutex<std::vec::IntoIter<CrawlTarget>>,
     pub(crate) writer: mpsc::Sender<WriterMessage>,
-    pub(crate) gate: HostGate,
     pub(crate) policy: UrlPolicy,
     pub(crate) downloaded_bytes: AtomicU64,
     pub(crate) cancelled: Arc<AtomicBool>,
@@ -199,7 +165,6 @@ pub(crate) struct WorkerOptions {
     pub(crate) all: bool,
     pub(crate) exclude: Vec<String>,
     pub(crate) workers: usize,
-    pub(crate) host_delay: f64,
     pub(crate) refresh: bool,
 }
 
@@ -210,7 +175,6 @@ impl WorkerOptions {
             all: false,
             exclude: Vec::new(),
             workers: MAX_WORKERS,
-            host_delay: 0.3,
             refresh: false,
         };
         let mut i = 0;
@@ -231,10 +195,6 @@ impl WorkerOptions {
                     i += 1;
                     options.workers = crate::commands::parsed(rest.get(i), "--workers")?;
                 }
-                "--host-delay" => {
-                    i += 1;
-                    options.host_delay = crate::commands::parsed(rest.get(i), "--host-delay")?;
-                }
                 "--refresh" => options.refresh = true,
                 other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
             }
@@ -245,13 +205,6 @@ impl WorkerOptions {
         }
         if options.workers == 0 || options.workers > MAX_WORKERS {
             bail!("--workers must be between 1 and {MAX_WORKERS}");
-        }
-        if !options.host_delay.is_finite()
-            || !(0.0..=MAX_HOST_DELAY_SECONDS).contains(&options.host_delay)
-        {
-            bail!(
-                "--host-delay must be a finite number between 0 and {MAX_HOST_DELAY_SECONDS} seconds"
-            );
         }
         Ok(options)
     }

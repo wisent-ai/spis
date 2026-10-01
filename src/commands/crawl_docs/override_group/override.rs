@@ -135,8 +135,6 @@ pub(crate) struct UrlPolicy {
 
 pub(crate) const MAX_WORKERS: usize = 8;
 
-pub(crate) const MAX_HOST_DELAY_SECONDS: f64 = 30.0;
-
 pub(crate) const MAX_TOTAL_INVENTORY_BYTES: u64 = 64 * 1024 * 1024;
 
 pub(crate) const MAX_TOTAL_DOWNLOAD_BYTES: u64 = 2 * 1024 * 1024 * 1024;

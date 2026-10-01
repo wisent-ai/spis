@@ -172,12 +172,11 @@ pub(crate) fn crawl_attempt(
         .cloned()
         .collect::<Vec<_>>();
     eprintln!(
-        "[{}] queue ready: {} pending URLs for {}; workers={} host-delay={}s",
+        "[{}] queue ready: {} pending URLs for {}; workers={}",
         lib::now_iso_utc(),
         pending.len(),
         manifest.record,
         options.workers,
-        options.host_delay
     );
     let state = if pending.is_empty() {
         state
@@ -185,7 +184,6 @@ pub(crate) fn crawl_attempt(
         run_fetch_workers(
             pending,
             options.workers,
-            options.host_delay,
             layout,
             state,
         )?

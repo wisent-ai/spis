@@ -2,7 +2,6 @@ use super::*;
 
 pub(crate) fn fetch_target(
     target: CrawlTarget,
-    gate: &HostGate,
     policy: &UrlPolicy,
     robots: &CompiledRobots,
     downloaded_bytes: &AtomicU64,
@@ -23,7 +22,6 @@ pub(crate) fn fetch_target(
             line: None,
         });
     }
-    gate.wait_turn(&target.url);
     match bounded_http_get(
         &target_url,
         policy,

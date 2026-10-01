@@ -3,7 +3,6 @@ use super::*;
 pub(crate) fn run_fetch_workers(
     pending: Vec<CrawlTarget>,
     workers: usize,
-    host_delay: f64,
     layout: &WorkLayout,
     state: DurableState,
 ) -> Result<DurableState> {
@@ -41,7 +40,6 @@ pub(crate) fn run_fetch_workers(
     let shared = Arc::new(FetchShared {
         queue: Mutex::new(pending.into_iter()),
         writer: writer.clone(),
-        gate: HostGate::new(host_delay),
         policy,
         downloaded_bytes: AtomicU64::new(downloaded_bytes),
         cancelled: Arc::clone(&cancelled),
@@ -76,7 +74,6 @@ pub(crate) fn run_fetch_workers(
                         let url = target.url.clone();
                         let outcome = fetch_target(
                             target,
-                            &shared.gate,
                             &shared.policy,
                             &shared.robots,
                             &shared.downloaded_bytes,

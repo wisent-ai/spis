@@ -202,7 +202,6 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
                 source.as_str(),
             );
         }
-        std::thread::sleep(Duration::from_millis(250));
     }
 
     if pages.len() == 1 && meta.inventory_source.starts_with("landing-nav") {
