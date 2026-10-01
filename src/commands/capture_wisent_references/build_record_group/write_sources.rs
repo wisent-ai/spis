@@ -212,7 +212,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 wanted.push(slug.clone());
             }
             other => {
-                bail!("unknown flag: {other} (expected --list, --product <slug>, --catalog-only)")
+                return Err(crate::commands::usage(format!("unknown flag: {other} (expected --list, --product <slug>, --catalog-only)")))
             }
         }
     }

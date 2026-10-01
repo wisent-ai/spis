@@ -152,7 +152,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--skip-readme" => skip_readme = true,
             "--write-report" => write_report = true,
             "--strict" => strict = true,
-            other => anyhow::bail!("unknown argument: {other}"),
+            other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
     }
 

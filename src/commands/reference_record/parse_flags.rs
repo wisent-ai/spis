@@ -25,7 +25,7 @@ pub(crate) fn parse_flags(
         let spec = all
             .iter()
             .find(|s| s.name == name)
-            .ok_or_else(|| anyhow::anyhow!("reference: unrecognized argument {name}"))?;
+            .ok_or_else(|| crate::commands::usage(format!("reference: unrecognized argument {name}\n{USAGE}")))?;
         if !spec.takes_value {
             flags.push((spec.name.to_string(), None));
             i += 1;
@@ -36,7 +36,7 @@ pub(crate) fn parse_flags(
             None => {
                 i += 1;
                 rest.get(i).cloned().ok_or_else(|| {
-                    anyhow::anyhow!("reference: argument {name}: expected one argument")
+                    crate::commands::usage(format!("reference: argument {name}: expected one argument"))
                 })?
             }
         };
@@ -51,7 +51,7 @@ pub(crate) fn require_flag(flags: &[(String, Option<String>)], name: &str) -> Re
         .iter()
         .find(|(n, _)| n == name)
         .and_then(|(_, v)| v.clone())
-        .ok_or_else(|| anyhow::anyhow!("reference: the following arguments are required: {name}"))
+        .ok_or_else(|| crate::commands::usage(format!("reference: the following arguments are required: {name}")))
 }
 
 pub(crate) fn optional_flag(flags: &[(String, Option<String>)], name: &str) -> Option<String> {
@@ -63,10 +63,10 @@ pub(crate) fn optional_flag(flags: &[(String, Option<String>)], name: &str) -> O
 
 pub(crate) fn require_positionals(positionals: &[String], names: &[&str]) -> Result<Vec<String>> {
     if positionals.len() < names.len() {
-        bail!(
+        return Err(crate::commands::usage(format!(
             "reference: the following arguments are required: {}",
             names[positionals.len()..].join(" ")
-        );
+        )));
     }
     Ok(positionals[..names.len()].to_vec())
 }
@@ -98,21 +98,26 @@ pub(crate) const ADD_SPECS: &[FlagSpec] = &[
     },
 ];
 
+const USAGE: &str = "usage: spis reference-record <add|get|remove> [flags]
+  spis reference-record add <catalog> --name N --source-url U --category C --selection-note S --visual F [--owner O]
+  spis reference-record get <catalog> <NN|slug>
+  spis reference-record remove <catalog> <NN|slug> [--force]";
+
 /// `spis reference-record <add|get|remove> ...`
 pub fn run(rest: &[String]) -> Result<()> {
+    // `--help` anywhere answers with the usage and never reads or changes a catalog.
+    if rest.iter().any(|arg| arg == "--help" || arg == "-h") {
+        println!("{USAGE}");
+        return Ok(());
+    }
     let Some(command) = rest.first() else {
-        bail!(
-            "reference: usage: spis reference-record <add|get|remove> [flags] \
-             (add <catalog> --name N --source-url U --category C --selection-note S \
-             --visual F [--owner O]; get <catalog> <NN|slug>; \
-             remove <catalog> <NN|slug> [--force])"
-        );
+        return Err(crate::commands::usage(USAGE));
     };
     match command.as_str() {
         "add" => {
             let (mut positionals, flags) = parse_flags(&rest[1..], ADD_SPECS, &[])?;
             if positionals.is_empty() {
-                bail!("reference: the following arguments are required: catalog");
+                return Err(crate::commands::usage("reference: the following arguments are required: catalog"));
             }
             let catalog = positionals.remove(0);
             add(&AddArgs {
@@ -143,6 +148,6 @@ pub fn run(rest: &[String]) -> Result<()> {
                 remove(&pos[0], &pos[1], force)
             }
         }
-        other => bail!("reference: unknown command {other:?}"),
+        other => Err(crate::commands::usage(format!("reference: unknown command {other:?}; it takes add, get or remove\n{USAGE}"))),
     }
 }

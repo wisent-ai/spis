@@ -18,20 +18,20 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--record" => {
                 i += 1;
-                record = Some(rest.get(i).context("--record needs a value")?.clone());
+                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--driver-url" => {
                 i += 1;
-                driver_url = rest.get(i).context("--driver-url needs a value")?.clone();
+                driver_url = crate::commands::required(rest.get(i), "--driver-url needs a value")?.clone();
             }
             "--host" => {
                 i += 1;
-                host = Some(rest.get(i).context("--host needs a value")?.clone());
+                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--worker" => worker = true,
             "--artifact-uri" => {
                 i += 1;
-                artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone());
             }
             "--runtime-manifest-base64" => {
                 i += 1;
@@ -40,23 +40,23 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--max-states" => {
                 i += 1;
-                max_states = rest.get(i).context("--max-states needs a value")?.parse()?;
+                max_states = crate::commands::parsed(rest.get(i), "--max-states")?;
             }
             "--max-depth" => {
                 i += 1;
-                max_depth = rest.get(i).context("--max-depth needs a value")?.parse()?;
+                max_depth = crate::commands::parsed(rest.get(i), "--max-depth")?;
             }
             "--output" => {
                 i += 1;
-                output = PathBuf::from(rest.get(i).context("--output needs a value")?);
+                output = PathBuf::from(crate::commands::required(rest.get(i), "--output needs a value")?);
             }
             "--help" | "-h" => {
                 println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
-            value if value.starts_with('-') => bail!("unknown argument: {value}"),
+            value if value.starts_with('-') => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
             value if catalog.is_none() => catalog = Some(value.to_string()),
-            value => bail!("unexpected argument: {value}"),
+            value => return Err(crate::commands::usage(format!("unexpected argument: {value}"))),
         }
         i += 1;
     }

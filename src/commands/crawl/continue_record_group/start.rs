@@ -11,10 +11,10 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--host" => {
                 i += 1;
-                let value = rest.get(i).context("--host needs a value")?;
+                let value = crate::commands::required(rest.get(i), "--host needs a value")?;
                 if let Some((scope, target)) = value.split_once('=') {
                     if scope.is_empty() || target.is_empty() {
-                        bail!("--host mapping must be ENGINE=TARGET or CATALOG=TARGET");
+                        return Err(crate::commands::usage("--host mapping must be ENGINE=TARGET or CATALOG=TARGET"));
                     }
                     hosts.insert(scope.to_string(), target.to_string());
                 } else {
@@ -23,21 +23,21 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
             }
             "--catalog" => {
                 i += 1;
-                catalogs.push(rest.get(i).context("--catalog needs a value")?.clone());
+                catalogs.push(crate::commands::required(rest.get(i), "--catalog needs a value")?.clone());
             }
             "--record" => {
                 i += 1;
-                record = Some(rest.get(i).context("--record needs a value")?.clone());
+                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--run-id" => {
                 i += 1;
-                requested_run_id = Some(rest.get(i).context("--run-id needs a value")?.clone());
+                requested_run_id = Some(crate::commands::required(rest.get(i), "--run-id needs a value")?.clone());
             }
             "--bindings" => {
                 i += 1;
-                bindings_path = Some(rest.get(i).context("--bindings needs a value")?.clone());
+                bindings_path = Some(crate::commands::required(rest.get(i), "--bindings needs a value")?.clone());
             }
-            value => bail!("unknown argument: {value}"),
+            value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
         i += 1;
     }

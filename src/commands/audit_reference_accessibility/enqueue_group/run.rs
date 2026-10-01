@@ -54,7 +54,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 println!("usage: spis audit-reference-accessibility [--catalog NAME]... [--records SEL] [--batch ID] [--target HOST] [--plan PATH] [--dry-run] [--poll-seconds N] [--timeout-minutes N]");
                 return Ok(());
             }
-            other => bail!("unknown argument: {other}"),
+            other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
         i += 1;
     }

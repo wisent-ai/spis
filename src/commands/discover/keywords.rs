@@ -136,7 +136,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             other => {
                 if other.starts_with("--") {
-                    bail!("discover: unrecognized argument {other}");
+                    return Err(crate::commands::usage(format!("discover: unrecognized argument {other}")));
                 }
                 positionals.push(arg);
             }

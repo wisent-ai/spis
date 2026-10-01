@@ -65,13 +65,13 @@ pub(crate) fn parse_run_and_record(rest: &[String], require_run: bool) -> Result
     let mut i = 0;
     while i < rest.len() {
         match rest[i].as_str() {
-            "--run" => { i += 1; run = Some(rest.get(i).context("--run needs a value")?.clone()); }
-            "--record" => { i += 1; record = Some(rest.get(i).context("--record needs a value")?.clone()); }
-            value => bail!("unknown argument: {value}"),
+            "--run" => { i += 1; run = Some(crate::commands::required(rest.get(i), "--run needs a value")?.clone()); }
+            "--record" => { i += 1; record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone()); }
+            value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
         i += 1;
     }
-    if require_run && run.is_none() { bail!("--run is required"); }
+    if require_run && run.is_none() { return Err(crate::commands::usage("--run is required")); }
     Ok((run, record))
 }
 

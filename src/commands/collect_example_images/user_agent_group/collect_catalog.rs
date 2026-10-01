@@ -131,7 +131,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         match arg.as_str() {
             "--replace" => replace = true,
             other if !other.starts_with('-') => selected.push(other),
-            other => bail!("unknown argument: {other}\nusage: spis collect-example-images [--replace] [catalog ...]"),
+            other => return Err(crate::commands::usage(format!("unknown argument: {other}\nusage: spis collect-example-images [--replace] [catalog ...]"))),
         }
     }
     let unknown: Vec<&&str> = selected.iter().filter(|s| !CATALOGS.contains(s)).collect();

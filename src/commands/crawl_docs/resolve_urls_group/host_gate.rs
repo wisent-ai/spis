@@ -218,26 +218,25 @@ impl WorkerOptions {
             match rest[i].as_str() {
                 "--site" => {
                     i += 1;
-                    options.site = Some(rest.get(i).context("--site needs a value")?.clone());
+                    options.site = Some(crate::commands::required(rest.get(i), "--site needs a value")?.clone());
                 }
                 "--all" => options.all = true,
                 "--exclude" => {
                     i += 1;
                     options
                         .exclude
-                        .push(rest.get(i).context("--exclude needs a value")?.clone());
+                        .push(crate::commands::required(rest.get(i), "--exclude needs a value")?.clone());
                 }
                 "--workers" => {
                     i += 1;
-                    options.workers = rest.get(i).context("--workers needs a value")?.parse()?;
+                    options.workers = crate::commands::parsed(rest.get(i), "--workers")?;
                 }
                 "--host-delay" => {
                     i += 1;
-                    options.host_delay =
-                        rest.get(i).context("--host-delay needs a value")?.parse()?;
+                    options.host_delay = crate::commands::parsed(rest.get(i), "--host-delay")?;
                 }
                 "--refresh" => options.refresh = true,
-                other => bail!("unknown argument: {other}"),
+                other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
             }
             i += 1;
         }

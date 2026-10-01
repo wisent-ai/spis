@@ -194,15 +194,15 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--host" => {
                 i += 1;
-                host = Some(rest.get(i).context("--host needs a value")?.clone());
+                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--record" => {
                 i += 1;
-                record = Some(rest.get(i).context("--record needs a value")?.clone());
+                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--site" => {
                 i += 1;
-                let value = rest.get(i).context("--site needs a value")?.clone();
+                let value = crate::commands::required(rest.get(i), "--site needs a value")?.clone();
                 record = Some(value.clone());
                 forwarded.push("--site".into());
                 forwarded.push(value);
@@ -215,7 +215,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--worker" => worker = true,
             "--artifact-uri" => {
                 i += 1;
-                artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone());
             }
             value => forwarded.push(value.to_string()),
         }

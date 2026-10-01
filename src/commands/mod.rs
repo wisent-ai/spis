@@ -49,6 +49,24 @@ pub fn is_usage(error: &anyhow::Error) -> bool {
     error.chain().any(|cause| cause.is::<Usage>())
 }
 
+/// A flag's value that the invocation must carry: absent is a usage error.
+/// `required(rest.get(i), "--record needs a value")?`
+pub fn required<T>(value: Option<T>, text: &str) -> Result<T> {
+    value.ok_or_else(|| usage(text))
+}
+
+/// A flag's value parsed into its type: a value that does not parse is a
+/// usage error naming the flag, the value given and the parse failure.
+pub fn parsed<T>(value: Option<&String>, flag: &str) -> Result<T>
+where
+    T: std::str::FromStr,
+    T::Err: std::fmt::Display,
+{
+    let raw = required(value, &format!("{flag} needs a value"))?;
+    raw.parse()
+        .map_err(|error| usage(format!("{flag}: {raw:?} is not valid: {error}")))
+}
+
 /// One subcommand: its name, what it does, and whether its own module
 /// answers `--help` with its flags. A module that does not is answered here,
 /// so `--help` never reaches code that would do the command's work.

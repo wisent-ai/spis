@@ -140,19 +140,19 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--host" => {
                 i += 1;
-                host = Some(rest.get(i).context("--host needs a value")?.clone());
+                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--record" => {
                 i += 1;
-                selected = Some(rest.get(i).context("--record needs a value")?.clone());
+                selected = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--artifact-uri" => {
                 i += 1;
-                artifact_uri = Some(rest.get(i).context("--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone());
             }
             "--git-path" => {
                 i += 1;
-                git_path = Some(rest.get(i).context("--git-path needs a value")?.clone());
+                git_path = Some(crate::commands::required(rest.get(i), "--git-path needs a value")?.clone());
             }
             "--runtime-manifest-base64" => {
                 i += 1;
@@ -164,7 +164,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 println!("usage: spis crawl-tui --host TARGET --record SLUG --runtime-manifest-base64 DATA\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
-            value => bail!("unknown argument: {value}"),
+            value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
         i += 1;
     }

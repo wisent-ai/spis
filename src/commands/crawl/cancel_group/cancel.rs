@@ -9,17 +9,17 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
         match rest[index].as_str() {
             "--run" => {
                 index += 1;
-                run_id = Some(rest.get(index).context("--run needs a value")?.clone());
+                run_id = Some(crate::commands::required(rest.get(index), "--run needs a value")?.clone());
             }
             "--record" => {
                 index += 1;
-                selected_record = Some(rest.get(index).context("--record needs a value")?.clone());
+                selected_record = Some(crate::commands::required(rest.get(index), "--record needs a value")?.clone());
             }
             "--reason" => {
                 index += 1;
-                reason = Some(rest.get(index).context("--reason needs a value")?.clone());
+                reason = Some(crate::commands::required(rest.get(index), "--reason needs a value")?.clone());
             }
-            value => bail!("unknown argument: {value}"),
+            value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
         index += 1;
     }

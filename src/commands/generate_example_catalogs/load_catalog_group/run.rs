@@ -10,7 +10,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 println!("  --check  validate only, write nothing");
                 return Ok(());
             }
-            other => bail!("unknown argument: {other}"),
+            other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
     }
 

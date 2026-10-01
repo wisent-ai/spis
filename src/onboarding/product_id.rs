@@ -22,7 +22,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 println!("  --reset  discard progress and evidence, then restart the walkthrough");
                 return Ok(());
             }
-            other => bail!("unknown argument: {other} (expected --reset)"),
+            other => return Err(crate::commands::usage(format!("unknown argument: {other} (expected --reset)"))),
         }
     }
 

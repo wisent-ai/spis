@@ -10,7 +10,7 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
             "--output" => {
                 index += 1;
                 output_path = Some(PathBuf::from(
-                    rest.get(index).context("--output needs a path")?,
+                    crate::commands::required(rest.get(index), "--output needs a path")?,
                 ));
             }
             "--weles-token-ref" => {
@@ -29,7 +29,7 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                         .clone(),
                 );
             }
-            other => bail!("unknown crawl bindings generate option: {other}"),
+            other => return Err(crate::commands::usage(format!("unknown crawl bindings generate option: {other}"))),
         }
         index += 1;
     }

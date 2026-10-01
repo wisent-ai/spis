@@ -64,14 +64,14 @@ pub(crate) fn preflight(rest: &[String]) -> Result<()> {
         match rest[index].as_str() {
             "--catalog" => {
                 index += 1;
-                catalog = Some(rest.get(index).context("--catalog needs a value")?.clone());
+                catalog = Some(crate::commands::required(rest.get(index), "--catalog needs a value")?.clone());
             }
             "--host" => {
                 index += 1;
-                host = Some(rest.get(index).context("--host needs a value")?.clone());
+                host = Some(crate::commands::required(rest.get(index), "--host needs a value")?.clone());
             }
             "--json" => json_output = true,
-            other => bail!("unknown argument: {other}"),
+            other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
         index += 1;
     }
@@ -150,6 +150,6 @@ pub fn run(rest: &[String]) -> Result<()> {
         Some("bindings") if rest.get(1).map(String::as_str) == Some("generate") => {
             generate_runtime_bindings(&rest[2..])
         }
-        Some(other) => bail!("unknown crawl operation: {other}"),
+        Some(other) => Err(crate::commands::usage(format!("unknown crawl operation: {other}; run `spis crawl --help` for the operations"))),
     }
 }

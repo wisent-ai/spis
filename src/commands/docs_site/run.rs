@@ -25,7 +25,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 );
                 return Ok(());
             }
-            other => bail!("unknown argument: {other}"),
+            other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
     }
     let version = env!("CARGO_PKG_VERSION");

@@ -76,7 +76,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--catalog" => {
                 i += 1;
-                catalog = Some(rest.get(i).context("--catalog needs a value")?.clone());
+                catalog = Some(crate::commands::required(rest.get(i), "--catalog needs a value")?.clone());
             }
             "--apply" => apply = true,
             "--no-state-match" => no_state_match = true,
@@ -88,7 +88,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                     .parse()
                     .context("--jobs expects an integer")?;
             }
-            other => anyhow::bail!("unknown argument: {other}"),
+            other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
         i += 1;
     }

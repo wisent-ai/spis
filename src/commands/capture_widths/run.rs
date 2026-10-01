@@ -11,11 +11,11 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--record" => {
                 i += 1;
-                record = Some(rest.get(i).context("--record needs a value")?.clone());
+                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--host" => {
                 i += 1;
-                host = Some(rest.get(i).context("--host needs a value")?.clone());
+                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--dry-run" => dry_run = true,
             other => {
