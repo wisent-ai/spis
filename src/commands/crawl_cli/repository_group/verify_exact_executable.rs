@@ -32,7 +32,7 @@ pub(crate) fn verify_exact_executable(
         .context("CLI execution identity has no typed observed_hostname")?;
     let mut hostname_command = Command::new("hostname");
     hostname_command.env_clear().env("PATH", "/usr/bin:/bin");
-    let hostname = super::crawl::bounded_command_output(
+    let hostname = crate::commands::crawl::bounded_command_output(
         &mut hostname_command,
         "read CLI worker hostname",
         Duration::from_secs(10),
@@ -107,7 +107,7 @@ pub(crate) fn verify_exact_executable(
         .arg("--version")
         .env_clear()
         .envs(environment);
-    let version = super::crawl::bounded_command_output(
+    let version = crate::commands::crawl::bounded_command_output(
         &mut version_command,
         "read exact CLI version",
         Duration::from_secs(30),
@@ -147,7 +147,7 @@ pub(crate) fn tmux(
         .envs(environment)
         .args(["-S", socket.to_string_lossy().as_ref()])
         .args(args);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut command,
         context,
         Duration::from_secs(30),
@@ -177,7 +177,7 @@ impl Drop for TmuxSession {
             .env("PATH", "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
             .args(["-S", self.socket.to_string_lossy().as_ref()])
             .args(["kill-session", "-t", &self.name]);
-        let _ = super::crawl::bounded_command_output(
+        let _ = crate::commands::crawl::bounded_command_output(
             &mut command,
             "close private CLI PTY",
             Duration::from_secs(5),

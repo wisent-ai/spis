@@ -39,7 +39,7 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
         .arg("--version")
         .env_clear()
         .env("PATH", "/usr/bin:/bin");
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut version_command,
         "read pinned mobile readiness helper version",
         Duration::from_secs(15),
@@ -112,7 +112,7 @@ pub(crate) fn readiness_observation(
         "--evidence-sha256",
         &proof.evidence_sha256,
     ]);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut readiness,
         "run fresh mobile runtime-readiness verification",
         Duration::from_secs(120),

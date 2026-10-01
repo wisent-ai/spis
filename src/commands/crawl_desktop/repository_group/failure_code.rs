@@ -153,7 +153,7 @@ pub(crate) fn preflight(driver: &CuaDriver) -> Result<()> {
     }
     let mut command = Command::new(&driver.path);
     command.args(["permissions", "status", "--json"]);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut command,
         "Cua Driver permission status",
         Duration::from_secs(15),
@@ -184,7 +184,7 @@ pub(crate) fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Recor
     if !matches!(catalog, "macos-app-examples" | "desktop-app-examples") {
         bail!("crawl-desktop accepts macos-app-examples or desktop-app-examples");
     }
-    let directory = super::corpus::data_root()
+    let directory = crate::commands::corpus::data_root()
         .join(catalog)
         .join("references");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)?

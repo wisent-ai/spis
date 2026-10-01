@@ -15,6 +15,9 @@ use anyhow::{bail, Context, Result};
 use serde_json::json;
 use std::io::Read;
 use std::time::Duration;
+// The split submodules reach their sibling commands through `super::`, which
+// resolves here by way of their `use super::*`.
+use crate::commands::reference_contract;
 
 mod ua;
 mod keywords;

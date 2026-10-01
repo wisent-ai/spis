@@ -75,7 +75,7 @@ pub(crate) fn readiness_observation(
         "--evidence-sha256",
         &proof.evidence_sha256,
     ]);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut readiness,
         "run fresh desktop runtime-readiness verification",
         Duration::from_secs(120),
@@ -134,7 +134,7 @@ pub(crate) fn verify_desktop_executable(
     let metadata = |key: &str| -> Result<String> {
         let mut command = Command::new("/usr/bin/plutil");
         command.args(["-extract", key, "raw", "-o", "-"]).arg(&info);
-        let output = super::crawl::bounded_command_output(
+        let output = crate::commands::crawl::bounded_command_output(
             &mut command,
             "read desktop bundle metadata",
             Duration::from_secs(30),

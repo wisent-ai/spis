@@ -103,7 +103,7 @@ pub(crate) fn import_record_attempt(
             // the corpus importer independently checks its digest, length,
             // extraction bounds and typed report/tree agreement.
             let readable_corpus =
-                super::docs_corpus::import_worker_report_from_archive(&report, &archive)?;
+                crate::commands::docs_corpus::import_worker_report_from_archive(&report, &archive)?;
             if readable_corpus
                 .get("artifact_uri")
                 .and_then(Value::as_str)

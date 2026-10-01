@@ -62,10 +62,10 @@ pub(crate) fn attempt_root(
     base: &Path,
     manifest: &super::crawl::RuntimeManifest,
 ) -> Result<PathBuf> {
-    super::crawl::native_attempt_root(base, manifest)
+    crate::commands::crawl::native_attempt_root(base, manifest)
 }
 
-pub(crate) fn revision() -> Result<String> { super::crawl::build_revision() }
+pub(crate) fn revision() -> Result<String> { crate::commands::crawl::build_revision() }
 
 pub(crate) fn binary_for(slug: &str) -> String {
     let tail = slug.split_once('-').map(|(_, tail)| tail).unwrap_or(slug);
@@ -97,7 +97,7 @@ pub(crate) fn binary_for(slug: &str) -> String {
 }
 
 pub(crate) fn records(selected: Option<&str>) -> Result<Vec<Record>> {
-    let directory = super::corpus::data_root()
+    let directory = crate::commands::corpus::data_root()
         .join(CATALOG)
         .join("references");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)?

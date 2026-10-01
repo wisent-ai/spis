@@ -4,6 +4,9 @@
 //! here. Change a rule here and both consumers change with it.
 
 use anyhow::Result;
+// The split submodules reach their sibling commands through `super::`, which
+// resolves here by way of their `use super::*`.
+use crate::commands::generate_example_catalogs;
 
 mod catalog_schema;
 mod canonical_timing_class;

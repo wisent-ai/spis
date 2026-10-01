@@ -148,7 +148,7 @@ pub(crate) fn runtime_product(
         .to_string();
     let (kind, identifier, identity_source) = match (engine, catalog) {
         ("mobile", "ios-app-examples") => {
-            let (bundle, source) = super::crawl_mobile::ios_bundle_id_for(&product_url)?;
+            let (bundle, source) = crate::commands::crawl_mobile::ios_bundle_id_for(&product_url)?;
             ("ios-bundle", bundle, source)
         }
         ("mobile", "android-app-examples") => {
@@ -175,7 +175,7 @@ pub(crate) fn runtime_product(
         }
         ("cli", _) => (
             "cli-binary",
-            super::crawl_cli::binary_for(slug),
+            crate::commands::crawl_cli::binary_for(slug),
             "Spis exact CLI catalog mapping".into(),
         ),
         ("tui", _) => {

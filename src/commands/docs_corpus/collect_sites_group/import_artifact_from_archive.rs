@@ -32,9 +32,9 @@ pub(crate) fn import_artifact_from_archive(
             std::fs::copy(source, &archive_path)
                 .context("stage already downloaded documentation corpus artifact")?;
         } else {
-            let mut command = super::crawl::crawl_storage_command();
+            let mut command = crate::commands::crawl::crawl_storage_command();
             command.args(["storage", "get", uri]).arg(&archive_path);
-            let output = super::crawl::bounded_command_output(
+            let output = crate::commands::crawl::bounded_command_output(
                 &mut command,
                 "download immutable documentation corpus artifact",
                 std::time::Duration::from_secs(30 * 60),

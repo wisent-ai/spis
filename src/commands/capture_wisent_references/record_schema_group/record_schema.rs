@@ -21,7 +21,7 @@ pub(crate) const FONT_PX: usize = 15;
 // The former script wrote its scratch under ~/.stado/work/wisent-capture; this
 // checkout is confined to the spis tree and ~/.spis, so the scratch moves with it.
 pub(crate) fn root() -> PathBuf {
-    super::corpus::data_root()
+    crate::commands::corpus::data_root()
 }
 
 pub(crate) fn catalog_dir() -> PathBuf {

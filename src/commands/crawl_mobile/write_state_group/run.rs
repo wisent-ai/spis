@@ -70,7 +70,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let encoded_manifest = runtime_manifest_base64
         .as_deref()
         .context("--runtime-manifest-base64 is required")?;
-    let manifest = super::crawl::decode_runtime_manifest(
+    let manifest = crate::commands::crawl::decode_runtime_manifest(
         encoded_manifest,
         &catalog,
         "mobile",
@@ -169,10 +169,10 @@ pub fn run(rest: &[String]) -> Result<()> {
             }))? + "\n",
         )?;
     }
-    let artifact = super::crawl::publish_attempt_archive(&run_root, &artifact_uri)?;
+    let artifact = crate::commands::crawl::publish_attempt_archive(&run_root, &artifact_uri)?;
     let failure = failure.map(|(code, message)| json!({"code": code, "message": message}));
     let report = worker_report(&manifest, Some(artifact), failure.clone())?;
-    super::crawl::publish_worker_report(&manifest, &report)?;
+    crate::commands::crawl::publish_worker_report(&manifest, &report)?;
     println!("{}", serde_json::to_string(&report)?);
     if failure.is_some() {
         bail!("the exact mobile record could not be crawled");

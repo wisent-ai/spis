@@ -20,6 +20,9 @@ use std::collections::{BTreeSet, HashMap};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::atomic::{AtomicUsize, Ordering};
+// The split submodules reach their sibling commands through `super::`, which
+// resolves here by way of their `use super::*`.
+use crate::commands::reference_contract;
 
 mod record_schema_group;
 mod catalogs_group;

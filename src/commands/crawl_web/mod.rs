@@ -20,6 +20,9 @@ use std::process::Command;
 use std::time::{Duration, Instant};
 
 use crate::weles_provenance as weles;
+// The split submodules reach their sibling commands through `super::`, which
+// resolves here by way of their `use super::*`.
+use crate::commands::crawl;
 
 mod repository_group;
 mod ensure_manifest_identity_group;

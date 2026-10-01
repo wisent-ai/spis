@@ -202,7 +202,7 @@ pub(crate) fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManife
     match outcome {
         Ok(corpus) => {
             let artifact =
-                super::crawl::publish_attempt_archive(&layout.root, &manifest.artifact_uri)?;
+                crate::commands::crawl::publish_attempt_archive(&layout.root, &manifest.artifact_uri)?;
             let report = worker_report(
                 manifest,
                 "artifact_published",
@@ -210,7 +210,7 @@ pub(crate) fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManife
                 Some(corpus),
                 None,
             )?;
-            super::crawl::publish_worker_report(manifest, &report)?;
+            crate::commands::crawl::publish_worker_report(manifest, &report)?;
             println!("{}", serde_json::to_string(&report)?);
             Ok(())
         }
@@ -237,7 +237,7 @@ pub(crate) fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManife
             // already used in this directory.
             match failure_diagnostic_path(&layout) {
                 Ok(path) => {
-                    if let Err(write_error) = super::crawl::atomic_json_write(&path, &failure) {
+                    if let Err(write_error) = crate::commands::crawl::atomic_json_write(&path, &failure) {
                         eprintln!(
                             "documentation worker failure artifact could not be retained: {write_error:#}"
                         );
@@ -248,7 +248,7 @@ pub(crate) fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManife
                 ),
             }
             let artifact =
-                super::crawl::publish_attempt_archive(&layout.root, &manifest.artifact_uri);
+                crate::commands::crawl::publish_attempt_archive(&layout.root, &manifest.artifact_uri);
             let report = worker_report(
                 manifest,
                 "failed",
@@ -256,7 +256,7 @@ pub(crate) fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManife
                 None,
                 Some(("docs_crawl_failed", &message)),
             )?;
-            super::crawl::publish_worker_report(manifest, &report)?;
+            crate::commands::crawl::publish_worker_report(manifest, &report)?;
             println!("{}", serde_json::to_string(&report)?);
             match artifact {
                 Ok(_) => bail!("documentation worker failed: {message}"),

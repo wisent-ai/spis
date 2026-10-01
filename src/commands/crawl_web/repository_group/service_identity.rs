@@ -62,7 +62,7 @@ pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) ->
         "Accept: application/json",
     ])
     .arg(&url);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut curl,
         "read the Weles service release identity",
         Duration::from_secs(30),

@@ -2,7 +2,7 @@ use super::*;
 
 /// The plan every page is rendered from.
 pub(crate) fn plan(version: &str) -> Value {
-    let over_bound: Vec<String> = super::docs_corpus::sites_over_corpus_bound()
+    let over_bound: Vec<String> = crate::commands::docs_corpus::sites_over_corpus_bound()
         .into_iter()
         .map(|(slug, declared)| {
             format!(

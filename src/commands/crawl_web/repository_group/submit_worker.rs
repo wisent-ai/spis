@@ -9,7 +9,7 @@ pub(crate) fn submit_worker(
 ) -> Result<()> {
     safe_job_value(host, "--host")?;
     safe_job_value(record, "--record")?;
-    if super::crawl::build_revision()? != manifest.source_revision {
+    if crate::commands::crawl::build_revision()? != manifest.source_revision {
         bail!("web coordinator revision does not match immutable runtime manifest");
     }
     let service = manifest
@@ -37,7 +37,7 @@ pub(crate) fn submit_worker(
     // resolves to nothing however the host installs Rust -- the defect that
     // cost job-545551889f9e88be30daa81f sixteen minutes of a claimed slot in
     // the documentation engine, still open in this one.
-    let cargo = super::crawl::resolved_worker_program(host)?;
+    let cargo = crate::commands::crawl::resolved_worker_program(host)?;
     let command = format!(
         "{cargo} run --release -- crawl-web {catalog} --worker --record {record} --artifact-uri {} --wait-seconds {wait_seconds} --runtime-manifest-base64 '{}'",
         manifest.artifact_uri,
@@ -67,9 +67,9 @@ pub(crate) fn submit_worker(
         arguments.push("--secret-env".to_string());
         arguments.push(format!("{name}={reference}"));
     }
-    let mut stado = super::crawl::stado_command();
+    let mut stado = crate::commands::crawl::stado_command();
     stado.args(arguments);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit web crawl through Stado",
         Duration::from_secs(120),
@@ -81,7 +81,7 @@ pub(crate) fn submit_worker(
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    super::crawl::print_submission(
+    crate::commands::crawl::print_submission(
         catalog,
         "web",
         host,

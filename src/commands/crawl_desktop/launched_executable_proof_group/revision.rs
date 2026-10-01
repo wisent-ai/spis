@@ -1,6 +1,6 @@
 use super::*;
 
-pub(crate) fn revision() -> Result<String> { super::crawl::build_revision() }
+pub(crate) fn revision() -> Result<String> { crate::commands::crawl::build_revision() }
 
 pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     if value.is_empty()
@@ -18,7 +18,7 @@ pub(crate) fn attempt_root(
     base: &Path,
     manifest: &super::crawl::RuntimeManifest,
 ) -> Result<PathBuf> {
-    super::crawl::native_attempt_root(base, manifest)
+    crate::commands::crawl::native_attempt_root(base, manifest)
 }
 
 pub(crate) struct DesktopSubmission<'a> {
@@ -47,7 +47,7 @@ pub(crate) fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
     // resolves to nothing however the host installs Rust -- the defect that
     // cost job-545551889f9e88be30daa81f sixteen minutes of a claimed slot in
     // the documentation engine, still open in this one.
-    let cargo = super::crawl::resolved_worker_program(request.host)?;
+    let cargo = crate::commands::crawl::resolved_worker_program(request.host)?;
     let command = format!(
         "{cargo} run --release -- crawl-desktop {} --worker --record {} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.catalog,
@@ -76,9 +76,9 @@ pub(crate) fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
         "--output-uri".to_string(),
         output_uri.clone(),
     ];
-    let mut stado = super::crawl::stado_command();
+    let mut stado = crate::commands::crawl::stado_command();
     stado.args(arguments);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit desktop crawl through Stado",
         Duration::from_secs(120),
@@ -90,7 +90,7 @@ pub(crate) fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    super::crawl::print_submission(
+    crate::commands::crawl::print_submission(
         request.catalog,
         "desktop",
         request.host,

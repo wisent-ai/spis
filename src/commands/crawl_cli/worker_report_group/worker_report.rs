@@ -74,7 +74,7 @@ pub(crate) fn submit(request: Submission<'_>) -> Result<()> {
     // resolves to nothing however the host installs Rust -- the defect that
     // cost job-545551889f9e88be30daa81f sixteen minutes of a claimed slot in
     // the documentation engine, still open in this one.
-    let cargo = super::crawl::resolved_worker_program(request.host)?;
+    let cargo = crate::commands::crawl::resolved_worker_program(request.host)?;
     let worker = format!(
         "{cargo} run --release -- crawl-cli --worker --record {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.record,
@@ -103,9 +103,9 @@ pub(crate) fn submit(request: Submission<'_>) -> Result<()> {
         arguments.push("--secret-env".to_string());
         arguments.push(format!("{name}={reference}"));
     }
-    let mut stado = super::crawl::stado_command();
+    let mut stado = crate::commands::crawl::stado_command();
     stado.args(arguments);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit CLI crawl through Stado",
         Duration::from_secs(120),
@@ -114,7 +114,7 @@ pub(crate) fn submit(request: Submission<'_>) -> Result<()> {
     if !output.status.success() {
         bail!("Stado refused CLI crawl: {}", String::from_utf8_lossy(&output.stderr).trim());
     }
-    super::crawl::print_submission(
+    crate::commands::crawl::print_submission(
         CATALOG,
         "cli",
         request.host,
@@ -163,7 +163,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let encoded_manifest = runtime_manifest_base64
         .as_deref()
         .context("--runtime-manifest-base64 is required")?;
-    let manifest = super::crawl::decode_runtime_manifest(
+    let manifest = crate::commands::crawl::decode_runtime_manifest(
         encoded_manifest,
         CATALOG,
         "cli",
@@ -242,10 +242,10 @@ pub fn run(rest: &[String]) -> Result<()> {
             }))? + "\n",
         )?;
     }
-    let artifact = super::crawl::publish_attempt_archive(&root, &artifact_uri)?;
+    let artifact = crate::commands::crawl::publish_attempt_archive(&root, &artifact_uri)?;
     let failure = failure.map(|(code, message)| json!({"code": code, "message": message}));
     let report = worker_report(&manifest, Some(artifact), failure.clone())?;
-    super::crawl::publish_worker_report(&manifest, &report)?;
+    crate::commands::crawl::publish_worker_report(&manifest, &report)?;
     println!("{}", serde_json::to_string(&report)?);
     if failure.is_some() {
         bail!("the exact CLI record could not be crawled");

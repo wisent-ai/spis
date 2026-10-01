@@ -72,14 +72,14 @@ pub(crate) fn submit(
     // resolves to nothing however the host installs Rust -- the defect that
     // cost job-545551889f9e88be30daa81f sixteen minutes of a claimed slot in
     // the documentation engine, still open in this one.
-    let cargo = super::crawl::resolved_worker_program(host)?;
+    let cargo = crate::commands::crawl::resolved_worker_program(host)?;
     // Git the same way, and for the same reason: the worker builds a fixture
     // repository with it, the job's shell finds nothing by bare name, and
     // `/usr/bin/git` must never be the answer because on a host without the
     // Command Line Tools that path opens the installer window rather than
     // running git. The allowlist resolves it to a real installation and the
     // worker is handed that exact path.
-    let git = super::crawl::resolved_program(host, &["git", "--version"])?;
+    let git = crate::commands::crawl::resolved_program(host, &["git", "--version"])?;
     if git.chars().any(char::is_whitespace) || git == "/usr/bin/git" {
         bail!("host {host} resolved git to {git:?}, which this worker must not be handed");
     }
@@ -87,7 +87,7 @@ pub(crate) fn submit(
         "{cargo} run --release -- crawl-tui --worker --record {selected} --artifact-uri {artifact} --git-path {git} --runtime-manifest-base64 '{}'",
         manifest.encoded()?
     );
-    let mut stado = super::crawl::stado_command();
+    let mut stado = crate::commands::crawl::stado_command();
     stado.args([
         "submit",
         &worker,
@@ -100,7 +100,7 @@ pub(crate) fn submit(
         "--repo-ref",
         &manifest.source_revision,
         "--repo-workdir",
-        super::crawl::STADO_REPO_WORKDIR,
+        crate::commands::crawl::STADO_REPO_WORKDIR,
         "--repo-extras",
         "",
         "--output-uri",
@@ -109,7 +109,7 @@ pub(crate) fn submit(
     for (name, reference) in delivery_secret_bindings(manifest)? {
         stado.arg("--secret-env").arg(format!("{name}={reference}"));
     }
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit TUI crawl through Stado",
         Duration::from_secs(120),
@@ -118,7 +118,7 @@ pub(crate) fn submit(
     if !output.status.success() {
         bail!("Stado refused TUI crawl: {}", String::from_utf8_lossy(&output.stderr).trim());
     }
-    super::crawl::print_submission(
+    crate::commands::crawl::print_submission(
         "tui-examples",
         "tui",
         host,
@@ -169,7 +169,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         i += 1;
     }
     let selected = selected.context("--record is required for one exact per-record job")?;
-    let manifest = super::crawl::decode_runtime_manifest(
+    let manifest = crate::commands::crawl::decode_runtime_manifest(
         runtime_manifest_base64.as_deref().context("--runtime-manifest-base64 is required")?,
         "tui-examples",
         "tui",
@@ -261,10 +261,10 @@ pub fn run(rest: &[String]) -> Result<()> {
             }))? + "\n",
         )?;
     }
-    let artifact = super::crawl::publish_attempt_archive(&root, &artifact_uri)?;
+    let artifact = crate::commands::crawl::publish_attempt_archive(&root, &artifact_uri)?;
     let failure = failure.map(|(code, message)| json!({"code": code, "message": message}));
     let report = worker_report(&manifest, Some(artifact), failure.clone())?;
-    super::crawl::publish_worker_report(&manifest, &report)?;
+    crate::commands::crawl::publish_worker_report(&manifest, &report)?;
     println!("{}", serde_json::to_string(&report)?);
     if failure.is_some() {
         bail!("the exact TUI record could not be crawled");

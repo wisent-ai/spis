@@ -42,6 +42,10 @@ use crate as lib;
 use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
 use std::path::{Path, PathBuf};
+// The split submodules reach their sibling commands and the subcommand table
+// through `super::`, which resolves here by way of their `use super::*`.
+use super::SUBCOMMANDS;
+use crate::commands::{crawl, docs_corpus};
 
 
 

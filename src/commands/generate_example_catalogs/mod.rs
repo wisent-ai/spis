@@ -16,6 +16,9 @@ use anyhow::{anyhow, bail, Context, Result};
 use serde_json::{json, Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
+// The split submodules reach their sibling commands through `super::`, which
+// resolves here by way of their `use super::*`.
+use crate::commands::reference_contract;
 
 mod catalog_schema_group;
 mod load_catalog_group;

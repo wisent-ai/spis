@@ -181,7 +181,7 @@ pub(crate) fn resolve_terminal_identity(
 ) -> Result<(RuntimeExecutionIdentity, Vec<Value>)> {
     let declared_identifier = manifest.runtime_product.identifier.clone();
     let candidates = if manifest.runtime_product.kind == "tui-slug" {
-        super::crawl_tui::binary_candidates(&manifest.runtime_product.identifier)
+        crate::commands::crawl_tui::binary_candidates(&manifest.runtime_product.identifier)
     } else {
         vec![manifest.runtime_product.identifier.clone()]
     };

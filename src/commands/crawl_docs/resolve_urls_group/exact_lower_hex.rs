@@ -83,7 +83,7 @@ pub(crate) fn work_layout(manifest: &super::crawl::RuntimeManifest) -> Result<Wo
         .filter(|value| !value.is_empty())
         .context("HOME is not set; cannot locate the durable crawl work root")?;
     let base = PathBuf::from(home).join(".spis/crawls");
-    let root = super::crawl::native_attempt_root(&base, manifest)?;
+    let root = crate::commands::crawl::native_attempt_root(&base, manifest)?;
     let corpus = root.clone();
     Ok(WorkLayout {
         state: corpus.join("state.json"),

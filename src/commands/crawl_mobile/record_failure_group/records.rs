@@ -1,7 +1,7 @@
 use super::*;
 
 pub(crate) fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
-    let directory = super::corpus::data_root()
+    let directory = crate::commands::corpus::data_root()
         .join(catalog)
         .join("references");
     let mut entries: Vec<PathBuf> = std::fs::read_dir(&directory)
@@ -71,7 +71,7 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
             .with_context(|| {
                 format!("Apple lookup response exceeded its {limit}-byte bound or was invalid JSON")
             })?;
-        super::crawl::atomic_json_write(&cache, &value)?;
+        crate::commands::crawl::atomic_json_write(&cache, &value)?;
         value
     };
     let results = response.get("results").and_then(Value::as_array)

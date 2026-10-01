@@ -145,7 +145,7 @@ pub(crate) fn run_fetch_workers(
 }
 
 pub(crate) fn source_root() -> PathBuf {
-    super::corpus::data_root()
+    crate::commands::corpus::data_root()
 }
 
 pub(crate) fn validate_worker_source(

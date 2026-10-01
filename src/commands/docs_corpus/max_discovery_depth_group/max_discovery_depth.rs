@@ -38,7 +38,7 @@ pub(crate) const CORPUS_FILES: [&str; 4] = [
 ];
 
 pub(crate) fn engine_root() -> PathBuf {
-    super::corpus::data_root().join("documentation-site-examples/content-structure")
+    crate::commands::corpus::data_root().join("documentation-site-examples/content-structure")
 }
 
 pub(crate) fn home_dir() -> Result<PathBuf> {

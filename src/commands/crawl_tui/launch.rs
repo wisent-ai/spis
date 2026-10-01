@@ -207,7 +207,7 @@ pub(crate) fn crawl_one(
 }
 
 pub(crate) fn records(selected: Option<&str>) -> Result<Vec<(String, String)>> {
-    let directory = super::corpus::data_root()
+    let directory = crate::commands::corpus::data_root()
         .join("tui-examples")
         .join("references");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(directory)?

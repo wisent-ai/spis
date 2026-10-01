@@ -214,9 +214,9 @@ pub(crate) fn storage_get(uri: &str, destination: &Path) -> Outcome<()> {
     if let Some(parent) = destination.parent() {
         std::fs::create_dir_all(parent)?;
     }
-    let mut stado = super::crawl::stado_command();
+    let mut stado = crate::commands::crawl::stado_command();
     stado.args(["storage", "get", uri]).arg(destination);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "download retained Weles evidence",
         Duration::from_secs(300),

@@ -50,10 +50,10 @@ pub(crate) fn command_bullets() -> Vec<String> {
 /// requirements nowhere at all, while five of the six engines were submitting
 /// workers that needed a program the preflight never checked.
 pub(crate) fn family_rows() -> Vec<Value> {
-    super::crawl::CATALOGS
+    crate::commands::crawl::CATALOGS
         .iter()
         .map(|(catalog, engine)| {
-            let requires: Vec<String> = super::crawl::engine_preconditions(engine, catalog)
+            let requires: Vec<String> = crate::commands::crawl::engine_preconditions(engine, catalog)
                 .into_iter()
                 .map(|command| command.join(" "))
                 .collect();

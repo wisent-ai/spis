@@ -10,6 +10,9 @@ use std::fs::{File, OpenOptions};
 use std::os::unix::fs::OpenOptionsExt;
 use std::io::{BufRead, Read, Write};
 use std::path::{Component, Path, PathBuf};
+// The split submodules reach their sibling commands through `super::`, which
+// resolves here by way of their `use super::*`.
+use crate::commands::crawl_docs;
 
 mod max_discovery_depth_group;
 mod collect_sites_group;

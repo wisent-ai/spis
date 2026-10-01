@@ -200,7 +200,7 @@ pub(crate) struct LookupFailure {
 }
 
 pub(crate) fn machine_status(job_id: &str) -> std::result::Result<Value, LookupFailure> {
-    let output = super::crawl::stado_command().args(["machine", "status", job_id]).output()
+    let output = crate::commands::crawl::stado_command().args(["machine", "status", job_id]).output()
         .map_err(|error| LookupFailure {
             diagnostic: json!({"code": "transport_error", "retryable": true, "message": error.to_string()}),
             not_found: false,

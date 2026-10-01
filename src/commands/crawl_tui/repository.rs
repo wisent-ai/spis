@@ -29,7 +29,7 @@ impl Drop for TmuxSession {
             .env("PATH", "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
             .args(["-S", self.socket.to_string_lossy().as_ref()])
             .args(["kill-session", "-t", &self.name]);
-        let _ = super::crawl::bounded_command_output(
+        let _ = crate::commands::crawl::bounded_command_output(
             &mut command,
             "close private TUI PTY",
             Duration::from_secs(5),
@@ -81,10 +81,10 @@ pub(crate) fn attempt_root(
     base: &Path,
     manifest: &super::crawl::RuntimeManifest,
 ) -> Result<PathBuf> {
-    super::crawl::native_attempt_root(base, manifest)
+    crate::commands::crawl::native_attempt_root(base, manifest)
 }
 
-pub(crate) fn revision() -> Result<String> { super::crawl::build_revision() }
+pub(crate) fn revision() -> Result<String> { crate::commands::crawl::build_revision() }
 
 pub(crate) fn binary_candidates(name: &str) -> Vec<String> {
     let lower = name.to_lowercase();

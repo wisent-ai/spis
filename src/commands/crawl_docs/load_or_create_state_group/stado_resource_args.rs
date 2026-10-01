@@ -23,7 +23,7 @@ pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
 }
 
 pub(crate) fn source_revision() -> Result<String> {
-    super::crawl::build_revision()
+    crate::commands::crawl::build_revision()
 }
 
 #[derive(Deserialize)]
@@ -35,9 +35,9 @@ pub(crate) struct StorageStatReceipt {
 }
 
 pub(crate) fn storage_artifact_present(uri: &str, context: &str) -> Result<bool> {
-    let mut command = super::crawl::crawl_storage_command();
+    let mut command = crate::commands::crawl::crawl_storage_command();
     command.args(["storage", "stat", uri, "--json"]);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut command,
         context,
         Duration::from_secs(60),
@@ -118,7 +118,7 @@ pub(crate) fn submit_worker(
     // with `/bin/sh: cargo: command not found`. Through the shared helper now
     // that all six engines do this, so no engine can drift back to naming it
     // bare while another names the resolved path.
-    let cargo = super::crawl::resolved_worker_program(host)?;
+    let cargo = crate::commands::crawl::resolved_worker_program(host)?;
     let mut command_arguments = vec![
         cargo,
         "run".to_string(),
@@ -140,7 +140,7 @@ pub(crate) fn submit_worker(
             .collect::<Result<Vec<_>>>()?,
     );
     let command = command_words.join(" ");
-    let mut stado = super::crawl::stado_command();
+    let mut stado = crate::commands::crawl::stado_command();
     stado.args([
         "submit",
         &command,
@@ -153,14 +153,14 @@ pub(crate) fn submit_worker(
         "--repo-ref",
         &manifest.source_revision,
         "--repo-workdir",
-        super::crawl::STADO_REPO_WORKDIR,
+        crate::commands::crawl::STADO_REPO_WORKDIR,
         "--repo-extras",
         "",
         "--output-uri",
         &output_uri,
     ]);
     stado.args(STADO_RESOURCE_ARGS);
-    let output = super::crawl::bounded_command_output(
+    let output = crate::commands::crawl::bounded_command_output(
         &mut stado,
         "submit documentation crawl through Stado",
         STADO_COMMAND_TIMEOUT,
@@ -172,7 +172,7 @@ pub(crate) fn submit_worker(
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    super::crawl::print_submission(
+    crate::commands::crawl::print_submission(
         "documentation-site-examples",
         "docs",
         host,
@@ -222,7 +222,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         i += 1;
     }
     let record = record.context("--record is required for one exact per-record job")?;
-    let manifest = super::crawl::decode_runtime_manifest(
+    let manifest = crate::commands::crawl::decode_runtime_manifest(
         runtime_manifest_base64.as_deref().context("--runtime-manifest-base64 is required")?,
         "documentation-site-examples",
         "docs",

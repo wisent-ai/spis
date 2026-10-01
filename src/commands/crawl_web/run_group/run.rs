@@ -58,7 +58,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         bail!("--wait-seconds must be 30..86400");
     }
     let record = record.context("--record is required for one exact per-record job")?;
-    let manifest = super::crawl::decode_runtime_manifest(
+    let manifest = crate::commands::crawl::decode_runtime_manifest(
         runtime_manifest_base64
             .as_deref()
             .context("--runtime-manifest-base64 is required")?,

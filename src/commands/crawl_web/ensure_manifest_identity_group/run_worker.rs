@@ -12,7 +12,7 @@ pub(crate) fn run_worker(
     let base = PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
         .join(".spis")
         .join("crawls");
-    let attempt_root = super::crawl::native_attempt_root(&base, manifest)?;
+    let attempt_root = crate::commands::crawl::native_attempt_root(&base, manifest)?;
     std::fs::create_dir_all(&attempt_root)?;
     prune_stale_attempt_temporaries(&attempt_root)?;
     let private = PrivateBridge::open(manifest)?;
@@ -29,7 +29,7 @@ pub(crate) fn run_worker(
         // A publication failure is itself a typed attempt failure, so the single mandatory
         // report line is emitted on every path.
         Ok(()) => {
-            match super::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri) {
+            match crate::commands::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri) {
                 Ok(artifact) => {
                     let report = worker_report(
                         manifest,
@@ -38,7 +38,7 @@ pub(crate) fn run_worker(
                         &collected,
                         None,
                     );
-                    super::crawl::publish_worker_report(manifest, &report)?;
+                    crate::commands::crawl::publish_worker_report(manifest, &report)?;
                     println!("{}", serde_json::to_string(&report)?);
                     return Ok(());
                 }
@@ -66,7 +66,7 @@ pub(crate) fn run_worker(
             retention.code, retention.message
         );
     }
-    let artifact = super::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri);
+    let artifact = crate::commands::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri);
     let report = worker_report(
         manifest,
         "failed",
@@ -74,7 +74,7 @@ pub(crate) fn run_worker(
         &collected,
         Some(&failure),
     );
-    super::crawl::publish_worker_report(manifest, &report)?;
+    crate::commands::crawl::publish_worker_report(manifest, &report)?;
     println!("{}", serde_json::to_string(&report)?);
     match artifact {
         Ok(_) => bail!("web worker failed ({}): {}", failure.code, failure.message),
