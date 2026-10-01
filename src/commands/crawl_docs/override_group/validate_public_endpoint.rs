@@ -8,30 +8,12 @@ pub(crate) fn validate_public_endpoint(url: &Url) -> Result<Vec<SocketAddr>> {
     let port = url
         .port_or_known_default()
         .context("declared documentation source_url has no effective port")?;
-    let (sender, receiver) = mpsc::sync_channel(1);
-    let resolver_host = host.clone();
-    std::thread::spawn(move || {
-        let result = (resolver_host.as_str(), port)
-            .to_socket_addrs()
-            .map(|addresses| addresses.collect::<Vec<_>>())
-            .map_err(|error| error.to_string());
-        let _ = sender.send(result);
-    });
-    let addresses = match receiver.recv_timeout(DNS_LOOKUP_TIMEOUT) {
-        Ok(Ok(addresses)) => addresses,
-        Ok(Err(error)) => {
-            bail!("resolve declared documentation origin {host}:{port}: {error}")
-        }
-        Err(mpsc::RecvTimeoutError::Timeout) => {
-            bail!(
-                "resolve declared documentation origin {host}:{port}: exceeded {} seconds",
-                DNS_LOOKUP_TIMEOUT.as_secs()
-            )
-        }
-        Err(mpsc::RecvTimeoutError::Disconnected) => {
-            bail!("resolve declared documentation origin {host}:{port}: resolver stopped")
-        }
-    };
+    // The system resolver's own answer or error is the result; no deadline
+    // (cli.md rule 8).
+    let addresses = (host.as_str(), port)
+        .to_socket_addrs()
+        .map(|addresses| addresses.collect::<Vec<_>>())
+        .with_context(|| format!("resolve declared documentation origin {host}:{port}"))?;
     if addresses.is_empty() {
         bail!("declared documentation origin resolved to no addresses");
     }

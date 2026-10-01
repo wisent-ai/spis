@@ -36,20 +36,11 @@ pub(crate) fn writer_loop(
     while expected_index < expected_sequences.len() {
         let expected = expected_sequences[expected_index];
         while !waiting.contains_key(&expected) {
-            let message = match receiver.recv_timeout(WRITER_LIVENESS_TIMEOUT) {
-                Ok(message) => message,
-                Err(mpsc::RecvTimeoutError::Timeout) => {
-                    bail!(
-                        "documentation writer made no progress for {} seconds while waiting for target sequence {expected}",
-                        WRITER_LIVENESS_TIMEOUT.as_secs()
-                    );
-                }
-                Err(mpsc::RecvTimeoutError::Disconnected) => {
-                    bail!(
-                        "documentation writer channel closed before target sequence {expected}"
-                    );
-                }
-            };
+            // Blocks until a worker delivers; a worker that ends without
+            // delivering closes the channel, which is the error (cli.md rule 8).
+            let message = receiver.recv().map_err(|_| {
+                anyhow::anyhow!("documentation writer channel closed before target sequence {expected}")
+            })?;
             accept_writer_message(
                 message,
                 &expected_positions,
@@ -58,21 +49,16 @@ pub(crate) fn writer_loop(
             )?;
         }
 
-        let deadline = Instant::now() + WRITER_BATCH_WAIT;
+        // Batch only what has already arrived; no waiting window.
         while waiting.len() < WRITER_BATCH_SIZE {
-            let remaining = deadline.saturating_duration_since(Instant::now());
-            if remaining.is_zero() {
-                break;
-            }
-            match receiver.recv_timeout(remaining) {
+            match receiver.try_recv() {
                 Ok(message) => accept_writer_message(
                     message,
                     &expected_positions,
                     expected_index,
                     &mut waiting,
                 )?,
-                Err(mpsc::RecvTimeoutError::Timeout) => break,
-                Err(mpsc::RecvTimeoutError::Disconnected) => break,
+                Err(_) => break,
             }
         }
 

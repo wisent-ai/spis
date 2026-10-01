@@ -92,16 +92,9 @@ pub(crate) fn run_fetch_workers(
                             .with_context(|| {
                                 format!("send documentation target {url} to durable writer")
                             })?;
-                        match acknowledged.recv_timeout(WRITER_LIVENESS_TIMEOUT) {
+                        match acknowledged.recv() {
                             Ok(result) => result.map_err(anyhow::Error::msg)?,
-                            Err(mpsc::RecvTimeoutError::Timeout) => {
-                                shared.cancelled.store(true, Ordering::SeqCst);
-                                bail!(
-                                    "durable writer acknowledgement timed out after {} seconds for {url}",
-                                    WRITER_LIVENESS_TIMEOUT.as_secs()
-                                );
-                            }
-                            Err(mpsc::RecvTimeoutError::Disconnected) => {
+                            Err(_) => {
                                 bail!("durable writer disconnected before acknowledging {url}");
                             }
                         }

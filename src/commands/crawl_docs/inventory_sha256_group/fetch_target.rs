@@ -220,8 +220,6 @@ pub(crate) fn load_stream_hasher(path: &Path, committed_bytes: u64) -> Result<Sh
 
 pub(crate) const WRITER_BATCH_SIZE: usize = 32;
 
-pub(crate) const WRITER_BATCH_WAIT: Duration = Duration::from_millis(10);
-
 pub(crate) fn accept_writer_message(
     message: WriterMessage,
     expected_positions: &HashMap<usize, usize>,
