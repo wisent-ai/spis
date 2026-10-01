@@ -1,59 +1,42 @@
 use super::*;
 
 /// The absolute program Stado's own service declaration names for this host's
-/// queue agent, observed until it is unambiguous.
+/// queue agent.
 ///
-/// A failed read is not a refusal. The lookup goes through the host's object
-/// API, and that endpoint drops connections when the machine is busy: on
-/// 2026-09-05 fifty-one documentation attempts died on
-/// `error sending request for url (http://127.0.0.1:18776/api/object?...)`
-/// while release qualification work shared the same store, and each one burned
-/// a record's attempt and forced `crawl resume` to plan a new identity. The
-/// registry answering nothing this second says nothing about the declaration,
-/// so a transport-level failure is observed again on the same schedule as an
-/// unstable declaration, and only a persistent one is reported.
+/// One read of the declaration. A transport failure, a refusal, or a
+/// declaration that names zero or several programs is returned as
+/// `worker_agent_program_unstable` with what was observed, and the record is
+/// planned again by `crawl resume` instead of this call pausing and asking
+/// again (cli.md rule 8).
 pub(crate) fn declared_worker_stado_program(host: &str) -> Result<String> {
-    const POLLS: usize = 6;
-    const POLL_DELAY: Duration = Duration::from_secs(2);
     let mut programs = BTreeSet::new();
     let mut last_failure = String::new();
-    for poll in 0..POLLS {
-        let mut command = stado_command();
-        command.args(["service", "list", "--json"]);
-        let output = bounded_command_output(
-            &mut command,
-            "read declared Stado agent program",
-            16 * 1024 * 1024,
-        );
-        match output {
-            Ok(output) if output.status.success() => {
-                let services: Value = serde_json::from_slice(&output.stdout)
-                    .context("Stado service list is not JSON")?;
-                programs = active_worker_stado_programs(&services, host);
-                // Two overlapping service declarations that execute the same
-                // program are still unambiguous. A release cutover can briefly
-                // expose zero active declarations, or old and new declarations
-                // together; neither is a permanent property of the host, so
-                // observe it again instead of burning the record.
-                if programs.len() == 1 {
-                    return Ok(programs
-                        .iter()
-                        .next()
-                        .expect("one active program")
-                        .clone());
-                }
-            }
-            Ok(output) => {
-                last_failure = String::from_utf8_lossy(&output.stderr).trim().to_string();
-                programs.clear();
-            }
-            Err(error) => {
-                last_failure = error.to_string();
-                programs.clear();
+    let mut command = stado_command();
+    command.args(["service", "list", "--json"]);
+    match bounded_command_output(
+        &mut command,
+        "read declared Stado agent program",
+        16 * 1024 * 1024,
+    ) {
+        Ok(output) if output.status.success() => {
+            let services: Value = serde_json::from_slice(&output.stdout)
+                .context("Stado service list is not JSON")?;
+            programs = active_worker_stado_programs(&services, host);
+            // Two overlapping service declarations that execute the same
+            // program are still unambiguous.
+            if programs.len() == 1 {
+                return Ok(programs
+                    .iter()
+                    .next()
+                    .expect("one active program")
+                    .clone());
             }
         }
-        if poll + 1 < POLLS {
-            std::thread::sleep(POLL_DELAY);
+        Ok(output) => {
+            last_failure = String::from_utf8_lossy(&output.stderr).trim().to_string();
+        }
+        Err(error) => {
+            last_failure = error.to_string();
         }
     }
     if programs.is_empty() {
@@ -78,11 +61,11 @@ pub(crate) fn declared_worker_stado_program(host: &str) -> Result<String> {
     }
     if !last_failure.is_empty() && programs.is_empty() {
         bail!(
-            "worker_agent_program_unstable: host={host} observed_count=0 observations={POLLS} retryable=true last_failure={last_failure}"
+            "worker_agent_program_unstable: host={host} observed_count=0 retryable=true last_failure={last_failure}"
         )
     }
     bail!(
-        "worker_agent_program_unstable: host={host} observed_count={} observations={POLLS} retryable=true",
+        "worker_agent_program_unstable: host={host} observed_count={} retryable=true",
         programs.len()
     )
 }
