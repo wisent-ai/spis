@@ -97,83 +97,55 @@ pub(crate) fn state_of(row: &Value) -> String {
         .unwrap_or_else(|| "unknown".to_string())
 }
 
-pub(crate) fn poll(
+/// One read of Stado's batch record after the synchronous enqueue returned.
+pub(crate) fn read_states(
     target: &str,
     batch: &str,
     expected_ids: &HashSet<String>,
-    interval: u64,
-    timeout_seconds: u64,
     log: &dyn Fn(&str),
 ) -> Result<std::collections::HashMap<String, Value>> {
-    let terminal: HashSet<&str> = [
-        "done",
-        "failed",
-        "error",
-        "cancelled",
-        "canceled",
-        "skipped",
-    ]
-    .into_iter()
-    .collect();
-    let deadline = Instant::now() + Duration::from_secs(timeout_seconds);
-    let mut latest: std::collections::HashMap<String, Value> = std::collections::HashMap::new();
-    loop {
-        let (payload, _) = stado(
-            &[
-                "host",
-                "weles-capture-status",
-                target,
-                "--batch",
-                batch,
-                "--json",
-            ],
-            true,
-        )?;
-        let payload = payload.unwrap_or(Value::Null);
-        if let Some(returned_action) = payload.get("action") {
-            if returned_action.as_str() != Some(ACTION) {
-                bail!("weles-capture-status: action: expected {ACTION}, got {returned_action}");
-            }
+    let (payload, _) = stado(
+        &[
+            "host",
+            "weles-capture-status",
+            target,
+            "--batch",
+            batch,
+            "--json",
+        ],
+        true,
+    )?;
+    let payload = payload.unwrap_or(Value::Null);
+    if let Some(returned_action) = payload.get("action") {
+        if returned_action.as_str() != Some(ACTION) {
+            bail!("weles-capture-status: action: expected {ACTION}, got {returned_action}");
         }
-        let rows = action_rows(&payload, "weles-capture-status")?;
-        latest.clear();
-        for row in &rows {
-            if let Some(identifier) = action_id(row) {
-                let identifier = identifier.trim_matches('"').to_string();
-                if expected_ids.contains(&identifier) {
-                    latest.insert(identifier, row.clone());
-                }
-            }
-        }
-        let mut counts: BTreeMap<String, usize> = BTreeMap::new();
-        for row in latest.values() {
-            *counts.entry(state_of(row)).or_insert(0) += 1;
-        }
-        let counts_text = counts
-            .iter()
-            .map(|(state, count)| format!("{state}={count}"))
-            .collect::<Vec<_>>()
-            .join(", ");
-        log(&format!(
-            "  {counts_text} ({}/{})",
-            latest.len(),
-            expected_ids.len()
-        ));
-        let all_terminal = latest.len() == expected_ids.len()
-            && latest
-                .values()
-                .all(|row| terminal.contains(state_of(row).as_str()));
-        if all_terminal {
-            return Ok(latest);
-        }
-        if Instant::now() > deadline {
-            log(&format!(
-                "  timed out after {timeout_seconds}s; unresolved actions remain pending"
-            ));
-            return Ok(latest);
-        }
-        std::thread::sleep(Duration::from_secs(interval));
     }
+    let rows = action_rows(&payload, "weles-capture-status")?;
+    let mut latest: std::collections::HashMap<String, Value> = std::collections::HashMap::new();
+    for row in &rows {
+        if let Some(identifier) = action_id(row) {
+            let identifier = identifier.trim_matches('"').to_string();
+            if expected_ids.contains(&identifier) {
+                latest.insert(identifier, row.clone());
+            }
+        }
+    }
+    let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+    for row in latest.values() {
+        *counts.entry(state_of(row)).or_insert(0) += 1;
+    }
+    let counts_text = counts
+        .iter()
+        .map(|(state, count)| format!("{state}={count}"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    log(&format!(
+        "  {counts_text} ({}/{})",
+        latest.len(),
+        expected_ids.len()
+    ));
+    Ok(latest)
 }
 
 pub(crate) fn artifact_keys(row: &Value) -> Vec<String> {

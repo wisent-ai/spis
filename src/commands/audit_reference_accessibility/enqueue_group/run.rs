@@ -9,8 +9,6 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut target: Option<String> = None;
     let mut plan_arg: Option<String> = None;
     let mut dry_run = false;
-    let mut poll_seconds: u64 = 15;
-    let mut timeout_minutes: u64 = 120;
 
     let mut i = 0usize;
     while i < rest.len() {
@@ -36,22 +34,8 @@ pub fn run(rest: &[String]) -> Result<()> {
                 plan_arg = Some(crate::commands::required(rest.get(i), "--plan needs a value")?.clone());
             }
             "--dry-run" => dry_run = true,
-            "--poll-seconds" => {
-                i += 1;
-                poll_seconds = rest
-                    .get(i)
-                    .context("--poll-seconds needs a value")?
-                    .parse()?;
-            }
-            "--timeout-minutes" => {
-                i += 1;
-                timeout_minutes = rest
-                    .get(i)
-                    .context("--timeout-minutes needs a value")?
-                    .parse()?;
-            }
             "--help" | "-h" => {
-                println!("usage: spis audit-reference-accessibility [--catalog NAME]... [--records SEL] [--batch ID] [--target HOST] [--plan PATH] [--dry-run] [--poll-seconds N] [--timeout-minutes N]");
+                println!("usage: spis audit-reference-accessibility [--catalog NAME]... [--records SEL] [--batch ID] [--target HOST] [--plan PATH] [--dry-run]");
                 return Ok(());
             }
             other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
@@ -73,12 +57,6 @@ pub fn run(rest: &[String]) -> Result<()> {
     let batch: String;
     {
         let outcome: Result<(Map<String, Value>, PathBuf, Vec<Reference>, String)> = (|| {
-            if poll_seconds < 1 {
-                bail!("--poll-seconds: must be at least 1");
-            }
-            if timeout_minutes < 1 {
-                bail!("--timeout-minutes: must be at least 1");
-            }
             let sources: Vec<String> = if catalogs_arg.is_empty() {
                 DEFAULT_CATALOGS.iter().map(|s| s.to_string()).collect()
             } else {
@@ -156,7 +134,9 @@ pub fn run(rest: &[String]) -> Result<()> {
         .collect();
     let mut verifier_errors: Vec<String> = Vec::new();
 
-    // ---- enqueue + poll: failures mark every row and exit 2 -------------
+    // ---- enqueue + read: failures mark every row and exit 2 -------------
+    // `stado host weles-capture` returns only after every run finished, so one
+    // status read afterwards is final; there is nothing to poll (cli.md rule 8).
     let (ids, states): (Vec<String>, std::collections::HashMap<String, Value>) = {
         let outcome: Result<(
             String,
@@ -165,18 +145,11 @@ pub fn run(rest: &[String]) -> Result<()> {
         )> = (|| {
             let (enqueued_batch, ids) = enqueue(&target, &plan_path, &plan)?;
             log(&format!(
-                "batch {enqueued_batch}: {} {ACTION} actions enqueued",
+                "batch {enqueued_batch}: {} {ACTION} actions ran",
                 ids.len()
             ));
             let id_set: HashSet<String> = ids.iter().cloned().collect();
-            let states = poll(
-                &target,
-                &enqueued_batch,
-                &id_set,
-                poll_seconds,
-                timeout_minutes * 60,
-                &log,
-            )?;
+            let states = read_states(&target, &enqueued_batch, &id_set, &log)?;
             Ok((enqueued_batch, ids, states))
         })();
         match outcome {
