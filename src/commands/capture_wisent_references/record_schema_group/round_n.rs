@@ -205,9 +205,8 @@ pub(crate) fn quick_version(product: &Product) -> (Option<String>, QuickOutcome)
         return (None, QuickOutcome::Missing);
     };
     let args: Vec<&str> = product.version_cmd.split_whitespace().collect();
-    match run_with_timeout(&args, Duration::from_secs(120)) {
+    match run_to_exit(&args) {
         QuickRun::SpawnError => (Some(path), QuickOutcome::Failed("OSError".into())),
-        QuickRun::TimedOut => (Some(path), QuickOutcome::Failed("TimeoutExpired".into())),
         QuickRun::Done(status, out, err) => {
             let text = strip_ansi(&(out + &err)).trim().to_string();
             let first = text.split('\n').next().unwrap_or("").to_string();
@@ -218,50 +217,23 @@ pub(crate) fn quick_version(product: &Product) -> (Option<String>, QuickOutcome)
 
 pub(crate) enum QuickRun {
     Done(i32, String, String),
-    TimedOut,
     SpawnError,
 }
 
-pub(crate) fn run_with_timeout(argv: &[&str], limit: Duration) -> QuickRun {
-    let mut child = match Command::new(argv[0])
+/// Runs `argv` to its own exit and captures both streams. There is no
+/// deadline: the program's exit or its own error is the answer (cli.md rule 8).
+pub(crate) fn run_to_exit(argv: &[&str]) -> QuickRun {
+    match Command::new(argv[0])
         .args(&argv[1..])
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
-        .spawn()
+        .output()
     {
-        Ok(c) => c,
-        Err(_) => return QuickRun::SpawnError,
-    };
-    let mut stdout_pipe = child.stdout.take().expect("stdout piped");
-    let mut stderr_pipe = child.stderr.take().expect("stderr piped");
-    let t_out = std::thread::spawn(move || {
-        use std::io::Read;
-        let mut buf = Vec::new();
-        let _ = stdout_pipe.read_to_end(&mut buf);
-        buf
-    });
-    let t_err = std::thread::spawn(move || {
-        use std::io::Read;
-        let mut buf = Vec::new();
-        let _ = stderr_pipe.read_to_end(&mut buf);
-        buf
-    });
-    let deadline = Instant::now() + limit;
-    loop {
-        match child.try_wait() {
-            Ok(Some(status)) => {
-                let out = String::from_utf8_lossy(&t_out.join().unwrap_or_default()).into_owned();
-                let err = String::from_utf8_lossy(&t_err.join().unwrap_or_default()).into_owned();
-                return QuickRun::Done(status.code().unwrap_or(-1), out, err);
-            }
-            Ok(None) => {}
-            Err(_) => return QuickRun::SpawnError,
-        }
-        if Instant::now() >= deadline {
-            let _ = child.kill();
-            let _ = child.wait();
-            return QuickRun::TimedOut;
-        }
-        std::thread::sleep(Duration::from_millis(50));
+        Ok(output) => QuickRun::Done(
+            output.status.code().unwrap_or(-1),
+            String::from_utf8_lossy(&output.stdout).into_owned(),
+            String::from_utf8_lossy(&output.stderr).into_owned(),
+        ),
+        Err(_) => QuickRun::SpawnError,
     }
 }
