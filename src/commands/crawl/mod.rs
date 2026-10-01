@@ -16,8 +16,8 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 
-#[cfg(test)]
-mod preflight_tests;
+
+
 
 mod op_schema_group;
 mod publish_worker_report_group;

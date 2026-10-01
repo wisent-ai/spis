@@ -25,8 +25,8 @@ use std::sync::{mpsc, Arc};
 use std::time::{Duration, Instant};
 use url::Url;
 
-#[cfg(test)]
-mod tests;
+
+
 
 mod override_group;
 mod resolve_urls_group;

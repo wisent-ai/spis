@@ -22,8 +22,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{Duration, Instant};
 
-#[cfg(test)]
-mod tests;
+
+
 
 mod index_group;
 mod enqueue_group;

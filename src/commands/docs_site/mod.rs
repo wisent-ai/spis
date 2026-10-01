@@ -43,8 +43,8 @@ use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
 use std::path::{Path, PathBuf};
 
-#[cfg(test)]
-mod tests;
+
+
 
 mod docs_content;
 mod plan;

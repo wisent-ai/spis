@@ -14,9 +14,6 @@
       "build": {
         "argv": ["stado", "product", "cargo", "stage", "--bin", "spis"]
       },
-      "tests": [
-        {"name": "crawl", "argv": ["cargo", "test", "--locked", "--test", "crawl_host_resolved_executable"]}
-      ],
       "stage": {
         "spis": "bin/spis"
       }

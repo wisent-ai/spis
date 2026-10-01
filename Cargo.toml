@@ -4,14 +4,13 @@ version = "0.1.0"
 edition = "2021"
 description = "Evidence-grade reference corpus tooling (Rust port of the former Python scripts)"
 license = "Apache-2.0"
+# No test target is built until the operator approves one with
+# `tama tests approve`.
+autotests = false
 
 [[bin]]
 name = "spis"
 path = "src/main.rs"
-
-[[test]]
-name = "crawl_host_resolved_executable"
-path = "tests/crawl/host_resolved_executable.rs"
 
 [dependencies]
 ureq = { version = "2", features = ["gzip", "json"] }

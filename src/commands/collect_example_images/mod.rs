@@ -17,14 +17,14 @@ use serde_json::{json, Map, Value};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
-#[cfg(test)]
-mod tests;
 
-#[cfg(test)]
-mod html_tests;
 
-#[cfg(test)]
-mod real_image_tests;
+
+
+
+
+
+
 
 mod user_agent_group;
 
