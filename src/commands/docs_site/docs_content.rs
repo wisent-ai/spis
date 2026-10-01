@@ -37,7 +37,7 @@ pub(crate) fn authored(slug: &str) -> &'static str {
 pub(crate) fn command_bullets() -> Vec<String> {
     super::SUBCOMMANDS
         .iter()
-        .map(|(name, summary)| format!("`{name}` — {summary}."))
+        .map(|command| format!("`{}` — {}.", command.name, command.description))
         .collect()
 }
 
@@ -101,7 +101,7 @@ pub(crate) fn brief(version: &str) -> Value {
                 "binary": "target/release/spis",
                 "commands": super::SUBCOMMANDS
                     .iter()
-                    .map(|(name, _)| *name)
+                    .map(|command| command.name)
                     .collect::<Vec<&str>>(),
             },
             // Declared, because it exists and because the fleet requires

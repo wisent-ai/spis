@@ -85,7 +85,7 @@ pub(crate) fn plan(version: &str) -> Value {
                 "nav": "CLI reference",
                 "eyebrow": "Reference",
                 "title": "CLI reference",
-                "description": "Every subcommand the shipped binary dispatches.",
+                "description": "Every subcommand the shipped binary dispatches. `spis --help` prints this list to standard output and exits 0; `spis <subcommand> --help` never runs the subcommand and needs no adopted corpus: a subcommand with its own usage prints its flags, every other one its usage line and description.",
                 "sections": [
                     { "title": "Commands", "bullets": command_bullets() },
                 ],

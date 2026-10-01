@@ -23,103 +23,68 @@ pub mod reference_record;
 pub mod verify_reference_evidence;
 
 use anyhow::Result;
+use std::io::Write;
 
-const SUBCOMMANDS: &[(&str, &str)] = &[
-    (
-        "onboarding",
-        "show or reset the first-use walkthrough",
-    ),
-    (
-        "corpus",
-        "adopt or inspect an existing canonical reference corpus",
-    ),
-    (
-        "docs-site",
-        "generate this product's documentation from its own tables",
-    ),
-    (
-        "crawl",
-        "plan, submit, track, resume and import every crawler",
-    ),
-    (
-        "crawl-cli",
-        "crawl real CLI products through a PTY on Stado",
-    ),
-    (
-        "crawl-docs",
-        "full-text crawl of the 50-reference documentation set",
-    ),
-    (
-        "crawl-mobile",
-        "crawl real iOS or Android apps through Appium",
-    ),
-    (
-        "crawl-desktop",
-        "crawl real macOS or desktop apps through Cua Driver",
-    ),
-    (
-        "crawl-web",
-        "crawl real browser products through Weles on Stado",
-    ),
-    (
-        "crawl-tui",
-        "crawl real terminal applications through a PTY on Stado",
-    ),
-    (
-        "docs-corpus",
-        "read and import immutable documentation retrieval corpora",
-    ),
-    ("discover", "discover important pages behind a start URL"),
-    (
-        "reference-record",
-        "manage numbered reference records in a catalog",
-    ),
-    (
-        "verify-reference-evidence",
-        "measure and verify evidence fields of records",
-    ),
-    (
-        "check-upstream-drift",
-        "detect drift between corpus and upstream sources",
-    ),
-    (
-        "catalog-type",
-        "manage typed catalogs (add/edit/rename/remove)",
-    ),
-    (
-        "generate-example-catalogs",
-        "validate catalogs and write the JSON index",
-    ),
-    (
-        "analyze-example-structures",
-        "structural analysis of example screenshots",
-    ),
-    (
-        "collect-example-images",
-        "collect cover images for examples",
-    ),
-    (
-        "capture-widths",
-        "enqueue multi-width Weles capture batches",
-    ),
-    (
-        "audit-reference-accessibility",
-        "run axe audits over captured references",
-    ),
-    (
-        "capture-wisent-references",
-        "pty-capture product CLIs into records",
-    ),
-    (
-        "curate-marketing-catalogs",
-        "write validated pricing and landing candidates for Weles capture",
-    ),
+/// One subcommand: its name, what it does, and whether its own module
+/// answers `--help` with its flags. A module that does not is answered here,
+/// so `--help` never reaches code that would do the command's work.
+struct Subcommand {
+    name: &'static str,
+    description: &'static str,
+    own_help: bool,
+}
+
+const fn sub(name: &'static str, description: &'static str, own_help: bool) -> Subcommand {
+    Subcommand { name, description, own_help }
+}
+
+const SUBCOMMANDS: &[Subcommand] = &[
+    sub("onboarding", "show or reset the first-use walkthrough", true),
+    sub("corpus", "adopt or inspect an existing canonical reference corpus", true),
+    sub("docs-site", "generate this product's documentation from its own tables", true),
+    sub("crawl", "plan, submit, track, resume and import every crawler", true),
+    sub("crawl-cli", "crawl real CLI products through a PTY on Stado", true),
+    sub("crawl-docs", "full-text crawl of the 50-reference documentation set", false),
+    sub("crawl-mobile", "crawl real iOS or Android apps through Appium", true),
+    sub("crawl-desktop", "crawl real macOS or desktop apps through Cua Driver", true),
+    sub("crawl-web", "crawl real browser products through Weles on Stado", true),
+    sub("crawl-tui", "crawl real terminal applications through a PTY on Stado", true),
+    sub("docs-corpus", "read and import immutable documentation retrieval corpora", false),
+    sub("discover", "discover important pages behind a start URL", false),
+    sub("reference-record", "manage numbered reference records in a catalog", false),
+    sub("verify-reference-evidence", "measure and verify evidence fields of records", false),
+    sub("check-upstream-drift", "detect drift between corpus and upstream sources", false),
+    sub("catalog-type", "manage typed catalogs (add/edit/rename/remove)", true),
+    sub("generate-example-catalogs", "validate catalogs and write the JSON index", true),
+    sub("analyze-example-structures", "structural analysis of example screenshots", false),
+    sub("collect-example-images", "collect cover images for examples", false),
+    sub("capture-widths", "enqueue multi-width Weles capture batches", false),
+    sub("audit-reference-accessibility", "run axe audits over captured references", true),
+    sub("capture-wisent-references", "pty-capture product CLIs into records", false),
+    sub("curate-marketing-catalogs", "write validated pricing and landing candidates for Weles capture", false),
 ];
 
+fn asks_help(rest: &[String]) -> bool {
+    rest.iter().any(|arg| arg == "--help" || arg == "-h")
+}
+
 fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
-    if !matches!(name, "onboarding" | "corpus" | "docs-site")
-        && SUBCOMMANDS.iter().any(|(candidate, _)| *candidate == name)
-    {
+    let Some(command) = SUBCOMMANDS.iter().find(|candidate| candidate.name == name) else {
+        eprintln!("unknown subcommand: {name}");
+        write_usage(&mut std::io::stderr());
+        return Ok(false);
+    };
+    // Help is answered before the corpus is activated and before the module
+    // runs: it needs no corpus, and a module that does not read `--help`
+    // would otherwise do its work.
+    if asks_help(rest) && !command.own_help {
+        println!(
+            "usage: spis {} [flags]\n\n{}\n\nThis command was not run. Its flags and refusals are in the CLI reference, https://spis.wisent.com/docs/cli-reference.",
+            command.name, command.description
+        );
+        return Ok(true);
+    }
+    if !asks_help(rest) && !matches!(name, "onboarding" | "corpus" | "docs-site") {
         corpus::activate_configured_root()?;
     }
     match name {
@@ -146,11 +111,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "capture-widths" => capture_widths::run(rest)?,
         "audit-reference-accessibility" => audit_reference_accessibility::run(rest)?,
         "capture-wisent-references" => capture_wisent_references::run(rest)?,
-        _ => {
-            eprintln!("unknown subcommand: {name}");
-            print_usage();
-            return Ok(false);
-        }
+        _ => unreachable!("every SUBCOMMANDS entry is dispatched"),
     }
     Ok(true)
 }
@@ -158,7 +119,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
 pub fn run(args: &[String]) -> Result<bool> {
     match args.first().map(|s| s.as_str()) {
         None | Some("help") | Some("--help") | Some("-h") => {
-            print_usage();
+            write_usage(&mut std::io::stdout());
             Ok(true)
         }
         Some(name) => {
@@ -168,10 +129,12 @@ pub fn run(args: &[String]) -> Result<bool> {
     }
 }
 
-fn print_usage() {
-    eprintln!("spis — evidence-grade reference corpus tooling\n\nUSAGE:\n  spis <subcommand> [flags]\n\nSUBCOMMANDS:");
-    for (name, desc) in SUBCOMMANDS {
-        eprintln!("  {name:<32} {desc}");
+/// The subcommand list: to stdout when it was asked for, to stderr beside an
+/// unknown subcommand's refusal.
+fn write_usage(out: &mut dyn std::io::Write) {
+    let _ = writeln!(out, "spis — evidence-grade reference corpus tooling\n\nUSAGE:\n  spis <subcommand> [flags]\n\nSUBCOMMANDS:");
+    for command in SUBCOMMANDS {
+        let _ = writeln!(out, "  {:<32} {}", command.name, command.description);
     }
-    eprintln!("\nRun `spis <subcommand> --help` for details.");
+    let _ = writeln!(out, "\nRun `spis <subcommand> --help` for details.");
 }
