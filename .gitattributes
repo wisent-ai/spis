@@ -1,0 +1,5 @@
+# The captured reference corpus (screenshots, page captures) is the data Spis
+# serves, not source the binary is built from. `git archive`, which Stado's
+# build snapshot uses, leaves it out, so a build source stays under the object
+# API's single-object limit.
+*-examples/** export-ignore
