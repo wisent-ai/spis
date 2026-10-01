@@ -174,12 +174,6 @@ pub(crate) fn capture_range(session: &TmuxSession, start: &str, context: &'stati
     Ok(screen)
 }
 
-/// Readiness polling reads only the visible tail; `-S -` would re-read the
-/// entire scrollback on every poll (finding 8).
-pub(crate) fn capture_tail(session: &TmuxSession) -> Result<String> {
-    capture_range(session, "-50", "poll TUI pane tail")
-}
-
 /// Exactly one bounded full capture per record (finding 8).
 pub(crate) fn capture(session: &TmuxSession) -> Result<String> {
     capture_range(session, "-2000", "capture TUI pane")

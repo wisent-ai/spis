@@ -14,8 +14,7 @@ pub(crate) struct Record {
 pub(crate) struct Invocation {
     pub(crate) argv: Vec<String>,
     pub(crate) output: String,
-    pub(crate) exit_status: Option<i32>,
-    pub(crate) timed_out: bool,
+    pub(crate) exit_status: i32,
     pub(crate) state_path: String,
 }
 

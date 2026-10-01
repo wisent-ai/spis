@@ -201,10 +201,10 @@ pub(crate) fn capture_range(session: &TmuxSession, start: &str, context: &'stati
     Ok(screen)
 }
 
-/// Marker polling reads only the visible tail; `-S -` would re-read the whole
-/// history ten times a second for the entire deadline (finding 8).
+/// Reads only the visible tail; `-S -` would re-read the whole history
+/// (finding 8).
 pub(crate) fn capture_tail(session: &TmuxSession) -> Result<String> {
-    capture_range(session, "-50", "poll CLI PTY tail")
+    capture_range(session, "-50", "read CLI PTY tail")
 }
 
 /// Exactly one bounded full capture per invocation (finding 8).
@@ -212,17 +212,26 @@ pub(crate) fn capture_history(session: &TmuxSession) -> Result<String> {
     capture_range(session, "-2000", "capture CLI PTY")
 }
 
-pub(crate) fn await_marker(session: &TmuxSession, marker: &str, timeout: Duration) -> Result<bool> {
-    let deadline = Instant::now() + timeout;
-    loop {
-        if capture_tail(session)?.contains(marker) {
-            return Ok(true);
-        }
-        if Instant::now() >= deadline {
-            return Ok(false);
-        }
-        std::thread::sleep(Duration::from_millis(100));
+/// Shell text that signals `channel` on this private tmux server. Typed as the
+/// last step of a command line, it runs only after everything before it.
+pub(crate) fn signal_suffix(session: &TmuxSession, channel: &str) -> String {
+    format!(
+        "; tmux -S {} wait-for -S {}",
+        shell_quote(session.socket.to_string_lossy().as_ref()),
+        shell_quote(channel)
+    )
+}
+
+/// Blocks on the tmux `wait-for` channel the typed command signals, then
+/// confirms `marker` is on screen. No polling and no deadline (cli.md rule 8):
+/// the program's own exit ends the command; if the shell dies, the private
+/// server exits and `wait-for` returns that error.
+pub(crate) fn await_signal(session: &TmuxSession, channel: &str, marker: &str, context: &str) -> Result<()> {
+    tmux(&session.socket, &session.environment, &["wait-for", channel], context)?;
+    if !capture_tail(session)?.contains(marker) {
+        bail!("{context}: channel {channel} was signalled but {marker} is not on screen");
     }
+    Ok(())
 }
 
 pub(crate) fn clean_terminal(value: &str) -> String {

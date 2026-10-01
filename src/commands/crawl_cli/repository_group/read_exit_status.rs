@@ -60,10 +60,12 @@ pub(crate) fn run_in_pty(
         invocation.push_str(&shell_quote(argument));
     }
     // Both markers are assembled from two shell words, so the shell's own echo
-    // of this command line cannot satisfy the poll before the program has run.
+    // of this command line cannot satisfy the marker check before the program has run.
+    let end_channel = format!("spis-end-{nonce}");
     let command = format!(
-        "printf '\\n%s%s\\n' '__SPIS_START_' '{nonce}__'; {invocation}; printf '%s' \"$?\" > {}; printf '\\n%s%s\\n' '__SPIS_END_' '{nonce}__'",
-        shell_quote(exit_file.to_string_lossy().as_ref())
+        "printf '\\n%s%s\\n' '__SPIS_START_' '{nonce}__'; {invocation}; printf '%s' \"$?\" > {}; printf '\\n%s%s\\n' '__SPIS_END_' '{nonce}__'{}",
+        shell_quote(exit_file.to_string_lossy().as_ref()),
+        signal_suffix(session, &end_channel)
     );
     tmux(
         &session.socket,
@@ -77,44 +79,14 @@ pub(crate) fn run_in_pty(
         &["send-keys", "-t", &session.name, "Enter"],
         "submit CLI invocation",
     )?;
-    let mut timed_out = false;
-    if !await_marker(session, &end_marker, Duration::from_secs(30))? {
-        let _ = tmux(
-            &session.socket,
-            &session.environment,
-            &["send-keys", "-t", &session.name, "C-c"],
-            "interrupt CLI timeout",
-        );
-        // A program that survives the interrupt would receive the next
-        // invocation's keystrokes as stdin and its output would be digested
-        // under the wrong argv, so the record is abandoned here instead of
-        // continuing on the shared session (finding 6).
-        if !await_marker(session, &end_marker, Duration::from_secs(5))? {
-            let _ = tmux(
-                &session.socket,
-                &session.environment,
-                &["kill-session", "-t", &session.name],
-                "kill hung CLI PTY",
-            );
-            return Err(anyhow::Error::new(RecordFailure {
-                code: "cli_invocation_timeout",
-                message: format!(
-                    "CLI invocation {argv:?} did not terminate after an interrupt; no further invocation was attempted on the shared session"
-                ),
-            }));
-        }
-        timed_out = true;
-    }
+    // The invocation runs to its own exit; there is no interrupt or kill
+    // deadline (cli.md rule 8).
+    await_signal(session, &end_channel, &end_marker, "CLI invocation")?;
     let screen = capture_history(session)?;
     let state_path = format!("states/state-{index:04}.ansi");
     std::fs::write(output.join(&state_path), &screen)?;
     let cleaned_screen = clean_terminal(&screen);
-    // The timeout path has no exit status at all.
-    let exit_status = if timed_out {
-        None
-    } else {
-        Some(read_exit_status(fixture, &exit_file)?)
-    };
+    let exit_status = read_exit_status(fixture, &exit_file)?;
     let after_start = cleaned_screen
         .rsplit_once(&start_marker)
         .map(|(_, tail)| tail)
@@ -129,7 +101,6 @@ pub(crate) fn run_in_pty(
         argv: argv.to_vec(),
         output: invocation_output,
         exit_status,
-        timed_out,
         state_path,
     })
 }
@@ -145,14 +116,12 @@ pub(crate) fn invocation_json(invocation: &Invocation, kind: &str) -> Value {
         },
         "observed_state": {
             "exit_status": invocation.exit_status,
-            "timed_out": invocation.timed_out,
             "raw_terminal_state": invocation.state_path,
             "rendered_output": invocation.output,
             "rendered_output_sha256": output_sha256,
         },
         "argv": invocation.argv,
         "exit_status": invocation.exit_status,
-        "timed_out": invocation.timed_out,
         "state": invocation.state_path,
         "output_sha256": output_sha256,
     })

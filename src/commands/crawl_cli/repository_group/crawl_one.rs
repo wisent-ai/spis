@@ -94,9 +94,10 @@ pub(crate) fn crawl_one(
     )?;
     // A readiness marker replaces the fixed 200ms sleep: on a slow host the
     // first invocation's keystrokes would otherwise race shell startup and be
-    // lost (finding 19).
+    // lost (finding 19). The probe signals a tmux channel instead of being polled.
     let ready_nonce = invocation_nonce(&manifest.record_key, 0)?;
     let ready_marker = format!("__SPIS_READY_{ready_nonce}__");
+    let ready_channel = format!("spis-ready-{ready_nonce}");
     tmux(
         &session.socket,
         &session.environment,
@@ -105,7 +106,10 @@ pub(crate) fn crawl_one(
             "-t",
             &session.name,
             "-l",
-            &format!("printf '\\n%s%s\\n' '__SPIS_READY_' '{ready_nonce}__'"),
+            &format!(
+                "printf '\\n%s%s\\n' '__SPIS_READY_' '{ready_nonce}__'{}",
+                signal_suffix(&session, &ready_channel)
+            ),
         ],
         "type CLI shell readiness probe",
     )?;
@@ -115,9 +119,7 @@ pub(crate) fn crawl_one(
         &["send-keys", "-t", &session.name, "Enter"],
         "submit CLI shell readiness probe",
     )?;
-    if !await_marker(&session, &ready_marker, Duration::from_secs(15))? {
-        bail!("the private CLI shell never acknowledged its readiness probe");
-    }
+    await_signal(&session, &ready_channel, &ready_marker, "private CLI shell readiness probe")?;
 
     let mut reports = Vec::new();
     let mut index = 1usize;
@@ -176,9 +178,7 @@ pub(crate) fn crawl_one(
     );
     let variant_events: Vec<Value> = reports.iter().enumerate().filter_map(|(position, invocation)| {
         let kind = invocation.get("kind").and_then(Value::as_str)?;
-        let event_kind = if invocation.get("timed_out").and_then(Value::as_bool) == Some(true) {
-            "crawler_timeout"
-        } else if kind == "refusal" && invocation.get("exit_status").and_then(Value::as_i64).is_some_and(|status| status != 0) {
+        let event_kind = if kind == "refusal" && invocation.get("exit_status").and_then(Value::as_i64).is_some_and(|status| status != 0) {
             "parser_refusal"
         } else if kind == "recovery" && invocation.get("exit_status").and_then(Value::as_i64) == Some(0) {
             "recovery_observation"
@@ -190,7 +190,6 @@ pub(crate) fn crawl_one(
             "event_kind": event_kind,
             "argv": invocation.get("argv"),
             "exit_status": invocation.get("exit_status"),
-            "timed_out": invocation.get("timed_out"),
             "state": invocation.get("state"),
             "output_sha256": invocation.get("output_sha256"),
             "linked_interaction_id": Value::Null,

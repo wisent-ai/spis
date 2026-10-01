@@ -11,7 +11,6 @@ use std::ffi::OsString;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::time::{Duration, Instant};
 // The split submodules reach their sibling commands through `super::`, which
 // resolves here by way of their `use super::*`.
 use crate::commands::crawl;

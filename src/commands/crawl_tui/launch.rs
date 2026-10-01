@@ -32,6 +32,17 @@ pub(crate) fn launch(
     // Bounded scrollback on this private server (finding 8).
     let configuration = fixture.join("tmux.conf");
     std::fs::write(&configuration, "set -g history-limit 2000\n")?;
+    // The program starts only after the recorder is attached (gate), and the
+    // recorder signals the first byte the program draws (painted). Both are
+    // tmux wait-for channels: no polling and no deadline (cli.md rule 8).
+    let quoted_socket = shell_quote(socket.to_string_lossy().as_ref());
+    let gate = format!("spis-tui-gate-{attempt}-{record_slug}");
+    let painted = format!("spis-tui-painted-{attempt}-{record_slug}");
+    let gated_launch = format!(
+        "tmux -S {quoted_socket} wait-for {} && exec {}",
+        shell_quote(&gate),
+        shell_quote(binary.to_string_lossy().as_ref())
+    );
     tmux(
         &socket,
         &environment,
@@ -49,7 +60,9 @@ pub(crate) fn launch(
             "-c",
             fixture.to_string_lossy().as_ref(),
             "--",
-            binary.to_string_lossy().as_ref(),
+            "/bin/sh",
+            "-c",
+            &gated_launch,
         ],
         "launch TUI in private tmux PTY",
     )?;
@@ -59,36 +72,40 @@ pub(crate) fn launch(
         environment,
     };
     // `>` truncates, so terminal.raw holds this attempt only (finding 11).
-    let pipe = format!("cat > {}", shell_quote(raw.to_string_lossy().as_ref()));
+    let pipe = format!(
+        "tee {} | {{ head -c 1 >/dev/null; tmux -S {quoted_socket} wait-for -S {}; cat >/dev/null; }}",
+        shell_quote(raw.to_string_lossy().as_ref()),
+        shell_quote(&painted)
+    );
     tmux(
         &session.socket,
         &session.environment,
         &["pipe-pane", "-t", &session.name, "-o", &pipe],
         "record TUI byte stream",
     )?;
-    // Bounded readiness poll instead of trusting a fixed sleep: the exact
-    // initial state is only captured once the program has actually drawn
-    // something (finding 19). A dynamic TUI keeps repainting, so this waits for
-    // first paint rather than for a stable screen.
-    let floor = Duration::from_secs(1);
-    let started = Instant::now();
-    loop {
-        let blank = capture_tail(&session)?.trim().is_empty();
-        if !blank && started.elapsed() >= floor {
-            break;
-        }
-        if started.elapsed() >= Duration::from_secs(20) {
-            // The hung program is killed with the session by TmuxSession::drop;
-            // nothing downstream may reuse this PTY (finding 6).
-            return Err(anyhow::Error::new(RecordFailure {
-                code: "tui_launch_not_ready",
-                message: format!(
-                    "the exact TUI executable drew nothing in the private PTY within 20s for record {record_slug}"
-                ),
-            }));
-        }
-        std::thread::sleep(Duration::from_millis(100));
-    }
+    tmux(
+        &session.socket,
+        &session.environment,
+        &["wait-for", "-S", &gate],
+        "start the TUI after its recorder is attached",
+    )?;
+    // The initial state is captured once the program has actually drawn
+    // something (finding 19). A program that exits without drawing ends the
+    // private server, and wait-for returns that error.
+    tmux(
+        &session.socket,
+        &session.environment,
+        &["wait-for", &painted],
+        "TUI first paint",
+    )
+    .map_err(|error| {
+        anyhow::Error::new(RecordFailure {
+            code: "tui_launch_not_ready",
+            message: format!(
+                "the exact TUI executable for record {record_slug} closed its private PTY before drawing anything: {error:#}"
+            ),
+        })
+    })?;
     Ok(session)
 }
 
