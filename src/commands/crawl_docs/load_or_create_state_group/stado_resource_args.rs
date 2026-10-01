@@ -1,25 +1,25 @@
 use super::*;
 
-// What filled 2.5 GiB of the production Mac's remaining disk on 2026-09-04 was
-// not the corpus: it was ten simultaneous `cargo build` passes, one per record,
-// each writing its own 5 GiB `target/` inside its own immutable checkout. That
-// is now one shared target directory per revision, and a finished record's own
-// retained corpus is tens of megabytes - MDN, the largest site in the catalog,
-// imported 36 MB from 12,248 pages. So the host's declared disk gate is the
-// right control for what remains, and it already is: below its low watermark
-// the agent claims nothing.
+// What fills a production host's remaining disk is not the corpus: it is
+// simultaneous `cargo build` passes, one per record, each writing its own
+// multi-GiB `target/` inside its own immutable checkout. That is one shared
+// target directory per revision, and a finished record's own retained corpus
+// is tens of megabytes - MDN, the largest site in the catalog, imports 36 MB
+// from 12,248 pages. So the host's declared disk gate is the right control for
+// what remains, and it already is: below its low watermark the agent claims
+// nothing.
 //
 // `--exclusive` is not that control. It means "claim the whole GPU: start only
 // while idle and admit no other job", and on a host that also carries release
 // qualification and Probierz work it means the family waits for an idle
-// machine. On 2026-09-05 forty-nine records sat queued from 18:30 to 19:25
-// behind foreign jobs, with 17 GiB free and six cores idle, because every one
-// of them demanded the machine to itself.
+// machine: dozens of records sit queued behind foreign jobs with disk free and
+// cores idle, because every one of them demands the machine to itself.
 pub(crate) const STADO_RESOURCE_ARGS: [&str; 0] = [];
 
 pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
-    safe_path_component(value, flag)
-        .map_err(|_| anyhow::anyhow!("{flag} contains characters that cannot be submitted to a worker"))
+    safe_path_component(value, flag).map_err(|_| {
+        anyhow::anyhow!("{flag} contains characters that cannot be submitted to a worker")
+    })
 }
 
 pub(crate) fn source_revision() -> Result<String> {
@@ -37,11 +37,8 @@ pub(crate) struct StorageStatReceipt {
 pub(crate) fn storage_artifact_present(uri: &str, context: &str) -> Result<bool> {
     let mut command = crate::commands::crawl::crawl_storage_command();
     command.args(["storage", "stat", uri, "--json"]);
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut command,
-        context,
-        STADO_OUTPUT_LIMIT,
-    )?;
+    let output =
+        crate::commands::crawl::bounded_command_output(&mut command, context, STADO_OUTPUT_LIMIT)?;
     if !output.status.success() {
         bail!(
             "cannot determine whether immutable documentation attempt artifact is published: {}",
@@ -192,11 +189,13 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--host" => {
                 i += 1;
-                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host =
+                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--record" => {
                 i += 1;
-                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record =
+                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--site" => {
                 i += 1;
@@ -207,13 +206,18 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--runtime-manifest-base64" => {
                 i += 1;
-                runtime_manifest_base64 =
-                    Some(rest.get(i).context("--runtime-manifest-base64 needs a value")?.clone());
+                runtime_manifest_base64 = Some(
+                    rest.get(i)
+                        .context("--runtime-manifest-base64 needs a value")?
+                        .clone(),
+                );
             }
             "--worker" => worker = true,
             "--artifact-uri" => {
                 i += 1;
-                artifact_uri = Some(crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(
+                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
+                );
             }
             value => forwarded.push(value.to_string()),
         }
@@ -221,14 +225,17 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
     let record = record.context("--record is required for one exact per-record job")?;
     let manifest = crate::commands::crawl::decode_runtime_manifest(
-        runtime_manifest_base64.as_deref().context("--runtime-manifest-base64 is required")?,
+        runtime_manifest_base64
+            .as_deref()
+            .context("--runtime-manifest-base64 is required")?,
         "documentation-site-examples",
         "docs",
         Some(&record),
     )?;
     if !worker {
         return submit_worker(
-            &host.context("--host is required; documentation crawls execute as pinned Stado jobs")?,
+            &host
+                .context("--host is required; documentation crawls execute as pinned Stado jobs")?,
             &record,
             &manifest,
             &forwarded,
