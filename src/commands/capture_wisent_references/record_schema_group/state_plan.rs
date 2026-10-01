@@ -52,7 +52,7 @@ pub(crate) fn capture(index: usize, product: &'static Product) -> Result<Run> {
             let mut step = if *kind == "cancellation" {
                 session.cancel(&commands[*kind])
             } else {
-                session.command(&commands[*kind], 180.0)
+                session.command(&commands[*kind])
             };
             step.kind = (*kind).to_string();
             step.event_index = session.events.len().saturating_sub(1);

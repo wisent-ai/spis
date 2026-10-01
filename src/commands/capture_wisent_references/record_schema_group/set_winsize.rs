@@ -96,9 +96,11 @@ impl Session {
             events: Vec::new(),
             start: Instant::now(),
         };
-        session.drain(1.5);
         session.write_text(&format!("PS1='{PROMPT}'\n"));
-        session.wait_prompt(10.0);
+        let (_, ready) = session.read_until_prompt();
+        if !ready {
+            bail!("the recording shell closed its terminal before printing the prompt");
+        }
         // Everything recorded from here is the product's own session.
         session.events.clear();
         session.start = Instant::now();
@@ -127,64 +129,54 @@ impl Session {
         }
     }
 
-    pub(crate) fn read_chunk(&mut self, timeout: f64) -> String {
+    /// Blocks until the terminal has output, then returns it. `None` means the
+    /// shell closed the terminal; there is no deadline (cli.md rule 8).
+    pub(crate) fn read_chunk(&mut self) -> Option<String> {
         let mut pfd = libc::pollfd {
             fd: self.fd,
             events: libc::POLLIN,
             revents: 0,
         };
-        let ready = unsafe { libc::poll(&mut pfd, 1, (timeout * 1000.0) as i32) };
-        if ready <= 0 {
-            return String::new();
+        if unsafe { libc::poll(&mut pfd, 1, -1) } <= 0 {
+            return None;
         }
         let mut buf = vec![0u8; 1 << 16];
         let n = unsafe { libc::read(self.fd, buf.as_mut_ptr() as *mut _, buf.len()) };
         if n <= 0 {
-            return String::new();
+            return None;
         }
         let text = String::from_utf8_lossy(&buf[..n as usize]).into_owned();
         self.events.push((self.elapsed(), text.clone()));
-        text
+        Some(text)
     }
 
-    pub(crate) fn drain(&mut self, seconds: f64) -> String {
-        let deadline = Instant::now() + Duration::from_secs_f64(seconds);
-        let mut got = String::new();
-        while Instant::now() < deadline {
-            got.push_str(&self.read_chunk(0.1));
-        }
-        got
-    }
-
-    /// Read until the shell reprints its prompt, or the timeout expires.
-    pub(crate) fn wait_prompt(&mut self, timeout: f64) -> (String, bool) {
-        let deadline = Instant::now() + Duration::from_secs_f64(timeout);
+    /// Read until the shell reprints its prompt (`true`) or closes the
+    /// terminal (`false`).
+    pub(crate) fn read_until_prompt(&mut self) -> (String, bool) {
         let mut buf = String::new();
-        while Instant::now() < deadline {
-            buf.push_str(&self.read_chunk(0.2));
+        while let Some(chunk) = self.read_chunk() {
+            buf.push_str(&chunk);
             if buf.ends_with(PROMPT) {
-                // Let a trailing flush land, then stop.
-                buf.push_str(&self.drain(0.15));
                 return (buf, true);
             }
         }
         (buf, false)
     }
 
-    pub(crate) fn command(&mut self, command: &str, timeout: f64) -> Step {
+    pub(crate) fn command(&mut self, command: &str) -> Step {
         let started_at = self.elapsed();
         self.write_text(&format!("{command}\n"));
-        let (mut raw, ok) = self.wait_prompt(timeout);
-        if !ok {
-            self.write_text("\u{3}");
-            raw.push_str(&self.wait_prompt(15.0).0);
-        }
+        let (raw, ok) = self.read_until_prompt();
         let ended_at = self.elapsed();
-        self.write_text("printf \"exit-status=%s\\n\" \"$?\"\n");
-        let (status_raw, _) = self.wait_prompt(20.0);
-        let exit_status = exit_status_re()
-            .captures(&status_raw)
-            .and_then(|c| c[1].parse::<i64>().ok());
+        let exit_status = if ok {
+            self.write_text("printf \"exit-status=%s\\n\" \"$?\"\n");
+            let (status_raw, _) = self.read_until_prompt();
+            exit_status_re()
+                .captures(&status_raw)
+                .and_then(|c| c[1].parse::<i64>().ok())
+        } else {
+            None
+        };
         let status_reported_at = self.elapsed();
         Step {
             command: command.to_string(),
@@ -203,10 +195,8 @@ impl Session {
     pub(crate) fn cancel(&mut self, pending: &str) -> Step {
         let started_at = self.elapsed();
         self.write_text(pending);
-        let mut raw = self.drain(0.6);
         self.write_text("\u{3}");
-        let (tail, _) = self.wait_prompt(20.0);
-        raw.push_str(&tail);
+        let (raw, ok) = self.read_until_prompt();
         let ended_at = self.elapsed();
         Step {
             command: pending.to_string(),
@@ -215,7 +205,7 @@ impl Session {
             ended_at,
             status_reported_at: ended_at,
             exit_status: None,
-            prompt_returned: true,
+            prompt_returned: ok,
             event_index: 0,
             kind: String::new(),
         }
@@ -223,7 +213,7 @@ impl Session {
 
     pub(crate) fn close(&mut self) {
         self.write_text("exit\n");
-        self.drain(0.5);
+        while self.read_chunk().is_some() {}
         unsafe {
             libc::close(self.fd);
             libc::waitpid(self.pid, std::ptr::null_mut(), 0);

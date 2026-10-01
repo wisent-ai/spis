@@ -21,7 +21,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::sync::LazyLock;
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 macro_rules! product {
     ($slug:expr, $name:expr, $binary:expr, $repo:expr, $url:expr, $cat:expr, $one:expr,
