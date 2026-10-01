@@ -121,36 +121,40 @@ pub fn run(rest: &[String]) -> Result<()> {
             "status" | "search" | "show" | "import" => sub = rest[index].as_str(),
             "--query" => {
                 index += 1;
-                query = rest.get(index).context("--query needs a value")?.clone();
+                query = rest.get(index).ok_or_else(|| crate::commands::usage("--query needs a value"))?.clone();
             }
             "--site" => {
                 index += 1;
-                site = Some(rest.get(index).context("--site needs a value")?.clone());
+                site = Some(rest.get(index).ok_or_else(|| crate::commands::usage("--site needs a value"))?.clone());
             }
             "--url" => {
                 index += 1;
-                url_filter = rest.get(index).context("--url needs a value")?.clone();
+                url_filter = rest.get(index).ok_or_else(|| crate::commands::usage("--url needs a value"))?.clone();
             }
             "--attempt-receipt" => {
                 index += 1;
                 attempt_receipt = Some(PathBuf::from(
                     rest.get(index)
-                        .context("--attempt-receipt needs a value")?,
+                        .ok_or_else(|| crate::commands::usage("--attempt-receipt needs a value"))?,
                 ));
             }
             "--limit" => {
                 index += 1;
-                limit = rest.get(index).context("--limit needs a value")?.parse()?;
+                limit = rest
+                    .get(index)
+                    .ok_or_else(|| crate::commands::usage("--limit needs a value"))?
+                    .parse()
+                    .map_err(|error| crate::commands::usage(format!("--limit must be a whole number: {error}")))?;
             }
-            other => bail!("unknown argument: {other}"),
+            other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
         index += 1;
     }
     if sub.is_empty() {
-        bail!("usage: spis docs-corpus status | search --query T [--site S] [--limit N] | show --site S --url U | import --attempt-receipt FILE");
+        return Err(crate::commands::usage("usage: spis docs-corpus status | search --query T [--site S] [--limit N] | show --site S --url U | import --attempt-receipt FILE"));
     }
     if limit == 0 || limit > 10_000 {
-        bail!("--limit must be between 1 and 10000");
+        return Err(crate::commands::usage("--limit must be between 1 and 10000"));
     }
 
     match sub {
@@ -187,7 +191,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
         "search" => {
             if query.is_empty() {
-                bail!("--query required");
+                return Err(crate::commands::usage("--query required"));
             }
             let sites = collect_sites()?;
             let mut hits = Vec::new();
@@ -210,9 +214,9 @@ pub fn run(rest: &[String]) -> Result<()> {
             Ok(())
         }
         "show" => {
-            let slug = site.context("show needs --site <slug>")?;
+            let slug = site.ok_or_else(|| crate::commands::usage("show needs --site <slug>"))?;
             if url_filter.is_empty() {
-                bail!("show needs --url <url>");
+                return Err(crate::commands::usage("show needs --url <url>"));
             }
             let selected = selected_corpora()?;
             let corpus = selected

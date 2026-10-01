@@ -25,6 +25,30 @@ pub mod verify_reference_evidence;
 use anyhow::Result;
 use std::io::Write;
 
+/// The invocation itself is wrong: a missing or extra argument, an unknown
+/// verb. A type rather than a phrase, so `main` tells it from a failure of a
+/// well-formed command without reading the message: it exits 2, a failure 1.
+#[derive(Debug)]
+pub struct Usage(pub String);
+
+impl std::fmt::Display for Usage {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
+impl std::error::Error for Usage {}
+
+/// A usage error ready for `?`: `return Err(usage("usage: spis …"))`.
+pub fn usage(text: impl Into<String>) -> anyhow::Error {
+    Usage(text.into()).into()
+}
+
+/// Whether a failure is a usage error anywhere in its chain.
+pub fn is_usage(error: &anyhow::Error) -> bool {
+    error.chain().any(|cause| cause.is::<Usage>())
+}
+
 /// One subcommand: its name, what it does, and whether its own module
 /// answers `--help` with its flags. A module that does not is answered here,
 /// so `--help` never reaches code that would do the command's work.

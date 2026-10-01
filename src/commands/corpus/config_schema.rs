@@ -27,7 +27,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             println!("usage: spis corpus <adopt PATH|status>\n\n  adopt PATH  validate and remember an unpacked canonical Spis corpus\n  status      print the currently adopted corpus and its measured counts\n\nZIP, tar, gzip, bzip2, xz, zstd, 7z and rar archives are not accepted; unpack them first so every provenance and evidence file can be validated.");
             Ok(())
         }
-        Some(other) => bail!("unknown corpus action: {other} (expected adopt or status)"),
+        Some(other) => Err(crate::commands::usage(format!("unknown corpus action: {other} (expected adopt or status)"))),
     }
 }
 
@@ -68,7 +68,7 @@ pub fn configured_root() -> Result<Option<PathBuf>> {
 
 pub(crate) fn adopt(rest: &[String]) -> Result<()> {
     if rest.len() != 1 {
-        bail!("usage: spis corpus adopt PATH");
+        return Err(crate::commands::usage("usage: spis corpus adopt PATH"));
     }
     let supplied = PathBuf::from(&rest[0]);
     if supplied.is_file() {
@@ -115,7 +115,7 @@ pub(crate) fn adopt(rest: &[String]) -> Result<()> {
 
 pub(crate) fn status(rest: &[String]) -> Result<()> {
     if !rest.is_empty() {
-        bail!("usage: spis corpus status");
+        return Err(crate::commands::usage("usage: spis corpus status"));
     }
     let root = configured_root()?.context("no corpus has been adopted; run `spis corpus adopt PATH`")?;
     let summary = validate(&root)?;

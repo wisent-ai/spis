@@ -20,7 +20,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--dry-run" => dry_run = true,
             other => {
                 if other.starts_with('-') || catalog.is_some() {
-                    bail!("unknown argument: {other}");
+                    return Err(crate::commands::usage(format!("unknown argument: {other}")));
                 }
                 catalog = Some(other.to_string());
             }
@@ -28,7 +28,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         i += 1;
     }
     let Some(catalog) = catalog else {
-        bail!("usage: spis capture-widths <catalog> [--record <NN|slug>] [--host <target>] [--dry-run]");
+        return Err(crate::commands::usage("usage: spis capture-widths <catalog> [--record <NN|slug>] [--host <target>] [--dry-run]"));
     };
 
     let data = load_catalog(&catalog);

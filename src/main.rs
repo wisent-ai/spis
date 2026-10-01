@@ -5,7 +5,8 @@ fn main() {
         Ok(false) => std::process::exit(2),
         Err(e) => {
             eprintln!("error: {e:#}");
-            std::process::exit(1);
+            // 2 for an invocation that is itself wrong, 1 for every other failure.
+            std::process::exit(if spis::commands::is_usage(&e) { 2 } else { 1 });
         }
     }
 }

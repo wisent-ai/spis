@@ -228,7 +228,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let apply = rest.iter().any(|value| value == "--apply");
     let replace = rest.iter().any(|value| value == "--replace");
     if rest.iter().any(|value| !matches!(value.as_str(), "--apply" | "--replace")) {
-        bail!("usage: spis curate-marketing-catalogs --apply [--replace]");
+        return Err(crate::commands::usage("usage: spis curate-marketing-catalogs --apply [--replace]"));
     }
     validate("pricing", PRICING)?;
     validate("landing", LANDING)?;
