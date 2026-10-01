@@ -212,30 +212,21 @@ impl Appium {
             .ok_or_else(|| anyhow!("Appium element response had no id"))
     }
 
-    /// Poll the accessibility source until two consecutive reads agree. A fixed
-    /// 700ms sleep was the only settling wait before a screenshot, so a slower
-    /// transition was captured mid-animation; 700ms is now the floor of a
-    /// bounded wait, not the whole wait (finding 19).
+    /// The driver waits for the app to go idle before answering a source
+    /// request (XCUITest quiescence, UiAutomator2 idle). Two back-to-back
+    /// reads must then agree; a surface still changing is the named failure
+    /// and the record is retried. No sleep, floor or deadline (cli.md rule 8).
     pub(crate) fn settle(&self, session: &str) -> Result<String> {
-        let started = Instant::now();
-        let mut previous = hash_text(&self.source(session)?);
-        loop {
-            std::thread::sleep(Duration::from_millis(200));
-            let current = self.source(session)?;
-            let digest = hash_text(&current);
-            if digest == previous && started.elapsed() >= Duration::from_millis(700) {
-                return Ok(current);
-            }
-            if started.elapsed() >= Duration::from_secs(20) {
-                return Err(anyhow::Error::new(RecordFailure {
-                    code: "mobile_surface_never_settled",
-                    message:
-                        "the mobile surface produced no two consecutive identical accessibility sources within 20s"
-                            .to_string(),
-                }));
-            }
-            previous = digest;
+        let first = hash_text(&self.source(session)?);
+        let current = self.source(session)?;
+        if hash_text(&current) != first {
+            return Err(anyhow::Error::new(RecordFailure {
+                code: "mobile_surface_never_settled",
+                message: "two consecutive accessibility sources read after the driver reported the app idle differ"
+                    .to_string(),
+            }));
         }
+        Ok(current)
     }
 
     pub(crate) fn click(&self, session: &str, selector: &str) -> Result<()> {
