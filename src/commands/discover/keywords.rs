@@ -41,8 +41,14 @@ pub(crate) fn brama_rank(start_url: &str, links: &Links, limit: usize) -> Option
         .take(80)
         .map(|(url, text)| format!("- {url} | {text}"))
         .collect();
+    // The model is the router's alias chosen by the operator, never a provider
+    // model written into the product (cli.md rule 14).
+    let Some(model) = std::env::var("MODEL_ROUTER_MODEL").ok().filter(|value| !value.trim().is_empty()) else {
+        eprintln!("discover: Brama ranking unavailable (MODEL_ROUTER_MODEL names no model alias); using keyword fallback");
+        return None;
+    };
     let payload = json!({
-        "model": std::env::var("MODEL_ROUTER_MODEL").unwrap_or_else(|_| "gpt-4o-mini".into()),
+        "model": model,
         "messages": [
             {"role": "system", "content": format!(
                 "You classify pages of one product's website for an interface reference corpus. \
