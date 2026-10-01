@@ -67,13 +67,11 @@ pub(crate) const WORKER_PROGRAM: [&str; 2] = ["cargo", "--version"];
 /// What one engine's worker needs on the host before it may be given a slot.
 ///
 /// One declaration, read by [`host_preflight`] and by every engine's submit
-/// path, because the alternative is what this fleet already paid for: the
-/// documentation engine preflighted `hostname -f` and nothing else, so
-/// job-545551889f9e88be30daa81f was declared ready, claimed a slot, ran for
-/// sixteen minutes and died with `/bin/sh: cargo: command not found`. That
-/// engine was fixed in place on 2026-09-03; the same hole was still open in
-/// the five others, which is why the requirement now lives here rather than
-/// in six separate match arms.
+/// path: an engine that preflights `hostname -f` and nothing else declares a
+/// host ready, claims a slot, and dies minutes later with `/bin/sh: cargo:
+/// command not found`, and a hole fixed in one engine's match arm stays open
+/// in every other engine's. So the requirement lives here rather than in one
+/// match arm per engine.
 ///
 /// Every probe is an exact entry in Stado's host-exec allowlist and every one
 /// of them resolves an absolute path per host. Nothing here is answered
@@ -142,7 +140,10 @@ pub(crate) fn resolved_program_from_host_preflight(
         .find(|check| check.get("command") == Some(&json!(arguments)))
         .with_context(|| format!("host preflight retained no `{}` probe", arguments.join(" ")))?;
     if check.get("ready").and_then(Value::as_bool) != Some(true) {
-        bail!("host preflight `{}` probe was not ready", arguments.join(" "));
+        bail!(
+            "host preflight `{}` probe was not ready",
+            arguments.join(" ")
+        );
     }
     let receipt = check
         .get("stado_receipt")
@@ -180,8 +181,9 @@ pub fn active_worker_stado_programs(services: &Value, host: &str) -> BTreeSet<St
                     let targets_this_host = arguments.windows(2).any(|pair| {
                         pair[0].as_str() == Some("--target") && pair[1].as_str() == Some(host)
                     });
-                    let serves_its_own_host =
-                        arguments.iter().any(|argument| argument.as_str() == Some("--auto"));
+                    let serves_its_own_host = arguments
+                        .iter()
+                        .any(|argument| argument.as_str() == Some("--auto"));
                     arguments.first().and_then(Value::as_str) == Some("agent")
                         && (targets_this_host || serves_its_own_host)
                 })
