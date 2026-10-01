@@ -268,14 +268,26 @@ fn cmd_remove(rest: &[String]) -> Result<()> {
     Ok(())
 }
 
+const USAGE: &str = "usage: spis catalog-type <add|edit|remove> <slug> [flags]
+  spis catalog-type add <slug> [--title TEXT] [--description TEXT]
+      scaffold a new <slug>-examples catalog and refresh the index
+  spis catalog-type edit <slug> [--title TEXT] [--description TEXT] [--status TEXT] [--rename NEW-SLUG]
+      change a catalog's metadata or rename its directory
+  spis catalog-type remove <slug> [--force]
+      delete a catalog; --force is required while it holds records or stored references";
+
 pub fn run(rest: &[String]) -> Result<()> {
-    let (command, rest) = rest
-        .split_first()
-        .context("usage: spis catalog-type <add|edit|remove> <slug> [flags]")?;
+    // `--help` or `-h` anywhere answers with the usage and never mutates a
+    // catalog: `spis catalog-type --help` used to fail as an unknown command.
+    if rest.is_empty() || rest.iter().any(|arg| arg == "--help" || arg == "-h") {
+        println!("{USAGE}");
+        return Ok(());
+    }
+    let (command, rest) = rest.split_first().context(USAGE)?;
     match command.as_str() {
         "add" => cmd_add(rest),
         "edit" => cmd_edit(rest),
         "remove" => cmd_remove(rest),
-        other => bail!("unknown catalog-type command: {other}"),
+        other => bail!("unknown catalog-type command: {other}; it takes add, edit or remove\n{USAGE}"),
     }
 }
