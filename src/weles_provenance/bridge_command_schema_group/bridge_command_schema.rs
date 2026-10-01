@@ -66,12 +66,6 @@ pub(crate) const MAX_RETAINED_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
 
 pub(crate) const MAX_BRIDGE_ERROR_BYTES: usize = 64 * 1024;
 
-/// Local re-verification is CPU work over retained bytes.
-pub const VERIFY_BRIDGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
-
-/// `submit`, `get` and `cancel` are real HTTP round trips through the official client.
-pub const NETWORK_BRIDGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60);
-
 pub(crate) const BRIDGE_PATH: &str = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

@@ -164,7 +164,7 @@ pub(crate) fn load_canonical_trust() -> Result<CanonicalTrust, String> {
 /// A typed bridge failure.
 ///
 /// `code` is the bridge's own machine-readable code whenever the bridge reported for
-/// itself, and a Rust-side code (`absent`, `unpinned`, `spawn-failed`, `timeout`,
+/// itself, and a Rust-side code (`absent`, `unpinned`, `spawn-failed`,
 /// `io-failed`) when it never got that far. `message` is the exact operator-facing text.
 #[derive(Debug, Clone)]
 pub struct BridgeFailure {
@@ -185,7 +185,7 @@ impl BridgeFailure {
 ///
 /// The operation is carried by `command.operation`, not by this struct: `submit`, `get`,
 /// `cancel` and `verify` differ only in the command document, the output destination,
-/// whether a network credential is in play, and the wall-clock budget.
+/// and whether a network credential is in play.
 pub struct BridgeInvocation<'a> {
     /// `wisent.spis-weles-bridge-command.v1` document. The bridge runs a strict per
     /// operation key allowlist, so it is passed through exactly as serialized.
@@ -204,6 +204,4 @@ pub struct BridgeInvocation<'a> {
     /// path: without it the bridge refuses every network operation, and `verify` never
     /// reads a config at all.
     pub config: Option<&'a Path>,
-    /// Wall-clock budget for the whole child process.
-    pub timeout: std::time::Duration,
 }

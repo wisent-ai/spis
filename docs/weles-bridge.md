@@ -55,9 +55,9 @@ SHA-256 pin is derived at build time by `build.rs` from
 `weles-bridge/spis-weles-bridge.mjs` in the source tree, so the compiled
 constant cannot drift from the checked-in bridge. Rust lstat-checks and hashes
 the bridge against that pin, then executes those verified bytes from a data URL
-in a new process group rather than reopening the path. The whole group is killed
-and drained after 30 seconds for local verification and 60 seconds for a network
-round trip.
+in a new process group rather than reopening the path. The child runs to its
+own exit with no deadline; the official client's error code is the failure. The
+group is killed only when its exit status cannot be collected.
 
 ## Public service and request identity
 

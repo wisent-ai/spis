@@ -172,11 +172,6 @@ pub(crate) fn run_bridge(
         working_dir: attempt_root,
         output,
         config: network.then_some(private.config.as_path()),
-        timeout: if network {
-            weles::NETWORK_BRIDGE_TIMEOUT
-        } else {
-            weles::VERIFY_BRIDGE_TIMEOUT
-        },
     })
     .map_err(|failure| {
         // Only the typed bridge code is surfaced; bridge stderr is never echoed, so no

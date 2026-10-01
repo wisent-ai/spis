@@ -98,7 +98,6 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
             "could not start Node for the checked-in Weles bridge",
         )
     })?;
-    let started = std::time::Instant::now();
     let stdout = child
         .stdout
         .take()
@@ -122,36 +121,19 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
             .write_all(&input_bytes)
             .map_err(|_| "could not send the command document to the Weles bridge".to_string())
     });
-    let status = loop {
-        match child.try_wait() {
-            Ok(Some(status)) => break status,
-            Ok(None) if started.elapsed() < invocation.timeout => {
-                std::thread::sleep(std::time::Duration::from_millis(10));
-            }
-            Ok(None) => {
-                // The whole group: the official client may itself be waiting on a socket.
-                terminate_bridge_process_group(&mut child);
-                let _ = stdin_writer.join();
-                let _ = stdout_reader.join();
-                let _ = stderr_reader.join();
-                return Err(BridgeFailure::new(
-                    "timeout",
-                    format!(
-                        "official Weles bridge exceeded the {}-second deadline",
-                        invocation.timeout.as_secs()
-                    ),
-                ));
-            }
-            Err(_) => {
-                terminate_bridge_process_group(&mut child);
-                let _ = stdin_writer.join();
-                let _ = stdout_reader.join();
-                let _ = stderr_reader.join();
-                return Err(BridgeFailure::new(
-                    "io-failed",
-                    "could not collect the Weles bridge result",
-                ));
-            }
+    // The bridge runs to its own exit; the official client's own error is the
+    // answer, with no deadline or poll (cli.md rule 8).
+    let status = match child.wait() {
+        Ok(status) => status,
+        Err(_) => {
+            terminate_bridge_process_group(&mut child);
+            let _ = stdin_writer.join();
+            let _ = stdout_reader.join();
+            let _ = stderr_reader.join();
+            return Err(BridgeFailure::new(
+                "io-failed",
+                "could not collect the Weles bridge result",
+            ));
         }
     };
     let stdin_result = stdin_writer.join();
@@ -201,7 +183,6 @@ pub(crate) fn invoke_bridge(
         // Re-verification is secretless: it re-reads retained bytes and the public trust
         // document, and must never be able to reach the network.
         config: None,
-        timeout: VERIFY_BRIDGE_TIMEOUT,
     })
     .map_err(|failure| failure.message)?;
     serde_json::from_slice(&stdout)
