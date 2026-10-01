@@ -48,7 +48,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
             json!({
                 "index": 4,
                 "user_action": format!("Run `{}`.", steps["subcommand-help"]["command"].as_str().unwrap_or_default()),
-                "system_response": product.sub_note,
+                "system_response": f.product.sub_note,
                 "state": "subcommand help surface",
                 "evidence": ev("subcommand-help", "media/03-subcommand-help.png"),
             })
@@ -185,5 +185,13 @@ pub(super) fn accessibility<'a>(f: &Facts<'a>) -> Accessibility<'a> {
                 .unwrap_or_else(|| "None".into())
         ),
     ];
-    Accessibility { observations: accessibility_observations, colors_help, identical, names_next, fits80, help_command, nocolor_command }
+    Accessibility {
+        observations: accessibility_observations.into_iter().map(Value::String).collect(),
+        colors_help,
+        identical,
+        names_next,
+        fits80,
+        help_command,
+        nocolor_command,
+    }
 }
