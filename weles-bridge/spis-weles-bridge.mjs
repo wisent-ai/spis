@@ -17,6 +17,8 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { open } from 'node:fs/promises';
+import { request as httpRequest } from 'node:http';
+import { request as httpsRequest } from 'node:https';
 import { basename, dirname, isAbsolute, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -964,6 +966,60 @@ function networkClient(config, WelesClient, serviceIdentity, origin, action) {
   });
 }
 
+// The task's status once Weles says it is terminal. Weles holds
+// `GET <endpoint>/tasks/<id>?wait=terminal` open until then, which can be
+// hours, so the read goes through node:http(s): the global fetch abandons a
+// response whose headers have not arrived in five minutes. The answer is then
+// checked exactly like any other status, receipt included.
+function heldTaskStatus(serviceIdentity, config, taskId) {
+  const url = new URL(`${serviceIdentity.endpoint}/tasks/${encodeURIComponent(taskId)}?wait=terminal`);
+  const send = url.protocol === 'https:' ? httpsRequest : httpRequest;
+  return new Promise((resolveStatus, rejectStatus) => {
+    const outgoing = send(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${config.bearer}`,
+        'X-Wisent-Organization-ID': config.organizationId,
+        Accept: 'application/json',
+      },
+    }, (incoming) => {
+      const chunks = [];
+      let received = 0;
+      incoming.on('data', (chunk) => {
+        received += chunk.length;
+        if (received > MAX_JSON_BYTES) {
+          incoming.destroy();
+          rejectStatus(new BridgeError('weles-response-oversized', 'the held Weles task status exceeded the size limit'));
+          return;
+        }
+        chunks.push(chunk);
+      });
+      incoming.on('end', () => {
+        const text = Buffer.concat(chunks).toString('utf8');
+        if (incoming.statusCode < 200 || incoming.statusCode > 299) {
+          rejectStatus(new BridgeError(
+            'weles-request-rejected',
+            `Weles answered HTTP ${incoming.statusCode} to the held task status read`,
+          ));
+          return;
+        }
+        try {
+          resolveStatus(JSON.parse(text));
+        } catch {
+          rejectStatus(new BridgeError('weles-response-invalid', 'the held Weles task status is not JSON'));
+        }
+      });
+      incoming.on('error', (error) => {
+        rejectStatus(new BridgeError('weles-transport-failed', `the held Weles task status read failed: ${error.message}`));
+      });
+    });
+    outgoing.on('error', (error) => {
+      rejectStatus(new BridgeError('weles-transport-failed', `the held Weles task status read failed: ${error.message}`));
+    });
+    outgoing.end();
+  });
+}
+
 function assertJcsString(value) {
   for (let index = 0; index < value.length; index += 1) {
     const unit = value.charCodeAt(index);
@@ -1403,29 +1459,17 @@ async function execute(commandValue, config, official, preparedSubmission) {
     onlyKeys(command, ['schema', 'operation', 'receipt', 'expectedClaims', 'artifact'], 'command');
     return buildProvenance(command.receipt, command.expectedClaims, command.artifact, config, official.verifyReceipt);
   }
-  if (operation === 'get') {
+  if (operation === 'await') {
     onlyKeys(command, ['schema', 'operation', 'serviceIdentity', 'taskId', 'expectedTask'], 'command');
     const taskId = nonemptyString(command.taskId, 'command.taskId');
     const expectedTask = validateExpectedTask(command.expectedTask, config);
-    if (taskId !== expectedTask.taskId) fail('expected-claim-mismatch', 'get taskId differs from expectedTask.taskId');
+    if (taskId !== expectedTask.taskId) fail('expected-claim-mismatch', 'await taskId differs from expectedTask.taskId');
     const serviceIdentity = operationServiceIdentity(
       command.serviceIdentity,
       config,
       expectedTask.action,
     );
-    let response;
-    try {
-      response = await networkClient(
-        config,
-        official.WelesClient,
-        serviceIdentity,
-        expectedTask.origin,
-        expectedTask.action,
-      ).get(taskId);
-    } catch (error) {
-      const code = typeof error?.code === 'string' ? error.code : 'weles-request-failed';
-      fail(code, 'the official Weles client get operation failed');
-    }
+    const response = await heldTaskStatus(serviceIdentity, config, taskId);
     return taskStatusDocument(
       TASK_STATUS_SCHEMA,
       response,
@@ -1433,7 +1477,7 @@ async function execute(commandValue, config, official, preparedSubmission) {
       serviceIdentity,
       config,
       official.verifyReceipt,
-      'Weles get response',
+      'Weles held task status',
     );
   }
   if (operation === 'cancel') {
@@ -1544,7 +1588,7 @@ async function execute(commandValue, config, official, preparedSubmission) {
     }
     return result;
   }
-  fail('unsupported-operation', 'bridge operation must be submit, get, cancel, or verify');
+  fail('unsupported-operation', `the bridge does not perform operation ${JSON.stringify(operation)}`);
 }
 
 function existingOutputMatches(destination, bytes) {
@@ -1629,13 +1673,10 @@ try {
   const commandEnvelope = plainObject(command, 'command');
   if (commandEnvelope.schema !== COMMAND_SCHEMA) fail('unsupported-command', 'bridge command schema is unsupported');
   const operation = nonemptyString(commandEnvelope.operation, 'command.operation');
-  if (!['submit', 'get', 'cancel', 'verify'].includes(operation)) {
-    fail('unsupported-operation', 'bridge operation must be submit, get, cancel, or verify');
-  }
-  if (operation === 'get' && args.output !== '-') {
+  if (operation === 'await' && args.output !== '-') {
     fail(
-      'poll-output-contract',
-      'get must return bounded stdout for caller-owned content-addressed immutable persistence',
+      'await-output-contract',
+      'await must return bounded stdout for caller-owned content-addressed immutable persistence',
     );
   }
   const trust = loadTrust();

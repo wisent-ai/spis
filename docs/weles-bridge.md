@@ -18,8 +18,12 @@ Commands use `wisent.spis-weles-bridge-command.v1`. Only `--input` and
 `--output` are accepted. Submit requires durable file output. An existing
 submission is reusable only when its complete canonical request, request
 identity, public service identity, and idempotency key are identical. Other
-operations may use bounded stdout; `get` must use stdout so Rust can persist
-each poll at a new content-addressed immutable observation path. File output is
+operations may use bounded stdout; `await` must use stdout so Rust can persist
+the terminal status at a content-addressed immutable observation path. `await`
+asks Weles for `GET {endpoint}/tasks/{id}?wait=terminal`, which Weles holds
+until the task has succeeded, failed or been cancelled; the bridge makes that
+read through `node:http`/`node:https` because the global fetch abandons a
+response whose headers take longer than five minutes. File output is
 an atomic create with fsync; identical bytes are a no-op and different bytes at
 the same path fail with `output-conflict`.
 
@@ -27,7 +31,7 @@ the same path fail with `output-conflict`.
 
 Network authorization and public receipt trust are separate:
 
-- `SPIS_WELES_CONFIG_FILE` is required only for `submit`, `get`, and `cancel`.
+- `SPIS_WELES_CONFIG_FILE` is required only for `submit`, `await`, and `cancel`.
   It must be an owner-only, mode-`0600`, regular non-symlink file with schema
   `wisent.spis-weles-bridge-config.v1` and exactly `endpoint`, `bearer`, and
   `organizationId`. The endpoint is the canonical exact `/api/v1` base. There
@@ -39,7 +43,7 @@ Network authorization and public receipt trust are separate:
   The repository intentionally carries no placeholder: onboarding must commit
   the real public trust before verification can succeed.
 
-Every operation this repository runs — `submit`, `get`, `cancel` and `verify` —
+Every operation this repository runs — `submit`, `await` and `verify` —
 goes through one invoker, `weles_provenance::run_bridge_command`. The operation
 is carried by the command document, and the invocation names only the validated
 trust, the working directory, the output destination, whether the protected
@@ -127,7 +131,7 @@ bridge emits, instead of rejecting it as floating-point. Submit retains the
 complete request as `requestDocument` and requires the service-returned
 `requestIdentity` to contain the same digest and binding.
 
-`get` and `cancel` require exact known task identity and service identity. Every
+`await` and `cancel` require exact known task identity and service identity. Every
 response must include the server-derived service identity and request identity.
 `queued`, `leased`, `running`, and `pending_review` are nonterminal. Terminal
 statuses normalize to the typed outcome; `completed` and `succeeded` normalize

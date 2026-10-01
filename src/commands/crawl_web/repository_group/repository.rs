@@ -43,8 +43,6 @@ pub(crate) const PNG_MAGIC: &[u8] = b"\x89PNG\r\n\x1a\n";
 
 pub(crate) const MAXIMUM_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
 
-pub(crate) const POLL_INTERVAL: Duration = Duration::from_secs(5);
-
 /// A typed worker failure. Every exit path carries an exact machine-readable code so the
 /// importer can distinguish an infrastructure refusal from a rejected attempt.
 pub(crate) struct WorkerFailure {
@@ -94,7 +92,6 @@ pub(crate) fn ensure(condition: bool, code: &str, message: &str) -> Outcome<()> 
 pub(crate) struct Collected {
     pub(crate) submission: Option<weles::WelesSubmission>,
     pub(crate) status: Option<weles::WelesTaskStatus>,
-    pub(crate) cancellation: Option<weles::WelesCancellation>,
     pub(crate) provenance: Option<weles::WelesProvenanceDocument>,
     pub(crate) envelope: Option<weles::WelesAttemptEnvelope>,
 }

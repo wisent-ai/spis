@@ -6,7 +6,6 @@ mod submission;
 
 pub(crate) fn capture(
     manifest: &super::crawl::RuntimeManifest,
-    wait_seconds: u64,
     attempt_root: &Path,
     private: &PrivateBridge,
     collected: &mut Collected,
@@ -152,22 +151,17 @@ pub(crate) fn capture(
         "origin": origin,
         "action": weles::SPIS_WELES_ACTION,
     });
-    let get_command = json!({
+    let await_command = json!({
         "schema": weles::BRIDGE_COMMAND_SCHEMA,
-        "operation": "get",
+        "operation": "await",
         "serviceIdentity": identity_value,
         "taskId": weles_task_id,
         "expectedTask": expected_task,
     });
-    let deadline = Instant::now() + Duration::from_secs(wait_seconds);
-    let status = loop {
-        let stdout = run_bridge(attempt_root, private, "get", &get_command, None, true)?;
-        let observed: weles::WelesTaskStatus = serde_json::from_slice(&stdout)?;
-        if observed.terminal || Instant::now() >= deadline {
-            break observed;
-        }
-        std::thread::sleep(POLL_INTERVAL);
-    };
+    // Weles answers this read once the task is terminal, so the attempt waits on
+    // the task itself; there is no local deadline that could abandon a live task.
+    let stdout = run_bridge(attempt_root, private, "await", &await_command, None, true)?;
+    let status: weles::WelesTaskStatus = serde_json::from_slice(&stdout)?;
     retain_attempt_document(
         attempt_root,
         "weles-status.json",
@@ -194,36 +188,11 @@ pub(crate) fn capture(
         "weles_status_invalid",
         "the retained task status service identity differs from the runtime directory",
     )?;
-    if !status.terminal {
-        // The wait budget is spent while the task is still live at Weles. Leaving it
-        // running would hold a browser session and a leased worker for an attempt that
-        // can no longer publish evidence, so the same bridge that submitted the task
-        // cancels it and the typed cancellation is retained with the attempt.
-        let cancellation = cancel_task(
-            attempt_root,
-            private,
-            &identity,
-            &identity_value,
-            &expected_task,
-            &submission,
-            // A pure function of the immutable attempt, exactly like the key: Weles
-            // refuses a second cancellation of the same task under a different reason,
-            // so the wait budget is reported in the failure below rather than signed
-            // into the cancellation.
-            &format!(
-                "Spis browser-evidence attempt {} ({}) exhausted its wait budget",
-                manifest.attempt, manifest.attempt_id
-            ),
-            collected,
-        )?;
-        return Err(WorkerFailure::new(
-            "weles_task_not_terminal",
-            format!(
-                "Weles task {weles_task_id} was still {} after {wait_seconds}s and was cancelled through the official bridge (cancel status {})",
-                status.status, cancellation.status
-            ),
-        ));
-    }
+    ensure(
+        status.terminal,
+        "weles_status_invalid",
+        "Weles answered the held task status read with a status that is not terminal",
+    )?;
     let terminal_outcome = status
         .outcome
         .clone()

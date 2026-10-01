@@ -4,7 +4,6 @@ pub(crate) fn run_worker(
     catalog: &str,
     record: &str,
     manifest: &super::crawl::RuntimeManifest,
-    wait_seconds: u64,
 ) -> Result<()> {
     if catalog != manifest.catalog || record != manifest.record {
         bail!("worker catalog/record differ from the immutable runtime manifest");
@@ -17,13 +16,7 @@ pub(crate) fn run_worker(
     prune_stale_attempt_temporaries(&attempt_root)?;
     let private = PrivateBridge::open(manifest)?;
     let mut collected = Collected::default();
-    let outcome = capture(
-        manifest,
-        wait_seconds,
-        &attempt_root,
-        &private,
-        &mut collected,
-    );
+    let outcome = capture(manifest, &attempt_root, &private, &mut collected);
     private.discard();
     let failure = match outcome {
         // A publication failure is itself a typed attempt failure, so the single mandatory

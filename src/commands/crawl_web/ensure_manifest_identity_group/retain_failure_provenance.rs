@@ -262,8 +262,6 @@ pub(crate) fn worker_report(
             .unwrap_or(Value::Null),
         "weles_submission": serde_json::to_value(&collected.submission).unwrap_or(Value::Null),
         "weles_task_status": serde_json::to_value(&collected.status).unwrap_or(Value::Null),
-        "weles_cancellation": serde_json::to_value(&collected.cancellation)
-            .unwrap_or(Value::Null),
         "provenance_document": serde_json::to_value(&collected.provenance)
             .unwrap_or(Value::Null),
         "failure": failure

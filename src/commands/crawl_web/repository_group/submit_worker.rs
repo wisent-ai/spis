@@ -5,7 +5,6 @@ pub(crate) fn submit_worker(
     catalog: &str,
     record: &str,
     manifest: &super::crawl::RuntimeManifest,
-    wait_seconds: u64,
 ) -> Result<()> {
     safe_job_value(host, "--host")?;
     safe_job_value(record, "--record")?;
@@ -39,7 +38,7 @@ pub(crate) fn submit_worker(
     // the documentation engine, still open in this one.
     let cargo = crate::commands::crawl::resolved_worker_program(host)?;
     let command = format!(
-        "{cargo} run --release -- crawl-web {catalog} --worker --record {record} --artifact-uri {} --wait-seconds {wait_seconds} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawl-web {catalog} --worker --record {record} --artifact-uri {} --runtime-manifest-base64 '{}'",
         manifest.artifact_uri,
         manifest.encoded()?,
     );

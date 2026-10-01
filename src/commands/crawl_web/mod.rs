@@ -17,7 +17,6 @@ use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
 use std::process::Command;
-use std::time::{Duration, Instant};
 
 use crate::weles_provenance as weles;
 // The split submodules reach their sibling commands through `super::`, which

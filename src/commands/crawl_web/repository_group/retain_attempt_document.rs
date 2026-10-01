@@ -150,7 +150,7 @@ pub(crate) fn prune_stale_attempt_temporaries(attempt_root: &Path) -> Result<()>
 /// the verified bytes, the cleared environment, the process group, the stream bounds and
 /// the canonical trust path for every operation this repository runs.
 ///
-/// `output` is the durable destination `submit` requires and `get` refuses; `network`
+/// `output` is the durable destination `submit` requires and `await` refuses; `network`
 /// hands the bridge the protected config, and is the only difference between the
 /// credentialed task operations and the secretless local verification.
 pub(crate) fn run_bridge(
@@ -189,66 +189,4 @@ pub(crate) fn read_submission(path: &Path) -> Outcome<weles::WelesSubmission> {
         WorkerFailure::new("web_worker_io_failed", "retained document path is not UTF-8")
     })?;
     Ok(crate::read_json(text)?)
-}
-
-/// Cancels a task that is still live at Weles through the bridge's `cancel` operation.
-///
-/// The cancellation key is derived from the retained submission's own idempotency key,
-/// itself a pure function of the immutable attempt, so a resubmitted identical attempt
-/// cancels exactly the same task exactly once; Weles refuses a second cancellation that
-/// carries a different key or reason for the same task.
-pub(crate) fn cancel_task(
-    attempt_root: &Path,
-    private: &PrivateBridge,
-    identity: &weles::WelesServiceIdentity,
-    identity_value: &Value,
-    expected_task: &Value,
-    submission: &weles::WelesSubmission,
-    reason: &str,
-    collected: &mut Collected,
-) -> Outcome<weles::WelesCancellation> {
-    let idempotency_key = format!(
-        "spis-cancel-{}",
-        crate::sha256_hex(format!("{}\0cancel", submission.idempotency_key).as_bytes())
-    );
-    let command = json!({
-        "schema": weles::BRIDGE_COMMAND_SCHEMA,
-        "operation": "cancel",
-        "serviceIdentity": identity_value,
-        "taskId": submission.task_id,
-        "expectedTask": expected_task,
-        "reason": reason,
-        "idempotencyKey": idempotency_key,
-    });
-    let stdout = run_bridge(attempt_root, private, "cancel", &command, None, true)?;
-    let cancellation: weles::WelesCancellation = serde_json::from_slice(&stdout)?;
-    // Retained before it is judged: a cancellation this worker refuses is still the exact
-    // document Weles returned for this attempt.
-    retain_attempt_document(
-        attempt_root,
-        "weles-cancellation.json",
-        &serde_json::to_value(&cancellation)?,
-    )?;
-    collected.cancellation = Some(cancellation.clone());
-    ensure(
-        cancellation.schema == weles::CANCELLATION_SCHEMA
-            && cancellation.task_id == submission.task_id
-            && cancellation.organization_id == submission.organization_id
-            && cancellation.origin == submission.origin
-            && cancellation.action == submission.action,
-        "weles_cancellation_invalid",
-        "the retained cancellation does not name this exact Weles task",
-    )?;
-    ensure(
-        cancellation.idempotency_key == idempotency_key,
-        "weles_cancellation_invalid",
-        "the retained cancellation carries a different idempotency key",
-    )?;
-    ensure(
-        cancellation.request_identity == submission.request_identity
-            && cancellation.service_identity == *identity,
-        "weles_cancellation_invalid",
-        "the retained cancellation request/service identity differs from the submission",
-    )?;
-    Ok(cancellation)
 }
