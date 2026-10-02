@@ -68,23 +68,23 @@ pub(crate) fn write_sources() -> Result<Value> {
     let payload = json!({
         "schema": SOURCES_SCHEMA,
         "catalog": catalog_dir().file_name().and_then(|n| n.to_str()).unwrap_or_default(),
-        "title": "Wisent product examples",
-        "description": "The Wisent products with a runnable CLI on the capture host, each measured by running it: \
+        "title": plan().title,
+        "description": "The products of the capture plan with a runnable CLI on the capture host, each measured by running it: \
                         version form, top-level help, one subcommand help surface, one invalid flag, a Ctrl-C on an \
                         unsubmitted line, the recovering help, and the same help with NO_COLOR=1.",
         "catalog_scope": format!(
-            "This catalog is bounded by the Wisent products installed on the capture host: it contains one \
-             record for each of the {} Wisent products with a runnable CLI on this workstation, and nothing \
-             else. It is not a curated fifty, it is not a sample of the company's product surface, and it does \
-             not cover Wisent products that ship only as a macOS app, an iOS app, a web application or a \
-             service. Every Wisent repository whose CLI is not installed here is absent by construction.",
+            "This catalog is bounded by the capture plan and the capture host: it contains one record for each \
+             of the {} planned products with a runnable CLI on this workstation, and nothing else. It is not a \
+             curated fifty and not a sample of a company's product surface; a planned product whose CLI is not \
+             installed here is absent by construction, and products that ship only as an app, a web application \
+             or a service are not planned.",
             examples.len()
         ),
         "capture_host": host_facts().host.clone(),
-        "excluded_from_scope": EXCLUSIONS.iter().map(|(b, r, reason)| json!({
-            "binary": b,
-            "resolved": r,
-            "reason": reason,
+        "excluded_from_scope": plan().exclusions.iter().map(|exclusion| json!({
+            "binary": exclusion.binary,
+            "resolved": exclusion.resolved,
+            "reason": exclusion.reason,
         })).collect::<Vec<_>>(),
         "curated_at": today_utc(),
         "count": examples.len(),
@@ -139,10 +139,10 @@ pub(crate) fn write_index() -> Result<Value> {
 // ----------------------------------------------------------------------- cli
 
 pub(crate) fn cmd_list() -> Result<()> {
-    println!("Wisent products on this host ({}):", host_sentence());
+    println!("Products of the plan on this host ({}):", host_sentence());
     println!();
     let mut found = 0usize;
-    for (index, product) in PRODUCTS.iter().enumerate() {
+    for (index, product) in products().iter().enumerate() {
         let (path, outcome) = quick_version(product);
         let path = match path {
             Some(p) => p,
@@ -184,36 +184,62 @@ pub(crate) fn cmd_list() -> Result<()> {
     }
     println!();
     println!(
-        "{} of {} listed Wisent products are installed and runnable here.",
+        "{} of {} planned products are installed and runnable here.",
         found,
-        PRODUCTS.len()
+        products().len()
     );
     println!();
     println!("Excluded from scope:");
-    for (item_binary, _resolved, reason) in EXCLUSIONS {
-        println!("  {:<14} {}", item_binary, reason);
+    for exclusion in &plan().exclusions {
+        println!("  {:<14} {}", exclusion.binary, exclusion.reason);
     }
     Ok(())
 }
+
+const USAGE: &str = "usage: spis capture-cli-references --plan <file.json> [--list] [--product <slug>]... [--catalog-only]";
 
 pub fn run(rest: &[String]) -> Result<()> {
     let mut list = false;
     let mut catalog_only = false;
     let mut wanted: Vec<String> = Vec::new();
+    let mut plan_path: Option<PathBuf> = None;
     let mut it = rest.iter();
     while let Some(flag) = it.next() {
         match flag.as_str() {
+            "--help" | "-h" => {
+                println!("{USAGE}\n\n  --plan <file.json>  the capture plan ({PLAN_SCHEMA}): catalog, products, exclusions\n  --list              run each planned product's version probe and report what is installed\n  --product <slug>    capture only this planned product; repeatable\n  --catalog-only      rebuild sources.json and references.json from the records on disk");
+                return Ok(());
+            }
             "--list" => list = true,
             "--catalog-only" => catalog_only = true,
+            "--plan" => {
+                let path = it
+                    .next()
+                    .ok_or_else(|| crate::commands::usage("--plan requires a path"))?;
+                plan_path = Some(crate::commands::operator_path(path));
+            }
             "--product" => {
                 let slug = it
                     .next()
-                    .ok_or_else(|| anyhow!("--product requires a slug"))?;
+                    .ok_or_else(|| crate::commands::usage("--product requires a slug"))?;
                 wanted.push(slug.clone());
             }
             other => {
-                return Err(crate::commands::usage(format!("unknown flag: {other} (expected --list, --product <slug>, --catalog-only)")))
+                return Err(crate::commands::usage(format!("unknown flag: {other}\n{USAGE}")))
             }
+        }
+    }
+    let Some(plan_path) = plan_path else {
+        return Err(crate::commands::usage(format!("--plan is required\n{USAGE}")));
+    };
+    let plan = load_plan(&plan_path)?;
+    for slug in &wanted {
+        if !plan.products.iter().any(|product| &product.slug == slug) {
+            return Err(crate::commands::usage(format!(
+                "--product {slug} is not in {}; it declares: {}",
+                plan_path.display(),
+                plan.products.iter().map(|product| product.slug.as_str()).collect::<Vec<_>>().join(", ")
+            )));
         }
     }
 
@@ -228,23 +254,23 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     if !catalog_only {
         pillow_python()?;
-        let selected: Vec<&Product> = PRODUCTS
+        let selected: Vec<&Product> = products()
             .iter()
-            .filter(|p| wanted.is_empty() || wanted.iter().any(|w| w == p.slug))
+            .filter(|p| wanted.is_empty() || wanted.iter().any(|w| w == &p.slug))
             .collect();
         let missing: Vec<&str> = selected
             .iter()
             .filter(|p| resolve(p).is_none())
-            .map(|p| p.binary)
+            .map(|p| p.binary.as_str())
             .collect();
         if !missing.is_empty() {
             bail!("not on PATH: {}", missing.join(", "));
         }
-        for (i, product) in PRODUCTS.iter().enumerate() {
+        for (i, product) in products().iter().enumerate() {
             if !selected.iter().any(|s| std::ptr::eq(*s, product)) {
                 continue;
             }
-            println!("[{:02}/{:02}] {}", i + 1, PRODUCTS.len(), product.name);
+            println!("[{:02}/{:02}] {}", i + 1, products().len(), product.name);
             let run = capture(i + 1, product)?;
             let measured = measure(&run);
             let (ref_dir, record) = write_reference(&run, &measured)?;
@@ -272,6 +298,6 @@ pub fn run(rest: &[String]) -> Result<()> {
         sources["count"],
         index_payload["reference_count"]
     );
-    println!("next: ./verify-reference-evidence.py --catalog wisent-product-examples --apply");
+    println!("next: spis verify-reference-evidence --catalog {} --apply", plan().catalog);
     Ok(())
 }

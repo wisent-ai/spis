@@ -27,8 +27,8 @@ impl<'a> Facts<'a> {
         let steps = &measured["steps"];
         let cast = &media["cast"];
         let states = &media["states"];
-        let name = product.name;
-        let binary = product.binary;
+        let name = product.name.as_str();
+        let binary = product.binary.as_str();
         let version_line = steps["version"]["first_line"].as_str().unwrap_or_default();
         let version_ok = measured["version_flag_supported"]
             .as_bool()

@@ -1,0 +1,164 @@
+{
+  "schema": "spis.cli-capture-plan.v1",
+  "catalog": "wisent-product-examples",
+  "title": "Wisent product examples",
+  "products": [
+    {
+      "slug": "stado",
+      "name": "Stado",
+      "binary": "stado",
+      "repository": "wisent-ai/stado",
+      "product_url": "https://github.com/wisent-ai/stado",
+      "category": "Infrastructure / compute and queue control plane",
+      "one_line": "Policy-controlled queue and compute control plane for machines you own or authorize.",
+      "selection_note": "The widest command surface we ship: a Clap-style noun tree over jobs, hosts, quota and credits. Study how a large control-plane CLI keeps its top-level help to one screen of verbs and pushes detail into per-command help.",
+      "version_cmd": "stado --version",
+      "help_cmd": "stado --help",
+      "sub_cmd": "stado capabilities --help",
+      "sub_note": "Per-command help exists and is the documented way down one level."
+    },
+    {
+      "slug": "skarbiec",
+      "name": "Skarbiec",
+      "binary": "skarbiec",
+      "repository": "wisent-ai/skarbiec",
+      "product_url": "https://github.com/wisent-ai/skarbiec",
+      "category": "Security / credential and authentication management",
+      "one_line": "Credential and authentication management for the AI era.",
+      "selection_note": "The only product here whose help is machine-readable JSON rather than prose, and the only one whose first refusal is a state gate rather than a parse error. Study what a credential CLI is willing to say before a vault exists.",
+      "version_cmd": "skarbiec --version",
+      "help_cmd": "skarbiec help",
+      "sub_cmd": "skarbiec status --help",
+      "sub_note": "Skarbiec has no per-subcommand help; the subcommand is reached before argument parsing and answers with the vault state gate instead."
+    },
+    {
+      "slug": "weles",
+      "name": "Weles",
+      "binary": "weles",
+      "repository": "wisent-ai/weles",
+      "product_url": "https://github.com/wisent-ai/weles",
+      "category": "Automation / authorized browser execution",
+      "one_line": "Authorized browser execution for AI agents, with signed receipts.",
+      "selection_note": "A CLI whose real work is gated on an authorization boundary, so its safe surface is help and identity only. Study how a product that refuses unauthorized work advertises that boundary in its own usage text.",
+      "version_cmd": "weles --version",
+      "help_cmd": "weles --help",
+      "sub_cmd": "weles version",
+      "sub_note": "Weles exposes no per-subcommand help. `weles version` is the only subcommand that can be run here without authorizing a workflow or touching durable onboarding state, so that is the subcommand surface this record measures."
+    },
+    {
+      "slug": "jeden",
+      "name": "Jeden",
+      "binary": "jeden",
+      "repository": "wisent-ai/jeden",
+      "product_url": "https://github.com/wisent-ai/jeden",
+      "category": "Agents / autonomous coding and company building",
+      "one_line": "The autonomous agent for building software and running the loop around it.",
+      "selection_note": "A single-block usage synopsis for an agent runtime whose flags are permission grants (`--allow-write`, `--allow-command`, `--yolo`). Study how a dangerous capability set is presented in first-run help.",
+      "version_cmd": "jeden --version",
+      "help_cmd": "jeden --help",
+      "sub_cmd": "jeden version",
+      "sub_note": "Jeden's help is one usage block covering every subcommand; there is no per-subcommand help. `jeden run --help` is not a safe probe: when probed once outside this recording it resolved credentials through Skarbiec before parsing `--help` and failed with an HTTP 403, so this record measures `jeden version` instead and reports that finding rather than re-running it."
+    },
+    {
+      "slug": "probierz",
+      "name": "Probierz",
+      "binary": "probierz",
+      "repository": "wisent-ai/probierz",
+      "product_url": "https://github.com/wisent-ai/probierz",
+      "category": "Quality / test execution and evidence boundary",
+      "one_line": "The quality-evidence boundary: selection, execution, evidence, and verdicts.",
+      "selection_note": "The one product whose refusal is a structured machine-readable failure envelope rather than a usage dump. Study a CLI that answers an unknown surface with a parseable `probierz-failure` line plus one plain sentence.",
+      "version_cmd": "probierz --version",
+      "help_cmd": "probierz --help",
+      "sub_cmd": "probierz specs --help",
+      "sub_note": "Probierz has no per-subcommand help: `--help` after a subcommand is read as a surface name and refused. That refusal is the observed subcommand surface."
+    },
+    {
+      "slug": "oko-cli",
+      "name": "Oko (oko-cli)",
+      "binary": "oko-cli",
+      "repository": "wisent-ai/oko",
+      "product_url": "https://github.com/wisent-ai/oko",
+      "category": "Observability / agent session inspection",
+      "one_line": "Understand your team's interactions with AI.",
+      "selection_note": "A headless companion CLI with one flat usage block and no version form at all. Study the cost of that: the same text answers help, an unknown flag, and a subcommand help request, and only the exit status distinguishes them.",
+      "version_cmd": "oko-cli --version",
+      "help_cmd": "oko-cli --help",
+      "sub_cmd": "oko-cli diff --help",
+      "sub_note": "Oko answers a subcommand help request with the whole top-level usage block."
+    },
+    {
+      "slug": "singularity",
+      "name": "Singularity",
+      "binary": "singularity",
+      "repository": "wisent-ai/singularity",
+      "product_url": "https://github.com/wisent-ai/singularity",
+      "category": "Agents / autonomous agent runtime",
+      "one_line": "An open-source framework for autonomous agents that execute tasks and manage resources.",
+      "selection_note": "The narrowest installed surface in the catalog: one subcommand, `onboarding`. Study a product whose CLI deliberately exposes only the first-use journey.",
+      "version_cmd": "singularity --version",
+      "help_cmd": "singularity --help",
+      "sub_cmd": "singularity onboarding --help",
+      "sub_note": "argparse gives every subcommand its own help; `onboarding` is the only one."
+    },
+    {
+      "slug": "tama",
+      "name": "Tama (tama-cli)",
+      "binary": "tama",
+      "repository": "wisent-ai/hooks-rotator",
+      "product_url": "https://github.com/wisent-ai/hooks-rotator",
+      "category": "Policy / agent and Git hook catalog",
+      "one_line": "Your AI agent made a mistake? Tama creates rules so that it never happens again.",
+      "selection_note": "A policy catalog CLI that answers `--help` after a subcommand by ignoring the flag and running the read-only command. Study how a hook installer separates a plan from an install.",
+      "version_cmd": "tama --version",
+      "help_cmd": "tama --help",
+      "sub_cmd": "tama install-plan --help",
+      "sub_note": "Tama ignores a trailing `--help` and executes the subcommand; `install-plan` only reports the paths an install would touch, so nothing is written."
+    },
+    {
+      "slug": "transcript-lake",
+      "name": "Transcript Lake",
+      "binary": "transcript-lake",
+      "repository": "wisent-ai/transcript-lake",
+      "product_url": "https://github.com/wisent-ai/transcript-lake",
+      "category": "Data / local privacy-masked transcript archive",
+      "one_line": "Nothing you ever told an AI is lost again.",
+      "selection_note": "The only help here that opens with a `Start safely:` section and names the read-only commands first. Study help text that is ordered by risk rather than alphabetically.",
+      "version_cmd": "transcript-lake --version",
+      "help_cmd": "transcript-lake --help",
+      "sub_cmd": "transcript-lake paths --help",
+      "sub_note": "Per-command usage exists and prints one line of purpose with its flags."
+    },
+    {
+      "slug": "transcript-label-trainer",
+      "name": "Transcript Label Trainer",
+      "binary": "transcript-label-trainer",
+      "repository": "wisent-ai/transcript-label-trainer",
+      "product_url": "https://github.com/wisent-ai/transcript-label-trainer",
+      "category": "Models / local classifiers over transcript labels",
+      "one_line": "Small models for your custom harness needs.",
+      "selection_note": "An argparse CLI that states its own boundary in the help body — 'Never writes to the lake.' Study a product that publishes what it will not touch above its command list.",
+      "version_cmd": "transcript-label-trainer --version",
+      "help_cmd": "transcript-label-trainer --help",
+      "sub_cmd": "transcript-label-trainer info --help",
+      "sub_note": "argparse gives every subcommand its own help."
+    }
+  ],
+  "exclusions": [
+    {
+      "binary": "omp",
+      "resolved": "~/.local/bin/omp",
+      "reason": "Not a Wisent repository: the binary's own build metadata names github.com/can1357/oh-my-pi. It is the harness we run, not a product we ship."
+    },
+    {
+      "binary": "stado_fleet",
+      "resolved": "~/.stado/bin/stado_fleet",
+      "reason": "A second binary of the same product (Stado, wisent-ai/stado), not a separate product."
+    },
+    {
+      "binary": "wc",
+      "resolved": "~/.local/bin/wc",
+      "reason": "The legacy name of the Stado CLI; `wc --version` prints `stado 0.6.0`. Same product."
+    }
+  ]
+}

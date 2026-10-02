@@ -20,14 +20,15 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
     let repainted = measured["screen_cleared"].as_bool().unwrap_or(false)
         || measured["cursor_addressed"].as_bool().unwrap_or(false);
     let duration = cast["duration_seconds"].as_f64().unwrap_or(0.0);
+    let owner = product.repository.split('/').next().unwrap_or_default();
 
     json!({
         "schema": RECORD_SCHEMA,
         "name": name,
         "product_url": product.product_url,
         "evidence_status": "pending-verification",
-        "upstream_owner": "Wisent (wisent-ai)",
-        "wisent_product": true,
+        "upstream_owner": owner,
+        "wisent_product": owner == "wisent-ai",
         "repository": product.repository,
         "captured_at": media["captured_at"].clone(),
         "capture_host": host_facts().host.clone(),

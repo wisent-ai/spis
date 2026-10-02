@@ -178,7 +178,7 @@ pub(crate) fn resolve(product: &Product) -> Option<String> {
         if dir.is_empty() {
             continue;
         }
-        let candidate = Path::new(dir).join(product.binary);
+        let candidate = Path::new(dir).join(&product.binary);
         if is_executable(&candidate) {
             return Some(candidate.to_string_lossy().into_owned());
         }

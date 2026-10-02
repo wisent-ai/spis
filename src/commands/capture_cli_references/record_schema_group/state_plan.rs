@@ -24,7 +24,7 @@ pub(crate) fn capture(index: usize, product: &'static Product) -> Result<Run> {
     let binary_path =
         resolve(product).ok_or_else(|| anyhow!("{} is not on PATH", product.binary))?;
 
-    let workdir = scratch_root().join("run").join(product.slug);
+    let workdir = scratch_root().join("run").join(&product.slug);
     if workdir.exists() {
         std::fs::remove_dir_all(&workdir)
             .with_context(|| format!("clear {}", workdir.display()))?;
@@ -33,12 +33,12 @@ pub(crate) fn capture(index: usize, product: &'static Product) -> Result<Run> {
 
     let invalid_cmd = format!("{} {PROBE_FLAG}", product.binary);
     let mut commands: BTreeMap<String, String> = BTreeMap::new();
-    commands.insert("version".into(), product.version_cmd.into());
-    commands.insert("help".into(), product.help_cmd.into());
-    commands.insert("subcommand-help".into(), product.sub_cmd.into());
+    commands.insert("version".into(), product.version_cmd.clone());
+    commands.insert("help".into(), product.help_cmd.clone());
+    commands.insert("subcommand-help".into(), product.sub_cmd.clone());
     commands.insert("invalid-flag".into(), invalid_cmd.clone());
     commands.insert("cancellation".into(), invalid_cmd.clone());
-    commands.insert("recovery-help".into(), product.help_cmd.into());
+    commands.insert("recovery-help".into(), product.help_cmd.clone());
     commands.insert(
         "no-color-help".into(),
         format!("NO_COLOR=1 {}", product.help_cmd),

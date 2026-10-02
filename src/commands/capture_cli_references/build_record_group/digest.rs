@@ -259,5 +259,5 @@ pub(crate) fn load_records() -> Result<Vec<(PathBuf, Value)>> {
 }
 
 pub(crate) fn product_by_name(name: &str) -> Option<&'static Product> {
-    PRODUCTS.iter().find(|p| p.name == name)
+    products().iter().find(|p| p.name == name)
 }

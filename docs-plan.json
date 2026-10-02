@@ -111,7 +111,7 @@
             "`collect-example-images` — collect cover images for examples.",
             "`capture-widths` — enqueue multi-width Weles capture batches.",
             "`audit-reference-accessibility` — run axe audits over captured references.",
-            "`capture-wisent-references` — pty-capture product CLIs into records.",
+            "`capture-cli-references` — pty-capture the CLI products of a capture plan into records.",
             "`curate-marketing-catalogs` — write validated pricing and landing candidates for Weles capture."
           ]
         }

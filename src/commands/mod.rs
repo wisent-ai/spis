@@ -1,7 +1,7 @@
 pub mod analyze_example_structures;
 pub mod audit_reference_accessibility;
 pub mod capture_widths;
-pub mod capture_wisent_references;
+pub mod capture_cli_references;
 pub mod catalog_type;
 pub mod check_upstream_drift;
 pub mod corpus;
@@ -22,7 +22,7 @@ pub mod reference_contract;
 pub mod reference_record;
 pub mod verify_reference_evidence;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use std::io::Write;
 
 /// The invocation itself is wrong: a missing or extra argument, an unknown
@@ -135,7 +135,7 @@ const SUBCOMMANDS: &[Subcommand] = &[
     sub("collect-example-images", "collect cover images for examples", false),
     sub("capture-widths", "enqueue multi-width Weles capture batches", false),
     sub("audit-reference-accessibility", "run axe audits over captured references", true),
-    sub("capture-wisent-references", "pty-capture product CLIs into records", false),
+    sub("capture-cli-references", "pty-capture the CLI products of a capture plan into records", true),
     sub("curate-marketing-catalogs", "write validated pricing and landing candidates for Weles capture", false),
 ];
 
@@ -160,6 +160,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         return Ok(true);
     }
     if !asks_help(rest) && !matches!(name, "onboarding" | "corpus" | "docs-site") {
+        remember_invocation_dir()?;
         corpus::activate_configured_root()?;
     }
     match name {
@@ -185,10 +186,32 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "collect-example-images" => collect_example_images::run(rest)?,
         "capture-widths" => capture_widths::run(rest)?,
         "audit-reference-accessibility" => audit_reference_accessibility::run(rest)?,
-        "capture-wisent-references" => capture_wisent_references::run(rest)?,
+        "capture-cli-references" => capture_cli_references::run(rest)?,
         _ => unreachable!("every SUBCOMMANDS entry is dispatched"),
     }
     Ok(true)
+}
+
+static INVOCATION_DIR: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
+
+fn remember_invocation_dir() -> Result<()> {
+    let here = std::env::current_dir().context("read the working directory the command was typed in")?;
+    let _ = INVOCATION_DIR.set(here);
+    Ok(())
+}
+
+/// A path the operator typed, resolved against the directory the command was
+/// typed in. Activating the adopted corpus changes the process directory, so
+/// a relative path read afterwards would otherwise point into the corpus.
+pub(crate) fn operator_path(path: &str) -> std::path::PathBuf {
+    let path = std::path::Path::new(path);
+    if path.is_absolute() {
+        return path.to_path_buf();
+    }
+    match INVOCATION_DIR.get() {
+        Some(dir) => dir.join(path),
+        None => path.to_path_buf(),
+    }
 }
 
 pub fn run(args: &[String]) -> Result<bool> {

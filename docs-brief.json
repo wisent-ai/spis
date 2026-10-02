@@ -29,7 +29,7 @@
         "collect-example-images",
         "capture-widths",
         "audit-reference-accessibility",
-        "capture-wisent-references",
+        "capture-cli-references",
         "curate-marketing-catalogs"
       ]
     },
