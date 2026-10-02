@@ -80,7 +80,9 @@ pub(crate) struct MobileSubmission<'a> {
     pub(crate) host: &'a str,
     pub(crate) catalog: &'a str,
     pub(crate) record: &'a str,
-    pub(crate) driver_url: &'a str,
+    /// The Appium server on the pinned host, when the coordinator was told it;
+    /// otherwise the worker reads SPIS_APPIUM_URL on that host.
+    pub(crate) driver_url: Option<&'a str>,
     pub(crate) max_states: usize,
     pub(crate) max_depth: usize,
     pub(crate) manifest: &'a super::crawl::RuntimeManifest,
@@ -90,7 +92,9 @@ pub(crate) fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
     safe_job_value(request.host, "--host")?;
     safe_job_value(request.catalog, "catalog")?;
     safe_job_value(request.record, "--record")?;
-    Appium::new(request.driver_url)?;
+    if let Some(driver_url) = request.driver_url {
+        Appium::new(driver_url)?;
+    }
     let _attempt_binding = attempt_root(Path::new("."), request.manifest)?;
     if revision()? != request.manifest.source_revision {
         bail!("mobile coordinator revision does not match immutable runtime manifest");
@@ -105,11 +109,14 @@ pub(crate) fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
     // cost job-545551889f9e88be30daa81f sixteen minutes of a claimed slot in
     // the documentation engine, still open in this one.
     let cargo = crate::commands::crawl::resolved_worker_program(request.host)?;
+    let driver = request
+        .driver_url
+        .map(|url| format!(" --driver-url {url}"))
+        .unwrap_or_default();
     let worker = format!(
-        "{cargo} run --release -- crawl-mobile {} --worker --record {} --driver-url {} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawl-mobile {} --worker --record {}{driver} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.catalog,
         request.record,
-        request.driver_url,
         request.max_states,
         request.max_depth,
         artifact,

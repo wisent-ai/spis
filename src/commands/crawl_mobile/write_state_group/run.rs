@@ -3,7 +3,11 @@ use super::*;
 pub fn run(rest: &[String]) -> Result<()> {
     let mut catalog: Option<String> = None;
     let mut record: Option<String> = None;
-    let mut driver_url = "http://127.0.0.1:4723".to_string();
+    // No address is assumed: Stado's registry declares no Appium address per
+    // host. `--driver-url` names it; without it the worker reads
+    // SPIS_APPIUM_URL on the host the job runs on, and refuses when neither is
+    // declared.
+    let mut driver_url: Option<String> = None;
     let mut host: Option<String> = None;
     let mut worker = false;
     let mut artifact_uri: Option<String> = None;
@@ -22,7 +26,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--driver-url" => {
                 i += 1;
-                driver_url = crate::commands::required(rest.get(i), "--driver-url needs a value")?.clone();
+                driver_url = Some(crate::commands::required(rest.get(i), "--driver-url needs a value")?.clone());
             }
             "--host" => {
                 i += 1;
@@ -51,7 +55,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 output = PathBuf::from(crate::commands::required(rest.get(i), "--output needs a value")?);
             }
             "--help" | "-h" => {
-                println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
+                println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--max-states N] [--max-depth N]\n--driver-url is the Appium server on that host; without it the worker reads SPIS_APPIUM_URL on that host and refuses when it is unset.\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value if value.starts_with('-') => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
@@ -62,7 +66,10 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
     let catalog = catalog.context("catalog is required")?;
     let platform = Platform::from_catalog(&catalog)?;
-    driver_url = canonical_driver_url(&driver_url)?;
+    let driver_url = driver_url
+        .as_deref()
+        .map(canonical_driver_url)
+        .transpose()?;
     if max_states == 0 || max_states > 10_000 || max_depth > 32 {
         bail!("--max-states must be 1..10000 and --max-depth must be 0..32");
     }
@@ -83,7 +90,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             host: &host,
             catalog: &catalog,
             record: &record,
-            driver_url: &driver_url,
+            driver_url: driver_url.as_deref(),
             max_states,
             max_depth,
             manifest: &manifest,
@@ -96,6 +103,16 @@ pub fn run(rest: &[String]) -> Result<()> {
     if artifact_uri != manifest.artifact_uri {
         bail!("worker artifact URI does not match immutable runtime manifest");
     }
+    let driver_url = match driver_url {
+        Some(url) => url,
+        None => {
+            let declared = std::env::var("SPIS_APPIUM_URL").ok().filter(|value| !value.trim().is_empty());
+            let declared = declared.context(
+                "no Appium server is declared for this host: pass --driver-url or set SPIS_APPIUM_URL on the host (Stado's registry declares no Appium address, so none is assumed)",
+            )?;
+            canonical_driver_url(declared.trim()).context("SPIS_APPIUM_URL")?
+        }
+    };
     let appium = Appium::new(&driver_url)?;
     let run_root = attempt_root(
         &output,
