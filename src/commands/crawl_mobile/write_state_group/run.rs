@@ -3,7 +3,7 @@ use super::*;
 pub fn run(rest: &[String]) -> Result<()> {
     let mut catalog: Option<String> = None;
     let mut record: Option<String> = None;
-    let mut driver_url: Option<String> = None;
+    let mut driver_url = "http://127.0.0.1:4723".to_string();
     let mut host: Option<String> = None;
     let mut worker = false;
     let mut artifact_uri: Option<String> = None;
@@ -22,7 +22,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--driver-url" => {
                 i += 1;
-                driver_url = Some(crate::commands::required(rest.get(i), "--driver-url needs a value")?.clone());
+                driver_url = crate::commands::required(rest.get(i), "--driver-url needs a value")?.clone();
             }
             "--host" => {
                 i += 1;
@@ -51,7 +51,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 output = PathBuf::from(crate::commands::required(rest.get(i), "--output needs a value")?);
             }
             "--help" | "-h" => {
-                println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA --driver-url URL [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record. --driver-url names the Appium server on the worker host; no address is assumed.");
+                println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value if value.starts_with('-') => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
@@ -62,9 +62,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
     let catalog = catalog.context("catalog is required")?;
     let platform = Platform::from_catalog(&catalog)?;
-    let driver_url = canonical_driver_url(&driver_url.context(
-        "--driver-url is required: name the Appium server the worker host runs; no address is assumed",
-    )?)?;
+    driver_url = canonical_driver_url(&driver_url)?;
     if max_states == 0 || max_states > 10_000 || max_depth > 32 {
         bail!("--max-states must be 1..10000 and --max-depth must be 0..32");
     }
