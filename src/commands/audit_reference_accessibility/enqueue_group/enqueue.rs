@@ -11,8 +11,10 @@ pub(crate) fn enqueue(
     let plan_arg = plan_path.to_string_lossy().to_string();
     let (payload, _) = stado(
         &[
-            "host",
+            "workload",
+            "run",
             "weles-capture",
+            "--target",
             target,
             "--plan",
             plan_arg.as_str(),
@@ -104,13 +106,14 @@ pub(crate) fn read_states(
     expected_ids: &HashSet<String>,
     log: &dyn Fn(&str),
 ) -> Result<std::collections::HashMap<String, Value>> {
+    let receipt = format!("weles-capture:{batch}");
     let (payload, _) = stado(
         &[
-            "host",
-            "weles-capture-status",
+            "workload",
+            "status",
+            receipt.as_str(),
+            "--target",
             target,
-            "--batch",
-            batch,
             "--json",
         ],
         true,
@@ -121,7 +124,7 @@ pub(crate) fn read_states(
             bail!("weles-capture-status: action: expected {ACTION}, got {returned_action}");
         }
     }
-    let rows = action_rows(&payload, "weles-capture-status")?;
+    let rows = action_rows(&payload, "weles-capture status")?;
     let mut latest: std::collections::HashMap<String, Value> = std::collections::HashMap::new();
     for row in &rows {
         if let Some(identifier) = action_id(row) {

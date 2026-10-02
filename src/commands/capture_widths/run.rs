@@ -113,11 +113,11 @@ pub fn run(rest: &[String]) -> Result<()> {
         fail("stado is not on PATH; hosts are reached through stado, never ssh");
     });
     let output = std::process::Command::new(&stado)
-        .args(["host", "weles-capture", &host, "--plan"])
+        .args(["workload", "run", "weles-capture", "--target", &host, "--plan"])
         .arg(plan_path.as_os_str())
         .arg("--json")
         .output()
-        .context("run stado host weles-capture")?;
+        .context("run stado workload run weles-capture")?;
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     let stderr = String::from_utf8_lossy(&output.stderr).to_string();
 
@@ -134,7 +134,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         let script = format!(
             "#!/bin/sh\nset -eu\ncp {plan} /tmp/spis-widths-plan.json\n\
              STADO=$HOME/.stado/bin/stado; [ -x \"$STADO\" ] || STADO=$(command -v stado)\n\
-             \"$STADO\" host weles-capture {host} --plan /tmp/spis-widths-plan.json --json\n",
+             \"$STADO\" workload run weles-capture --target {host} --plan /tmp/spis-widths-plan.json --json\n",
             plan = plan_path.display(),
         );
         let job_dir = work_root();

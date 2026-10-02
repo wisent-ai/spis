@@ -135,7 +135,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut verifier_errors: Vec<String> = Vec::new();
 
     // ---- enqueue + read: failures mark every row and exit 2 -------------
-    // `stado host weles-capture` returns only after every run finished, so one
+    // `stado workload run weles-capture` returns only after every run finished, so one
     // status read afterwards is final; there is nothing to poll (cli.md rule 8).
     let (ids, states): (Vec<String>, std::collections::HashMap<String, Value>) = {
         let outcome: Result<(

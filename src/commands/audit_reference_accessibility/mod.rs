@@ -2,7 +2,7 @@
 //! axe-core through Weles on a Stado host (port of audit-reference-accessibility.py).
 //!
 //! Plans a `wisent.weles-capture-plan.v1` batch of generic_accessibility_audit
-//! actions, enqueues it via `stado host weles-capture`, polls status, retrieves
+//! actions, enqueues it via `stado workload run weles-capture`, polls status, retrieves
 //! axe artifacts through `stado storage get`, validates them, installs them
 //! under each record's media/accessibility/, updates reference.json, and runs
 //! the `verify-reference-evidence` subcommand per completed catalog.
