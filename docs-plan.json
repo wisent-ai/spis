@@ -112,7 +112,7 @@
             "`capture-widths` — enqueue multi-width Weles capture batches.",
             "`audit-reference-accessibility` — run axe audits over captured references.",
             "`capture-cli-references` — pty-capture the CLI products of a capture plan into records.",
-            "`curate-marketing-catalogs` — write validated pricing and landing candidates for Weles capture."
+            "`curate-catalog` — write a catalog's capture-pending records from a declared selector file (`--selector FILE [--apply] [--replace]`); the pricing and landing selectors are under `capture-plans/`."
           ]
         }
       ]

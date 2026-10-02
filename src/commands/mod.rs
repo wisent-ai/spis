@@ -13,7 +13,7 @@ pub mod crawl_docs;
 pub mod crawl_mobile;
 pub mod crawl_tui;
 pub mod crawl_web;
-pub mod curate_marketing_catalogs;
+pub mod curate_catalog;
 pub mod discover;
 pub mod docs_corpus;
 pub mod docs_site;
@@ -136,7 +136,7 @@ const SUBCOMMANDS: &[Subcommand] = &[
     sub("capture-widths", "enqueue multi-width Weles capture batches", false),
     sub("audit-reference-accessibility", "run axe audits over captured references", true),
     sub("capture-cli-references", "pty-capture the CLI products of a capture plan into records", true),
-    sub("curate-marketing-catalogs", "write validated pricing and landing candidates for Weles capture", false),
+    sub("curate-catalog", "write a catalog's capture-pending records from a declared selector file", true),
 ];
 
 fn asks_help(rest: &[String]) -> bool {
@@ -173,7 +173,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "crawl-mobile" => crawl_mobile::run(rest)?,
         "crawl-web" => crawl_web::run(rest)?,
         "crawl-tui" => crawl_tui::run(rest)?,
-        "curate-marketing-catalogs" => curate_marketing_catalogs::run(rest)?,
+        "curate-catalog" => curate_catalog::run(rest)?,
         "docs-corpus" => docs_corpus::run(rest)?,
         "docs-site" => docs_site::run(rest)?,
         "discover" => discover::run(rest)?,
