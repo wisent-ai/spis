@@ -201,14 +201,8 @@ pub(crate) fn aggregate_catalog_entry(entry: &mut Value) {
     entry["state"] = json!(state);
     entry["partial"] = json!(!failures.is_empty());
     entry["failure_counts"] = serde_json::to_value(failures).unwrap_or(Value::Null);
-    // A catalog with no records at all reaches the final `else` above and is
-    // reported `failed` with `error: null` and no failure counts, which is
-    // what the 2026-09-01 documentation catalog looked like after a refresh:
-    // a whole family declared failed with nothing anywhere saying why. That
-    // state is not a crawl outcome, it is an empty plan — a run written in the
-    // retired catalog-level shape, or a checked-out catalog whose references
-    // directory is empty — so it says so, in the same typed diagnostic shape
-    // every record-level refusal uses.
+    // An empty plan is not a failed crawl. Expose the missing record attempts
+    // through the same typed diagnostic shape as record-level refusals.
     if no_planned_records {
         entry["diagnostic"] = json!({
             "code": "no_planned_records",
