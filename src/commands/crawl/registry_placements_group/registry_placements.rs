@@ -1,6 +1,17 @@
 use super::*;
 
-pub(crate) fn registry_placements() -> Result<(BTreeMap<String, String>, Option<RuntimeServiceIdentity>)> {
+/// What the Stado registry declares about where each crawl engine runs.
+pub(crate) struct RegistryPlacements {
+    /// Engine or catalog name to the host it is placed on.
+    pub(crate) hosts: BTreeMap<String, String>,
+    /// The Weles admission service the web crawl binds to, when declared.
+    pub(crate) service_identity: Option<RuntimeServiceIdentity>,
+    /// Mobile host name to the Appium address its `mobile_runtime.address`
+    /// declares. A mobile host absent here declared drivers and no address.
+    pub(crate) driver_urls: BTreeMap<String, String>,
+}
+
+pub(crate) fn registry_placements() -> Result<RegistryPlacements> {
     let mut command = stado_command();
     command.args(["registry", "pull"]);
     let output = bounded_command_output(
@@ -89,28 +100,35 @@ pub(crate) fn registry_placements() -> Result<(BTreeMap<String, String>, Option<
     // required Appium driver is the family route: XCUITest for iOS,
     // UiAutomator2 for Android. Looking for a service whose name happened to
     // contain "appium" ignored the registry's typed runtime declaration and
-    // reported no placement even while both fleet hosts declared one.
+    // reported no placement even while both fleet hosts declared one. The
+    // Appium address is `mobile_runtime.address` of the same declaration;
+    // no port is assumed when it is absent.
+    let mut driver_urls = BTreeMap::new();
     let mobile = [
         ("ios-app-examples", "xcuitest"),
         ("android-app-examples", "uiautomator2"),
     ]
     .into_iter()
     .filter_map(|(catalog, driver)| {
-        targets
-            .iter()
-            .find(|target| {
-                target
-                    .pointer("/mobile_runtime/drivers")
-                    .and_then(Value::as_array)
-                    .is_some_and(|drivers| {
-                        drivers
-                            .iter()
-                            .any(|declared| declared.as_str() == Some(driver))
-                    })
-            })
-            .and_then(|target| target.get("name"))
+        let target = targets.iter().find(|target| {
+            target
+                .pointer("/mobile_runtime/drivers")
+                .and_then(Value::as_array)
+                .is_some_and(|drivers| {
+                    drivers
+                        .iter()
+                        .any(|declared| declared.as_str() == Some(driver))
+                })
+        })?;
+        let host = target.get("name").and_then(Value::as_str)?.to_string();
+        if let Some(address) = target
+            .pointer("/mobile_runtime/address")
             .and_then(Value::as_str)
-            .map(|host| (catalog.to_string(), host.to_string()))
+            .filter(|address| !address.trim().is_empty())
+        {
+            driver_urls.insert(host.clone(), address.trim().to_string());
+        }
+        Some((catalog.to_string(), host))
     })
     .collect::<BTreeMap<_, _>>();
     let mut placements = BTreeMap::new();
@@ -126,7 +144,11 @@ pub(crate) fn registry_placements() -> Result<(BTreeMap<String, String>, Option<
         placements.insert("tui".into(), host.clone());
         placements.insert("docs".into(), host);
     }
-    Ok((placements, service_identity))
+    Ok(RegistryPlacements {
+        hosts: placements,
+        service_identity,
+        driver_urls,
+    })
 }
 
 pub(crate) fn host_for(
@@ -154,8 +176,8 @@ pub(crate) fn weles_capture_host(explicit: Option<String>) -> Result<String> {
     if let Some(host) = explicit {
         return Ok(host);
     }
-    let (placements, _) = registry_placements()?;
-    placements.get("web").cloned().ok_or_else(|| {
+    let placements = registry_placements()?;
+    placements.hosts.get("web").cloned().ok_or_else(|| {
         anyhow!("the Stado registry names no active host for the weles-admission service; pass --host TARGET")
     })
 }

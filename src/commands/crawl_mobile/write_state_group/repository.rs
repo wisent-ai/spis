@@ -81,7 +81,7 @@ pub(crate) struct MobileSubmission<'a> {
     pub(crate) catalog: &'a str,
     pub(crate) record: &'a str,
     /// The Appium server on the pinned host, when the coordinator was told it;
-    /// otherwise the worker reads SPIS_APPIUM_URL on that host.
+    /// otherwise the worker uses the address the runtime manifest bound.
     pub(crate) driver_url: Option<&'a str>,
     pub(crate) max_states: usize,
     pub(crate) max_depth: usize,

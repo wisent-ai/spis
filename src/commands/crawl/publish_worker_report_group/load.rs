@@ -256,7 +256,20 @@ pub(crate) fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<V
     let catalog = manifest.catalog.as_str();
     let engine = manifest.engine.as_str();
     let mut args = match engine {
-        "mobile" => vec!["crawl-mobile".into(), catalog.into(), "--host".into(), host.into()],
+        "mobile" => {
+            let driver_url = manifest
+                .driver_url
+                .as_deref()
+                .context("mobile runtime manifest binds no Appium address")?;
+            vec![
+                "crawl-mobile".into(),
+                catalog.into(),
+                "--host".into(),
+                host.into(),
+                "--driver-url".into(),
+                driver_url.into(),
+            ]
+        }
         "desktop" => vec!["crawl-desktop".into(), catalog.into(), "--host".into(), host.into()],
         "web" => vec!["crawl-web".into(), catalog.into(), "--host".into(), host.into()],
         "tui" => vec!["crawl-tui".into(), "--host".into(), host.into()],

@@ -47,12 +47,18 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
     }
     let source_revision = source_snapshot_revision()?;
     let bindings = load_runtime_bindings(bindings_path.as_deref())?;
-    let (discovered_hosts, service_identity, registry_diagnostic) =
+    let (discovered_hosts, service_identity, driver_urls, registry_diagnostic) =
         match registry_placements() {
-            Ok((hosts, service)) => (hosts, service, None),
+            Ok(placements) => (
+                placements.hosts,
+                placements.service_identity,
+                placements.driver_urls,
+                None,
+            ),
             Err(error) => (
                 BTreeMap::new(),
                 None,
+                BTreeMap::new(),
                 Some(format!("Stado registry placement discovery failed: {error}")),
             ),
         };
@@ -100,6 +106,12 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
                         "Stado service directory does not authorize consumer spis for weles-admission browser-evidence on a host advertising generic_browser_task".into()
                     })
                 })
+            })
+            .or_else(|| {
+                let host = host.as_ref().ok()?;
+                (engine == "mobile" && !driver_urls.contains_key(host)).then(|| {
+                    format!("Stado registry host {host} declares no mobile_runtime.address, so no Appium server is known for it; declare the address the Appium server listens on for that host")
+                })
             });
         if let Some(message) = unavailable {
             let records = paths
@@ -137,6 +149,9 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
         let service = (engine == "web")
             .then_some(service_identity.as_ref())
             .flatten();
+        let driver_url = (engine == "mobile")
+            .then(|| driver_urls.get(&host).map(String::as_str))
+            .flatten();
         let records = paths
             .iter()
             .map(|path| {
@@ -149,6 +164,7 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
                     path,
                     &bindings,
                     service,
+                    driver_url,
                 )
             })
             .collect::<Vec<_>>();

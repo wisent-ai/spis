@@ -91,11 +91,12 @@ The surface-specific commands below are execution engines. Each takes exactly on
 | Pricing pages | `spis crawl-web pricing-page-examples` | real browser session via the official Weles task API |
 | Landing pages | `spis crawl-web landing-page-examples` | real browser session via the official Weles task API |
 
-`crawl-mobile` assumes no Appium address. `--driver-url URL` names the Appium
-server on the pinned host; without it the worker reads `SPIS_APPIUM_URL` from
-the environment the job runs in on that host (the Stado worker's service
-environment), and refuses with "no Appium server is declared for this host"
-when neither is set. The address must be HTTPS, or HTTP on loopback.
+`crawl-mobile` assumes no Appium address. The placement host declares the
+server it runs in the Stado registry as `mobile_runtime.address`; `spis crawl
+start` binds that address into the record's runtime manifest and the worker
+command carries it as `--driver-url`. A host that declares drivers and no
+address is reported as `runtime_placement_unavailable` naming the field to
+declare. The address must be HTTPS, or HTTP on loopback.
 
 `spis crawl bindings generate` writes the exact typed binding for every checked-in record; with `--output` an existing generated document is replaced atomically after validation and read-back, and the reported outcome is `created`, `replaced` or `unchanged`. `headless` is set only for the web engine. Native records without an explicit binding and an independently observed authorization proof stay explicitly unconfigured and surface one typed `unavailable` attempt diagnostic rather than disappearing from the run.
 

@@ -3,10 +3,10 @@ use super::*;
 pub fn run(rest: &[String]) -> Result<()> {
     let mut catalog: Option<String> = None;
     let mut record: Option<String> = None;
-    // No address is assumed: Stado's registry declares no Appium address per
-    // host. `--driver-url` names it; without it the worker reads
-    // SPIS_APPIUM_URL on the host the job runs on, and refuses when neither is
-    // declared.
+    // The Appium address is the placement host's `mobile_runtime.address` in
+    // the Stado registry, bound into the runtime manifest at planning.
+    // `--driver-url` overrides it for a coordinator submission; nothing is
+    // assumed.
     let mut driver_url: Option<String> = None;
     let mut host: Option<String> = None;
     let mut worker = false;
@@ -55,7 +55,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 output = PathBuf::from(crate::commands::required(rest.get(i), "--output needs a value")?);
             }
             "--help" | "-h" => {
-                println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--max-states N] [--max-depth N]\n--driver-url is the Appium server on that host; without it the worker reads SPIS_APPIUM_URL on that host and refuses when it is unset.\nworker mode requires the same immutable runtime manifest and exact record.");
+                println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--max-states N] [--max-depth N]\n--driver-url is the Appium server on that host; absent, the runtime manifest's bound address (the host's mobile_runtime.address in the Stado registry) is used.\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value if value.starts_with('-') => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
@@ -106,11 +106,11 @@ pub fn run(rest: &[String]) -> Result<()> {
     let driver_url = match driver_url {
         Some(url) => url,
         None => {
-            let declared = std::env::var("SPIS_APPIUM_URL").ok().filter(|value| !value.trim().is_empty());
-            let declared = declared.context(
-                "no Appium server is declared for this host: pass --driver-url or set SPIS_APPIUM_URL on the host (Stado's registry declares no Appium address, so none is assumed)",
-            )?;
-            canonical_driver_url(declared.trim()).context("SPIS_APPIUM_URL")?
+            let bound = manifest
+                .driver_url
+                .as_deref()
+                .context("the runtime manifest binds no Appium address and --driver-url was not given")?;
+            canonical_driver_url(bound).context("runtime manifest driver_url")?
         }
     };
     let appium = Appium::new(&driver_url)?;

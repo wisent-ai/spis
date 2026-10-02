@@ -53,12 +53,19 @@ pub(crate) fn decode_runtime_manifest(
         {
             bail!("web runtime manifest Weles service identity is invalid");
         }
-        let (_, current) = registry_placements()?;
+        let current = registry_placements()?.service_identity;
         if serde_json::to_value(current)? != serde_json::to_value(&manifest.service_identity)? {
             bail!("Weles service directory generation or exact placement changed after planning");
         }
     } else if manifest.service_identity.is_some() {
         bail!("non-web runtime manifest cannot bind a Weles service identity");
+    }
+    if manifest.engine == "mobile" {
+        if manifest.driver_url.as_deref().is_none_or(|url| url.trim().is_empty()) {
+            bail!("mobile runtime manifest binds no Appium address; the placement host must declare mobile_runtime.address in the Stado registry");
+        }
+    } else if manifest.driver_url.is_some() {
+        bail!("non-mobile runtime manifest cannot bind an Appium address");
     }
     let bindings = runtime_bindings_for_worker(&manifest)?;
     if bindings.sha256 != manifest.bindings_file_sha256 {

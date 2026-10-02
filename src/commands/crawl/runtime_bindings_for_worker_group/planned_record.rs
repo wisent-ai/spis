@@ -9,6 +9,7 @@ pub(crate) fn planned_record(
     record_dir: &Path,
     bindings: &RuntimeBindings,
     service_identity: Option<&RuntimeServiceIdentity>,
+    driver_url: Option<&str>,
 ) -> Value {
     let slug = record_dir
         .file_name()
@@ -184,6 +185,7 @@ pub(crate) fn planned_record(
         resource_lease: matches!(engine, "desktop" | "mobile" | "cli" | "tui")
             .then(|| format!("stado-exclusive://{host}/{engine}")),
         service_identity,
+        driver_url: driver_url.map(str::to_string),
     };
     if let Err(error) = finalize_manifest_identity(&mut manifest, &bytes) {
         return unavailable_record(

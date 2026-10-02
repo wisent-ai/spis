@@ -188,6 +188,11 @@ pub(crate) struct RuntimeManifest {
     pub execution_identity: Option<RuntimeExecutionIdentity>,
     pub resource_lease: Option<String>,
     pub service_identity: Option<RuntimeServiceIdentity>,
+    /// The Appium server a mobile record's worker talks to, from the
+    /// placement host's `mobile_runtime.address` in the Stado registry at
+    /// planning time. Only a mobile manifest carries one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub driver_url: Option<String>,
 }
 
 impl RuntimeManifest {
