@@ -1,6 +1,6 @@
 use super::*;
 
-pub(crate) const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
+pub(crate) const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 
 #[derive(Clone, Debug)]
 pub(crate) struct Record {

@@ -1,6 +1,6 @@
 use super::*;
 
-pub(crate) const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
+pub(crate) const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 
 pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     if value.is_empty()

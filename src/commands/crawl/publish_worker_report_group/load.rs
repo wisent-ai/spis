@@ -26,7 +26,7 @@ pub(crate) fn load(run_id: Option<&str>) -> Result<Value> {
 
 pub(crate) const STADO_SUBMISSION_RECEIPT_SCHEMA: &str = "stado.submission-receipt.v3";
 
-pub(crate) const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
+pub(crate) const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 
 /// The checkout subdirectory every crawl worker runs from. It is no longer a
 /// receipt field, so it is asserted where it is actually declared: the

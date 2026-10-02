@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 description = "Evidence-grade reference corpus tooling (Rust port of the former Python scripts)"
 license = "Apache-2.0"
+# The repository every crawl worker clones and every worker receipt names.
+# Read through CARGO_PKG_REPOSITORY, so a fork changes it here and nowhere else.
+repository = "https://github.com/wisent-ai/spis.git"
 # No test target is built until the operator approves one with
 # `tama tests approve`.
 autotests = false

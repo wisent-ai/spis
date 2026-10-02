@@ -1,6 +1,6 @@
 use super::*;
 
-pub(crate) const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
+pub(crate) const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 
 pub(crate) const REPRESENTATIVE_INPUT_CLASSES: &[(&str, &str)] = &[
     ("arrow keys", "context-ambiguous navigation or mutation input"),

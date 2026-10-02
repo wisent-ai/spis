@@ -1,6 +1,6 @@
 use super::*;
 
-pub(crate) const REPOSITORY: &str = "https://github.com/wisent-ai/spis.git";
+pub(crate) const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 
 pub(crate) const CATALOGS: &[&str] = &[
     "web-app-examples",
