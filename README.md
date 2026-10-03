@@ -14,7 +14,7 @@ Licensed Apache-2.0. Third-party content remains attributable to its owners; see
 - [Configuration](https://spis.wisent.com/docs/configuration)
 - [Architecture](https://spis.wisent.com/docs/architecture)
 - [Runbook](https://spis.wisent.com/docs/runbook)
-- [Examples and executed walkthroughs](https://spis.wisent.com/docs/examples)
+- [Examples and walkthroughs](https://spis.wisent.com/docs/examples)
 
 Core concepts:
 
