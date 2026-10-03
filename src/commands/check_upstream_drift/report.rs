@@ -1,6 +1,6 @@
 use super::*;
 
-pub(crate) const REPORT: &str = "upstream-drift.json";
+pub(crate) const REPORT: &str = ".build/upstream-drift.json";
 
 pub(crate) const USER_AGENT: &str = crate::USER_AGENT;
 

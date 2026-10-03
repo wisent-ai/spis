@@ -249,7 +249,9 @@ pub fn run(rest: &[String]) -> Result<()> {
             "upstream_urls_unresolved": drift.sources_unresolved,
             "upstream_urls_skipped": drift.sources_skipped,
         });
-        std::fs::write(REPORT, serde_json::to_string_pretty(&report)? + "\n")?;
+        std::fs::create_dir_all(".build").context("create private drift report directory .build")?;
+        std::fs::write(REPORT, serde_json::to_string_pretty(&report)? + "\n")
+            .with_context(|| format!("write private drift report {REPORT}"))?;
         println!("\nreport written to {REPORT}");
     }
 

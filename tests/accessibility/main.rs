@@ -1,3 +1,4 @@
+mod drift;
 mod journeys;
 mod support;
 
@@ -10,6 +11,7 @@ fn main() -> Result<()> {
     let result = (|| {
         let fixture = run.prepare()?;
         run.report["state"] = json!("running");
+        drift::run(&mut run, &fixture)?;
         journeys::run(&mut run, &fixture)
     })();
     match &result {

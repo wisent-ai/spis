@@ -236,3 +236,8 @@ impl Run {
         Ok(fixture)
     }
 }
+
+pub fn json_file(path: &Path) -> Result<Value> {
+    serde_json::from_slice(&fs::read(path).with_context(|| format!("read {}", path.display()))?)
+        .with_context(|| format!("decode {}", path.display()))
+}

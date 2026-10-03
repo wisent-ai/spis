@@ -132,8 +132,14 @@ corpus. Validated accessibility media and measurements still belong in each
 selected reference record. Failed retrieval or verification does not become a
 completed measurement.
 
+`spis check-upstream-drift --write-report` follows the same rule: its observed
+integrity and reachability results go to private `.build/upstream-drift.json`,
+not a tracked corpus-root report. `--skip-network` measures local bytes only;
+`--strict` returns a failure for missing media or a hash mismatch.
+
 The live qualification target uses actual catalog data and a Stado-selected
-browser host. Its private fixture file has these fields:
+browser host. The selected record must include a retained state artifact and
+its measured SHA-256. Its private fixture file has these fields:
 
 ```json
 {
@@ -153,9 +159,11 @@ SPIS_ACCESSIBILITY_FIXTURE=/absolute/path/to/private-fixture.json \
 
 The runner copies catalog data, not a checkout, into an isolated ignored build
 directory. A fresh `XDG_CONFIG_HOME` prevents it from activating the operator's
-adopted corpus. It exercises an outside-plan refusal and real default-plan and
-relative-plan audits, then compares downloaded axe bytes with the persisted
-measurement and confirms that the source reference was not changed.
+adopted corpus. It checks private drift-report persistence, changes only a copied
+media file to exercise a real hash-mismatch refusal, and restores that copy.
+It then exercises an outside-plan refusal and real default-plan and relative-plan
+audits, compares downloaded axe bytes with the persisted measurement, and
+confirms that the source reference was not changed.
 The source revision, binary and input hashes, exact commands, exit statuses,
 streams, plans, staging files and observations remain under
 `.build/accessibility-live-*/`. Missing dependencies or incomplete evidence

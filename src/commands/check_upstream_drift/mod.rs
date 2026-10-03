@@ -8,7 +8,7 @@
 //! 3. Local integrity — every recorded local media path resolves and matches
 //!    its recorded SHA-256.
 //!
-//! Ported 1:1 from the former check-upstream-drift.py.
+//! Optional operational reports stay in the active corpus's ignored `.build/`.
 
 use crate as lib;
 use anyhow::{Context, Result};

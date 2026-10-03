@@ -1,13 +1,8 @@
-use crate::support::{digest, Fixture, Run};
+use crate::support::{digest, json_file, Fixture, Run};
 use anyhow::{ensure, Context, Result};
-use serde_json::{json, Value};
+use serde_json::json;
 use std::fs;
 use std::path::{Component, Path};
-
-fn json_file(path: &Path) -> Result<Value> {
-    serde_json::from_slice(&fs::read(path).with_context(|| format!("read {}", path.display()))?)
-        .with_context(|| format!("decode {}", path.display()))
-}
 
 pub fn run(run: &mut Run, fixture: &Fixture) -> Result<()> {
     let catalog = fixture
