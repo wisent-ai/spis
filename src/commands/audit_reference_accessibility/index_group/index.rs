@@ -1,6 +1,6 @@
 use super::*;
 
-pub(crate) const INDEX: &str = "accessibility-audit-index.json";
+pub(crate) const INDEX: &str = ".build/accessibility-audit/index.json";
 
 pub(crate) const PLAN_SCHEMA: &str = "wisent.weles-capture-plan.v1";
 
@@ -43,19 +43,10 @@ pub(crate) const SUMMARY_FIELDS: &[&str] = &[
     "sha256",
 ];
 
-/// Deviation from the Python original, which used ~/.stado/work: generated
-/// working files stay under ~/.spis/work per harness policy.
+/// Operational plans, downloaded staging files and diagnostics are private work,
+/// not publishable reference records.
 pub(crate) fn work_root() -> PathBuf {
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    Path::new(&home).join(".spis").join("work")
-}
-
-pub(crate) fn plan_dir() -> PathBuf {
-    work_root().join("accessibility-audit-plans")
-}
-
-pub(crate) fn staging_root() -> PathBuf {
-    work_root().join("accessibility-audits")
+    PathBuf::from(".build/accessibility-audit")
 }
 
 // ---------------------------------------------------------------------------

@@ -4,3 +4,4 @@ __pycache__/
 .workload/
 /target/
 /.wisent-output/
+/.build/

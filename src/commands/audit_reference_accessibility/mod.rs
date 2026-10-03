@@ -1,19 +1,15 @@
-//! `spis audit-reference-accessibility` — measure reference accessibility with
-//! axe-core through Weles on a Stado host (port of audit-reference-accessibility.py).
+//! `spis audit-reference-accessibility` measures reference accessibility with
+//! axe-core through Weles on a Stado-selected host.
 //!
 //! Plans a `wisent.weles-capture-plan.v1` batch of generic_accessibility_audit
-//! actions, enqueues it via `stado workload run weles-capture`, polls status, retrieves
-//! axe artifacts through `stado storage get`, validates them, installs them
-//! under each record's media/accessibility/, updates reference.json, and runs
-//! the `verify-reference-evidence` subcommand per completed catalog.
+//! actions, runs it through `stado workload run weles-capture`, reads terminal
+//! status, retrieves and validates axe artifacts, and installs measured evidence
+//! under each record's media/accessibility/. The current executable then runs
+//! `verify-reference-evidence` for each completed catalog.
 //!
-//! Deviations from the Python original (reported, deliberate):
-//! * Plan/staging directories live under ~/.spis/work instead of ~/.stado/work.
-//! * The verifier is invoked as a spis subcommand (`spis
-//!   verify-reference-evidence`) on the current executable rather than
-//!   `python3 verify-reference-evidence.py`.
-//! * The strict JSON reader is a hand-rolled parser with duplicate-key
-//!   detection (serde_json alone accepts duplicates silently).
+//! Operational plans, staging files and the audit index stay in the corpus's
+//! ignored `.build/accessibility-audit/` directory. JSON inputs reject duplicate
+//! keys rather than silently accepting conflicting observations.
 
 use anyhow::{anyhow, bail, Context, Result};
 use serde_json::{json, Map, Value};

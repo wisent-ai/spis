@@ -7,13 +7,17 @@ license = "Apache-2.0"
 # The repository every crawl worker clones and every worker receipt names.
 # Read through CARGO_PKG_REPOSITORY, so a fork changes it here and nowhere else.
 repository = "https://github.com/wisent-ai/spis.git"
-# No test target is built until the operator approves one with
-# `tama tests approve`.
+# Live qualification targets require real external dependencies and explicit fixtures.
 autotests = false
 
 [[bin]]
 name = "spis"
 path = "src/main.rs"
+
+[[test]]
+name = "accessibility-live"
+path = "tests/accessibility/main.rs"
+harness = false
 
 [dependencies]
 ureq = { version = "2", features = ["gzip", "json"] }

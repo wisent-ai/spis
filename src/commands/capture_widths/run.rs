@@ -79,7 +79,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
     }
 
-    let host = crate::commands::crawl::weles_capture_host(host)?;
+    let host = crate::commands::crawl::weles_capture_host(host, "--host")?;
     let plan = json!({
         "schema": PLAN_SCHEMA,
         "batch": batch,

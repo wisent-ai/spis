@@ -42,7 +42,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
         i += 1;
     }
-    let target = crate::commands::crawl::weles_capture_host(target)?;
+    let target = crate::commands::crawl::weles_capture_host(target, "--target")?;
 
     let log = |line: &str| {
         eprintln!("{line}");

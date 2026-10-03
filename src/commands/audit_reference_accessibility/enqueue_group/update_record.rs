@@ -134,7 +134,8 @@ pub(crate) fn retrieve(
     let keys = artifact_keys(row);
     let raw_key = named_artifact(&keys, "axe.json", reference)?;
     let summary_key = named_artifact(&keys, "axe-summary.json", reference)?;
-    let stage = staging_root()
+    let stage = work_root()
+        .join("staging")
         .join(batch)
         .join(&reference.catalog)
         .join(&reference.slug);

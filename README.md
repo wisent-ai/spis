@@ -116,6 +116,51 @@ Browser crawls are anonymous: `credentialRefs` is always empty, `evidencePolicy`
 The Weles bridge, its network configuration, public service identity and receipt-bound
 evidence are described in [docs/weles-bridge.md](docs/weles-bridge.md).
 
+## Accessibility audit retention
+
+`spis audit-reference-accessibility` keeps operational data beneath
+`.build/accessibility-audit/` in the active corpus. Plans go in `plans/`,
+downloaded artifacts in `staging/<batch>/`, and the latest observed result in
+`index.json`. An explicit `--plan` is resolved relative to that corpus and must
+remain under the same private work directory. A plan outside it is refused
+before dispatch. An adopted corpus takes precedence over the shell directory.
+
+Keep `.build/` excluded from version control and publication in every corpus
+checkout. The index retains the actual target, plan location and failed
+operation; those diagnostics belong to the operator, not the public reference
+corpus. Validated accessibility media and measurements still belong in each
+selected reference record. Failed retrieval or verification does not become a
+completed measurement.
+
+The live qualification target uses actual catalog data and a Stado-selected
+browser host. Its private fixture file has these fields:
+
+```json
+{
+  "catalog_dir": "/absolute/path/to/corpus/documentation-site-examples",
+  "record_index": 1,
+  "target": "stado-selected-browser-host"
+}
+```
+
+Replace the example paths, record index and target with real inputs. Keep the
+fixture private, provide normal authenticated Stado/Weles access, and invoke:
+
+```bash
+SPIS_ACCESSIBILITY_FIXTURE=/absolute/path/to/private-fixture.json \
+  cargo test --locked --test accessibility-live
+```
+
+The runner copies catalog data, not a checkout, into an isolated ignored build
+directory. A fresh `XDG_CONFIG_HOME` prevents it from activating the operator's
+adopted corpus. It exercises an outside-plan refusal and real default-plan and
+relative-plan audits, then compares downloaded axe bytes with the persisted
+measurement and confirms that the source reference was not changed.
+The source revision, binary and input hashes, exact commands, exit statuses,
+streams, plans, staging files and observations remain under
+`.build/accessibility-live-*/`. Missing dependencies or incomplete evidence
+produce a nonzero result, never a skipped success. No local browser is opened.
+
 ## Repository layout
 
 | Path | Owns |

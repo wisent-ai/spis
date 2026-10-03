@@ -180,15 +180,16 @@ pub(crate) fn path_name(path: &Path) -> &str {
 }
 
 pub(crate) fn plan_path_for(plan_arg: Option<&String>, batch: &str) -> Result<PathBuf> {
+    let cwd = std::env::current_dir().context("locate the selected corpus directory")?;
+    let work = lex_norm(&cwd.join(work_root()));
     let raw = match plan_arg {
         Some(arg) => PathBuf::from(expand_home(arg)),
-        None => plan_dir().join(format!("{batch}.json")),
+        None => work.join("plans").join(format!("{batch}.json")),
     };
-    let resolved = lex_norm(Path::new(&raw));
-    let work = lex_norm(&work_root());
+    let resolved = lex_norm(&cwd.join(raw));
     if !is_relative_to(&resolved, &work) {
         bail!(
-            "--plan: {} is outside {}; plans belong under ~/.spis/work",
+            "--plan: {} is outside {}; plans belong under .build/accessibility-audit",
             resolved.display(),
             work.display()
         );

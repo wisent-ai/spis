@@ -172,12 +172,12 @@ pub(crate) fn host_for(
 /// active host of the registry's weles-admission service, the same placement
 /// the web crawl uses. Keeping the answer in the registry means a moved
 /// browser host is followed by every command instead of being edited into each.
-pub(crate) fn weles_capture_host(explicit: Option<String>) -> Result<String> {
+pub(crate) fn weles_capture_host(explicit: Option<String>, host_flag: &str) -> Result<String> {
     if let Some(host) = explicit {
         return Ok(host);
     }
     let placements = registry_placements()?;
     placements.hosts.get("web").cloned().ok_or_else(|| {
-        anyhow!("the Stado registry names no active host for the weles-admission service; pass --host TARGET")
+        anyhow!("the Stado registry names no active host for the weles-admission service; pass {host_flag} TARGET")
     })
 }
