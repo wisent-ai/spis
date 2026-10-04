@@ -1,17 +1,5 @@
 use super::*;
 
-/// The most records of one catalog that may occupy a host at the same time,
-/// whatever its disk says.
-///
-/// Measured on a shared fleet host: ten records in flight took the disk from
-/// 18.4 GiB to 0.1 GiB in fifty minutes, and three took it from 11 GiB to
-/// 2.1 GiB in fifteen. The fleet's disk gate cannot prevent either -
-/// it stops new claims below the watermark and has no say over the growth of
-/// claims already running - and `--exclusive` prevents it only by demanding an
-/// idle machine, which on a host that also carries release and qualification
-/// work means the family never starts at all.
-pub(crate) const HOST_RECORD_WINDOW: usize = 3;
-
 /// What one record in flight costs the host at its peak, in GiB.
 ///
 /// A record holds its whole crawl on the host until the attempt artifact is
@@ -40,12 +28,16 @@ pub(crate) const RECORD_PEAK_GIB: f64 = 4.0;
 /// volume; this admits one and leaves the other 6 GiB for the host's own work,
 /// which on a shared host is a release store, a queue, and everyone else's
 /// jobs.
+///
+/// No fixed ceiling sits on top of this: the free space the host reports is
+/// the limit. A constant window was tried twice before the arithmetic existed
+/// and was wrong both times, in opposite directions.
 pub(crate) fn host_record_window(host_report: &Value) -> usize {
     let Some(free_gib) = observed_free_gib(host_report) else {
         return 0;
     };
     let affordable = (free_gib / RECORD_PEAK_GIB).floor() - 1.0;
-    (affordable.max(0.0) as usize).min(HOST_RECORD_WINDOW)
+    affordable.max(0.0) as usize
 }
 
 /// Whether this record is holding a slot on the host right now: submitted and
