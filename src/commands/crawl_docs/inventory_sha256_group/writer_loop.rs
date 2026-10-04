@@ -24,6 +24,11 @@ pub(crate) fn writer_loop(
     )?;
     output.seek(SeekFrom::Start(state.committed_bytes))?;
     let mut stream_hasher = load_stream_hasher(&layout.pages, state.committed_bytes)?;
+    // The corpus may grow by the room its volume reports now, so a page that
+    // would not fit is recorded as such instead of filling the disk; no corpus
+    // size is chosen here.
+    let (room_bytes, _) = crate::commands::crawl::volume_room(&layout.pages)?;
+    let corpus_ceiling = state.committed_bytes.saturating_add(room_bytes);
     let expected_positions = expected_sequences
         .iter()
         .copied()
@@ -78,13 +83,13 @@ pub(crate) fn writer_loop(
                         encoder.write_all(line)?;
                         let member = encoder.finish()?;
                         if state.committed_bytes.saturating_add(member.len() as u64)
-                            > MAX_CORPUS_BYTES
+                            > corpus_ceiling
                         {
                             status = json!("corpus_limit");
                             diagnostic = Some(CrawlDiagnostic {
                                 code: "corpus_total_byte_limit".into(),
                                 message: format!(
-                                    "writing this page would exceed the {MAX_CORPUS_BYTES}-byte corpus limit"
+                                    "writing this page would exceed the {room_bytes} bytes free on the corpus volume when this run began"
                                 ),
                                 url: request.outcome.target.url.clone(),
                             });
