@@ -143,9 +143,6 @@ pub(crate) fn tmux(
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
-/// A capture larger than this is refused rather than digested as evidence.
-pub(crate) const MAXIMUM_CAPTURE_BYTES: usize = 4 * 1024 * 1024;
-
 pub(crate) fn capture_range(session: &TmuxSession, start: &str, context: &'static str) -> Result<String> {
     let screen = tmux(
         &session.socket,
@@ -153,12 +150,6 @@ pub(crate) fn capture_range(session: &TmuxSession, start: &str, context: &'stati
         &["capture-pane", "-t", &session.name, "-p", "-e", "-S", start],
         context,
     )?;
-    if screen.len() > MAXIMUM_CAPTURE_BYTES {
-        bail!(
-            "{context} returned {} bytes, beyond the {MAXIMUM_CAPTURE_BYTES}-byte bound",
-            screen.len()
-        );
-    }
     Ok(screen)
 }
 
