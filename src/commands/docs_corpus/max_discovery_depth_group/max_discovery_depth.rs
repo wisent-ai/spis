@@ -1,17 +1,5 @@
 use super::*;
 
-pub(crate) const MAX_DISCOVERY_DEPTH: usize = 16;
-
-pub(crate) const MAX_DISCOVERY_DIRECTORIES: usize = 100_000;
-
-pub(crate) const MAX_OUTCOME_JOURNAL_BYTES: u64 = 256 * 1024 * 1024;
-
-pub(crate) const MAX_PAGE_RECORD_BYTES: usize = 128 * 1024 * 1024;
-
-pub(crate) const MAX_TOTAL_INVENTORY_BYTES: u64 = 64 * 1024 * 1024;
-
-pub(crate) const MAX_METADATA_BYTES: u64 = 256 * 1024 * 1024;
-
 pub(crate) const CORPUS_FILES: [&str; 4] = [
     "docs-retrieval-run.json",
     "outcomes.jsonl",
@@ -108,9 +96,6 @@ pub(crate) fn existing_regular_directory(path: &Path, label: &str) -> Result<boo
 
 pub(crate) fn read_json(path: &Path) -> Result<Value> {
     let mut file = open_regular_read(path, "documentation corpus metadata")?;
-    if file.metadata()?.len() > MAX_METADATA_BYTES {
-        bail!("documentation corpus metadata exceeds its byte limit");
-    }
     let mut bytes = Vec::new();
     file.read_to_end(&mut bytes)?;
     serde_json::from_slice(&bytes).with_context(|| format!("parse {}", path.display()))
@@ -118,9 +103,6 @@ pub(crate) fn read_json(path: &Path) -> Result<Value> {
 
 pub(crate) fn read_last_worker_report(path: &Path) -> Result<Value> {
     let mut file = open_regular_read(path, "documentation worker output")?;
-    if file.metadata()?.len() > MAX_METADATA_BYTES {
-        bail!("documentation worker output exceeds its byte limit");
-    }
     let mut bytes = Vec::new();
     file.read_to_end(&mut bytes)?;
     bytes

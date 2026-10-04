@@ -116,19 +116,15 @@ pub(crate) fn validate_corpus(
     })
 }
 
+/// Every corpus under `directory`. Symbolic links are never followed, so the
+/// walk cannot loop and needs no depth or directory count chosen here.
 pub(crate) fn visit_corpora(
     directory: &Path,
-    depth: usize,
-    visited: &mut usize,
     corpora: &mut Vec<AttemptCorpus>,
     origin: CorpusOrigin,
 ) -> Result<()> {
     if !directory.exists() {
         return Ok(());
-    }
-    *visited += 1;
-    if *visited > MAX_DISCOVERY_DIRECTORIES {
-        bail!("durable documentation corpus discovery exceeded its directory limit");
     }
     let metadata = std::fs::symlink_metadata(directory)?;
     if !metadata.file_type().is_dir() || metadata.file_type().is_symlink() {
@@ -142,13 +138,10 @@ pub(crate) fn visit_corpora(
         corpora.push(validate_corpus(directory, None, origin)?);
         return Ok(());
     }
-    if depth == 0 {
-        return Ok(());
-    }
     for entry in std::fs::read_dir(directory)? {
         let entry = entry?;
         if entry.file_type()?.is_dir() {
-            visit_corpora(&entry.path(), depth - 1, visited, corpora, origin)?;
+            visit_corpora(&entry.path(), corpora, origin)?;
         }
     }
     Ok(())
@@ -156,21 +149,8 @@ pub(crate) fn visit_corpora(
 
 pub(crate) fn selected_corpora() -> Result<HashMap<String, AttemptCorpus>> {
     let mut candidates = Vec::new();
-    let mut visited = 0usize;
-    visit_corpora(
-        &crawl_root()?,
-        MAX_DISCOVERY_DEPTH,
-        &mut visited,
-        &mut candidates,
-        CorpusOrigin::Local,
-    )?;
-    visit_corpora(
-        &imports_root()?,
-        MAX_DISCOVERY_DEPTH,
-        &mut visited,
-        &mut candidates,
-        CorpusOrigin::Imported,
-    )?;
+    visit_corpora(&crawl_root()?, &mut candidates, CorpusOrigin::Local)?;
+    visit_corpora(&imports_root()?, &mut candidates, CorpusOrigin::Imported)?;
     let mut selected = HashMap::<String, AttemptCorpus>::new();
     for candidate in candidates {
         let replace = selected.get(&candidate.slug).is_none_or(|current| {

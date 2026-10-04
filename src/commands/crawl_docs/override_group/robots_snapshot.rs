@@ -64,13 +64,11 @@ impl CompiledRobots {
     }
 }
 
-/// Compile one robots pattern under an explicit program-size ceiling, so the
-/// bound is ours rather than whatever `regex` defaults to.
+/// Compile one robots pattern. A pattern the regex engine refuses fails here,
+/// and the caller then denies everything: a dropped `Disallow` would read as
+/// an allow.
 pub(crate) fn compile_robots_pattern(pattern: &str) -> Result<regex::Regex> {
-    regex::RegexBuilder::new(pattern)
-        .size_limit(MAX_ROBOTS_PROGRAM_BYTES)
-        .build()
-        .with_context(|| format!("robots pattern {pattern:?} does not compile"))
+    regex::Regex::new(pattern).with_context(|| format!("robots pattern {pattern:?} does not compile"))
 }
 
 /// Every in-scope page a site's inventory names, with what reading it cost.
@@ -88,19 +86,9 @@ pub(crate) fn push_inventory_diagnostic(
     message: impl Into<String>,
     url: impl Into<String>,
 ) {
-    if diagnostics.len() < MAX_INVENTORY_DIAGNOSTICS {
-        diagnostics.push(CrawlDiagnostic {
-            code: code.into(),
-            message: message.into(),
-            url: url.into(),
-        });
-    } else if diagnostics.len() == MAX_INVENTORY_DIAGNOSTICS {
-        diagnostics.push(CrawlDiagnostic {
-            code: "inventory_diagnostics_truncated".into(),
-            message: format!(
-                "inventory diagnostics exceeded the {MAX_INVENTORY_DIAGNOSTICS}-entry limit"
-            ),
-            url: String::new(),
-        });
-    }
+    diagnostics.push(CrawlDiagnostic {
+        code: code.into(),
+        message: message.into(),
+        url: url.into(),
+    });
 }

@@ -135,9 +135,6 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
         .get("inventory_downloaded_bytes")
         .and_then(Value::as_u64)
         .context("durable state has no inventory_downloaded_bytes")?;
-    if inventory_downloaded_bytes > MAX_TOTAL_INVENTORY_BYTES {
-        bail!("durable inventory download counter exceeds its limit");
-    }
     let total_downloaded_bytes = inventory_downloaded_bytes
         .checked_add(downloaded_bytes)
         .context("durable total download counter overflows")?;

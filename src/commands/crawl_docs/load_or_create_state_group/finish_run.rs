@@ -17,9 +17,6 @@ pub(crate) fn finish_run(
             false,
             "completed documentation crawl report",
         )?;
-        if report_file.metadata()?.len() > MAX_STATE_BYTES {
-            bail!("completed documentation crawl report exceeds its byte limit");
-        }
         let mut bytes = Vec::new();
         report_file.read_to_end(&mut bytes)?;
         if lib::sha256_hex(&bytes) != *expected_report_sha256 {

@@ -23,15 +23,6 @@ pub(crate) fn validate_public_endpoint(url: &Url) -> Result<Vec<SocketAddr>> {
     Ok(addresses)
 }
 
-/// A shared download counter, and the limit it is held to when one is
-/// declared. Pages are counted without a limit; the corpus volume's room
-/// bounds what is kept.
-#[derive(Clone, Copy)]
-pub(crate) struct ByteBudget<'a> {
-    pub(crate) counter: &'a AtomicU64,
-    pub(crate) limit: Option<u64>,
-}
-
 pub(crate) struct HttpResponse {
     pub(crate) status: u16,
     pub(crate) final_url: Url,
@@ -65,110 +56,28 @@ impl fmt::Display for HttpFailure {
 
 impl std::error::Error for HttpFailure {}
 
-pub(crate) fn claim_budget(budget: Option<ByteBudget<'_>>, requested: usize) -> usize {
-    let Some(budget) = budget else {
-        return requested;
-    };
-    let Some(limit) = budget.limit else {
-        budget.counter.fetch_add(requested as u64, Ordering::SeqCst);
-        return requested;
-    };
-    loop {
-        let current = budget.counter.load(Ordering::SeqCst);
-        let available = limit.saturating_sub(current);
-        let claimed = requested.min(available as usize);
-        if claimed == 0 {
-            return 0;
-        }
-        if budget
-            .counter
-            .compare_exchange(
-                current,
-                current + claimed as u64,
-                Ordering::SeqCst,
-                Ordering::SeqCst,
-            )
-            .is_ok()
-        {
-            return claimed;
-        }
-    }
-}
-
-pub(crate) fn refund_budget(budget: Option<ByteBudget<'_>>, bytes: usize) {
-    if let Some(budget) = budget {
-        budget.counter.fetch_sub(bytes as u64, Ordering::SeqCst);
-    }
-}
-
-pub(crate) fn read_bounded_response(
+/// Read one response to its end, adding what arrived to `counter`. No body
+/// size is chosen here: documentation pages, sitemaps and robots files are
+/// read whole, and what a run keeps is bounded by its corpus volume's room.
+pub(crate) fn read_response(
     response: ureq::Response,
     final_url: Url,
-    max_bytes: usize,
     label: &str,
-    budget: Option<ByteBudget<'_>>,
+    counter: Option<&AtomicU64>,
 ) -> std::result::Result<HttpResponse, HttpFailure> {
-    if response
-        .header("Content-Length")
-        .and_then(|value| value.parse::<usize>().ok())
-        .is_some_and(|length| length > max_bytes)
-    {
-        return Err(HttpFailure::new(
-            "body_byte_limit",
-            format!(
-                "{label} exceeds the {max_bytes}-byte limit declared by Content-Length"
-            ),
-            0,
-        ));
-    }
     let status = response.status() as u16;
     let content_type = response.header("Content-Type").map(str::to_string);
-    let mut body = Vec::with_capacity(max_bytes.min(64 * 1024));
-    let mut reader = response.into_reader();
-    let mut buffer = [0u8; 64 * 1024];
-    loop {
-        let local_remaining = max_bytes.saturating_add(1).saturating_sub(body.len());
-        if local_remaining == 0 {
-            return Err(HttpFailure::new(
-                "body_byte_limit",
-                format!("{label} exceeds the {max_bytes}-byte limit"),
-                body.len() as u64,
-            ));
-        }
-        let wanted = local_remaining.min(buffer.len());
-        let claimed = claim_budget(budget, wanted);
-        if claimed == 0 {
-            return Err(HttpFailure::new(
-                "total_download_byte_limit",
-                format!("{label} reached the aggregate download byte limit"),
-                body.len() as u64,
-            ));
-        }
-        let read = match reader.read(&mut buffer[..claimed]) {
-            Ok(read) => read,
-            Err(error) => {
-                refund_budget(budget, claimed);
-                return Err(HttpFailure::new(
-                    "response_read_failed",
-                    format!("read bounded {label}: {error}"),
-                    body.len() as u64,
-                ));
-            }
-        };
-        if read < claimed {
-            refund_budget(budget, claimed - read);
-        }
-        if read == 0 {
-            break;
-        }
-        body.extend_from_slice(&buffer[..read]);
-        if body.len() > max_bytes {
-            return Err(HttpFailure::new(
-                "body_byte_limit",
-                format!("{label} exceeds the {max_bytes}-byte limit"),
-                body.len() as u64,
-            ));
-        }
+    let mut body = Vec::new();
+    let read = response.into_reader().read_to_end(&mut body);
+    if let Some(counter) = counter {
+        counter.fetch_add(body.len() as u64, Ordering::SeqCst);
+    }
+    if let Err(error) = read {
+        return Err(HttpFailure::new(
+            "response_read_failed",
+            format!("read {label}: {error}"),
+            body.len() as u64,
+        ));
     }
     Ok(HttpResponse {
         status,
@@ -179,12 +88,14 @@ pub(crate) fn read_bounded_response(
     })
 }
 
-pub(crate) fn bounded_http_get(
+/// GET `requested`, following each validated redirect. A redirect back to an
+/// address already visited is a loop and is refused with that address; no
+/// count of redirects is chosen here.
+pub(crate) fn http_get(
     requested: &Url,
     policy: &UrlPolicy,
-    max_bytes: usize,
     label: &str,
-    budget: Option<ByteBudget<'_>>,
+    counter: Option<&AtomicU64>,
 ) -> std::result::Result<HttpResponse, HttpFailure> {
     let pinned_addresses = Arc::clone(&policy.pinned_addresses);
     let agent = ureq::AgentBuilder::new()
@@ -193,7 +104,8 @@ pub(crate) fn bounded_http_get(
         .resolver(move |_netloc: &str| Ok(pinned_addresses.as_ref().clone()))
         .build();
     let mut current = requested.clone();
-    for redirect in 0..=MAX_REDIRECTS {
+    let mut visited = std::collections::HashSet::new();
+    loop {
         let response = match agent
             .get(current.as_str())
             .set("User-Agent", lib::USER_AGENT)
@@ -220,10 +132,10 @@ pub(crate) fn bounded_http_get(
             ));
         }
         if matches!(response.status(), 301 | 302 | 303 | 307 | 308) {
-            if redirect == MAX_REDIRECTS {
+            if !visited.insert(current.as_str().to_string()) {
                 return Err(HttpFailure::new(
-                    "redirect_limit",
-                    format!("{label} exceeded the {MAX_REDIRECTS}-redirect limit"),
+                    "redirect_loop",
+                    format!("{label} redirects back to {current}, which it already visited"),
                     0,
                 ));
             }
@@ -239,9 +151,8 @@ pub(crate) fn bounded_http_get(
                 .map_err(|error| HttpFailure::new("redirect_rejected", format!("{error:#}"), 0))?;
             continue;
         }
-        return read_bounded_response(response, current, max_bytes, label, budget);
+        return read_response(response, current, label, counter);
     }
-    unreachable!("redirect loop always returns or fails")
 }
 
 #[derive(Clone, Deserialize, Serialize)]

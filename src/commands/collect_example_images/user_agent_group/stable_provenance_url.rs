@@ -145,7 +145,6 @@ pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) ->
 pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
     let fetched = fetch(
         &candidate.url,
-        MAX_IMAGE_BYTES,
         "image/avif,image/webp,image/png,image/jpeg,image/*",
     )
     .ok()?;
@@ -170,7 +169,6 @@ pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
 pub(crate) fn select_image(page_url: &str) -> Result<(Candidate, Probe)> {
     let fetched = fetch(
         page_url,
-        MAX_PAGE_BYTES,
         "text/html,application/xhtml+xml,image/*",
     )?;
     let final_page_url = fetched.final_url.clone();

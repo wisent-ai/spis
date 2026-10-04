@@ -2,10 +2,6 @@ use super::*;
 
 pub(crate) const USER_AGENT: &str = crate::USER_AGENT;
 
-pub(crate) const MAX_PAGE_BYTES: usize = 8 * 1024 * 1024;
-
-pub(crate) const MAX_IMAGE_BYTES: usize = 16 * 1024 * 1024;
-
 // TARGET_SIZE (1400, 1000) applied only during Pillow resampling; kept for
 // reference because the thum.io fallback URL embeds 1400/1000.
 
@@ -50,7 +46,8 @@ pub(crate) struct Fetched {
     pub(crate) final_url: String,
 }
 
-pub(crate) fn fetch(url: &str, maximum: usize, accept: &str) -> Result<Fetched> {
+/// GET `url` and read the whole body; no response size is chosen here.
+pub(crate) fn fetch(url: &str, accept: &str) -> Result<Fetched> {
     let resp = ureq::get(url)
         .set("User-Agent", USER_AGENT)
         .set("Accept", accept)
@@ -66,13 +63,9 @@ pub(crate) fn fetch(url: &str, maximum: usize, accept: &str) -> Result<Fetched> 
         .to_string();
     let final_url = resp.get_url().to_string();
     let mut data = Vec::new();
-    let mut limited = std::io::Read::take(resp.into_reader(), (maximum + 1) as u64);
-    limited
+    resp.into_reader()
         .read_to_end(&mut data)
         .with_context(|| format!("read body of {url}"))?;
-    if data.len() > maximum {
-        bail!("response exceeds {maximum} bytes");
-    }
     Ok(Fetched {
         data,
         content_type,

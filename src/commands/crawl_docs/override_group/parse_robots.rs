@@ -57,31 +57,8 @@ pub(crate) fn parse_robots(
             && !agents.is_empty()
             && !value.is_empty()
         {
-            if directives.len() >= MAX_ROBOTS_RULES {
-                push_inventory_diagnostic(
-                    diagnostics,
-                    "robots_rules_truncated",
-                    format!("robots directives exceeded the {MAX_ROBOTS_RULES}-rule limit"),
-                    robots_url.as_str(),
-                );
-                continue;
-            }
             let terminal = value.ends_with('$');
             let source = value.strip_suffix('$').unwrap_or(value);
-            // A robots.txt line is otherwise bounded only by MAX_ROBOTS_BYTES, so
-            // an origin could serve `Disallow: /` plus ~250 000 `*` characters and
-            // push the compiled program past any sane ceiling. Refuse the whole
-            // file fail-closed rather than dropping the offending rule, because a
-            // dropped `Disallow` reads as an allow.
-            if source.len() > MAX_ROBOTS_PATTERN_BYTES {
-                return deny_all(
-                    diagnostics,
-                    "robots_rule_too_long",
-                    format!(
-                        "robots directive exceeds the {MAX_ROBOTS_PATTERN_BYTES}-byte pattern limit"
-                    ),
-                );
-            }
             directives.push(RobotsRule {
                 pattern: format!(
                     "^{}{}",
@@ -123,7 +100,6 @@ pub(crate) fn parse_robots(
                     })
                 })
                 .flat_map(|(_, rules)| rules)
-                .take(MAX_ROBOTS_RULES)
                 .collect()
         })
         .unwrap_or_default();

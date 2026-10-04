@@ -89,11 +89,8 @@ pub(crate) fn read_corpus_record(
         let newline = available.iter().position(|byte| *byte == b'\n');
         let consumed = newline.map_or(available.len(), |position| position + 1);
         let content = newline.map_or(consumed, |position| position);
-        if line.len().saturating_add(content) > MAX_PAGE_RECORD_BYTES {
-            bail!("documentation corpus record exceeds its decompressed byte limit");
-        }
-        // The corpus is as large as its crawl's volume allowed; it is read one
-        // record at a time, so only its records are bounded, not its total.
+        // A record is as long as the page it holds and the corpus as large as
+        // its crawl's volume allowed; both are read without a size chosen here.
         *decompressed_bytes = decompressed_bytes
             .checked_add(consumed as u64)
             .context("documentation corpus decompressed byte counter overflows")?;

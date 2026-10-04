@@ -166,7 +166,9 @@ impl WorkerOptions {
             site: None,
             all: false,
             exclude: Vec::new(),
-            workers: MAX_WORKERS,
+            // One fetch worker per core the system reports, unless --workers
+            // names another count.
+            workers: std::thread::available_parallelism().map_or(1, usize::from),
             refresh: false,
         };
         let mut i = 0;
@@ -195,8 +197,8 @@ impl WorkerOptions {
         if options.site.is_none() && !options.all {
             bail!("pass --site <NN-slug> or --all");
         }
-        if options.workers == 0 || options.workers > MAX_WORKERS {
-            bail!("--workers must be between 1 and {MAX_WORKERS}");
+        if options.workers == 0 {
+            bail!("--workers must name at least one worker");
         }
         Ok(options)
     }

@@ -71,16 +71,6 @@ pub(crate) fn validate_state(
         .robots
         .as_ref()
         .context("complete documentation inventory has no persisted robots policy")?;
-    if state.inventory_diagnostics.len() > MAX_INVENTORY_DIAGNOSTICS + 1
-        || robots.directives.len() > MAX_ROBOTS_RULES
-    {
-        bail!("durable documentation inventory exceeds persisted diagnostic/rule bounds");
-    }
-    if state.inventory_downloaded_bytes > MAX_TOTAL_INVENTORY_BYTES {
-        bail!(
-            "durable inventory download counter exceeds the {MAX_TOTAL_INVENTORY_BYTES}-byte limit"
-        );
-    }
     let expected_inventory_sha256 = inventory_sha256(
         &state.targets,
         &state.inventory_diagnostics,

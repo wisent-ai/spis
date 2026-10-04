@@ -103,18 +103,6 @@ pub(crate) fn site_rules(slug: &str, meta: &SiteMeta, map: &HashMap<&'static str
     }
 }
 
-pub(crate) const MAX_INVENTORY_BYTES: usize = 8 * 1024 * 1024;
-
-pub(crate) const MAX_ROBOTS_BYTES: usize = 512 * 1024;
-
-pub(crate) const MAX_PAGE_BYTES: usize = 16 * 1024 * 1024;
-
-pub(crate) const MAX_INVENTORY_DIAGNOSTICS: usize = 512;
-
-pub(crate) const MAX_ROBOTS_RULES: usize = 4_096;
-
-pub(crate) const MAX_REDIRECTS: usize = 5;
-
 #[derive(Clone)]
 pub(crate) struct UrlPolicy {
     pub(crate) declared_source_url: String,
@@ -123,24 +111,7 @@ pub(crate) struct UrlPolicy {
     pub(crate) pinned_addresses: Arc<Vec<SocketAddr>>,
 }
 
-pub(crate) const MAX_WORKERS: usize = 8;
-
-pub(crate) const MAX_TOTAL_INVENTORY_BYTES: u64 = 64 * 1024 * 1024;
-
-/// Longest `Allow:`/`Disallow:` value accepted from a served robots.txt. Real
-/// robots.txt paths are far shorter; the cap keeps a hostile origin from handing
-/// us a rule whose compiled program is unbounded.
-pub(crate) const MAX_ROBOTS_PATTERN_BYTES: usize = 1024;
-
-/// Explicit compiled-program ceiling for one robots rule, so the bound is ours
-/// rather than whatever `regex` happens to default to.
-pub(crate) const MAX_ROBOTS_PROGRAM_BYTES: usize = 1024 * 1024;
-
 pub(crate) static STAGING_SEQUENCE: AtomicU64 = AtomicU64::new(0);
-
-pub(crate) const MAX_JOURNAL_BYTES: u64 = 256 * 1024 * 1024;
-
-pub(crate) const MAX_STATE_BYTES: u64 = 256 * 1024 * 1024;
 
 impl UrlPolicy {
     pub(crate) fn new(source_url: &str) -> Result<Self> {

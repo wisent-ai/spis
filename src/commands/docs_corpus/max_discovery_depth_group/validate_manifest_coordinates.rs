@@ -124,9 +124,6 @@ pub(crate) fn validate_current_definition(report: &Value) -> Result<()> {
 pub(crate) fn validate_journal(corpus_dir: &Path, state: &Value) -> Result<()> {
     let path = corpus_dir.join("outcomes.jsonl");
     let mut journal = open_regular_read(&path, "outcome journal")?;
-    if journal.metadata()?.len() > MAX_OUTCOME_JOURNAL_BYTES {
-        bail!("outcome journal exceeds its durable byte limit");
-    }
     let mut bytes = Vec::new();
     journal.read_to_end(&mut bytes)?;
     if !bytes.is_empty() && !bytes.ends_with(b"\n") {

@@ -22,16 +22,7 @@ pub(crate) fn fetch_target(
             line: None,
         });
     }
-    match bounded_http_get(
-        &target_url,
-        policy,
-        MAX_PAGE_BYTES,
-        "documentation page",
-        Some(ByteBudget {
-            counter: downloaded_bytes,
-            limit: None,
-        }),
-    ) {
+    match http_get(&target_url, policy, "documentation page", Some(downloaded_bytes)) {
         Ok(response) => {
             let response_bytes = response.downloaded_bytes;
             let resolved_url = response.final_url.as_str().to_string();

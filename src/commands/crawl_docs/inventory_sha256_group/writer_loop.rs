@@ -163,12 +163,6 @@ pub(crate) fn writer_loop(
             };
             let mut journal_line = serde_json::to_vec(&journal_batch)?;
             journal_line.push(b'\n');
-            let journal_length = journal.metadata()?.len();
-            if journal_length.saturating_add(journal_line.len() as u64) > MAX_JOURNAL_BYTES {
-                bail!(
-                    "documentation outcome journal would exceed the {MAX_JOURNAL_BYTES}-byte limit"
-                );
-            }
             journal.write_all(&journal_line)?;
             journal.flush().context("flush outcome journal batch")?;
             journal.sync_all().context("fsync outcome journal batch")?;

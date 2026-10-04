@@ -79,9 +79,6 @@ pub(crate) fn checkpoint_state(path: &Path, state: &DurableState) -> Result<()> 
 
 pub(crate) fn read_state(path: &Path) -> Result<DurableState> {
     let mut file = open_regular_file(path, true, false, false, false, "durable state")?;
-    if file.metadata()?.len() > MAX_STATE_BYTES {
-        bail!("durable documentation state exceeds its byte limit");
-    }
     let mut bytes = Vec::new();
     file.read_to_end(&mut bytes)?;
     serde_json::from_slice(&bytes)
@@ -112,13 +109,7 @@ pub(crate) fn replay_outcome_journal(layout: &WorkLayout, state: &mut DurableSta
     }
     let mut journal_file =
         open_regular_file(&layout.journal, true, false, false, false, "outcome journal")?;
-    let journal_length = journal_file.metadata()?.len();
-    if journal_length > MAX_JOURNAL_BYTES {
-        bail!(
-            "documentation outcome journal exceeds the {MAX_JOURNAL_BYTES}-byte limit"
-        );
-    }
-    let mut bytes = Vec::with_capacity(journal_length as usize);
+    let mut bytes = Vec::new();
     journal_file.read_to_end(&mut bytes)?;
     let complete_length = bytes
         .iter()

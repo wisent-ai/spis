@@ -5,12 +5,9 @@ mod robots;
 pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Result<InventoryResolution> {
     let mut diagnostics = Vec::new();
     let total_inventory_bytes = AtomicU64::new(0);
-    let inventory_budget = Some(ByteBudget {
-        counter: &total_inventory_bytes,
-        limit: Some(MAX_TOTAL_INVENTORY_BYTES),
-    });
+    let inventory_counter = Some(&total_inventory_bytes);
     let (robots, compiled_robots, discovered_sitemaps) =
-        robots::fetch_robots(policy, inventory_budget, &mut diagnostics)?;
+        robots::fetch_robots(policy, inventory_counter, &mut diagnostics)?;
 
     let mut pages = vec![(policy.source_url.as_str().to_string(), None)];
     let mut queue = VecDeque::<Url>::new();
@@ -49,13 +46,7 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
             );
             continue;
         }
-        let response = match bounded_http_get(
-            &source,
-            policy,
-            MAX_INVENTORY_BYTES,
-            "documentation inventory source",
-            inventory_budget,
-        ) {
+        let response = match http_get(&source, policy, "documentation inventory source", inventory_counter) {
             Ok(response) if (200..300).contains(&response.status) => response,
             Ok(response) => {
                 push_inventory_diagnostic(
@@ -73,9 +64,6 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
                     error.to_string(),
                     source.as_str(),
                 );
-                if error.code == "total_download_byte_limit" {
-                    break;
-                }
                 continue;
             }
         };
