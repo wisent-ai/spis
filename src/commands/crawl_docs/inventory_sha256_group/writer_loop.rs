@@ -49,23 +49,14 @@ pub(crate) fn writer_loop(
             )?;
         }
 
-        // Batch only what has already arrived; no waiting window.
-        while waiting.len() < WRITER_BATCH_SIZE {
-            match receiver.try_recv() {
-                Ok(message) => accept_writer_message(
-                    message,
-                    &expected_positions,
-                    expected_index,
-                    &mut waiting,
-                )?,
-                Err(_) => break,
-            }
+        // Batch everything that has already arrived; no waiting window and no
+        // batch size: a batch is the run of consecutive outcomes on hand.
+        while let Ok(message) = receiver.try_recv() {
+            accept_writer_message(message, &expected_positions, expected_index, &mut waiting)?;
         }
 
-        let mut batch = Vec::with_capacity(WRITER_BATCH_SIZE);
-        while batch.len() < WRITER_BATCH_SIZE
-            && expected_index + batch.len() < expected_sequences.len()
-        {
+        let mut batch = Vec::new();
+        while expected_index + batch.len() < expected_sequences.len() {
             let sequence = expected_sequences[expected_index + batch.len()];
             let Some(request) = waiting.remove(&sequence) else {
                 break;

@@ -158,7 +158,6 @@ pub(crate) fn replay_outcome_journal(layout: &WorkLayout, state: &mut DurableSta
         })?;
         if batch.schema != "wisent.docs-outcome-batch.v1"
             || batch.outcomes.is_empty()
-            || batch.outcomes.len() > WRITER_BATCH_SIZE
             || batch.first_sequence != state.outcomes.len()
             || batch.last_sequence + 1
                 != batch.first_sequence.saturating_add(batch.outcomes.len())
