@@ -37,7 +37,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
             "binary": binary,
             "resolved_path": run.binary_path,
             "version_command": steps["version"]["command"].clone(),
-            "version_output": quote(version_line, 400),
+            "version_output": quote(version_line),
             "version_exit_status": steps["version"]["exit_status"].clone(),
             "version_flag_supported": version_ok,
         },
@@ -99,12 +99,12 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
             "steps": journey_steps,
             "failure_route": [
                 format!("Run `{invalid_cmd}`."),
-                quote(refusal_line, 160),
+                quote(refusal_line),
                 format!("Observe status {} printed by the recorded shell, and the prompt restored.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
             ],
             "recovery_route": [
                 format!("Run `{}`.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
-                quote(recovery_line, 160),
+                quote(recovery_line),
                 format!("Observe status {} and the prompt returned with nothing changed on disk.", steps["recovery-help"]["exit_status"]),
             ],
             "completion_evidence": format!(

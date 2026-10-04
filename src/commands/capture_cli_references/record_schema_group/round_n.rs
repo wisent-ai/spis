@@ -62,16 +62,9 @@ pub(crate) fn visible_lines(text: &str) -> Vec<String> {
     out
 }
 
-/// Collapse whitespace and truncate with an ellipsis, like the Python `quote`.
-pub(crate) fn quote(text: &str, limit: usize) -> String {
-    let collapsed = text.split_whitespace().collect::<Vec<_>>().join(" ");
-    let chars: Vec<char> = collapsed.chars().collect();
-    if chars.len() > limit {
-        let head: String = chars[..limit - 1].iter().collect();
-        format!("{head}\u{2026}")
-    } else {
-        collapsed
-    }
+/// The text with its whitespace collapsed to single spaces, whole.
+pub(crate) fn quote(text: &str) -> String {
+    text.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 pub(crate) fn json_str(s: &str) -> String {

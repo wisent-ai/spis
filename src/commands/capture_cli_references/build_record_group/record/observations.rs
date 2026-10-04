@@ -21,14 +21,14 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
                 "system_response": if version_ok {
                     format!(
                         "{name} prints `{}` and exits {}.",
-                        quote(version_line, 90),
+                        quote(version_line),
                         steps["version"]["exit_status"]
                     )
                 } else {
                     format!(
                         "{name} refuses the version flag with status {} and prints `{}`.",
                         steps["version"]["exit_status"],
-                        quote(version_line, 90)
+                        quote(version_line)
                     )
                 },
                 "state": "version identity",
@@ -57,7 +57,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
             json!({
                 "index": 5,
                 "user_action": format!("Run `{invalid_cmd}`."),
-                "system_response": format!("The option is refused: `{}`, status {}.", quote(refusal_line, 90), refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                "system_response": format!("The option is refused: `{}`, status {}.", quote(refusal_line), refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
                 "state": "observed refusal",
                 "evidence": ev("invalid-flag", "media/04-refusal.png"),
             })

@@ -11,7 +11,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "name": "command entry",
                 "trigger": format!("Type `{}` at the `{}` prompt and press Enter.", s["command"].as_str().unwrap_or_default(), PROMPT.trim()),
                 "response": format!("{name} starts from {} and writes to the pseudo-terminal.", run.binary_path),
-                "feedback": if version_line.is_empty() { "no output on the version form".to_string() } else { quote(version_line, 160) },
+                "feedback": if version_line.is_empty() { "no output on the version form".to_string() } else { quote(version_line) },
                 "cancellation": format!("{cancellation_sentence}; nothing was submitted."),
                 "failure": format!("`{invalid_cmd}` reaches the same parser and is refused with status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
                 "recovery": format!("Re-enter `{}`.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
@@ -35,7 +35,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "feedback": if version_line.is_empty() {
                     format!("The process returns exit status {}.", st.map(|v| v.to_string()).unwrap_or_else(|| "None".into()))
                 } else {
-                    quote(version_line, 160)
+                    quote(version_line)
                 },
                 "cancellation": "The version form returns on its own; Ctrl-C is available at the prompt.",
                 "failure": if version_ok {
@@ -62,7 +62,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 ),
                 "feedback": match s["first_line"].as_str().unwrap_or_default() {
                     "" => format!("The help process returns exit status {}.", s["exit_status"].as_i64().map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
-                    fl => quote(fl, 160),
+                    fl => quote(fl),
                 },
                 "cancellation": "The stream is short enough to complete; the prompt stays interruptible.",
                 "failure": format!("A misspelled flag on the same surface is refused with status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
@@ -78,7 +78,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "response": product.sub_note,
                 "feedback": match s["first_line"].as_str().unwrap_or_default() {
                     "" => format!("The subcommand surface returns exit status {}.", s["exit_status"].as_i64().map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
-                    fl => quote(fl, 160),
+                    fl => quote(fl),
                 },
                 "cancellation": "Ctrl-C at the prompt abandons the request before submission.",
                 "failure": if s["exit_status"].as_i64().unwrap_or(0) != 0 {
@@ -98,7 +98,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "feedback": if refusal_line.is_empty() {
                     format!("The refusal returns exit status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into()))
                 } else {
-                    quote(refusal_line, 160)
+                    quote(refusal_line)
                 },
                 "cancellation": "The refusal returns immediately; no cancellation was required.",
                 "failure": format!("Observed status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
@@ -168,7 +168,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "feedback": if recovery_line.is_empty() {
                     format!("The recovery help returns exit status {}.", s["exit_status"])
                 } else {
-                    quote(recovery_line, 160)
+                    quote(recovery_line)
                 },
                 "cancellation": "The recovery can itself be interrupted with Ctrl-C at the prompt.",
                 "failure": format!("Repeating `{invalid_cmd}` reproduces status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
