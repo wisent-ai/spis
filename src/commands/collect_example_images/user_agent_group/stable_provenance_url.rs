@@ -15,72 +15,6 @@ pub(crate) fn stable_provenance_url(value: &str) -> String {
 }
 
 // ---------------------------------------------------------------------------
-// Scoring
-
-pub(crate) fn preflight_score(candidate: &Candidate) -> f64 {
-    let text = format!("{} {}", candidate.url, candidate.hint).to_lowercase();
-    let mut score: f64 = 0.0;
-    for (word, weight) in [
-        ("screenshot", 35.0),
-        ("screen", 18.0),
-        ("interface", 24.0),
-        ("dashboard", 22.0),
-        ("window", 16.0),
-        ("workflow", 14.0),
-        ("product", 8.0),
-        ("hero", 5.0),
-        ("app", 4.0),
-    ] {
-        if text.contains(word) {
-            score += weight;
-        }
-    }
-    for (word, weight) in [
-        ("logo", -45.0),
-        ("icon", -38.0),
-        ("avatar", -40.0),
-        ("badge", -50.0),
-        ("favicon", -60.0),
-        ("opengraph", -22.0),
-        ("emoji", -45.0),
-        ("spinner", -45.0),
-    ] {
-        if text.contains(word) {
-            score += weight;
-        }
-    }
-    if candidate.origin == "meta" {
-        score += 9.0;
-    }
-    if candidate.origin.ends_with("-srcset") {
-        score += 7.0;
-    }
-    score -= candidate.order as f64 * 0.015;
-    score
-}
-
-pub(crate) fn image_score(candidate: &Candidate, width: u32, height: u32) -> f64 {
-    let area = u64::from(width) * u64::from(height);
-    let mut score = preflight_score(candidate) + (area.max(1) as f64).log2() * 3.0;
-    let ratio = width as f64 / height as f64;
-    if (1.15..=2.4).contains(&ratio) {
-        score += 14.0;
-    } else if (0.45..1.15).contains(&ratio) {
-        score += 8.0;
-    }
-    if width >= 1000 {
-        score += 8.0;
-    }
-    if height >= 600 {
-        score += 7.0;
-    }
-    if width == height {
-        score -= 18.0;
-    }
-    score
-}
-
-// ---------------------------------------------------------------------------
 // Selection
 
 pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) -> Vec<Candidate> {
@@ -128,20 +62,16 @@ pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) ->
             insert_order.push(clean);
         }
     }
-    let mut result: Vec<Candidate> = unique.into_values().collect();
-    result.sort_by(|a, b| {
-        preflight_score(b)
-            .partial_cmp(&preflight_score(a))
-            .unwrap_or(std::cmp::Ordering::Equal)
-    });
-    // Every candidate is kept: `select_image` probes each and keeps the best
-    // score, so a cut here only drops the image it would have chosen.
+    // Candidates keep the order the page lists them in; which one shows the
+    // product is Brama's answer in `select_image`, not a word score here.
     let _ = insert_order;
+    let mut result: Vec<Candidate> = unique.into_values().collect();
+    result.sort_by_key(|candidate| candidate.order);
     result
 }
 
-/// Header-side replacement for the Python decode_candidate(): fetch, sniff the
-/// container, read dimensions, apply the same size/aspect gates.
+/// Fetch one candidate and read its container and dimensions from the
+/// header; `None` when it is not a raster image this can read.
 pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
     let fetched = fetch(
         &candidate.url,
@@ -149,14 +79,6 @@ pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
     )
     .ok()?;
     let (format, width, height) = parse_image_header(&fetched.data)?;
-    if width.min(height) < 260 || width.max(height) < 480 {
-        return None;
-    }
-    let wf = f64::from(width);
-    let hf = f64::from(height);
-    if wf / hf > 5.2 || hf / wf > 3.2 {
-        return None;
-    }
     Some(Probe {
         format,
         width,
@@ -166,29 +88,50 @@ pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
     })
 }
 
+/// The image on `page_url` that shows the product's interface, as Brama
+/// chooses it from every readable image on the page with its address, the
+/// page's own description of it and its dimensions. Brama answering "none"
+/// is refused with that answer, never replaced by a guess.
 pub(crate) fn select_image(page_url: &str) -> Result<(Candidate, Probe)> {
-    let fetched = fetch(
-        page_url,
-        "text/html,application/xhtml+xml,image/*",
-    )?;
+    let fetched = fetch(page_url, "text/html,application/xhtml+xml,image/*")?;
     let final_page_url = fetched.final_url.clone();
-    let candidates = candidate_urls(&final_page_url, &fetched.data, &fetched.content_type);
-    let mut best: Option<(f64, Candidate, Probe)> = None;
-    // The Python probed candidates on 8 threads; this port probes them
-    // sequentially (same selection outcome, slower wall clock).
-    for candidate in &candidates {
-        let Some(probe) = probe_candidate(candidate) else {
-            continue;
-        };
-        let score = image_score(candidate, probe.width, probe.height);
-        if best.as_ref().map(|(s, _, _)| score > *s).unwrap_or(true) {
-            best = Some((score, candidate.clone(), probe));
-        }
+    let mut probed: Vec<(Candidate, Probe)> =
+        candidate_urls(&final_page_url, &fetched.data, &fetched.content_type)
+            .into_iter()
+            .filter_map(|candidate| probe_candidate(&candidate).map(|probe| (candidate, probe)))
+            .collect();
+    if probed.is_empty() {
+        bail!("{final_page_url} holds no readable raster image");
     }
-    match best {
-        Some((_, candidate, probe)) => Ok((candidate, probe)),
-        None => bail!("no qualifying image found"),
-    }
+    let listing: Vec<String> = probed
+        .iter()
+        .enumerate()
+        .map(|(index, (candidate, probe))| {
+            format!(
+                "{index}: {} | {} | {}x{} {} | found in {}",
+                candidate.url, candidate.hint, probe.width, probe.height, probe.format, candidate.origin
+            )
+        })
+        .collect();
+    let answer = crate::commands::brama::ask_json(
+        "collect-example-images asks Brama which image shows the product",
+        "You pick the one image that shows a software product's own interface \
+         (a screenshot of its screens, windows or dashboards) from the images on its \
+         page. Logos, icons, avatars, badges, illustrations and decorative pictures \
+         are not the interface. Return STRICT JSON: {\"index\": number} with the \
+         listed index, or {\"index\": null} when no image shows the interface.",
+        &format!("Page: {final_page_url}\nImages:\n{}", listing.join("\n")),
+    )?;
+    let index = answer["index"].as_u64().with_context(|| {
+        format!("Brama found no image of the product's interface on {final_page_url}")
+    })?;
+    let index = usize::try_from(index)
+        .ok()
+        .filter(|index| *index < probed.len())
+        .with_context(|| {
+            format!("Brama chose image {index}, which {final_page_url} does not list")
+        })?;
+    Ok(probed.swap_remove(index))
 }
 
 // ---------------------------------------------------------------------------
