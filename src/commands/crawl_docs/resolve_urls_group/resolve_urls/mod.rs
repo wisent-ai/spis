@@ -7,7 +7,7 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
     let total_inventory_bytes = AtomicU64::new(0);
     let inventory_budget = Some(ByteBudget {
         counter: &total_inventory_bytes,
-        limit: MAX_TOTAL_INVENTORY_BYTES,
+        limit: Some(MAX_TOTAL_INVENTORY_BYTES),
     });
     let (robots, compiled_robots, discovered_sitemaps) =
         robots::fetch_robots(policy, inventory_budget, &mut diagnostics)?;

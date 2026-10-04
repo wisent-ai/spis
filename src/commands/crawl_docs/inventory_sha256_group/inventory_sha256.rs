@@ -193,11 +193,6 @@ pub(crate) fn validate_state(
             committed_end
         );
     }
-    if downloaded_bytes > MAX_TOTAL_DOWNLOAD_BYTES {
-        bail!(
-            "durable download byte counter exceeds the {MAX_TOTAL_DOWNLOAD_BYTES}-byte limit"
-        );
-    }
     let has_completed_at = state.completed_at.is_some();
     let has_report_sha256 = state.report_sha256.is_some();
     if has_completed_at != has_report_sha256

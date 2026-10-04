@@ -30,11 +30,6 @@ pub(crate) fn run_fetch_workers(
         .inventory_downloaded_bytes
         .checked_add(page_downloaded_bytes)
         .context("durable total download byte counter overflow")?;
-    if downloaded_bytes > MAX_TOTAL_DOWNLOAD_BYTES {
-        bail!(
-            "durable download byte counter exceeds the {MAX_TOTAL_DOWNLOAD_BYTES}-byte limit"
-        );
-    }
     let (writer, receiver) = mpsc::channel::<WriterMessage>();
     let cancelled = Arc::new(AtomicBool::new(false));
     let shared = Arc::new(FetchShared {

@@ -29,7 +29,7 @@ pub(crate) fn fetch_target(
         "documentation page",
         Some(ByteBudget {
             counter: downloaded_bytes,
-            limit: MAX_TOTAL_DOWNLOAD_BYTES,
+            limit: None,
         }),
     ) {
         Ok(response) => {

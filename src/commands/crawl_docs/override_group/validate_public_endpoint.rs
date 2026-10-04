@@ -23,10 +23,13 @@ pub(crate) fn validate_public_endpoint(url: &Url) -> Result<Vec<SocketAddr>> {
     Ok(addresses)
 }
 
+/// A shared download counter, and the limit it is held to when one is
+/// declared. Pages are counted without a limit; the corpus volume's room
+/// bounds what is kept.
 #[derive(Clone, Copy)]
 pub(crate) struct ByteBudget<'a> {
     pub(crate) counter: &'a AtomicU64,
-    pub(crate) limit: u64,
+    pub(crate) limit: Option<u64>,
 }
 
 pub(crate) struct HttpResponse {
@@ -66,9 +69,13 @@ pub(crate) fn claim_budget(budget: Option<ByteBudget<'_>>, requested: usize) -> 
     let Some(budget) = budget else {
         return requested;
     };
+    let Some(limit) = budget.limit else {
+        budget.counter.fetch_add(requested as u64, Ordering::SeqCst);
+        return requested;
+    };
     loop {
         let current = budget.counter.load(Ordering::SeqCst);
-        let available = budget.limit.saturating_sub(current);
+        let available = limit.saturating_sub(current);
         let claimed = requested.min(available as usize);
         if claimed == 0 {
             return 0;

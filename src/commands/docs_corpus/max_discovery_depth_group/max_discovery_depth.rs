@@ -26,8 +26,6 @@ pub(crate) const MAX_TOTAL_PAGE_DOWNLOAD_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 
 pub(crate) const MAX_TOTAL_INVENTORY_BYTES: u64 = 64 * 1024 * 1024;
 
-pub(crate) const MAX_TOTAL_DOWNLOAD_BYTES: u64 = 2 * 1024 * 1024 * 1024;
-
 pub(crate) const MAX_METADATA_BYTES: u64 = 256 * 1024 * 1024;
 
 pub(crate) const CORPUS_FILES: [&str; 4] = [

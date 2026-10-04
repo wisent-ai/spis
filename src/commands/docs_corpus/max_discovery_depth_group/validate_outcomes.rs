@@ -140,8 +140,7 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
     }
     let total_downloaded_bytes = inventory_downloaded_bytes
         .checked_add(downloaded_bytes)
-        .filter(|bytes| *bytes <= MAX_TOTAL_DOWNLOAD_BYTES)
-        .context("durable total download counter exceeds its limit")?;
+        .context("durable total download counter overflows")?;
     if report.get("inventory_downloaded_bytes").and_then(Value::as_u64)
         != Some(inventory_downloaded_bytes)
         || report.get("page_downloaded_bytes").and_then(Value::as_u64)

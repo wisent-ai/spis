@@ -137,8 +137,6 @@ pub(crate) const MAX_WORKERS: usize = 8;
 
 pub(crate) const MAX_TOTAL_INVENTORY_BYTES: u64 = 64 * 1024 * 1024;
 
-pub(crate) const MAX_TOTAL_DOWNLOAD_BYTES: u64 = 2 * 1024 * 1024 * 1024;
-
 /// Longest `Allow:`/`Disallow:` value accepted from a served robots.txt. Real
 /// robots.txt paths are far shorter; the cap keeps a hostile origin from handing
 /// us a rule whose compiled program is unbounded.
