@@ -202,13 +202,13 @@ pub fn run(rest: &[String]) -> Result<()> {
             drift.sources_unresolved.len()
         );
     }
-    for item in drift.media_missing.iter().take(20) {
+    for item in &drift.media_missing {
         println!("  missing media: {item}");
     }
-    for item in drift.media_hash_mismatch.iter().take(20) {
+    for item in &drift.media_hash_mismatch {
         println!("  hash mismatch: {item}");
     }
-    for item in drift.readme_changed.iter().take(20) {
+    for item in &drift.readme_changed {
         println!(
             "  README changed: {} ({})",
             item["repository"].as_str().unwrap_or("?"),
