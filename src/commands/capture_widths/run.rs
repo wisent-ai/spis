@@ -160,16 +160,13 @@ pub fn run(rest: &[String]) -> Result<()> {
                 } else {
                     sub_err.trim()
                 }
-                .chars()
-                .take(300)
-                .collect::<String>()
             ));
         }
         match find_batch_id(&sub_out) {
             Some(id) => println!("remote batch {id} submitted; poll with: stado status {id}"),
             None => fail(&format!(
                 "could not read Stado batch id from: {}",
-                sub_out.trim().chars().take(200).collect::<String>()
+                sub_out.trim()
             )),
         }
         return Ok(());
@@ -180,10 +177,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         } else {
             &stderr
         };
-        fail(&format!(
-            "weles-capture refused: {}",
-            detail.trim().chars().take(300).collect::<String>()
-        ));
+        fail(&format!("weles-capture refused: {}", detail.trim()));
     }
 
     // Record the batch on each touched reference so retrieval can find it.

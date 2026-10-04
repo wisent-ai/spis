@@ -67,10 +67,7 @@ pub(crate) fn load_json(text: &str, what: &str) -> Result<Value> {
                     }
                 }
             }
-            bail!(
-                "{what}: expected JSON on stdout, got {:?}",
-                text.trim().chars().take(200).collect::<String>()
-            );
+            bail!("{what}: expected JSON on stdout, got {:?}", text.trim());
         }
     }
 }
