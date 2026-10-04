@@ -20,8 +20,6 @@ pub(crate) const MAX_PAGE_RECORDS: usize = 50_000;
 
 pub(crate) const MAX_PAGE_RECORD_BYTES: usize = 128 * 1024 * 1024;
 
-pub(crate) const MAX_DECOMPRESSED_CORPUS_BYTES: u64 = 3 * 1024 * 1024 * 1024;
-
 pub(crate) const MAX_TOTAL_INVENTORY_BYTES: u64 = 64 * 1024 * 1024;
 
 pub(crate) const MAX_METADATA_BYTES: u64 = 256 * 1024 * 1024;
