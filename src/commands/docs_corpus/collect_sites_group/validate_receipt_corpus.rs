@@ -172,15 +172,8 @@ pub fn run(rest: &[String]) -> Result<()> {
                         "seen": site.seen,
                         "cumulative_ok": site.cumulative_ok,
                         "noise": site.noise,
-                        // `done` stays exactly "is this record complete", and
-                        // an over-capacity record is not: it is as retrieved
-                        // as this contract can make it, with a stated number
-                        // of pages that no attempt of this record can hold.
                         "done": site.retrieval_status.as_deref() == Some("retrieval_complete"),
                         "retrieval_status": site.retrieval_status,
-                        "corpus_bound": MAX_PAGE_RECORDS,
-                        "pages_outside_corpus": site.pages_outside_corpus,
-                        "pages_outside_corpus_exact": site.pages_outside_corpus_exact,
                         "attempt": site.attempt,
                         "attempt_id": site.attempt_id,
                     })

@@ -41,9 +41,7 @@ pub(crate) fn parse_robots(
         let field = field.trim();
         let value = value.trim();
         if field.eq_ignore_ascii_case("sitemap") {
-            if sitemaps.len() < MAX_INVENTORY_SOURCES {
-                sitemaps.push(value.to_string());
-            }
+            sitemaps.push(value.to_string());
             continue;
         }
         if field.eq_ignore_ascii_case("user-agent") {

@@ -16,11 +16,10 @@ impl RobotsSnapshot {
 }
 
 /// `RobotsSnapshot` is the persisted wire form; this is the matcher. Patterns are
-/// compiled exactly once per run instead of once per rule per URL, which used to
-/// cost up to `MAX_ROBOTS_RULES * MAX_TARGETS` compilations of identical
-/// programs. Compilation is fallible here and never ignored, so a rule can no
-/// longer be silently dropped — dropping a `Disallow` would have turned it into
-/// an allow, the one fail-open path in this file.
+/// compiled exactly once per run instead of once per rule per URL.
+/// Compilation is fallible here and never ignored, so a rule can no longer be
+/// silently dropped — dropping a `Disallow` would have turned it into an
+/// allow, the one fail-open path in this file.
 pub(crate) struct CompiledRobots {
     pub(crate) rules: Vec<CompiledRobotsRule>,
 }
@@ -74,53 +73,13 @@ pub(crate) fn compile_robots_pattern(pattern: &str) -> Result<regex::Regex> {
         .with_context(|| format!("robots pattern {pattern:?} does not compile"))
 }
 
-/// What one record's inventory could not fit, and whether that number is
-/// exact.
-///
-/// A documentation corpus holds at most [`MAX_TARGETS`] page records. Four
-/// sites in the documentation family declare inventories far past it -- Google
-/// Cloud at 216,092 canonical URLs, .NET at 201,460, Azure at 201,009 and MDN
-/// at 54,594 -- so for those four the bound is not a safety margin, it decides
-/// what the record can ever contain. Until this existed the bound was applied
-/// and never stated: the inventory walk stopped at the 50,000th URL and the
-/// run recorded one diagnostic naming the limit but no quantity, so nothing
-/// downstream could say whether a record was missing ten pages or a hundred
-/// and sixty thousand.
-///
-/// `exact` is false only when the excluded set itself hit
-/// [`MAX_COUNTED_EXCLUDED_KEYS`], in which case `pages_outside_corpus` is a
-/// floor and says so rather than a number pretending to be the total.
-#[derive(Clone, Copy, Deserialize, Serialize)]
-pub(crate) struct CorpusCapacity {
-    pub(crate) pages_outside_corpus: u64,
-    pub(crate) exact: bool,
-}
-
+/// Every in-scope page a site's inventory names, with what reading it cost.
+/// No page is left out for want of room: a corpus holds the whole site.
 pub(crate) struct InventoryResolution {
     pub(crate) pages: Vec<(String, Option<String>)>,
     pub(crate) diagnostics: Vec<CrawlDiagnostic>,
     pub(crate) robots: RobotsSnapshot,
     pub(crate) downloaded_bytes: u64,
-    pub(crate) capacity: Option<CorpusCapacity>,
-}
-
-/// Record one in-scope URL that did not fit, by digest rather than by string.
-///
-/// Digests, not URLs, because the whole point of [`MAX_TARGETS`] is that this
-/// process does not hold the excluded material: a set of digests counts the
-/// distinct remainder without retaining what it names. The set is itself
-/// bounded, so an inventory larger than anything this fleet has measured
-/// degrades to a stated floor instead of unbounded memory.
-pub(crate) fn note_excluded(
-    excluded: &mut std::collections::HashSet<String>,
-    exact: &mut bool,
-    url: &str,
-) {
-    if excluded.len() >= MAX_COUNTED_EXCLUDED_KEYS {
-        *exact = false;
-        return;
-    }
-    excluded.insert(lib::sha256_hex(url.as_bytes()));
 }
 
 pub(crate) fn push_inventory_diagnostic(

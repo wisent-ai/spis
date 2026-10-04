@@ -23,13 +23,7 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
     };
     for raw in seeds.into_iter().chain(rules.llms.iter().cloned()) {
         match policy.canonical(&raw, Some(&policy.source_url), "inventory source") {
-            Ok(url) if queue.len() < MAX_INVENTORY_SOURCES => queue.push_back(url),
-            Ok(url) => push_inventory_diagnostic(
-                &mut diagnostics,
-                "inventory_source_limit",
-                format!("inventory sources exceeded the {MAX_INVENTORY_SOURCES}-source limit"),
-                url.as_str(),
-            ),
+            Ok(url) => queue.push_back(url),
             Err(error) => push_inventory_diagnostic(
                 &mut diagnostics,
                 "inventory_source_rejected",
@@ -39,21 +33,12 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
         }
     }
 
+    // Every inventory source is read once; the visited set is what stops a
+    // sitemap index that names itself, not a count of sources.
     let mut visited = HashSet::new();
-    let mut excluded_keys = HashSet::<String>::new();
-    let mut excluded_exact = true;
     while let Some(source) = queue.pop_front() {
         if !visited.insert(source.as_str().to_string()) {
             continue;
-        }
-        if visited.len() > MAX_INVENTORY_SOURCES {
-            push_inventory_diagnostic(
-                &mut diagnostics,
-                "inventory_source_limit",
-                format!("inventory sources exceeded the {MAX_INVENTORY_SOURCES}-source limit"),
-                source.as_str(),
-            );
-            break;
         }
         if !compiled_robots.allows(&source) {
             push_inventory_diagnostic(
@@ -113,17 +98,7 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
             let (children, discovered_pages) = lib::parse_sitemap(&response.body);
             for child in children {
                 match policy.canonical(&child, Some(&response.final_url), "child sitemap") {
-                    Ok(url) if queue.len() + visited.len() < MAX_INVENTORY_SOURCES => {
-                        queue.push_back(url)
-                    }
-                    Ok(url) => push_inventory_diagnostic(
-                        &mut diagnostics,
-                        "inventory_source_limit",
-                        format!(
-                            "inventory sources exceeded the {MAX_INVENTORY_SOURCES}-source limit"
-                        ),
-                        url.as_str(),
-                    ),
+                    Ok(url) => queue.push_back(url),
                     Err(error) => push_inventory_diagnostic(
                         &mut diagnostics,
                         "child_sitemap_rejected",
@@ -135,20 +110,7 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
             for (raw, lastmod) in discovered_pages {
                 match policy.canonical(&raw, Some(&response.final_url), "sitemap page") {
                     Ok(url) if path_is_in_scope(&url, &rules.prefixes)? => {
-                        // In scope, so it belongs in the material this record is
-                        // supposed to hold. Whether it fits is the next
-                        // question, and the answer is counted either way --
-                        // before this, the walk stopped at the bound and the
-                        // run could not say how much it had left behind.
-                        if pages.len() < MAX_TARGETS {
-                            pages.push((url.to_string(), lastmod));
-                        } else {
-                            note_excluded(
-                                &mut excluded_keys,
-                                &mut excluded_exact,
-                                url.as_str(),
-                            );
-                        }
+                        pages.push((url.to_string(), lastmod));
                     }
                     Ok(_) => {}
                     Err(error) => push_inventory_diagnostic(
@@ -175,15 +137,7 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
                 let raw = &after[..end];
                 match policy.canonical(raw, Some(&response.final_url), "llms.txt page") {
                     Ok(url) if path_is_in_scope(&url, &rules.prefixes)? => {
-                        if pages.len() < MAX_TARGETS {
-                            pages.push((url.to_string(), None));
-                        } else {
-                            note_excluded(
-                                &mut excluded_keys,
-                                &mut excluded_exact,
-                                url.as_str(),
-                            );
-                        }
+                        pages.push((url.to_string(), None));
                     }
                     Ok(_) => {}
                     Err(error) => push_inventory_diagnostic(
@@ -208,11 +162,7 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
         for item in &meta.landing_nav {
             match policy.canonical(&item.path, Some(&policy.source_url), "landing navigation page") {
                 Ok(url) if path_is_in_scope(&url, &rules.prefixes)? => {
-                    if pages.len() < MAX_TARGETS {
-                        pages.push((url.to_string(), None));
-                    } else {
-                        note_excluded(&mut excluded_keys, &mut excluded_exact, url.as_str());
-                    }
+                    pages.push((url.to_string(), None));
                 }
                 Ok(_) => {}
                 Err(error) => push_inventory_diagnostic(
@@ -232,37 +182,10 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
             policy.source_url.as_str(),
         );
     }
-    // The bound, stated with its quantity, and stated where the inventory
-    // digest already covers it. `target_limit` used to be pushed the moment
-    // the walk hit the bound, naming the limit and nothing else; it is now
-    // pushed once, at the end, when the whole in-scope inventory has been
-    // counted, so the sentence carries the number an operator has to decide
-    // about.
-    let capacity = (!excluded_keys.is_empty()).then(|| CorpusCapacity {
-        pages_outside_corpus: excluded_keys.len() as u64,
-        exact: excluded_exact,
-    });
-    if let Some(capacity) = capacity {
-        let qualifier = if capacity.exact { "" } else { "at least " };
-        push_inventory_diagnostic(
-            &mut diagnostics,
-            "target_limit",
-            format!(
-                "this site declares more in-scope pages than one corpus holds: {} retrieved \
-                 against the {MAX_TARGETS}-page corpus bound, leaving {qualifier}{} pages \
-                 outside this record. The bound is per corpus and one site is one corpus, so \
-                 the remainder cannot be delivered by this record at all",
-                pages.len(),
-                capacity.pages_outside_corpus
-            ),
-            policy.source_url.as_str(),
-        );
-    }
     Ok(InventoryResolution {
         pages,
         diagnostics,
         robots,
         downloaded_bytes: total_inventory_bytes.load(Ordering::SeqCst),
-        capacity,
     })
 }

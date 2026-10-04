@@ -5,16 +5,13 @@ pub(crate) fn inventory_sha256(
     diagnostics: &[CrawlDiagnostic],
     robots: &RobotsSnapshot,
     downloaded_bytes: u64,
-    capacity: Option<CorpusCapacity>,
 ) -> Result<String> {
     inventory_digest(
         serde_json::to_value(targets)?,
         serde_json::to_value(diagnostics)?,
         serde_json::to_value(robots)?,
         downloaded_bytes,
-        capacity
-            .map(|value| -> Result<Value> { Ok(serde_json::to_value(value)?) })
-            .transpose()?,
+        None,
     )
 }
 
@@ -89,13 +86,12 @@ pub(crate) fn validate_state(
         &state.inventory_diagnostics,
         robots,
         state.inventory_downloaded_bytes,
-        state.corpus_capacity,
     )?;
     if state.inventory_sha256.as_deref() != Some(expected_inventory_sha256.as_str()) {
         bail!("durable documentation target inventory digest does not match its contents");
     }
-    if state.targets.is_empty() || state.targets.len() > MAX_TARGETS {
-        bail!("durable documentation target inventory has an invalid target count");
+    if state.targets.is_empty() {
+        bail!("durable documentation target inventory has no targets");
     }
     if !state
         .targets

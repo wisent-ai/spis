@@ -127,7 +127,6 @@ pub(crate) fn brief(version: &str) -> Value {
             },
         },
         "families": family_rows(),
-        "corpus_bound": super::docs_corpus::MAX_PAGE_RECORDS,
         "problems": Value::Array(Vec::new()),
     })
 }

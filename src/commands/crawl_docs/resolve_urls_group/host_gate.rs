@@ -62,14 +62,6 @@ pub(crate) struct DurableState {
     pub(crate) inventory_downloaded_bytes: u64,
     pub(crate) inventory_sha256: Option<String>,
     pub(crate) inventory_diagnostics: Vec<CrawlDiagnostic>,
-    /// What the inventory could not fit, absent for every record that fits.
-    ///
-    /// Optional and `skip_serializing_if` so a corpus written before this
-    /// existed serialises byte-identically and keeps its inventory digest;
-    /// present, it is folded into that digest, because a count of what a
-    /// record is missing is part of what the record's inventory says.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) corpus_capacity: Option<CorpusCapacity>,
     pub(crate) robots: Option<RobotsSnapshot>,
     pub(crate) targets: Vec<CrawlTarget>,
     pub(crate) outcomes: BTreeMap<String, PageOutcome>,

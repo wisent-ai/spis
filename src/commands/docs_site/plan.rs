@@ -2,15 +2,6 @@ use super::*;
 
 /// The plan every page is rendered from.
 pub(crate) fn plan(version: &str) -> Value {
-    let over_bound: Vec<String> = crate::commands::docs_corpus::sites_over_corpus_bound()
-        .into_iter()
-        .map(|(slug, declared)| {
-            format!(
-                "`{slug}` declares {declared} in-scope pages against the {}-page bound.",
-                super::docs_corpus::MAX_PAGE_RECORDS
-            )
-        })
-        .collect();
     json!({
         "product": "spis",
         "version": version,
@@ -22,9 +13,9 @@ pub(crate) fn plan(version: &str) -> Value {
                 "kind": "code",
                 "location": "src/commands/crawl.rs engine_preconditions",
             },
-            "corpus-bound": {
+            "corpus-room": {
                 "kind": "code",
-                "location": "src/commands/docs_corpus.rs MAX_PAGE_RECORDS",
+                "location": "src/commands/crawl/cancel_group/extract_attempt_archive.rs volume_room",
             },
             "corpus-adoption": {
                 "kind": "code",
@@ -126,21 +117,14 @@ pub(crate) fn plan(version: &str) -> Value {
                 "nav": "Corpus limits",
                 "eyebrow": "Operating",
                 "title": "Corpus limits",
-                "description": "One site is one corpus, and a corpus holds a bounded number of pages.",
+                "description": "A corpus holds every page its site declares; disk space is its only bound.",
                 "sections": [
                     {
-                        "title": "The bound, and what falls outside it",
+                        "title": "What bounds a corpus",
                         "paragraphs": [
-                            format!(
-                                "A documentation corpus holds at most {} page records. One site is one corpus: the record identity, the corpus selection and the catalog's refusal of a duplicate source URL all assume it, so a site declaring more in-scope pages than the bound cannot deliver the remainder under another record.",
-                                super::docs_corpus::MAX_PAGE_RECORDS
-                            ),
-                            "A run in that position ends in the named state `retrieval_over_capacity`, and its report carries `corpus_bound`, `pages_outside_corpus` and `pages_outside_corpus_exact`. That is a capacity decision for an operator, not a failed retrieval: no number of retries makes the material fit. `spis docs-corpus status` and the desktop application both show those three numbers per site.",
+                            "A documentation corpus holds every in-scope page its site's sitemaps, llms.txt or landing navigation name. No page count, source count or download total is chosen in Spis.",
+                            "The bound is the free space of the volume a corpus is written to, measured when the run begins: a page that would not fit is recorded with the status `corpus_limit` and that number. Extracting an attempt archive, auditing a worker's tree and importing a corpus each measure their volume the same way and refuse an archive that needs more bytes or files than it reports free, naming both.",
                         ],
-                    },
-                    {
-                        "title": "Sites that exceed the bound today",
-                        "bullets": over_bound,
                     },
                 ],
             },

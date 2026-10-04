@@ -80,7 +80,6 @@ pub fn run(rest: &[String]) -> Result<()> {
             "landing_content": landing_content,
             "families": super::crawl::CATALOGS.len(),
             "commands": super::SUBCOMMANDS.len(),
-            "corpus_bound": super::docs_corpus::MAX_PAGE_RECORDS,
         }))?
     );
     let _ = lib::now_iso_utc();

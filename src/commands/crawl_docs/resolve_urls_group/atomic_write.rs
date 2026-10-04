@@ -228,7 +228,6 @@ pub(crate) fn fresh_state(
         inventory_complete: false,
         inventory_sha256: None,
         inventory_diagnostics: Vec::new(),
-        corpus_capacity: None,
         inventory_downloaded_bytes: 0,
         robots: None,
         targets: Vec::new(),
@@ -247,11 +246,10 @@ pub(crate) fn fresh_state(
 /// is a contract between two modules, and a second implementation of it is a
 /// second opinion about whether a corpus is authentic.
 ///
-/// `capacity` is inserted only when the corpus bound actually excluded
-/// pages, so every corpus written before that member existed hashes to
-/// exactly the digest it already carries and stays valid. `serde_json` runs
-/// with `preserve_order`, so the insertion order below is part of the
-/// contract.
+/// `capacity` is passed only by the validator, for a corpus written while a
+/// page bound still excluded pages and folded that count into its digest; a
+/// corpus written now has none. `serde_json` runs with `preserve_order`, so
+/// the insertion order below is part of the contract.
 pub(crate) fn inventory_digest(
     targets: Value,
     diagnostics: Value,

@@ -43,9 +43,8 @@ pub(crate) fn import_artifact_from_archive(
             }
         }
         let archive = open_regular_read(&archive_path, "downloaded documentation archive")?;
-        let archive_length = archive.metadata()?.len();
-        if archive_length > MAX_IMPORTED_ARCHIVE_BYTES {
-            bail!("documentation corpus artifact exceeds the import byte limit");
+        if archive.metadata()?.len() != expected_archive_bytes {
+            bail!("documentation corpus artifact differs from the length its receipt states");
         }
         drop(archive);
         let (archive_sha256, archive_bytes) = hash_file(&archive_path)?;
@@ -130,7 +129,7 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
     let archive_bytes = artifact
         .get("bytes")
         .and_then(Value::as_u64)
-        .filter(|bytes| *bytes > 0 && *bytes <= MAX_IMPORTED_ARCHIVE_BYTES)
+        .filter(|bytes| *bytes > 0)
         .context("attempt receipt artifact has no valid byte length")?;
     if artifact.get("media_type").and_then(Value::as_str) != Some("application/gzip") {
         bail!("attempt receipt artifact media_type is not application/gzip");
@@ -155,13 +154,12 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
     let corpus_bytes = corpus
         .get("bytes")
         .and_then(Value::as_u64)
-        .filter(|bytes| *bytes > 0 && *bytes <= MAX_IMPORTED_CORPUS_BYTES)
+        .filter(|bytes| *bytes > 0)
         .context("attempt receipt corpus has no valid byte count")?;
     corpus
         .get("pages")
         .and_then(Value::as_u64)
-        .filter(|pages| *pages <= MAX_PAGE_RECORDS as u64)
-        .context("attempt receipt corpus has no valid page count")?;
+        .context("attempt receipt corpus has no page count")?;
     if tree_entries != corpus_files || tree_bytes != corpus_bytes {
         bail!("attempt receipt artifact tree and corpus summaries disagree");
     }

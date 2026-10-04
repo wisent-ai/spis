@@ -50,25 +50,6 @@ pub(crate) fn collect_sites() -> Result<Vec<SiteInfo>> {
             cumulative_ok,
             noise: seen.saturating_sub(cumulative_ok),
             retrieval_status: corpus.map(|attempt| attempt.retrieval_status.clone()),
-            // Read off the durable state, which is the copy the inventory
-            // digest covers, rather than off the report, which is derived
-            // from it.
-            pages_outside_corpus: corpus
-                .and_then(|attempt| {
-                    attempt
-                        .state
-                        .pointer("/corpus_capacity/pages_outside_corpus")
-                        .and_then(Value::as_u64)
-                })
-                .unwrap_or(0),
-            pages_outside_corpus_exact: corpus
-                .and_then(|attempt| {
-                    attempt
-                        .state
-                        .pointer("/corpus_capacity/exact")
-                        .and_then(Value::as_bool)
-                })
-                .unwrap_or(true),
             attempt: corpus.map(|attempt| attempt.attempt),
             attempt_id: corpus.map(|attempt| attempt.attempt_id.clone()),
             corpus_dir: corpus.map(|attempt| attempt.corpus_dir.clone()),
@@ -121,8 +102,7 @@ pub(crate) fn read_corpus_record(
         if newline.is_some() {
             *record_count = record_count
                 .checked_add(1)
-                .filter(|count| *count <= MAX_PAGE_RECORDS)
-                .context("documentation corpus exceeds its record-count limit")?;
+                .context("documentation corpus record counter overflows")?;
             let record = serde_json::from_slice(&line)
                 .context("parse bounded documentation corpus record")?;
             return Ok(Some(record));
@@ -206,6 +186,8 @@ pub(crate) fn archive_member_name(path: &Path) -> Result<String> {
 
 pub(crate) fn extract_corpus_archive(archive_path: &Path, corpus_dir: &Path) -> Result<()> {
     std::fs::create_dir(corpus_dir)?;
+    // The extracted corpus may take the room its volume reports now, no more.
+    let (room_bytes, _) = crate::commands::crawl::volume_room(corpus_dir)?;
     let decoder = flate2::read::GzDecoder::new(open_regular_read(
         archive_path,
         "documentation archive",
@@ -225,8 +207,14 @@ pub(crate) fn extract_corpus_archive(archive_path: &Path, corpus_dir: &Path) -> 
         }
         total = total
             .checked_add(entry.size())
-            .filter(|bytes| *bytes <= MAX_IMPORTED_CORPUS_BYTES)
-            .context("retrieval archive exceeds the extracted corpus byte limit")?;
+            .filter(|bytes| *bytes <= room_bytes)
+            .with_context(|| {
+                format!(
+                    "retrieval archive needs more than the {room_bytes} bytes free on the volume \
+                     of {}",
+                    corpus_dir.display()
+                )
+            })?;
         let destination = corpus_dir.join(&name);
         let mut output = OpenOptions::new()
             .write(true)

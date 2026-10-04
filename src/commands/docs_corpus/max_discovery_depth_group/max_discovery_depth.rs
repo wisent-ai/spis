@@ -4,19 +4,7 @@ pub(crate) const MAX_DISCOVERY_DEPTH: usize = 16;
 
 pub(crate) const MAX_DISCOVERY_DIRECTORIES: usize = 100_000;
 
-pub(crate) const MAX_IMPORTED_ARCHIVE_BYTES: u64 = 2 * 1024 * 1024 * 1024;
-
-pub(crate) const MAX_IMPORTED_CORPUS_BYTES: u64 = 1536 * 1024 * 1024;
-
 pub(crate) const MAX_OUTCOME_JOURNAL_BYTES: u64 = 256 * 1024 * 1024;
-
-/// The per-corpus page bound. One site is one corpus, so this is also the
-/// most pages one documentation record can ever hold.
-///
-/// Public because the generated documentation states it: `docs_site` reads it
-/// here rather than repeating the number in prose, so a documented bound
-/// cannot drift from the enforced one.
-pub(crate) const MAX_PAGE_RECORDS: usize = 50_000;
 
 pub(crate) const MAX_PAGE_RECORD_BYTES: usize = 128 * 1024 * 1024;
 
@@ -83,11 +71,6 @@ pub(crate) struct SiteInfo {
     pub(crate) cumulative_ok: usize,
     pub(crate) noise: usize,
     pub(crate) retrieval_status: Option<String>,
-    /// How many in-scope pages this site declares that no attempt of this
-    /// record can hold, and whether that number is exact. `0` for every site
-    /// that fits, which is 47 of the 51 in this family.
-    pub(crate) pages_outside_corpus: u64,
-    pub(crate) pages_outside_corpus_exact: bool,
     pub(crate) attempt: Option<u64>,
     pub(crate) attempt_id: Option<String>,
     pub(crate) corpus_dir: Option<PathBuf>,

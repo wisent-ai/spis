@@ -57,7 +57,6 @@ pub(crate) fn load_or_create_state(
         resolved.dedup_by(|left, right| left.0 == right.0);
         state.targets = resolved
             .into_iter()
-            .take(MAX_TARGETS)
             .enumerate()
             .map(|(sequence, (url, lastmod))| CrawlTarget {
                 sequence,
@@ -67,7 +66,6 @@ pub(crate) fn load_or_create_state(
             })
             .collect();
         state.inventory_diagnostics = resolution.diagnostics;
-        state.corpus_capacity = resolution.capacity;
         state.robots = Some(resolution.robots);
         state.inventory_downloaded_bytes = resolution.downloaded_bytes;
         state.inventory_sha256 = Some(inventory_sha256(
@@ -78,7 +76,6 @@ pub(crate) fn load_or_create_state(
                 .as_ref()
                 .context("resolved documentation inventory has no robots policy")?,
             state.inventory_downloaded_bytes,
-            state.corpus_capacity,
         )?);
         state.inventory_complete = true;
         checkpoint_state(&layout.state, &state)?;
@@ -107,7 +104,6 @@ pub(crate) struct RetrievalCounts {
     pub ok_count: usize,
     pub text_page_count: usize,
     pub diagnostic_count: usize,
-    pub pages_outside_corpus: u64,
 }
 
 /// The one derivation of a run's terminal state, called by the producer here
@@ -115,22 +111,15 @@ pub(crate) struct RetrievalCounts {
 ///
 /// It is one function because it was two expressions, and they disagreed: the
 /// producer read only per-page diagnostics while the validator also counted
-/// inventory diagnostics, so an over-bound site whose pages all fetched
-/// cleanly was written `retrieval_complete` and then refused on import with
-/// "counts or completion status differ from durable outcomes". Two readings of
-/// one rule is how a site ends up neither retrieved nor reported.
-///
-/// `retrieval_over_capacity` outranks `retrieval_partial` deliberately. A
-/// partial run can be completed by retrying it; a run over capacity cannot be
-/// completed by any number of retries, because the material does not fit the
-/// record. They are different states and the operator's decision differs.
+/// inventory diagnostics, so a site whose pages all fetched cleanly was
+/// written `retrieval_complete` and then refused on import with "counts or
+/// completion status differ from durable outcomes". Two readings of one rule
+/// is how a site ends up neither retrieved nor reported.
 pub(crate) fn retrieval_status(counts: &RetrievalCounts) -> &'static str {
     if counts.target_count == 0 || counts.retrieved_count == 0 {
         "retrieval_empty"
     } else if counts.text_page_count == 0 {
         "retrieval_no_text"
-    } else if counts.pages_outside_corpus > 0 {
-        "retrieval_over_capacity"
     } else if counts.diagnostic_count != 0
         || counts.retrieved_count != counts.target_count
         || counts.ok_count != counts.target_count
@@ -188,14 +177,12 @@ pub(crate) fn build_report(
             diagnostics.push(serde_json::to_value(diagnostic)?);
         }
     }
-    let capacity = state.corpus_capacity;
     let retrieval_status = retrieval_status(&RetrievalCounts {
         target_count: state.targets.len(),
         retrieved_count,
         ok_count,
         text_page_count,
         diagnostic_count: diagnostics.len(),
-        pages_outside_corpus: capacity.map_or(0, |value| value.pages_outside_corpus),
     });
     let records = vec![json!({
         "page_downloaded_bytes": page_downloaded_bytes,
@@ -208,9 +195,6 @@ pub(crate) fn build_report(
         "pages_sha256": state.committed_sha256,
         "pages_bytes": state.committed_bytes,
         "retrieval_status": retrieval_status,
-        "corpus_bound": MAX_TARGETS,
-        "pages_outside_corpus": capacity.map_or(0, |value| value.pages_outside_corpus),
-        "pages_outside_corpus_exact": capacity.is_none_or(|value| value.exact),
         "diagnostics": diagnostics,
     })];
     let (attempt, attempt_id) = manifest_attempt(manifest)?;
@@ -254,9 +238,6 @@ pub(crate) fn build_report(
             "pages_bytes": state.committed_bytes,
             "inventory_downloaded_bytes": state.inventory_downloaded_bytes,
             "page_downloaded_bytes": page_downloaded_bytes,
-            "corpus_bound": MAX_TARGETS,
-            "pages_outside_corpus": capacity.map_or(0, |value| value.pages_outside_corpus),
-            "pages_outside_corpus_exact": capacity.is_none_or(|value| value.exact),
             "downloaded_bytes": state
                 .inventory_downloaded_bytes
                 .checked_add(page_downloaded_bytes)

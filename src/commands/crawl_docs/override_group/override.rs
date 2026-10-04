@@ -109,16 +109,6 @@ pub(crate) const MAX_ROBOTS_BYTES: usize = 512 * 1024;
 
 pub(crate) const MAX_PAGE_BYTES: usize = 16 * 1024 * 1024;
 
-pub(crate) const MAX_TARGETS: usize = 50_000;
-
-/// How many distinct excluded URLs one run will count before it reports a
-/// floor instead of a total. Held well above the largest inventory this
-/// family declares (216,092) so every real site yields an exact number, and
-/// bounded regardless because the count must not become its own memory leak.
-pub(crate) const MAX_COUNTED_EXCLUDED_KEYS: usize = 1_000_000;
-
-pub(crate) const MAX_INVENTORY_SOURCES: usize = 256;
-
 pub(crate) const MAX_INVENTORY_DIAGNOSTICS: usize = 512;
 
 pub(crate) const MAX_ROBOTS_RULES: usize = 4_096;

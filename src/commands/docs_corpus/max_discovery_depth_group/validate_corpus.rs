@@ -99,11 +99,7 @@ pub(crate) fn validate_corpus(
         .to_string();
     if !matches!(
         retrieval_status.as_str(),
-        "retrieval_complete"
-            | "retrieval_over_capacity"
-            | "retrieval_partial"
-            | "retrieval_no_text"
-            | "retrieval_empty"
+        "retrieval_complete" | "retrieval_partial" | "retrieval_no_text" | "retrieval_empty"
     ) {
         bail!("retrieval report has an unsupported retrieval_status");
     }
@@ -186,39 +182,4 @@ pub(crate) fn selected_corpora() -> Result<HashMap<String, AttemptCorpus>> {
         }
     }
     Ok(selected)
-}
-
-/// Every documentation site whose declared inventory exceeds
-/// [`MAX_PAGE_RECORDS`], with that declared count.
-///
-/// Read from the checked-in structure files, not from a crawl: the fact is a
-/// property of the site's own sitemap and is true before any attempt. The
-/// generated documentation names these sites instead of describing them,
-/// because "some sites are large" is what let four of them read as failures.
-pub(crate) fn sites_over_corpus_bound() -> Vec<(String, i64)> {
-    let mut found = Vec::new();
-    let Ok(entries) = std::fs::read_dir(engine_root()) else {
-        return found;
-    };
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.extension().and_then(|value| value.to_str()) != Some("json")
-            || path.file_name().and_then(|value| value.to_str()) == Some("full-text-manifest.json")
-        {
-            continue;
-        }
-        let Ok(meta) = read_json(&path) else { continue };
-        let declared = meta
-            .get("inventory_url_count")
-            .and_then(Value::as_i64)
-            .unwrap_or(0);
-        if declared <= MAX_PAGE_RECORDS as i64 {
-            continue;
-        }
-        if let Some(slug) = path.file_stem().and_then(|value| value.to_str()) {
-            found.push((slug.to_string(), declared));
-        }
-    }
-    found.sort_by(|left, right| right.1.cmp(&left.1));
-    found
 }

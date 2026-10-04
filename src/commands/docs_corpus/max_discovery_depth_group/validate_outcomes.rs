@@ -9,7 +9,9 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
         .get("inventory_downloaded_bytes")
         .and_then(Value::as_u64)
         .context("durable state has no inventory_downloaded_bytes")?;
-    // The same derivation the producer hashes, called rather than copied.
+    // The same derivation the producer hashes, called rather than copied. A
+    // corpus written while a page bound still applied may carry the count it
+    // excluded, which its digest covers; a corpus written now carries none.
     let capacity = state
         .get("corpus_capacity")
         .filter(|value| !value.is_null())
@@ -25,7 +27,7 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
             .context("durable state has no robots policy")?
             .clone(),
         inventory_downloaded_bytes,
-        capacity.clone(),
+        capacity,
     )?;
     if state.get("inventory_sha256").and_then(Value::as_str)
         != Some(inventory_sha256.as_str())
@@ -36,7 +38,7 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
         .get("outcomes")
         .and_then(Value::as_object)
         .context("durable state has no outcomes")?;
-    if targets.is_empty() || targets.len() > MAX_PAGE_RECORDS || outcomes.len() != targets.len() {
+    if targets.is_empty() || outcomes.len() != targets.len() {
         bail!("durable target and outcome counts are invalid");
     }
     let declared = url::Url::parse(
@@ -179,29 +181,14 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
         .get("inventory_diagnostics")
         .and_then(Value::as_array)
         .map_or(0, Vec::len);
-    // One derivation, two callers. This side used to re-implement the rule
-    // and the two implementations disagreed, which is what made an over-bound
-    // site both unretrievable and unreportable: the producer wrote
-    // `retrieval_complete` and this refused it with "counts or completion
-    // status differ from durable outcomes", a sentence about arithmetic for a
-    // fact about capacity.
-    let declared_outside = capacity
-        .as_ref()
-        .and_then(|value| value.get("pages_outside_corpus"))
-        .and_then(Value::as_u64)
-        .unwrap_or(0);
-    let declared_exact = capacity
-        .as_ref()
-        .and_then(|value| value.get("exact"))
-        .and_then(Value::as_bool)
-        .unwrap_or(true);
+    // One derivation, two callers, so the producer and this check cannot
+    // disagree about which state a run ended in.
     let expected_status = super::crawl_docs::retrieval_status(&super::crawl_docs::RetrievalCounts {
         target_count: targets.len(),
         retrieved_count,
         ok_count,
         text_page_count,
         diagnostic_count: inventory_diagnostics + outcome_diagnostic_count,
-        pages_outside_corpus: declared_outside,
     });
     if report.get("retrieval_status").and_then(Value::as_str) != Some(expected_status)
         || report.pointer("/retrieval/target_count").and_then(Value::as_u64)
@@ -214,17 +201,6 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
             != Some(text_page_count as u64)
         || report.pointer("/retrieval/page_downloaded_bytes").and_then(Value::as_u64)
             != Some(downloaded_bytes)
-        // The quantity is held to the durable inventory exactly as every
-        // other count is. A report free to name its own remainder is a
-        // report that can under-state what a record is missing.
-        || report.pointer("/retrieval/pages_outside_corpus").and_then(Value::as_u64)
-            != Some(declared_outside)
-        || report
-            .pointer("/retrieval/pages_outside_corpus_exact")
-            .and_then(Value::as_bool)
-            != Some(declared_exact)
-        || report.pointer("/retrieval/corpus_bound").and_then(Value::as_u64)
-            != Some(MAX_PAGE_RECORDS as u64)
     {
         bail!("retrieval report counts or completion status differ from durable outcomes");
     }
