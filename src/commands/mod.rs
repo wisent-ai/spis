@@ -67,35 +67,36 @@ where
         .map_err(|error| usage(format!("{flag}: {raw:?} is not valid: {error}")))
 }
 
-/// The secret a Skarbiec `ITEM#FIELD` reference in `variable` names, `None`
-/// when the variable is unset. Only the reference travels in the
-/// environment; the value is read from `skarbiec get` (cli.md rule 15).
-/// `SKARBIEC_BIN` names another executable.
-pub fn skarbiec_secret(variable: &str) -> Result<Option<String>> {
+/// The secret a `ROLE#FIELD` reference in `variable` names, `None` when the
+/// variable is unset. Only the vault role the secret's item plays travels in
+/// the environment, never an item name; the value is read with
+/// `stado credentials get --role` (cli.md rule 15). `STADO_BIN` names another
+/// executable.
+pub fn role_secret(variable: &str) -> Result<Option<String>> {
     let Some(reference) = std::env::var(variable).ok().filter(|value| !value.trim().is_empty()) else {
         return Ok(None);
     };
     let reference = reference.trim();
-    let Some((item, field)) = reference.rsplit_once('#').filter(|(item, field)| !item.is_empty() && !field.is_empty()) else {
-        return Err(usage(format!("{variable} must be a Skarbiec reference ITEM#FIELD, not {reference:?}")));
+    let Some((role, field)) = reference.rsplit_once('#').filter(|(role, field)| !role.is_empty() && !field.is_empty()) else {
+        return Err(usage(format!("{variable} must be a role reference ROLE#FIELD, not {reference:?}")));
     };
-    let binary = std::env::var("SKARBIEC_BIN").unwrap_or_else(|_| "skarbiec".into());
+    let binary = std::env::var("STADO_BIN").unwrap_or_else(|_| "stado".into());
     let output = std::process::Command::new(&binary)
-        .args(["get", item, "--field", field])
+        .args(["credentials", "get", "--role", role, "--field", field])
         .output()
         .map_err(|error| anyhow::anyhow!("{variable}: {binary} could not be run: {error}"))?;
     if !output.status.success() {
         anyhow::bail!(
-            "{variable}: skarbiec get {item} --field {field} failed: {}",
+            "{variable}: {binary} credentials get --role {role} --field {field} failed: {}",
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
     let secret = String::from_utf8(output.stdout)
-        .map_err(|_| anyhow::anyhow!("{variable}: skarbiec returned a value that is not UTF-8"))?
+        .map_err(|_| anyhow::anyhow!("{variable}: {binary} returned a value that is not UTF-8"))?
         .trim_end_matches('\n')
         .to_string();
     if secret.is_empty() {
-        anyhow::bail!("{variable}: Skarbiec item {item} field {field} is empty");
+        anyhow::bail!("{variable}: the item playing role {role} holds no value in field {field}");
     }
     Ok(Some(secret))
 }

@@ -61,7 +61,7 @@ pub(crate) fn brama_rank(start_url: &str, links: &Links, limit: usize) -> Option
     .to_string();
 
     // Read before the request so a bad reference is named, never sent anonymously.
-    let router_token = match crate::commands::skarbiec_secret("MODEL_ROUTER_TOKEN_REF") {
+    let router_token = match crate::commands::role_secret("MODEL_ROUTER_TOKEN_ROLE") {
         Ok(token) => token,
         Err(error) => {
             eprintln!("discover: Brama ranking unavailable ({error:#}); using keyword fallback");

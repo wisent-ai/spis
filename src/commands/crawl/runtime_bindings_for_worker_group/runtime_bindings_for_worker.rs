@@ -150,13 +150,15 @@ pub(crate) fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()>
     Ok(())
 }
 
+/// A `ROLE#FIELD` reference Stado's `--secret-env` accepts: the vault role the
+/// secret's item plays, never an item name, and the field to read.
 pub(crate) fn valid_secret_reference(reference: &str) -> bool {
     reference
         .split_once('#')
-        .is_some_and(|(item, field)| {
-            !item.is_empty()
+        .is_some_and(|(role, field)| {
+            !role.is_empty()
                 && !field.is_empty()
-                && item
+                && role
                     .bytes()
                     .all(|byte| byte.is_ascii_alphanumeric() || b"._:-".contains(&byte))
                 && field

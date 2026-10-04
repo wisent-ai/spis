@@ -3,7 +3,7 @@ use super::*;
 pub(crate) fn usage() {
     println!(
         "usage:
-  spis crawl bindings generate --weles-token-ref ITEM#FIELD --organization-ref ITEM#FIELD [--output PATH]
+  spis crawl bindings generate --weles-token-role ROLE#FIELD --organization-role ROLE#FIELD [--output PATH]
   spis crawl start [--host ENGINE=TARGET] [--catalog SLUG ...] [--record SLUG] [--run-id ID] [--bindings PATH]
   spis crawl status [--run RUN_ID] [--record SLUG]
   spis crawl cancel --run RUN_ID [--record SLUG] --reason TEXT

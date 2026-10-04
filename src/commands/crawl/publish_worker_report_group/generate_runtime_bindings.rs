@@ -13,19 +13,19 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                     crate::commands::required(rest.get(index), "--output needs a path")?,
                 ));
             }
-            "--weles-token-ref" => {
+            "--weles-token-role" => {
                 index += 1;
                 weles_token_ref = Some(
                     rest.get(index)
-                        .context("--weles-token-ref needs ITEM#FIELD")?
+                        .context("--weles-token-role needs ROLE#FIELD")?
                         .clone(),
                 );
             }
-            "--organization-ref" => {
+            "--organization-role" => {
                 index += 1;
                 organization_ref = Some(
                     rest.get(index)
-                        .context("--organization-ref needs ITEM#FIELD")?
+                        .context("--organization-role needs ROLE#FIELD")?
                         .clone(),
                 );
             }
@@ -47,7 +47,7 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
     // browser credential is a misconfiguration, not a narrower plan.
     if weles_token_ref.is_some() != organization_ref.is_some() {
         bail!(
-            "--weles-token-ref and --organization-ref are supplied together or not at all; \
+            "--weles-token-role and --organization-role are supplied together or not at all; \
              one without the other cannot authorize a browser record"
         );
     }
@@ -57,7 +57,7 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
         .chain(organization_ref.as_deref())
         .any(|value| !valid_secret_reference(value))
     {
-        bail!("binding secret references must use exact ITEM#FIELD syntax");
+        bail!("binding secret references must be vault roles in exact ROLE#FIELD syntax; Stado reads each with the item playing that role");
     }
 
     let mut catalogs = serde_json::Map::new();

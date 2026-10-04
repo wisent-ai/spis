@@ -61,7 +61,7 @@ Every crawler that opens a product runs as an exact-revision job on a host expli
 `spis crawl start` is the durable public coordinator and the only supported entry point. One record is one immutable attempt: its input digest, catalog and record keys, attempt id, correlation id, Stado run id and both `stado://` attempt URIs are derived from the record itself, and every state transition is persisted under a durable per-record lock *before* the external effect it authorizes. A record held by another process is skipped, never failed.
 
 ```
-spis crawl bindings generate --weles-token-ref ITEM#FIELD --organization-ref ITEM#FIELD [--output PATH]
+spis crawl bindings generate --weles-token-role ROLE#FIELD --organization-role ROLE#FIELD [--output PATH]
 spis crawl start  [--host ENGINE=TARGET] [--catalog SLUG ...] [--record SLUG] [--run-id ID] [--bindings PATH]
 spis crawl status [--run RUN_ID] [--record SLUG]
 spis crawl cancel --run RUN_ID [--record SLUG] --reason TEXT

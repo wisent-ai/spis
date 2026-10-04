@@ -61,7 +61,7 @@ pub(crate) fn submit_worker(
         manifest.output_uri.clone(),
     ];
     // `secret_env` is a BTreeMap, so the injected references are already in sorted key
-    // order. The values are opaque `item#field` references and are never logged.
+    // order. The values are opaque `role#field` references and are never logged.
     for (name, reference) in &manifest.delivery.secret_env {
         arguments.push("--secret-env".to_string());
         arguments.push(format!("{name}={reference}"));

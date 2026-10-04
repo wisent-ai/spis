@@ -75,7 +75,7 @@ pub(crate) fn runtime_binding(
     )
     .context("record credential delivery is invalid")?;
     if delivery.secret_env.values().any(|reference| !valid_secret_reference(reference)) {
-        bail!("{catalog}/{slug}: secret_env must contain exact NAME=item#field references");
+        bail!("{catalog}/{slug}: secret_env must contain exact NAME=role#field references");
     }
     let prepared_proof = binding
         .get("prepared_proof")
