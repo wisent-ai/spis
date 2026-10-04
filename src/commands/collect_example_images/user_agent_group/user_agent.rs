@@ -6,8 +6,6 @@ pub(crate) const MAX_PAGE_BYTES: usize = 8 * 1024 * 1024;
 
 pub(crate) const MAX_IMAGE_BYTES: usize = 16 * 1024 * 1024;
 
-pub(crate) const MAX_CANDIDATES: usize = 14;
-
 // TARGET_SIZE (1400, 1000) applied only during Pillow resampling; kept for
 // reference because the thum.io fallback URL embeds 1400/1000.
 

@@ -134,7 +134,8 @@ pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) ->
             .partial_cmp(&preflight_score(a))
             .unwrap_or(std::cmp::Ordering::Equal)
     });
-    result.truncate(MAX_CANDIDATES);
+    // Every candidate is kept: `select_image` probes each and keeps the best
+    // score, so a cut here only drops the image it would have chosen.
     let _ = insert_order;
     result
 }
