@@ -242,7 +242,8 @@ pub(crate) fn attr_value(tag_body: &str, name: &str) -> Option<String> {
     }
 }
 
-pub(crate) fn extract_links(start_url: &str, html_bytes: &[u8], limit: usize) -> Links {
+/// Every same-origin page link on the start page; no count is chosen here.
+pub(crate) fn extract_links(start_url: &str, html_bytes: &[u8]) -> Links {
     let html = String::from_utf8_lossy(html_bytes);
     let parser = parse_links(&html);
     let origin = start_url;
@@ -268,9 +269,6 @@ pub(crate) fn extract_links(start_url: &str, html_bytes: &[u8], limit: usize) ->
             text.clone()
         };
         found.setdefault(absolute, text);
-        if found.entries.len() >= limit {
-            break;
-        }
     }
     found
 }

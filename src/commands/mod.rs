@@ -1,4 +1,5 @@
 pub mod analyze_example_structures;
+pub(crate) mod brama;
 pub mod audit_reference_accessibility;
 pub mod capture_widths;
 pub mod capture_cli_references;

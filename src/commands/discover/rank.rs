@@ -3,76 +3,27 @@ use super::*;
 /// Ask Brama which discovered pages matter for the corpus and what family each
 /// belongs to. There is no keyword fallback: words in a URL decided the family
 /// before, so a pricing page at `/buy` was "other" and every link saying
-/// "start" was a signup page. Without `MODEL_ROUTER_URL` and
-/// `MODEL_ROUTER_MODEL`, an unreadable `MODEL_ROUTER_TOKEN_ROLE`, or an answer
-/// that selects nothing from the list, discovery stops naming the cause.
+/// "start" was a signup page. Every discovered link is listed; Brama's own
+/// refusal, not a count chosen here, says when a page holds too many.
 pub(crate) fn brama_rank(
     start_url: &str,
     links: &Links,
     limit: usize,
 ) -> Result<Vec<(String, String)>> {
-    let router = std::env::var("MODEL_ROUTER_URL")
-        .ok()
-        .filter(|value| !value.trim().is_empty())
-        .context(
-            "discover asks Brama which pages to keep: set MODEL_ROUTER_URL to the Brama address",
-        )?;
-    let endpoint = if router.contains("/v1") {
-        format!("{}/chat/completions", router.trim_end_matches('/'))
-    } else {
-        format!("{}/v1/chat/completions", router.trim_end_matches('/'))
-    };
     let listing: Vec<String> = links
         .entries
         .iter()
-        .take(80)
         .map(|(url, text)| format!("- {url} | {text}"))
         .collect();
-    // The model is the router's alias chosen by the operator, never a provider
-    // model written into the product (cli.md rule 14).
-    let model = std::env::var("MODEL_ROUTER_MODEL")
-        .ok()
-        .filter(|value| !value.trim().is_empty())
-        .context("discover asks Brama which pages to keep: set MODEL_ROUTER_MODEL to a Brama model alias")?;
-    let payload = json!({
-        "model": model,
-        "messages": [
-            {"role": "system", "content": format!(
-                "You classify pages of one product's website for an interface reference corpus. \
-                 Return STRICT JSON: {{\"pages\": [{{\"url\": string, \"family\": \
-                 one of {FAMILIES:?}]}}}} . Only use URLs from the list. Pick at most {limit}.")},
-            {"role": "user", "content": format!(
-                "Start page: {start_url}\nDiscovered links:\n{}", listing.join("\n"))},
-        ],
-    })
-    .to_string();
-
-    // Read before the request so a bad reference is named, never sent anonymously.
-    let router_token = crate::commands::role_secret("MODEL_ROUTER_TOKEN_ROLE")
-        .context("discover could not read the Brama bearer")?;
-    let mut request = ureq::post(&endpoint).set("Content-Type", "application/json");
-    if let Some(token) = &router_token {
-        request = request.set("Authorization", &format!("Bearer {token}"));
-    }
-    let response = request
-        .send_string(&payload)
-        .with_context(|| format!("Brama at {endpoint} refused or could not be reached"))?;
-    let mut body_bytes = Vec::new();
-    response.into_reader().read_to_end(&mut body_bytes)?;
-    let body: serde_json::Value = serde_json::from_slice(&body_bytes)
-        .context("Brama answered with a body that is not JSON")?;
-    let content = body["choices"][0]["message"]["content"]
-        .as_str()
-        .context("Brama's answer carries no message content")?;
-    let brace_open = content
-        .find('{')
-        .context("Brama's answer holds no JSON object")?;
-    let brace_close = content
-        .rfind('}')
-        .context("Brama's answer holds no JSON object")?
-        + 1;
-    let parsed: serde_json::Value = serde_json::from_str(&content[brace_open..brace_close])
-        .context("Brama's page selection is not valid JSON")?;
+    let parsed = crate::commands::brama::ask_json(
+        "discover asks Brama which pages to keep",
+        &format!(
+            "You classify pages of one product's website for an interface reference corpus. \
+             Return STRICT JSON: {{\"pages\": [{{\"url\": string, \"family\": \
+             one of {FAMILIES:?}]}}}} . Only use URLs from the list. Pick at most {limit}."
+        ),
+        &format!("Start page: {start_url}\nDiscovered links:\n{}", listing.join("\n")),
+    )?;
     let mut ranked: Vec<(String, String)> = Vec::new();
     for page in parsed["pages"].as_array().unwrap_or(&Vec::new()) {
         let (Some(url), Some(family)) = (page["url"].as_str(), page["family"].as_str()) else {
@@ -94,12 +45,12 @@ pub(crate) fn brama_rank(
     Ok(ranked)
 }
 
-/// `spis discover <start-url> --catalog <slug> [--limit <n>] [--max-links <n>]`
+/// `spis discover <start-url> --catalog <slug> --limit <n>`: `--limit` is how
+/// many pages the operator wants recorded from this site, and is required.
 pub fn run(rest: &[String]) -> Result<()> {
     let mut positionals: Vec<String> = Vec::new();
     let mut catalog: Option<String> = None;
-    let mut limit: usize = 6;
-    let mut max_links: usize = 120;
+    let mut limit: Option<usize> = None;
     let mut i = 0;
     while i < rest.len() {
         let arg = rest[i].clone();
@@ -110,20 +61,14 @@ pub fn run(rest: &[String]) -> Result<()> {
                     anyhow::anyhow!("discover: argument --catalog: expected one argument")
                 })?);
             }
-            "--limit" | "--max-links" => {
-                let name = arg.clone();
+            "--limit" => {
                 i += 1;
                 let value = rest.get(i).cloned().ok_or_else(|| {
-                    anyhow::anyhow!("discover: argument {name}: expected one argument")
+                    anyhow::anyhow!("discover: argument --limit: expected one argument")
                 })?;
-                let parsed: usize = value.parse().map_err(|_| {
-                    anyhow::anyhow!("discover: argument {name}: invalid int value {value:?}")
-                })?;
-                if name == "--limit" {
-                    limit = parsed;
-                } else {
-                    max_links = parsed;
-                }
+                limit = Some(value.parse().map_err(|_| {
+                    anyhow::anyhow!("discover: argument --limit: invalid int value {value:?}")
+                })?);
             }
             other => {
                 if other.starts_with("--") {
@@ -140,6 +85,11 @@ pub fn run(rest: &[String]) -> Result<()> {
     let catalog = catalog.ok_or_else(|| {
         anyhow::anyhow!("discover: the following arguments are required: --catalog")
     })?;
+    let limit = limit.ok_or_else(|| {
+        anyhow::anyhow!(
+            "discover: the following arguments are required: --limit (how many pages to record from this site)"
+        )
+    })?;
 
     let slug = if catalog.ends_with("-examples") {
         catalog.clone()
@@ -149,7 +99,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let directory = std::path::PathBuf::from(&slug);
 
     let (html_bytes, _) = fetch(&start_url)?;
-    let links = extract_links(&start_url, &html_bytes, max_links);
+    let links = extract_links(&start_url, &html_bytes);
     println!(
         "discovered {} same-origin links on {start_url}",
         links.entries.len()
