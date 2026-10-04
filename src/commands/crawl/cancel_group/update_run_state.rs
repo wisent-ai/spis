@@ -234,12 +234,6 @@ pub(crate) fn selected_matches(record: &str, selected: Option<&str>) -> bool {
     })
 }
 
-pub(crate) const MAX_WORKER_OUTPUT_BYTES: u64 = 8 * 1024 * 1024;
-
-pub(crate) const MAX_EXTRACTED_ENTRIES: usize = 20_000;
-
-pub(crate) const MAX_EXTRACTED_BYTES: u64 = 512 * 1024 * 1024;
-
 pub(crate) fn download_uri(uri: &str, destination: &Path) -> Result<()> {
     if let Some(parent) = destination.parent() {
         std::fs::create_dir_all(parent)?;

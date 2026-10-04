@@ -3,16 +3,20 @@ use super::*;
 /// Extract one crawl attempt archive into an empty staging directory.
 ///
 /// Only ordinary files and directories are accepted. Absolute paths, `..`
-/// components, symlinks, hard links, devices, duplicate members and archives
-/// beyond the entry/byte bounds are refused, and every member is created with
-/// `create_new` so a pre-existing path can never be followed or overwritten.
+/// components, symlinks, hard links, devices and duplicate members are
+/// refused, and every member is created with `create_new` so a pre-existing
+/// path can never be followed or overwritten. An archive that would not fit
+/// is refused before it fills the disk: the bound is the room the staging
+/// volume reports when extraction starts, in bytes and in file entries, not a
+/// size chosen here.
 pub(crate) fn extract_attempt_archive(archive: &Path, destination: &Path) -> Result<Vec<String>> {
     if destination.exists() {
         std::fs::remove_dir_all(destination)?;
     }
     std::fs::create_dir_all(destination)?;
+    let (room_bytes, room_entries) = volume_room(destination)?;
     let mut tar = tar::Archive::new(GzDecoder::new(File::open(archive)?));
-    let mut entries = 0_usize;
+    let mut entries = 0_u64;
     let mut total = 0_u64;
     let mut extracted = Vec::new();
     for member in tar.entries()? {
@@ -40,14 +44,24 @@ pub(crate) fn extract_attempt_archive(archive: &Path, destination: &Path) -> Res
             );
         }
         entries += 1;
-        if entries > MAX_EXTRACTED_ENTRIES {
-            bail!("crawl attempt archive exceeds the {MAX_EXTRACTED_ENTRIES}-entry bound");
+        if entries > room_entries {
+            bail!(
+                "crawl attempt archive holds more files than the {room_entries} entries free on \
+                 the volume of {}",
+                destination.display()
+            );
         }
         let size = member.header().size()?;
         total = total
             .checked_add(size)
-            .filter(|value| *value <= MAX_EXTRACTED_BYTES)
-            .context("crawl attempt archive exceeds the extracted byte bound")?;
+            .filter(|value| *value <= room_bytes)
+            .with_context(|| {
+                format!(
+                    "crawl attempt archive needs more than the {room_bytes} bytes free on the \
+                     volume of {}",
+                    destination.display()
+                )
+            })?;
         if let Some(parent) = target.parent() {
             std::fs::create_dir_all(parent)?;
         }
@@ -73,6 +87,27 @@ pub(crate) fn extract_attempt_archive(archive: &Path, destination: &Path) -> Res
     }
     extracted.sort();
     Ok(extracted)
+}
+
+/// Bytes and file entries the volume holding `path` can still take, as the
+/// operating system reports them to an unprivileged writer.
+fn volume_room(path: &Path) -> Result<(u64, u64)> {
+    use std::os::unix::ffi::OsStrExt;
+    let c_path = std::ffi::CString::new(path.as_os_str().as_bytes())
+        .context("staging path contains a NUL byte")?;
+    let mut stats = std::mem::MaybeUninit::<libc::statvfs>::uninit();
+    // SAFETY: `c_path` is NUL-terminated and `stats` is written by statvfs
+    // before it is read; a non-zero return leaves it unread.
+    if unsafe { libc::statvfs(c_path.as_ptr(), stats.as_mut_ptr()) } != 0 {
+        return Err(std::io::Error::last_os_error())
+            .with_context(|| format!("read the free space of {}", path.display()));
+    }
+    // SAFETY: statvfs returned success, so the struct is initialised.
+    let stats = unsafe { stats.assume_init() };
+    Ok((
+        (stats.f_bavail as u64).saturating_mul(stats.f_frsize as u64),
+        stats.f_favail as u64,
+    ))
 }
 
 pub(crate) fn fsync_tree(root: &Path) -> Result<()> {
@@ -144,6 +179,7 @@ pub(crate) fn worker_report_schema(engine: &str) -> &'static str {
 /// worker that failed to print its typed report is an import failure rather than
 /// an invitation to guess.
 pub(crate) fn retained_worker_report(engine: &str, output_log: &Path) -> Result<Value> {
+    use std::io::BufRead;
     let metadata = std::fs::symlink_metadata(output_log)
         .with_context(|| format!("read retained worker output {}", output_log.display()))?;
     if metadata.file_type().is_symlink() || !metadata.is_file() {
@@ -152,20 +188,21 @@ pub(crate) fn retained_worker_report(engine: &str, output_log: &Path) -> Result<
             output_log.display()
         );
     }
-    if metadata.len() > MAX_WORKER_OUTPUT_BYTES {
-        bail!(
-            "retained worker output {} exceeds the {MAX_WORKER_OUTPUT_BYTES}-byte bound",
-            output_log.display()
-        );
-    }
-    let bytes = std::fs::read(output_log)?;
-    let text = String::from_utf8_lossy(&bytes);
+    // Read line by line and keep the last report, so a long log is never held
+    // in memory whole and needs no size ceiling.
     let schema = worker_report_schema(engine);
-    text.lines()
-        .rev()
-        .filter_map(|line| serde_json::from_str::<Value>(line.trim()).ok())
-        .find(|value| value.get("schema").and_then(Value::as_str) == Some(schema))
-        .with_context(|| format!("retained worker output carries no {schema} report"))
+    let mut report = None;
+    for line in std::io::BufReader::new(File::open(output_log)?).split(b'\n') {
+        let line = line?;
+        let Ok(value) = serde_json::from_str::<Value>(String::from_utf8_lossy(&line).trim())
+        else {
+            continue;
+        };
+        if value.get("schema").and_then(Value::as_str) == Some(schema) {
+            report = Some(value);
+        }
+    }
+    report.with_context(|| format!("retained worker output carries no {schema} report"))
 }
 
 /// Prove the worker report describes exactly this attempt.
