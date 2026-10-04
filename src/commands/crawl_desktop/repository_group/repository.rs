@@ -84,11 +84,7 @@ pub(crate) fn pin_cua_driver() -> Result<CuaDriver> {
     let sha256 = hash_file(&path)?;
     let mut version_command = Command::new(&path);
     version_command.arg("--version");
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut version_command,
-        "read pinned Cua Driver version",
-        64 * 1024,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut version_command, "read pinned Cua Driver version")?;
     if !output.status.success() {
         bail!(
             "pinned Cua Driver {} refused --version: {}",
@@ -142,11 +138,7 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
         .arg("--version")
         .env_clear()
         .env("PATH", "/usr/bin:/bin");
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut version_command,
-        "read pinned desktop readiness helper version",
-        64 * 1024,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut version_command, "read pinned desktop readiness helper version")?;
     if !output.status.success() {
         bail!(
             "pinned desktop readiness helper {} refused --version: {}",
@@ -174,11 +166,7 @@ pub(crate) fn call_with_cli_options(
     let mut command = Command::new(&driver.path);
     command.arg(tool).arg(serde_json::to_string(payload)?);
     command.args(options);
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut command,
-        &format!("cua-driver {tool}"),
-        4 * 1024 * 1024,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut command, &format!("cua-driver {tool}"))?;
     if !output.status.success() {
         bail!(
             "cua-driver {tool} failed: status={}; stdout={:?}; stderr={:?}",

@@ -15,11 +15,7 @@ pub(crate) fn build_revision() -> Result<String> {
 pub(crate) fn bounded_git(arguments: &[&str], operation: &str) -> Result<Output> {
     let mut command = Command::new("git");
     command.arg("-C").arg(source_root()).args(arguments);
-    bounded_command_output(
-        &mut command,
-        operation,
-        4 * 1024 * 1024,
-    )
+    command_output(&mut command, operation)
 }
 
 pub(crate) fn source_snapshot_revision() -> Result<String> {
@@ -165,30 +161,12 @@ pub(crate) fn crawl_storage_command() -> Command {
     command
 }
 
-pub(crate) fn read_bounded<R: Read>(mut reader: R, maximum: usize) -> std::io::Result<(Vec<u8>, bool)> {
-    let mut retained = Vec::with_capacity(maximum.min(64 * 1024));
-    let mut buffer = [0_u8; 16 * 1024];
-    let mut overflow = false;
-    loop {
-        let count = reader.read(&mut buffer)?;
-        if count == 0 {
-            break;
-        }
-        let remaining = maximum.saturating_sub(retained.len());
-        retained.extend_from_slice(&buffer[..count.min(remaining)]);
-        overflow |= count > remaining;
-    }
-    Ok((retained, overflow))
-}
-
-/// Runs `command` to completion with its stdout and stderr captured up to
-/// `maximum_stream_bytes` each. There is no deadline: the child's own exit,
-/// or its own error, is the answer (cli.md rule 8).
-pub(crate) fn bounded_command_output(
-    command: &mut Command,
-    operation: &str,
-    maximum_stream_bytes: usize,
-) -> Result<Output> {
+/// Runs `command` to completion with its whole stdout and stderr captured.
+/// There is no deadline: the child's own exit, or its own error, is the
+/// answer (cli.md rule 8). Nor is there a size ceiling: the children are
+/// Spis's own tools, and a ceiling chosen here only turned a long answer into
+/// a refusal.
+pub(crate) fn command_output(command: &mut Command, operation: &str) -> Result<Output> {
     use std::process::Stdio;
     #[cfg(unix)]
     {
@@ -200,20 +178,23 @@ pub(crate) fn bounded_command_output(
         .stderr(Stdio::piped())
         .spawn()
         .with_context(|| format!("start {operation}"))?;
-    let stdout = child.stdout.take().context("capture bounded child stdout")?;
-    let stderr = child.stderr.take().context("capture bounded child stderr")?;
-    let stdout_reader = std::thread::spawn(move || read_bounded(stdout, maximum_stream_bytes));
-    let stderr_reader = std::thread::spawn(move || read_bounded(stderr, maximum_stream_bytes));
+    let mut stdout = child.stdout.take().context("capture child stdout")?;
+    let mut stderr = child.stderr.take().context("capture child stderr")?;
+    let stdout_reader = std::thread::spawn(move || {
+        let mut bytes = Vec::new();
+        stdout.read_to_end(&mut bytes).map(|_| bytes)
+    });
+    let stderr_reader = std::thread::spawn(move || {
+        let mut bytes = Vec::new();
+        stderr.read_to_end(&mut bytes).map(|_| bytes)
+    });
     let status = child.wait().with_context(|| format!("{operation} did not report an exit status"))?;
-    let (stdout, stdout_overflow) = stdout_reader
+    let stdout = stdout_reader
         .join()
         .map_err(|_| anyhow!("{operation} stdout reader panicked"))??;
-    let (stderr, stderr_overflow) = stderr_reader
+    let stderr = stderr_reader
         .join()
         .map_err(|_| anyhow!("{operation} stderr reader panicked"))??;
-    if stdout_overflow || stderr_overflow {
-        bail!("{operation} exceeded the {maximum_stream_bytes}-byte stdout/stderr bound");
-    }
     Ok(Output {
         status,
         stdout,

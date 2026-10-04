@@ -143,11 +143,7 @@ pub(crate) fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
     ];
     let mut stado = crate::commands::crawl::stado_command();
     stado.args(arguments);
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut stado,
-        "submit mobile crawl through Stado",
-        4 * 1024 * 1024,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut stado, "submit mobile crawl through Stado")?;
     if !output.status.success() {
         bail!(
             "Stado refused mobile crawl: {}",

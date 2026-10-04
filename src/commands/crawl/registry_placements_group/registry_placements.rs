@@ -14,11 +14,7 @@ pub(crate) struct RegistryPlacements {
 pub(crate) fn registry_placements() -> Result<RegistryPlacements> {
     let mut command = stado_command();
     command.args(["registry", "pull"]);
-    let output = bounded_command_output(
-        &mut command,
-        "Stado registry pull",
-        4 * 1024 * 1024,
-    )?;
+    let output = command_output(&mut command, "Stado registry pull")?;
     if !output.status.success() {
         bail!(
             "Stado registry could not select crawler hosts: {}",

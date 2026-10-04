@@ -34,11 +34,7 @@ pub(crate) fn import_artifact_from_archive(
         } else {
             let mut command = crate::commands::crawl::crawl_storage_command();
             command.args(["storage", "get", uri]).arg(&archive_path);
-            let output = crate::commands::crawl::bounded_command_output(
-                &mut command,
-                "download immutable documentation corpus artifact",
-                super::crawl_docs::STADO_OUTPUT_LIMIT,
-            )?;
+            let output = crate::commands::crawl::command_output(&mut command, "download immutable documentation corpus artifact")?;
             if !output.status.success() {
                 bail!(
                     "stado storage get refused documentation corpus artifact: {}",

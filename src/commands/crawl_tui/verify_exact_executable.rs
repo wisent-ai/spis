@@ -32,11 +32,7 @@ pub(crate) fn verify_exact_executable(
         .context("TUI execution identity has no typed observed_hostname")?;
     let mut hostname_command = Command::new("hostname");
     hostname_command.env_clear().env("PATH", "/usr/bin:/bin");
-    let hostname = crate::commands::crawl::bounded_command_output(
-        &mut hostname_command,
-        "read TUI worker hostname",
-        64 * 1024,
-    )?;
+    let hostname = crate::commands::crawl::command_output(&mut hostname_command, "read TUI worker hostname")?;
     if !hostname.status.success() {
         bail!(
             "TUI worker hostname command failed: status={}; stdout={:?}; stderr={:?}",
@@ -106,11 +102,7 @@ pub(crate) fn verify_exact_executable(
         .arg("--version")
         .env_clear()
         .envs(environment);
-    let version = crate::commands::crawl::bounded_command_output(
-        &mut version_command,
-        "read exact TUI version",
-        1024 * 1024,
-    )
+    let version = crate::commands::crawl::command_output(&mut version_command, "read exact TUI version")
     .with_context(|| format!("read exact TUI version from {}", path.display()))?;
     if !version.status.success() {
         bail!(
@@ -141,11 +133,7 @@ pub(crate) fn tmux(
         .envs(environment)
         .args(["-S", socket.to_string_lossy().as_ref()])
         .args(args);
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut command,
-        context,
-        MAXIMUM_CAPTURE_BYTES,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut command, context)?;
     if !output.status.success() {
         bail!(
             "{context}: {}",
@@ -217,11 +205,7 @@ pub(crate) fn prepare_fixture(fixture: &Path, git: &Path) -> Result<()> {
             .env("HOME", &home)
             .env("GIT_CONFIG_GLOBAL", fixture.join("gitconfig"))
             .env("GIT_CONFIG_NOSYSTEM", "1");
-        let output = crate::commands::crawl::bounded_command_output(
-            &mut command,
-            "prepare TUI fixture with git",
-            1024 * 1024,
-        )
+        let output = crate::commands::crawl::command_output(&mut command, "prepare TUI fixture with git")
         .with_context(|| format!("prepare TUI fixture: git {}", arguments.join(" ")))?;
         if !output.status.success() {
             bail!(

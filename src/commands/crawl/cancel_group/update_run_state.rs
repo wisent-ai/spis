@@ -246,11 +246,7 @@ pub(crate) fn download_uri(uri: &str, destination: &Path) -> Result<()> {
     }
     let mut command = crawl_storage_command();
     command.args(["storage", "get", uri]).arg(destination);
-    let output = bounded_command_output(
-        &mut command,
-        "download retained crawl object",
-        4 * 1024 * 1024,
-    )?;
+    let output = command_output(&mut command, "download retained crawl object")?;
     if !output.status.success() {
         bail!(
             "download {uri}: {}",

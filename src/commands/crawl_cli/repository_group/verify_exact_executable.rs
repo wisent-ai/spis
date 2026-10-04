@@ -32,11 +32,7 @@ pub(crate) fn verify_exact_executable(
         .context("CLI execution identity has no typed observed_hostname")?;
     let mut hostname_command = Command::new("hostname");
     hostname_command.env_clear().env("PATH", "/usr/bin:/bin");
-    let hostname = crate::commands::crawl::bounded_command_output(
-        &mut hostname_command,
-        "read CLI worker hostname",
-        64 * 1024,
-    )?;
+    let hostname = crate::commands::crawl::command_output(&mut hostname_command, "read CLI worker hostname")?;
     if !hostname.status.success() {
         bail!(
             "CLI worker hostname command failed: status={}; stdout={:?}; stderr={:?}",
@@ -106,11 +102,7 @@ pub(crate) fn verify_exact_executable(
         .arg("--version")
         .env_clear()
         .envs(environment);
-    let version = crate::commands::crawl::bounded_command_output(
-        &mut version_command,
-        "read exact CLI version",
-        1024 * 1024,
-    )
+    let version = crate::commands::crawl::command_output(&mut version_command, "read exact CLI version")
     .with_context(|| format!("read exact CLI version from {}", path.display()))?;
     if !version.status.success() {
         bail!(
@@ -145,11 +137,7 @@ pub(crate) fn tmux(
         .envs(environment)
         .args(["-S", socket.to_string_lossy().as_ref()])
         .args(args);
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut command,
-        context,
-        MAXIMUM_CAPTURE_BYTES,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut command, context)?;
     if !output.status.success() {
         bail!(
             "{context}: {}",
@@ -174,11 +162,7 @@ impl Drop for TmuxSession {
             .env("PATH", "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
             .args(["-S", self.socket.to_string_lossy().as_ref()])
             .args(["kill-session", "-t", &self.name]);
-        let _ = crate::commands::crawl::bounded_command_output(
-            &mut command,
-            "close private CLI PTY",
-            64 * 1024,
-        );
+        let _ = crate::commands::crawl::command_output(&mut command, "close private CLI PTY");
     }
 }
 

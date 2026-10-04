@@ -13,11 +13,7 @@ pub(crate) fn declared_worker_stado_program(host: &str) -> Result<String> {
     let mut last_failure = String::new();
     let mut command = stado_command();
     command.args(["service", "list", "--json"]);
-    match bounded_command_output(
-        &mut command,
-        "read declared Stado agent program",
-        16 * 1024 * 1024,
-    ) {
+    match command_output(&mut command, "read declared Stado agent program") {
         Ok(output) if output.status.success() => {
             let services: Value = serde_json::from_slice(&output.stdout)
                 .context("Stado service list is not JSON")?;

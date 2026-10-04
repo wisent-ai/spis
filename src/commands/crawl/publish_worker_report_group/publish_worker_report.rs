@@ -37,20 +37,16 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
         use std::os::unix::fs::PermissionsExt;
         std::fs::set_permissions(&source, std::fs::Permissions::from_mode(0o600))?;
     }
-    let output = bounded_command_output(
-        crawl_storage_command()
-            .args([
-                "storage",
-                "put",
-                "--if-absent",
-                "--content-type",
-                "application/x-ndjson",
-                &manifest.output_uri,
-            ])
-            .arg(&source),
-        "publish worker report",
-        4 * 1024 * 1024,
-    )?;
+    let output = command_output(crawl_storage_command()
+        .args([
+            "storage",
+            "put",
+            "--if-absent",
+            "--content-type",
+            "application/x-ndjson",
+            &manifest.output_uri,
+        ])
+        .arg(&source), "publish worker report")?;
     if !output.status.success() {
         bail!(
             "stado storage put refused the worker report: {}",
@@ -63,13 +59,9 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
         std::process::id()
     ));
     let _ = std::fs::remove_file(&readback);
-    let output = bounded_command_output(
-        crawl_storage_command()
-            .args(["storage", "get", &manifest.output_uri])
-            .arg(&readback),
-        "read back worker report",
-        4 * 1024 * 1024,
-    )?;
+    let output = command_output(crawl_storage_command()
+        .args(["storage", "get", &manifest.output_uri])
+        .arg(&readback), "read back worker report")?;
     if !output.status.success() {
         let _ = std::fs::remove_file(&readback);
         bail!(

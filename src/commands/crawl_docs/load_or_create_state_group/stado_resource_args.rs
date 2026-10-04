@@ -38,7 +38,7 @@ pub(crate) fn storage_artifact_present(uri: &str, context: &str) -> Result<bool>
     let mut command = crate::commands::crawl::crawl_storage_command();
     command.args(["storage", "stat", uri, "--json"]);
     let output =
-        crate::commands::crawl::bounded_command_output(&mut command, context, STADO_OUTPUT_LIMIT)?;
+        crate::commands::crawl::command_output(&mut command, context)?;
     if !output.status.success() {
         bail!(
             "cannot determine whether immutable documentation attempt artifact is published: {}",
@@ -156,11 +156,7 @@ pub(crate) fn submit_worker(
         &output_uri,
     ]);
     stado.args(STADO_RESOURCE_ARGS);
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut stado,
-        "submit documentation crawl through Stado",
-        STADO_OUTPUT_LIMIT,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut stado, "submit documentation crawl through Stado")?;
     if !output.status.success() {
         bail!(
             "Stado refused documentation crawl: {}",

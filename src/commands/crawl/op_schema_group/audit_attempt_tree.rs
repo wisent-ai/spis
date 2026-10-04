@@ -141,11 +141,7 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         }
         let mut stado = stado_command();
         stado.args(["storage", "archive"]).arg(root).arg(&staged);
-        let output = bounded_command_output(
-            &mut stado,
-            "archive crawl attempt",
-            4 * 1024 * 1024,
-        )?;
+        let output = command_output(&mut stado, "archive crawl attempt")?;
         if !output.status.success() {
             bail!(
                 "stado storage archive refused the crawl attempt: {}",
@@ -163,11 +159,7 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         stado
             .args(["storage", "put", "--if-absent", "--content-type", "application/gzip", uri])
             .arg(&archive);
-        let output = bounded_command_output(
-            &mut stado,
-            "publish crawl attempt",
-            4 * 1024 * 1024,
-        )?;
+        let output = command_output(&mut stado, "publish crawl attempt")?;
         if !output.status.success() {
             bail!(
                 "stado storage put refused the crawl attempt: {}",
@@ -178,11 +170,7 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         let _ = std::fs::remove_file(&readback);
         let mut stado = crawl_storage_command();
         stado.args(["storage", "get", uri]).arg(&readback);
-        let output = bounded_command_output(
-            &mut stado,
-            "read back crawl attempt",
-            4 * 1024 * 1024,
-        )?;
+        let output = command_output(&mut stado, "read back crawl attempt")?;
         if !output.status.success() {
             let _ = std::fs::remove_file(&readback);
             bail!(

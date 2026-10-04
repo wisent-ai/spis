@@ -7,11 +7,7 @@ pub(crate) fn invoke_engine(args: &[String], host: &str, host_report: &Value) ->
     command
         .args(args)
         .env("SPIS_PREFLIGHT_WORKER_PROGRAM", worker_program);
-    bounded_command_output(
-        &mut command,
-        "crawler coordinator",
-        8 * 1024 * 1024,
-    )
+    command_output(&mut command, "crawler coordinator")
 }
 
 pub(crate) fn selected_specs(selected: &[String]) -> Result<Vec<(&'static str, &'static str)>> {

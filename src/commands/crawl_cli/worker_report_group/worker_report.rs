@@ -105,11 +105,7 @@ pub(crate) fn submit(request: Submission<'_>) -> Result<()> {
     }
     let mut stado = crate::commands::crawl::stado_command();
     stado.args(arguments);
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut stado,
-        "submit CLI crawl through Stado",
-        4 * 1024 * 1024,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut stado, "submit CLI crawl through Stado")?;
     if !output.status.success() {
         bail!("Stado refused CLI crawl: {}", String::from_utf8_lossy(&output.stderr).trim());
     }

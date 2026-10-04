@@ -109,11 +109,7 @@ pub(crate) fn submit(
     for (name, reference) in delivery_secret_bindings(manifest)? {
         stado.arg("--secret-env").arg(format!("{name}={reference}"));
     }
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut stado,
-        "submit TUI crawl through Stado",
-        4 * 1024 * 1024,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut stado, "submit TUI crawl through Stado")?;
     if !output.status.success() {
         bail!("Stado refused TUI crawl: {}", String::from_utf8_lossy(&output.stderr).trim());
     }

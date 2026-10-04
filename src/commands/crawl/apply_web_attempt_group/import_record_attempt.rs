@@ -206,11 +206,7 @@ pub(crate) fn run_spis_command(arguments: &[&str]) -> Result<String> {
     let executable = std::env::current_exe().context("resolve current Spis executable")?;
     let mut command = Command::new(executable);
     command.args(arguments);
-    let output = bounded_command_output(
-        &mut command,
-        "Spis catalog maintenance command",
-        8 * 1024 * 1024,
-    )?;
+    let output = command_output(&mut command, "Spis catalog maintenance command")?;
     if !output.status.success() {
         bail!(
             "spis {} failed: {}{}",

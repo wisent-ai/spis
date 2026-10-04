@@ -216,11 +216,7 @@ pub(crate) fn storage_get(uri: &str, destination: &Path) -> Outcome<()> {
     }
     let mut stado = crate::commands::crawl::stado_command();
     stado.args(["storage", "get", uri]).arg(destination);
-    let output = crate::commands::crawl::bounded_command_output(
-        &mut stado,
-        "download retained Weles evidence",
-        4 * 1024 * 1024,
-    )?;
+    let output = crate::commands::crawl::command_output(&mut stado, "download retained Weles evidence")?;
     if !output.status.success() {
         return Err(WorkerFailure::new(
             "weles_evidence_download_failed",

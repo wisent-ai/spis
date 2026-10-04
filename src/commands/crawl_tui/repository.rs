@@ -29,11 +29,7 @@ impl Drop for TmuxSession {
             .env("PATH", "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
             .args(["-S", self.socket.to_string_lossy().as_ref()])
             .args(["kill-session", "-t", &self.name]);
-        let _ = crate::commands::crawl::bounded_command_output(
-            &mut command,
-            "close private TUI PTY",
-            64 * 1024,
-        );
+        let _ = crate::commands::crawl::command_output(&mut command, "close private TUI PTY");
     }
 }
 

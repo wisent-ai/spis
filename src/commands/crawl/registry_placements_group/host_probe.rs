@@ -6,11 +6,7 @@ pub(crate) fn host_probe(host: &str, arguments: &[&str]) -> Value {
         .args(["host", "exec", host, "--json", "--"])
         .args(arguments);
     let result = (|| -> Result<Value> {
-        let output = bounded_command_output(
-            &mut command,
-            "Stado host probe",
-            1024 * 1024,
-        )?;
+        let output = command_output(&mut command, "Stado host probe")?;
         // A non-zero exit is an answer, not a missing one: `stado host exec`
         // prints its typed receipt on stdout either way, and that receipt is
         // where the host records which executable it resolved for the command.
