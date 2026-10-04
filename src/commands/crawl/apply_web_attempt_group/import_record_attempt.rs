@@ -45,8 +45,9 @@ pub(crate) fn import_record_attempt(
         .get("bytes")
         .and_then(Value::as_u64)
         .expect("verified artifact byte count");
-    let (observed_sha256, observed_bytes) =
-        hash_regular_file(&archive, MAX_ATTEMPT_ARCHIVE_BYTES)?;
+    // The verified report states the archive's size, so a larger file is
+    // refused at that size rather than at a ceiling chosen here.
+    let (observed_sha256, observed_bytes) = hash_regular_file(&archive, expected_bytes)?;
     if observed_sha256 != expected_sha256 || observed_bytes != expected_bytes {
         bail!(
             "retained attempt artifact differs from the worker report: expected sha256={expected_sha256} bytes={expected_bytes}, observed sha256={observed_sha256} bytes={observed_bytes}"

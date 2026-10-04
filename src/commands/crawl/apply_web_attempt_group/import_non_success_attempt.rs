@@ -73,8 +73,7 @@ pub(crate) fn import_non_success_attempt(
         .expect("verified artifact byte count");
     let archive = staging.join("artifacts.tar.gz");
     download_uri(&manifest.artifact_uri, &archive)?;
-    let (observed_sha256, observed_bytes) =
-        hash_regular_file(&archive, MAX_ATTEMPT_ARCHIVE_BYTES)?;
+    let (observed_sha256, observed_bytes) = hash_regular_file(&archive, expected_bytes)?;
     if observed_sha256 != expected_sha256 || observed_bytes != expected_bytes {
         bail!("retained failed-attempt artifact differs from the worker report");
     }
