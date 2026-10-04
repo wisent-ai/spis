@@ -153,7 +153,7 @@ pub(crate) fn host_facts() -> &'static HostFacts {
                 uname_field(|u| &u.release)
             ),
             "shell": SHELL,
-            "terminal": format!("pseudo-terminal, {COLS}x{ROWS}, TERM=xterm-256color"),
+            "terminal": format!("pseudo-terminal, {}x{}, TERM=xterm-256color", terminal().columns, terminal().rows),
         });
         let sentence = format!(
             "macOS {} ({}) {}",

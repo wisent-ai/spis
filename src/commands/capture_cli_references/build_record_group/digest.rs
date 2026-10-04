@@ -50,12 +50,11 @@ pub(crate) const RENDER_SCRIPT: &str = r#"
 import json, os, re, sys
 from PIL import Image, ImageDraw, ImageFont
 
-COLS = 100
-ROWS = 32
+COLS = int(sys.argv[3])
+ROWS = int(sys.argv[4])
 FONT_CANDIDATES = ("/System/Library/Fonts/Menlo.ttc", "/System/Library/Fonts/SFNSMono.ttf")
-FONT_PX = 15
+FONT_PX = int(sys.argv[5])
 ANSI = re.compile(r"\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[@-Z\\-_]")
-
 events = json.load(open(sys.argv[1]))
 path = sys.argv[2]
 
@@ -128,6 +127,9 @@ pub(crate) fn render_state(path: &Path, events: &[(f64, String)], cutoff_index: 
         .args(["-c", RENDER_SCRIPT])
         .arg(&tmp)
         .arg(path)
+        .arg(terminal().columns.to_string())
+        .arg(terminal().rows.to_string())
+        .arg(terminal().font_px.to_string())
         .output()
         .with_context(|| format!("run {}", interpreter.display()))?;
     let _ = std::fs::remove_file(&tmp);
@@ -147,8 +149,10 @@ pub(crate) fn render_state(path: &Path, events: &[(f64, String)], cutoff_index: 
 
 pub(crate) fn write_cast(path: &Path, events: &[(f64, String)], title: &str, wall_start: u64) -> Result<()> {
     let header = format!(
-        "{{\"version\":2,\"width\":{COLS},\"height\":{ROWS},\"timestamp\":{wall_start},\
+        "{{\"version\":2,\"width\":{},\"height\":{},\"timestamp\":{wall_start},\
          \"env\":{{\"SHELL\":\"{SHELL}\",\"TERM\":\"xterm-256color\"}},\"title\":{}}}\n",
+        terminal().columns,
+        terminal().rows,
         json_str(title),
     );
     let mut out = String::from(&header);
@@ -203,10 +207,13 @@ pub(crate) fn write_media(run: &Run, ref_dir: &Path) -> Result<Value> {
             "source_relationship": format!(
                 "Deterministic Pillow render of media/session.cast replayed to the end of the \
                  '{label}' step (event {index}, t={} s): the cast's own ANSI-stripped text, wrapped \
-                 at {COLS} columns, last {ROWS} rows, Menlo {FONT_PX}px. It is a render of the cast \
+                 at {} columns, last {} rows, Menlo {}px. It is a render of the cast \
                  at that named point, not a separate capture, and re-rendering the same cast \
                  produces the same bytes.",
-                g(ts)
+                g(ts),
+                terminal().columns,
+                terminal().rows,
+                terminal().font_px
             ),
         }));
     }

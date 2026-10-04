@@ -6,17 +6,11 @@ pub(crate) const INDEX_SCHEMA: &str = "wisent.full-reference-catalog.v2";
 
 pub(crate) const SOURCES_SCHEMA: &str = "wisent.example-catalog.v2";
 
-pub(crate) const COLS: usize = 100;
-
-pub(crate) const ROWS: usize = 32;
-
 pub(crate) const PROMPT: &str = "wisent-ref$ ";
 
 pub(crate) const PROBE_FLAG: &str = "--wisent-reference-probe";
 
 pub(crate) const SHELL: &str = "/bin/bash";
-
-pub(crate) const FONT_PX: usize = 15;
 
 // The transient scratch tree is confined to ~/.spis so it moves with the
 // product; the catalog itself lives under the adopted corpus root.
@@ -72,15 +66,27 @@ pub(crate) struct Exclusion {
     pub(crate) reason: String,
 }
 
+/// The pseudo-terminal every capture runs in and the font its frames are
+/// rendered with. The plan states it; no size is compiled into the binary.
+#[derive(Debug, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct Terminal {
+    pub(crate) columns: usize,
+    pub(crate) rows: usize,
+    pub(crate) font_px: usize,
+}
+
 /// The capture plan: which catalog the records belong to, which products are
-/// captured and which binaries are excluded. It is a JSON file the operator
-/// names with `--plan`; nothing about a product is compiled into the binary.
+/// captured, which binaries are excluded and the terminal they run in. It is a
+/// JSON file the operator names with `--plan`; nothing about a product or the
+/// terminal is compiled into the binary.
 #[derive(Debug, serde::Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct Plan {
     pub(crate) schema: String,
     pub(crate) catalog: String,
     pub(crate) title: String,
+    pub(crate) terminal: Terminal,
     pub(crate) products: Vec<Product>,
     pub(crate) exclusions: Vec<Exclusion>,
 }
@@ -105,6 +111,15 @@ pub(crate) fn load_plan(path: &Path) -> Result<&'static Plan> {
     if plan.products.is_empty() {
         bail!("capture plan {} declares no products", path.display());
     }
+    if plan.terminal.columns == 0 || plan.terminal.rows == 0 || plan.terminal.font_px == 0 {
+        bail!(
+            "capture plan {} states terminal {}x{} at {} px; columns, rows and font_px must each be at least 1",
+            path.display(),
+            plan.terminal.columns,
+            plan.terminal.rows,
+            plan.terminal.font_px
+        );
+    }
     let mut seen = std::collections::BTreeSet::new();
     for product in &plan.products {
         if !seen.insert(product.slug.as_str()) {
@@ -125,6 +140,11 @@ pub(crate) fn plan() -> &'static Plan {
 
 pub(crate) fn products() -> &'static [Product] {
     &plan().products
+}
+
+/// The terminal the loaded plan states.
+pub(crate) fn terminal() -> &'static Terminal {
+    &plan().terminal
 }
 
 // --------------------------------------------------------------- small utils

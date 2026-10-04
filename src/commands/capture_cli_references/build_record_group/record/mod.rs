@@ -21,6 +21,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
         || measured["cursor_addressed"].as_bool().unwrap_or(false);
     let duration = cast["duration_seconds"].as_f64().unwrap_or(0.0);
     let owner = product.repository.split('/').next().unwrap_or_default();
+    let (columns, rows) = (terminal().columns, terminal().rows);
 
     json!({
         "schema": RECORD_SCHEMA,
@@ -44,8 +45,8 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
             "local_path": "media/session.cast",
             "source_url": product.product_url,
             "media_kind": "asciinema-v2-terminal-cast",
-            "width": COLS,
-            "height": ROWS,
+            "width": columns,
+            "height": rows,
             "duration_seconds": cast["duration_seconds"].clone(),
             "frame_count": cast["frame_count"].clone(),
             "bytes": cast["bytes"].clone(),
@@ -62,7 +63,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
                 host_sentence()
             ),
             "recording_environment": format!(
-                "{SHELL} --norc --noprofile -i on a {COLS}x{ROWS} PTY, TERM=xterm-256color, PAGER=cat, cwd={}",
+                "{SHELL} --norc --noprofile -i on a {columns}x{rows} PTY, TERM=xterm-256color, PAGER=cat, cwd={}",
                 run.workdir
             ),
         }],
@@ -92,7 +93,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
             "prerequisites": [
                 format!("{} installed on this workstation at {} (from {})", name, run.binary_path, product.repository),
                 format!("An empty scratch working directory ({}) with no project or product state in it", run.workdir),
-                format!("A pseudo-terminal at {COLS}x{ROWS} with TERM=xterm-256color, PAGER=cat and NO_COLOR unset"),
+                format!("A pseudo-terminal at {columns}x{rows} with TERM=xterm-256color, PAGER=cat and NO_COLOR unset"),
                 host_sentence().to_string(),
             ],
             "steps": journey_steps,

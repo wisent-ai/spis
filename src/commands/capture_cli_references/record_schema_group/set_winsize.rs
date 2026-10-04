@@ -42,8 +42,8 @@ impl Session {
             ("PS1", PROMPT),
             ("PAGER", "cat"),
             ("LESS", "-FRX"),
-            ("COLUMNS", &COLS.to_string()),
-            ("LINES", &ROWS.to_string()),
+            ("COLUMNS", &terminal().columns.to_string()),
+            ("LINES", &terminal().rows.to_string()),
             ("SHELL", SHELL),
         ] {
             env_pairs.retain(|(ek, _)| ek != k);
@@ -89,7 +89,7 @@ impl Session {
                 libc::_exit(127);
             }
         }
-        set_winsize(master, ROWS as u32, COLS as u32);
+        set_winsize(master, terminal().rows as u32, terminal().columns as u32);
         let mut session = Session {
             fd: master,
             pid,
