@@ -4,8 +4,8 @@
 //!
 //! 1. Fetch the start page and extract every same-origin link with its text.
 //! 2. Ask Brama which pages matter for a reference corpus (pricing, docs,
-//!    sign-in, about…). If Brama is unreachable or unauthenticated, fall back to
-//!    deterministic keyword classification — discovery never blocks on a model.
+//!    sign-in, about…). Without a configured, reachable Brama discovery stops
+//!    naming the missing setting; no word list decides a page's family.
 //! 3. Download an overview screenshot per selected page and scaffold a numbered
 //!    record through the same contract as `reference-record add`.
 
@@ -19,7 +19,7 @@ use std::io::Read;
 use crate::commands::reference_contract;
 
 mod ua;
-mod keywords;
+mod rank;
 
+pub use rank::*;
 pub use ua::*;
-pub use keywords::*;

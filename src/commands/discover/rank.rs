@@ -1,35 +1,22 @@
 use super::*;
 
-pub(crate) const KEYWORDS: &[(&str, &[&str])] = &[
-    ("pricing", &["pricing", "plans", "plans-and-pricing"]),
-    (
-        "docs",
-        &["docs", "documentation", "developers", "api", "guides"],
-    ),
-    (
-        "signup",
-        &["sign-up", "signup", "register", "get-started", "start"],
-    ),
-    ("about", &["about", "company", "customers", "careers"]),
-    ("product", &["product", "features", "platform", "solutions"]),
-];
-
-pub(crate) fn heuristic_family(url: &str, text: &str) -> &'static str {
-    let blob = format!("{} {}", url, text).to_lowercase();
-    for (family, words) in KEYWORDS {
-        if words.iter().any(|word| blob.contains(word)) {
-            return family;
-        }
-    }
-    "other"
-}
-
-/// Ask Brama to rank pages; `None` means fall back deterministically.
-pub(crate) fn brama_rank(start_url: &str, links: &Links, limit: usize) -> Option<Vec<(String, String)>> {
-    let router = std::env::var("MODEL_ROUTER_URL").ok()?;
-    if router.is_empty() {
-        return None;
-    }
+/// Ask Brama which discovered pages matter for the corpus and what family each
+/// belongs to. There is no keyword fallback: words in a URL decided the family
+/// before, so a pricing page at `/buy` was "other" and every link saying
+/// "start" was a signup page. Without `MODEL_ROUTER_URL` and
+/// `MODEL_ROUTER_MODEL`, an unreadable `MODEL_ROUTER_TOKEN_ROLE`, or an answer
+/// that selects nothing from the list, discovery stops naming the cause.
+pub(crate) fn brama_rank(
+    start_url: &str,
+    links: &Links,
+    limit: usize,
+) -> Result<Vec<(String, String)>> {
+    let router = std::env::var("MODEL_ROUTER_URL")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .context(
+            "discover asks Brama which pages to keep: set MODEL_ROUTER_URL to the Brama address",
+        )?;
     let endpoint = if router.contains("/v1") {
         format!("{}/chat/completions", router.trim_end_matches('/'))
     } else {
@@ -43,10 +30,10 @@ pub(crate) fn brama_rank(start_url: &str, links: &Links, limit: usize) -> Option
         .collect();
     // The model is the router's alias chosen by the operator, never a provider
     // model written into the product (cli.md rule 14).
-    let Some(model) = std::env::var("MODEL_ROUTER_MODEL").ok().filter(|value| !value.trim().is_empty()) else {
-        eprintln!("discover: Brama ranking unavailable (MODEL_ROUTER_MODEL names no model alias); using keyword fallback");
-        return None;
-    };
+    let model = std::env::var("MODEL_ROUTER_MODEL")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .context("discover asks Brama which pages to keep: set MODEL_ROUTER_MODEL to a Brama model alias")?;
     let payload = json!({
         "model": model,
         "messages": [
@@ -61,57 +48,50 @@ pub(crate) fn brama_rank(start_url: &str, links: &Links, limit: usize) -> Option
     .to_string();
 
     // Read before the request so a bad reference is named, never sent anonymously.
-    let router_token = match crate::commands::role_secret("MODEL_ROUTER_TOKEN_ROLE") {
-        Ok(token) => token,
-        Err(error) => {
-            eprintln!("discover: Brama ranking unavailable ({error:#}); using keyword fallback");
-            return None;
-        }
-    };
-    let parsed: Result<serde_json::Value> = (|| {
-        let mut request = ureq::post(&endpoint)
-            .set("Content-Type", "application/json");
-        if let Some(token) = &router_token {
-            request = request.set("Authorization", &format!("Bearer {token}"));
-        }
-        let response = request.send_string(&payload)?;
-        let mut body_bytes = Vec::new();
-        let bytes_read = response.into_reader().read_to_end(&mut body_bytes)?;
-        let _ = bytes_read;
-        let body: serde_json::Value = serde_json::from_slice(&body_bytes)?;
-        let content = body["choices"][0]["message"]["content"]
-            .as_str()
-            .context("no message content")?;
-        let brace_open = content.find('{').context("no JSON object")?;
-        let brace_close = content.rfind('}').context("no JSON object")? + 1;
-        Ok(serde_json::from_str(&content[brace_open..brace_close])?)
-    })();
-    match parsed {
-        Ok(parsed) => {
-            let mut ranked: Vec<(String, String)> = Vec::new();
-            for page in parsed["pages"].as_array().unwrap_or(&Vec::new()) {
-                let (Some(url), Some(family)) = (page["url"].as_str(), page["family"].as_str())
-                else {
-                    continue;
-                };
-                if links.entries.iter().any(|(known, _)| known == url)
-                    && FAMILIES.contains(&family)
-                    && !ranked.iter().any(|(seen, _)| seen == url)
-                {
-                    ranked.push((url.to_string(), family.to_string()));
-                }
-            }
-            if ranked.is_empty() {
-                None
-            } else {
-                Some(ranked)
-            }
-        }
-        Err(error) => {
-            eprintln!("discover: Brama ranking unavailable ({error}); using keyword fallback");
-            None
+    let router_token = crate::commands::role_secret("MODEL_ROUTER_TOKEN_ROLE")
+        .context("discover could not read the Brama bearer")?;
+    let mut request = ureq::post(&endpoint).set("Content-Type", "application/json");
+    if let Some(token) = &router_token {
+        request = request.set("Authorization", &format!("Bearer {token}"));
+    }
+    let response = request
+        .send_string(&payload)
+        .with_context(|| format!("Brama at {endpoint} refused or could not be reached"))?;
+    let mut body_bytes = Vec::new();
+    response.into_reader().read_to_end(&mut body_bytes)?;
+    let body: serde_json::Value = serde_json::from_slice(&body_bytes)
+        .context("Brama answered with a body that is not JSON")?;
+    let content = body["choices"][0]["message"]["content"]
+        .as_str()
+        .context("Brama's answer carries no message content")?;
+    let brace_open = content
+        .find('{')
+        .context("Brama's answer holds no JSON object")?;
+    let brace_close = content
+        .rfind('}')
+        .context("Brama's answer holds no JSON object")?
+        + 1;
+    let parsed: serde_json::Value = serde_json::from_str(&content[brace_open..brace_close])
+        .context("Brama's page selection is not valid JSON")?;
+    let mut ranked: Vec<(String, String)> = Vec::new();
+    for page in parsed["pages"].as_array().unwrap_or(&Vec::new()) {
+        let (Some(url), Some(family)) = (page["url"].as_str(), page["family"].as_str()) else {
+            continue;
+        };
+        if links.entries.iter().any(|(known, _)| known == url)
+            && FAMILIES.contains(&family)
+            && !ranked.iter().any(|(seen, _)| seen == url)
+        {
+            ranked.push((url.to_string(), family.to_string()));
         }
     }
+    if ranked.is_empty() {
+        bail!(
+            "Brama selected no page from the {} discovered links",
+            links.entries.len()
+        );
+    }
+    Ok(ranked)
 }
 
 /// `spis discover <start-url> --catalog <slug> [--limit <n>] [--max-links <n>]`
@@ -178,22 +158,12 @@ pub fn run(rest: &[String]) -> Result<()> {
         bail!("discover: no same-origin links found");
     }
 
-    let ranked = brama_rank(&start_url, &links, limit).unwrap_or_else(|| {
-        let mut ranked: Vec<(String, String)> = Vec::new();
-        for (url, text) in &links.entries {
-            let family = heuristic_family(url, text);
-            let family_count = ranked.iter().filter(|(_, f)| f == family).count();
-            if family != "other" && family_count < std::cmp::max(1, limit / 3) {
-                ranked.push((url.clone(), family.to_string()));
-            }
-        }
-        ranked
-    });
+    let ranked = brama_rank(&start_url, &links, limit)?;
     let selected: Vec<(String, String)> = ranked.into_iter().take(limit).collect();
     if selected.is_empty() {
         bail!("discover: nothing selected for this corpus");
     }
-    println!("Brama/heuristics selected {} page(s):", selected.len());
+    println!("Brama selected {} page(s):", selected.len());
     for (url, family) in &selected {
         println!("  [{family}] {url}");
     }
