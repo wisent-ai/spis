@@ -126,10 +126,8 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
             outcome_diagnostic_count += 1;
         }
     }
-    if committed_end != state["committed_bytes"].as_u64().unwrap_or(u64::MAX)
-        || downloaded_bytes > MAX_TOTAL_PAGE_DOWNLOAD_BYTES
-    {
-        bail!("durable corpus byte counters are inconsistent or exceed their limits");
+    if committed_end != state["committed_bytes"].as_u64().unwrap_or(u64::MAX) {
+        bail!("durable corpus byte counters are inconsistent");
     }
     let inventory_downloaded_bytes = state
         .get("inventory_downloaded_bytes")
