@@ -192,6 +192,7 @@ pub(crate) fn import_record_attempt(
         "artifact_uri": manifest.artifact_uri,
         "artifact_sha256": expected_sha256,
         "artifact_bytes": expected_bytes,
+        "tree_bytes": proof.pointer("/artifact/tree_bytes").cloned().unwrap_or(Value::Null),
         "retained_members": members.len(),
         "states": states.len(),
         "motion": motion.len(),

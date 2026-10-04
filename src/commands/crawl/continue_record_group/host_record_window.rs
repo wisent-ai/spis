@@ -1,42 +1,44 @@
 use super::*;
 
-/// What one record in flight costs the host at its peak, in GiB.
-///
-/// A record holds its whole crawl on the host until the attempt artifact is
-/// published, and the object store keeps a same-disk backup twin of what it
-/// then stores. Measured on a shared fleet host:
-/// MDN, the largest site in the catalog, moved the disk from 17.7 to 13.8 GiB
-/// while it ran and gave it back on import; three records together moved it
-/// from 11 to 2.1 GiB. That is 3.9 GiB for the largest and about 3 GiB each
-/// for a mixed three, so four is the largest record rounded up rather than the
-/// average - the average is what filled the disk twice.
-pub(crate) const RECORD_PEAK_GIB: f64 = 4.0;
+/// The most bytes one record of this catalog has held on its host, measured:
+/// the attempt tree its worker audited plus the archive published from it,
+/// read off every record already imported. `None` until one has been.
+fn measured_record_peak_bytes(records: &[Value]) -> Option<u64> {
+    records
+        .iter()
+        .filter_map(|record| {
+            let import = record.get("import")?;
+            let tree = import.get("tree_bytes")?.as_u64()?;
+            let archive = import.get("artifact_bytes")?.as_u64()?;
+            tree.checked_add(archive)
+        })
+        .max()
+}
 
 /// How many records may be submitted against the free space this host just
 /// reported, keeping one record's worth of it unspent.
 ///
-/// A window that ignores the disk is a guess, and both guesses were wrong: one
-/// starved the family behind foreign work, ten and then three killed the
-/// machine. The host answers `df -h` in its own preflight, so the number of
-/// slots is arithmetic rather than a constant, and an unreadable answer yields
-/// no slots at all - the family waits and says why, instead of finding out by
-/// filling a production disk.
+/// The host answers `df -h` in its own preflight and the catalog's own
+/// imported records say what one record costs, so the number of slots is
+/// arithmetic on two measurements rather than a constant. An unreadable
+/// answer yields no slots at all - the family waits and says why, instead of
+/// finding out by filling a production disk. Before any record of the
+/// catalog has been imported there is no measurement, so one record runs
+/// alone and its import supplies the size every later window uses.
 ///
 /// The reserved slot is the difference between planning to use the disk and
-/// planning to use all of it. With 12 GiB free and a 6 GiB peak the naive
-/// division admits two records whose combined peak is exactly the whole
-/// volume; this admits one and leaves the other 6 GiB for the host's own work,
-/// which on a shared host is a release store, a queue, and everyone else's
-/// jobs.
-///
-/// No fixed ceiling sits on top of this: the free space the host reports is
-/// the limit. A constant window was tried twice before the arithmetic existed
-/// and was wrong both times, in opposite directions.
-pub(crate) fn host_record_window(host_report: &Value) -> usize {
+/// planning to use all of it: with free space for exactly two records this
+/// admits one and leaves the other's worth for the host's own work.
+pub(crate) fn host_record_window(host_report: &Value, records: &[Value]) -> usize {
     let Some(free_gib) = observed_free_gib(host_report) else {
         return 0;
     };
-    let affordable = (free_gib / RECORD_PEAK_GIB).floor() - 1.0;
+    let Some(peak_bytes) = measured_record_peak_bytes(records) else {
+        return usize::from(free_gib > 0.0);
+    };
+    // GiB is 2^30 bytes, the unit `df -h` reports in.
+    let peak_gib = peak_bytes as f64 / f64::from(1u32 << 30);
+    let affordable = (free_gib / peak_gib).floor() - 1.0;
     affordable.max(0.0) as usize
 }
 
@@ -94,7 +96,7 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
             .and_then(Value::as_array)
             .cloned()
             .unwrap_or_default();
-        let window = host_record_window(&host_report);
+        let window = host_record_window(&host_report, &records);
         let mut occupied = records.iter().filter(|record| record_occupies_host(record)).count();
         for record in records {
             let Some(record_name) = record.get("record").and_then(Value::as_str) else {
