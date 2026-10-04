@@ -1,13 +1,15 @@
 use super::*;
 
 /// Walk `root` and prove it is a self-contained tree of ordinary directories and
-/// regular files. A symlink, device, socket, FIFO, hard-link fan-out or an
-/// out-of-bound entry count/byte total is refused before anything is archived,
-/// so a compromised or racing worker cannot smuggle host content into a
-/// published crawl artifact.
+/// regular files. A symlink, device, socket, FIFO or hard-link fan-out is
+/// refused before anything is archived, so a compromised or racing worker
+/// cannot smuggle host content into a published crawl artifact; a tree larger
+/// than the room its volume reports for the archive beside it is refused
+/// before archiving starts, rather than at a size chosen here.
 pub(crate) fn audit_attempt_tree(root: &Path) -> Result<(usize, u64)> {
     #[cfg(unix)]
     use std::os::unix::fs::MetadataExt;
+    let (room_bytes, room_entries) = volume_room(root)?;
     let mut pending = vec![root.to_path_buf()];
     let mut entries = 0_usize;
     let mut bytes = 0_u64;
@@ -26,9 +28,10 @@ pub(crate) fn audit_attempt_tree(root: &Path) -> Result<(usize, u64)> {
                 .with_context(|| format!("read attempt tree entry {}", path.display()))?;
             let file_type = metadata.file_type();
             entries += 1;
-            if entries > MAX_ATTEMPT_TREE_ENTRIES {
+            if entries as u64 > room_entries {
                 bail!(
-                    "attempt artifact tree exceeds the {MAX_ATTEMPT_TREE_ENTRIES}-entry bound"
+                    "attempt artifact tree holds more entries than the {room_entries} free on its \
+                     volume"
                 );
             }
             if file_type.is_symlink() {
@@ -47,10 +50,11 @@ pub(crate) fn audit_attempt_tree(root: &Path) -> Result<(usize, u64)> {
             }
             bytes = bytes
                 .checked_add(metadata.len())
-                .filter(|total| *total <= MAX_ATTEMPT_TREE_BYTES)
+                .filter(|total| *total <= room_bytes)
                 .with_context(|| {
                     format!(
-                        "attempt artifact tree exceeds the {MAX_ATTEMPT_TREE_BYTES}-byte bound"
+                        "attempt artifact tree needs more than the {room_bytes} bytes free on its \
+                         volume for its archive"
                     )
                 })?;
         }
@@ -151,7 +155,10 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         std::fs::rename(&staged, &archive).with_context(|| {
             format!("install rebuilt crawl attempt archive {}", archive.display())
         })?;
-        let (sha256, bytes) = hash_regular_file(&archive, MAX_ATTEMPT_ARCHIVE_BYTES)?;
+        let staged_bytes = std::fs::metadata(&archive)
+            .with_context(|| format!("read {}", archive.display()))?
+            .len();
+        let (sha256, bytes) = hash_regular_file(&archive, staged_bytes)?;
         let mut stado = crawl_storage_command();
         stado
             .args(["storage", "put", "--if-absent", "--content-type", "application/gzip", uri])
@@ -183,7 +190,7 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
                 String::from_utf8_lossy(&output.stderr).trim()
             );
         }
-        let observed = hash_regular_file(&readback, MAX_ATTEMPT_ARCHIVE_BYTES);
+        let observed = hash_regular_file(&readback, bytes);
         let _ = std::fs::remove_file(&readback);
         let (observed_sha256, observed_bytes) = observed?;
         if observed_sha256 != sha256 || observed_bytes != bytes {

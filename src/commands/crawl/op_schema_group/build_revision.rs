@@ -247,9 +247,3 @@ pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {
     }
     result
 }
-
-pub(crate) const MAX_ATTEMPT_TREE_ENTRIES: usize = 20_000;
-
-pub(crate) const MAX_ATTEMPT_TREE_BYTES: u64 = 512 * 1024 * 1024;
-
-pub(crate) const MAX_ATTEMPT_ARCHIVE_BYTES: u64 = 256 * 1024 * 1024;

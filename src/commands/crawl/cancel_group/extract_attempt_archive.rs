@@ -91,7 +91,7 @@ pub(crate) fn extract_attempt_archive(archive: &Path, destination: &Path) -> Res
 
 /// Bytes and file entries the volume holding `path` can still take, as the
 /// operating system reports them to an unprivileged writer.
-fn volume_room(path: &Path) -> Result<(u64, u64)> {
+pub(crate) fn volume_room(path: &Path) -> Result<(u64, u64)> {
     use std::os::unix::ffi::OsStrExt;
     let c_path = std::ffi::CString::new(path.as_os_str().as_bytes())
         .context("staging path contains a NUL byte")?;
