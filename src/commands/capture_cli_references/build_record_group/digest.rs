@@ -54,6 +54,8 @@ COLS = int(sys.argv[3])
 ROWS = int(sys.argv[4])
 FONT_CANDIDATES = ("/System/Library/Fonts/Menlo.ttc", "/System/Library/Fonts/SFNSMono.ttf")
 FONT_PX = int(sys.argv[5])
+BACKGROUND = sys.argv[6]
+FOREGROUND = sys.argv[7]
 ANSI = re.compile(r"\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[@-Z\\-_]")
 events = json.load(open(sys.argv[1]))
 path = sys.argv[2]
@@ -98,15 +100,16 @@ for candidate in FONT_CANDIDATES:
             continue
 if font is None:
     font = ImageFont.load_default()
-advance = font.getlength("M") if hasattr(font, "getlength") else FONT_PX * 0.6
-cell_w = max(1, int(round(advance)))
-cell_h = int(round(FONT_PX * 1.45))
-pad = 12
-size = (COLS * cell_w + 2 * pad, ROWS * cell_h + 2 * pad)
-image = Image.new("RGB", size, (13, 17, 23))
+# The cell is the font's own advance and line metrics: nothing is scaled by
+# a chosen factor and no margin is added around the terminal's cells.
+cell_w = max(1, int(round(font.getlength("M"))))
+ascent, descent = font.getmetrics()
+cell_h = ascent + descent
+size = (COLS * cell_w, ROWS * cell_h)
+image = Image.new("RGB", size, BACKGROUND)
 draw = ImageDraw.Draw(image)
 for index, row in enumerate(rows):
-    draw.text((pad, pad + index * cell_h), row, font=font, fill=(222, 228, 234))
+    draw.text((0, index * cell_h), row, font=font, fill=FOREGROUND)
 image.save(str(path), format="PNG", optimize=True)
 print(image.size[0], image.size[1])
 "#;
@@ -130,6 +133,8 @@ pub(crate) fn render_state(path: &Path, events: &[(f64, String)], cutoff_index: 
         .arg(terminal().columns.to_string())
         .arg(terminal().rows.to_string())
         .arg(terminal().font_px.to_string())
+        .arg(&terminal().background)
+        .arg(&terminal().foreground)
         .output()
         .with_context(|| format!("run {}", interpreter.display()))?;
     let _ = std::fs::remove_file(&tmp);

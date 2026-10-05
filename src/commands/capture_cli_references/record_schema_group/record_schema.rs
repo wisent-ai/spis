@@ -66,14 +66,19 @@ pub(crate) struct Exclusion {
     pub(crate) reason: String,
 }
 
-/// The pseudo-terminal every capture runs in and the font its frames are
-/// rendered with. The plan states it; no size is compiled into the binary.
+/// The pseudo-terminal every capture runs in and the font and colours its
+/// frames are rendered with. The plan states it; no size or colour is
+/// compiled into the binary.
 #[derive(Debug, serde::Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct Terminal {
     pub(crate) columns: usize,
     pub(crate) rows: usize,
     pub(crate) font_px: usize,
+    /// `#rrggbb` the frame is filled with.
+    pub(crate) background: String,
+    /// `#rrggbb` the text is drawn in.
+    pub(crate) foreground: String,
 }
 
 /// The capture plan: which catalog the records belong to, which products are
@@ -95,7 +100,8 @@ static PLAN: std::sync::OnceLock<Plan> = std::sync::OnceLock::new();
 
 /// Read and check the plan, then make it the one this run captures from.
 pub(crate) fn load_plan(path: &Path) -> Result<&'static Plan> {
-    let bytes = std::fs::read(path).with_context(|| format!("read capture plan {}", path.display()))?;
+    let bytes =
+        std::fs::read(path).with_context(|| format!("read capture plan {}", path.display()))?;
     let plan: Plan = serde_json::from_slice(&bytes)
         .with_context(|| format!("parse capture plan {}", path.display()))?;
     if plan.schema != PLAN_SCHEMA {
@@ -120,10 +126,27 @@ pub(crate) fn load_plan(path: &Path) -> Result<&'static Plan> {
             plan.terminal.font_px
         );
     }
+    let hex = |value: &str| {
+        value.len() == 7
+            && value.starts_with('#')
+            && value[1..].bytes().all(|byte| byte.is_ascii_hexdigit())
+    };
+    if !hex(&plan.terminal.background) || !hex(&plan.terminal.foreground) {
+        bail!(
+            "capture plan {} states terminal background {:?} and foreground {:?}; each must be a #rrggbb colour",
+            path.display(),
+            plan.terminal.background,
+            plan.terminal.foreground
+        );
+    }
     let mut seen = std::collections::BTreeSet::new();
     for product in &plan.products {
         if !seen.insert(product.slug.as_str()) {
-            bail!("capture plan {} declares product {} twice", path.display(), product.slug);
+            bail!(
+                "capture plan {} declares product {} twice",
+                path.display(),
+                product.slug
+            );
         }
     }
     if PLAN.set(plan).is_err() {
@@ -135,7 +158,8 @@ pub(crate) fn load_plan(path: &Path) -> Result<&'static Plan> {
 /// The loaded plan. `run` loads it before anything reads a product, so a
 /// read before that is a programming error, not an operator one.
 pub(crate) fn plan() -> &'static Plan {
-    PLAN.get().expect("the capture plan is loaded by run before any product is read")
+    PLAN.get()
+        .expect("the capture plan is loaded by run before any product is read")
 }
 
 pub(crate) fn products() -> &'static [Product] {
