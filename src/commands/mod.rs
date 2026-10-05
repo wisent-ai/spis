@@ -21,6 +21,7 @@ pub mod docs_site;
 pub mod generate_example_catalogs;
 pub mod reference_contract;
 pub mod reference_record;
+pub mod serve;
 pub mod verify_reference_evidence;
 
 use anyhow::{Context, Result};
@@ -139,6 +140,7 @@ const SUBCOMMANDS: &[Subcommand] = &[
     sub("audit-reference-accessibility", "run axe audits over captured references", true),
     sub("capture-cli-references", "pty-capture the CLI products of a capture plan into records", true),
     sub("curate-catalog", "write a catalog's capture-pending records from a declared selector file", true),
+    sub("serve", "loopback HTTP/JSON backend for Spis Desktop (--port PORT, 0 picks one)", true),
 ];
 
 fn asks_help(rest: &[String]) -> bool {
@@ -161,7 +163,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         );
         return Ok(true);
     }
-    if !asks_help(rest) && !matches!(name, "onboarding" | "corpus" | "docs-site") {
+    if !asks_help(rest) && !matches!(name, "onboarding" | "corpus" | "docs-site" | "serve") {
         remember_invocation_dir()?;
         corpus::activate_configured_root()?;
     }
@@ -188,6 +190,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "collect-example-images" => collect_example_images::run(rest)?,
         "capture-widths" => capture_widths::run(rest)?,
         "audit-reference-accessibility" => audit_reference_accessibility::run(rest)?,
+        "serve" => serve::run(rest)?,
         "capture-cli-references" => capture_cli_references::run(rest)?,
         _ => unreachable!("every SUBCOMMANDS entry is dispatched"),
     }
