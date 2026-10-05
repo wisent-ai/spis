@@ -253,7 +253,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     std::fs::create_dir_all(scratch_root())?;
 
     if !catalog_only {
-        pillow_python()?;
+        font(terminal().font_px as f32)?;
         let selected: Vec<&Product> = products()
             .iter()
             .filter(|p| wanted.is_empty() || wanted.iter().any(|w| w == &p.slug))

@@ -10,7 +10,7 @@
 //! invalid flag, Ctrl-C on an unsubmitted line, the help that recovers from the
 //! refusal, and the same help with NO_COLOR=1. The session becomes
 //! `media/session.cast` (asciinema v2); five PNGs are rendered from that cast's
-//! text with Pillow at named points in the sequence. Afterwards the JSON catalog
+//! text in Menlo (or SF Mono) at named points in the sequence. Afterwards the JSON catalog
 //! files (`sources.json` and `references.json`) are rebuilt from every record on disk.
 //!
 //! The transient scratch tree lives under `~/.spis/work/cli-capture/`.

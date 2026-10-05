@@ -126,19 +126,13 @@ pub fn run(rest: &[String]) -> Result<()> {
             Some(first) => first.to_uppercase().collect::<String>() + title_chars.as_str(),
             None => title_base,
         };
-        let status = std::process::Command::new("python3")
-            .args([
-                "catalog-type.py",
-                "add",
-                &catalog,
-                "--title",
-                &format!("{title} examples"),
-            ])
-            .status()
-            .context("run catalog-type.py")?;
-        if !status.success() {
-            bail!("discover: catalog-type.py add failed with {status}");
-        }
+        crate::commands::catalog_type::run(&[
+            "add".to_string(),
+            catalog.clone(),
+            "--title".to_string(),
+            format!("{title} examples"),
+        ])
+        .context("discover: scaffolding the catalog with spis catalog-type add")?;
     }
 
     for (url, family) in &selected {

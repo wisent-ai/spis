@@ -22,136 +22,6 @@ pub(crate) fn digest(path: &Path) -> Result<(u64, String)> {
     Ok((size, format!("{:x}", hasher.finalize())))
 }
 
-/// Render with whichever interpreter on this host has Pillow, exactly as the
-/// former script did before re-execing itself.
-pub(crate) fn pillow_python() -> Result<PathBuf> {
-    static FOUND: LazyLock<Option<PathBuf>> = LazyLock::new(|| {
-        for cand in [
-            "/usr/bin/python3",
-            "/opt/homebrew/bin/python3",
-            "/usr/local/bin/python3",
-        ] {
-            if !Path::new(cand).exists() {
-                continue;
-            }
-            let probe = Command::new(cand).arg("-c").arg("import PIL").output();
-            if probe.is_ok_and(|o| o.status.success()) {
-                return Some(PathBuf::from(cand));
-            }
-        }
-        None
-    });
-    FOUND
-        .clone()
-        .ok_or_else(|| anyhow!("Pillow is required to render the state PNGs and was not found."))
-}
-
-pub(crate) const RENDER_SCRIPT: &str = r#"
-import json, os, re, sys
-from PIL import Image, ImageDraw, ImageFont
-
-COLS = int(sys.argv[3])
-ROWS = int(sys.argv[4])
-FONT_CANDIDATES = ("/System/Library/Fonts/Menlo.ttc", "/System/Library/Fonts/SFNSMono.ttf")
-FONT_PX = int(sys.argv[5])
-BACKGROUND = sys.argv[6]
-FOREGROUND = sys.argv[7]
-ANSI = re.compile(r"\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[@-Z\\-_]")
-events = json.load(open(sys.argv[1]))
-path = sys.argv[2]
-
-def strip_ansi(text):
-    return ANSI.sub("", text).replace("\x07", "")
-
-def visible_lines(text):
-    out = []
-    for line in strip_ansi(text).split("\n"):
-        if line.endswith("\r"):
-            line = line[:-1]
-        if "\r" in line:
-            line = line.split("\r")[-1]
-        out.append(line.replace("\t", "    "))
-    return out
-
-def wrapped(lines, width):
-    out = []
-    for line in lines:
-        if not line:
-            out.append("")
-            continue
-        while len(line) > width:
-            out.append(line[:width])
-            line = line[width:]
-        out.append(line)
-    return out
-
-text = "".join(e[2] for e in events)
-rows = wrapped(visible_lines(text), COLS)
-rows = rows[-ROWS:]
-while len(rows) < ROWS:
-    rows.append("")
-font = None
-for candidate in FONT_CANDIDATES:
-    if os.path.exists(candidate):
-        try:
-            font = ImageFont.truetype(candidate, FONT_PX)
-            break
-        except OSError:
-            continue
-if font is None:
-    font = ImageFont.load_default()
-# The cell is the font's own advance and line metrics: nothing is scaled by
-# a chosen factor and no margin is added around the terminal's cells.
-cell_w = max(1, int(round(font.getlength("M"))))
-ascent, descent = font.getmetrics()
-cell_h = ascent + descent
-size = (COLS * cell_w, ROWS * cell_h)
-image = Image.new("RGB", size, BACKGROUND)
-draw = ImageDraw.Draw(image)
-for index, row in enumerate(rows):
-    draw.text((0, index * cell_h), row, font=font, fill=FOREGROUND)
-image.save(str(path), format="PNG", optimize=True)
-print(image.size[0], image.size[1])
-"#;
-
-/// Deterministic PNG of the cast's own text, replayed to one event. Returns
-/// (width, height) of the written image.
-pub(crate) fn render_state(path: &Path, events: &[(f64, String)], cutoff_index: usize) -> Result<(u64, u64)> {
-    let interpreter = pillow_python()?;
-    std::fs::create_dir_all(scratch_root())?;
-    let tmp = scratch_root().join(".render-events.json");
-    let sliced: Vec<Value> = events
-        .iter()
-        .take(cutoff_index + 1)
-        .map(|(t, text)| json!([t, "o", text]))
-        .collect();
-    std::fs::write(&tmp, serde_json::to_vec(&sliced)?)?;
-    let output = Command::new(&interpreter)
-        .args(["-c", RENDER_SCRIPT])
-        .arg(&tmp)
-        .arg(path)
-        .arg(terminal().columns.to_string())
-        .arg(terminal().rows.to_string())
-        .arg(terminal().font_px.to_string())
-        .arg(&terminal().background)
-        .arg(&terminal().foreground)
-        .output()
-        .with_context(|| format!("run {}", interpreter.display()))?;
-    let _ = std::fs::remove_file(&tmp);
-    if !output.status.success() {
-        bail!(
-            "state render failed ({}, {})",
-            output.status,
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    let dims = String::from_utf8_lossy(&output.stdout);
-    let mut it = dims.split_whitespace();
-    let w = it.next().and_then(|v| v.parse().ok()).unwrap_or(0u64);
-    let h = it.next().and_then(|v| v.parse().ok()).unwrap_or(0u64);
-    Ok((w, h))
-}
-
 pub(crate) fn write_cast(path: &Path, events: &[(f64, String)], title: &str, wall_start: u64) -> Result<()> {
     let header = format!(
         "{{\"version\":2,\"width\":{},\"height\":{},\"timestamp\":{wall_start},\
@@ -210,7 +80,7 @@ pub(crate) fn write_media(run: &Run, ref_dir: &Path) -> Result<Value> {
             "bytes": st_size,
             "sha256": st_sha,
             "source_relationship": format!(
-                "Deterministic Pillow render of media/session.cast replayed to the end of the \
+                "Deterministic render of media/session.cast replayed to the end of the \
                  '{label}' step (event {index}, t={} s): the cast's own ANSI-stripped text, wrapped \
                  at {} columns, last {} rows, Menlo {}px. It is a render of the cast \
                  at that named point, not a separate capture, and re-rendering the same cast \

@@ -36,6 +36,8 @@ hex = "0.4"
 url = "2"
 # The loopback backend Spis Desktop talks to (`spis serve`).
 tiny_http = "0.12"
+# Renders a CLI capture's terminal text into its state PNGs.
+fontdue = "0.9"
 
 [build-dependencies]
 sha2 = "0.10"
