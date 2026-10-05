@@ -23,7 +23,9 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
     let script_metadata = fs::symlink_metadata(&script_path)
         .map_err(|_| absent("checked-in Weles bridge is absent"))?;
     if script_metadata.file_type().is_symlink() || !script_metadata.is_file() {
-        return Err(absent("checked-in Weles bridge is not a regular non-symlink file"));
+        return Err(absent(
+            "checked-in Weles bridge is not a regular non-symlink file",
+        ));
     }
     let script = fs::canonicalize(&script_path)
         .map_err(|_| absent("checked-in Weles bridge could not be resolved"))?;
@@ -32,14 +34,10 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
             "checked-in Weles bridge escaped its canonical resource directory",
         ));
     }
-    let script_file =
-        fs::File::open(&script).map_err(|_| absent("checked-in Weles bridge could not be opened"))?;
-    let script_bytes = read_stream_limited(
-        script_file,
-        MAX_BRIDGE_SCRIPT_BYTES as usize,
-        "checked-in Weles bridge",
-    )
-    .map_err(|message| BridgeFailure::new("absent", message))?;
+    let script_file = fs::File::open(&script)
+        .map_err(|_| absent("checked-in Weles bridge could not be opened"))?;
+    let script_bytes = read_stream(script_file, "checked-in Weles bridge")
+        .map_err(|message| BridgeFailure::new("absent", message))?;
     if sha256_bytes(&script_bytes) != BRIDGE_SCRIPT_SHA256 {
         return Err(BridgeFailure::new(
             "unpinned",
@@ -106,12 +104,8 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
         .stderr
         .take()
         .ok_or_else(|| BridgeFailure::new("io-failed", "Weles bridge stderr was unavailable"))?;
-    let stdout_reader = std::thread::spawn(move || {
-        read_stream_limited(stdout, MAX_DOCUMENT_BYTES as usize, "stdout")
-    });
-    let stderr_reader = std::thread::spawn(move || {
-        read_stream_limited(stderr, MAX_BRIDGE_ERROR_BYTES, "stderr")
-    });
+    let stdout_reader = std::thread::spawn(move || read_stream(stdout, "stdout"));
+    let stderr_reader = std::thread::spawn(move || read_stream(stderr, "stderr"));
     let mut stdin = child
         .stdin
         .take()
@@ -238,7 +232,9 @@ pub(crate) fn validate_fresh_document(
         &fresh.artifact,
     )?;
     if fresh.id != expected_id || !is_sha256_id(&fresh.id) {
-        return Err("verification document ID is not derived from verified receipt material".to_string());
+        return Err(
+            "verification document ID is not derived from verified receipt material".to_string(),
+        );
     }
     Ok(())
 }

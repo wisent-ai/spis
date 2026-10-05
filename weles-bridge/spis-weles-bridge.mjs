@@ -10,7 +10,6 @@ import {
   lstatSync,
   openSync,
   readFileSync,
-  readSync,
   realpathSync,
   linkSync,
   unlinkSync,
@@ -34,11 +33,8 @@ const SUBMISSION_SCHEMA = 'wisent.spis-weles-submission.v1';
 const TASK_STATUS_SCHEMA = 'wisent.spis-weles-task-status.v1';
 const CANCELLATION_SCHEMA = 'wisent.spis-weles-cancellation.v1';
 const ERROR_SCHEMA = 'wisent.spis-weles-bridge-error.v1';
-const MAX_JSON_BYTES = 1024 * 1024;
-const MAX_TRUST_BYTES = 64 * 1024;
-const MAX_OUTPUT_BYTES = 4 * 1024 * 1024;
-const MAX_EVIDENCE_MANIFEST_BYTES = 4 * 1024 * 1024;
-const MAX_EVIDENCE_INVENTORY_BYTES = 8 * 1024 * 1024;
+// No size caps: checked-in and protected files, the operator's input, Weles's answers and
+// retained artifacts are as long as they are; artifacts are bound by their signed byte counts.
 const SHA256 = /^[0-9a-f]{64}$/;
 const SHA256_ID = /^sha256:[0-9a-f]{64}$/;
 const GIT_REVISION = /^[0-9a-f]{40}$/;
@@ -351,16 +347,13 @@ function parseJson(text, name) {
 
 async function readStdin() {
   const chunks = [];
-  let bytes = 0;
   for await (const chunk of process.stdin) {
-    bytes += chunk.length;
-    if (bytes > MAX_JSON_BYTES) fail('input-too-large', 'bridge input exceeded the size limit');
     chunks.push(chunk);
   }
   return Buffer.concat(chunks).toString('utf8');
 }
 
-function readBoundedFile(path, name) {
+function readInputFile(path, name) {
   let fd;
   try {
     const pathStat = lstatSync(path);
@@ -374,15 +367,7 @@ function readBoundedFile(path, name) {
         || openedStat.ino !== pathStat.ino) {
       fail('invalid-input-file', `${name} changed during open`);
     }
-    const bytes = Buffer.allocUnsafe(MAX_JSON_BYTES + 1);
-    let offset = 0;
-    while (offset < bytes.length) {
-      const count = readSync(fd, bytes, offset, bytes.length - offset, null);
-      if (count === 0) break;
-      offset += count;
-    }
-    if (offset > MAX_JSON_BYTES) fail('input-too-large', `${name} exceeded the size limit`);
-    return bytes.subarray(0, offset).toString('utf8');
+    return readFileSync(fd, 'utf8');
   } catch (error) {
     if (error instanceof BridgeError) throw error;
     fail('invalid-input-file', `${name} could not be read`);
@@ -406,7 +391,6 @@ function readProtectedConfig(path) {
   if (typeof process.getuid !== 'function' || stat.uid !== process.getuid() || (stat.mode & 0o077) !== 0) {
     fail('config-unprotected', 'protected Weles config must be owned by this user with mode 0600 or stricter');
   }
-  if (stat.size > MAX_JSON_BYTES) fail('config-too-large', 'protected Weles config exceeded the size limit');
   try {
     return parseJson(readFileSync(path, 'utf8'), 'protected Weles config');
   } catch (error) {
@@ -424,7 +408,6 @@ function readPublicTrust(path) {
   if (!stat.isFile() || stat.isSymbolicLink()) {
     fail('invalid-trust', 'public Weles receipt trust must be a regular file, not a symlink');
   }
-  if (stat.size > MAX_JSON_BYTES) fail('invalid-trust', 'public Weles receipt trust exceeded the size limit');
   try {
     return parseJson(readFileSync(path, 'utf8'), 'public Weles receipt trust');
   } catch (error) {
@@ -446,8 +429,8 @@ function loadTrust() {
       fail('trust-unavailable', 'verified in-memory execution requires the checked-in public trust bytes');
     }
     const bytes = Buffer.from(encoded, 'base64');
-    if (bytes.toString('base64') !== encoded || bytes.length > MAX_TRUST_BYTES) {
-      fail('invalid-trust', 'verified public trust bytes are malformed or oversized');
+    if (bytes.toString('base64') !== encoded) {
+      fail('invalid-trust', 'verified public trust bytes are malformed');
     }
     trustValue = parseJson(bytes.toString('utf8'), 'verified public Weles receipt trust');
   } else {
@@ -514,9 +497,6 @@ async function loadOfficialClient() {
         'official-client-unavailable',
         'the vendored official Weles client must be a regular non-symlink file',
       );
-    }
-    if (pathStat.size > MAX_JSON_BYTES) {
-      fail('official-client-unavailable', 'the vendored official Weles client is oversized');
     }
     fd = openSync(
       sourcePath,
@@ -650,10 +630,8 @@ function validateArtifact(value) {
   if (!SHA256.test(nonemptyString(artifact.sha256, 'artifact.sha256'))) {
     fail('invalid-artifact', 'artifact.sha256 must be a lowercase SHA-256 digest');
   }
-  if (!Number.isSafeInteger(artifact.bytes)
-      || artifact.bytes < 1
-      || artifact.bytes > MAX_EVIDENCE_MANIFEST_BYTES) {
-    fail('invalid-artifact', 'artifact.bytes must be a required positive bounded safe integer');
+  if (!Number.isSafeInteger(artifact.bytes) || artifact.bytes < 1) {
+    fail('invalid-artifact', 'artifact.bytes must be a required positive safe integer');
   }
   return artifact;
 }
@@ -675,9 +653,6 @@ async function digestArtifact(artifact) {
     handle = await open(actual, fsConstants.O_RDONLY | (fsConstants.O_NOFOLLOW ?? 0));
     const stat = await handle.stat();
     if (!stat.isFile()) fail('invalid-artifact', 'retained artifact must be a regular file');
-    if (stat.size > MAX_EVIDENCE_MANIFEST_BYTES) {
-      fail('artifact-too-large', 'retained evidence manifest exceeded the strict byte limit');
-    }
     const hash = createHash('sha256');
     const chunks = [];
     for await (const chunk of createReadStream(null, { fd: handle.fd, autoClose: false })) {
@@ -879,8 +854,8 @@ function validateEvidenceManifest(value, expectedClaims) {
       fail('invalid-artifact', `${name} is not a canonical immutable evidence entry`);
     }
     totalBytes += entry.bytes;
-    if (!Number.isSafeInteger(totalBytes) || totalBytes > MAX_EVIDENCE_INVENTORY_BYTES) {
-      fail('artifact-too-large', 'retained evidence inventory exceeded the total byte limit');
+    if (!Number.isSafeInteger(totalBytes)) {
+      fail('artifact-too-large', 'retained evidence inventory byte total is not a safe integer');
     }
     kinds.add(kind);
     uris.add(uri);
@@ -984,14 +959,7 @@ function heldTaskStatus(serviceIdentity, config, taskId) {
       },
     }, (incoming) => {
       const chunks = [];
-      let received = 0;
       incoming.on('data', (chunk) => {
-        received += chunk.length;
-        if (received > MAX_JSON_BYTES) {
-          incoming.destroy();
-          rejectStatus(new BridgeError('weles-response-oversized', 'the held Weles task status exceeded the size limit'));
-          return;
-        }
         chunks.push(chunk);
       });
       incoming.on('end', () => {
@@ -1298,7 +1266,6 @@ function reusableSubmission(path, prepared, config) {
   if (stat.isSymbolicLink() || !stat.isFile()) {
     fail('invalid-output', 'submission output must be a regular non-symlink file');
   }
-  if (stat.size > MAX_OUTPUT_BYTES) fail('output-conflict', 'existing submission output is oversized');
   let existing;
   try {
     existing = JSON.parse(readFileSync(destination, 'utf8'));
@@ -1597,7 +1564,6 @@ function existingOutputMatches(destination, bytes) {
     if (existing.isSymbolicLink() || !existing.isFile()) {
       fail('invalid-output', 'output must not be a symlink or non-file');
     }
-    if (existing.size > MAX_OUTPUT_BYTES) fail('output-conflict', 'existing output differs from this result');
     if (readFileSync(destination).equals(bytes)) return true;
     fail('output-conflict', 'existing output differs from this result');
   } catch (error) {
@@ -1625,7 +1591,6 @@ function syncOutput(destination, parent) {
 function writeOutput(path, document) {
   const text = `${JSON.stringify(document, null, 2)}\n`;
   const bytes = Buffer.from(text, 'utf8');
-  if (bytes.length > MAX_OUTPUT_BYTES) fail('output-too-large', 'bridge output exceeded the size limit');
   if (path === '-') {
     process.stdout.write(bytes);
     return;
@@ -1668,7 +1633,7 @@ function writeOutput(path, document) {
 
 try {
   const args = parseArgs(process.argv.slice(2));
-  const inputText = args.input === '-' ? await readStdin() : readBoundedFile(args.input, 'bridge input');
+  const inputText = args.input === '-' ? await readStdin() : readInputFile(args.input, 'bridge input');
   const command = parseJson(inputText, 'bridge input');
   const commandEnvelope = plainObject(command, 'command');
   if (commandEnvelope.schema !== COMMAND_SCHEMA) fail('unsupported-command', 'bridge command schema is unsupported');

@@ -91,8 +91,7 @@ impl VerifiedProvenanceSet {
             }
         };
         for (index, reference_value) in references.iter().enumerate() {
-            let result =
-                verify_document_reference(reference_value, record, record_dir, &trust);
+            let result = verify_document_reference(reference_value, record, record_dir, &trust);
             match result {
                 Ok(document) => {
                     if verified.documents.contains_key(&document.id) {
@@ -178,8 +177,7 @@ impl VerifiedProvenanceSet {
                     return false;
                 };
                 let stripped = strip_provenance(value);
-                canonical_json_sha256(source_value)
-                    .is_ok_and(|digest| digest == expected_digest)
+                canonical_json_sha256(source_value).is_ok_and(|digest| digest == expected_digest)
                     && *source_value == stripped
                     && self.retained_member_matches(value)
             }
@@ -230,9 +228,8 @@ pub(crate) fn verify_document_reference(
     record_dir: &Path,
     trust: &CanonicalTrust,
 ) -> Result<VerifiedDocument, String> {
-    let reference: WelesProvenanceDocumentRef =
-        serde_json::from_value(reference_value.clone())
-            .map_err(|_| "reference does not match the typed schema".to_string())?;
+    let reference: WelesProvenanceDocumentRef = serde_json::from_value(reference_value.clone())
+        .map_err(|_| "reference does not match the typed schema".to_string())?;
     if reference.schema != PROVENANCE_DOCUMENT_REF_SCHEMA {
         return Err("reference schema is unsupported".to_string());
     }
@@ -240,7 +237,7 @@ pub(crate) fn verify_document_reference(
         return Err("reference sha256 is not a lowercase SHA-256 digest".to_string());
     }
     let document_path = resolve_retained_file(record_dir, &reference.path)?;
-    let bytes = read_limited(&document_path, MAX_DOCUMENT_BYTES)?;
+    let bytes = read_whole(&document_path)?;
     if sha256_bytes(&bytes) != reference.sha256 {
         return Err("verification document digest does not match its reference".to_string());
     }
@@ -251,12 +248,13 @@ pub(crate) fn verify_document_reference(
     let fresh = invoke_bridge(&persisted, record_dir, trust)?;
     validate_fresh_document(&persisted, &fresh, record_dir)?;
     let artifact_path = resolve_retained_file(record_dir, &fresh.artifact.path)?;
-    let artifact_bytes = read_limited(&artifact_path, MAX_DOCUMENT_BYTES)?;
+    let artifact_bytes = read_limited(&artifact_path, fresh.artifact.bytes)?;
     if sha256_bytes(&artifact_bytes) != fresh.artifact.sha256 {
         return Err("receipt-bound JSON artifact changed while it was being parsed".to_string());
     }
-    let artifact_value: Value = serde_json::from_slice(&artifact_bytes)
-        .map_err(|_| "receipt-bound artifact is not the required signed JSON document".to_string())?;
+    let artifact_value: Value = serde_json::from_slice(&artifact_bytes).map_err(|_| {
+        "receipt-bound artifact is not the required signed JSON document".to_string()
+    })?;
     verify_attempt_binding(record, record_dir, &fresh, &artifact_value, &trust.document)?;
     Ok(VerifiedDocument {
         id: fresh.id,

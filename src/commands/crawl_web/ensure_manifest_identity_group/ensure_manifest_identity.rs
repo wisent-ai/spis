@@ -51,7 +51,9 @@ pub(crate) fn ensure_manifest_identity(
 
 /// The signed inventory, typed. An empty inventory is a legitimate non-success shape: a
 /// task that failed before it produced anything still signs the manifest that says so.
-pub(crate) fn signed_inventory(evidence: &Value) -> Outcome<Vec<weles::WelesEvidenceInventoryEntry>> {
+pub(crate) fn signed_inventory(
+    evidence: &Value,
+) -> Outcome<Vec<weles::WelesEvidenceInventoryEntry>> {
     let entries = evidence
         .get("evidenceInventory")
         .and_then(Value::as_array)
@@ -87,7 +89,6 @@ pub(crate) fn retain_signed_inventory(
         vec![format!("recordings/{weles_task_id}/evidence-manifest.json")];
     let mut kinds: BTreeSet<&str> = BTreeSet::new();
     let mut uris: BTreeSet<&str> = BTreeSet::new();
-    let mut total_bytes = 0_u64;
     for entry in inventory {
         let relative = entry.uri.strip_prefix(prefix).ok_or_else(|| {
             WorkerFailure::new(
@@ -117,15 +118,6 @@ pub(crate) fn retain_signed_inventory(
             "weles_evidence_entry_duplicate",
             "the evidence inventory repeats a kind or URI",
         )?;
-        total_bytes = total_bytes
-            .checked_add(entry.bytes)
-            .filter(|total| *total <= MAXIMUM_EVIDENCE_BYTES)
-            .ok_or_else(|| {
-                WorkerFailure::new(
-                    "weles_evidence_too_large",
-                    "the retained evidence inventory exceeds the total byte limit",
-                )
-            })?;
         let destination = recordings.join(relative);
         storage_get(&entry.uri, &destination)?;
         let bytes = std::fs::read(&destination)?;

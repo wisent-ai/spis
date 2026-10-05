@@ -30,45 +30,55 @@ pub(crate) fn resolve_retained_file(base: &Path, relative: &str) -> Result<PathB
     {
         return Err("retained path escapes the record directory".to_string());
     }
-    let canonical_base = fs::canonicalize(base)
-        .map_err(|_| "record directory could not be resolved".to_string())?;
+    let canonical_base =
+        fs::canonicalize(base).map_err(|_| "record directory could not be resolved".to_string())?;
     let joined = canonical_base.join(relative_path);
-    let link_metadata = fs::symlink_metadata(&joined)
-        .map_err(|_| "retained file is absent".to_string())?;
+    let link_metadata =
+        fs::symlink_metadata(&joined).map_err(|_| "retained file is absent".to_string())?;
     if link_metadata.file_type().is_symlink() || !link_metadata.is_file() {
         return Err("retained path is not a regular non-symlink file".to_string());
     }
-    let canonical_file = fs::canonicalize(&joined)
-        .map_err(|_| "retained file could not be resolved".to_string())?;
+    let canonical_file =
+        fs::canonicalize(&joined).map_err(|_| "retained file could not be resolved".to_string())?;
     if !canonical_file.starts_with(&canonical_base) {
         return Err("retained file resolves outside the record directory".to_string());
     }
     Ok(canonical_file)
 }
 
-pub(crate) fn read_stream_limited(
-    reader: impl Read,
-    limit: usize,
-    label: &str,
-) -> Result<Vec<u8>, String> {
+/// Everything `reader` yields; a checked-in file, a document the reference pins by
+/// digest, or the bridge's own output is as long as it is.
+pub(crate) fn read_stream(mut reader: impl Read, label: &str) -> Result<Vec<u8>, String> {
     let mut bytes = Vec::new();
     reader
-        .take(limit as u64 + 1)
         .read_to_end(&mut bytes)
         .map_err(|_| format!("{label} could not be read"))?;
-    if bytes.len() > limit {
-        return Err(format!("{label} exceeded the size limit"));
+    Ok(bytes)
+}
+
+/// A retained file read up to the byte count its signed inventory or receipt states;
+/// more is refused, because the signature covers exactly that many bytes.
+pub(crate) fn read_limited(path: &Path, limit: u64) -> Result<Vec<u8>, String> {
+    let file = fs::File::open(path).map_err(|_| "retained file could not be opened".to_string())?;
+    let mut bytes = Vec::new();
+    file.take(limit + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|_| "retained file could not be read".to_string())?;
+    if bytes.len() as u64 > limit {
+        return Err("retained file is longer than its signed byte count".to_string());
     }
     Ok(bytes)
 }
 
-pub(crate) fn read_limited(path: &Path, limit: u64) -> Result<Vec<u8>, String> {
+/// A retained file read whole; its digest is then checked against the reference.
+pub(crate) fn read_whole(path: &Path) -> Result<Vec<u8>, String> {
     let file = fs::File::open(path).map_err(|_| "retained file could not be opened".to_string())?;
-    read_stream_limited(file, limit as usize, "retained JSON document")
+    read_stream(file, "retained JSON document")
 }
 
 pub(crate) fn sha256_file(path: &Path) -> Result<String, String> {
-    let mut file = fs::File::open(path).map_err(|_| "retained artifact could not be opened".to_string())?;
+    let mut file =
+        fs::File::open(path).map_err(|_| "retained artifact could not be opened".to_string())?;
     let mut hash = Sha256::new();
     std::io::copy(&mut file, &mut DigestWriter(&mut hash))
         .map_err(|_| "retained artifact could not be hashed".to_string())?;
@@ -107,9 +117,7 @@ pub(crate) fn is_git_revision(value: &str) -> bool {
 }
 
 pub(crate) fn is_sha256_id(value: &str) -> bool {
-    value
-        .strip_prefix("sha256:")
-        .is_some_and(is_sha256)
+    value.strip_prefix("sha256:").is_some_and(is_sha256)
 }
 
 pub(crate) fn update_framed(hash: &mut Sha256, label: &str, value: &str) {
@@ -186,9 +194,9 @@ pub(crate) fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
                     // double inside the safe-integer range canonicalizes to the same
                     // integer text here. Fractional and out-of-range numbers are
                     // rejected on both sides.
-                    let float = number
-                        .as_f64()
-                        .ok_or_else(|| "JCS input contains an unrepresentable number".to_string())?;
+                    let float = number.as_f64().ok_or_else(|| {
+                        "JCS input contains an unrepresentable number".to_string()
+                    })?;
                     if !float.is_finite() || float.fract() != 0.0 {
                         return Err("JCS input contains a fractional number".to_string());
                     }
@@ -215,9 +223,8 @@ pub(crate) fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
             }
             Value::Object(object) => {
                 let mut entries: Vec<_> = object.iter().collect();
-                entries.sort_by(|(left, _), (right, _)| {
-                    left.encode_utf16().cmp(right.encode_utf16())
-                });
+                entries
+                    .sort_by(|(left, _), (right, _)| left.encode_utf16().cmp(right.encode_utf16()));
                 output.push('{');
                 for (index, (key, entry)) in entries.into_iter().enumerate() {
                     if index != 0 {

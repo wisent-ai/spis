@@ -76,7 +76,9 @@ pub(crate) fn validate_spis_binding(binding: &WelesAttemptBinding) -> Result<(),
 /// Re-derives the runtime record key and attempt identity exactly as the Weles
 /// public admission service does, so the Rust layer never accepts a weaker
 /// attempt binding than the runtime promises.
-pub(crate) fn validate_attempt_binding_derivation(binding: &WelesAttemptBinding) -> Result<(), String> {
+pub(crate) fn validate_attempt_binding_derivation(
+    binding: &WelesAttemptBinding,
+) -> Result<(), String> {
     let catalog_key = sha256_bytes(
         format!(
             "{}\0{}\0{}",
@@ -101,13 +103,7 @@ pub(crate) fn validate_attempt_binding_derivation(binding: &WelesAttemptBinding)
         )
         .as_bytes(),
     );
-    if binding.attempt_id
-        != format!(
-            "attempt-{}-{}",
-            binding.attempt,
-            &attempt_fingerprint[..16]
-        )
-    {
+    if binding.attempt_id != format!("attempt-{}-{}", binding.attempt, &attempt_fingerprint[..16]) {
         return Err("signed Spis attempt identity is not the runtime derivation".to_string());
     }
     Ok(())
@@ -139,7 +135,7 @@ pub(crate) fn load_canonical_trust() -> Result<CanonicalTrust, String> {
     }
     let canonical = fs::canonicalize(&checked_in)
         .map_err(|_| "checked-in public trust document could not be resolved".to_string())?;
-    let bytes = read_limited(&canonical, MAX_TRUST_BYTES)?;
+    let bytes = read_whole(&canonical)?;
     let document: WelesReceiptTrust = serde_json::from_slice(&bytes)
         .map_err(|_| "public trust document does not match the typed schema".to_string())?;
     if document.schema != BRIDGE_TRUST_SCHEMA

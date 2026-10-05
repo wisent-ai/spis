@@ -41,8 +41,6 @@ pub(crate) const ACCESSIBILITY_KIND: &str = "accessibility_tree";
 
 pub(crate) const PNG_MAGIC: &[u8] = b"\x89PNG\r\n\x1a\n";
 
-pub(crate) const MAXIMUM_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
-
 /// A typed worker failure. Every exit path carries an exact machine-readable code so the
 /// importer can distinguish an infrastructure refusal from a rejected attempt.
 pub(crate) struct WorkerFailure {
@@ -97,7 +95,10 @@ pub(crate) struct Collected {
 }
 
 pub(crate) fn is_lowercase_hex(value: &str, length: usize) -> bool {
-    value.len() == length && value.bytes().all(|byte| matches!(byte, b'0'..=b'9' | b'a'..=b'f'))
+    value.len() == length
+        && value
+            .bytes()
+            .all(|byte| matches!(byte, b'0'..=b'9' | b'a'..=b'f'))
 }
 
 pub(crate) fn is_sha256(value: &str) -> bool {
@@ -176,8 +177,9 @@ pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
 
 /// Mirrors `weles_provenance::validate_api_endpoint`: the exact canonical `/api/v1` base.
 pub(crate) fn validate_api_endpoint(value: &str) -> Outcome<()> {
-    let endpoint = url::Url::parse(value)
-        .map_err(|_| WorkerFailure::new("weles_service_endpoint_invalid", "endpoint is not a URL"))?;
+    let endpoint = url::Url::parse(value).map_err(|_| {
+        WorkerFailure::new("weles_service_endpoint_invalid", "endpoint is not a URL")
+    })?;
     ensure(
         matches!(endpoint.scheme(), "http" | "https")
             && endpoint.username().is_empty()

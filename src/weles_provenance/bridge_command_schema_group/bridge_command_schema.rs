@@ -16,8 +16,7 @@ pub const CANCELLATION_SCHEMA: &str = "wisent.spis-weles-cancellation.v1";
 
 pub const PROVENANCE_DOCUMENT_SCHEMA: &str = "wisent.spis-weles-provenance.v1";
 
-pub const PROVENANCE_DOCUMENT_REF_SCHEMA: &str =
-    "wisent.spis-weles-provenance-document-ref.v1";
+pub const PROVENANCE_DOCUMENT_REF_SCHEMA: &str = "wisent.spis-weles-provenance-document-ref.v1";
 
 pub const PROVENANCE_LINK_SCHEMA: &str = "wisent.spis-provenance-link.v1";
 
@@ -51,20 +50,13 @@ pub fn is_terminal_outcome(value: &str) -> bool {
 
 pub const OFFICIAL_CLIENT_PACKAGE: &str = "@wisent-ai/weles-client";
 
-pub const OFFICIAL_CLIENT_COMMIT: &str =
-    "37798a26022a040fbd0a4a4a25c99b5559d95a32";
+pub const OFFICIAL_CLIENT_COMMIT: &str = "37798a26022a040fbd0a4a4a25c99b5559d95a32";
 
 pub(crate) const BRIDGE_SCRIPT_SHA256: &str = env!("SPIS_BRIDGE_SCRIPT_SHA256");
 
-pub(crate) const MAX_BRIDGE_SCRIPT_BYTES: u64 = 256 * 1024;
-
-pub(crate) const MAX_DOCUMENT_BYTES: u64 = 4 * 1024 * 1024;
-
-pub(crate) const MAX_TRUST_BYTES: u64 = 64 * 1024;
-
-pub(crate) const MAX_RETAINED_EVIDENCE_BYTES: u64 = 8 * 1024 * 1024;
-
-pub(crate) const MAX_BRIDGE_ERROR_BYTES: usize = 64 * 1024;
+// Retained files are read up to the byte count their signed inventory or receipt states,
+// and checked-in files, pinned documents and the bridge's own output whole; no size is
+// chosen here.
 
 pub(crate) const BRIDGE_PATH: &str = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
 
