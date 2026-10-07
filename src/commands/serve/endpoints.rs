@@ -95,6 +95,46 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
             }
             Ok(argv)
         }
+        "catalog-add" => {
+            let mut argv = vec![
+                "catalog-type".into(),
+                "add".into(),
+                text(body, "slug", "adding a product type requires a slug")?,
+                "--title".into(),
+                text(body, "title", "adding a product type requires a title")?,
+            ];
+            if let Ok(description) = text(body, "description", "") {
+                argv.extend(["--description".into(), description]);
+            }
+            Ok(argv)
+        }
+        "catalog-edit" => {
+            let mut argv = vec![
+                "catalog-type".into(),
+                "edit".into(),
+                text(body, "slug", "editing a product type requires its slug")?,
+            ];
+            for (key, flag) in [("title", "--title"), ("description", "--description"), ("status", "--status"), ("rename", "--rename")] {
+                if let Ok(value) = text(body, key, "") {
+                    argv.extend([flag.into(), value]);
+                }
+            }
+            if argv.len() == 3 {
+                return Err(bad_request("editing a product type requires a title, description, status or new slug"));
+            }
+            Ok(argv)
+        }
+        "catalog-remove" => {
+            let mut argv = vec![
+                "catalog-type".into(),
+                "remove".into(),
+                text(body, "slug", "removing a product type requires its slug")?,
+            ];
+            if body.get("force").and_then(Value::as_bool) == Some(true) {
+                argv.push("--force".into());
+            }
+            Ok(argv)
+        }
         _ => Err(Refusal { status: 404, sentence: format!("unknown endpoint: POST /v1/{name}") }),
     }
 }
