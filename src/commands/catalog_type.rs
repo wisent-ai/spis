@@ -63,18 +63,23 @@ fn save_sources(directory: &std::path::Path, sources: &Value) -> Result<()> {
     Ok(())
 }
 
-fn regenerate() {
+/// Rebuild the index; on refusal return the generator's own output.
+fn regenerate() -> std::result::Result<(), String> {
     let exe = std::env::current_exe().unwrap_or_else(|_| PathBuf::from("spis"));
     match Command::new(exe).arg("generate-example-catalogs").output() {
-        Ok(out) if out.status.success() => {}
-        Ok(out) => {
-            let stdout = String::from_utf8_lossy(&out.stdout);
-            let stderr = String::from_utf8_lossy(&out.stderr);
-            fail(&format!(
-                "index regeneration refused the change:\n{stdout}{stderr}"
-            ));
-        }
-        Err(e) => fail(&format!("index regeneration refused the change:\n{e}")),
+        Ok(out) if out.status.success() => Ok(()),
+        Ok(out) => Err(format!(
+            "{}{}",
+            String::from_utf8_lossy(&out.stdout),
+            String::from_utf8_lossy(&out.stderr)
+        )),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+fn regenerate_or_fail() {
+    if let Err(detail) = regenerate() {
+        fail(&format!("index regeneration refused the change:\n{detail}"));
     }
 }
 
@@ -170,7 +175,20 @@ fn cmd_add(rest: &[String]) -> Result<()> {
             "references": [],
         }))? + "\n",
     )?;
-    regenerate();
+    // A refused catalog is not left behind: it would make every later
+    // regeneration refuse the corpus for the same reason.
+    if let Err(detail) = regenerate() {
+        match std::fs::remove_dir_all(&directory) {
+            Ok(()) => fail(&format!(
+                "index regeneration refused the change, so {} was removed again:\n{detail}",
+                directory.display()
+            )),
+            Err(e) => fail(&format!(
+                "index regeneration refused the change and {} could not be removed ({e}):\n{detail}",
+                directory.display()
+            )),
+        }
+    }
     println!(
         "added {} ({title}); scaffolded with zero records",
         directory.display()
@@ -226,7 +244,7 @@ fn cmd_edit(rest: &[String]) -> Result<()> {
     if let Some(target) = &new_slug {
         std::fs::rename(&directory, target)?;
     }
-    regenerate();
+    regenerate_or_fail();
     println!("edited {}: {}", slug, changed.join(", "));
     Ok(())
 }
@@ -263,7 +281,7 @@ fn cmd_remove(rest: &[String]) -> Result<()> {
         ));
     }
     std::fs::remove_dir_all(&directory)?;
-    regenerate();
+    regenerate_or_fail();
     println!("removed {}", directory.display());
     Ok(())
 }

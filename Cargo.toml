@@ -19,6 +19,11 @@ name = "accessibility-live"
 path = "tests/accessibility/main.rs"
 harness = false
 
+[[test]]
+name = "catalog-type-lifecycle"
+path = "tests/catalog_type/main.rs"
+harness = false
+
 [dependencies]
 ureq = { version = "2", features = ["gzip", "json"] }
 serde = { version = "1", features = ["derive"] }

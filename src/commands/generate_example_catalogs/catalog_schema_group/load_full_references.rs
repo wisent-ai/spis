@@ -12,7 +12,7 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
 
     require_nonempty(
         &index,
-        &["schema", "catalog", "reference_count", "references"],
+        &["schema", "catalog", "reference_count"],
         &index_path_str,
     )?;
     if index.get("schema").and_then(Value::as_str) != Some(INDEX_SCHEMA) {
@@ -25,11 +25,13 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
         bail!("{index_path_str}: catalog must equal directory name");
     }
 
+    // A scaffolded catalog holds zero references, so the list may be empty but
+    // must be a list.
     let records: Vec<Value> = index
         .get("references")
         .and_then(Value::as_array)
         .cloned()
-        .unwrap_or_default();
+        .ok_or_else(|| anyhow!("{index_path_str}: references must be a list"))?;
     if records.len() != examples.len() {
         bail!(
             "{index_path_str}: {} references for {} curated examples",

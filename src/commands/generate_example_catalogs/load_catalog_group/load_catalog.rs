@@ -18,9 +18,9 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
         .cloned()
         .ok_or_else(|| anyhow!("{source_path_str}: examples must be a list"))?;
 
-    if examples.len() != RECORDS_PER_CATALOG {
+    if CATALOGS.contains(&slug) && examples.len() != RECORDS_PER_CATALOG {
         bail!(
-            "{source_path_str}: exact corpus contract requires {RECORDS_PER_CATALOG} sources, found {}",
+            "{source_path_str}: the interface family contract requires {RECORDS_PER_CATALOG} sources, found {}",
             examples.len()
         );
     }
@@ -225,8 +225,11 @@ pub(crate) fn full_reference_index<'a>(catalog: &'a Value) -> &'a Value {
 // Entry point
 // ---------------------------------------------------------------------------
 
+/// Every interface family in [`CATALOGS`] is required and keeps its order. A
+/// catalog added with `spis catalog-type add` is accepted beside them, after
+/// them in name order, and holds as many records as its sources declare.
 pub(crate) fn discovered_catalogs() -> Result<Vec<String>> {
-    let mut found: Vec<String> = std::fs::read_dir(".")?
+    let found: BTreeSet<String> = std::fs::read_dir(".")?
         .filter_map(Result::ok)
         .map(|entry| entry.file_name().to_string_lossy().to_string())
         .filter(|name| {
@@ -234,15 +237,18 @@ pub(crate) fn discovered_catalogs() -> Result<Vec<String>> {
                 && Path::new(name).join("references").is_dir()
         })
         .collect();
-    found.sort();
-    let mut expected: Vec<String> = CATALOGS.iter().map(|value| value.to_string()).collect();
-    expected.sort();
-    if found != expected {
+    let missing: Vec<&str> = CATALOGS
+        .iter()
+        .copied()
+        .filter(|family| !found.contains(*family))
+        .collect();
+    if !missing.is_empty() {
         bail!(
-            "catalog set differs from the exact 15-family contract; found {:?}, expected {:?}",
-            found,
-            expected
+            "interface families missing from the corpus: {missing:?}; all {} are required",
+            CATALOGS.len()
         );
     }
-    Ok(CATALOGS.iter().map(|value| value.to_string()).collect())
+    let mut slugs: Vec<String> = CATALOGS.iter().map(|value| value.to_string()).collect();
+    slugs.extend(found.into_iter().filter(|name| !CATALOGS.contains(&name.as_str())));
+    Ok(slugs)
 }

@@ -1,5 +1,8 @@
 use super::*;
 
+/// Every interface family in [`KNOWN_CATALOGS`] is required and keeps its
+/// order; a catalog added with `spis catalog-type add` follows them in name
+/// order.
 pub(crate) fn catalogs(selected: Option<&str>) -> Result<Vec<PathBuf>> {
     let mut found: Vec<String> = std::fs::read_dir(".")?
         .filter_map(Result::ok)
@@ -10,25 +13,34 @@ pub(crate) fn catalogs(selected: Option<&str>) -> Result<Vec<PathBuf>> {
         })
         .collect();
     found.sort();
-    let mut expected: Vec<String> = KNOWN_CATALOGS.iter().map(|value| value.to_string()).collect();
-    expected.sort();
-    if found != expected {
+    let missing: Vec<&str> = KNOWN_CATALOGS
+        .iter()
+        .copied()
+        .filter(|family| !found.iter().any(|name| name == family))
+        .collect();
+    if !missing.is_empty() {
         anyhow::bail!(
-            "catalog set differs from the exact 15-family contract; found {:?}, expected {:?}",
-            found,
-            expected
+            "interface families missing from the corpus: {missing:?}; all {} are required",
+            KNOWN_CATALOGS.len()
         );
     }
     if let Some(selected) = selected {
-        if !KNOWN_CATALOGS.contains(&selected) {
+        if !found.iter().any(|name| name == selected) {
             anyhow::bail!(
-                "unknown catalog {selected}; exact corpus contains only {}",
-                KNOWN_CATALOGS.join(", ")
+                "unknown catalog {selected}; the corpus holds {}",
+                found.join(", ")
             );
         }
         return Ok(vec![PathBuf::from(selected)]);
     }
-    Ok(KNOWN_CATALOGS.iter().map(PathBuf::from).collect())
+    let mut ordered: Vec<PathBuf> = KNOWN_CATALOGS.iter().map(PathBuf::from).collect();
+    ordered.extend(
+        found
+            .iter()
+            .filter(|name| !KNOWN_CATALOGS.contains(&name.as_str()))
+            .map(PathBuf::from),
+    );
+    Ok(ordered)
 }
 
 pub(crate) fn records_in(catalog: &Path) -> Result<Vec<PathBuf>> {
@@ -49,9 +61,19 @@ pub(crate) fn records_in(catalog: &Path) -> Result<Vec<PathBuf>> {
         .and_then(Value::as_array)
         .map(Vec::len)
         .context("sources.json has no examples array")?;
-    if records.len() != RECORDS_PER_CATALOG || source_count != RECORDS_PER_CATALOG {
+    let family = catalog
+        .to_str()
+        .is_some_and(|name| KNOWN_CATALOGS.contains(&name));
+    if family && (records.len() != RECORDS_PER_CATALOG || source_count != RECORDS_PER_CATALOG) {
         anyhow::bail!(
-            "{}: exact contract requires {RECORDS_PER_CATALOG} records and sources, found {} records and {source_count} sources",
+            "{}: the interface family contract requires {RECORDS_PER_CATALOG} records and sources, found {} records and {source_count} sources",
+            catalog.display(),
+            records.len()
+        );
+    }
+    if records.len() != source_count {
+        anyhow::bail!(
+            "{}: {} records for {source_count} sources",
             catalog.display(),
             records.len()
         );
