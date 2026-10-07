@@ -15,14 +15,22 @@ pub(crate) fn write_sources() -> Result<Value> {
             .split_once('-')
             .map(|(_, rest)| rest)
             .unwrap_or(parent);
-        let prod = product_by_name(record["name"].as_str().unwrap_or_default());
+        let name = record["name"].as_str().with_context(|| {
+            format!("record {} has no product name", path.display())
+        })?;
+        let prod = product_by_name(name).with_context(|| {
+            format!(
+                "record {} names product {name:?}, which the capture plan does not declare",
+                path.display()
+            )
+        })?;
         examples.push(json!({
             "name": record["name"].clone(),
             "slug": slug,
             "source_url": record["product_url"].clone(),
             "repository": record["repository"].clone(),
-            "category": prod.map(|p| p.category).unwrap_or("Wisent product"),
-            "selection_note": prod.map(|p| p.selection_note).unwrap_or(""),
+            "category": prod.category,
+            "selection_note": prod.selection_note,
             "installed": record["installed"].clone(),
             "reference_path": format!("references/{parent}/reference.json"),
             "visual": {
@@ -232,13 +240,13 @@ pub fn run(rest: &[String]) -> Result<()> {
     let Some(plan_path) = plan_path else {
         return Err(crate::commands::usage(format!("--plan is required\n{USAGE}")));
     };
-    let plan = load_plan(&plan_path)?;
+    let loaded = load_plan(&plan_path)?;
     for slug in &wanted {
-        if !plan.products.iter().any(|product| &product.slug == slug) {
+        if !loaded.products.iter().any(|product| &product.slug == slug) {
             return Err(crate::commands::usage(format!(
                 "--product {slug} is not in {}; it declares: {}",
                 plan_path.display(),
-                plan.products.iter().map(|product| product.slug.as_str()).collect::<Vec<_>>().join(", ")
+                loaded.products.iter().map(|product| product.slug.as_str()).collect::<Vec<_>>().join(", ")
             )));
         }
     }
