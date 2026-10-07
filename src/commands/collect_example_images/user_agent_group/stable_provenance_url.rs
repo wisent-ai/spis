@@ -157,7 +157,9 @@ pub(crate) fn slugify_name(name: &str) -> String {
     while slug.ends_with('-') {
         slug.pop();
     }
-    slug.chars().take(60).collect()
+    // The whole slug: two names sharing their first characters would share a
+    // cut one and overwrite each other's stored image.
+    slug
 }
 
 pub(crate) fn today_utc() -> String {
