@@ -103,10 +103,7 @@ pub(super) fn take_step(
     };
     let active_owner_after = global_active_owner(driver, &session)?;
     let post_snapshot = transitions_dir.join(format!("step-{transition_index:04}-after.json"));
-    std::fs::write(
-        &post_snapshot,
-        serde_json::to_string_pretty(&post)? + "\n",
-    )?;
+    std::fs::write(&post_snapshot, serde_json::to_string_pretty(&post)? + "\n")?;
     if let Err(error) = assert_target_surface(&post, pid, window_id, &bundle_id) {
         transitions.push(json!({
             "step": transition_index,

@@ -9,15 +9,21 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
         match rest[index].as_str() {
             "--run" => {
                 index += 1;
-                run_id = Some(crate::commands::required(rest.get(index), "--run needs a value")?.clone());
+                run_id = Some(
+                    crate::commands::required(rest.get(index), "--run needs a value")?.clone(),
+                );
             }
             "--record" => {
                 index += 1;
-                selected_record = Some(crate::commands::required(rest.get(index), "--record needs a value")?.clone());
+                selected_record = Some(
+                    crate::commands::required(rest.get(index), "--record needs a value")?.clone(),
+                );
             }
             "--reason" => {
                 index += 1;
-                reason = Some(crate::commands::required(rest.get(index), "--reason needs a value")?.clone());
+                reason = Some(
+                    crate::commands::required(rest.get(index), "--reason needs a value")?.clone(),
+                );
             }
             value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
@@ -73,8 +79,7 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
         bail!("--record must resolve to exactly one retained crawl record");
     }
     for (catalog_name, record_name) in targets {
-        let _record_guard =
-            RecordMutationGuard::acquire(&run_id, &catalog_name, &record_name)?;
+        let _record_guard = RecordMutationGuard::acquire(&run_id, &catalog_name, &record_name)?;
         let current = load(Some(&run_id))?;
         let record = current
             .get("catalogs")
@@ -216,7 +221,10 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
                 (json!({"state": "not_cancellable"}), status_before.clone())
             }
         } else {
-            (json!({"state": "cancelled_before_submission"}), status_before.clone())
+            (
+                json!({"state": "cancelled_before_submission"}),
+                status_before.clone(),
+            )
         };
         let result = json!({
             "schema": "wisent.crawl-cancel-result.v1",
@@ -263,7 +271,9 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
             .and_then(Value::as_str)
             .unwrap_or("lookup_failed");
         if matches!(final_state, "cancelled" | "canceled")
-            || target.pointer("/cancel/stado_action/state").and_then(Value::as_str)
+            || target
+                .pointer("/cancel/stado_action/state")
+                .and_then(Value::as_str)
                 == Some("cancelled_before_submission")
         {
             target["state"] = json!("cancelled");

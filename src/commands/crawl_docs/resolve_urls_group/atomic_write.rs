@@ -86,14 +86,7 @@ pub(crate) fn read_state(path: &Path) -> Result<DurableState> {
 }
 
 pub(crate) fn reset_outcome_journal(layout: &WorkLayout) -> Result<()> {
-    let journal = open_regular_file(
-        &layout.journal,
-        false,
-        true,
-        false,
-        true,
-        "outcome journal",
-    )?;
+    let journal = open_regular_file(&layout.journal, false, true, false, true, "outcome journal")?;
     journal.set_len(0)?;
     journal
         .sync_all()
@@ -107,8 +100,14 @@ pub(crate) fn replay_outcome_journal(layout: &WorkLayout, state: &mut DurableSta
     if !regular_file_exists(&layout.journal, "outcome journal")? {
         reset_outcome_journal(layout)?;
     }
-    let mut journal_file =
-        open_regular_file(&layout.journal, true, false, false, false, "outcome journal")?;
+    let mut journal_file = open_regular_file(
+        &layout.journal,
+        true,
+        false,
+        false,
+        false,
+        "outcome journal",
+    )?;
     let mut bytes = Vec::new();
     journal_file.read_to_end(&mut bytes)?;
     let complete_length = bytes
@@ -144,14 +143,12 @@ pub(crate) fn replay_outcome_journal(layout: &WorkLayout, state: &mut DurableSta
         if line.is_empty() {
             continue;
         }
-        let batch: OutcomeJournalBatch = serde_json::from_slice(line).with_context(|| {
-            format!("parse outcome journal line {}", line_index + 1)
-        })?;
+        let batch: OutcomeJournalBatch = serde_json::from_slice(line)
+            .with_context(|| format!("parse outcome journal line {}", line_index + 1))?;
         if batch.schema != "wisent.docs-outcome-batch.v1"
             || batch.outcomes.is_empty()
             || batch.first_sequence != state.outcomes.len()
-            || batch.last_sequence + 1
-                != batch.first_sequence.saturating_add(batch.outcomes.len())
+            || batch.last_sequence + 1 != batch.first_sequence.saturating_add(batch.outcomes.len())
         {
             bail!("outcome journal line {} is not canonical", line_index + 1);
         }

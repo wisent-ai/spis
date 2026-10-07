@@ -39,8 +39,9 @@ pub(crate) fn crawl_one(
     // link would survive and tmux would place its socket at the link target
     // (finding 18).
     if std::fs::symlink_metadata(&socket).is_ok() {
-        std::fs::remove_file(&socket)
-            .with_context(|| format!("remove stale private CLI tmux socket {}", socket.display()))?;
+        std::fs::remove_file(&socket).with_context(|| {
+            format!("remove stale private CLI tmux socket {}", socket.display())
+        })?;
     }
     if std::fs::symlink_metadata(&socket).is_ok() {
         bail!(
@@ -119,7 +120,12 @@ pub(crate) fn crawl_one(
         &["send-keys", "-t", &session.name, "Enter"],
         "submit CLI shell readiness probe",
     )?;
-    await_signal(&session, &ready_channel, &ready_marker, "private CLI shell readiness probe")?;
+    await_signal(
+        &session,
+        &ready_channel,
+        &ready_marker,
+        "private CLI shell readiness probe",
+    )?;
 
     let mut reports = Vec::new();
     let mut index = 1usize;
@@ -176,25 +182,36 @@ pub(crate) fn crawl_one(
         &["kill-session", "-t", &session.name],
         "close CLI PTY",
     );
-    let variant_events: Vec<Value> = reports.iter().enumerate().filter_map(|(position, invocation)| {
-        let kind = invocation.get("kind").and_then(Value::as_str)?;
-        let event_kind = if kind == "refusal" && invocation.get("exit_status").and_then(Value::as_i64).is_some_and(|status| status != 0) {
-            "parser_refusal"
-        } else if kind == "recovery" && invocation.get("exit_status").and_then(Value::as_i64) == Some(0) {
-            "recovery_observation"
-        } else {
-            return None;
-        };
-        Some(json!({
-            "event_id": format!("invocation-{}", position + 1),
-            "event_kind": event_kind,
-            "argv": invocation.get("argv"),
-            "exit_status": invocation.get("exit_status"),
-            "state": invocation.get("state"),
-            "output_sha256": invocation.get("output_sha256"),
-            "linked_interaction_id": Value::Null,
-        }))
-    }).collect();
+    let variant_events: Vec<Value> = reports
+        .iter()
+        .enumerate()
+        .filter_map(|(position, invocation)| {
+            let kind = invocation.get("kind").and_then(Value::as_str)?;
+            let event_kind = if kind == "refusal"
+                && invocation
+                    .get("exit_status")
+                    .and_then(Value::as_i64)
+                    .is_some_and(|status| status != 0)
+            {
+                "parser_refusal"
+            } else if kind == "recovery"
+                && invocation.get("exit_status").and_then(Value::as_i64) == Some(0)
+            {
+                "recovery_observation"
+            } else {
+                return None;
+            };
+            Some(json!({
+                "event_id": format!("invocation-{}", position + 1),
+                "event_kind": event_kind,
+                "argv": invocation.get("argv"),
+                "exit_status": invocation.get("exit_status"),
+                "state": invocation.get("state"),
+                "output_sha256": invocation.get("output_sha256"),
+                "linked_interaction_id": Value::Null,
+            }))
+        })
+        .collect();
     let report = json!({
         "schema": "wisent.cli-crawl-run.v1",
         "slug": record.slug,

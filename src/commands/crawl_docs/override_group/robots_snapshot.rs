@@ -68,7 +68,8 @@ impl CompiledRobots {
 /// and the caller then denies everything: a dropped `Disallow` would read as
 /// an allow.
 pub(crate) fn compile_robots_pattern(pattern: &str) -> Result<regex::Regex> {
-    regex::Regex::new(pattern).with_context(|| format!("robots pattern {pattern:?} does not compile"))
+    regex::Regex::new(pattern)
+        .with_context(|| format!("robots pattern {pattern:?} does not compile"))
 }
 
 /// Every in-scope page a site's inventory names, with what reading it cost.

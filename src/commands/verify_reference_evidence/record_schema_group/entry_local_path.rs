@@ -129,10 +129,7 @@ pub(crate) fn demote_unsupported_semantics(
         Value::Null
     };
 
-    let motion_analysis = data
-        .get("motion_analysis")
-        .cloned()
-        .unwrap_or(Value::Null);
+    let motion_analysis = data.get("motion_analysis").cloned().unwrap_or(Value::Null);
     let was_analysis_array = motion_analysis.is_array();
     let analysis_items = match motion_analysis {
         Value::Array(items) => items,
@@ -187,10 +184,7 @@ pub(crate) fn demote_unsupported_semantics(
     }
     accessibility["measured"] = json!(!verified_accessibility.is_empty());
     accessibility["observations"] = Value::Array(verified_accessibility);
-    if !accessibility
-        .get("unknowns")
-        .is_some_and(Value::is_array)
-    {
+    if !accessibility.get("unknowns").is_some_and(Value::is_array) {
         accessibility["unknowns"] = json!([]);
     }
 
@@ -199,7 +193,10 @@ pub(crate) fn demote_unsupported_semantics(
         .filter(|note| note.get("schema").and_then(Value::as_str) == Some(UNVERIFIED_NOTE_SCHEMA))
         .filter_map(|note| note.get("field").and_then(Value::as_str))
         .collect();
-    if migrated_fields.iter().any(|field| field.starts_with("interactions[")) {
+    if migrated_fields
+        .iter()
+        .any(|field| field.starts_with("interactions["))
+    {
         migration_gaps.push(
             "unsupported interaction semantics preserved as unverified source notes; verified per-observation provenance absent".to_string(),
         );

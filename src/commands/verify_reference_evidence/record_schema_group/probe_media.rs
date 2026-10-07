@@ -199,7 +199,10 @@ pub(crate) fn still_signature(path: &Path) -> Option<Signature> {
 /// Deterministic: the motion is decoded once at two frames per second into
 /// 16x16 grayscale signatures, the state image is reduced the same way, and the
 /// two are compared by mean absolute difference.
-pub(crate) fn locate_state_in_motion(state: &Path, motion_frames: &[Signature]) -> Result<Option<Value>> {
+pub(crate) fn locate_state_in_motion(
+    state: &Path,
+    motion_frames: &[Signature],
+) -> Result<Option<Value>> {
     if !state.exists() || state.extension().and_then(|e| e.to_str()) == Some("cast") {
         return Ok(None);
     }

@@ -128,14 +128,20 @@ pub(crate) fn is_lower_sha256(value: &str) -> bool {
 /// map to command index 0 with the receipt's own command and request digests, and
 /// its output URI must be the canonical attempt output coordinate. Unknown fields
 /// are refused so a v2 or extended receipt can never be mistaken for proof.
-pub(crate) fn compact_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Option<&str>, output_uri: &str, stado_stdout: &str) -> Result<Value> {
+pub(crate) fn compact_submission(
+    catalog: &str,
+    engine: &str,
+    host: &str,
+    artifact_uri: Option<&str>,
+    output_uri: &str,
+    stado_stdout: &str,
+) -> Result<Value> {
     let raw = stado_stdout
         .lines()
         .rev()
         .filter_map(|line| serde_json::from_str::<Value>(line.trim()).ok())
         .find(|value| {
-            value.get("schema").and_then(Value::as_str)
-                == Some(STADO_SUBMISSION_RECEIPT_SCHEMA)
+            value.get("schema").and_then(Value::as_str) == Some(STADO_SUBMISSION_RECEIPT_SCHEMA)
         })
         .context("Stado accepted the command but returned no exact typed v3 submission receipt")?;
     let receipt: StadoSubmissionReceipt = serde_json::from_value(raw.clone())
@@ -156,9 +162,7 @@ pub(crate) fn compact_submission(catalog: &str, engine: &str, host: &str, artifa
         || receipt.repo_ref != expected_revision
         || receipt.source_revision != expected_revision
     {
-        bail!(
-            "Stado submission receipt run/repository/ref does not bind this exact attempt"
-        );
+        bail!("Stado submission receipt run/repository/ref does not bind this exact attempt");
     }
     if receipt.jobs.len() != 1 {
         bail!("per-record crawl submission must map to exactly one Stado job");
@@ -221,9 +225,23 @@ pub(crate) fn compact_submission(catalog: &str, engine: &str, host: &str, artifa
 /// Surface-specific coordinators call this after Stado accepts a job. The final
 /// compact line is stable machine input while the preceding Stado text remains
 /// useful to a person invoking the low-level engine directly.
-pub fn print_submission(catalog: &str, engine: &str, host: &str, artifact_uri: Option<&str>, output_uri: &str, stado_stdout: &str) -> Result<()> {
+pub fn print_submission(
+    catalog: &str,
+    engine: &str,
+    host: &str,
+    artifact_uri: Option<&str>,
+    output_uri: &str,
+    stado_stdout: &str,
+) -> Result<()> {
     print!("{stado_stdout}");
-    let report = compact_submission(catalog, engine, host, artifact_uri, output_uri, stado_stdout)?;
+    let report = compact_submission(
+        catalog,
+        engine,
+        host,
+        artifact_uri,
+        output_uri,
+        stado_stdout,
+    )?;
     println!("{}", serde_json::to_string(&report)?);
     Ok(())
 }
@@ -270,8 +288,18 @@ pub(crate) fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<V
                 driver_url.into(),
             ]
         }
-        "desktop" => vec!["crawl-desktop".into(), catalog.into(), "--host".into(), host.into()],
-        "web" => vec!["crawl-web".into(), catalog.into(), "--host".into(), host.into()],
+        "desktop" => vec![
+            "crawl-desktop".into(),
+            catalog.into(),
+            "--host".into(),
+            host.into(),
+        ],
+        "web" => vec![
+            "crawl-web".into(),
+            catalog.into(),
+            "--host".into(),
+            host.into(),
+        ],
         "tui" => vec!["crawl-tui".into(), "--host".into(), host.into()],
         "cli" => vec!["crawl-cli".into(), "--host".into(), host.into()],
         "docs" => vec!["crawl-docs".into(), "--host".into(), host.into()],

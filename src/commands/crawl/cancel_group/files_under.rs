@@ -208,7 +208,10 @@ pub(crate) fn write_immutable_file(path: &Path, bytes: &[u8]) -> Result<()> {
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
     let staged = parent.join(format!(".{file_name}.{}.{}.tmp", std::process::id(), nonce));
     let result = (|| -> Result<()> {
-        let mut file = OpenOptions::new().write(true).create_new(true).open(&staged)?;
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&staged)?;
         file.write_all(bytes)?;
         file.sync_all()?;
         drop(file);
@@ -231,14 +234,20 @@ pub(crate) fn merge_immutable_tree(source: &Path, destination: &Path) -> Result<
         let to = destination.join(entry.file_name());
         let metadata = std::fs::symlink_metadata(&from)?;
         if metadata.file_type().is_symlink() {
-            bail!("retained crawl content {} is a symbolic link", from.display());
+            bail!(
+                "retained crawl content {} is a symbolic link",
+                from.display()
+            );
         }
         if metadata.is_dir() {
             merge_immutable_tree(&from, &to)?;
         } else if metadata.is_file() {
             write_immutable_file(&to, &std::fs::read(&from)?)?;
         } else {
-            bail!("retained crawl content {} is not a regular file", from.display());
+            bail!(
+                "retained crawl content {} is not a regular file",
+                from.display()
+            );
         }
     }
     Ok(())

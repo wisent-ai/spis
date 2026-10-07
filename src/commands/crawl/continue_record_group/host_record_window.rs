@@ -84,20 +84,18 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
             .find_map(|record| record.pointer("/manifest/service_identity"))
             .filter(|value| value.is_object())
             .and_then(|value| serde_json::from_value(value.clone()).ok());
-        let host_report = ensure_host_preflight(
-            run_id,
-            &catalog,
-            &engine,
-            &host,
-            service_identity.as_ref(),
-        )?;
+        let host_report =
+            ensure_host_preflight(run_id, &catalog, &engine, &host, service_identity.as_ref())?;
         let records = catalog_entry
             .get("records")
             .and_then(Value::as_array)
             .cloned()
             .unwrap_or_default();
         let window = host_record_window(&host_report, &records);
-        let mut occupied = records.iter().filter(|record| record_occupies_host(record)).count();
+        let mut occupied = records
+            .iter()
+            .filter(|record| record_occupies_host(record))
+            .count();
         for record in records {
             let Some(record_name) = record.get("record").and_then(Value::as_str) else {
                 continue;
@@ -109,13 +107,8 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
             if !occupies {
                 occupied += 1;
             }
-            if let Err(error) = continue_record(
-                run_id,
-                &catalog,
-                &host,
-                &host_report,
-                record_name,
-            ) {
+            if let Err(error) = continue_record(run_id, &catalog, &host, &host_report, record_name)
+            {
                 if error.downcast_ref::<RecordLockBusy>().is_some() {
                     continue;
                 }

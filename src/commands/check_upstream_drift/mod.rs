@@ -18,8 +18,8 @@ use std::path::PathBuf;
 use std::process::Command;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-mod report;
 mod check_sources;
+mod report;
 
-pub use report::*;
 pub use check_sources::*;
+pub use report::*;

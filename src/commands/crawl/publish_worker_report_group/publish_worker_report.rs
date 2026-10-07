@@ -37,16 +37,19 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
         use std::os::unix::fs::PermissionsExt;
         std::fs::set_permissions(&source, std::fs::Permissions::from_mode(0o600))?;
     }
-    let output = command_output(crawl_storage_command()
-        .args([
-            "storage",
-            "put",
-            "--if-absent",
-            "--content-type",
-            "application/x-ndjson",
-            &manifest.output_uri,
-        ])
-        .arg(&source), "publish worker report")?;
+    let output = command_output(
+        crawl_storage_command()
+            .args([
+                "storage",
+                "put",
+                "--if-absent",
+                "--content-type",
+                "application/x-ndjson",
+                &manifest.output_uri,
+            ])
+            .arg(&source),
+        "publish worker report",
+    )?;
     if !output.status.success() {
         bail!(
             "stado storage put refused the worker report: {}",
@@ -59,9 +62,12 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
         std::process::id()
     ));
     let _ = std::fs::remove_file(&readback);
-    let output = command_output(crawl_storage_command()
-        .args(["storage", "get", &manifest.output_uri])
-        .arg(&readback), "read back worker report")?;
+    let output = command_output(
+        crawl_storage_command()
+            .args(["storage", "get", &manifest.output_uri])
+            .arg(&readback),
+        "read back worker report",
+    )?;
     if !output.status.success() {
         let _ = std::fs::remove_file(&readback);
         bail!(
@@ -105,10 +111,7 @@ impl RecordMutationGuard {
         safe_component(run_id, "run id")?;
         safe_component(catalog, "catalog")?;
         safe_component(record, "record")?;
-        let directory = run_root()?
-            .join(run_id)
-            .join("record-locks")
-            .join(catalog);
+        let directory = run_root()?.join(run_id).join("record-locks").join(catalog);
         std::fs::create_dir_all(&directory)?;
         let file = OpenOptions::new()
             .read(true)
@@ -185,7 +188,9 @@ pub(crate) fn sync_attempt_history(run: &mut Value) {
             continue;
         };
         let mut snapshot = record.clone();
-        snapshot.as_object_mut().map(|object| object.remove("attempts"));
+        snapshot
+            .as_object_mut()
+            .map(|object| object.remove("attempts"));
         snapshot["attempt_id"] = json!(attempt_id);
         let attempts = record
             .as_object_mut()
@@ -221,19 +226,14 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
         bail!("crawl run {run_id} is already being persisted");
     }
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
-    let temporary = parent.join(format!(
-        ".run.json.{}.{}.tmp",
-        std::process::id(),
-        nonce
-    ));
+    let temporary = parent.join(format!(".run.json.{}.{}.tmp", std::process::id(), nonce));
     let result = (|| -> Result<Value> {
         let expected = run
             .get("mutation_revision")
             .and_then(Value::as_u64)
             .unwrap_or(0);
         if path.is_file() {
-            let current: Value =
-                crate::read_json(path.to_str().context("run path is not UTF-8")?)?;
+            let current: Value = crate::read_json(path.to_str().context("run path is not UTF-8")?)?;
             let actual = current
                 .get("mutation_revision")
                 .and_then(Value::as_u64)

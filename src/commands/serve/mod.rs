@@ -61,7 +61,9 @@ pub fn run(rest: &[String]) -> Result<()> {
 fn document(request: tiny_http::Request, status: u16, body: Vec<u8>) {
     let header = tiny_http::Header::from_bytes("Content-Type", "application/json")
         .expect("a fixed header is well formed");
-    let response = tiny_http::Response::from_data(body).with_status_code(status).with_header(header);
+    let response = tiny_http::Response::from_data(body)
+        .with_status_code(status)
+        .with_header(header);
     let _ = request.respond(response);
 }
 
@@ -95,10 +97,18 @@ fn answer(mut request: tiny_http::Request, program: &Path, jobs: &Mutex<()>) {
             return document(request, 200, body);
         }
         (tiny_http::Method::Get, Some("docs-status")) => "docs-status".to_string(),
-        (tiny_http::Method::Post, Some(name)) if !name.is_empty() && !name.contains('/') => name.to_string(),
+        (tiny_http::Method::Post, Some(name)) if !name.is_empty() && !name.contains('/') => {
+            name.to_string()
+        }
         _ => {
             let sentence = format!("unknown endpoint: {method} {path}");
-            return refuse(request, Refusal { status: 404, sentence });
+            return refuse(
+                request,
+                Refusal {
+                    status: 404,
+                    sentence,
+                },
+            );
         }
     };
     let body = match read_body(&mut request) {
@@ -127,21 +137,44 @@ fn run_document(request: tiny_http::Request, program: &Path, jobs: &Mutex<()>, a
         Ok(output) if output.status.success() => document(request, 200, output.stdout),
         Ok(output) => {
             let sentence = endpoints::refusal_sentence(&String::from_utf8_lossy(&output.stderr));
-            refuse(request, Refusal { status: 500, sentence });
+            refuse(
+                request,
+                Refusal {
+                    status: 500,
+                    sentence,
+                },
+            );
         }
         Err(error) => {
             let sentence = format!("spis could not start: {error}");
-            refuse(request, Refusal { status: 500, sentence });
+            refuse(
+                request,
+                Refusal {
+                    status: 500,
+                    sentence,
+                },
+            );
         }
     }
 }
 
 /// Each line a pipe yields, sent as `(stream_name, line)` until the pipe ends.
-fn pump(pipe: Box<dyn Read + Send>, stream_name: &'static str, sender: mpsc::Sender<(&'static str, String)>) {
+fn pump(
+    pipe: Box<dyn Read + Send>,
+    stream_name: &'static str,
+    sender: mpsc::Sender<(&'static str, String)>,
+) {
     let mut reader = BufReader::new(pipe);
     let mut line = Vec::new();
-    while reader.read_until(b'\n', &mut line).map(|read| read > 0).unwrap_or(false) {
-        if sender.send((stream_name, String::from_utf8_lossy(&line).into_owned())).is_err() {
+    while reader
+        .read_until(b'\n', &mut line)
+        .map(|read| read > 0)
+        .unwrap_or(false)
+    {
+        if sender
+            .send((stream_name, String::from_utf8_lossy(&line).into_owned()))
+            .is_err()
+        {
             return;
         }
         line.clear();
@@ -163,25 +196,41 @@ fn stream(request: tiny_http::Request, program: &Path, jobs: &Mutex<()>, argv: &
         Ok(child) => child,
         Err(error) => {
             let sentence = format!("spis could not start: {error}");
-            return refuse(request, Refusal { status: 500, sentence });
+            return refuse(
+                request,
+                Refusal {
+                    status: 500,
+                    sentence,
+                },
+            );
         }
     };
     let (sender, receiver) = mpsc::channel();
     let mut pumps = Vec::new();
     if let Some(pipe) = child.stdout.take() {
         let sender = sender.clone();
-        pumps.push(std::thread::spawn(move || pump(Box::new(pipe), "stdout", sender)));
+        pumps.push(std::thread::spawn(move || {
+            pump(Box::new(pipe), "stdout", sender)
+        }));
     }
     if let Some(pipe) = child.stderr.take() {
         let sender = sender.clone();
-        pumps.push(std::thread::spawn(move || pump(Box::new(pipe), "stderr", sender)));
+        pumps.push(std::thread::spawn(move || {
+            pump(Box::new(pipe), "stderr", sender)
+        }));
     }
     drop(sender);
 
     let mut writer = request.into_writer();
-    let mut connected = writer.write_all(STREAM_HEAD.as_bytes()).and_then(|()| writer.flush()).is_ok();
+    let mut connected = writer
+        .write_all(STREAM_HEAD.as_bytes())
+        .and_then(|()| writer.flush())
+        .is_ok();
     let mut emit = |line: Value| -> bool {
-        writer.write_all(format!("{line}\n").as_bytes()).and_then(|()| writer.flush()).is_ok()
+        writer
+            .write_all(format!("{line}\n").as_bytes())
+            .and_then(|()| writer.flush())
+            .is_ok()
     };
     let mut stderr = String::new();
     for (stream_name, chunk) in receiver {

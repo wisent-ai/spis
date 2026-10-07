@@ -23,7 +23,10 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
             format!("{PROGRAM} is absent from the pinned absolute helper directories")
         })?;
     if std::fs::symlink_metadata(&path)?.file_type().is_symlink() {
-        bail!("pinned mobile readiness helper {} is a symlink", path.display());
+        bail!(
+            "pinned mobile readiness helper {} is a symlink",
+            path.display()
+        );
     }
     let canonical = std::fs::canonicalize(&path)?;
     if canonical != path {
@@ -39,7 +42,10 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
         .arg("--version")
         .env_clear()
         .env("PATH", "/usr/bin:/bin");
-    let output = crate::commands::crawl::command_output(&mut version_command, "read pinned mobile readiness helper version")?;
+    let output = crate::commands::crawl::command_output(
+        &mut version_command,
+        "read pinned mobile readiness helper version",
+    )?;
     if !output.status.success() {
         bail!(
             "pinned mobile readiness helper {} refused --version: {}",
@@ -86,9 +92,13 @@ pub(crate) fn readiness_observation(
         || proof.pending_notification_prompts != 0
         || !manifest.constraints.no_system_permission_prompts
         || !manifest.constraints.no_notifications
-        || ["notification_delivery_disabled", "permission_prompt_invocation_disabled", "notification_prompt_invocation_disabled"]
-            .iter()
-            .any(|field| proof_value.get(*field).and_then(Value::as_bool) != Some(true))
+        || [
+            "notification_delivery_disabled",
+            "permission_prompt_invocation_disabled",
+            "notification_prompt_invocation_disabled",
+        ]
+        .iter()
+        .any(|field| proof_value.get(*field).and_then(Value::as_bool) != Some(true))
     {
         bail!(
             "prepared-runtime proof does not bind the exact mobile app/device with prompt invocation and notification delivery disabled"
@@ -107,7 +117,10 @@ pub(crate) fn readiness_observation(
         "--evidence-sha256",
         &proof.evidence_sha256,
     ]);
-    let output = crate::commands::crawl::command_output(&mut readiness, "run fresh mobile runtime-readiness verification")?;
+    let output = crate::commands::crawl::command_output(
+        &mut readiness,
+        "run fresh mobile runtime-readiness verification",
+    )?;
     if !output.status.success() {
         bail!(
             "fresh mobile runtime-readiness verification failed: status={}; stdout={:?}; stderr={:?}",
@@ -119,21 +132,33 @@ pub(crate) fn readiness_observation(
     let observation: Value = serde_json::from_slice(&output.stdout)
         .context("fresh mobile runtime-readiness output is not JSON")?;
     if observation.get("ready").and_then(Value::as_bool) != Some(true)
-        || observation.get("product_identifier").and_then(Value::as_str) != Some(app_id)
+        || observation
+            .get("product_identifier")
+            .and_then(Value::as_str)
+            != Some(app_id)
         || observation.get("device_id").and_then(Value::as_str) != Some(device)
-        || observation.get("pending_permission_prompts").and_then(Value::as_u64) != Some(0)
-        || observation.get("pending_notification_prompts").and_then(Value::as_u64) != Some(0)
+        || observation
+            .get("pending_permission_prompts")
+            .and_then(Value::as_u64)
+            != Some(0)
+        || observation
+            .get("pending_notification_prompts")
+            .and_then(Value::as_u64)
+            != Some(0)
         || observation.get("evidence_sha256").and_then(Value::as_str)
             != Some(proof.evidence_sha256.as_str())
-        || observation.get("product_version").and_then(Value::as_str)
-            != Some(expected_version)
+        || observation.get("product_version").and_then(Value::as_str) != Some(expected_version)
         || !observation
             .get("executable_sha256")
             .and_then(Value::as_str)
             .is_some_and(|value| value.eq_ignore_ascii_case(expected_sha))
-        || ["notification_delivery_disabled", "permission_prompt_invocation_disabled", "notification_prompt_invocation_disabled"]
-            .iter()
-            .any(|field| observation.get(*field).and_then(Value::as_bool) != Some(true))
+        || [
+            "notification_delivery_disabled",
+            "permission_prompt_invocation_disabled",
+            "notification_prompt_invocation_disabled",
+        ]
+        .iter()
+        .any(|field| observation.get(*field).and_then(Value::as_bool) != Some(true))
     {
         bail!("fresh mobile readiness identity/safety observation differs from the immutable manifest: {observation}");
     }

@@ -10,7 +10,9 @@ pub(crate) fn validate_behaviour(
     let Some(interactions) = record.get("interactions").and_then(Value::as_array) else {
         bail!("{record_path}: interactions must be a list");
     };
-    if interactions.len() < requirements.min_interactions && evidence_status_of(record) == Some("complete") {
+    if interactions.len() < requirements.min_interactions
+        && evidence_status_of(record) == Some("complete")
+    {
         bail!(
             "{record_path}: complete {} evidence needs at least {} observed interactions",
             requirements.profile,
@@ -44,7 +46,11 @@ pub(crate) fn validate_behaviour(
             .map(|steps| steps.len() >= requirements.min_journey_steps)
             .unwrap_or(false);
         if !steps_ok {
-            bail!("{record_path}: {} journey needs at least {} observed steps", requirements.profile, requirements.min_journey_steps);
+            bail!(
+                "{record_path}: {} journey needs at least {} observed steps",
+                requirements.profile,
+                requirements.min_journey_steps
+            );
         }
         for (position, step) in journey["steps"].as_array().unwrap().iter().enumerate() {
             require_nonempty(
@@ -149,9 +155,7 @@ pub(crate) fn validate_behaviour(
         .flatten()
         .enumerate()
     {
-        if !nonempty_observation(observation)
-            || !verified_provenance.supports_value(observation)
-        {
+        if !nonempty_observation(observation) || !verified_provenance.supports_value(observation) {
             bail!(
                 "{record_path}: accessibility observation {} lacks a typed statement or verified provenance",
                 position + 1
@@ -159,12 +163,22 @@ pub(crate) fn validate_behaviour(
         }
     }
     if evidence_status_of(record) == Some("complete") {
-        let count = observations.and_then(Value::as_array).map(Vec::len).unwrap_or(0);
+        let count = observations
+            .and_then(Value::as_array)
+            .map(Vec::len)
+            .unwrap_or(0);
         if count < requirements.min_accessibility_observations {
-            bail!("{record_path}: complete {} evidence needs at least {} accessibility observations", requirements.profile, requirements.min_accessibility_observations);
+            bail!(
+                "{record_path}: complete {} evidence needs at least {} accessibility observations",
+                requirements.profile,
+                requirements.min_accessibility_observations
+            );
         }
         if !py_truthy(accessibility.get("measured")) {
-            bail!("{record_path}: complete {} evidence must be measured against the product", requirements.profile);
+            bail!(
+                "{record_path}: complete {} evidence must be measured against the product",
+                requirements.profile
+            );
         }
     }
     Ok(())

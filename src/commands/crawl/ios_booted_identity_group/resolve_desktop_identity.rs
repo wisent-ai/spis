@@ -25,7 +25,13 @@ pub(crate) fn resolve_desktop_identity(
     let app_path = paths[0].to_string();
     let metadata = host_probe(
         host,
-        &["mdls", "-raw", "-name", "kMDItemCFBundleIdentifier", &app_path],
+        &[
+            "mdls",
+            "-raw",
+            "-name",
+            "kMDItemCFBundleIdentifier",
+            &app_path,
+        ],
     );
     let bundle = ready_output(&metadata, "resolve exact desktop bundle identifier")?;
     if bundle == "(null)" || bundle.chars().any(char::is_whitespace) {
@@ -34,7 +40,12 @@ pub(crate) fn resolve_desktop_identity(
     let info = format!("{app_path}/Contents/Info.plist");
     let executable_check = host_probe(
         host,
-        &["/usr/libexec/PlistBuddy", "-c", "Print:CFBundleExecutable", &info],
+        &[
+            "/usr/libexec/PlistBuddy",
+            "-c",
+            "Print:CFBundleExecutable",
+            &info,
+        ],
     );
     let executable_name = ready_output(&executable_check, "resolve desktop executable")?;
     if executable_name.contains('/') || executable_name.chars().any(char::is_whitespace) {
@@ -43,12 +54,21 @@ pub(crate) fn resolve_desktop_identity(
     let executable_path = format!("{app_path}/Contents/MacOS/{executable_name}");
     let version_check = host_probe(
         host,
-        &["/usr/libexec/PlistBuddy", "-c", "Print:CFBundleShortVersionString", &info],
+        &[
+            "/usr/libexec/PlistBuddy",
+            "-c",
+            "Print:CFBundleShortVersionString",
+            &info,
+        ],
     );
     let version = ready_output(&version_check, "resolve desktop product version")?;
     let digest_check = host_probe(host, &["shasum", "-a", "256", &executable_path]);
     let digest_output = ready_output(&digest_check, "hash desktop executable")?;
-    let digest = digest_output.split_whitespace().next().unwrap_or_default().to_ascii_lowercase();
+    let digest = digest_output
+        .split_whitespace()
+        .next()
+        .unwrap_or_default()
+        .to_ascii_lowercase();
     if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
         bail!("desktop executable SHA-256 is invalid");
     }
@@ -83,7 +103,14 @@ pub(crate) fn resolve_desktop_identity(
             executable_sha256: Some(digest),
             effective_url: None,
         },
-        vec![search, metadata, executable_check, version_check, digest_check, hardware_check],
+        vec![
+            search,
+            metadata,
+            executable_check,
+            version_check,
+            digest_check,
+            hardware_check,
+        ],
     ))
 }
 
@@ -106,7 +133,10 @@ pub(crate) fn prepared_runtime_check(
         || identity.product_version.as_deref() != Some(proof.product_version.as_str())
         || identity.executable_sha256.as_deref() != Some(proof.executable_sha256.as_str())
         || proof.evidence_sha256.len() != 64
-        || !proof.evidence_sha256.bytes().all(|byte| byte.is_ascii_hexdigit())
+        || !proof
+            .evidence_sha256
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit())
         || !proof.installed
         || !proof.first_run_completed
         || proof.pending_permission_prompts != 0
@@ -140,13 +170,28 @@ pub(crate) fn prepared_runtime_check(
     if observation.get("schema").and_then(Value::as_str)
         != Some("wisent.runtime-readiness-observation.v1")
         || observation.get("ready").and_then(Value::as_bool) != Some(true)
-        || observation.get("product_identifier").and_then(Value::as_str) != Some(product)
-        || observation.get("device_id").and_then(Value::as_str).unwrap_or("") != device
+        || observation
+            .get("product_identifier")
+            .and_then(Value::as_str)
+            != Some(product)
+        || observation
+            .get("device_id")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            != device
         || observation.get("evidence_sha256").and_then(Value::as_str)
             != Some(proof.evidence_sha256.as_str())
-        || observation.get("pending_permission_prompts").and_then(Value::as_u64) != Some(0)
-        || observation.get("pending_notification_prompts").and_then(Value::as_u64) != Some(0)
-        || observation.get("notification_delivery_disabled").and_then(Value::as_bool)
+        || observation
+            .get("pending_permission_prompts")
+            .and_then(Value::as_u64)
+            != Some(0)
+        || observation
+            .get("pending_notification_prompts")
+            .and_then(Value::as_u64)
+            != Some(0)
+        || observation
+            .get("notification_delivery_disabled")
+            .and_then(Value::as_bool)
             != Some(true)
         || observation
             .get("permission_prompt_invocation_disabled")

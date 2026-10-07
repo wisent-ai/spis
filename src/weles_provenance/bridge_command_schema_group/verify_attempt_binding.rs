@@ -10,7 +10,9 @@ pub(crate) fn verify_attempt_binding(
     let product_url = record
         .get("product_url")
         .and_then(Value::as_str)
-        .ok_or_else(|| "current record has no product_url for receipt origin binding".to_string())?;
+        .ok_or_else(|| {
+            "current record has no product_url for receipt origin binding".to_string()
+        })?;
     let parsed_product_url = url::Url::parse(product_url)
         .map_err(|_| "current record product_url is not a valid URL".to_string())?;
     if !matches!(parsed_product_url.scheme(), "http" | "https") {
@@ -134,8 +136,7 @@ pub(crate) fn verify_attempt_binding(
     if envelope.catalog != catalog_name
         || envelope.record != record_name
         || run.get("run_id").and_then(Value::as_str) != Some(envelope.run_id.as_str())
-        || run.get("stado_job_id").and_then(Value::as_str)
-            != Some(envelope.stado_job_id.as_str())
+        || run.get("stado_job_id").and_then(Value::as_str) != Some(envelope.stado_job_id.as_str())
         || run.get("record_key").and_then(Value::as_str) != Some(envelope.record_key.as_str())
         || run.get("attempt").and_then(Value::as_u64) != Some(u64::from(envelope.attempt))
         || run.get("attempt_id").and_then(Value::as_str) != Some(envelope.attempt_id.as_str())
@@ -147,9 +148,13 @@ pub(crate) fn verify_attempt_binding(
             != Some(envelope.source_input_sha256.as_str())
         || run.get("reference_sha256").and_then(Value::as_str)
             != Some(envelope.reference_sha256.as_str())
-        || run.get("weles_evidence_manifest_uri").and_then(Value::as_str)
+        || run
+            .get("weles_evidence_manifest_uri")
+            .and_then(Value::as_str)
             != Some(envelope.weles_evidence_manifest_uri.as_str())
-        || run.get("weles_evidence_manifest_sha256").and_then(Value::as_str)
+        || run
+            .get("weles_evidence_manifest_sha256")
+            .and_then(Value::as_str)
             != Some(weles_evidence_manifest_sha256)
         || run.get("artifact_document_uri").and_then(Value::as_str)
             != Some(envelope.artifact_document_uri.as_str())
@@ -157,18 +162,21 @@ pub(crate) fn verify_attempt_binding(
             != Some(artifact_document_sha256)
         || run.get("observation_document_uri").and_then(Value::as_str)
             != Some(envelope.observation_document_uri.as_str())
-        || run.get("observation_document_sha256").and_then(Value::as_str)
+        || run
+            .get("observation_document_sha256")
+            .and_then(Value::as_str)
             != Some(envelope.observation_document_sha256.as_str())
     {
         return Err(
-            "outer typed crawl run differs from the imported Weles attempt coordinates"
-                .to_string(),
+            "outer typed crawl run differs from the imported Weles attempt coordinates".to_string(),
         );
     }
     if envelope.service_identity.action != SPIS_WELES_ACTION
         || envelope.service_identity.action != trust.allowed_action
     {
-        return Err("attempt service identity action differs from public receipt trust".to_string());
+        return Err(
+            "attempt service identity action differs from public receipt trust".to_string(),
+        );
     }
     validate_service_identity(&envelope.service_identity)?;
     validate_attempt_uris(&envelope)?;
@@ -213,8 +221,7 @@ pub(crate) fn verify_attempt_binding(
     // The signed outcome, already proved above to be the receipt's own claim, chooses the
     // manifest version. Nothing else may: a document that does not match the version its
     // outcome mandates is refused, in either direction.
-    let manifest =
-        ReceiptBoundManifest::parse(artifact_value, &document.expected_claims.outcome)?;
+    let manifest = ReceiptBoundManifest::parse(artifact_value, &document.expected_claims.outcome)?;
     validate_request_and_evidence_manifest(
         &envelope,
         binding,
@@ -273,7 +280,7 @@ pub(crate) fn validate_attempt_uris(envelope: &WelesAttemptEnvelope) -> Result<(
 pub(crate) fn is_portable_attempt_component(value: &str) -> bool {
     !value.is_empty()
         && !matches!(value, "." | "..")
-        && value.bytes().all(|byte| {
-            byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-')
-        })
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
 }

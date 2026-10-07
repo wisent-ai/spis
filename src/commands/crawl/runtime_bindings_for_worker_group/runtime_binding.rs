@@ -27,7 +27,10 @@ pub(crate) fn runtime_binding(
         );
     }
     let account: RuntimeAccount = serde_json::from_value(
-        binding.get("account").cloned().context("record binding has no account declaration")?,
+        binding
+            .get("account")
+            .cloned()
+            .context("record binding has no account declaration")?,
     )
     .context("record account declaration is invalid")?;
     match account.mode.as_str() {
@@ -74,7 +77,11 @@ pub(crate) fn runtime_binding(
             .context("record binding has no typed credential delivery")?,
     )
     .context("record credential delivery is invalid")?;
-    if delivery.secret_env.values().any(|reference| !valid_secret_reference(reference)) {
+    if delivery
+        .secret_env
+        .values()
+        .any(|reference| !valid_secret_reference(reference))
+    {
         bail!("{catalog}/{slug}: secret_env must contain exact NAME=role#field references");
     }
     let prepared_proof = binding
@@ -88,7 +95,9 @@ pub(crate) fn runtime_binding(
             let expected = ["WELES_TOKEN", "WISENT_ORGANIZATION_ID"];
             if delivery.kind != "weles-service-env"
                 || delivery.secret_env.len() != expected.len()
-                || expected.iter().any(|name| !delivery.secret_env.contains_key(*name))
+                || expected
+                    .iter()
+                    .any(|name| !delivery.secret_env.contains_key(*name))
             {
                 bail!("{catalog}/{slug}: web binding needs only exact bearer and organization secret references; public receipt trust is checked in");
             }
@@ -102,7 +111,11 @@ pub(crate) fn runtime_binding(
             }
         }
         "cli" | "tui" => {
-            let expected = if delivery.secret_env.is_empty() { "none" } else { "stado-secret-env" };
+            let expected = if delivery.secret_env.is_empty() {
+                "none"
+            } else {
+                "stado-secret-env"
+            };
             let delivered: std::collections::BTreeSet<&str> =
                 delivery.secret_env.values().map(String::as_str).collect();
             let declared: std::collections::BTreeSet<&str> =
@@ -190,7 +203,11 @@ pub(crate) fn runtime_product(
                 "pending unique typed host executable/version resolution".into(),
             )
         }
-        ("web" | "docs", _) => ("url", product_url.clone(), "reference.json product_url".into()),
+        ("web" | "docs", _) => (
+            "url",
+            product_url.clone(),
+            "reference.json product_url".into(),
+        ),
         _ => bail!("{catalog}/{slug}: unsupported runtime identity for {engine}"),
     };
     let surface = if engine == "web" {
@@ -204,14 +221,24 @@ pub(crate) fn runtime_product(
             || surface.origin != parsed.origin().ascii_serialization()
             || surface.path != parsed.path()
             || surface.allowed_origins.is_empty()
-            || !surface.allowed_origins.iter().any(|origin| origin == &surface.origin)
-            || surface.allowed_origins.iter().any(|origin| url::Url::parse(origin).is_err())
+            || !surface
+                .allowed_origins
+                .iter()
+                .any(|origin| origin == &surface.origin)
+            || surface
+                .allowed_origins
+                .iter()
+                .any(|origin| url::Url::parse(origin).is_err())
             || surface.allowed_actions.is_empty()
-            || surface.allowed_actions.iter().any(|action| action.is_empty() || action.chars().any(char::is_whitespace))
+            || surface
+                .allowed_actions
+                .iter()
+                .any(|action| action.is_empty() || action.chars().any(char::is_whitespace))
             || surface.terminal_outcomes.is_empty()
-            || surface.terminal_outcomes.iter().any(|outcome| {
-                !matches!(outcome.as_str(), "completed" | "failed" | "blocked")
-            })
+            || surface
+                .terminal_outcomes
+                .iter()
+                .any(|outcome| !matches!(outcome.as_str(), "completed" | "failed" | "blocked"))
         {
             bail!("{catalog}/{slug}: typed web surface family, origin, path, URL, allowed actions or terminal outcomes are not exact");
         }
@@ -243,14 +270,18 @@ pub(crate) fn runtime_product(
 pub(crate) fn is_host_query_literal(value: &str) -> bool {
     !value.is_empty()
         && value.len() <= 128
-        && value
-            .chars()
-            .all(|character| character.is_ascii_alphanumeric() || matches!(character, ' ' | '.' | '_' | '-'))
+        && value.chars().all(|character| {
+            character.is_ascii_alphanumeric() || matches!(character, ' ' | '.' | '_' | '-')
+        })
         && !value.starts_with(' ')
         && !value.ends_with(' ')
 }
 
-pub(crate) fn docs_structure_sha256(catalog: &str, record: &str, engine: &str) -> Result<Option<String>> {
+pub(crate) fn docs_structure_sha256(
+    catalog: &str,
+    record: &str,
+    engine: &str,
+) -> Result<Option<String>> {
     if engine != "docs" {
         return Ok(None);
     }

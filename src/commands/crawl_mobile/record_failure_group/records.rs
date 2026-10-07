@@ -41,7 +41,9 @@ pub(crate) fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Recor
 }
 
 pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
-    let track = product_url.rsplit("/id").next()
+    let track = product_url
+        .rsplit("/id")
+        .next()
         .filter(|value| !value.is_empty() && value.bytes().all(|byte| byte.is_ascii_digit()))
         .ok_or_else(|| anyhow!("{product_url} has no exact /idNNN App Store identity"))?;
     let track_id: u64 = track.parse().context("parse App Store track id")?;
@@ -52,9 +54,7 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
     } else {
         // Same bounded, redirect-free treatment as every Appium read: no
         // unbounded into_json and no cross-origin redirect (findings 12/12b).
-        let agent = ureq::AgentBuilder::new()
-            .redirects(0)
-            .build();
+        let agent = ureq::AgentBuilder::new().redirects(0).build();
         let response = agent
             .get(&url)
             .call()
@@ -73,7 +73,9 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
         crate::commands::crawl::atomic_json_write(&cache, &value)?;
         value
     };
-    let results = response.get("results").and_then(Value::as_array)
+    let results = response
+        .get("results")
+        .and_then(Value::as_array)
         .ok_or_else(|| anyhow!("Apple lookup response has no results array"))?;
     if response.get("resultCount").and_then(Value::as_u64) != Some(1) || results.len() != 1 {
         bail!("Apple lookup for track id {track_id} did not return exactly one result");
@@ -82,7 +84,9 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
     if candidate.get("trackId").and_then(Value::as_u64) != Some(track_id) {
         bail!("Apple lookup result does not match requested track id {track_id}");
     }
-    let bundle = candidate.get("bundleId").and_then(Value::as_str)
+    let bundle = candidate
+        .get("bundleId")
+        .and_then(Value::as_str)
         .ok_or_else(|| anyhow!("Apple lookup result has no bundleId"))?;
     Ok((bundle.to_string(), url))
 }
@@ -260,8 +264,7 @@ pub(crate) fn verify_session_capabilities(
 }
 
 pub(crate) fn hash_file(path: &Path) -> Result<String> {
-    let mut file = std::fs::File::open(path)
-        .with_context(|| format!("open {}", path.display()))?;
+    let mut file = std::fs::File::open(path).with_context(|| format!("open {}", path.display()))?;
     let mut digest = Sha256::new();
     let mut buffer = [0_u8; 64 * 1024];
     loop {

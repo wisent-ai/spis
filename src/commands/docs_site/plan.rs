@@ -208,7 +208,12 @@ pub(crate) fn docs_content(plan: &Value) -> Result<String> {
     ))
 }
 
-pub(crate) fn write_if_changed(path: &Path, contents: &str, check: bool, stale: &mut Vec<String>) -> Result<()> {
+pub(crate) fn write_if_changed(
+    path: &Path,
+    contents: &str,
+    check: bool,
+    stale: &mut Vec<String>,
+) -> Result<()> {
     let existing = std::fs::read_to_string(path).unwrap_or_default();
     if existing == contents {
         return Ok(());
@@ -220,7 +225,6 @@ pub(crate) fn write_if_changed(path: &Path, contents: &str, check: bool, stale: 
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
     }
-    std::fs::write(path, contents)
-        .with_context(|| format!("write {}", path.display()))?;
+    std::fs::write(path, contents).with_context(|| format!("write {}", path.display()))?;
     Ok(())
 }

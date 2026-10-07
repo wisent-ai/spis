@@ -152,7 +152,9 @@ pub(crate) fn load_plan(path: &Path) -> Result<&'static Plan> {
     if PLAN.set(plan).is_err() {
         bail!("a capture plan is already loaded in this process");
     }
-    Ok(PLAN.get().expect("the capture plan was set on the line above"))
+    Ok(PLAN
+        .get()
+        .expect("the capture plan was set on the line above"))
 }
 
 /// The loaded plan. `run` loads it before anything reads a product, so a

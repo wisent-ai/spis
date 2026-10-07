@@ -25,7 +25,10 @@ pub(crate) fn parse_robots(
             return deny_all(
                 diagnostics,
                 "robots_non_utf8",
-                format!("robots.txt is not valid UTF-8 at byte {}", error.valid_up_to()),
+                format!(
+                    "robots.txt is not valid UTF-8 at byte {}",
+                    error.valid_up_to()
+                ),
             );
         }
     };
@@ -46,14 +49,10 @@ pub(crate) fn parse_robots(
         }
         if field.eq_ignore_ascii_case("user-agent") {
             if !directives.is_empty() {
-                groups.push((
-                    std::mem::take(&mut agents),
-                    std::mem::take(&mut directives),
-                ));
+                groups.push((std::mem::take(&mut agents), std::mem::take(&mut directives)));
             }
             agents.push(value.to_ascii_lowercase());
-        } else if (field.eq_ignore_ascii_case("allow")
-            || field.eq_ignore_ascii_case("disallow"))
+        } else if (field.eq_ignore_ascii_case("allow") || field.eq_ignore_ascii_case("disallow"))
             && !agents.is_empty()
             && !value.is_empty()
         {

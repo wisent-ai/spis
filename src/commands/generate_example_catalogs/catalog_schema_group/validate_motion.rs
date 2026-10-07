@@ -121,7 +121,11 @@ pub(crate) fn validate_states(
         bail!("{record_path}: states must be a list");
     };
     if states.len() < requirements.min_states && evidence_status_of(record) == Some("complete") {
-        bail!("{record_path}: complete {} evidence needs at least {} local states", requirements.profile, requirements.min_states);
+        bail!(
+            "{record_path}: complete {} evidence needs at least {} local states",
+            requirements.profile,
+            requirements.min_states
+        );
     }
     for (position, item) in states.iter().enumerate() {
         let context = format!("{record_path}: state {}", position + 1);

@@ -32,7 +32,8 @@ pub(crate) fn verify_exact_executable(
         .context("CLI execution identity has no typed observed_hostname")?;
     let mut hostname_command = Command::new("hostname");
     hostname_command.env_clear().env("PATH", "/usr/bin:/bin");
-    let hostname = crate::commands::crawl::command_output(&mut hostname_command, "read CLI worker hostname")?;
+    let hostname =
+        crate::commands::crawl::command_output(&mut hostname_command, "read CLI worker hostname")?;
     if !hostname.status.success() {
         bail!(
             "CLI worker hostname command failed: status={}; stdout={:?}; stderr={:?}",
@@ -102,8 +103,9 @@ pub(crate) fn verify_exact_executable(
         .arg("--version")
         .env_clear()
         .envs(environment);
-    let version = crate::commands::crawl::command_output(&mut version_command, "read exact CLI version")
-    .with_context(|| format!("read exact CLI version from {}", path.display()))?;
+    let version =
+        crate::commands::crawl::command_output(&mut version_command, "read exact CLI version")
+            .with_context(|| format!("read exact CLI version from {}", path.display()))?;
     if !version.status.success() {
         bail!(
             "exact CLI version command failed immediately before use: status={}; stdout={:?}; stderr={:?}",
@@ -159,14 +161,21 @@ impl Drop for TmuxSession {
         let mut command = Command::new("tmux");
         command
             .env_clear()
-            .env("PATH", "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
+            .env(
+                "PATH",
+                "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+            )
             .args(["-S", self.socket.to_string_lossy().as_ref()])
             .args(["kill-session", "-t", &self.name]);
         let _ = crate::commands::crawl::command_output(&mut command, "close private CLI PTY");
     }
 }
 
-pub(crate) fn capture_range(session: &TmuxSession, start: &str, context: &'static str) -> Result<String> {
+pub(crate) fn capture_range(
+    session: &TmuxSession,
+    start: &str,
+    context: &'static str,
+) -> Result<String> {
     let screen = tmux(
         &session.socket,
         &session.environment,
@@ -201,8 +210,18 @@ pub(crate) fn signal_suffix(session: &TmuxSession, channel: &str) -> String {
 /// confirms `marker` is on screen. No polling and no deadline (cli.md rule 8):
 /// the program's own exit ends the command; if the shell dies, the private
 /// server exits and `wait-for` returns that error.
-pub(crate) fn await_signal(session: &TmuxSession, channel: &str, marker: &str, context: &str) -> Result<()> {
-    tmux(&session.socket, &session.environment, &["wait-for", channel], context)?;
+pub(crate) fn await_signal(
+    session: &TmuxSession,
+    channel: &str,
+    marker: &str,
+    context: &str,
+) -> Result<()> {
+    tmux(
+        &session.socket,
+        &session.environment,
+        &["wait-for", channel],
+        context,
+    )?;
     if !capture_tail(session)?.contains(marker) {
         bail!("{context}: channel {channel} was signalled but {marker} is not on screen");
     }

@@ -9,9 +9,10 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
         match rest[index].as_str() {
             "--output" => {
                 index += 1;
-                output_path = Some(PathBuf::from(
-                    crate::commands::required(rest.get(index), "--output needs a path")?,
-                ));
+                output_path = Some(PathBuf::from(crate::commands::required(
+                    rest.get(index),
+                    "--output needs a path",
+                )?));
             }
             "--weles-token-role" => {
                 index += 1;
@@ -29,7 +30,11 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                         .clone(),
                 );
             }
-            other => return Err(crate::commands::usage(format!("unknown crawl bindings generate option: {other}"))),
+            other => {
+                return Err(crate::commands::usage(format!(
+                    "unknown crawl bindings generate option: {other}"
+                )))
+            }
         }
         index += 1;
     }
@@ -86,7 +91,9 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                         .get("product_url")
                         .and_then(Value::as_str)
                         .filter(|value| !value.is_empty())
-                        .with_context(|| format!("{catalog}/{slug}: reference has no product_url"))?;
+                        .with_context(|| {
+                            format!("{catalog}/{slug}: reference has no product_url")
+                        })?;
                     let parsed = url::Url::parse(exact_url)
                         .with_context(|| format!("{catalog}/{slug}: product_url is invalid"))?;
                     let delivery = if *engine == "web" {
@@ -189,7 +196,10 @@ pub(crate) fn write_generated_bindings(path: &Path, bytes: &[u8]) -> Result<&'st
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
     let staged = parent.join(format!(".{file_name}.{}.{}.tmp", std::process::id(), nonce));
     let result = (|| -> Result<()> {
-        let mut file = OpenOptions::new().write(true).create_new(true).open(&staged)?;
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&staged)?;
         file.write_all(bytes)?;
         file.sync_all()?;
         drop(file);

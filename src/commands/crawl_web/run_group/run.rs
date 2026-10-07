@@ -12,11 +12,13 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--host" => {
                 i += 1;
-                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host =
+                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--record" => {
                 i += 1;
-                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record =
+                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--runtime-manifest-base64" => {
                 i += 1;
@@ -28,16 +30,24 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--artifact-uri" => {
                 i += 1;
-                artifact_uri = Some(crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(
+                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
+                );
             }
             "--worker" => worker = true,
             "--help" | "-h" => {
                 println!("usage: spis crawl-web <catalog> --host TARGET --record SLUG --runtime-manifest-base64 DATA\nworker mode: spis crawl-web <catalog> --worker --record SLUG --artifact-uri URI --runtime-manifest-base64 DATA");
                 return Ok(());
             }
-            value if value.starts_with('-') => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
+            value if value.starts_with('-') => {
+                return Err(crate::commands::usage(format!("unknown argument: {value}")))
+            }
             value if catalog.is_none() => catalog = Some(value.to_string()),
-            value => return Err(crate::commands::usage(format!("unexpected argument: {value}"))),
+            value => {
+                return Err(crate::commands::usage(format!(
+                    "unexpected argument: {value}"
+                )))
+            }
         }
         i += 1;
     }
@@ -58,8 +68,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         if artifact_uri.is_some() {
             bail!("--artifact-uri is worker-only");
         }
-        let host = host
-            .context("--host is required; web crawls execute as pinned Stado jobs")?;
+        let host = host.context("--host is required; web crawls execute as pinned Stado jobs")?;
         return submit_worker(&host, &catalog, &record, &manifest);
     }
     if host.is_some() {

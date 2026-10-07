@@ -39,9 +39,7 @@ impl Drift {
 }
 
 pub(crate) fn agent() -> ureq::Agent {
-    ureq::AgentBuilder::new()
-        .user_agent(USER_AGENT)
-        .build()
+    ureq::AgentBuilder::new().user_agent(USER_AGENT).build()
 }
 
 /// Run `f` over `items` on a bounded worker pool (mirrors ThreadPoolExecutor).

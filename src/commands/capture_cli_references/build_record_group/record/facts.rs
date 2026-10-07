@@ -41,7 +41,7 @@ impl<'a> Facts<'a> {
         let invalid_cmd = steps["invalid-flag"]["command"]
             .as_str()
             .unwrap_or_default();
-    
+
         let cancellation_sentence = if measured["cancel_prompt_restored"]
             .as_bool()
             .unwrap_or(false)
@@ -55,7 +55,25 @@ impl<'a> Facts<'a> {
         let phrase = measured["refusal_next_action_phrase"]
             .as_str()
             .unwrap_or("");
-        Facts { run, measured, media, product, steps, cast, states, name, binary, version_line, version_ok, refusal_line, refusal_status, recovery_line, invalid_cmd, cancellation_sentence, phrase }
+        Facts {
+            run,
+            measured,
+            media,
+            product,
+            steps,
+            cast,
+            states,
+            name,
+            binary,
+            version_line,
+            version_ok,
+            refusal_line,
+            refusal_status,
+            recovery_line,
+            invalid_cmd,
+            cancellation_sentence,
+            phrase,
+        }
     }
 
     /// Where in the recording a step happened, its exit status, and any extra evidence.

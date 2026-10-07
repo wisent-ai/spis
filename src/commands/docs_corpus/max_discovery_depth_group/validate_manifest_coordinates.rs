@@ -1,6 +1,9 @@
 use super::*;
 
-pub(crate) fn validate_manifest_coordinates(report: &Value, required_uri: Option<&str>) -> Result<String> {
+pub(crate) fn validate_manifest_coordinates(
+    report: &Value,
+    required_uri: Option<&str>,
+) -> Result<String> {
     let manifest = report
         .get("runtime_manifest")
         .context("retrieval report has no runtime_manifest")?;
@@ -49,14 +52,8 @@ pub(crate) fn validate_manifest_coordinates(report: &Value, required_uri: Option
         safe_component(value, label)?;
     }
     exact_lower_hex(record_key, "record_key")?;
-    let base = crate::crawl_attempt_base_uri(
-        run_id,
-        catalog,
-        record,
-        record_key,
-        attempt,
-        attempt_id,
-    );
+    let base =
+        crate::crawl_attempt_base_uri(run_id, catalog, record, record_key, attempt, attempt_id);
     let artifact_uri = manifest
         .get("artifact_uri")
         .and_then(Value::as_str)
@@ -95,7 +92,9 @@ pub(crate) fn validate_current_definition(report: &Value) -> Result<()> {
         .and_then(Value::as_str)
         .context("runtime manifest has no docs_structure_sha256")?;
     if structure_sha256 != reported_structure || structure_sha256 != manifest_structure {
-        bail!("retrieval corpus is stale relative to the current committed documentation definition");
+        bail!(
+            "retrieval corpus is stale relative to the current committed documentation definition"
+        );
     }
     let structure: Value = serde_json::from_slice(&structure_bytes)?;
     let declared_source = report
@@ -113,9 +112,7 @@ pub(crate) fn validate_current_definition(report: &Value) -> Result<()> {
     }
     let definition_path = engine_root().join("full-text-manifest.json");
     let definition_sha256 = lib::sha256_hex(&std::fs::read(&definition_path)?);
-    if report.get("definition_sha256").and_then(Value::as_str)
-        != Some(definition_sha256.as_str())
-    {
+    if report.get("definition_sha256").and_then(Value::as_str) != Some(definition_sha256.as_str()) {
         bail!("retrieval corpus is stale relative to the current crawl definition");
     }
     Ok(())
@@ -136,7 +133,10 @@ pub(crate) fn validate_journal(corpus_dir: &Path, state: &Value) -> Result<()> {
     let mut reconstructed = serde_json::Map::new();
     let mut committed_bytes = 0u64;
     let mut committed_sha256 = lib::sha256_hex(&[]);
-    for line in bytes.split(|byte| *byte == b'\n').filter(|line| !line.is_empty()) {
+    for line in bytes
+        .split(|byte| *byte == b'\n')
+        .filter(|line| !line.is_empty())
+    {
         let batch: Value = serde_json::from_slice(line)?;
         let entries = batch
             .get("outcomes")
@@ -184,8 +184,7 @@ pub(crate) fn validate_journal(corpus_dir: &Path, state: &Value) -> Result<()> {
     }
     if &reconstructed != state_outcomes
         || state.get("committed_bytes").and_then(Value::as_u64) != Some(committed_bytes)
-        || state.get("committed_sha256").and_then(Value::as_str)
-            != Some(committed_sha256.as_str())
+        || state.get("committed_sha256").and_then(Value::as_str) != Some(committed_sha256.as_str())
     {
         bail!("outcome journal does not reconstruct the completed durable state");
     }

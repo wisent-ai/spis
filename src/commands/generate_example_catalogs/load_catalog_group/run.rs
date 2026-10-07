@@ -63,15 +63,27 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     let record_count = catalogs
         .iter()
-        .map(|c| full_reference_index(c)["reference_count"].as_u64().unwrap_or(0))
+        .map(|c| {
+            full_reference_index(c)["reference_count"]
+                .as_u64()
+                .unwrap_or(0)
+        })
         .sum::<u64>();
     let complete_record_count = catalogs
         .iter()
-        .map(|c| full_reference_index(c)["complete_count"].as_u64().unwrap_or(0))
+        .map(|c| {
+            full_reference_index(c)["complete_count"]
+                .as_u64()
+                .unwrap_or(0)
+        })
         .sum::<u64>();
     let partial_record_count = catalogs
         .iter()
-        .map(|c| full_reference_index(c)["partial_count"].as_u64().unwrap_or(0))
+        .map(|c| {
+            full_reference_index(c)["partial_count"]
+                .as_u64()
+                .unwrap_or(0)
+        })
         .sum::<u64>();
     if complete_record_count + partial_record_count != record_count {
         bail!(

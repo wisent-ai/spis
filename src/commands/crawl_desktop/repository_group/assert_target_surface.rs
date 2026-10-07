@@ -54,9 +54,13 @@ pub(crate) fn readiness_observation(
         || proof.pending_notification_prompts != 0
         || !manifest.constraints.no_system_permission_prompts
         || !manifest.constraints.no_notifications
-        || ["notification_delivery_disabled", "permission_prompt_invocation_disabled", "notification_prompt_invocation_disabled"]
-            .iter()
-            .any(|field| proof_value.get(*field).and_then(Value::as_bool) != Some(true))
+        || [
+            "notification_delivery_disabled",
+            "permission_prompt_invocation_disabled",
+            "notification_prompt_invocation_disabled",
+        ]
+        .iter()
+        .any(|field| proof_value.get(*field).and_then(Value::as_bool) != Some(true))
     {
         bail!(
             "prepared-runtime proof does not bind the exact desktop app/device with prompt invocation and notification delivery disabled"
@@ -75,7 +79,10 @@ pub(crate) fn readiness_observation(
         "--evidence-sha256",
         &proof.evidence_sha256,
     ]);
-    let output = crate::commands::crawl::command_output(&mut readiness, "run fresh desktop runtime-readiness verification")?;
+    let output = crate::commands::crawl::command_output(
+        &mut readiness,
+        "run fresh desktop runtime-readiness verification",
+    )?;
     if !output.status.success() {
         bail!(
             "fresh desktop runtime-readiness verification failed: status={}; stdout={:?}; stderr={:?}",
@@ -87,13 +94,26 @@ pub(crate) fn readiness_observation(
     let observation: Value = serde_json::from_slice(&output.stdout)
         .context("fresh desktop runtime-readiness output is not JSON")?;
     if observation.get("ready").and_then(Value::as_bool) != Some(true)
-        || observation.get("product_identifier").and_then(Value::as_str) != Some(product)
+        || observation
+            .get("product_identifier")
+            .and_then(Value::as_str)
+            != Some(product)
         || observation.get("device_id").and_then(Value::as_str) != Some(device)
-        || observation.get("pending_permission_prompts").and_then(Value::as_u64) != Some(0)
-        || observation.get("pending_notification_prompts").and_then(Value::as_u64) != Some(0)
-        || ["notification_delivery_disabled", "permission_prompt_invocation_disabled", "notification_prompt_invocation_disabled"]
-            .iter()
-            .any(|field| observation.get(*field).and_then(Value::as_bool) != Some(true))
+        || observation
+            .get("pending_permission_prompts")
+            .and_then(Value::as_u64)
+            != Some(0)
+        || observation
+            .get("pending_notification_prompts")
+            .and_then(Value::as_u64)
+            != Some(0)
+        || [
+            "notification_delivery_disabled",
+            "permission_prompt_invocation_disabled",
+            "notification_prompt_invocation_disabled",
+        ]
+        .iter()
+        .any(|field| observation.get(*field).and_then(Value::as_bool) != Some(true))
         || observation.get("evidence_sha256").and_then(Value::as_str)
             != Some(proof.evidence_sha256.as_str())
     {
@@ -129,8 +149,9 @@ pub(crate) fn verify_desktop_executable(
     let metadata = |key: &str| -> Result<String> {
         let mut command = Command::new("/usr/bin/plutil");
         command.args(["-extract", key, "raw", "-o", "-"]).arg(&info);
-        let output = crate::commands::crawl::command_output(&mut command, "read desktop bundle metadata")
-        .with_context(|| format!("read {key} from {}", info.display()))?;
+        let output =
+            crate::commands::crawl::command_output(&mut command, "read desktop bundle metadata")
+                .with_context(|| format!("read {key} from {}", info.display()))?;
         if !output.status.success() {
             bail!(
                 "read {key} from {} failed: status={}; stdout={:?}; stderr={:?}",

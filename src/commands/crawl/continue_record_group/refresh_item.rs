@@ -1,7 +1,11 @@
 use super::*;
 
 pub(crate) fn refresh_item(entry: &mut Value) {
-    let Some(job_id) = entry.get("stado_job_id").and_then(Value::as_str).map(str::to_string) else {
+    let Some(job_id) = entry
+        .get("stado_job_id")
+        .and_then(Value::as_str)
+        .map(str::to_string)
+    else {
         return;
     };
     match machine_status(&job_id) {
@@ -57,7 +61,9 @@ pub(crate) fn refresh_item(entry: &mut Value) {
                 "message": format!("Stado returned semantic NOT_FOUND for job {job_id}"),
                 "stado_job_id": job_id,
             });
-            entry["error"] = json!(format!("current Stado lookup confirmed that job {job_id} does not exist"));
+            entry["error"] = json!(format!(
+                "current Stado lookup confirmed that job {job_id} does not exist"
+            ));
             entry["job"] = Value::Null;
         }
         Err(error) => {
@@ -92,7 +98,11 @@ pub(crate) fn migrate_legacy_catalog_jobs(run: &mut Value) {
             .get("records")
             .and_then(Value::as_array)
             .is_some_and(|records| !records.is_empty());
-        let Some(job_id) = entry.get("job_id").and_then(Value::as_str).map(str::to_string) else {
+        let Some(job_id) = entry
+            .get("job_id")
+            .and_then(Value::as_str)
+            .map(str::to_string)
+        else {
             continue;
         };
         if has_records {
@@ -130,13 +140,7 @@ pub(crate) fn machine_state(job: &Value) -> &str {
 pub(crate) fn terminal_machine_state(state: &str) -> bool {
     matches!(
         state,
-        "completed"
-            | "succeeded"
-            | "failed"
-            | "cancelled"
-            | "canceled"
-            | "lost"
-            | "reaped"
+        "completed" | "succeeded" | "failed" | "cancelled" | "canceled" | "lost" | "reaped"
     )
 }
 
@@ -163,7 +167,10 @@ pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String>
     } else {
         let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
         let temporary = directory.join(format!(".{digest}.{}.{}.tmp", std::process::id(), nonce));
-        let mut file = OpenOptions::new().write(true).create_new(true).open(&temporary)?;
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary)?;
         file.write_all(&bytes)?;
         file.sync_all()?;
         #[cfg(unix)]
@@ -175,7 +182,14 @@ pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String>
         File::open(&directory)?.sync_all()?;
     }
     let stored = crawl_storage_command()
-        .args(["storage", "put", "--if-absent", "--content-type", "application/json", uri])
+        .args([
+            "storage",
+            "put",
+            "--if-absent",
+            "--content-type",
+            "application/json",
+            uri,
+        ])
         .arg(&source)
         .output()
         .context("persist immutable crawl cancel intent")?;

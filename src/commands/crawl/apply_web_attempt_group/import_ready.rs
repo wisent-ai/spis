@@ -63,8 +63,7 @@ pub(crate) fn import_ready(run_id: &str, selected_record: Option<&str>) -> Resul
             ) {
                 continue;
             }
-            let outcome =
-                import_record_attempt(run_id, &catalog_name, &engine, &current, &run_dir);
+            let outcome = import_record_attempt(run_id, &catalog_name, &engine, &current, &run_dir);
             match outcome {
                 Ok(import) => {
                     mutate_record(run_id, &catalog_name, &record_name, |entry| {
@@ -164,7 +163,10 @@ pub(crate) fn import(rest: &[String]) -> Result<()> {
         })
         .filter(|record| {
             selected_matches(
-                record.get("record").and_then(Value::as_str).unwrap_or_default(),
+                record
+                    .get("record")
+                    .and_then(Value::as_str)
+                    .unwrap_or_default(),
                 selected_record.as_deref(),
             ) && record.get("state").and_then(Value::as_str) != Some("imported")
         })
@@ -183,7 +185,11 @@ pub(crate) fn import(rest: &[String]) -> Result<()> {
         bail!("crawl evidence was imported but a catalog validator or generator failed");
     }
     if !pending.is_empty() {
-        bail!("{} crawl records were not imported: {}", pending.len(), pending.join(", "));
+        bail!(
+            "{} crawl records were not imported: {}",
+            pending.len(),
+            pending.join(", ")
+        );
     }
     Ok(())
 }
@@ -209,22 +215,58 @@ pub(crate) fn has_failures(run: &Value) -> bool {
         })
 }
 
-pub(crate) fn print_operation(operation: &str, run: &Value, record_filter: Option<&str>) -> Result<()> {
-    let mut catalogs = run.get("catalogs").and_then(Value::as_array).cloned().unwrap_or_default();
+pub(crate) fn print_operation(
+    operation: &str,
+    run: &Value,
+    record_filter: Option<&str>,
+) -> Result<()> {
+    let mut catalogs = run
+        .get("catalogs")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
     if let Some(record) = record_filter {
         for catalog in &mut catalogs {
             if let Some(records) = catalog.get_mut("records").and_then(Value::as_array_mut) {
-                records.retain(|item| item.get("record").and_then(Value::as_str).is_some_and(|value| value == record || value.split_once('-').map(|(_, tail)| tail) == Some(record)));
+                records.retain(|item| {
+                    item.get("record")
+                        .and_then(Value::as_str)
+                        .is_some_and(|value| {
+                            value == record
+                                || value.split_once('-').map(|(_, tail)| tail) == Some(record)
+                        })
+                });
             }
         }
-        catalogs.retain(|catalog| catalog.get("records").and_then(Value::as_array).is_some_and(|records| !records.is_empty()));
+        catalogs.retain(|catalog| {
+            catalog
+                .get("records")
+                .and_then(Value::as_array)
+                .is_some_and(|records| !records.is_empty())
+        });
     }
     let mut counts: BTreeMap<String, usize> = BTreeMap::new();
     for catalog in &catalogs {
-        *counts.entry(catalog.get("state").and_then(Value::as_str).unwrap_or("unknown").to_string()).or_default() += 1;
+        *counts
+            .entry(
+                catalog
+                    .get("state")
+                    .and_then(Value::as_str)
+                    .unwrap_or("unknown")
+                    .to_string(),
+            )
+            .or_default() += 1;
         if let Some(records) = catalog.get("records").and_then(Value::as_array) {
             for record in records {
-                *counts.entry(format!("record_{}", record.get("state").and_then(Value::as_str).unwrap_or("unknown"))).or_default() += 1;
+                *counts
+                    .entry(format!(
+                        "record_{}",
+                        record
+                            .get("state")
+                            .and_then(Value::as_str)
+                            .unwrap_or("unknown")
+                    ))
+                    .or_default() += 1;
             }
         }
     }

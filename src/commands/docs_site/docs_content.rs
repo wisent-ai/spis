@@ -53,10 +53,11 @@ pub(crate) fn family_rows() -> Vec<Value> {
     crate::commands::crawl::CATALOGS
         .iter()
         .map(|(catalog, engine)| {
-            let requires: Vec<String> = crate::commands::crawl::engine_preconditions(engine, catalog)
-                .into_iter()
-                .map(|command| command.join(" "))
-                .collect();
+            let requires: Vec<String> =
+                crate::commands::crawl::engine_preconditions(engine, catalog)
+                    .into_iter()
+                    .map(|command| command.join(" "))
+                    .collect();
             json!({
                 "family": catalog,
                 "engine": engine,

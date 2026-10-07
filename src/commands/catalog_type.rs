@@ -124,7 +124,9 @@ fn parse_args<'a>(rest: &'a [String], what: &[&str]) -> Result<Parsed<'a>> {
                 if !other.starts_with("--") && parsed.positional.is_none() {
                     parsed.positional = Some(&rest[i]);
                 } else {
-                    return Err(crate::commands::usage(format!("unrecognized argument: {other}\n{USAGE}")));
+                    return Err(crate::commands::usage(format!(
+                        "unrecognized argument: {other}\n{USAGE}"
+                    )));
                 }
             }
         }
@@ -306,6 +308,8 @@ pub fn run(rest: &[String]) -> Result<()> {
         "add" => cmd_add(rest),
         "edit" => cmd_edit(rest),
         "remove" => cmd_remove(rest),
-        other => Err(crate::commands::usage(format!("unknown catalog-type command: {other}; it takes add, edit or remove\n{USAGE}"))),
+        other => Err(crate::commands::usage(format!(
+            "unknown catalog-type command: {other}; it takes add, edit or remove\n{USAGE}"
+        ))),
     }
 }

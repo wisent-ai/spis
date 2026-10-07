@@ -15,12 +15,12 @@ use std::process::Command;
 // resolves here by way of their `use super::*`.
 use crate::commands::crawl;
 
+mod launch;
 mod repository;
 mod verify_exact_executable;
-mod launch;
 mod worker_report;
 
+pub use launch::*;
 pub use repository::*;
 pub use verify_exact_executable::*;
-pub use launch::*;
 pub use worker_report::*;

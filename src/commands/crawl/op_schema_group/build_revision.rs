@@ -188,7 +188,9 @@ pub(crate) fn command_output(command: &mut Command, operation: &str) -> Result<O
         let mut bytes = Vec::new();
         stderr.read_to_end(&mut bytes).map(|_| bytes)
     });
-    let status = child.wait().with_context(|| format!("{operation} did not report an exit status"))?;
+    let status = child
+        .wait()
+        .with_context(|| format!("{operation} did not report an exit status"))?;
     let stdout = stdout_reader
         .join()
         .map_err(|_| anyhow!("{operation} stdout reader panicked"))??;
@@ -205,16 +207,26 @@ pub(crate) fn command_output(command: &mut Command, operation: &str) -> Result<O
 pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {
     let parent = path.parent().context("JSON path has no parent")?;
     std::fs::create_dir_all(parent)?;
-    let file_name = path.file_name().and_then(|name| name.to_str()).context("JSON filename is not UTF-8")?;
+    let file_name = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .context("JSON filename is not UTF-8")?;
     let lock_path = parent.join(format!(".{file_name}.lock"));
-    let lock = OpenOptions::new().read(true).write(true).create(true).open(&lock_path)?;
+    let lock = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(&lock_path)?;
     if unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
         bail!("another process is updating {}", path.display());
     }
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
     let temporary = parent.join(format!(".{file_name}.{}.{}.tmp", std::process::id(), nonce));
     let result = (|| -> Result<()> {
-        let mut output = OpenOptions::new().write(true).create_new(true).open(&temporary)?;
+        let mut output = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary)?;
         output.write_all((serde_json::to_string_pretty(value)? + "\n").as_bytes())?;
         output.sync_all()?;
         std::fs::rename(&temporary, path)?;

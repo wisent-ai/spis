@@ -14,7 +14,9 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
                 let value = crate::commands::required(rest.get(i), "--host needs a value")?;
                 if let Some((scope, target)) = value.split_once('=') {
                     if scope.is_empty() || target.is_empty() {
-                        return Err(crate::commands::usage("--host mapping must be ENGINE=TARGET or CATALOG=TARGET"));
+                        return Err(crate::commands::usage(
+                            "--host mapping must be ENGINE=TARGET or CATALOG=TARGET",
+                        ));
                     }
                     hosts.insert(scope.to_string(), target.to_string());
                 } else {
@@ -23,19 +25,25 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
             }
             "--catalog" => {
                 i += 1;
-                catalogs.push(crate::commands::required(rest.get(i), "--catalog needs a value")?.clone());
+                catalogs.push(
+                    crate::commands::required(rest.get(i), "--catalog needs a value")?.clone(),
+                );
             }
             "--record" => {
                 i += 1;
-                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record =
+                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--run-id" => {
                 i += 1;
-                requested_run_id = Some(crate::commands::required(rest.get(i), "--run-id needs a value")?.clone());
+                requested_run_id =
+                    Some(crate::commands::required(rest.get(i), "--run-id needs a value")?.clone());
             }
             "--bindings" => {
                 i += 1;
-                bindings_path = Some(crate::commands::required(rest.get(i), "--bindings needs a value")?.clone());
+                bindings_path = Some(
+                    crate::commands::required(rest.get(i), "--bindings needs a value")?.clone(),
+                );
             }
             value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
@@ -59,11 +67,16 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
                 BTreeMap::new(),
                 None,
                 BTreeMap::new(),
-                Some(format!("Stado registry placement discovery failed: {error}")),
+                Some(format!(
+                    "Stado registry placement discovery failed: {error}"
+                )),
             ),
         };
     let run_id = requested_run_id.unwrap_or_else(|| {
-        format!("crawl-{}", crate::now_iso_utc().replace(':', "-").replace('T', "-"))
+        format!(
+            "crawl-{}",
+            crate::now_iso_utc().replace(':', "-").replace('T', "-")
+        )
     });
     let request_identity = json!({
         "source_revision": source_revision,
@@ -226,18 +239,23 @@ pub(crate) fn machine_status(job_id: &str) -> std::result::Result<Value, LookupF
         not_found: false,
     })?;
     if !output.status.success() || document.get("ok").and_then(Value::as_bool) != Some(true) {
-        let error = document.get("error").cloned().unwrap_or_else(|| json!({
-            "code": "status_failed",
-            "retryable": true,
-            "message": String::from_utf8_lossy(&output.stderr).trim(),
-        }));
+        let error = document.get("error").cloned().unwrap_or_else(|| {
+            json!({
+                "code": "status_failed",
+                "retryable": true,
+                "message": String::from_utf8_lossy(&output.stderr).trim(),
+            })
+        });
         let code = error
             .get("code")
             .and_then(Value::as_str)
             .unwrap_or_default()
             .to_ascii_uppercase();
         let not_found = matches!(code.as_str(), "NOT_FOUND" | "JOB_NOT_FOUND");
-        return Err(LookupFailure { diagnostic: error, not_found });
+        return Err(LookupFailure {
+            diagnostic: error,
+            not_found,
+        });
     }
     document.pointer("/result/job").cloned().ok_or_else(|| LookupFailure {
         diagnostic: json!({"code": "invalid_response", "retryable": true, "message": "Stado status has no result.job"}),

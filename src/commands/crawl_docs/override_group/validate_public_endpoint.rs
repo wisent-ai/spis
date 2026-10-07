@@ -39,7 +39,11 @@ pub(crate) struct HttpFailure {
 }
 
 impl HttpFailure {
-    pub(crate) fn new(code: &'static str, message: impl Into<String>, downloaded_bytes: u64) -> Self {
+    pub(crate) fn new(
+        code: &'static str,
+        message: impl Into<String>,
+        downloaded_bytes: u64,
+    ) -> Self {
         Self {
             code,
             message: message.into(),

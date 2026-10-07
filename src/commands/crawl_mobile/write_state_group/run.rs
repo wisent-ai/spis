@@ -22,25 +22,34 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--record" => {
                 i += 1;
-                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record =
+                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--driver-url" => {
                 i += 1;
-                driver_url = Some(crate::commands::required(rest.get(i), "--driver-url needs a value")?.clone());
+                driver_url = Some(
+                    crate::commands::required(rest.get(i), "--driver-url needs a value")?.clone(),
+                );
             }
             "--host" => {
                 i += 1;
-                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host =
+                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--worker" => worker = true,
             "--artifact-uri" => {
                 i += 1;
-                artifact_uri = Some(crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(
+                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
+                );
             }
             "--runtime-manifest-base64" => {
                 i += 1;
-                runtime_manifest_base64 =
-                    Some(rest.get(i).context("--runtime-manifest-base64 needs a value")?.clone());
+                runtime_manifest_base64 = Some(
+                    rest.get(i)
+                        .context("--runtime-manifest-base64 needs a value")?
+                        .clone(),
+                );
             }
             "--max-states" => {
                 i += 1;
@@ -52,15 +61,24 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--output" => {
                 i += 1;
-                output = PathBuf::from(crate::commands::required(rest.get(i), "--output needs a value")?);
+                output = PathBuf::from(crate::commands::required(
+                    rest.get(i),
+                    "--output needs a value",
+                )?);
             }
             "--help" | "-h" => {
                 println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--max-states N] [--max-depth N]\n--driver-url is the Appium server on that host; absent, the runtime manifest's bound address (the host's mobile_runtime.address in the Stado registry) is used.\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
-            value if value.starts_with('-') => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
+            value if value.starts_with('-') => {
+                return Err(crate::commands::usage(format!("unknown argument: {value}")))
+            }
             value if catalog.is_none() => catalog = Some(value.to_string()),
-            value => return Err(crate::commands::usage(format!("unexpected argument: {value}"))),
+            value => {
+                return Err(crate::commands::usage(format!(
+                    "unexpected argument: {value}"
+                )))
+            }
         }
         i += 1;
     }
@@ -106,31 +124,21 @@ pub fn run(rest: &[String]) -> Result<()> {
     let driver_url = match driver_url {
         Some(url) => url,
         None => {
-            let bound = manifest
-                .driver_url
-                .as_deref()
-                .context("the runtime manifest binds no Appium address and --driver-url was not given")?;
+            let bound = manifest.driver_url.as_deref().context(
+                "the runtime manifest binds no Appium address and --driver-url was not given",
+            )?;
             canonical_driver_url(bound).context("runtime manifest driver_url")?
         }
     };
     let appium = Appium::new(&driver_url)?;
-    let run_root = attempt_root(
-        &output,
-        &manifest,
-    )?;
+    let run_root = attempt_root(&output, &manifest)?;
     std::fs::create_dir_all(&run_root)?;
     let entry = records(&catalog, Some(&record))?
         .into_iter()
         .next()
         .context("runtime manifest record is absent from catalog")?;
     let (record_report, failure) = match crawl_record(
-        &appium,
-        platform,
-        &entry,
-        &manifest,
-        &run_root,
-        max_states,
-        max_depth,
+        &appium, platform, &entry, &manifest, &run_root, max_states, max_depth,
     ) {
         Ok(report) => (report, None),
         Err(error) => {

@@ -105,9 +105,13 @@ pub(crate) fn submit(request: Submission<'_>) -> Result<()> {
     }
     let mut stado = crate::commands::crawl::stado_command();
     stado.args(arguments);
-    let output = crate::commands::crawl::command_output(&mut stado, "submit CLI crawl through Stado")?;
+    let output =
+        crate::commands::crawl::command_output(&mut stado, "submit CLI crawl through Stado")?;
     if !output.status.success() {
-        bail!("Stado refused CLI crawl: {}", String::from_utf8_lossy(&output.stderr).trim());
+        bail!(
+            "Stado refused CLI crawl: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
     }
     crate::commands::crawl::print_submission(
         CATALOG,
@@ -130,20 +134,27 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--host" => {
                 i += 1;
-                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host =
+                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--record" => {
                 i += 1;
-                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record =
+                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--artifact-uri" => {
                 i += 1;
-                artifact_uri = Some(crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(
+                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
+                );
             }
             "--runtime-manifest-base64" => {
                 i += 1;
-                runtime_manifest_base64 =
-                    Some(rest.get(i).context("--runtime-manifest-base64 needs a value")?.clone());
+                runtime_manifest_base64 = Some(
+                    rest.get(i)
+                        .context("--runtime-manifest-base64 needs a value")?
+                        .clone(),
+                );
             }
             "--worker" => worker = true,
             "--help" | "-h" => {
@@ -178,11 +189,11 @@ pub fn run(rest: &[String]) -> Result<()> {
     if artifact_uri != manifest.artifact_uri {
         bail!("worker artifact URI does not match immutable runtime manifest");
     }
-    let root = attempt_root(
-        &Path::new("target").join("spis-cli-crawls"),
-        &manifest,
-    )?;
-    let entry = records(Some(&record))?.into_iter().next().context("runtime manifest record is absent")?;
+    let root = attempt_root(&Path::new("target").join("spis-cli-crawls"), &manifest)?;
+    let entry = records(Some(&record))?
+        .into_iter()
+        .next()
+        .context("runtime manifest record is absent")?;
     let output = root.join(&entry.slug);
     std::fs::create_dir_all(&output)?;
     let (report, failure) = match crawl_one(&entry, &manifest, &output) {

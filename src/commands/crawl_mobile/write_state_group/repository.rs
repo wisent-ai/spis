@@ -21,7 +21,9 @@ pub(crate) fn attempt_root(
     crate::commands::crawl::native_attempt_root(base, manifest)
 }
 
-pub(crate) fn revision() -> Result<String> { crate::commands::crawl::build_revision() }
+pub(crate) fn revision() -> Result<String> {
+    crate::commands::crawl::build_revision()
+}
 
 pub(crate) fn worker_report(
     manifest: &super::crawl::RuntimeManifest,
@@ -143,7 +145,8 @@ pub(crate) fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
     ];
     let mut stado = crate::commands::crawl::stado_command();
     stado.args(arguments);
-    let output = crate::commands::crawl::command_output(&mut stado, "submit mobile crawl through Stado")?;
+    let output =
+        crate::commands::crawl::command_output(&mut stado, "submit mobile crawl through Stado")?;
     if !output.status.success() {
         bail!(
             "Stado refused mobile crawl: {}",

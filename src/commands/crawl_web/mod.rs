@@ -23,10 +23,10 @@ use crate::weles_provenance as weles;
 // resolves here by way of their `use super::*`.
 use crate::commands::crawl;
 
-mod repository_group;
 mod ensure_manifest_identity_group;
+mod repository_group;
 mod run_group;
 
-pub use repository_group::*;
 pub use ensure_manifest_identity_group::*;
+pub use repository_group::*;
 pub use run_group::*;

@@ -146,7 +146,9 @@ pub(crate) fn crawl_record(
             }
             let Some(action) = actions(&before.source, platform)
                 .into_iter()
-                .find(|action| action.selector == selected.selector && action.label == selected.label)
+                .find(|action| {
+                    action.selector == selected.selector && action.label == selected.label
+                })
             else {
                 blocked.push(json!({
                     "state": state_id,
@@ -170,9 +172,12 @@ pub(crate) fn crawl_record(
                 continue;
             }
             let before_hash = hash_text(&before.source);
-            appium
-                .click(&session, &action.selector)
-                .with_context(|| format!("deliver independently safe mobile action {:?}", action.label))?;
+            appium.click(&session, &action.selector).with_context(|| {
+                format!(
+                    "deliver independently safe mobile action {:?}",
+                    action.label
+                )
+            })?;
             let after = inspect_surface(appium, &session)?;
             surface_observations += 1;
             let after_hash = hash_text(&after.source);

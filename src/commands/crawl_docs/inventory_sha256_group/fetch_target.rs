@@ -22,7 +22,12 @@ pub(crate) fn fetch_target(
             line: None,
         });
     }
-    match http_get(&target_url, policy, "documentation page", Some(downloaded_bytes)) {
+    match http_get(
+        &target_url,
+        policy,
+        "documentation page",
+        Some(downloaded_bytes),
+    ) {
         Ok(response) => {
             let response_bytes = response.downloaded_bytes;
             let resolved_url = response.final_url.as_str().to_string();
@@ -30,10 +35,7 @@ pub(crate) fn fetch_target(
                 return Ok(FetchedOutcome {
                     diagnostic: Some(CrawlDiagnostic {
                         code: "http_status".into(),
-                        message: format!(
-                            "documentation page returned HTTP {}",
-                            response.status
-                        ),
+                        message: format!("documentation page returned HTTP {}", response.status),
                         url: target.url.clone(),
                     }),
                     resolved_url: resolved_url.clone(),
@@ -56,12 +58,7 @@ pub(crate) fn fetch_target(
             );
             let is_plain_text = matches!(
                 media_type.as_deref(),
-                Some(
-                    "text/plain"
-                        | "text/markdown"
-                        | "text/x-markdown"
-                        | "application/markdown"
-                )
+                Some("text/plain" | "text/markdown" | "text/x-markdown" | "application/markdown")
             );
             if !is_html && !is_plain_text {
                 return Ok(FetchedOutcome {
@@ -167,31 +164,35 @@ pub(crate) fn fetch_target(
                 line: Some(line),
             })
         }
-        Err(error) => {
-            Ok(FetchedOutcome {
-                diagnostic: Some(CrawlDiagnostic {
-                    code: match error.code {
-                        "body_byte_limit" => "page_body_limit".into(),
-                        code => code.into(),
-                    },
-                    message: error.to_string(),
-                    url: target.url.clone(),
-                }),
-                resolved_url: target.url.clone(),
-                target,
-                status: Value::String("error".into()),
-                text_bytes: None,
-                downloaded_bytes: error.downloaded_bytes,
-                line: None,
-            })
-        }
+        Err(error) => Ok(FetchedOutcome {
+            diagnostic: Some(CrawlDiagnostic {
+                code: match error.code {
+                    "body_byte_limit" => "page_body_limit".into(),
+                    code => code.into(),
+                },
+                message: error.to_string(),
+                url: target.url.clone(),
+            }),
+            resolved_url: target.url.clone(),
+            target,
+            status: Value::String("error".into()),
+            text_bytes: None,
+            downloaded_bytes: error.downloaded_bytes,
+            line: None,
+        }),
     }
 }
 
 pub(crate) fn load_stream_hasher(path: &Path, committed_bytes: u64) -> Result<Sha256> {
     let mut hasher = Sha256::new();
-    let mut file =
-        open_regular_file(path, true, false, false, false, "durable documentation pages")?;
+    let mut file = open_regular_file(
+        path,
+        true,
+        false,
+        false,
+        false,
+        "durable documentation pages",
+    )?;
     let mut remaining = committed_bytes;
     let mut buffer = [0u8; 64 * 1024];
     while remaining > 0 {

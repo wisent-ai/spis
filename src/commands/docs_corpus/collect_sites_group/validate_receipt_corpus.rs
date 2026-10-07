@@ -76,7 +76,10 @@ pub(crate) fn validate_receipt_corpus(receipt: &Value, corpus: &AttemptCorpus) -
     Ok(())
 }
 
-pub(crate) fn import_verified_worker_report(receipt: &Value, source_archive: Option<&Path>) -> Result<Value> {
+pub(crate) fn import_verified_worker_report(
+    receipt: &Value,
+    source_archive: Option<&Path>,
+) -> Result<Value> {
     let (uri, expected_sha256) = validate_docs_worker_report(receipt)?;
     let expected_bytes = receipt
         .pointer("/artifact/bytes")
@@ -121,22 +124,32 @@ pub fn run(rest: &[String]) -> Result<()> {
             "status" | "search" | "show" | "import" => sub = rest[index].as_str(),
             "--query" => {
                 index += 1;
-                query = rest.get(index).ok_or_else(|| crate::commands::usage("--query needs a value"))?.clone();
+                query = rest
+                    .get(index)
+                    .ok_or_else(|| crate::commands::usage("--query needs a value"))?
+                    .clone();
             }
             "--site" => {
                 index += 1;
-                site = Some(rest.get(index).ok_or_else(|| crate::commands::usage("--site needs a value"))?.clone());
+                site = Some(
+                    rest.get(index)
+                        .ok_or_else(|| crate::commands::usage("--site needs a value"))?
+                        .clone(),
+                );
             }
             "--url" => {
                 index += 1;
-                url_filter = rest.get(index).ok_or_else(|| crate::commands::usage("--url needs a value"))?.clone();
+                url_filter = rest
+                    .get(index)
+                    .ok_or_else(|| crate::commands::usage("--url needs a value"))?
+                    .clone();
             }
             "--attempt-receipt" => {
                 index += 1;
-                attempt_receipt = Some(PathBuf::from(
-                    rest.get(index)
-                        .ok_or_else(|| crate::commands::usage("--attempt-receipt needs a value"))?,
-                ));
+                attempt_receipt =
+                    Some(PathBuf::from(rest.get(index).ok_or_else(|| {
+                        crate::commands::usage("--attempt-receipt needs a value")
+                    })?));
             }
             "--limit" => {
                 index += 1;
@@ -144,7 +157,9 @@ pub fn run(rest: &[String]) -> Result<()> {
                     .get(index)
                     .ok_or_else(|| crate::commands::usage("--limit needs a value"))?
                     .parse()
-                    .map_err(|error| crate::commands::usage(format!("--limit must be a whole number: {error}")))?;
+                    .map_err(|error| {
+                        crate::commands::usage(format!("--limit must be a whole number: {error}"))
+                    })?;
             }
             other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
@@ -154,7 +169,9 @@ pub fn run(rest: &[String]) -> Result<()> {
         return Err(crate::commands::usage("usage: spis docs-corpus status | search --query T [--site S] [--limit N] | show --site S --url U | import --attempt-receipt FILE"));
     }
     if limit == 0 || limit > 10_000 {
-        return Err(crate::commands::usage("--limit must be between 1 and 10000"));
+        return Err(crate::commands::usage(
+            "--limit must be between 1 and 10000",
+        ));
     }
 
     match sub {
@@ -230,8 +247,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             bail!("url not found in the completed {slug} retrieval corpus")
         }
         "import" => {
-            let receipt_path =
-                attempt_receipt.context("import needs --attempt-receipt <file>")?;
+            let receipt_path = attempt_receipt.context("import needs --attempt-receipt <file>")?;
             let (receipt, _, _) = read_attempt_receipt(&receipt_path)?;
             let mut imported = import_worker_report(&receipt)?;
             imported["attempt_receipt"] = json!(receipt_path);

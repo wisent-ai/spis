@@ -8,8 +8,8 @@ use anyhow::Result;
 // resolves here by way of their `use super::*`.
 use crate::commands::generate_example_catalogs;
 
-mod catalog_schema;
 mod canonical_timing_class;
+mod catalog_schema;
 
-pub use catalog_schema::*;
 pub use canonical_timing_class::*;
+pub use catalog_schema::*;

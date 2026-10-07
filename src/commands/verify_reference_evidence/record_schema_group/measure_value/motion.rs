@@ -113,20 +113,14 @@ pub(super) fn measure_motion(
                 fmt_opt_num(probe.duration_seconds)
             ));
         }
-        let provenance = provenance_class(
-            &Value::Object(obj.clone()),
-            &provenance_context,
-        );
+        let provenance = provenance_class(&Value::Object(obj.clone()), &provenance_context);
         obj.insert("provenance_class".into(), json!(provenance));
         if provenance == "unverified-source-media" {
             gaps.push(format!(
                 "motion provenance unverified: {local_path} has no typed verified crawl or owner observation"
             ));
         }
-        if !is_still
-            && provenance != "unverified-source-media"
-            && primary_motion.is_none()
-        {
+        if !is_still && provenance != "unverified-source-media" && primary_motion.is_none() {
             primary_motion = Some(local);
         }
     }

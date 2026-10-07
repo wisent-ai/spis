@@ -108,7 +108,12 @@ pub(crate) fn choose_boundary(
         .or(fallback)
 }
 
-pub(crate) fn region(role: &str, position: &str, bounds: (f64, f64, f64, f64), evidence: &str) -> Value {
+pub(crate) fn region(
+    role: &str,
+    position: &str,
+    bounds: (f64, f64, f64, f64),
+    evidence: &str,
+) -> Value {
     json!({
         "role": role,
         "position": position,

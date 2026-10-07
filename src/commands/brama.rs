@@ -46,9 +46,9 @@ pub(crate) fn ask_json(purpose: &str, system: &str, user: &str) -> Result<Value>
     if let Some(token) = &token {
         request = request.set("Authorization", &format!("Bearer {token}"));
     }
-    let response = request
-        .send_string(&payload)
-        .with_context(|| format!("{purpose}: Brama at {endpoint} refused or could not be reached"))?;
+    let response = request.send_string(&payload).with_context(|| {
+        format!("{purpose}: Brama at {endpoint} refused or could not be reached")
+    })?;
     let mut body_bytes = Vec::new();
     response.into_reader().read_to_end(&mut body_bytes)?;
     let body: Value = serde_json::from_slice(&body_bytes)

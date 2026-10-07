@@ -5,14 +5,25 @@ use image::{ImageFormat, Rgb, RgbImage};
 
 /// Where macOS keeps the monospace faces a terminal frame is drawn in, tried
 /// in order: Menlo, then SF Mono.
-const FONT_CANDIDATES: [&str; 2] = ["/System/Library/Fonts/Menlo.ttc", "/System/Library/Fonts/SFNSMono.ttf"];
+const FONT_CANDIDATES: [&str; 2] = [
+    "/System/Library/Fonts/Menlo.ttc",
+    "/System/Library/Fonts/SFNSMono.ttf",
+];
 
 /// The monospace face the state PNGs are drawn in, refused before any capture
 /// starts when none can be read.
 pub(crate) fn font(px: f32) -> Result<Font> {
     for candidate in FONT_CANDIDATES {
-        let Ok(bytes) = std::fs::read(candidate) else { continue };
-        if let Ok(font) = Font::from_bytes(bytes, FontSettings { scale: px, ..FontSettings::default() }) {
+        let Ok(bytes) = std::fs::read(candidate) else {
+            continue;
+        };
+        if let Ok(font) = Font::from_bytes(
+            bytes,
+            FontSettings {
+                scale: px,
+                ..FontSettings::default()
+            },
+        ) {
             return Ok(font);
         }
     }
@@ -25,7 +36,9 @@ pub(crate) fn font(px: f32) -> Result<Font> {
 fn colour(hex: &str) -> Result<Rgb<u8>> {
     let digits = hex.strip_prefix('#').unwrap_or(hex);
     let channel = |range: std::ops::Range<usize>| {
-        digits.get(range).and_then(|pair| u8::from_str_radix(pair, 16).ok())
+        digits
+            .get(range)
+            .and_then(|pair| u8::from_str_radix(pair, 16).ok())
     };
     match (channel(0..2), channel(2..4), channel(4..6), digits.len()) {
         (Some(r), Some(g), Some(b), 6) => Ok(Rgb([r, g, b])),
@@ -38,8 +51,10 @@ fn colour(hex: &str) -> Result<Rgb<u8>> {
 /// spaces.
 fn visible_lines(text: &str) -> Vec<String> {
     static ANSI: LazyLock<regex::Regex> = LazyLock::new(|| {
-        regex::Regex::new(r"\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[@-Z\\-_]")
-            .expect("the control-sequence pattern compiles")
+        regex::Regex::new(
+            r"\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[@-Z\\-_]",
+        )
+        .expect("the control-sequence pattern compiles")
     });
     let stripped = ANSI.replace_all(text, "").replace('\x07', "");
     stripped
@@ -71,9 +86,17 @@ fn wrapped(lines: &[String], width: usize) -> Vec<String> {
 /// Deterministic PNG of the cast's own text, replayed to one event: the last
 /// rows of the plan's terminal, each cell the font's own advance and line
 /// height, no margin. Returns (width, height) of the written image.
-pub(crate) fn render_state(path: &Path, events: &[(f64, String)], cutoff_index: usize) -> Result<(u64, u64)> {
+pub(crate) fn render_state(
+    path: &Path,
+    events: &[(f64, String)],
+    cutoff_index: usize,
+) -> Result<(u64, u64)> {
     let terminal = terminal();
-    let text: String = events.iter().take(cutoff_index + 1).map(|(_, chunk)| chunk.as_str()).collect();
+    let text: String = events
+        .iter()
+        .take(cutoff_index + 1)
+        .map(|(_, chunk)| chunk.as_str())
+        .collect();
     let mut rows = wrapped(&visible_lines(&text), terminal.columns);
     if rows.len() > terminal.rows {
         rows.drain(..rows.len() - terminal.rows);
@@ -104,7 +127,8 @@ pub(crate) fn render_state(path: &Path, events: &[(f64, String)], cutoff_index: 
             for (offset, alpha) in coverage.iter().enumerate() {
                 let x = left + (offset % metrics.width.max(1)) as i64;
                 let y = top + (offset / metrics.width.max(1)) as i64;
-                if *alpha == 0 || x < 0 || y < 0 || x >= i64::from(width) || y >= i64::from(height) {
+                if *alpha == 0 || x < 0 || y < 0 || x >= i64::from(width) || y >= i64::from(height)
+                {
                     continue;
                 }
                 let pixel = image.get_pixel_mut(x as u32, y as u32);

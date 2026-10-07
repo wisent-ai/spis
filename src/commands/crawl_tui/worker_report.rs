@@ -109,9 +109,13 @@ pub(crate) fn submit(
     for (name, reference) in delivery_secret_bindings(manifest)? {
         stado.arg("--secret-env").arg(format!("{name}={reference}"));
     }
-    let output = crate::commands::crawl::command_output(&mut stado, "submit TUI crawl through Stado")?;
+    let output =
+        crate::commands::crawl::command_output(&mut stado, "submit TUI crawl through Stado")?;
     if !output.status.success() {
-        bail!("Stado refused TUI crawl: {}", String::from_utf8_lossy(&output.stderr).trim());
+        bail!(
+            "Stado refused TUI crawl: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
     }
     crate::commands::crawl::print_submission(
         "tui-examples",
@@ -135,24 +139,33 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--host" => {
                 i += 1;
-                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host =
+                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--record" => {
                 i += 1;
-                selected = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                selected =
+                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--artifact-uri" => {
                 i += 1;
-                artifact_uri = Some(crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(
+                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
+                );
             }
             "--git-path" => {
                 i += 1;
-                git_path = Some(crate::commands::required(rest.get(i), "--git-path needs a value")?.clone());
+                git_path = Some(
+                    crate::commands::required(rest.get(i), "--git-path needs a value")?.clone(),
+                );
             }
             "--runtime-manifest-base64" => {
                 i += 1;
-                runtime_manifest_base64 =
-                    Some(rest.get(i).context("--runtime-manifest-base64 needs a value")?.clone());
+                runtime_manifest_base64 = Some(
+                    rest.get(i)
+                        .context("--runtime-manifest-base64 needs a value")?
+                        .clone(),
+                );
             }
             "--worker" => worker = true,
             "--help" | "-h" => {
@@ -165,7 +178,9 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
     let selected = selected.context("--record is required for one exact per-record job")?;
     let manifest = crate::commands::crawl::decode_runtime_manifest(
-        runtime_manifest_base64.as_deref().context("--runtime-manifest-base64 is required")?,
+        runtime_manifest_base64
+            .as_deref()
+            .context("--runtime-manifest-base64 is required")?,
         "tui-examples",
         "tui",
         Some(&selected),
@@ -196,35 +211,36 @@ pub fn run(rest: &[String]) -> Result<()> {
     {
         bail!("--git-path must be an absolute real git, never the /usr/bin shim: {git_path:?}");
     }
-    let root = attempt_root(
-        &Path::new("target").join("spis-tui-crawls"),
-        &manifest,
-    )?;
+    let root = attempt_root(&Path::new("target").join("spis-tui-crawls"), &manifest)?;
     std::fs::create_dir_all(&root)?;
-    let (slug, name) = records(Some(&selected))?.into_iter().next().context("runtime manifest record is absent")?;
+    let (slug, name) = records(Some(&selected))?
+        .into_iter()
+        .next()
+        .context("runtime manifest record is absent")?;
     let output = root.join(&slug);
     std::fs::create_dir_all(&output)?;
-    let (record_report, failure) = match crawl_one(&slug, &name, &manifest, &output, Path::new(&git_path)) {
-        Ok(report) => (report, None),
-        Err(error) => {
-            let code = failure_code(&error);
-            let message = format!("{error:#}");
-            // Diagnostics never share stdout with the one worker report line.
-            eprintln!("TUI record {slug} failed: {message}");
-            (
-                json!({
-                    "slug": slug,
-                    "name": name,
-                    "status": "failed",
-                    "source_revision": manifest.source_revision,
-                    "source_input_sha256": manifest.source_input_sha256,
-                    "runtime_manifest": manifest,
-                    "error": message,
-                }),
-                Some((code, message)),
-            )
-        }
-    };
+    let (record_report, failure) =
+        match crawl_one(&slug, &name, &manifest, &output, Path::new(&git_path)) {
+            Ok(report) => (report, None),
+            Err(error) => {
+                let code = failure_code(&error);
+                let message = format!("{error:#}");
+                // Diagnostics never share stdout with the one worker report line.
+                eprintln!("TUI record {slug} failed: {message}");
+                (
+                    json!({
+                        "slug": slug,
+                        "name": name,
+                        "status": "failed",
+                        "source_revision": manifest.source_revision,
+                        "source_input_sha256": manifest.source_input_sha256,
+                        "runtime_manifest": manifest,
+                        "error": message,
+                    }),
+                    Some((code, message)),
+                )
+            }
+        };
     let summary = json!({
         "schema": "wisent.tui-crawl-batch.v1",
         "source_revision": manifest.source_revision,

@@ -62,7 +62,10 @@ pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) ->
         "Accept: application/json",
     ])
     .arg(&url);
-    let output = crate::commands::crawl::command_output(&mut curl, "read the Weles service release identity")?;
+    let output = crate::commands::crawl::command_output(
+        &mut curl,
+        "read the Weles service release identity",
+    )?;
     if !output.status.success() {
         return Err(WorkerFailure::new(
             "weles_service_release_unavailable",
@@ -98,7 +101,11 @@ pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) ->
     )
 }
 
-pub(crate) fn alternate<'a>(document: &'a Value, primary: &str, secondary: &str) -> Option<&'a str> {
+pub(crate) fn alternate<'a>(
+    document: &'a Value,
+    primary: &str,
+    secondary: &str,
+) -> Option<&'a str> {
     document
         .get(primary)
         .or_else(|| document.get(secondary))
@@ -205,7 +212,9 @@ pub(crate) const BROWSER_EVIDENCE_CONSTRAINTS: &[&str] = &[
 /// URL origin and which is signed into the receipt as a core claim.
 /// `validate_request_and_evidence_manifest` runs `validate_unique_nonempty` over exactly
 /// this vector.
-pub(crate) fn task_constraints(constraints: &super::crawl::RuntimeConstraints) -> Outcome<Vec<String>> {
+pub(crate) fn task_constraints(
+    constraints: &super::crawl::RuntimeConstraints,
+) -> Outcome<Vec<String>> {
     ensure(
         constraints.no_first_run_consent
             && constraints.no_system_permission_prompts
@@ -223,13 +232,10 @@ pub(crate) fn task_constraints(constraints: &super::crawl::RuntimeConstraints) -
 }
 
 pub(crate) fn text<'a>(document: &'a Value, key: &str) -> Outcome<&'a str> {
-    document
-        .get(key)
-        .and_then(Value::as_str)
-        .ok_or_else(|| {
-            WorkerFailure::new(
-                "weles_evidence_manifest_invalid",
-                format!("the signed evidence manifest has no string {key}"),
-            )
-        })
+    document.get(key).and_then(Value::as_str).ok_or_else(|| {
+        WorkerFailure::new(
+            "weles_evidence_manifest_invalid",
+            format!("the signed evidence manifest has no string {key}"),
+        )
+    })
 }

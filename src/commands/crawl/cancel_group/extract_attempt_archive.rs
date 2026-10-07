@@ -194,8 +194,7 @@ pub(crate) fn retained_worker_report(engine: &str, output_log: &Path) -> Result<
     let mut report = None;
     for line in std::io::BufReader::new(File::open(output_log)?).split(b'\n') {
         let line = line?;
-        let Ok(value) = serde_json::from_str::<Value>(String::from_utf8_lossy(&line).trim())
-        else {
+        let Ok(value) = serde_json::from_str::<Value>(String::from_utf8_lossy(&line).trim()) else {
             continue;
         };
         if value.get("schema").and_then(Value::as_str) == Some(schema) {

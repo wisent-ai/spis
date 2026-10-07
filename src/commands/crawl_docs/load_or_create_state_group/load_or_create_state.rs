@@ -49,11 +49,7 @@ pub(crate) fn load_or_create_state(
         );
         let resolution = resolve_urls(meta, rules, &policy)?;
         let mut resolved = resolution.pages;
-        resolved.sort_by(|left, right| {
-            left.0
-                .cmp(&right.0)
-                .then_with(|| left.1.cmp(&right.1))
-        });
+        resolved.sort_by(|left, right| left.0.cmp(&right.0).then_with(|| left.1.cmp(&right.1)));
         resolved.dedup_by(|left, right| left.0 == right.0);
         state.targets = resolved
             .into_iter()
@@ -137,16 +133,14 @@ pub(crate) fn build_report(
     structure_sha256: &str,
     completed_at: &str,
 ) -> Result<Value> {
-    let definition_path = source_root()
-        .join("documentation-site-examples/content-structure/full-text-manifest.json");
-    let definition_hash = lib::sha256_hex(
-        &std::fs::read(&definition_path).with_context(|| {
-            format!(
-                "read documentation crawl definition {}",
-                definition_path.display()
-            )
-        })?,
-    );
+    let definition_path =
+        source_root().join("documentation-site-examples/content-structure/full-text-manifest.json");
+    let definition_hash = lib::sha256_hex(&std::fs::read(&definition_path).with_context(|| {
+        format!(
+            "read documentation crawl definition {}",
+            definition_path.display()
+        )
+    })?);
     let mut diagnostics = state
         .inventory_diagnostics
         .iter()

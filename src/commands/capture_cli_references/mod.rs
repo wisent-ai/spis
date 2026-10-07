@@ -24,8 +24,8 @@ use std::process::{Command, Stdio};
 use std::sync::LazyLock;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
-mod record_schema_group;
 mod build_record_group;
+mod record_schema_group;
 
-pub use record_schema_group::*;
 pub use build_record_group::*;
+pub use record_schema_group::*;

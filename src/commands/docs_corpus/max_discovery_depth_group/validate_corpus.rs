@@ -10,7 +10,10 @@ pub(crate) fn validate_corpus(
         .map(|entry| entry.map(|value| value.file_name().to_string_lossy().to_string()))
         .collect::<std::result::Result<Vec<_>, _>>()?;
     observed.sort();
-    let mut expected = CORPUS_FILES.iter().map(|name| name.to_string()).collect::<Vec<_>>();
+    let mut expected = CORPUS_FILES
+        .iter()
+        .map(|name| name.to_string())
+        .collect::<Vec<_>>();
     expected.sort();
     if observed != expected {
         bail!(
@@ -26,9 +29,7 @@ pub(crate) fn validate_corpus(
     if state.get("schema").and_then(Value::as_str) != Some("wisent.docs-crawl-state.v3") {
         bail!("documentation corpus uses an unsupported durable state schema");
     }
-    if report.get("schema").and_then(Value::as_str)
-        != Some("wisent.docs-retrieval-run.v2")
-    {
+    if report.get("schema").and_then(Value::as_str) != Some("wisent.docs-retrieval-run.v2") {
         bail!("documentation corpus uses an unsupported retrieval report schema");
     }
     for field in [
@@ -134,7 +135,10 @@ pub(crate) fn visit_corpora(
     // durable layout writes the four artifacts straight into the attempt root
     // (`native_attempt_root`), while `import_artifact` stages them under a
     // directory literally named `corpus`; only a content test sees both.
-    if CORPUS_FILES.iter().all(|name| directory.join(name).is_file()) {
+    if CORPUS_FILES
+        .iter()
+        .all(|name| directory.join(name).is_file())
+    {
         corpora.push(validate_corpus(directory, None, origin)?);
         return Ok(());
     }
@@ -154,8 +158,11 @@ pub(crate) fn selected_corpora() -> Result<HashMap<String, AttemptCorpus>> {
     let mut selected = HashMap::<String, AttemptCorpus>::new();
     for candidate in candidates {
         let replace = selected.get(&candidate.slug).is_none_or(|current| {
-            (&candidate.completed_at, candidate.attempt, &candidate.attempt_id)
-                > (&current.completed_at, current.attempt, &current.attempt_id)
+            (
+                &candidate.completed_at,
+                candidate.attempt,
+                &candidate.attempt_id,
+            ) > (&current.completed_at, current.attempt, &current.attempt_id)
         });
         if replace {
             selected.insert(candidate.slug.clone(), candidate);

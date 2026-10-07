@@ -6,9 +6,7 @@ pub(crate) fn finish_run(
     mut state: DurableState,
     structure_sha256: &str,
 ) -> Result<(DurableState, Value)> {
-    if let (Some(_), Some(expected_report_sha256)) =
-        (&state.completed_at, &state.report_sha256)
-    {
+    if let (Some(_), Some(expected_report_sha256)) = (&state.completed_at, &state.report_sha256) {
         let mut report_file = open_regular_file(
             &layout.report,
             true,
@@ -68,8 +66,14 @@ pub(crate) fn corpus_summary(layout: &WorkLayout, state: &DurableState) -> Resul
     }
     let mut bytes = 0u64;
     for name in expected {
-        let file =
-            open_regular_file(&layout.corpus.join(name), true, false, false, false, "corpus artifact")?;
+        let file = open_regular_file(
+            &layout.corpus.join(name),
+            true,
+            false,
+            false,
+            false,
+            "corpus artifact",
+        )?;
         bytes = bytes
             .checked_add(file.metadata()?.len())
             .context("documentation corpus byte count overflow")?;
@@ -125,8 +129,7 @@ pub(crate) fn crawl_attempt(
 ) -> Result<(DurableState, Value)> {
     let invocation_started_at = lib::now_iso_utc();
     let options = WorkerOptions::parse(rest)?;
-    let structure_dir =
-        source_root().join("documentation-site-examples/content-structure");
+    let structure_dir = source_root().join("documentation-site-examples/content-structure");
     let mut slugs: Vec<String> = std::fs::read_dir(&structure_dir)?
         .filter_map(|entry| entry.ok())
         .map(|entry| entry.file_name().to_string_lossy().to_string())
@@ -178,12 +181,7 @@ pub(crate) fn crawl_attempt(
     let state = if pending.is_empty() {
         state
     } else {
-        run_fetch_workers(
-            pending,
-            options.workers,
-            layout,
-            state,
-        )?
+        run_fetch_workers(pending, options.workers, layout, state)?
     };
     finish_run(layout, manifest, state, &structure_sha256)
 }
@@ -196,8 +194,10 @@ pub(crate) fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManife
         .and_then(|(state, _)| corpus_summary(&layout, &state));
     match outcome {
         Ok(corpus) => {
-            let artifact =
-                crate::commands::crawl::publish_attempt_archive(&layout.root, &manifest.artifact_uri)?;
+            let artifact = crate::commands::crawl::publish_attempt_archive(
+                &layout.root,
+                &manifest.artifact_uri,
+            )?;
             let report = worker_report(
                 manifest,
                 "artifact_published",
@@ -232,7 +232,9 @@ pub(crate) fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManife
             // already used in this directory.
             match failure_diagnostic_path(&layout) {
                 Ok(path) => {
-                    if let Err(write_error) = crate::commands::crawl::atomic_json_write(&path, &failure) {
+                    if let Err(write_error) =
+                        crate::commands::crawl::atomic_json_write(&path, &failure)
+                    {
                         eprintln!(
                             "documentation worker failure artifact could not be retained: {write_error:#}"
                         );
@@ -242,8 +244,10 @@ pub(crate) fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManife
                     "documentation worker failure artifact has no retainable path: {path_error:#}"
                 ),
             }
-            let artifact =
-                crate::commands::crawl::publish_attempt_archive(&layout.root, &manifest.artifact_uri);
+            let artifact = crate::commands::crawl::publish_attempt_archive(
+                &layout.root,
+                &manifest.artifact_uri,
+            );
             let report = worker_report(
                 manifest,
                 "failed",

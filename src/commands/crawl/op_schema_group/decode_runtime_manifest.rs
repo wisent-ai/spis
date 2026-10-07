@@ -8,7 +8,9 @@ pub(crate) fn decode_runtime_manifest(
 ) -> Result<RuntimeManifest> {
     use base64::{engine::general_purpose::STANDARD, Engine};
     let manifest: RuntimeManifest = serde_json::from_slice(
-        &STANDARD.decode(encoded).context("runtime manifest is not valid base64")?,
+        &STANDARD
+            .decode(encoded)
+            .context("runtime manifest is not valid base64")?,
     )?;
     if manifest.schema != RUNTIME_MANIFEST_SCHEMA
         || manifest.catalog != catalog
@@ -16,7 +18,9 @@ pub(crate) fn decode_runtime_manifest(
         || record.is_some_and(|value| value != manifest.record)
         || manifest.source_revision != build_revision()?
     {
-        bail!("runtime manifest does not match this exact worker, record, engine and source revision");
+        bail!(
+            "runtime manifest does not match this exact worker, record, engine and source revision"
+        );
     }
     safe_component(&manifest.run_id, "run id")?;
     safe_component(&manifest.catalog, "catalog")?;
@@ -61,7 +65,11 @@ pub(crate) fn decode_runtime_manifest(
         bail!("non-web runtime manifest cannot bind a Weles service identity");
     }
     if manifest.engine == "mobile" {
-        if manifest.driver_url.as_deref().is_none_or(|url| url.trim().is_empty()) {
+        if manifest
+            .driver_url
+            .as_deref()
+            .is_none_or(|url| url.trim().is_empty())
+        {
             bail!("mobile runtime manifest binds no Appium address; the placement host must declare mobile_runtime.address in the Stado registry");
         }
     } else if manifest.driver_url.is_some() {
@@ -77,8 +85,7 @@ pub(crate) fn decode_runtime_manifest(
         &manifest.engine,
         &manifest.record,
     )?;
-    let authoritative_sha256 =
-        crate::sha256_hex(&serde_json::to_vec(&authoritative)?);
+    let authoritative_sha256 = crate::sha256_hex(&serde_json::to_vec(&authoritative)?);
     if authoritative_sha256 != manifest.bindings_sha256 {
         bail!("normalized catalog+record binding digest differs from the immutable manifest");
     }
@@ -139,7 +146,10 @@ pub(crate) fn decode_runtime_manifest(
             }
         }
         "cli" => {
-            let path = execution.executable_path.as_deref().context("CLI identity has no path")?;
+            let path = execution
+                .executable_path
+                .as_deref()
+                .context("CLI identity has no path")?;
             let digest = execution
                 .executable_sha256
                 .as_deref()
@@ -153,7 +163,10 @@ pub(crate) fn decode_runtime_manifest(
             }
         }
         "tui" => {
-            let path = execution.executable_path.as_deref().context("TUI identity has no path")?;
+            let path = execution
+                .executable_path
+                .as_deref()
+                .context("TUI identity has no path")?;
             let digest = execution
                 .executable_sha256
                 .as_deref()
@@ -209,9 +222,9 @@ pub(crate) fn safe_component(value: &str, name: &str) -> Result<()> {
     if value.is_empty()
         || value.len() > 128
         || matches!(value, "." | "..")
-        || !value.bytes().all(|byte| {
-            byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.')
-        })
+        || !value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.'))
     {
         bail!("{name} must be one strict ASCII path component of at most 128 bytes");
     }
@@ -272,8 +285,11 @@ pub(crate) fn migrate_run_state(run_id: Option<&str>) -> Result<()> {
         let document: Value =
             crate::read_json(source.to_str().context("legacy run path is not UTF-8")?)?;
         atomic_json_write(&destination, &document)?;
-        let recovered: Value =
-            crate::read_json(destination.to_str().context("migrated run path is not UTF-8")?)?;
+        let recovered: Value = crate::read_json(
+            destination
+                .to_str()
+                .context("migrated run path is not UTF-8")?,
+        )?;
         if recovered != document {
             bail!("legacy crawl run {id} migration read-back differs");
         }

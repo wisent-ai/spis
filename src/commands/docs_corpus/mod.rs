@@ -7,15 +7,15 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::collections::{HashMap, HashSet};
 use std::fs::{File, OpenOptions};
-use std::os::unix::fs::OpenOptionsExt;
 use std::io::{BufRead, Read, Write};
+use std::os::unix::fs::OpenOptionsExt;
 use std::path::{Component, Path, PathBuf};
 // The split submodules reach their sibling commands through `super::`, which
 // resolves here by way of their `use super::*`.
 use crate::commands::crawl_docs;
 
-mod max_discovery_depth_group;
 mod collect_sites_group;
+mod max_discovery_depth_group;
 
-pub use max_discovery_depth_group::*;
 pub use collect_sites_group::*;
+pub use max_discovery_depth_group::*;

@@ -22,7 +22,10 @@ pub(crate) fn run_worker(
         // A publication failure is itself a typed attempt failure, so the single mandatory
         // report line is emitted on every path.
         Ok(()) => {
-            match crate::commands::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri) {
+            match crate::commands::crawl::publish_attempt_archive(
+                &attempt_root,
+                &manifest.artifact_uri,
+            ) {
                 Ok(artifact) => {
                     let report = worker_report(
                         manifest,
@@ -35,10 +38,9 @@ pub(crate) fn run_worker(
                     println!("{}", serde_json::to_string(&report)?);
                     return Ok(());
                 }
-                Err(error) => WorkerFailure::new(
-                    "attempt_archive_publication_failed",
-                    format!("{error:#}"),
-                ),
+                Err(error) => {
+                    WorkerFailure::new("attempt_archive_publication_failed", format!("{error:#}"))
+                }
             }
         }
         Err(failure) => failure,
@@ -59,7 +61,8 @@ pub(crate) fn run_worker(
             retention.code, retention.message
         );
     }
-    let artifact = crate::commands::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri);
+    let artifact =
+        crate::commands::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri);
     let report = worker_report(
         manifest,
         "failed",

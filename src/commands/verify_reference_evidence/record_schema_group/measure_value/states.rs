@@ -85,9 +85,7 @@ pub(super) fn measure_states(
                 (motion_frames_cache.as_ref(), primary_motion.as_ref())
             {
                 if let Some(matched) = locate_state_in_motion(&local, frames)? {
-                    let diff = matched["mean_abs_diff"]
-                        .as_f64()
-                        .unwrap_or(f64::INFINITY);
+                    let diff = matched["mean_abs_diff"].as_f64().unwrap_or(f64::INFINITY);
                     if diff <= STATE_MATCH_MAX_DIFF {
                         let rel = motion
                             .strip_prefix(base)
@@ -102,10 +100,7 @@ pub(super) fn measure_states(
                                 "method".into(),
                                 json!("16x16 grayscale mean-absolute-difference frame search"),
                             );
-                            details.insert(
-                                "max_mean_abs_diff".into(),
-                                json!(STATE_MATCH_MAX_DIFF),
-                            );
+                            details.insert("max_mean_abs_diff".into(), json!(STATE_MATCH_MAX_DIFF));
                         }
                         obj.insert("source_match".into(), source_match);
                         obj.insert(
@@ -133,7 +128,10 @@ pub(super) fn measure_states(
         .map(|a| a.len())
         .unwrap_or(0);
     if states_count < requirements.min_states {
-        gaps.push(format!("fewer than {} states for {} profile", requirements.min_states, requirements.profile));
+        gaps.push(format!(
+            "fewer than {} states for {} profile",
+            requirements.min_states, requirements.profile
+        ));
     }
     Ok(())
 }

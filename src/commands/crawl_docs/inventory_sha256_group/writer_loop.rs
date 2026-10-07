@@ -14,14 +14,8 @@ pub(crate) fn writer_loop(
         false,
         "durable documentation pages",
     )?;
-    let mut journal = open_regular_file(
-        &layout.journal,
-        false,
-        true,
-        true,
-        false,
-        "outcome journal",
-    )?;
+    let mut journal =
+        open_regular_file(&layout.journal, false, true, true, false, "outcome journal")?;
     output.seek(SeekFrom::Start(state.committed_bytes))?;
     let mut stream_hasher = load_stream_hasher(&layout.pages, state.committed_bytes)?;
     // The corpus may grow by the room its volume reports now, so a page that
@@ -44,14 +38,11 @@ pub(crate) fn writer_loop(
             // Blocks until a worker delivers; a worker that ends without
             // delivering closes the channel, which is the error (cli.md rule 8).
             let message = receiver.recv().map_err(|_| {
-                anyhow::anyhow!("documentation writer channel closed before target sequence {expected}")
+                anyhow::anyhow!(
+                    "documentation writer channel closed before target sequence {expected}"
+                )
             })?;
-            accept_writer_message(
-                message,
-                &expected_positions,
-                expected_index,
-                &mut waiting,
-            )?;
+            accept_writer_message(message, &expected_positions, expected_index, &mut waiting)?;
         }
 
         // Batch everything that has already arrived; no waiting window and no
@@ -75,46 +66,44 @@ pub(crate) fn writer_loop(
                 let mut status = request.outcome.status.clone();
                 let mut diagnostic = request.outcome.diagnostic.clone();
                 let mut text_bytes = request.outcome.text_bytes;
-                let (record_sha256, corpus_start, corpus_end) =
-                    if let Some(line) = &request.outcome.line {
-                        let mut encoder = flate2::GzBuilder::new()
-                            .mtime(0)
-                            .write(Vec::new(), flate2::Compression::default());
-                        encoder.write_all(line)?;
-                        let member = encoder.finish()?;
-                        if state.committed_bytes.saturating_add(member.len() as u64)
-                            > corpus_ceiling
-                        {
-                            status = json!("corpus_limit");
-                            diagnostic = Some(CrawlDiagnostic {
+                let (record_sha256, corpus_start, corpus_end) = if let Some(line) =
+                    &request.outcome.line
+                {
+                    let mut encoder = flate2::GzBuilder::new()
+                        .mtime(0)
+                        .write(Vec::new(), flate2::Compression::default());
+                    encoder.write_all(line)?;
+                    let member = encoder.finish()?;
+                    if state.committed_bytes.saturating_add(member.len() as u64) > corpus_ceiling {
+                        status = json!("corpus_limit");
+                        diagnostic = Some(CrawlDiagnostic {
                                 code: "corpus_total_byte_limit".into(),
                                 message: format!(
                                     "writing this page would exceed the {room_bytes} bytes free on the corpus volume when this run began"
                                 ),
                                 url: request.outcome.target.url.clone(),
                             });
-                            text_bytes = None;
-                            (None, None, None)
-                        } else {
-                            output.write_all(&member).with_context(|| {
-                                format!(
-                                    "write documentation page {} to gzip stream",
-                                    request.outcome.target.url
-                                )
-                            })?;
-                            stream_hasher.update(&member);
-                            state.committed_bytes += member.len() as u64;
-                            state.committed_sha256 =
-                                hex::encode(stream_hasher.clone().finalize());
-                            (
-                                Some(lib::sha256_hex(line)),
-                                Some(start),
-                                Some(state.committed_bytes),
-                            )
-                        }
-                    } else {
+                        text_bytes = None;
                         (None, None, None)
-                    };
+                    } else {
+                        output.write_all(&member).with_context(|| {
+                            format!(
+                                "write documentation page {} to gzip stream",
+                                request.outcome.target.url
+                            )
+                        })?;
+                        stream_hasher.update(&member);
+                        state.committed_bytes += member.len() as u64;
+                        state.committed_sha256 = hex::encode(stream_hasher.clone().finalize());
+                        (
+                            Some(lib::sha256_hex(line)),
+                            Some(start),
+                            Some(state.committed_bytes),
+                        )
+                    }
+                } else {
+                    (None, None, None)
+                };
                 if request.outcome.target.url == Url::parse(&state.source_url)?.as_str() {
                     state.effective_source_url = request.outcome.resolved_url.clone();
                 }
@@ -130,10 +119,9 @@ pub(crate) fn writer_loop(
                     corpus_start,
                     corpus_end,
                 };
-                state.outcomes.insert(
-                    request.outcome.target.key.clone(),
-                    page_outcome.clone(),
-                );
+                state
+                    .outcomes
+                    .insert(request.outcome.target.key.clone(), page_outcome.clone());
                 journal_outcomes.push(JournalOutcome {
                     key: request.outcome.target.key.clone(),
                     outcome: page_outcome,
@@ -178,24 +166,19 @@ pub(crate) fn writer_loop(
             }
             if let Some(send_error) = notification_error {
                 return Err(error).with_context(|| {
-                    format!(
-                        "durable writer also failed to report its batch error: {send_error}"
-                    )
+                    format!("durable writer also failed to report its batch error: {send_error}")
                 });
             }
             return Err(error);
         }
         expected_index += batch.len();
         for request in batch {
-            request
-                .acknowledge
-                .send(Ok(()))
-                .with_context(|| {
-                    format!(
-                        "acknowledge durable documentation page {}",
-                        request.outcome.target.url
-                    )
-                })?;
+            request.acknowledge.send(Ok(())).with_context(|| {
+                format!(
+                    "acknowledge durable documentation page {}",
+                    request.outcome.target.url
+                )
+            })?;
         }
     }
     Ok(state)

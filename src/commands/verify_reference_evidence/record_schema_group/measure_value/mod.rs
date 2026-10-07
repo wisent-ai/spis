@@ -3,7 +3,11 @@ use super::*;
 mod motion;
 mod states;
 
-pub(crate) fn measure_value(data: &mut Value, base: &Path, locate_states: bool) -> Result<Vec<String>> {
+pub(crate) fn measure_value(
+    data: &mut Value,
+    base: &Path,
+    locate_states: bool,
+) -> Result<Vec<String>> {
     let requirements = super::reference_contract::completeness_requirements(base);
     let provenance_context = ProvenanceContext::from_record(data, base);
     let mut gaps: Vec<String> = provenance_context
@@ -18,10 +22,19 @@ pub(crate) fn measure_value(data: &mut Value, base: &Path, locate_states: bool) 
     }
 
     // ---- motion ----
-    let primary_motion = motion::measure_motion(data, base, &requirements, &provenance_context, &mut gaps)?;
+    let primary_motion =
+        motion::measure_motion(data, base, &requirements, &provenance_context, &mut gaps)?;
 
     // ---- states ----
-    states::measure_states(data, base, locate_states, &requirements, &provenance_context, primary_motion, &mut gaps)?;
+    states::measure_states(
+        data,
+        base,
+        locate_states,
+        &requirements,
+        &provenance_context,
+        primary_motion,
+        &mut gaps,
+    )?;
 
     // ---- journey ----
     let journey = data.get("journey").cloned().unwrap_or(Value::Null);
@@ -33,8 +46,7 @@ pub(crate) fn measure_value(data: &mut Value, base: &Path, locate_states: bool) 
     if steps_len < requirements.min_journey_steps {
         gaps.push(format!(
             "journey exposes fewer than {} observed steps for {} profile",
-            requirements.min_journey_steps,
-            requirements.profile
+            requirements.min_journey_steps, requirements.profile
         ));
     }
     for key in [
@@ -57,7 +69,10 @@ pub(crate) fn measure_value(data: &mut Value, base: &Path, locate_states: bool) 
         .cloned()
         .unwrap_or_default();
     if interactions.len() < requirements.min_interactions {
-        gaps.push(format!("fewer than {} mapped interactions for {} profile", requirements.min_interactions, requirements.profile));
+        gaps.push(format!(
+            "fewer than {} mapped interactions for {} profile",
+            requirements.min_interactions, requirements.profile
+        ));
     }
     for item in &interactions {
         let missing: Vec<&str> = INTERACTION_FIELDS
@@ -165,8 +180,7 @@ pub(crate) fn measure_value(data: &mut Value, base: &Path, locate_states: bool) 
     if observations < requirements.min_accessibility_observations {
         gaps.push(format!(
             "fewer than {} accessibility observations for {} profile",
-            requirements.min_accessibility_observations,
-            requirements.profile
+            requirements.min_accessibility_observations, requirements.profile
         ));
     }
     if !truthy(access.get("measured")) {

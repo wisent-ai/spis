@@ -194,7 +194,8 @@ pub(crate) fn action_block_reason(action: &Action) -> Option<&'static str> {
         return Some("destructive action withheld before delivery");
     }
     let label = normalize(&action.label);
-    if action.role == "button" && matches!(label.as_str(), "back" | "cancel" | "dismiss" | "close") {
+    if action.role == "button" && matches!(label.as_str(), "back" | "cancel" | "dismiss" | "close")
+    {
         return None;
     }
     Some("action is not independently safe navigation or cancellation and was withheld before delivery")
@@ -238,7 +239,11 @@ pub(crate) fn global_active_owner(driver: &CuaDriver, session: &str) -> Result<S
 }
 
 /// Every running pid of `bundle_id`, read from the anchored `apps` array.
-pub(crate) fn running_instances(driver: &CuaDriver, session: &str, bundle_id: &str) -> Result<Vec<i64>> {
+pub(crate) fn running_instances(
+    driver: &CuaDriver,
+    session: &str,
+    bundle_id: &str,
+) -> Result<Vec<i64>> {
     let apps = call(driver, "list_apps", &json!({"session": session}))?;
     let entries = DriverResponse(&apps)
         .apps()

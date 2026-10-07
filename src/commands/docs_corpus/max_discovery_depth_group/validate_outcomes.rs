@@ -29,9 +29,7 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
         inventory_downloaded_bytes,
         capacity,
     )?;
-    if state.get("inventory_sha256").and_then(Value::as_str)
-        != Some(inventory_sha256.as_str())
-    {
+    if state.get("inventory_sha256").and_then(Value::as_str) != Some(inventory_sha256.as_str()) {
         bail!("durable inventory digest differs from its exact contents");
     }
     let outcomes = state
@@ -54,7 +52,9 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
             .and_then(Value::as_str)
             .context("durable state has no effective_source_url")?,
     )?;
-    if effective.origin() != origin || effective.as_str() != state["effective_source_url"].as_str().unwrap() {
+    if effective.origin() != origin
+        || effective.as_str() != state["effective_source_url"].as_str().unwrap()
+    {
         bail!("durable effective source URL is noncanonical or cross-origin");
     }
     let mut committed_end = 0u64;
@@ -97,7 +97,12 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
             bail!("durable outcome identity is not canonical");
         }
         downloaded_bytes = downloaded_bytes
-            .checked_add(outcome.get("downloaded_bytes").and_then(Value::as_u64).unwrap_or(0))
+            .checked_add(
+                outcome
+                    .get("downloaded_bytes")
+                    .and_then(Value::as_u64)
+                    .unwrap_or(0),
+            )
             .context("durable download byte counter overflow")?;
         let digest = outcome.get("record_sha256").and_then(Value::as_str);
         let start = outcome.get("corpus_start").and_then(Value::as_u64);
@@ -138,12 +143,12 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
     let total_downloaded_bytes = inventory_downloaded_bytes
         .checked_add(downloaded_bytes)
         .context("durable total download counter overflows")?;
-    if report.get("inventory_downloaded_bytes").and_then(Value::as_u64)
+    if report
+        .get("inventory_downloaded_bytes")
+        .and_then(Value::as_u64)
         != Some(inventory_downloaded_bytes)
-        || report.get("page_downloaded_bytes").and_then(Value::as_u64)
-            != Some(downloaded_bytes)
-        || report.get("downloaded_bytes").and_then(Value::as_u64)
-            != Some(total_downloaded_bytes)
+        || report.get("page_downloaded_bytes").and_then(Value::as_u64) != Some(downloaded_bytes)
+        || report.get("downloaded_bytes").and_then(Value::as_u64) != Some(total_downloaded_bytes)
         || report
             .pointer("/retrieval/inventory_downloaded_bytes")
             .and_then(Value::as_u64)
@@ -152,7 +157,9 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
             .pointer("/retrieval/page_downloaded_bytes")
             .and_then(Value::as_u64)
             != Some(downloaded_bytes)
-        || report.pointer("/retrieval/downloaded_bytes").and_then(Value::as_u64)
+        || report
+            .pointer("/retrieval/downloaded_bytes")
+            .and_then(Value::as_u64)
             != Some(total_downloaded_bytes)
     {
         bail!("retrieval report download byte counters differ from durable state");
@@ -164,9 +171,14 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
         .context("durable state has no committed_sha256")?;
     if report.get("pages_sha256").and_then(Value::as_str) != Some(pages_sha256.as_str())
         || report.get("pages_bytes").and_then(Value::as_u64) != Some(pages_bytes)
-        || report.pointer("/retrieval/pages_sha256").and_then(Value::as_str)
+        || report
+            .pointer("/retrieval/pages_sha256")
+            .and_then(Value::as_str)
             != Some(pages_sha256.as_str())
-        || report.pointer("/retrieval/pages_bytes").and_then(Value::as_u64) != Some(pages_bytes)
+        || report
+            .pointer("/retrieval/pages_bytes")
+            .and_then(Value::as_u64)
+            != Some(pages_bytes)
     {
         bail!("retrieval report page digest or length differs from the exact corpus");
     }
@@ -180,23 +192,34 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
         .map_or(0, Vec::len);
     // One derivation, two callers, so the producer and this check cannot
     // disagree about which state a run ended in.
-    let expected_status = super::crawl_docs::retrieval_status(&super::crawl_docs::RetrievalCounts {
-        target_count: targets.len(),
-        retrieved_count,
-        ok_count,
-        text_page_count,
-        diagnostic_count: inventory_diagnostics + outcome_diagnostic_count,
-    });
+    let expected_status =
+        super::crawl_docs::retrieval_status(&super::crawl_docs::RetrievalCounts {
+            target_count: targets.len(),
+            retrieved_count,
+            ok_count,
+            text_page_count,
+            diagnostic_count: inventory_diagnostics + outcome_diagnostic_count,
+        });
     if report.get("retrieval_status").and_then(Value::as_str) != Some(expected_status)
-        || report.pointer("/retrieval/target_count").and_then(Value::as_u64)
+        || report
+            .pointer("/retrieval/target_count")
+            .and_then(Value::as_u64)
             != Some(targets.len() as u64)
-        || report.pointer("/retrieval/outcome_count").and_then(Value::as_u64)
+        || report
+            .pointer("/retrieval/outcome_count")
+            .and_then(Value::as_u64)
             != Some(outcomes.len() as u64)
-        || report.pointer("/retrieval/retrieved_count").and_then(Value::as_u64)
+        || report
+            .pointer("/retrieval/retrieved_count")
+            .and_then(Value::as_u64)
             != Some(retrieved_count as u64)
-        || report.pointer("/retrieval/text_page_count").and_then(Value::as_u64)
+        || report
+            .pointer("/retrieval/text_page_count")
+            .and_then(Value::as_u64)
             != Some(text_page_count as u64)
-        || report.pointer("/retrieval/page_downloaded_bytes").and_then(Value::as_u64)
+        || report
+            .pointer("/retrieval/page_downloaded_bytes")
+            .and_then(Value::as_u64)
             != Some(downloaded_bytes)
     {
         bail!("retrieval report counts or completion status differ from durable outcomes");

@@ -2,7 +2,11 @@ use super::*;
 
 mod robots;
 
-pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolicy) -> Result<InventoryResolution> {
+pub(crate) fn resolve_urls(
+    meta: &SiteMeta,
+    rules: &SiteRules,
+    policy: &UrlPolicy,
+) -> Result<InventoryResolution> {
     let mut diagnostics = Vec::new();
     let total_inventory_bytes = AtomicU64::new(0);
     let inventory_counter = Some(&total_inventory_bytes);
@@ -46,7 +50,12 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
             );
             continue;
         }
-        let response = match http_get(&source, policy, "documentation inventory source", inventory_counter) {
+        let response = match http_get(
+            &source,
+            policy,
+            "documentation inventory source",
+            inventory_counter,
+        ) {
             Ok(response) if (200..300).contains(&response.status) => response,
             Ok(response) => {
                 push_inventory_diagnostic(
@@ -148,7 +157,11 @@ pub(crate) fn resolve_urls(meta: &SiteMeta, rules: &SiteRules, policy: &UrlPolic
 
     if pages.len() == 1 && meta.inventory_source.starts_with("landing-nav") {
         for item in &meta.landing_nav {
-            match policy.canonical(&item.path, Some(&policy.source_url), "landing navigation page") {
+            match policy.canonical(
+                &item.path,
+                Some(&policy.source_url),
+                "landing navigation page",
+            ) {
                 Ok(url) if path_is_in_scope(&url, &rules.prefixes)? => {
                     pages.push((url.to_string(), None));
                 }

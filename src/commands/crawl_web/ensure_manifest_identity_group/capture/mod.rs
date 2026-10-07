@@ -37,7 +37,10 @@ pub(crate) fn capture(
         "web_reference_product_url_mismatch",
         "the committed record product_url differs from the runtime manifest product URL",
     )?;
-    let name = reference.get("name").and_then(Value::as_str).unwrap_or_default();
+    let name = reference
+        .get("name")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
     let goal = reference
         .pointer("/journey/goal")
         .and_then(Value::as_str)

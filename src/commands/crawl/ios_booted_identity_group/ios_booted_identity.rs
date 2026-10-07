@@ -24,14 +24,20 @@ pub(crate) fn ios_booted_identity(host: &str) -> Result<(RuntimeExecutionIdentit
     {
         for device in values.as_array().into_iter().flatten() {
             if device.get("state").and_then(Value::as_str) == Some("Booted")
-                && device.get("isAvailable").and_then(Value::as_bool).unwrap_or(true)
+                && device
+                    .get("isAvailable")
+                    .and_then(Value::as_bool)
+                    .unwrap_or(true)
             {
                 devices.push(device);
             }
         }
     }
     if devices.len() != 1 {
-        bail!("expected exactly one booted available iOS device, found {}", devices.len());
+        bail!(
+            "expected exactly one booted available iOS device, found {}",
+            devices.len()
+        );
     }
     let identity = RuntimeExecutionIdentity {
         host: host.into(),
@@ -44,7 +50,10 @@ pub(crate) fn ios_booted_identity(host: &str) -> Result<(RuntimeExecutionIdentit
                 .context("booted iOS device has no UDID")?
                 .into(),
         ),
-        device_name: devices[0].get("name").and_then(Value::as_str).map(str::to_string),
+        device_name: devices[0]
+            .get("name")
+            .and_then(Value::as_str)
+            .map(str::to_string),
         resolved_product_identifier: String::new(),
         executable_path: None,
         product_version: None,
@@ -55,7 +64,9 @@ pub(crate) fn ios_booted_identity(host: &str) -> Result<(RuntimeExecutionIdentit
 }
 
 /// Resolve the authorized Android device with a probe taken for THIS record.
-pub(crate) fn android_device_identity(host: &str) -> Result<(RuntimeExecutionIdentity, Vec<Value>)> {
+pub(crate) fn android_device_identity(
+    host: &str,
+) -> Result<(RuntimeExecutionIdentity, Vec<Value>)> {
     let check = host_probe(host, &["adb", "devices", "-l"]);
     let stdout = ready_output(&check, "fresh Android device probe")?;
     let devices: Vec<&str> = stdout
@@ -68,7 +79,10 @@ pub(crate) fn android_device_identity(host: &str) -> Result<(RuntimeExecutionIde
         })
         .collect();
     if devices.len() != 1 {
-        bail!("expected exactly one authorized Android device, found {}", devices.len());
+        bail!(
+            "expected exactly one authorized Android device, found {}",
+            devices.len()
+        );
     }
     let identity = RuntimeExecutionIdentity {
         host: host.into(),
@@ -87,7 +101,13 @@ pub(crate) fn android_device_identity(host: &str) -> Result<(RuntimeExecutionIde
 
 pub(crate) fn ready_output(check: &Value, context: &str) -> Result<String> {
     if check.get("ready").and_then(Value::as_bool) != Some(true) {
-        bail!("{context}: {}", check.get("stderr").and_then(Value::as_str).unwrap_or("host command failed"));
+        bail!(
+            "{context}: {}",
+            check
+                .get("stderr")
+                .and_then(Value::as_str)
+                .unwrap_or("host command failed")
+        );
     }
     let output = check
         .get("stdout")
@@ -107,7 +127,10 @@ pub(crate) fn resolve_mobile_install_identity(
     host: &str,
     install_check: &Value,
 ) -> Result<Vec<Value>> {
-    let device = identity.device_id.as_deref().context("mobile identity has no device id")?;
+    let device = identity
+        .device_id
+        .as_deref()
+        .context("mobile identity has no device id")?;
     let product = manifest.runtime_product.identifier.as_str();
     if identity.platform == "ios" {
         let app_path = ready_output(install_check, "resolve installed iOS app bundle")?;
@@ -117,7 +140,12 @@ pub(crate) fn resolve_mobile_install_identity(
         let info = format!("{app_path}/Info.plist");
         let executable_check = host_probe(
             host,
-            &["/usr/libexec/PlistBuddy", "-c", "Print:CFBundleExecutable", &info],
+            &[
+                "/usr/libexec/PlistBuddy",
+                "-c",
+                "Print:CFBundleExecutable",
+                &info,
+            ],
         );
         let executable_name = ready_output(&executable_check, "resolve installed iOS executable")?;
         if executable_name.contains('/') || executable_name.chars().any(char::is_whitespace) {
@@ -126,15 +154,21 @@ pub(crate) fn resolve_mobile_install_identity(
         let executable_path = format!("{app_path}/{executable_name}");
         let version_check = host_probe(
             host,
-            &["/usr/libexec/PlistBuddy", "-c", "Print:CFBundleShortVersionString", &info],
+            &[
+                "/usr/libexec/PlistBuddy",
+                "-c",
+                "Print:CFBundleShortVersionString",
+                &info,
+            ],
         );
         let version = ready_output(&version_check, "resolve installed iOS version")?;
-        let digest_check = host_probe(
-            host,
-            &["shasum", "-a", "256", &executable_path],
-        );
+        let digest_check = host_probe(host, &["shasum", "-a", "256", &executable_path]);
         let digest_output = ready_output(&digest_check, "hash installed iOS executable")?;
-        let digest = digest_output.split_whitespace().next().unwrap_or_default().to_ascii_lowercase();
+        let digest = digest_output
+            .split_whitespace()
+            .next()
+            .unwrap_or_default()
+            .to_ascii_lowercase();
         if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
             bail!("installed iOS executable SHA-256 is invalid");
         }
@@ -165,7 +199,11 @@ pub(crate) fn resolve_mobile_install_identity(
         &["adb", "-s", device, "shell", "sha256sum", &package_path],
     );
     let digest_output = ready_output(&digest_check, "hash installed Android package")?;
-    let digest = digest_output.split_whitespace().next().unwrap_or_default().to_ascii_lowercase();
+    let digest = digest_output
+        .split_whitespace()
+        .next()
+        .unwrap_or_default()
+        .to_ascii_lowercase();
     if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
         bail!("installed Android package SHA-256 is invalid");
     }

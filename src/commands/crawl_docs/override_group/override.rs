@@ -80,7 +80,11 @@ pub(crate) struct SiteRules {
     pub(crate) prefixes: Vec<String>,
 }
 
-pub(crate) fn site_rules(slug: &str, meta: &SiteMeta, map: &HashMap<&'static str, Override>) -> SiteRules {
+pub(crate) fn site_rules(
+    slug: &str,
+    meta: &SiteMeta,
+    map: &HashMap<&'static str, Override>,
+) -> SiteRules {
     let ov = map.get(slug);
     let mut prefixes: Vec<String> = ov
         .map(|o| o.prefixes.iter().map(|s| s.to_string()).collect())
@@ -115,7 +119,8 @@ pub(crate) static STAGING_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
 impl UrlPolicy {
     pub(crate) fn new(source_url: &str) -> Result<Self> {
-        let parsed = Url::parse(source_url).context("declared documentation source_url is invalid")?;
+        let parsed =
+            Url::parse(source_url).context("declared documentation source_url is invalid")?;
         validate_url_shape(&parsed, "declared documentation source_url")?;
         let pinned_addresses = validate_public_endpoint(&parsed)?;
         Ok(Self {

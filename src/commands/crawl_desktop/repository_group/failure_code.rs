@@ -153,7 +153,8 @@ pub(crate) fn preflight(driver: &CuaDriver) -> Result<()> {
     }
     let mut command = Command::new(&driver.path);
     command.args(["permissions", "status", "--json"]);
-    let output = crate::commands::crawl::command_output(&mut command, "Cua Driver permission status")?;
+    let output =
+        crate::commands::crawl::command_output(&mut command, "Cua Driver permission status")?;
     if !output.status.success() {
         bail!(
             "cua-driver permission status failed: {}",

@@ -52,17 +52,15 @@ pub(crate) fn manifest_attempt(manifest: &super::crawl::RuntimeManifest) -> Resu
     Ok((attempt, attempt_id))
 }
 
-pub(crate) fn manifest_structure_sha256(manifest: &super::crawl::RuntimeManifest) -> Result<String> {
+pub(crate) fn manifest_structure_sha256(
+    manifest: &super::crawl::RuntimeManifest,
+) -> Result<String> {
     let encoded = serde_json::to_value(manifest)?;
     let digest = encoded
         .get("docs_structure_sha256")
         .and_then(Value::as_str)
         .context("documentation runtime manifest has no docs_structure_sha256")?;
-    exact_lower_hex(
-        digest,
-        64,
-        "runtime manifest docs_structure_sha256",
-    )?;
+    exact_lower_hex(digest, 64, "runtime manifest docs_structure_sha256")?;
     Ok(digest.to_string())
 }
 
@@ -70,7 +68,11 @@ pub(crate) fn work_layout(manifest: &super::crawl::RuntimeManifest) -> Result<Wo
     safe_path_component(&manifest.run_id, "runtime manifest run_id")?;
     safe_path_component(&manifest.catalog, "runtime manifest catalog")?;
     safe_path_component(&manifest.record, "runtime manifest record")?;
-    exact_lower_hex(&manifest.source_revision, 40, "runtime manifest source_revision")?;
+    exact_lower_hex(
+        &manifest.source_revision,
+        40,
+        "runtime manifest source_revision",
+    )?;
     exact_lower_hex(
         &manifest.source_input_sha256,
         64,
@@ -99,7 +101,10 @@ pub(crate) fn regular_file_exists(path: &Path, label: &str) -> Result<bool> {
     match std::fs::symlink_metadata(path) {
         Ok(metadata) => {
             if !metadata.file_type().is_file() || metadata.file_type().is_symlink() {
-                bail!("{label} is not a regular non-symlink file: {}", path.display());
+                bail!(
+                    "{label} is not a regular non-symlink file: {}",
+                    path.display()
+                );
             }
             Ok(true)
         }
@@ -119,7 +124,10 @@ pub(crate) fn open_regular_file(
     let exists = match std::fs::symlink_metadata(path) {
         Ok(metadata) => {
             if !metadata.file_type().is_file() || metadata.file_type().is_symlink() {
-                bail!("{label} is not a regular non-symlink file: {}", path.display());
+                bail!(
+                    "{label} is not a regular non-symlink file: {}",
+                    path.display()
+                );
             }
             true
         }

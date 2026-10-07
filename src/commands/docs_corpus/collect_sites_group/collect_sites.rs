@@ -24,7 +24,13 @@ pub(crate) fn collect_sites() -> Result<Vec<SiteInfo>> {
         let cumulative_ok = outcomes.map_or(0, |values| {
             values
                 .values()
-                .filter(|outcome| outcome.get("text_bytes").and_then(Value::as_u64).unwrap_or(0) > 0)
+                .filter(|outcome| {
+                    outcome
+                        .get("text_bytes")
+                        .and_then(Value::as_u64)
+                        .unwrap_or(0)
+                        > 0
+                })
                 .count()
         });
         let target_count = corpus
@@ -34,7 +40,11 @@ pub(crate) fn collect_sites() -> Result<Vec<SiteInfo>> {
             .unwrap_or(0);
         out.push(SiteInfo {
             slug,
-            name: meta.get("name").and_then(Value::as_str).unwrap_or_default().to_string(),
+            name: meta
+                .get("name")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+                .to_string(),
             category: meta
                 .get("category")
                 .and_then(Value::as_str)
@@ -79,7 +89,9 @@ pub(crate) fn read_corpus_record(
 ) -> Result<Option<Value>> {
     let mut line = Vec::new();
     loop {
-        let available = reader.fill_buf().context("decompress documentation corpus")?;
+        let available = reader
+            .fill_buf()
+            .context("decompress documentation corpus")?;
         if available.is_empty() {
             if line.is_empty() {
                 return Ok(None);
@@ -172,7 +184,9 @@ pub(crate) fn archive_member_name(path: &Path) -> Result<String> {
         .filter_map(|component| match component {
             Component::CurDir => None,
             Component::Normal(value) => Some(Ok(value.to_string_lossy().to_string())),
-            _ => Some(Err(anyhow::anyhow!("retrieval archive contains an unsafe path"))),
+            _ => Some(Err(anyhow::anyhow!(
+                "retrieval archive contains an unsafe path"
+            ))),
         })
         .collect::<Result<Vec<_>>>()?;
     match components.as_slice() {
@@ -185,15 +199,16 @@ pub(crate) fn extract_corpus_archive(archive_path: &Path, corpus_dir: &Path) -> 
     std::fs::create_dir(corpus_dir)?;
     // The extracted corpus may take the room its volume reports now, no more.
     let (room_bytes, _) = crate::commands::crawl::volume_room(corpus_dir)?;
-    let decoder = flate2::read::GzDecoder::new(open_regular_read(
-        archive_path,
-        "documentation archive",
-    )?);
+    let decoder =
+        flate2::read::GzDecoder::new(open_regular_read(archive_path, "documentation archive")?);
     let mut archive = tar::Archive::new(decoder);
     let expected = CORPUS_FILES.iter().copied().collect::<HashSet<_>>();
     let mut observed = HashSet::<String>::new();
     let mut total = 0u64;
-    for entry in archive.entries().context("read retrieval archive entries")? {
+    for entry in archive
+        .entries()
+        .context("read retrieval archive entries")?
+    {
         let mut entry = entry?;
         if !entry.header().entry_type().is_file() {
             bail!("retrieval archive contains a non-regular member");
@@ -238,7 +253,9 @@ pub(crate) fn validate_installed_import(
     let archive_path = destination.join("artifact.tar.gz");
     let (archive_sha256, archive_bytes) = hash_file(&archive_path)?;
     if archive_sha256 != expected_archive_sha256 || archive_bytes != expected_archive_bytes {
-        bail!("installed immutable documentation artifact differs from the expected digest or length");
+        bail!(
+            "installed immutable documentation artifact differs from the expected digest or length"
+        );
     }
     validate_corpus(
         &destination.join("corpus"),

@@ -154,7 +154,11 @@ pub fn run(rest: &[String]) -> Result<()> {
     unknown.sort();
     if !unknown.is_empty() {
         let names: Vec<&str> = unknown.iter().map(|s| s.as_str()).collect();
-        return Err(crate::commands::usage(format!("unknown catalog(s): {}; known: {}", names.join(", "), CATALOGS.join(", "))));
+        return Err(crate::commands::usage(format!(
+            "unknown catalog(s): {}; known: {}",
+            names.join(", "),
+            CATALOGS.join(", ")
+        )));
     }
     let selected: Vec<&str> = if requested.is_empty() {
         CATALOGS.to_vec()

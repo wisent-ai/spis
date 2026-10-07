@@ -39,14 +39,21 @@ fn slug(value: &str) -> String {
 /// Read a selector file; every header key is required and every source line
 /// is `Name<TAB>URL`, so a malformed line is refused by its number.
 fn read_selector(path: &Path) -> Result<Selector> {
-    let text = std::fs::read_to_string(path).with_context(|| format!("reading selector {}", path.display()))?;
-    let (header, body) = text
-        .split_once("\n\n")
-        .with_context(|| format!("{}: a selector has a header, a blank line, then one source per line", path.display()))?;
+    let text = std::fs::read_to_string(path)
+        .with_context(|| format!("reading selector {}", path.display()))?;
+    let (header, body) = text.split_once("\n\n").with_context(|| {
+        format!(
+            "{}: a selector has a header, a blank line, then one source per line",
+            path.display()
+        )
+    })?;
     let mut field = |key: &str| -> Result<String> {
         header
             .lines()
-            .find_map(|line| line.strip_prefix(key).and_then(|rest| rest.strip_prefix(':')))
+            .find_map(|line| {
+                line.strip_prefix(key)
+                    .and_then(|rest| rest.strip_prefix(':'))
+            })
             .map(|value| value.trim().to_string())
             .filter(|value| !value.is_empty())
             .with_context(|| format!("{}: the header has no `{key}:` line", path.display()))
@@ -55,24 +62,41 @@ fn read_selector(path: &Path) -> Result<Selector> {
     let title = field("title")?;
     let description = field("description")?;
     let category = field("category")?;
-    let count: usize = field("count")?.parse().with_context(|| format!("{}: `count:` is not a number", path.display()))?;
+    let count: usize = field("count")?
+        .parse()
+        .with_context(|| format!("{}: `count:` is not a number", path.display()))?;
     let mut sources = Vec::new();
     for (offset, line) in body.lines().enumerate() {
         if line.trim().is_empty() {
             continue;
         }
         let Some((name, url)) = line.split_once('\t') else {
-            bail!("{}: source line {} is not `Name<TAB>URL`: {line:?}", path.display(), offset + 1);
+            bail!(
+                "{}: source line {} is not `Name<TAB>URL`: {line:?}",
+                path.display(),
+                offset + 1
+            );
         };
         sources.push((name.trim().to_string(), url.trim().to_string()));
     }
-    Ok(Selector { catalog, title, description, category, count, sources })
+    Ok(Selector {
+        catalog,
+        title,
+        description,
+        category,
+        count,
+        sources,
+    })
 }
 
 fn validate(selector: &Selector) -> Result<()> {
     let category = &selector.category;
     if selector.sources.len() != selector.count {
-        bail!("{category}: the selector declares {} sources and lists {}", selector.count, selector.sources.len());
+        bail!(
+            "{category}: the selector declares {} sources and lists {}",
+            selector.count,
+            selector.sources.len()
+        );
     }
     let mut names = BTreeSet::new();
     let mut urls = BTreeSet::new();
@@ -130,7 +154,10 @@ fn write_catalog(selector: &Selector, replace: bool) -> Result<()> {
             "motion_provenance": [],
             "evidence_gaps": gaps,
         });
-        std::fs::write(directory.join("reference.json"), serde_json::to_string_pretty(&record)? + "\n")?;
+        std::fs::write(
+            directory.join("reference.json"),
+            serde_json::to_string_pretty(&record)? + "\n",
+        )?;
         examples.push(json!({
             "name": name,
             "source_url": url,
@@ -147,25 +174,35 @@ fn write_catalog(selector: &Selector, replace: bool) -> Result<()> {
             "evidence_gap_count": gaps.len()
         }));
     }
-    crate::write_pretty_json(root.join("sources.json").to_str().context("sources path is not UTF-8")?, &json!({
-        "schema": "wisent.example-catalog.v2",
-        "catalog": catalog,
-        "slug": catalog,
-        "title": selector.title,
-        "description": selector.description,
-        "status": "capture-pending",
-        "curated_at": today,
-        "count": selector.sources.len(),
-        "examples": examples,
-        "visual_count": 0,
-        "structure_count": 0
-    }))?;
-    crate::write_pretty_json(root.join("references.json").to_str().context("index path is not UTF-8")?, &json!({
-        "schema": "wisent.full-reference-catalog.v2",
-        "catalog": catalog,
-        "reference_count": selector.sources.len(),
-        "references": index
-    }))?;
+    crate::write_pretty_json(
+        root.join("sources.json")
+            .to_str()
+            .context("sources path is not UTF-8")?,
+        &json!({
+            "schema": "wisent.example-catalog.v2",
+            "catalog": catalog,
+            "slug": catalog,
+            "title": selector.title,
+            "description": selector.description,
+            "status": "capture-pending",
+            "curated_at": today,
+            "count": selector.sources.len(),
+            "examples": examples,
+            "visual_count": 0,
+            "structure_count": 0
+        }),
+    )?;
+    crate::write_pretty_json(
+        root.join("references.json")
+            .to_str()
+            .context("index path is not UTF-8")?,
+        &json!({
+            "schema": "wisent.full-reference-catalog.v2",
+            "catalog": catalog,
+            "reference_count": selector.sources.len(),
+            "references": index
+        }),
+    )?;
     Ok(())
 }
 
@@ -187,7 +224,8 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[index].as_str() {
             "--selector" => {
                 index += 1;
-                selector_path = Some(super::required(rest.get(index), "--selector needs a file")?.clone());
+                selector_path =
+                    Some(super::required(rest.get(index), "--selector needs a file")?.clone());
             }
             "--apply" => apply = true,
             "--replace" => replace = true,
@@ -201,11 +239,17 @@ pub fn run(rest: &[String]) -> Result<()> {
     if !apply {
         println!(
             "{}: {} attributable candidates in {}\npass --apply to write capture-pending records",
-            selector.catalog, selector.sources.len(), selector.category
+            selector.catalog,
+            selector.sources.len(),
+            selector.category
         );
         return Ok(());
     }
     write_catalog(&selector, replace)?;
-    println!("wrote {} capture-pending records into {}", selector.sources.len(), selector.catalog);
+    println!(
+        "wrote {} capture-pending records into {}",
+        selector.sources.len(),
+        selector.catalog
+    );
     Ok(())
 }

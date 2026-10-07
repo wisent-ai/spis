@@ -113,9 +113,11 @@ pub(crate) fn run_fetch_workers(
             }));
         }
         for handle in handles {
-            handle
-                .join()
-                .map_err(|_| anyhow::anyhow!("documentation fetch worker thread panicked outside its failure boundary"))??;
+            handle.join().map_err(|_| {
+                anyhow::anyhow!(
+                    "documentation fetch worker thread panicked outside its failure boundary"
+                )
+            })??;
         }
         Ok(())
     });
@@ -140,7 +142,8 @@ pub(crate) fn validate_worker_source(
     if source_revision()? != manifest.source_revision {
         bail!("documentation worker source revision differs from immutable runtime manifest");
     }
-    let reference_path = source_root().join(&manifest.catalog)
+    let reference_path = source_root()
+        .join(&manifest.catalog)
         .join("references")
         .join(&manifest.record)
         .join("reference.json");
@@ -162,9 +165,7 @@ pub(crate) fn validate_worker_source(
     })?;
     let structure_sha256 = lib::sha256_hex(&structure_bytes);
     if structure_sha256 != manifest_structure_sha256(manifest)? {
-        bail!(
-            "documentation content-structure digest differs from immutable runtime manifest"
-        );
+        bail!("documentation content-structure digest differs from immutable runtime manifest");
     }
     let meta: SiteMeta = serde_json::from_slice(&structure_bytes).with_context(|| {
         format!(

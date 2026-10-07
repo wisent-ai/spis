@@ -22,7 +22,11 @@ pub fn run(rest: &[String]) -> Result<()> {
                 println!("  --reset  discard progress and evidence, then restart the walkthrough");
                 return Ok(());
             }
-            other => return Err(crate::commands::usage(format!("unknown argument: {other} (expected --reset)"))),
+            other => {
+                return Err(crate::commands::usage(format!(
+                    "unknown argument: {other} (expected --reset)"
+                )))
+            }
         }
     }
 
@@ -113,8 +117,7 @@ pub(crate) fn canonical_definition() -> Result<Value> {
         || definition.get("product_id").and_then(Value::as_str) != Some(PRODUCT_ID)
         || definition.get("journey_id").and_then(Value::as_str) != Some(JOURNEY_ID)
         || definition.get("journey_version").and_then(Value::as_str) != Some(JOURNEY_VERSION)
-        || definition.get("first_success_fact").and_then(Value::as_str)
-            != Some(FIRST_SUCCESS_FACT)
+        || definition.get("first_success_fact").and_then(Value::as_str) != Some(FIRST_SUCCESS_FACT)
     {
         bail!("canonical onboarding journey identity mismatch");
     }

@@ -150,13 +150,17 @@ pub(super) fn retain_completed(
         "expectedClaims": serde_json::to_value(&expected_claims)?,
         "artifact": serde_json::to_value(&artifact)?,
     });
-    let stdout = run_bridge(attempt_root, private, "verify", &verify_command, None, false)?;
+    let stdout = run_bridge(
+        attempt_root,
+        private,
+        "verify",
+        &verify_command,
+        None,
+        false,
+    )?;
     let fresh: weles::WelesProvenanceDocument = serde_json::from_slice(&stdout)?;
     ensure(
-        fresh
-            .id
-            .strip_prefix("sha256:")
-            .is_some_and(is_sha256),
+        fresh.id.strip_prefix("sha256:").is_some_and(is_sha256),
         "weles_provenance_id_invalid",
         "the bridge verification document has no framed sha256: identifier",
     )?;

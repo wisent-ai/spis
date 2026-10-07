@@ -64,7 +64,9 @@ pub(crate) fn attempt_root(
     crate::commands::crawl::native_attempt_root(base, manifest)
 }
 
-pub(crate) fn revision() -> Result<String> { crate::commands::crawl::build_revision() }
+pub(crate) fn revision() -> Result<String> {
+    crate::commands::crawl::build_revision()
+}
 
 pub(crate) fn binary_for(slug: &str) -> String {
     let tail = slug.split_once('-').map(|(_, tail)| tail).unwrap_or(slug);
@@ -145,16 +147,15 @@ pub(crate) fn delivery_secret_bindings(
         let reference = reference
             .as_str()
             .filter(|value| !value.is_empty())
-            .with_context(|| format!("CLI delivery secret reference is invalid for environment key {name:?}"))?;
+            .with_context(|| {
+                format!("CLI delivery secret reference is invalid for environment key {name:?}")
+            })?;
         if name.is_empty()
-            || !name
-                .chars()
-                .enumerate()
-                .all(|(index, character)| {
-                    character == '_'
-                        || character.is_ascii_alphabetic()
-                        || (index > 0 && character.is_ascii_digit())
-                })
+            || !name.chars().enumerate().all(|(index, character)| {
+                character == '_'
+                    || character.is_ascii_alphabetic()
+                    || (index > 0 && character.is_ascii_digit())
+            })
         {
             bail!("CLI delivery secret binding has invalid environment key {name:?}");
         }
@@ -179,14 +180,18 @@ pub(crate) fn delivery_secret_bindings(
         ]
         .contains(&name.as_str())
         {
-            bail!("CLI delivery secret key {name:?} would override the isolated worker environment");
+            bail!(
+                "CLI delivery secret key {name:?} would override the isolated worker environment"
+            );
         }
         bindings.push((name.clone(), reference.to_string()));
     }
     Ok(bindings)
 }
 
-pub(crate) fn delivery_secret_names(manifest: &super::crawl::RuntimeManifest) -> Result<Vec<String>> {
+pub(crate) fn delivery_secret_names(
+    manifest: &super::crawl::RuntimeManifest,
+) -> Result<Vec<String>> {
     Ok(delivery_secret_bindings(manifest)?
         .into_iter()
         .map(|(name, _)| name)
@@ -199,15 +204,36 @@ pub(crate) fn isolated_environment(
 ) -> Result<BTreeMap<OsString, OsString>> {
     let home = fixture.join("home");
     let mut environment = BTreeMap::new();
-    environment.insert("PATH".into(), "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin".into());
+    environment.insert(
+        "PATH".into(),
+        "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin".into(),
+    );
     environment.insert("HOME".into(), home.clone().into_os_string());
-    environment.insert("XDG_CONFIG_HOME".into(), home.join(".config").into_os_string());
-    environment.insert("XDG_DATA_HOME".into(), home.join(".local/share").into_os_string());
-    environment.insert("XDG_CACHE_HOME".into(), home.join(".cache").into_os_string());
-    environment.insert("GIT_CONFIG_GLOBAL".into(), fixture.join("gitconfig").into_os_string());
+    environment.insert(
+        "XDG_CONFIG_HOME".into(),
+        home.join(".config").into_os_string(),
+    );
+    environment.insert(
+        "XDG_DATA_HOME".into(),
+        home.join(".local/share").into_os_string(),
+    );
+    environment.insert(
+        "XDG_CACHE_HOME".into(),
+        home.join(".cache").into_os_string(),
+    );
+    environment.insert(
+        "GIT_CONFIG_GLOBAL".into(),
+        fixture.join("gitconfig").into_os_string(),
+    );
     environment.insert("GIT_CONFIG_NOSYSTEM".into(), "1".into());
-    environment.insert("KUBECONFIG".into(), fixture.join("kubeconfig").into_os_string());
-    environment.insert("DOCKER_HOST".into(), format!("unix://{}", fixture.join("docker.sock").display()).into());
+    environment.insert(
+        "KUBECONFIG".into(),
+        fixture.join("kubeconfig").into_os_string(),
+    );
+    environment.insert(
+        "DOCKER_HOST".into(),
+        format!("unix://{}", fixture.join("docker.sock").display()).into(),
+    );
     environment.insert("AWS_EC2_METADATA_DISABLED".into(), "true".into());
     environment.insert("TERM".into(), "xterm-256color".into());
     environment.insert("PAGER".into(), "cat".into());
@@ -217,8 +243,9 @@ pub(crate) fn isolated_environment(
     environment.insert("CI".into(), "1".into());
     environment.insert("LANG".into(), "C.UTF-8".into());
     for name in delivery_secret_names(manifest)? {
-        let value = std::env::var_os(&name)
-            .with_context(|| format!("CLI worker did not receive manifest-bound secret environment key {name}"))?;
+        let value = std::env::var_os(&name).with_context(|| {
+            format!("CLI worker did not receive manifest-bound secret environment key {name}")
+        })?;
         environment.insert(name.into(), value);
     }
     Ok(environment)

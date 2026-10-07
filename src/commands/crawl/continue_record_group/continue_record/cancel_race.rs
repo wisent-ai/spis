@@ -20,8 +20,9 @@ pub(super) fn settle_cancel_race(run_id: &str, catalog: &str, record_name: &str)
                 .output()
                 .context("cancel Stado job after submission race")?;
             if output.status.success() {
-                let response = serde_json::from_slice(&output.stdout)
-                    .unwrap_or_else(|_| json!({"stdout": String::from_utf8_lossy(&output.stdout).trim()}));
+                let response = serde_json::from_slice(&output.stdout).unwrap_or_else(
+                    |_| json!({"stdout": String::from_utf8_lossy(&output.stdout).trim()}),
+                );
                 Ok(json!({"state": "cancel_dispatched", "observed_job": job, "response": response}))
             } else {
                 Err(anyhow!(

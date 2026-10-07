@@ -42,8 +42,7 @@ pub(crate) struct CuaDriver {
 }
 
 pub(crate) fn hash_file(path: &Path) -> Result<String> {
-    let mut file =
-        std::fs::File::open(path).with_context(|| format!("open {}", path.display()))?;
+    let mut file = std::fs::File::open(path).with_context(|| format!("open {}", path.display()))?;
     let mut digest = Sha256::new();
     let mut buffer = [0_u8; 64 * 1024];
     loop {
@@ -84,7 +83,10 @@ pub(crate) fn pin_cua_driver() -> Result<CuaDriver> {
     let sha256 = hash_file(&path)?;
     let mut version_command = Command::new(&path);
     version_command.arg("--version");
-    let output = crate::commands::crawl::command_output(&mut version_command, "read pinned Cua Driver version")?;
+    let output = crate::commands::crawl::command_output(
+        &mut version_command,
+        "read pinned Cua Driver version",
+    )?;
     if !output.status.success() {
         bail!(
             "pinned Cua Driver {} refused --version: {}",
@@ -138,7 +140,10 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
         .arg("--version")
         .env_clear()
         .env("PATH", "/usr/bin:/bin");
-    let output = crate::commands::crawl::command_output(&mut version_command, "read pinned desktop readiness helper version")?;
+    let output = crate::commands::crawl::command_output(
+        &mut version_command,
+        "read pinned desktop readiness helper version",
+    )?;
     if !output.status.success() {
         bail!(
             "pinned desktop readiness helper {} refused --version: {}",
@@ -166,7 +171,8 @@ pub(crate) fn call_with_cli_options(
     let mut command = Command::new(&driver.path);
     command.arg(tool).arg(serde_json::to_string(payload)?);
     command.args(options);
-    let output = crate::commands::crawl::command_output(&mut command, &format!("cua-driver {tool}"))?;
+    let output =
+        crate::commands::crawl::command_output(&mut command, &format!("cua-driver {tool}"))?;
     if !output.status.success() {
         bail!(
             "cua-driver {tool} failed: status={}; stdout={:?}; stderr={:?}",
@@ -186,7 +192,11 @@ pub(crate) struct SessionGuard {
 
 impl Drop for SessionGuard {
     fn drop(&mut self) {
-        let _ = call(&self.driver, "end_session", &json!({"session": self.session}));
+        let _ = call(
+            &self.driver,
+            "end_session",
+            &json!({"session": self.session}),
+        );
     }
 }
 

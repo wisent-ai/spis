@@ -1,6 +1,9 @@
 use super::*;
 
-pub(crate) fn update_record(reference: &Reference, summary: &Map<String, Value>) -> Result<(String, String)> {
+pub(crate) fn update_record(
+    reference: &Reference,
+    summary: &Map<String, Value>,
+) -> Result<(String, String)> {
     let rid = reference.id();
     let text = std::fs::read_to_string(&reference.path)
         .with_context(|| format!("{rid}: reference.json: unreadable"))?;

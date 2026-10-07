@@ -1,6 +1,9 @@
 use super::*;
 
-pub(crate) fn finalize_manifest_identity(manifest: &mut RuntimeManifest, reference_bytes: &[u8]) -> Result<()> {
+pub(crate) fn finalize_manifest_identity(
+    manifest: &mut RuntimeManifest,
+    reference_bytes: &[u8],
+) -> Result<()> {
     manifest.reference_sha256 = crate::sha256_hex(reference_bytes);
     let input_identity = json!({
         "reference_sha256": manifest.reference_sha256,
@@ -16,8 +19,7 @@ pub(crate) fn finalize_manifest_identity(manifest: &mut RuntimeManifest, referen
         "docs_structure_sha256": manifest.docs_structure_sha256,
         "service_identity": manifest.service_identity,
     });
-    manifest.source_input_sha256 =
-        crate::sha256_hex(&serde_json::to_vec(&input_identity)?);
+    manifest.source_input_sha256 = crate::sha256_hex(&serde_json::to_vec(&input_identity)?);
     manifest.catalog_key = crate::sha256_hex(
         format!(
             "{}\0{}\0{}",
@@ -38,7 +40,13 @@ pub(crate) fn finalize_manifest_identity(manifest: &mut RuntimeManifest, referen
         &crate::sha256_hex(
             format!(
                 "{}\0{}\0{}",
-                manifest.record_key, manifest.attempt, manifest.execution_identity.as_ref().map(|value| value.host.as_str()).unwrap_or("")
+                manifest.record_key,
+                manifest.attempt,
+                manifest
+                    .execution_identity
+                    .as_ref()
+                    .map(|value| value.host.as_str())
+                    .unwrap_or("")
             )
             .as_bytes()
         )[..16]
@@ -58,10 +66,7 @@ pub(crate) fn finalize_manifest_identity(manifest: &mut RuntimeManifest, referen
     Ok(())
 }
 
-pub(crate) fn native_attempt_root(
-    base: &Path,
-    manifest: &RuntimeManifest,
-) -> Result<PathBuf> {
+pub(crate) fn native_attempt_root(base: &Path, manifest: &RuntimeManifest) -> Result<PathBuf> {
     for (name, component) in [
         ("run_id", manifest.run_id.as_str()),
         ("catalog", manifest.catalog.as_str()),

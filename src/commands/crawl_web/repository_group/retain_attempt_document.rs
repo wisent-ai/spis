@@ -24,7 +24,11 @@ use super::*;
 /// Unlike `crawl::atomic_json_write` this leaves no `.{name}.lock` sibling: `create_new`
 /// plus the atomic `rename` below leave the destination either absent or one complete
 /// document, so nothing an advisory lock would add is needed here.
-pub(crate) fn retain_attempt_document(attempt_root: &Path, relative: &str, value: &Value) -> Outcome<()> {
+pub(crate) fn retain_attempt_document(
+    attempt_root: &Path,
+    relative: &str,
+    value: &Value,
+) -> Outcome<()> {
     use std::io::Write;
     let io_failed = |message: &str| WorkerFailure::new("web_worker_io_failed", message);
     if !is_portable_relative(relative) {
@@ -126,8 +130,9 @@ pub(crate) fn prune_stale_attempt_temporaries(attempt_root: &Path) -> Result<()>
         Ok(entries) => entries,
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
         Err(error) => {
-            return Err(error)
-                .with_context(|| format!("list the attempt staging directory {}", staging.display()))
+            return Err(error).with_context(|| {
+                format!("list the attempt staging directory {}", staging.display())
+            })
         }
     };
     for entry in entries {
@@ -186,7 +191,10 @@ pub(crate) fn run_bridge(
 /// Reads back the durable, request-bound submission the bridge persisted.
 pub(crate) fn read_submission(path: &Path) -> Outcome<weles::WelesSubmission> {
     let text = path.to_str().ok_or_else(|| {
-        WorkerFailure::new("web_worker_io_failed", "retained document path is not UTF-8")
+        WorkerFailure::new(
+            "web_worker_io_failed",
+            "retained document path is not UTF-8",
+        )
     })?;
     Ok(crate::read_json(text)?)
 }

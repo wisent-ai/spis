@@ -105,9 +105,7 @@ pub(crate) fn import_record_attempt(
             // extraction bounds and typed report/tree agreement.
             let readable_corpus =
                 crate::commands::docs_corpus::import_worker_report_from_archive(&report, &archive)?;
-            if readable_corpus
-                .get("artifact_uri")
-                .and_then(Value::as_str)
+            if readable_corpus.get("artifact_uri").and_then(Value::as_str)
                 != Some(manifest.artifact_uri.as_str())
                 || readable_corpus
                     .get("archive_sha256")
@@ -121,7 +119,9 @@ pub(crate) fn import_record_attempt(
             if report.get("docs_structure_sha256").and_then(Value::as_str)
                 != manifest.docs_structure_sha256.as_deref()
             {
-                bail!("docs worker report crawl-definition digest differs from the immutable attempt");
+                bail!(
+                    "docs worker report crawl-definition digest differs from the immutable attempt"
+                );
             }
             run["docs_structure_sha256"] = json!(manifest.docs_structure_sha256);
             run["corpus"] = report

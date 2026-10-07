@@ -55,10 +55,11 @@ pub(crate) fn host_probe(host: &str, arguments: &[&str]) -> Value {
             );
         }
         if object.keys().any(|key| !allowed.contains(&key.as_str()))
-            || receipt.get("schema").and_then(Value::as_str)
-                != Some("stado.host-exec-receipt.v1")
+            || receipt.get("schema").and_then(Value::as_str) != Some("stado.host-exec-receipt.v1")
             || !receipt.get("target").is_some_and(Value::is_string)
-            || !receipt.get("ssh").is_some_and(|value| value.is_null() || value.is_string())
+            || !receipt
+                .get("ssh")
+                .is_some_and(|value| value.is_null() || value.is_string())
             || !receipt.get("ssh_fallbacks").is_some_and(Value::is_array)
             || !receipt.get("command").is_some_and(Value::is_string)
             || !receipt.get("stdout").is_some_and(Value::is_string)
@@ -141,7 +142,10 @@ pub(crate) fn host_preflight_is_retryable(report: &Value) -> bool {
         .into_iter()
         .flatten()
         .any(|check| {
-            check.pointer("/diagnostic/retryable").and_then(Value::as_bool) == Some(true)
+            check
+                .pointer("/diagnostic/retryable")
+                .and_then(Value::as_bool)
+                == Some(true)
         })
 }
 
@@ -202,10 +206,7 @@ pub fn executable_word_from_host_receipt(host: &str, receipt: &Value) -> Result<
         if rest.is_empty() {
             bail!("host {host} probe reported incomplete selected executable {selected:?}");
         }
-        return Ok(format!(
-            "\"$HOME\"/'{}'",
-            rest.replace('\'', "'\\''")
-        ));
+        return Ok(format!("\"$HOME\"/'{}'", rest.replace('\'', "'\\''")));
     }
     if selected.starts_with('/') {
         return Ok(selected.to_string());

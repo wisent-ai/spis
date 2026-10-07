@@ -17,7 +17,10 @@ pub(crate) fn continue_record(
         .and_then(Value::as_str)
         .unwrap_or("unavailable")
         .to_string();
-    if snapshot.get("stado_job_id").and_then(Value::as_str).is_some()
+    if snapshot
+        .get("stado_job_id")
+        .and_then(Value::as_str)
+        .is_some()
         || matches!(
             state.as_str(),
             "unavailable"
@@ -44,16 +47,13 @@ pub(crate) fn continue_record(
         );
     }
     if host_preflight_is_retryable(host_report) {
-        let diagnostic = host_report
-            .get("diagnostic")
-            .cloned()
-            .unwrap_or_else(|| {
-                json!({
-                    "code": "host_check_retryable",
-                    "retryable": true,
-                    "message": "a host capability check answered with a refusal it marks retryable",
-                })
-            });
+        let diagnostic = host_report.get("diagnostic").cloned().unwrap_or_else(|| {
+            json!({
+                "code": "host_check_retryable",
+                "retryable": true,
+                "message": "a host capability check answered with a refusal it marks retryable",
+            })
+        });
         mutate_record(run_id, catalog, record_name, |entry| {
             entry["preflight"] = host_report.clone();
             entry["state"] = json!(failed_host_preflight_record_state(host_report));
@@ -62,21 +62,20 @@ pub(crate) fn continue_record(
         })?;
         return Ok(());
     }
-    let mut manifest: RuntimeManifest = match serde_json::from_value(
-        snapshot.get("manifest").cloned().unwrap_or(Value::Null),
-    ) {
-        Ok(manifest) => manifest,
-        Err(error) => {
-            return mark_record_failure(
-                run_id,
-                catalog,
-                record_name,
-                "unavailable",
-                "runtime_manifest_invalid",
-                error.to_string(),
-            );
-        }
-    };
+    let mut manifest: RuntimeManifest =
+        match serde_json::from_value(snapshot.get("manifest").cloned().unwrap_or(Value::Null)) {
+            Ok(manifest) => manifest,
+            Err(error) => {
+                return mark_record_failure(
+                    run_id,
+                    catalog,
+                    record_name,
+                    "unavailable",
+                    "runtime_manifest_invalid",
+                    error.to_string(),
+                );
+            }
+        };
 
     let Some(command) = command::prepared_command(
         &snapshot,
@@ -93,7 +92,10 @@ pub(crate) fn continue_record(
     };
 
     let before_submit = record_snapshot(run_id, catalog, record_name)?;
-    if before_submit.get("cancel_intent").is_some_and(Value::is_object) {
+    if before_submit
+        .get("cancel_intent")
+        .is_some_and(Value::is_object)
+    {
         return mark_record_failure(
             run_id,
             catalog,
@@ -127,12 +129,8 @@ pub(crate) fn continue_record(
     if armed.get("state").and_then(Value::as_str) != Some("submitting") {
         return Ok(());
     }
-    let recovered = load_submission_receipt(
-        run_id,
-        catalog,
-        &manifest.record,
-        &manifest.attempt_id,
-    )?;
+    let recovered =
+        load_submission_receipt(run_id, catalog, &manifest.record, &manifest.attempt_id)?;
     drop(record_guard);
     let receipt = if let Some(receipt) = recovered {
         receipt
@@ -234,10 +232,7 @@ pub(crate) fn continue_record(
         );
     }
     mutate_record(run_id, catalog, record_name, |entry| {
-        entry["stado_job_id"] = receipt
-            .get("stado_job_id")
-            .cloned()
-            .unwrap_or(Value::Null);
+        entry["stado_job_id"] = receipt.get("stado_job_id").cloned().unwrap_or(Value::Null);
         entry["artifact_uri"] = json!(manifest.artifact_uri);
         entry["output_uri"] = json!(manifest.output_uri);
         entry["submission_receipt"] = receipt;

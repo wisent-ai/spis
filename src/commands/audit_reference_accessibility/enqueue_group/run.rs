@@ -15,23 +15,30 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--catalog" => {
                 i += 1;
-                catalogs_arg.push(crate::commands::required(rest.get(i), "--catalog needs a value")?.clone());
+                catalogs_arg.push(
+                    crate::commands::required(rest.get(i), "--catalog needs a value")?.clone(),
+                );
             }
             "--records" => {
                 i += 1;
-                records = Some(crate::commands::required(rest.get(i), "--records needs a value")?.clone());
+                records = Some(
+                    crate::commands::required(rest.get(i), "--records needs a value")?.clone(),
+                );
             }
             "--batch" => {
                 i += 1;
-                batch_arg = Some(crate::commands::required(rest.get(i), "--batch needs a value")?.clone());
+                batch_arg =
+                    Some(crate::commands::required(rest.get(i), "--batch needs a value")?.clone());
             }
             "--target" => {
                 i += 1;
-                target = Some(crate::commands::required(rest.get(i), "--target needs a value")?.clone());
+                target =
+                    Some(crate::commands::required(rest.get(i), "--target needs a value")?.clone());
             }
             "--plan" => {
                 i += 1;
-                plan_arg = Some(crate::commands::required(rest.get(i), "--plan needs a value")?.clone());
+                plan_arg =
+                    Some(crate::commands::required(rest.get(i), "--plan needs a value")?.clone());
             }
             "--dry-run" => dry_run = true,
             "--help" | "-h" => {

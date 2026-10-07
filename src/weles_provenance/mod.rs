@@ -12,10 +12,10 @@ use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::io::{Read, Write};
-use std::path::{Component, Path, PathBuf};
-use std::process::{Command, Stdio};
 #[cfg(unix)]
 use std::os::unix::process::CommandExt;
+use std::path::{Component, Path, PathBuf};
+use std::process::{Command, Stdio};
 
 mod bridge_command_schema_group;
 mod validate_request_and_evidence_manifest_group;

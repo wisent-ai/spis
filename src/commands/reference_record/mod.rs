@@ -16,12 +16,12 @@ use std::path::{Path, PathBuf};
 // resolves here by way of their `use super::*`.
 use crate::commands::reference_contract;
 
-mod catalog_dir;
 mod add;
+mod catalog_dir;
 mod edit;
 mod parse_flags;
 
-pub use catalog_dir::*;
 pub use add::*;
+pub use catalog_dir::*;
 pub use edit::*;
 pub use parse_flags::*;

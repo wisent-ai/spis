@@ -109,7 +109,12 @@ pub(crate) fn select_image(page_url: &str) -> Result<(Candidate, Probe)> {
         .map(|(index, (candidate, probe))| {
             format!(
                 "{index}: {} | {} | {}x{} {} | found in {}",
-                candidate.url, candidate.hint, probe.width, probe.height, probe.format, candidate.origin
+                candidate.url,
+                candidate.hint,
+                probe.width,
+                probe.height,
+                probe.format,
+                candidate.origin
             )
         })
         .collect();
@@ -159,7 +164,12 @@ pub(crate) fn today_utc() -> String {
     crate::now_iso_utc()[..10].to_string()
 }
 
-pub(crate) fn store_image(catalog_dir: &Path, index: usize, name: &str, page_url: &str) -> Result<Value> {
+pub(crate) fn store_image(
+    catalog_dir: &Path,
+    index: usize,
+    name: &str,
+    page_url: &str,
+) -> Result<Value> {
     let (candidate, probe) = select_image(page_url)?;
     // Gap vs. Pillow original: no RGBA flattening onto white, no LANCZOS
     // thumbnail to fit (1400, 1000), no WebP re-encode at quality 82. The

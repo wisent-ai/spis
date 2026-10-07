@@ -11,7 +11,9 @@ pub(crate) fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<
                 .map(PathBuf::from)
                 .map(|home| host_home_crawl_token_path(&home))
         })
-        .context("worker_crawl_token_undeclared: HOME and SPIS_CRAWL_OBJECT_TOKEN_FILE are absent")?;
+        .context(
+            "worker_crawl_token_undeclared: HOME and SPIS_CRAWL_OBJECT_TOKEN_FILE are absent",
+        )?;
     validate_worker_runtime_files(
         &stado_path,
         stado_path.is_file(),
@@ -153,16 +155,14 @@ pub(crate) fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()>
 /// A `ROLE#FIELD` reference Stado's `--secret-env` accepts: the vault role the
 /// secret's item plays, never an item name, and the field to read.
 pub(crate) fn valid_secret_reference(reference: &str) -> bool {
-    reference
-        .split_once('#')
-        .is_some_and(|(role, field)| {
-            !role.is_empty()
-                && !field.is_empty()
-                && role
-                    .bytes()
-                    .all(|byte| byte.is_ascii_alphanumeric() || b"._:-".contains(&byte))
-                && field
-                    .bytes()
-                    .all(|byte| byte.is_ascii_alphanumeric() || b"._-".contains(&byte))
-        })
+    reference.split_once('#').is_some_and(|(role, field)| {
+        !role.is_empty()
+            && !field.is_empty()
+            && role
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || b"._:-".contains(&byte))
+            && field
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || b"._-".contains(&byte))
+    })
 }

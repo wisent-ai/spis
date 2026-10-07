@@ -112,9 +112,8 @@ pub(crate) fn apply_web_attempt(
                 .context("evidence inventory URI is not bound to the attempt task")?;
             let relative = format!("recordings/{}/{tail}", envelope.weles_task_id);
             let retained = record_dir.join(&relative);
-            let bytes = std::fs::read(&retained).with_context(|| {
-                format!("read retained Weles evidence {}", retained.display())
-            })?;
+            let bytes = std::fs::read(&retained)
+                .with_context(|| format!("read retained Weles evidence {}", retained.display()))?;
             if bytes.len() as u64 != item.bytes || crate::sha256_hex(&bytes) != item.sha256 {
                 bail!("retained Weles evidence {relative} differs from the signed inventory");
             }

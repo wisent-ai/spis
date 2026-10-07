@@ -1,12 +1,12 @@
 pub mod analyze_example_structures;
-pub(crate) mod brama;
 pub mod audit_reference_accessibility;
-pub mod capture_widths;
+pub(crate) mod brama;
 pub mod capture_cli_references;
+pub mod capture_widths;
 pub mod catalog_type;
 pub mod check_upstream_drift;
-pub mod corpus;
 pub mod collect_example_images;
+pub mod corpus;
 pub mod crawl;
 pub mod crawl_cli;
 pub mod crawl_desktop;
@@ -75,12 +75,20 @@ where
 /// `stado credentials get --role` (cli.md rule 15). `STADO_BIN` names another
 /// executable.
 pub fn role_secret(variable: &str) -> Result<Option<String>> {
-    let Some(reference) = std::env::var(variable).ok().filter(|value| !value.trim().is_empty()) else {
+    let Some(reference) = std::env::var(variable)
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+    else {
         return Ok(None);
     };
     let reference = reference.trim();
-    let Some((role, field)) = reference.rsplit_once('#').filter(|(role, field)| !role.is_empty() && !field.is_empty()) else {
-        return Err(usage(format!("{variable} must be a role reference ROLE#FIELD, not {reference:?}")));
+    let Some((role, field)) = reference
+        .rsplit_once('#')
+        .filter(|(role, field)| !role.is_empty() && !field.is_empty())
+    else {
+        return Err(usage(format!(
+            "{variable} must be a role reference ROLE#FIELD, not {reference:?}"
+        )));
     };
     let binary = std::env::var("STADO_BIN").unwrap_or_else(|_| "stado".into());
     let output = std::process::Command::new(&binary)
@@ -113,34 +121,134 @@ struct Subcommand {
 }
 
 const fn sub(name: &'static str, description: &'static str, own_help: bool) -> Subcommand {
-    Subcommand { name, description, own_help }
+    Subcommand {
+        name,
+        description,
+        own_help,
+    }
 }
 
 const SUBCOMMANDS: &[Subcommand] = &[
-    sub("onboarding", "show or reset the first-use walkthrough", true),
-    sub("corpus", "adopt or inspect an existing canonical reference corpus", true),
-    sub("docs-site", "generate this product's documentation from its own tables", true),
-    sub("crawl", "plan, submit, track, resume and import every crawler", true),
-    sub("crawl-cli", "crawl real CLI products through a PTY on Stado", true),
-    sub("crawl-docs", "full-text crawl of the 50-reference documentation set", false),
-    sub("crawl-mobile", "crawl real iOS or Android apps through Appium", true),
-    sub("crawl-desktop", "crawl real macOS or desktop apps through Cua Driver", true),
-    sub("crawl-web", "crawl real browser products through Weles on Stado", true),
-    sub("crawl-tui", "crawl real terminal applications through a PTY on Stado", true),
-    sub("docs-corpus", "read and import immutable documentation retrieval corpora", false),
-    sub("discover", "discover important pages behind a start URL", false),
-    sub("reference-record", "manage numbered reference records in a catalog", false),
-    sub("verify-reference-evidence", "measure and verify evidence fields of records", false),
-    sub("check-upstream-drift", "detect drift between corpus and upstream sources", false),
-    sub("catalog-type", "manage typed catalogs (add/edit/rename/remove)", true),
-    sub("generate-example-catalogs", "validate catalogs and write the JSON index", true),
-    sub("analyze-example-structures", "structural analysis of example screenshots", false),
-    sub("collect-example-images", "collect cover images for examples", false),
-    sub("capture-widths", "enqueue multi-width Weles capture batches", false),
-    sub("audit-reference-accessibility", "run axe audits over captured references", true),
-    sub("capture-cli-references", "pty-capture the CLI products of a capture plan into records", true),
-    sub("curate-catalog", "write a catalog's capture-pending records from a declared selector file", true),
-    sub("serve", "loopback HTTP/JSON backend for Spis Desktop (--port PORT, 0 picks one)", true),
+    sub(
+        "onboarding",
+        "show or reset the first-use walkthrough",
+        true,
+    ),
+    sub(
+        "corpus",
+        "adopt or inspect an existing canonical reference corpus",
+        true,
+    ),
+    sub(
+        "docs-site",
+        "generate this product's documentation from its own tables",
+        true,
+    ),
+    sub(
+        "crawl",
+        "plan, submit, track, resume and import every crawler",
+        true,
+    ),
+    sub(
+        "crawl-cli",
+        "crawl real CLI products through a PTY on Stado",
+        true,
+    ),
+    sub(
+        "crawl-docs",
+        "full-text crawl of the 50-reference documentation set",
+        false,
+    ),
+    sub(
+        "crawl-mobile",
+        "crawl real iOS or Android apps through Appium",
+        true,
+    ),
+    sub(
+        "crawl-desktop",
+        "crawl real macOS or desktop apps through Cua Driver",
+        true,
+    ),
+    sub(
+        "crawl-web",
+        "crawl real browser products through Weles on Stado",
+        true,
+    ),
+    sub(
+        "crawl-tui",
+        "crawl real terminal applications through a PTY on Stado",
+        true,
+    ),
+    sub(
+        "docs-corpus",
+        "read and import immutable documentation retrieval corpora",
+        false,
+    ),
+    sub(
+        "discover",
+        "discover important pages behind a start URL",
+        false,
+    ),
+    sub(
+        "reference-record",
+        "manage numbered reference records in a catalog",
+        false,
+    ),
+    sub(
+        "verify-reference-evidence",
+        "measure and verify evidence fields of records",
+        false,
+    ),
+    sub(
+        "check-upstream-drift",
+        "detect drift between corpus and upstream sources",
+        false,
+    ),
+    sub(
+        "catalog-type",
+        "manage typed catalogs (add/edit/rename/remove)",
+        true,
+    ),
+    sub(
+        "generate-example-catalogs",
+        "validate catalogs and write the JSON index",
+        true,
+    ),
+    sub(
+        "analyze-example-structures",
+        "structural analysis of example screenshots",
+        false,
+    ),
+    sub(
+        "collect-example-images",
+        "collect cover images for examples",
+        false,
+    ),
+    sub(
+        "capture-widths",
+        "enqueue multi-width Weles capture batches",
+        false,
+    ),
+    sub(
+        "audit-reference-accessibility",
+        "run axe audits over captured references",
+        true,
+    ),
+    sub(
+        "capture-cli-references",
+        "pty-capture the CLI products of a capture plan into records",
+        true,
+    ),
+    sub(
+        "curate-catalog",
+        "write a catalog's capture-pending records from a declared selector file",
+        true,
+    ),
+    sub(
+        "serve",
+        "loopback HTTP/JSON backend for Spis Desktop (--port PORT, 0 picks one)",
+        true,
+    ),
 ];
 
 fn asks_help(rest: &[String]) -> bool {
@@ -200,7 +308,8 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
 static INVOCATION_DIR: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
 
 fn remember_invocation_dir() -> Result<()> {
-    let here = std::env::current_dir().context("read the working directory the command was typed in")?;
+    let here =
+        std::env::current_dir().context("read the working directory the command was typed in")?;
     let _ = INVOCATION_DIR.set(here);
     Ok(())
 }

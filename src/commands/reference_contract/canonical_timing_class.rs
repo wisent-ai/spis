@@ -75,14 +75,19 @@ pub struct CompletenessRequirements {
 /// surface cannot express a criterion must define a measurable replacement
 /// here rather than filling a global field with prose.
 pub fn completeness_requirements(path: &std::path::Path) -> CompletenessRequirements {
-    let catalog = path.components().find_map(|component| {
-        let value = component.as_os_str().to_str()?;
-        value.ends_with("-examples").then_some(value)
-    }).unwrap_or_default();
+    let catalog = path
+        .components()
+        .find_map(|component| {
+            let value = component.as_os_str().to_str()?;
+            value.ends_with("-examples").then_some(value)
+        })
+        .unwrap_or_default();
     let profile = match catalog {
         "cli-examples" | "tui-examples" => "terminal-product",
-        "documentation-site-examples" | "app-store-listing-examples"
-        | "pricing-page-examples" | "landing-page-examples" => "document-navigation",
+        "documentation-site-examples"
+        | "app-store-listing-examples"
+        | "pricing-page-examples"
+        | "landing-page-examples" => "document-navigation",
         _ => "interactive-product",
     };
     CompletenessRequirements {

@@ -17,21 +17,28 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--record" => {
                 i += 1;
-                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record =
+                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--host" => {
                 i += 1;
-                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host =
+                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--worker" => worker = true,
             "--artifact-uri" => {
                 i += 1;
-                artifact_uri = Some(crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(
+                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
+                );
             }
             "--runtime-manifest-base64" => {
                 i += 1;
-                runtime_manifest_base64 =
-                    Some(rest.get(i).context("--runtime-manifest-base64 needs a value")?.clone());
+                runtime_manifest_base64 = Some(
+                    rest.get(i)
+                        .context("--runtime-manifest-base64 needs a value")?
+                        .clone(),
+                );
             }
             "--max-states" => {
                 i += 1;
@@ -43,15 +50,24 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--output" => {
                 i += 1;
-                output = PathBuf::from(crate::commands::required(rest.get(i), "--output needs a value")?);
+                output = PathBuf::from(crate::commands::required(
+                    rest.get(i),
+                    "--output needs a value",
+                )?);
             }
             "--help" | "-h" => {
                 println!("usage: spis crawl-desktop <macos-app-examples|desktop-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
-            value if value.starts_with('-') => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
+            value if value.starts_with('-') => {
+                return Err(crate::commands::usage(format!("unknown argument: {value}")))
+            }
             value if catalog.is_none() => catalog = Some(value.to_string()),
-            value => return Err(crate::commands::usage(format!("unexpected argument: {value}"))),
+            value => {
+                return Err(crate::commands::usage(format!(
+                    "unexpected argument: {value}"
+                )))
+            }
         }
         i += 1;
     }
@@ -88,10 +104,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     if artifact_uri != manifest.artifact_uri {
         bail!("worker artifact URI does not match immutable runtime manifest");
     }
-    let run_root = attempt_root(
-        &output,
-        &manifest,
-    )?;
+    let run_root = attempt_root(&output, &manifest)?;
     std::fs::create_dir_all(&run_root)?;
     let entry = records(&catalog, Some(&record))?
         .into_iter()
@@ -100,34 +113,33 @@ pub fn run(rest: &[String]) -> Result<()> {
     // Driver pinning and the permission preflight run inside the failure-handled
     // region, so a refused driver still produces a typed failure artifact and a
     // published attempt archive like any other record failure.
-    let (record_report, failure) =
-        match (|| -> Result<Value> {
-            // Resolved, canonicalized, hashed and version-stamped exactly once
-            // for this record; every later call runs that same file (finding 10).
-            let driver = pin_cua_driver()?;
-            preflight(&driver)?;
-            crawl_record(&driver, &entry, &manifest, &run_root, max_states, max_depth)
-        })() {
-            Ok(report) => (report, None),
-            Err(error) => {
-                let code = failure_code(&error);
-                let message = format!("{error:#}");
-                // Diagnostics never share stdout with the one worker report line.
-                eprintln!("desktop record {} failed: {message}", entry.slug);
-                (
-                    json!({
-                        "record": entry.slug,
-                        "name": entry.name,
-                        "status": "failed",
-                        "source_revision": manifest.source_revision,
-                        "source_input_sha256": manifest.source_input_sha256,
-                        "runtime_manifest": manifest,
-                        "error": message,
-                    }),
-                    Some((code, message)),
-                )
-            }
-        };
+    let (record_report, failure) = match (|| -> Result<Value> {
+        // Resolved, canonicalized, hashed and version-stamped exactly once
+        // for this record; every later call runs that same file (finding 10).
+        let driver = pin_cua_driver()?;
+        preflight(&driver)?;
+        crawl_record(&driver, &entry, &manifest, &run_root, max_states, max_depth)
+    })() {
+        Ok(report) => (report, None),
+        Err(error) => {
+            let code = failure_code(&error);
+            let message = format!("{error:#}");
+            // Diagnostics never share stdout with the one worker report line.
+            eprintln!("desktop record {} failed: {message}", entry.slug);
+            (
+                json!({
+                    "record": entry.slug,
+                    "name": entry.name,
+                    "status": "failed",
+                    "source_revision": manifest.source_revision,
+                    "source_input_sha256": manifest.source_input_sha256,
+                    "runtime_manifest": manifest,
+                    "error": message,
+                }),
+                Some((code, message)),
+            )
+        }
+    };
     let summary = json!({
         "schema": "wisent.desktop-crawl-batch.v1",
         "catalog": catalog,

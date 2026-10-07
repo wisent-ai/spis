@@ -244,7 +244,11 @@ pub(crate) fn nonempty_text(value: &Value, field: &str, reference: &Reference) -
         })
 }
 
-pub(crate) fn count_field(summary: &Map<String, Value>, field: &str, reference: &Reference) -> Result<u64> {
+pub(crate) fn count_field(
+    summary: &Map<String, Value>,
+    field: &str,
+    reference: &Reference,
+) -> Result<u64> {
     let value = require_summary_field(summary, field, reference)?;
     value.as_u64().ok_or_else(|| {
         anyhow!(

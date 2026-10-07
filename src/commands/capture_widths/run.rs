@@ -11,11 +11,13 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--record" => {
                 i += 1;
-                record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record =
+                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
             }
             "--host" => {
                 i += 1;
-                host = Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host =
+                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
             }
             "--dry-run" => dry_run = true,
             other => {
@@ -113,7 +115,14 @@ pub fn run(rest: &[String]) -> Result<()> {
         fail("stado is not on PATH; hosts are reached through stado, never ssh");
     });
     let output = std::process::Command::new(&stado)
-        .args(["workload", "run", "weles-capture", "--target", &host, "--plan"])
+        .args([
+            "workload",
+            "run",
+            "weles-capture",
+            "--target",
+            &host,
+            "--plan",
+        ])
         .arg(plan_path.as_os_str())
         .arg("--json")
         .output()

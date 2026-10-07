@@ -68,7 +68,10 @@ pub(crate) fn open_regular_read(path: &Path, label: &str) -> Result<File> {
     let metadata = std::fs::symlink_metadata(path)
         .with_context(|| format!("inspect {label} {}", path.display()))?;
     if !metadata.file_type().is_file() || metadata.file_type().is_symlink() {
-        bail!("{label} is not a regular non-symlink file: {}", path.display());
+        bail!(
+            "{label} is not a regular non-symlink file: {}",
+            path.display()
+        );
     }
     let file = OpenOptions::new()
         .read(true)
@@ -85,7 +88,10 @@ pub(crate) fn existing_regular_directory(path: &Path, label: &str) -> Result<boo
     match std::fs::symlink_metadata(path) {
         Ok(metadata) => {
             if !metadata.file_type().is_dir() || metadata.file_type().is_symlink() {
-                bail!("{label} is not a regular non-symlink directory: {}", path.display());
+                bail!(
+                    "{label} is not a regular non-symlink directory: {}",
+                    path.display()
+                );
             }
             Ok(true)
         }
@@ -110,8 +116,7 @@ pub(crate) fn read_last_worker_report(path: &Path) -> Result<Value> {
         .rev()
         .filter_map(|line| serde_json::from_slice::<Value>(line).ok())
         .find(|value| {
-            value.get("schema").and_then(Value::as_str)
-                == Some("wisent.docs-worker-report.v1")
+            value.get("schema").and_then(Value::as_str) == Some("wisent.docs-worker-report.v1")
         })
         .context("documentation worker output has no typed documentation worker report")
 }
@@ -142,7 +147,9 @@ pub(crate) fn hash_file(path: &Path) -> Result<(String, u64)> {
             break;
         }
         hasher.update(&buffer[..read]);
-        bytes = bytes.checked_add(read as u64).context("file byte counter overflow")?;
+        bytes = bytes
+            .checked_add(read as u64)
+            .context("file byte counter overflow")?;
     }
     Ok((hex::encode(hasher.finalize()), bytes))
 }
@@ -179,10 +186,9 @@ pub(crate) fn validate_completion_timestamp(value: &str) -> Result<()> {
         || bytes[13] != b':'
         || bytes[16] != b':'
         || bytes[19] != b'Z'
-        || bytes
-            .iter()
-            .enumerate()
-            .any(|(index, byte)| !matches!(index, 4 | 7 | 10 | 13 | 16 | 19) && !byte.is_ascii_digit())
+        || bytes.iter().enumerate().any(|(index, byte)| {
+            !matches!(index, 4 | 7 | 10 | 13 | 16 | 19) && !byte.is_ascii_digit()
+        })
     {
         bail!("completion timestamp is not canonical UTC RFC3339");
     }
@@ -203,13 +209,7 @@ pub(crate) fn validate_completion_timestamp(value: &str) -> Result<()> {
         2 => 28,
         _ => 0,
     };
-    if year == 0
-        || day == 0
-        || day > month_days
-        || hour > 23
-        || minute > 59
-        || second > 59
-    {
+    if year == 0 || day == 0 || day > month_days || hour > 23 || minute > 59 || second > 59 {
         bail!("completion timestamp is not a valid UTC RFC3339 instant");
     }
     Ok(())

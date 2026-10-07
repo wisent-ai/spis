@@ -176,14 +176,16 @@ impl WorkerOptions {
             match rest[i].as_str() {
                 "--site" => {
                     i += 1;
-                    options.site = Some(crate::commands::required(rest.get(i), "--site needs a value")?.clone());
+                    options.site = Some(
+                        crate::commands::required(rest.get(i), "--site needs a value")?.clone(),
+                    );
                 }
                 "--all" => options.all = true,
                 "--exclude" => {
                     i += 1;
-                    options
-                        .exclude
-                        .push(crate::commands::required(rest.get(i), "--exclude needs a value")?.clone());
+                    options.exclude.push(
+                        crate::commands::required(rest.get(i), "--exclude needs a value")?.clone(),
+                    );
                 }
                 "--workers" => {
                     i += 1;

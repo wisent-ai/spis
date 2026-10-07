@@ -22,10 +22,9 @@ pub(crate) fn parse_flags(
             Some((n, v)) => (n.to_string(), Some(v.to_string())),
             None => (arg.clone(), None),
         };
-        let spec = all
-            .iter()
-            .find(|s| s.name == name)
-            .ok_or_else(|| crate::commands::usage(format!("reference: unrecognized argument {name}\n{USAGE}")))?;
+        let spec = all.iter().find(|s| s.name == name).ok_or_else(|| {
+            crate::commands::usage(format!("reference: unrecognized argument {name}\n{USAGE}"))
+        })?;
         if !spec.takes_value {
             flags.push((spec.name.to_string(), None));
             i += 1;
@@ -36,7 +35,9 @@ pub(crate) fn parse_flags(
             None => {
                 i += 1;
                 rest.get(i).cloned().ok_or_else(|| {
-                    crate::commands::usage(format!("reference: argument {name}: expected one argument"))
+                    crate::commands::usage(format!(
+                        "reference: argument {name}: expected one argument"
+                    ))
                 })?
             }
         };
@@ -51,7 +52,11 @@ pub(crate) fn require_flag(flags: &[(String, Option<String>)], name: &str) -> Re
         .iter()
         .find(|(n, _)| n == name)
         .and_then(|(_, v)| v.clone())
-        .ok_or_else(|| crate::commands::usage(format!("reference: the following arguments are required: {name}")))
+        .ok_or_else(|| {
+            crate::commands::usage(format!(
+                "reference: the following arguments are required: {name}"
+            ))
+        })
 }
 
 pub(crate) fn optional_flag(flags: &[(String, Option<String>)], name: &str) -> Option<String> {
@@ -139,7 +144,9 @@ pub fn run(rest: &[String]) -> Result<()> {
         "add" => {
             let (mut positionals, flags) = parse_flags(&rest[1..], ADD_SPECS, &[])?;
             if positionals.is_empty() {
-                return Err(crate::commands::usage("reference: the following arguments are required: catalog"));
+                return Err(crate::commands::usage(
+                    "reference: the following arguments are required: catalog",
+                ));
             }
             let catalog = positionals.remove(0);
             add(&AddArgs {
@@ -182,6 +189,8 @@ pub fn run(rest: &[String]) -> Result<()> {
                 remove(&pos[0], &pos[1], force)
             }
         }
-        other => Err(crate::commands::usage(format!("reference: unknown command {other:?}; it takes add, get, edit or remove\n{USAGE}"))),
+        other => Err(crate::commands::usage(format!(
+            "reference: unknown command {other:?}; it takes add, get, edit or remove\n{USAGE}"
+        ))),
     }
 }

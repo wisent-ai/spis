@@ -25,7 +25,10 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
     }
     let original_manifest = manifest.clone();
     let result = (|| -> Result<Vec<Value>> {
-        let host = host_report.get("host").and_then(Value::as_str).context("host report has no host")?;
+        let host = host_report
+            .get("host")
+            .and_then(Value::as_str)
+            .context("host report has no host")?;
         let (mut identity, mut checks) = match manifest.runtime_product.kind.as_str() {
             "ios-bundle" => ios_booted_identity(host)?,
             "android-package" => android_device_identity(host)?,
@@ -35,7 +38,11 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
                 RuntimeExecutionIdentity {
                     host: host.into(),
                     observed_hostname: String::new(),
-                    platform: if manifest.engine == "web" { "weles".into() } else { "http".into() },
+                    platform: if manifest.engine == "web" {
+                        "weles".into()
+                    } else {
+                        "http".into()
+                    },
                     device_id: None,
                     resolved_product_identifier: String::new(),
                     device_name: None,
@@ -53,24 +60,38 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
         let product = manifest.runtime_product.identifier.as_str();
         let check = match manifest.runtime_product.kind.as_str() {
             "ios-bundle" => {
-                let udid = identity.device_id.as_deref().context("iOS identity has no UDID")?;
-                host_probe(host, &["xcrun", "simctl", "get_app_container", udid, product, "app"])
+                let udid = identity
+                    .device_id
+                    .as_deref()
+                    .context("iOS identity has no UDID")?;
+                host_probe(
+                    host,
+                    &["xcrun", "simctl", "get_app_container", udid, product, "app"],
+                )
             }
             "android-package" => {
-                let serial = identity.device_id.as_deref().context("Android identity has no serial")?;
+                let serial = identity
+                    .device_id
+                    .as_deref()
+                    .context("Android identity has no serial")?;
                 host_probe(host, &["adb", "-s", serial, "shell", "pm", "path", product])
             }
             "desktop-bundle" => {
-                let query = format!("kMDItemCFBundleIdentifier == '{}'", product.replace('\'', "\\'"));
+                let query = format!(
+                    "kMDItemCFBundleIdentifier == '{}'",
+                    product.replace('\'', "\\'")
+                );
                 host_probe(host, &["mdfind", &query])
             }
             "cli-binary" | "tui-binary" => {
-                let path = identity.executable_path.as_deref().context("terminal identity has no exact executable path")?;
+                let path = identity
+                    .executable_path
+                    .as_deref()
+                    .context("terminal identity has no exact executable path")?;
                 host_probe(host, &["shasum", "-a", "256", path])
             }
             "url" => {
-                let parsed = url::Url::parse(product)
-                    .context("declared URL is invalid")?;
+                let parsed = url::Url::parse(product).context("declared URL is invalid")?;
                 if parsed.scheme() != "https"
                     || parsed.username() != ""
                     || parsed.password().is_some()
@@ -97,14 +118,22 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
             _ => unreachable!(),
         };
         let output = ready_output(&check, "verify exact runtime product")?;
-        if matches!(manifest.runtime_product.kind.as_str(), "cli-binary" | "tui-binary") {
+        if matches!(
+            manifest.runtime_product.kind.as_str(),
+            "cli-binary" | "tui-binary"
+        ) {
             let observed = output.split_whitespace().next().unwrap_or_default();
             if identity.executable_sha256.as_deref() != Some(observed) {
                 bail!("terminal executable changed during preflight");
             }
         }
         if manifest.engine == "mobile" {
-            checks.extend(resolve_mobile_install_identity(manifest, &mut identity, host, &check)?);
+            checks.extend(resolve_mobile_install_identity(
+                manifest,
+                &mut identity,
+                host,
+                &check,
+            )?);
         }
         checks.push(check);
         if matches!(manifest.engine.as_str(), "mobile" | "desktop") {
@@ -173,11 +202,15 @@ pub(crate) fn aggregate_catalog_entry(entry: &mut Value) {
         "cancel_pending"
     } else if states.iter().any(|state| *state == "pending_review") {
         "pending_review"
-    } else if states.iter().any(|state| {
-        matches!(*state, "queued" | "submitting" | "preflight_passed")
-    }) {
+    } else if states
+        .iter()
+        .any(|state| matches!(*state, "queued" | "submitting" | "preflight_passed"))
+    {
         "queued"
-    } else if states.iter().any(|state| matches!(*state, "planned" | "preflighting")) {
+    } else if states
+        .iter()
+        .any(|state| matches!(*state, "planned" | "preflighting"))
+    {
         "planned"
     } else if states.iter().all(|state| *state == "imported") && !states.is_empty() {
         "imported"
@@ -262,8 +295,7 @@ pub(crate) fn persist_submission_receipt(
         bail!("immutable submission receipt already exists with different content");
     }
     atomic_json_write(&path, receipt)?;
-    let recovered: Value =
-        crate::read_json(path.to_str().context("receipt path is not UTF-8")?)?;
+    let recovered: Value = crate::read_json(path.to_str().context("receipt path is not UTF-8")?)?;
     if recovered != *receipt {
         bail!("submission receipt read-back differs from accepted content");
     }

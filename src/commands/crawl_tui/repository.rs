@@ -3,15 +3,33 @@ use super::*;
 pub(crate) const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 
 pub(crate) const REPRESENTATIVE_INPUT_CLASSES: &[(&str, &str)] = &[
-    ("arrow keys", "context-ambiguous navigation or mutation input"),
+    (
+        "arrow keys",
+        "context-ambiguous navigation or mutation input",
+    ),
     ("focus keys", "context-ambiguous focus or commit input"),
-    ("escape/cancel keys", "context-ambiguous cancel or discard input"),
+    (
+        "escape/cancel keys",
+        "context-ambiguous cancel or discard input",
+    ),
     ("paging keys", "context-ambiguous navigation input"),
-    ("activation keys", "ambiguous activation, confirmation, or toggle input"),
+    (
+        "activation keys",
+        "ambiguous activation, confirmation, or toggle input",
+    ),
     ("digit keys", "application-specific numeric input"),
-    ("text keys", "application-specific letter, search, help, or command input"),
-    ("mouse and pointer", "context-ambiguous pointing, scrolling, or activation input"),
-    ("paste and other input", "unclassified input has no authorized exception"),
+    (
+        "text keys",
+        "application-specific letter, search, help, or command input",
+    ),
+    (
+        "mouse and pointer",
+        "context-ambiguous pointing, scrolling, or activation input",
+    ),
+    (
+        "paste and other input",
+        "unclassified input has no authorized exception",
+    ),
 ];
 
 pub(crate) struct TmuxSession {
@@ -26,7 +44,10 @@ impl Drop for TmuxSession {
         let mut command = Command::new("tmux");
         command
             .env_clear()
-            .env("PATH", "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin")
+            .env(
+                "PATH",
+                "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+            )
             .args(["-S", self.socket.to_string_lossy().as_ref()])
             .args(["kill-session", "-t", &self.name]);
         let _ = crate::commands::crawl::command_output(&mut command, "close private TUI PTY");
@@ -79,7 +100,9 @@ pub(crate) fn attempt_root(
     crate::commands::crawl::native_attempt_root(base, manifest)
 }
 
-pub(crate) fn revision() -> Result<String> { crate::commands::crawl::build_revision() }
+pub(crate) fn revision() -> Result<String> {
+    crate::commands::crawl::build_revision()
+}
 
 pub(crate) fn binary_candidates(name: &str) -> Vec<String> {
     let lower = name.to_lowercase();
@@ -108,16 +131,15 @@ pub(crate) fn delivery_secret_bindings(
         let reference = reference
             .as_str()
             .filter(|value| !value.is_empty())
-            .with_context(|| format!("TUI delivery secret reference is invalid for environment key {name:?}"))?;
+            .with_context(|| {
+                format!("TUI delivery secret reference is invalid for environment key {name:?}")
+            })?;
         if name.is_empty()
-            || !name
-                .chars()
-                .enumerate()
-                .all(|(index, character)| {
-                    character == '_'
-                        || character.is_ascii_alphabetic()
-                        || (index > 0 && character.is_ascii_digit())
-                })
+            || !name.chars().enumerate().all(|(index, character)| {
+                character == '_'
+                    || character.is_ascii_alphabetic()
+                    || (index > 0 && character.is_ascii_digit())
+            })
         {
             bail!("TUI delivery secret binding has invalid environment key {name:?}");
         }
@@ -140,7 +162,9 @@ pub(crate) fn delivery_secret_bindings(
         ]
         .contains(&name.as_str())
         {
-            bail!("TUI delivery secret key {name:?} would override the isolated worker environment");
+            bail!(
+                "TUI delivery secret key {name:?} would override the isolated worker environment"
+            );
         }
         bindings.push((name.clone(), reference.to_string()));
     }
@@ -153,24 +177,52 @@ pub(crate) fn isolated_environment(
 ) -> Result<BTreeMap<OsString, OsString>> {
     let home = fixture.join("home");
     let mut environment = BTreeMap::new();
-    environment.insert("PATH".into(), "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin".into());
+    environment.insert(
+        "PATH".into(),
+        "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin".into(),
+    );
     environment.insert("HOME".into(), home.clone().into_os_string());
-    environment.insert("XDG_CONFIG_HOME".into(), home.join(".config").into_os_string());
-    environment.insert("XDG_DATA_HOME".into(), home.join(".local/share").into_os_string());
-    environment.insert("XDG_CACHE_HOME".into(), home.join(".cache").into_os_string());
-    environment.insert("XDG_STATE_HOME".into(), home.join(".local/state").into_os_string());
-    environment.insert("XDG_RUNTIME_DIR".into(), fixture.join("runtime").into_os_string());
-    environment.insert("GIT_CONFIG_GLOBAL".into(), fixture.join("gitconfig").into_os_string());
+    environment.insert(
+        "XDG_CONFIG_HOME".into(),
+        home.join(".config").into_os_string(),
+    );
+    environment.insert(
+        "XDG_DATA_HOME".into(),
+        home.join(".local/share").into_os_string(),
+    );
+    environment.insert(
+        "XDG_CACHE_HOME".into(),
+        home.join(".cache").into_os_string(),
+    );
+    environment.insert(
+        "XDG_STATE_HOME".into(),
+        home.join(".local/state").into_os_string(),
+    );
+    environment.insert(
+        "XDG_RUNTIME_DIR".into(),
+        fixture.join("runtime").into_os_string(),
+    );
+    environment.insert(
+        "GIT_CONFIG_GLOBAL".into(),
+        fixture.join("gitconfig").into_os_string(),
+    );
     environment.insert("GIT_CONFIG_NOSYSTEM".into(), "1".into());
-    environment.insert("KUBECONFIG".into(), fixture.join("kubeconfig").into_os_string());
-    environment.insert("DOCKER_HOST".into(), format!("unix://{}", fixture.join("docker.sock").display()).into());
+    environment.insert(
+        "KUBECONFIG".into(),
+        fixture.join("kubeconfig").into_os_string(),
+    );
+    environment.insert(
+        "DOCKER_HOST".into(),
+        format!("unix://{}", fixture.join("docker.sock").display()).into(),
+    );
     environment.insert("AWS_EC2_METADATA_DISABLED".into(), "true".into());
     environment.insert("TERM".into(), "xterm-256color".into());
     environment.insert("NO_COLOR".into(), "1".into());
     environment.insert("LANG".into(), "C.UTF-8".into());
     for (name, _) in delivery_secret_bindings(manifest)? {
-        let value = std::env::var_os(&name)
-            .with_context(|| format!("TUI worker did not receive manifest-bound secret environment key {name}"))?;
+        let value = std::env::var_os(&name).with_context(|| {
+            format!("TUI worker did not receive manifest-bound secret environment key {name}")
+        })?;
         environment.insert(name.into(), value);
     }
     Ok(environment)

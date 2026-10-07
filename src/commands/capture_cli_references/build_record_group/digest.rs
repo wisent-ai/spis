@@ -22,7 +22,12 @@ pub(crate) fn digest(path: &Path) -> Result<(u64, String)> {
     Ok((size, format!("{:x}", hasher.finalize())))
 }
 
-pub(crate) fn write_cast(path: &Path, events: &[(f64, String)], title: &str, wall_start: u64) -> Result<()> {
+pub(crate) fn write_cast(
+    path: &Path,
+    events: &[(f64, String)],
+    title: &str,
+    wall_start: u64,
+) -> Result<()> {
     let header = format!(
         "{{\"version\":2,\"width\":{},\"height\":{},\"timestamp\":{wall_start},\
          \"env\":{{\"SHELL\":\"{SHELL}\",\"TERM\":\"xterm-256color\"}},\"title\":{}}}\n",

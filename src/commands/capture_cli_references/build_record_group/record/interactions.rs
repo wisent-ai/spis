@@ -2,7 +2,23 @@ use super::*;
 
 /// The record's interactions: each trigger, response, feedback, cancellation, failure and recovery observed.
 pub(super) fn interactions(f: &Facts) -> Vec<Value> {
-    let Facts { run, measured, product, steps, name, binary, version_line, version_ok, refusal_line, refusal_status, recovery_line, invalid_cmd, ref cancellation_sentence, phrase, .. } = *f;
+    let Facts {
+        run,
+        measured,
+        product,
+        steps,
+        name,
+        binary,
+        version_line,
+        version_ok,
+        refusal_line,
+        refusal_status,
+        recovery_line,
+        invalid_cmd,
+        ref cancellation_sentence,
+        phrase,
+        ..
+    } = *f;
     let ev = |kind: &str, extra: &str| f.ev(kind, extra);
     let interactions = vec![
         {

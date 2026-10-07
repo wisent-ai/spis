@@ -10,7 +10,11 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
     let index: Value = serde_json::from_slice(&index_bytes)
         .with_context(|| format!("parse canonical corpus index {}", index_path.display()))?;
     if index.get("schema").and_then(Value::as_str) != Some(INDEX_SCHEMA) {
-        bail!("{} is not a canonical {} corpus index", index_path.display(), INDEX_SCHEMA);
+        bail!(
+            "{} is not a canonical {} corpus index",
+            index_path.display(),
+            INDEX_SCHEMA
+        );
     }
     let catalogs = index
         .get("catalogs")
@@ -46,7 +50,11 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
                 bail!("catalog {slug} has no numeric {key}");
             }
         }
-        if catalog.get("measured_provenance").and_then(Value::as_object).is_none() {
+        if catalog
+            .get("measured_provenance")
+            .and_then(Value::as_object)
+            .is_none()
+        {
             bail!("catalog {slug} has no measured_provenance object");
         }
 
@@ -69,12 +77,18 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
         if source.get("schema").and_then(Value::as_str) != Some(SOURCES_SCHEMA)
             || source.get("catalog").and_then(Value::as_str) != Some(slug)
         {
-            bail!("{} does not identify canonical catalog {slug}", source_path.display());
+            bail!(
+                "{} does not identify canonical catalog {slug}",
+                source_path.display()
+            );
         }
         if references.get("schema").and_then(Value::as_str) != Some(REFERENCES_SCHEMA)
             || references.get("catalog").and_then(Value::as_str) != Some(slug)
         {
-            bail!("{} does not identify canonical reference catalog {slug}", references_path.display());
+            bail!(
+                "{} does not identify canonical reference catalog {slug}",
+                references_path.display()
+            );
         }
 
         let examples = source
@@ -88,7 +102,9 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
         }
         validate_local_paths(
             &source,
-            source_path.parent().context("catalog source has no parent")?,
+            source_path
+                .parent()
+                .context("catalog source has no parent")?,
             &format!("catalog {slug} evidence"),
             &mut files,
         )?;
@@ -102,7 +118,9 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
         {
             bail!("reference catalog {slug} counts do not match its references array");
         }
-        let catalog_root = references_path.parent().context("reference index has no parent")?;
+        let catalog_root = references_path
+            .parent()
+            .context("reference index has no parent")?;
         let mut record_paths = HashSet::new();
         for entry in entries {
             let relative = required_text(
@@ -117,7 +135,11 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
             files.insert(record_path.clone());
             let record: Value = read_json(&record_path)?;
             if record.get("schema").and_then(Value::as_str) != Some(RECORD_SCHEMA) {
-                bail!("{} is not a canonical {} record", record_path.display(), RECORD_SCHEMA);
+                bail!(
+                    "{} is not a canonical {} record",
+                    record_path.display(),
+                    RECORD_SCHEMA
+                );
             }
             let evidence_status = record
                 .get("evidence_status")
@@ -131,11 +153,16 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
                 || entry.get("evidence_gap_count").and_then(Value::as_u64)
                     != Some(evidence_gaps.len() as u64)
             {
-                bail!("reference index facts do not match {}", record_path.display());
+                bail!(
+                    "reference index facts do not match {}",
+                    record_path.display()
+                );
             }
             validate_local_paths(
                 &record,
-                record_path.parent().context("reference record has no parent")?,
+                record_path
+                    .parent()
+                    .context("reference record has no parent")?,
                 &format!("reference record {}", record_path.display()),
                 &mut files,
             )?;
@@ -184,7 +211,9 @@ pub(crate) fn safe_component(value: &str, label: &str) -> Result<()> {
 pub(crate) fn contained_file(root: &Path, relative: &str, label: &str) -> Result<PathBuf> {
     let path = Path::new(relative);
     if path.is_absolute()
-        || path.components().any(|component| !matches!(component, Component::Normal(_)))
+        || path
+            .components()
+            .any(|component| !matches!(component, Component::Normal(_)))
     {
         bail!("{label} path is not a contained relative path: {relative}");
     }
@@ -193,7 +222,10 @@ pub(crate) fn contained_file(root: &Path, relative: &str, label: &str) -> Result
         .canonicalize()
         .with_context(|| format!("open {label} {}", joined.display()))?;
     if !canonical.starts_with(root) || !canonical.is_file() {
-        bail!("{label} escapes the adopted corpus or is not a file: {}", joined.display());
+        bail!(
+            "{label} escapes the adopted corpus or is not a file: {}",
+            joined.display()
+        );
     }
     Ok(canonical)
 }
@@ -234,7 +266,9 @@ pub(crate) fn validate_local_paths(
 
 pub(crate) fn write_config(summary: &CorpusSummary) -> Result<()> {
     let path = config_path();
-    let parent = path.parent().context("corpus location path has no parent")?;
+    let parent = path
+        .parent()
+        .context("corpus location path has no parent")?;
 
     fs::create_dir_all(parent)
         .with_context(|| format!("create corpus configuration directory {}", parent.display()))?;
@@ -254,7 +288,8 @@ pub(crate) fn write_config(summary: &CorpusSummary) -> Result<()> {
         use std::os::unix::fs::OpenOptionsExt;
         options.mode(0o600);
     }
-    let mut file = options.open(&temporary)
+    let mut file = options
+        .open(&temporary)
         .with_context(|| format!("create corpus location {}", temporary.display()))?;
     file.write_all(&body)?;
     file.write_all(b"\n")?;

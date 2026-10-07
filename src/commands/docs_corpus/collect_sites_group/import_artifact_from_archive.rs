@@ -34,7 +34,10 @@ pub(crate) fn import_artifact_from_archive(
         } else {
             let mut command = crate::commands::crawl::crawl_storage_command();
             command.args(["storage", "get", uri]).arg(&archive_path);
-            let output = crate::commands::crawl::command_output(&mut command, "download immutable documentation corpus artifact")?;
+            let output = crate::commands::crawl::command_output(
+                &mut command,
+                "download immutable documentation corpus artifact",
+            )?;
             if !output.status.success() {
                 bail!(
                     "stado storage get refused documentation corpus artifact: {}",
@@ -48,9 +51,7 @@ pub(crate) fn import_artifact_from_archive(
         }
         drop(archive);
         let (archive_sha256, archive_bytes) = hash_file(&archive_path)?;
-        if archive_sha256 != expected_archive_sha256
-            || archive_bytes != expected_archive_bytes
-        {
+        if archive_sha256 != expected_archive_sha256 || archive_bytes != expected_archive_bytes {
             bail!("downloaded documentation artifact differs from the expected digest or length");
         }
         let staged_corpus = staging.join("corpus");

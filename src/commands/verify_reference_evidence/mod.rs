@@ -24,8 +24,8 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 // resolves here by way of their `use super::*`.
 use crate::commands::reference_contract;
 
-mod record_schema_group;
 mod catalogs_group;
+mod record_schema_group;
 
-pub use record_schema_group::*;
 pub use catalogs_group::*;
+pub use record_schema_group::*;

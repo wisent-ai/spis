@@ -22,7 +22,10 @@ pub(crate) fn brama_rank(
              Return STRICT JSON: {{\"pages\": [{{\"url\": string, \"family\": \
              one of {FAMILIES:?}]}}}} . Only use URLs from the list. Pick at most {limit}."
         ),
-        &format!("Start page: {start_url}\nDiscovered links:\n{}", listing.join("\n")),
+        &format!(
+            "Start page: {start_url}\nDiscovered links:\n{}",
+            listing.join("\n")
+        ),
     )?;
     let mut ranked: Vec<(String, String)> = Vec::new();
     for page in parsed["pages"].as_array().unwrap_or(&Vec::new()) {
@@ -72,7 +75,9 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             other => {
                 if other.starts_with("--") {
-                    return Err(crate::commands::usage(format!("discover: unrecognized argument {other}")));
+                    return Err(crate::commands::usage(format!(
+                        "discover: unrecognized argument {other}"
+                    )));
                 }
                 positionals.push(arg);
             }

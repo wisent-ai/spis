@@ -65,7 +65,10 @@ pub(crate) fn retain_failure_provenance(
     let prefix = format!("stado://weles/recordings/{weles_task_id}/");
     let recordings = attempt_root.join("recordings").join(weles_task_id);
     let evidence_manifest_path = recordings.join("evidence-manifest.json");
-    storage_get(&format!("{prefix}evidence-manifest.json"), &evidence_manifest_path)?;
+    storage_get(
+        &format!("{prefix}evidence-manifest.json"),
+        &evidence_manifest_path,
+    )?;
     // These exact bytes are the receipt-bound artifact, so they are only ever copied.
     let manifest_bytes = std::fs::read(&evidence_manifest_path)?;
     let artifact_document_sha256 = crate::sha256_hex(&manifest_bytes);
@@ -136,7 +139,14 @@ pub(crate) fn retain_failure_provenance(
         "expectedClaims": serde_json::to_value(&expected_claims)?,
         "artifact": serde_json::to_value(&artifact)?,
     });
-    let stdout = run_bridge(attempt_root, private, "verify", &verify_command, None, false)?;
+    let stdout = run_bridge(
+        attempt_root,
+        private,
+        "verify",
+        &verify_command,
+        None,
+        false,
+    )?;
     let fresh: weles::WelesProvenanceDocument = serde_json::from_slice(&stdout)?;
     ensure(
         fresh.id.strip_prefix("sha256:").is_some_and(is_sha256),
@@ -194,7 +204,10 @@ pub(crate) fn retain_failure_provenance(
         evidence_inventory: inventory,
         weles_evidence_manifest_uri: format!("{prefix}evidence-manifest.json"),
         weles_evidence_manifest_sha256: Some(provenance.artifact.sha256.clone()),
-        artifact_document_uri: format!("{base}/weles/artifacts/{}.json", provenance.artifact.sha256),
+        artifact_document_uri: format!(
+            "{base}/weles/artifacts/{}.json",
+            provenance.artifact.sha256
+        ),
         artifact_document_sha256: Some(provenance.artifact.sha256.clone()),
         observation_document_uri: format!(
             "{base}/weles/observations/{observation_document_sha256}.json"
@@ -216,7 +229,8 @@ pub(crate) fn storage_get(uri: &str, destination: &Path) -> Outcome<()> {
     }
     let mut stado = crate::commands::crawl::stado_command();
     stado.args(["storage", "get", uri]).arg(destination);
-    let output = crate::commands::crawl::command_output(&mut stado, "download retained Weles evidence")?;
+    let output =
+        crate::commands::crawl::command_output(&mut stado, "download retained Weles evidence")?;
     if !output.status.success() {
         return Err(WorkerFailure::new(
             "weles_evidence_download_failed",

@@ -94,8 +94,12 @@ pub(crate) const MOTION_ANALYSIS_ALIASES: &[(&str, &str)] = &[
 ];
 
 /// Extra keys a motion analysis may carry beyond the required eight.
-pub(crate) const MOTION_ANALYSIS_OPTIONAL: &[&str] =
-    &["source_title", "evidence", "timing_description", "provenance"];
+pub(crate) const MOTION_ANALYSIS_OPTIONAL: &[&str] = &[
+    "source_title",
+    "evidence",
+    "timing_description",
+    "provenance",
+];
 
 pub(crate) const TIMING_CLASSES: &[&str] = &[
     "instant",

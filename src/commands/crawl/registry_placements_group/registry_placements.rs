@@ -41,9 +41,9 @@ pub(crate) fn registry_placements() -> Result<RegistryPlacements> {
             return None;
         }
         let active_host = service.get("active_host").and_then(Value::as_str)?;
-        let target = targets.iter().find(|target| {
-            target.get("name").and_then(Value::as_str) == Some(active_host)
-        })?;
+        let target = targets
+            .iter()
+            .find(|target| target.get("name").and_then(Value::as_str) == Some(active_host))?;
         let actions = target.pointer("/weles/actions").and_then(Value::as_array)?;
         if !actions
             .iter()

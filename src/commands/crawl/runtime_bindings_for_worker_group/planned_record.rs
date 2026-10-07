@@ -90,13 +90,8 @@ pub(crate) fn planned_record(
             );
         }
     };
-    let product = match runtime_product(
-        catalog,
-        engine,
-        &slug,
-        &reference,
-        binding.surface.clone(),
-    ) {
+    let product = match runtime_product(catalog, engine, &slug, &reference, binding.surface.clone())
+    {
         Ok(product) => product,
         Err(error) => {
             return unavailable_record(
@@ -122,9 +117,8 @@ pub(crate) fn planned_record(
             );
         }
     };
-    let bindings_sha256 = crate::sha256_hex(
-        &serde_json::to_vec(&binding).expect("typed runtime binding serializes"),
-    );
+    let bindings_sha256 =
+        crate::sha256_hex(&serde_json::to_vec(&binding).expect("typed runtime binding serializes"));
     let account = binding.account;
     let constraints = binding.constraints;
     let prepared_proof = binding.prepared_proof;
@@ -144,12 +138,10 @@ pub(crate) fn planned_record(
     let source_input_sha256 = crate::sha256_hex(
         &serde_json::to_vec(&input_identity).expect("typed runtime input serializes"),
     );
-    let catalog_key = crate::sha256_hex(
-        format!("{source_revision}\0{run_id}\0{catalog}").as_bytes(),
-    );
-    let record_key = crate::sha256_hex(
-        format!("{catalog_key}\0{slug}\0{source_input_sha256}").as_bytes(),
-    );
+    let catalog_key =
+        crate::sha256_hex(format!("{source_revision}\0{run_id}\0{catalog}").as_bytes());
+    let record_key =
+        crate::sha256_hex(format!("{catalog_key}\0{slug}\0{source_input_sha256}").as_bytes());
     let correlation_id = format!("spis-{}", &record_key[..32]);
     let base_uri = crate::crawl_record_base_uri(run_id, catalog, &slug, &record_key);
     let mut manifest = RuntimeManifest {

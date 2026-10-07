@@ -17,11 +17,8 @@ use std::collections::{BTreeMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-
-
-
-mod index_group;
 mod enqueue_group;
+mod index_group;
 
-pub use index_group::*;
 pub use enqueue_group::*;
+pub use index_group::*;

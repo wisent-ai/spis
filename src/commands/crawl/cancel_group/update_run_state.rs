@@ -42,7 +42,11 @@ pub(crate) fn update_run_state(run: &mut Value) {
 pub(crate) fn status(rest: &[String]) -> Result<()> {
     let (run_id, record) = parse_run_and_record(rest, false)?;
     let mut selected = load(run_id.as_deref())?;
-    let selected_id = selected.get("run_id").and_then(Value::as_str).context("run has no id")?.to_string();
+    let selected_id = selected
+        .get("run_id")
+        .and_then(Value::as_str)
+        .context("run has no id")?
+        .to_string();
     match RunMutationGuard::acquire(&selected_id) {
         Ok(_guard) => {
             selected = load(Some(&selected_id))?;
@@ -59,19 +63,31 @@ pub(crate) fn status(rest: &[String]) -> Result<()> {
     print_operation("status", &selected, record.as_deref())
 }
 
-pub(crate) fn parse_run_and_record(rest: &[String], require_run: bool) -> Result<(Option<String>, Option<String>)> {
+pub(crate) fn parse_run_and_record(
+    rest: &[String],
+    require_run: bool,
+) -> Result<(Option<String>, Option<String>)> {
     let mut run = None;
     let mut record = None;
     let mut i = 0;
     while i < rest.len() {
         match rest[i].as_str() {
-            "--run" => { i += 1; run = Some(crate::commands::required(rest.get(i), "--run needs a value")?.clone()); }
-            "--record" => { i += 1; record = Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone()); }
+            "--run" => {
+                i += 1;
+                run = Some(crate::commands::required(rest.get(i), "--run needs a value")?.clone());
+            }
+            "--record" => {
+                i += 1;
+                record =
+                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+            }
             value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
         i += 1;
     }
-    if require_run && run.is_none() { return Err(crate::commands::usage("--run is required")); }
+    if require_run && run.is_none() {
+        return Err(crate::commands::usage("--run is required"));
+    }
     Ok((run, record))
 }
 

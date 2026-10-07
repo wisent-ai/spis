@@ -17,7 +17,10 @@ pub(crate) fn audit_attempt_tree(root: &Path) -> Result<(usize, u64)> {
         let metadata = std::fs::symlink_metadata(&directory)
             .with_context(|| format!("read attempt tree entry {}", directory.display()))?;
         if !metadata.is_dir() || metadata.file_type().is_symlink() {
-            bail!("attempt artifact tree {} is not a real directory", directory.display());
+            bail!(
+                "attempt artifact tree {} is not a real directory",
+                directory.display()
+            );
         }
         for entry in std::fs::read_dir(&directory)
             .with_context(|| format!("list attempt tree {}", directory.display()))?
@@ -64,8 +67,8 @@ pub(crate) fn audit_attempt_tree(root: &Path) -> Result<(usize, u64)> {
 
 pub(crate) fn hash_regular_file(path: &Path, maximum: u64) -> Result<(String, u64)> {
     use sha2::{Digest, Sha256};
-    let metadata = std::fs::symlink_metadata(path)
-        .with_context(|| format!("read {}", path.display()))?;
+    let metadata =
+        std::fs::symlink_metadata(path).with_context(|| format!("read {}", path.display()))?;
     if metadata.file_type().is_symlink() || !metadata.is_file() {
         bail!("{} is not a regular file", path.display());
     }
@@ -85,7 +88,10 @@ pub(crate) fn hash_regular_file(path: &Path, maximum: u64) -> Result<(String, u6
         }
         bytes += count as u64;
         if bytes > maximum {
-            bail!("{} grew past the {maximum}-byte bound while hashing", path.display());
+            bail!(
+                "{} grew past the {maximum}-byte bound while hashing",
+                path.display()
+            );
         }
         digest.update(&buffer[..count]);
     }
@@ -104,7 +110,9 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         .and_then(|value| value.to_str())
         .context("attempt artifact root has no UTF-8 name")?
         .to_string();
-    let parent = root.parent().context("attempt artifact root has no parent")?;
+    let parent = root
+        .parent()
+        .context("attempt artifact root has no parent")?;
     let (entries, tree_bytes) = audit_attempt_tree(root)?;
     let lock_path = parent.join(format!(".{attempt_name}.archive.lock"));
     let lock = OpenOptions::new()
@@ -149,7 +157,10 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
             );
         }
         std::fs::rename(&staged, &archive).with_context(|| {
-            format!("install rebuilt crawl attempt archive {}", archive.display())
+            format!(
+                "install rebuilt crawl attempt archive {}",
+                archive.display()
+            )
         })?;
         let staged_bytes = std::fs::metadata(&archive)
             .with_context(|| format!("read {}", archive.display()))?
@@ -157,7 +168,14 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         let (sha256, bytes) = hash_regular_file(&archive, staged_bytes)?;
         let mut stado = crawl_storage_command();
         stado
-            .args(["storage", "put", "--if-absent", "--content-type", "application/gzip", uri])
+            .args([
+                "storage",
+                "put",
+                "--if-absent",
+                "--content-type",
+                "application/gzip",
+                uri,
+            ])
             .arg(&archive);
         let output = command_output(&mut stado, "publish crawl attempt")?;
         if !output.status.success() {

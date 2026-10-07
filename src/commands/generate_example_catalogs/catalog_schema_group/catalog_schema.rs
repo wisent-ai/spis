@@ -56,8 +56,12 @@ pub(crate) const MOTION_ANALYSIS_FIELDS: &[&str] = &[
     "reduced_motion_equivalent",
 ];
 
-pub(crate) const MOTION_ANALYSIS_OPTIONAL: &[&str] =
-    &["source_title", "evidence", "timing_description", "provenance"];
+pub(crate) const MOTION_ANALYSIS_OPTIONAL: &[&str] = &[
+    "source_title",
+    "evidence",
+    "timing_description",
+    "provenance",
+];
 
 pub(crate) const TIMING_CLASSES: &[&str] = &[
     "continuous",

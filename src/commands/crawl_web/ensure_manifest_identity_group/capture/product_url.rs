@@ -2,7 +2,9 @@ use super::*;
 
 /// The runtime product URL, checked: HTTP(S), no credentials, canonical, a real origin, and the
 /// surface identity (when there is one) naming exactly this URL and allowing the Spis action.
-pub(super) fn checked_product_url(manifest: &super::super::crawl::RuntimeManifest) -> Outcome<(String, url::Url, String)> {
+pub(super) fn checked_product_url(
+    manifest: &super::super::crawl::RuntimeManifest,
+) -> Outcome<(String, url::Url, String)> {
     // `validate_request_and_evidence_manifest` binds every retained URL to the exact
     // product URL of the current record, so the manifest URL must already be canonical.
     let product_url = manifest.runtime_product.product_url.clone();

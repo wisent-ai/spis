@@ -6,9 +6,7 @@ impl Appium {
             base: canonical_driver_url(base)?,
             // Zero redirects: an Appium reply may not send this worker, its
             // session id or its screenshots to another origin (finding 12b).
-            agent: ureq::AgentBuilder::new()
-                .redirects(0)
-                .build(),
+            agent: ureq::AgentBuilder::new().redirects(0).build(),
         })
     }
 

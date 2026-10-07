@@ -64,11 +64,15 @@ pub(crate) fn preflight(rest: &[String]) -> Result<()> {
         match rest[index].as_str() {
             "--catalog" => {
                 index += 1;
-                catalog = Some(crate::commands::required(rest.get(index), "--catalog needs a value")?.clone());
+                catalog = Some(
+                    crate::commands::required(rest.get(index), "--catalog needs a value")?.clone(),
+                );
             }
             "--host" => {
                 index += 1;
-                host = Some(crate::commands::required(rest.get(index), "--host needs a value")?.clone());
+                host = Some(
+                    crate::commands::required(rest.get(index), "--host needs a value")?.clone(),
+                );
             }
             "--json" => json_output = true,
             other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
@@ -146,10 +150,15 @@ pub fn run(rest: &[String]) -> Result<()> {
         Some("cancel") => cancel(&rest[1..]),
         Some("resume") => resume(&rest[1..]),
         Some("import") => import(&rest[1..]),
-        Some("--help" | "-h") | None => { usage(); Ok(()) }
+        Some("--help" | "-h") | None => {
+            usage();
+            Ok(())
+        }
         Some("bindings") if rest.get(1).map(String::as_str) == Some("generate") => {
             generate_runtime_bindings(&rest[2..])
         }
-        Some(other) => Err(crate::commands::usage(format!("unknown crawl operation: {other}; run `spis crawl --help` for the operations"))),
+        Some(other) => Err(crate::commands::usage(format!(
+            "unknown crawl operation: {other}; run `spis crawl --help` for the operations"
+        ))),
     }
 }

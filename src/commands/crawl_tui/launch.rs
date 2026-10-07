@@ -14,8 +14,9 @@ pub(crate) fn launch(
     // link would survive and tmux would place its socket at the link target
     // (finding 18).
     if std::fs::symlink_metadata(&socket).is_ok() {
-        std::fs::remove_file(&socket)
-            .with_context(|| format!("remove stale private TUI tmux socket {}", socket.display()))?;
+        std::fs::remove_file(&socket).with_context(|| {
+            format!("remove stale private TUI tmux socket {}", socket.display())
+        })?;
     }
     if std::fs::symlink_metadata(&socket).is_ok() {
         bail!(

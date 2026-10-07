@@ -15,9 +15,9 @@ pub(crate) fn write_sources() -> Result<Value> {
             .split_once('-')
             .map(|(_, rest)| rest)
             .unwrap_or(parent);
-        let name = record["name"].as_str().with_context(|| {
-            format!("record {} has no product name", path.display())
-        })?;
+        let name = record["name"]
+            .as_str()
+            .with_context(|| format!("record {} has no product name", path.display()))?;
         let prod = product_by_name(name).with_context(|| {
             format!(
                 "record {} names product {name:?}, which the capture plan does not declare",
@@ -233,12 +233,16 @@ pub fn run(rest: &[String]) -> Result<()> {
                 wanted.push(slug.clone());
             }
             other => {
-                return Err(crate::commands::usage(format!("unknown flag: {other}\n{USAGE}")))
+                return Err(crate::commands::usage(format!(
+                    "unknown flag: {other}\n{USAGE}"
+                )))
             }
         }
     }
     let Some(plan_path) = plan_path else {
-        return Err(crate::commands::usage(format!("--plan is required\n{USAGE}")));
+        return Err(crate::commands::usage(format!(
+            "--plan is required\n{USAGE}"
+        )));
     };
     let loaded = load_plan(&plan_path)?;
     for slug in &wanted {
@@ -246,7 +250,12 @@ pub fn run(rest: &[String]) -> Result<()> {
             return Err(crate::commands::usage(format!(
                 "--product {slug} is not in {}; it declares: {}",
                 plan_path.display(),
-                loaded.products.iter().map(|product| product.slug.as_str()).collect::<Vec<_>>().join(", ")
+                loaded
+                    .products
+                    .iter()
+                    .map(|product| product.slug.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ")
             )));
         }
     }
@@ -306,6 +315,9 @@ pub fn run(rest: &[String]) -> Result<()> {
         sources["count"],
         index_payload["reference_count"]
     );
-    println!("next: spis verify-reference-evidence --catalog {} --apply", plan().catalog);
+    println!(
+        "next: spis verify-reference-evidence --catalog {} --apply",
+        plan().catalog
+    );
     Ok(())
 }

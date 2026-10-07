@@ -26,7 +26,10 @@ pub(crate) fn submit_worker(
     }
     if manifest.delivery.secret_env.len() != 2
         || !manifest.delivery.secret_env.contains_key("WELES_TOKEN")
-        || !manifest.delivery.secret_env.contains_key("WISENT_ORGANIZATION_ID")
+        || !manifest
+            .delivery
+            .secret_env
+            .contains_key("WISENT_ORGANIZATION_ID")
     {
         bail!("web delivery must carry exactly the WELES_TOKEN and WISENT_ORGANIZATION_ID secret references");
     }
@@ -68,7 +71,8 @@ pub(crate) fn submit_worker(
     }
     let mut stado = crate::commands::crawl::stado_command();
     stado.args(arguments);
-    let output = crate::commands::crawl::command_output(&mut stado, "submit web crawl through Stado")?;
+    let output =
+        crate::commands::crawl::command_output(&mut stado, "submit web crawl through Stado")?;
     if !output.status.success() {
         bail!(
             "Stado refused web crawl: {}",
@@ -124,7 +128,12 @@ impl PrivateBridge {
         let _ = std::fs::remove_file(&self.config);
     }
 
-    pub(crate) fn write_config(&self, endpoint: &str, bearer: &str, organization_id: &str) -> Outcome<()> {
+    pub(crate) fn write_config(
+        &self,
+        endpoint: &str,
+        bearer: &str,
+        organization_id: &str,
+    ) -> Outcome<()> {
         let document = json!({
             "schema": weles::BRIDGE_CONFIG_SCHEMA,
             "endpoint": endpoint,

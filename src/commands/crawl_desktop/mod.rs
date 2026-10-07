@@ -16,8 +16,8 @@ use std::time::{Duration, SystemTime};
 // resolves here by way of their `use super::*`.
 use crate::commands::crawl;
 
-mod repository_group;
 mod launched_executable_proof_group;
+mod repository_group;
 
-pub use repository_group::*;
 pub use launched_executable_proof_group::*;
+pub use repository_group::*;

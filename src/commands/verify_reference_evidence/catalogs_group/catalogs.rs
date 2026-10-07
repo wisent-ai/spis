@@ -7,10 +7,7 @@ pub(crate) fn catalogs(selected: Option<&str>) -> Result<Vec<PathBuf>> {
     let mut found: Vec<String> = std::fs::read_dir(".")?
         .filter_map(Result::ok)
         .map(|entry| entry.file_name().to_string_lossy().to_string())
-        .filter(|name| {
-            name.ends_with("-examples")
-                && Path::new(name).join("references").is_dir()
-        })
+        .filter(|name| name.ends_with("-examples") && Path::new(name).join("references").is_dir())
         .collect();
     found.sort();
     let missing: Vec<&str> = KNOWN_CATALOGS
@@ -98,7 +95,9 @@ pub fn run(rest: &[String]) -> Result<()> {
         match rest[i].as_str() {
             "--catalog" => {
                 i += 1;
-                catalog = Some(crate::commands::required(rest.get(i), "--catalog needs a value")?.clone());
+                catalog = Some(
+                    crate::commands::required(rest.get(i), "--catalog needs a value")?.clone(),
+                );
             }
             "--apply" => apply = true,
             "--no-state-match" => no_state_match = true,
@@ -158,7 +157,8 @@ pub fn run(rest: &[String]) -> Result<()> {
         errors.sort_by(|a, b| a.0.cmp(&b.0));
         if !errors.is_empty() {
             let error_count = errors.len();
-            let details = errors.into_iter()
+            let details = errors
+                .into_iter()
                 .map(|(path, error)| format!("{}: {error}", path.display()))
                 .collect::<Vec<_>>()
                 .join("\n");

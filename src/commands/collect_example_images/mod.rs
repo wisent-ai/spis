@@ -17,15 +17,6 @@ use serde_json::{json, Map, Value};
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
-
-
-
-
-
-
-
-
-
 mod user_agent_group;
 
 pub use user_agent_group::*;

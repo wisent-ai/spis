@@ -1,6 +1,8 @@
 use super::*;
 
-pub(crate) fn revision() -> Result<String> { crate::commands::crawl::build_revision() }
+pub(crate) fn revision() -> Result<String> {
+    crate::commands::crawl::build_revision()
+}
 
 pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     if value.is_empty()
@@ -78,7 +80,8 @@ pub(crate) fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
     ];
     let mut stado = crate::commands::crawl::stado_command();
     stado.args(arguments);
-    let output = crate::commands::crawl::command_output(&mut stado, "submit desktop crawl through Stado")?;
+    let output =
+        crate::commands::crawl::command_output(&mut stado, "submit desktop crawl through Stado")?;
     if !output.status.success() {
         bail!(
             "Stado refused desktop crawl: {}",

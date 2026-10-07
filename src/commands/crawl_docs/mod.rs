@@ -17,8 +17,8 @@ use std::fmt;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
-use std::os::unix::fs::OpenOptionsExt;
 use std::os::fd::AsRawFd;
+use std::os::unix::fs::OpenOptionsExt;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{mpsc, Arc};
@@ -27,15 +27,12 @@ use url::Url;
 // resolves here by way of their `use super::*`.
 use crate::commands::crawl;
 
-
-
-
-mod override_group;
-mod resolve_urls_group;
 mod inventory_sha256_group;
 mod load_or_create_state_group;
+mod override_group;
+mod resolve_urls_group;
 
-pub use override_group::*;
-pub use resolve_urls_group::*;
 pub use inventory_sha256_group::*;
 pub use load_or_create_state_group::*;
+pub use override_group::*;
+pub use resolve_urls_group::*;

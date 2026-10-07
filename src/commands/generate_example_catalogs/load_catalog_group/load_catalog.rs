@@ -26,14 +26,29 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
     }
 
     if catalog.get("count").and_then(Value::as_u64) != Some(examples.len() as u64) {
-        bail!("{source_path_str}: count does not match the {} examples", examples.len());
+        bail!(
+            "{source_path_str}: count does not match the {} examples",
+            examples.len()
+        );
     }
-    let measured_visuals = examples.iter().filter(|example| {
-        example.pointer("/visual/capture_status").and_then(Value::as_str) != Some("pending-weles")
-    }).count() as u64;
-    let measured_structures = examples.iter().filter(|example| {
-        example.pointer("/interface_structure/analysis_status").and_then(Value::as_str) != Some("pending-weles")
-    }).count() as u64;
+    let measured_visuals = examples
+        .iter()
+        .filter(|example| {
+            example
+                .pointer("/visual/capture_status")
+                .and_then(Value::as_str)
+                != Some("pending-weles")
+        })
+        .count() as u64;
+    let measured_structures = examples
+        .iter()
+        .filter(|example| {
+            example
+                .pointer("/interface_structure/analysis_status")
+                .and_then(Value::as_str)
+                != Some("pending-weles")
+        })
+        .count() as u64;
     if catalog.get("visual_count").and_then(Value::as_u64) != Some(measured_visuals) {
         bail!("{source_path_str}: visual_count does not match the {measured_visuals} retained captures");
     }
@@ -81,8 +96,14 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
             bail!("{source_path_str}: duplicate source URL '{source_url}'");
         }
 
-        let pending_visual = example.pointer("/visual/capture_status").and_then(Value::as_str) == Some("pending-weles");
-        let pending_structure = example.pointer("/interface_structure/analysis_status").and_then(Value::as_str) == Some("pending-weles");
+        let pending_visual = example
+            .pointer("/visual/capture_status")
+            .and_then(Value::as_str)
+            == Some("pending-weles");
+        let pending_structure = example
+            .pointer("/interface_structure/analysis_status")
+            .and_then(Value::as_str)
+            == Some("pending-weles");
         if pending_visual || pending_structure {
             if pending_visual && pending_structure {
                 continue;
@@ -232,10 +253,7 @@ pub(crate) fn discovered_catalogs() -> Result<Vec<String>> {
     let found: BTreeSet<String> = std::fs::read_dir(".")?
         .filter_map(Result::ok)
         .map(|entry| entry.file_name().to_string_lossy().to_string())
-        .filter(|name| {
-            name.ends_with("-examples")
-                && Path::new(name).join("references").is_dir()
-        })
+        .filter(|name| name.ends_with("-examples") && Path::new(name).join("references").is_dir())
         .collect();
     let missing: Vec<&str> = CATALOGS
         .iter()
@@ -249,6 +267,10 @@ pub(crate) fn discovered_catalogs() -> Result<Vec<String>> {
         );
     }
     let mut slugs: Vec<String> = CATALOGS.iter().map(|value| value.to_string()).collect();
-    slugs.extend(found.into_iter().filter(|name| !CATALOGS.contains(&name.as_str())));
+    slugs.extend(
+        found
+            .into_iter()
+            .filter(|name| !CATALOGS.contains(&name.as_str())),
+    );
     Ok(slugs)
 }

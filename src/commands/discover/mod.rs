@@ -18,8 +18,8 @@ use std::io::Read;
 // resolves here by way of their `use super::*`.
 use crate::commands::reference_contract;
 
-mod ua;
 mod rank;
+mod ua;
 
 pub use rank::*;
 pub use ua::*;

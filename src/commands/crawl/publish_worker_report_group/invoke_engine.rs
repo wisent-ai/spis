@@ -16,7 +16,10 @@ pub(crate) fn selected_specs(selected: &[String]) -> Result<Vec<(&'static str, &
     }
     let mut out = Vec::new();
     for wanted in selected {
-        let spec = CATALOGS.iter().find(|(catalog, _)| catalog == wanted).copied()
+        let spec = CATALOGS
+            .iter()
+            .find(|(catalog, _)| catalog == wanted)
+            .copied()
             .ok_or_else(|| anyhow!("unknown crawl catalog {wanted}"))?;
         if !out.contains(&spec) {
             out.push(spec);
@@ -60,7 +63,10 @@ pub(crate) fn record_directories(catalog: &str, selected: Option<&str>) -> Resul
         let entry = entry.with_context(|| format!("read crawl catalog {}", root.display()))?;
         let name = entry.file_name();
         let name = name.to_str().with_context(|| {
-            format!("crawl catalog {} contains a non-UTF-8 record name", root.display())
+            format!(
+                "crawl catalog {} contains a non-UTF-8 record name",
+                root.display()
+            )
         })?;
         if name.starts_with('.') {
             continue;
@@ -74,7 +80,11 @@ pub(crate) fn record_directories(catalog: &str, selected: Option<&str>) -> Resul
     Ok(records)
 }
 
-pub(crate) fn require_exact_object_keys(value: &Value, expected: &[&str], context: &str) -> Result<()> {
+pub(crate) fn require_exact_object_keys(
+    value: &Value,
+    expected: &[&str],
+    context: &str,
+) -> Result<()> {
     let object = value
         .as_object()
         .with_context(|| format!("{context} must be an object"))?;
@@ -94,9 +104,7 @@ pub(crate) fn require_exact_object_keys(value: &Value, expected: &[&str], contex
 
 pub(crate) fn validate_runtime_bindings_document(document: &Value) -> Result<()> {
     require_exact_object_keys(document, &["schema", "records"], "runtime bindings")?;
-    if document.get("schema").and_then(Value::as_str)
-        != Some("wisent.crawl-runtime-bindings.v1")
-    {
+    if document.get("schema").and_then(Value::as_str) != Some("wisent.crawl-runtime-bindings.v1") {
         bail!("runtime bindings must declare wisent.crawl-runtime-bindings.v1");
     }
     let catalogs = document
@@ -151,7 +159,10 @@ pub(crate) fn validate_runtime_bindings_document(document: &Value) -> Result<()>
                         .cloned()
                         .collect::<Vec<_>>();
                     if !unknown.is_empty() {
-                        bail!("{catalog}/{slug}: unknown runtime binding fields: {}", unknown.join(", "));
+                        bail!(
+                            "{catalog}/{slug}: unknown runtime binding fields: {}",
+                            unknown.join(", ")
+                        );
                     }
                     for required in ["account", "constraints", "delivery"] {
                         if !object.contains_key(required) {

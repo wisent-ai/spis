@@ -2,7 +2,17 @@ use super::*;
 
 /// The record's journey: the steps a person takes through the product, in order.
 pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
-    let Facts { measured, steps, name, version_line, version_ok, refusal_line, refusal_status, invalid_cmd, .. } = *f;
+    let Facts {
+        measured,
+        steps,
+        name,
+        version_line,
+        version_ok,
+        refusal_line,
+        refusal_status,
+        invalid_cmd,
+        ..
+    } = *f;
     let ev = |kind: &str, extra: &str| f.ev(kind, extra);
     let journey_steps = vec![
         {
@@ -117,7 +127,15 @@ pub(super) struct Accessibility<'a> {
 }
 
 pub(super) fn accessibility<'a>(f: &Facts<'a>) -> Accessibility<'a> {
-    let Facts { measured, steps, name, refusal_status, invalid_cmd, phrase, .. } = *f;
+    let Facts {
+        measured,
+        steps,
+        name,
+        refusal_status,
+        invalid_cmd,
+        phrase,
+        ..
+    } = *f;
     let colors_help = measured["colors_help"].as_bool().unwrap_or(false);
     let identical = measured["no_color_text_identical"]
         .as_bool()
@@ -186,7 +204,10 @@ pub(super) fn accessibility<'a>(f: &Facts<'a>) -> Accessibility<'a> {
         ),
     ];
     Accessibility {
-        observations: accessibility_observations.into_iter().map(Value::String).collect(),
+        observations: accessibility_observations
+            .into_iter()
+            .map(Value::String)
+            .collect(),
         colors_help,
         identical,
         names_next,

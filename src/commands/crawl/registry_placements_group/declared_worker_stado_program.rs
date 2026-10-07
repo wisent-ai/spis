@@ -15,17 +15,13 @@ pub(crate) fn declared_worker_stado_program(host: &str) -> Result<String> {
     command.args(["service", "list", "--json"]);
     match command_output(&mut command, "read declared Stado agent program") {
         Ok(output) if output.status.success() => {
-            let services: Value = serde_json::from_slice(&output.stdout)
-                .context("Stado service list is not JSON")?;
+            let services: Value =
+                serde_json::from_slice(&output.stdout).context("Stado service list is not JSON")?;
             programs = active_worker_stado_programs(&services, host);
             // Two overlapping service declarations that execute the same
             // program are still unambiguous.
             if programs.len() == 1 {
-                return Ok(programs
-                    .iter()
-                    .next()
-                    .expect("one active program")
-                    .clone());
+                return Ok(programs.iter().next().expect("one active program").clone());
             }
         }
         Ok(output) => {
@@ -107,7 +103,10 @@ pub(crate) fn host_preflight(
     // else in the crawl ever asked it.
     let mut commands: Vec<Vec<&str>> = vec![vec!["hostname", "-f"], vec!["df", "-h"]];
     commands.extend(engine_preconditions(engine, catalog));
-    let mut checks: Vec<Value> = commands.iter().map(|command| host_probe(host, command)).collect();
+    let mut checks: Vec<Value> = commands
+        .iter()
+        .map(|command| host_probe(host, command))
+        .collect();
     let desktop_driver_ready = if engine == "desktop" {
         let candidates = [
             "/Applications/CuaDriver.app/Contents/MacOS/cua-driver",
@@ -145,7 +144,12 @@ pub(crate) fn host_preflight(
     let diagnostic = retryable.then(|| {
         let retryable_checks = checks
             .iter()
-            .filter(|check| check.pointer("/diagnostic/retryable").and_then(Value::as_bool) == Some(true))
+            .filter(|check| {
+                check
+                    .pointer("/diagnostic/retryable")
+                    .and_then(Value::as_bool)
+                    == Some(true)
+            })
             .filter_map(|check| check.get("diagnostic").cloned())
             .collect::<Vec<_>>();
         json!({
@@ -179,11 +183,14 @@ pub(crate) fn observed_hostname(host_report: &Value) -> Result<String> {
             // carries two words. Matching only the one-word form silently
             // dropped the observed hostname and every record then refused with
             // runtime_identity_or_readiness_unavailable.
-            check.get("command").and_then(Value::as_array).is_some_and(|command| {
-                command.len() == 2
-                    && command[0].as_str() == Some("hostname")
-                    && command[1].as_str() == Some("-f")
-            })
+            check
+                .get("command")
+                .and_then(Value::as_array)
+                .is_some_and(|command| {
+                    command.len() == 2
+                        && command[0].as_str() == Some("hostname")
+                        && command[1].as_str() == Some("-f")
+                })
         })
         .and_then(|check| check.get("stdout"))
         .and_then(Value::as_str)
@@ -191,7 +198,9 @@ pub(crate) fn observed_hostname(host_report: &Value) -> Result<String> {
         .filter(|value| {
             !value.is_empty()
                 && !value.chars().any(char::is_whitespace)
-                && value.bytes().all(|byte| byte.is_ascii_alphanumeric() || b".-_".contains(&byte))
+                && value
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || b".-_".contains(&byte))
         })
         .context("host preflight has no exact observed hostname")?;
     Ok(value.to_string())
@@ -209,11 +218,14 @@ pub(crate) fn observed_free_gib(host_report: &Value) -> Option<f64> {
         .into_iter()
         .flatten()
         .find(|check| {
-            check.get("command").and_then(Value::as_array).is_some_and(|command| {
-                command.len() == 2
-                    && command[0].as_str() == Some("df")
-                    && command[1].as_str() == Some("-h")
-            })
+            check
+                .get("command")
+                .and_then(Value::as_array)
+                .is_some_and(|command| {
+                    command.len() == 2
+                        && command[0].as_str() == Some("df")
+                        && command[1].as_str() == Some("-h")
+                })
         })
         .and_then(|check| check.get("stdout"))
         .and_then(Value::as_str)?;

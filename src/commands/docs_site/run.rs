@@ -9,9 +9,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         match argument.as_str() {
             "--check" => check = true,
             "--site-content" => {
-                let path = arguments
-                    .next()
-                    .context("--site-content requires a path")?;
+                let path = arguments.next().context("--site-content requires a path")?;
                 landing_content = Some(PathBuf::from(path));
             }
             "--help" | "-h" => {
@@ -47,7 +45,10 @@ pub fn run(rest: &[String]) -> Result<()> {
         &mut stale,
     )?;
     write_if_changed(&site_content, &content, check, &mut stale)?;
-    if let Some(path) = landing_content.as_ref().filter(|path| *path != &site_content) {
+    if let Some(path) = landing_content
+        .as_ref()
+        .filter(|path| *path != &site_content)
+    {
         write_if_changed(path, &content, check, &mut stale)?;
     }
     if check {

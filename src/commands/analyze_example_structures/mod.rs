@@ -17,12 +17,12 @@ use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
 use std::path::Path;
 
-mod catalogs;
-mod semantic_hints;
-mod classify_layout;
 mod analyze;
+mod catalogs;
+mod classify_layout;
+mod semantic_hints;
 
-pub use catalogs::*;
-pub use semantic_hints::*;
-pub use classify_layout::*;
 pub use analyze::*;
+pub use catalogs::*;
+pub use classify_layout::*;
+pub use semantic_hints::*;

@@ -14,8 +14,33 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
     let f = Facts::read(run, measured, media);
     let interactions = interactions(&f);
     let journey_steps = journey_steps(&f);
-    let Accessibility { observations: accessibility_observations, colors_help, identical, names_next, fits80, help_command, nocolor_command } = accessibility(&f);
-    let Facts { run, measured, media, product, steps, cast, states, name, binary, version_line, version_ok, refusal_line, refusal_status, recovery_line, invalid_cmd, .. } = f;
+    let Accessibility {
+        observations: accessibility_observations,
+        colors_help,
+        identical,
+        names_next,
+        fits80,
+        help_command,
+        nocolor_command,
+    } = accessibility(&f);
+    let Facts {
+        run,
+        measured,
+        media,
+        product,
+        steps,
+        cast,
+        states,
+        name,
+        binary,
+        version_line,
+        version_ok,
+        refusal_line,
+        refusal_status,
+        recovery_line,
+        invalid_cmd,
+        ..
+    } = f;
 
     let repainted = measured["screen_cleared"].as_bool().unwrap_or(false)
         || measured["cursor_addressed"].as_bool().unwrap_or(false);
