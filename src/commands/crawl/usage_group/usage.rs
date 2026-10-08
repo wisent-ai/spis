@@ -50,8 +50,8 @@ persisted under a durable per-record lock before the external effect it authoriz
 /// store, submits no job and takes no slot, which is the whole point --
 /// before this the only way to find out was to drive a crawl, and the
 /// documentation engine proved what that costs when the answer is no:
-/// job-545551889f9e88be30daa81f held a slot for sixteen minutes to discover
-/// a missing program.
+/// a documentation crawl job held a slot for many minutes to discover a
+/// missing program.
 ///
 /// Exits non-zero when the host is not ready, so a placement script can ask
 /// this question in a condition.

@@ -108,8 +108,8 @@ pub(crate) fn submit_worker(
     let output_uri = manifest.output_uri.clone();
     // The absolute path Stado resolved on this host, never the bare name. The
     // submitted command runs under a non-login `/bin/sh` that reads no
-    // profile, so `cargo` alone resolved to nothing and
-    // job-545551889f9e88be30daa81f died sixteen minutes into a claimed slot
+    // profile, so `cargo` alone resolved to nothing and a crawl job died
+    // many minutes into a claimed slot
     // with `/bin/sh: cargo: command not found`. Through the shared helper now
     // that all six engines do this, so no engine can drift back to naming it
     // bare while another names the resolved path.

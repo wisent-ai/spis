@@ -37,8 +37,8 @@ pub(crate) fn submit_worker(
     // Every worker in this repository is `cargo run --release`, and the job's
     // shell is a non-login `/bin/sh` that reads no profile, so a bare name
     // resolves to nothing however the host installs Rust -- the defect that
-    // cost job-545551889f9e88be30daa81f sixteen minutes of a claimed slot in
-    // the documentation engine, still open in this one.
+    // cost a documentation crawl job many minutes of a claimed slot, and
+    // would cost this engine the same.
     let cargo = crate::commands::crawl::resolved_worker_program(host)?;
     let command = format!(
         "{cargo} run --release -- crawl-web {catalog} --worker --record {record} --artifact-uri {} --runtime-manifest-base64 '{}'",
