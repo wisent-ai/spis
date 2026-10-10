@@ -115,6 +115,40 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
             "--visual".into(),
             text(body, "visual", "adding a record requires an image path")?,
         ]),
+        "reference-edit" => {
+            let slug = text(body, "slug", "editing a record requires a catalog slug")?;
+            let number = positive(body.get("number"))
+                .ok_or_else(|| bad_request("editing a record requires its number"))?;
+            let mut argv = vec![
+                "reference-record".into(),
+                "edit".into(),
+                slug,
+                number.to_string(),
+            ];
+            let mut changed = false;
+            for (key, flag) in [
+                ("sourceUrl", "--source-url"),
+                ("category", "--category"),
+                ("selectionNote", "--selection-note"),
+                ("owner", "--owner"),
+            ] {
+                if body.contains_key(key) {
+                    let value = text(
+                        body,
+                        key,
+                        &format!("editing a record requires nonempty {key}"),
+                    )?;
+                    argv.extend([flag.into(), value]);
+                    changed = true;
+                }
+            }
+            if !changed {
+                return Err(bad_request(
+                    "editing a record requires sourceUrl, category, selectionNote or owner",
+                ));
+            }
+            Ok(argv)
+        }
         "reference-remove" => {
             let slug = text(body, "slug", "removing a record requires a catalog slug")?;
             let number = positive(body.get("number"))
