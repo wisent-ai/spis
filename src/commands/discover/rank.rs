@@ -61,16 +61,18 @@ pub fn run(rest: &[String]) -> Result<()> {
             "--catalog" => {
                 i += 1;
                 catalog = Some(rest.get(i).cloned().ok_or_else(|| {
-                    anyhow::anyhow!("discover: argument --catalog: expected one argument")
+                    crate::commands::usage("discover: argument --catalog: expected one argument")
                 })?);
             }
             "--limit" => {
                 i += 1;
                 let value = rest.get(i).cloned().ok_or_else(|| {
-                    anyhow::anyhow!("discover: argument --limit: expected one argument")
+                    crate::commands::usage("discover: argument --limit: expected one argument")
                 })?;
                 limit = Some(value.parse().map_err(|_| {
-                    anyhow::anyhow!("discover: argument --limit: invalid int value {value:?}")
+                    crate::commands::usage(format!(
+                        "discover: argument --limit: invalid int value {value:?}"
+                    ))
                 })?);
             }
             other => {
@@ -85,13 +87,13 @@ pub fn run(rest: &[String]) -> Result<()> {
         i += 1;
     }
     let start_url = positionals.first().cloned().ok_or_else(|| {
-        anyhow::anyhow!("discover: the following arguments are required: start_url")
+        crate::commands::usage("discover: the following arguments are required: start_url")
     })?;
     let catalog = catalog.ok_or_else(|| {
-        anyhow::anyhow!("discover: the following arguments are required: --catalog")
+        crate::commands::usage("discover: the following arguments are required: --catalog")
     })?;
     let limit = limit.ok_or_else(|| {
-        anyhow::anyhow!(
+        crate::commands::usage(
             "discover: the following arguments are required: --limit (how many pages to record from this site)"
         )
     })?;
