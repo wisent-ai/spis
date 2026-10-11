@@ -61,47 +61,65 @@ pub(crate) fn pool<T: Sync, F: Fn(&T) + Sync>(items: &[T], workers: usize, f: F)
     });
 }
 
-pub(crate) fn gh_json(path: &str) -> Option<Value> {
-    // Preserved external call: `gh api <path> --cache 0`.
+/// `gh api <path> --cache 0`, answering the JSON or the reason it has none:
+/// gh could not start, gh refused (its exit status and stderr), or gh
+/// answered something that is not JSON.
+pub(crate) fn gh_json(path: &str) -> std::result::Result<Value, String> {
     let out = Command::new("gh")
         .args(["api", path, "--cache", "0"])
         .output()
-        .ok()?;
+        .map_err(|error| format!("gh api {path} could not start: {error}"))?;
     if !out.status.success() {
-        return None;
+        return Err(format!(
+            "gh api {path} exited {}: {}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim()
+        ));
     }
-    serde_json::from_slice(&out.stdout).ok()
+    serde_json::from_slice(&out.stdout)
+        .map_err(|error| format!("gh api {path} answered no JSON: {error}"))
 }
 
 pub(crate) fn check_readmes(drift: &Mutex<Drift>) -> Result<()> {
     let sources: Value = lib::read_json("readme-examples/sources.json")?;
+    // A sources file without its list, or an entry without its repository
+    // and README path, is a broken input, not "no README to check".
     let entries = sources
         .get("repositories")
         .or_else(|| sources.get("examples"))
         .or_else(|| sources.get("sources"))
         .and_then(|v| v.as_array())
         .cloned()
-        .unwrap_or_default();
-
-    pool(&entries, 8, |entry| {
+        .context("readme-examples/sources.json has no repositories, examples or sources array")?;
+    let mut checked = Vec::with_capacity(entries.len());
+    for (index, entry) in entries.iter().enumerate() {
         let repo = entry.get("repository").and_then(|v| v.as_str());
         let readme_path = entry.get("readme_path").and_then(|v| v.as_str());
-        let recorded = entry.get("readme_blob_sha");
-        let (repo, readme_path) = match (repo, readme_path) {
-            (Some(r), Some(p)) => (r, p),
-            _ => return,
+        let (Some(repo), Some(readme_path)) = (repo, readme_path) else {
+            anyhow::bail!(
+                "readme-examples/sources.json entry {index} has no repository or readme_path string: {entry}"
+            );
         };
-        let mut guard = drift.lock();
-        match gh_json(&format!("repos/{repo}/contents/{readme_path}")) {
-            None => guard.readme_unreachable.push(json!({
+        checked.push((entry, repo, readme_path));
+    }
+
+    pool(&checked, 8, |&(entry, repo, readme_path)| {
+        let recorded = entry.get("readme_blob_sha");
+        let unreachable = |cause: String| {
+            json!({
                 "repository": repo,
                 "readme_path": readme_path,
-            })),
-            Some(data) => match data.get("sha").and_then(|v| v.as_str()) {
-                None => guard.readme_unreachable.push(json!({
-                    "repository": repo,
-                    "readme_path": readme_path,
-                })),
+                "cause": cause,
+            })
+        };
+        let answer = gh_json(&format!("repos/{repo}/contents/{readme_path}"));
+        let mut guard = drift.lock();
+        match answer {
+            Err(cause) => guard.readme_unreachable.push(unreachable(cause)),
+            Ok(data) => match data.get("sha").and_then(|v| v.as_str()) {
+                None => guard.readme_unreachable.push(unreachable(format!(
+                    "gh answered no sha string for {repo}/{readme_path}: {data}"
+                ))),
                 Some(current) => {
                     if Some(current) != recorded.and_then(|v| v.as_str()) {
                         guard.readme_changed.push(json!({
