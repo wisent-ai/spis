@@ -1,29 +1,39 @@
 use super::*;
 
-pub(crate) fn files_under(root: &Path) -> Vec<PathBuf> {
-    fn walk(root: &Path, out: &mut Vec<PathBuf>) {
-        let Ok(entries) = std::fs::read_dir(root) else {
-            return;
-        };
-        for entry in entries.flatten() {
+/// Every file under `root`, sorted. A directory or entry that cannot be read
+/// fails with its path: skipped, the retained media and accessibility files
+/// under it were left out of the imported record without a word.
+pub(crate) fn files_under(root: &Path) -> Result<Vec<PathBuf>> {
+    fn walk(root: &Path, out: &mut Vec<PathBuf>) -> Result<()> {
+        let entries =
+            std::fs::read_dir(root).with_context(|| format!("listing {}", root.display()))?;
+        for entry in entries {
+            let entry = entry.with_context(|| format!("reading an entry of {}", root.display()))?;
             let path = entry.path();
             if path.is_dir() {
-                walk(&path, out);
+                walk(&path, out)?;
             } else {
                 out.push(path);
             }
         }
+        Ok(())
     }
     let mut files = Vec::new();
-    walk(root, &mut files);
+    walk(root, &mut files)?;
     files.sort();
-    files
+    Ok(files)
 }
 
 pub(crate) fn media_kind(path: &Path) -> Option<&'static str> {
     match path.extension()?.to_str()?.to_ascii_lowercase().as_str() {
-        "png" | "jpg" | "jpeg" | "webp" => Some("state"),
-        "gif" | "mp4" | "webm" | "cast" => Some("motion"),
+        "png" => Some("state"),
+        "jpg" => Some("state"),
+        "jpeg" => Some("state"),
+        "webp" => Some("state"),
+        "gif" => Some("motion"),
+        "mp4" => Some("motion"),
+        "webm" => Some("motion"),
+        "cast" => Some("motion"),
         _ => None,
     }
 }
@@ -65,7 +75,7 @@ pub(crate) fn attempt_media(
 ) -> Result<(Vec<Value>, Vec<Value>)> {
     let mut motion = Vec::new();
     let mut states = Vec::new();
-    let files = files_under(attempt_dir);
+    let files = files_under(attempt_dir)?;
     let first_motion = files
         .iter()
         .find(|path| media_kind(path) == Some("motion"))
@@ -103,24 +113,39 @@ pub(crate) fn attempt_media(
     Ok((motion, states))
 }
 
-pub(crate) fn accessibility_gap(engine: &str, attempt_dir: &Path) -> Value {
-    let trees: Vec<PathBuf> = files_under(attempt_dir)
+/// Whether a retained file is an accessibility or DOM source: by extension,
+/// or by the name an engine gives its tree.
+fn accessibility_source(path: &Path) -> bool {
+    let by_extension = match path.extension().and_then(|value| value.to_str()) {
+        Some("xml") => true,
+        Some("html") => true,
+        Some("txt") => true,
+        _ => false,
+    };
+    let by_name = match path.file_name().and_then(|value| value.to_str()) {
+        Some("snapshot.json") => true,
+        Some("source.json") => true,
+        Some("axe.json") => true,
+        _ => false,
+    };
+    by_extension || by_name
+}
+
+pub(crate) fn accessibility_gap(engine: &str, attempt_dir: &Path) -> Result<Value> {
+    let trees: Vec<PathBuf> = files_under(attempt_dir)?
         .into_iter()
-        .filter(|path| {
-            matches!(
-                path.extension().and_then(|value| value.to_str()),
-                Some("xml" | "html" | "txt")
-            ) || matches!(
-                path.file_name().and_then(|value| value.to_str()),
-                Some("snapshot.json" | "source.json" | "axe.json")
-            )
-        })
+        .filter(|path| accessibility_source(path))
         .collect();
-    let bytes: u64 = trees
+    let sizes = trees
         .iter()
-        .filter_map(|path| std::fs::metadata(path).ok().map(|value| value.len()))
-        .sum();
-    json!({
+        .map(|path| {
+            std::fs::metadata(path)
+                .map(|metadata| metadata.len())
+                .with_context(|| format!("reading the size of {}", path.display()))
+        })
+        .collect::<Result<Vec<u64>>>()?;
+    let bytes: u64 = sizes.iter().sum();
+    Ok(json!({
         "measured": false,
         "observations": if trees.is_empty() {
             Vec::new()
@@ -134,7 +159,7 @@ pub(crate) fn accessibility_gap(engine: &str, attempt_dir: &Path) -> Value {
             "No engine-supplied canonical accessibility measurement was retained.",
             "Screen-reader traversal, focus order, live regions and reduced-motion preference remain unmeasured.",
         ],
-    })
+    }))
 }
 
 /// One durable `crawl_runs` entry, keyed by the immutable attempt id.

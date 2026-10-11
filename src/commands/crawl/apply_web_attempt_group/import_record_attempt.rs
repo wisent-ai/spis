@@ -133,7 +133,7 @@ pub(crate) fn import_record_attempt(
         _ => {}
     }
     let (motion, states) = attempt_media(engine, &attempt_destination, &record_dir, &source_url)?;
-    let accessibility = accessibility_gap(engine, &attempt_destination);
+    let accessibility = accessibility_gap(engine, &attempt_destination)?;
     let object = record
         .as_object_mut()
         .context("reference record is not an object")?;
