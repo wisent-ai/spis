@@ -44,16 +44,26 @@ pub fn activate_configured_root() -> Result<()> {
         .with_context(|| format!("open adopted Spis corpus {}", root.display()))
 }
 
+/// The adopted corpus, or the source checkout when none was adopted. A
+/// corpus location that exists but cannot be read or parsed stops Spis with
+/// its cause: answered with the source checkout, every reader silently
+/// worked on a different corpus than the one the operator adopted.
 pub fn data_root() -> PathBuf {
-    configured_root()
-        .ok()
-        .flatten()
-        .unwrap_or_else(|| PathBuf::from(env!("CARGO_MANIFEST_DIR")))
+    match configured_root() {
+        Ok(Some(root)) => root,
+        Ok(None) => PathBuf::from(env!("CARGO_MANIFEST_DIR")),
+        Err(error) => panic!("the adopted Spis corpus cannot be located: {error:#}"),
+    }
 }
 
 pub fn configured_root() -> Result<Option<PathBuf>> {
     let path = config_path();
-    if !path.exists() {
+    // `exists` answers false when the directory cannot be searched, which
+    // read an adopted corpus as never adopted.
+    if !path
+        .try_exists()
+        .with_context(|| format!("check corpus location {}", path.display()))?
+    {
         return Ok(None);
     }
     let document: Value = serde_json::from_slice(
