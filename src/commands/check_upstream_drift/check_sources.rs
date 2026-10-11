@@ -1,7 +1,7 @@
 use super::*;
 
-pub(crate) fn check_sources(drift: &Mutex<Drift>) {
-    let pairs = collect_urls();
+pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
+    let pairs = collect_urls()?;
     pool(&pairs, 12, |pair| {
         let (url, where_, expected) = pair;
         if !(url.starts_with("http://") || url.starts_with("https://")) {
@@ -33,6 +33,7 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) {
             _ => guard.sources_unresolved.push(item),
         }
     });
+    Ok(())
 }
 
 pub(crate) fn stream_sha256(path: &std::path::Path) -> Result<String> {
@@ -56,7 +57,7 @@ pub(crate) fn stream_sha256(path: &std::path::Path) -> Result<String> {
 }
 
 pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
-    for record in reference_records() {
+    for record in reference_records()? {
         let data: Value = lib::read_json(record.to_str().context("non-UTF8 path")?)?;
         let base = record.parent().context("record without parent")?;
         for key in ["motion", "states"] {
@@ -91,15 +92,24 @@ pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
     Ok(())
 }
 
-/// Sorted `*-examples/references/*/reference.json` under the working directory.
-pub(crate) fn reference_records() -> Vec<PathBuf> {
+/// Sorted `*-examples/references/*/reference.json` under the working
+/// directory. A catalog without a `references` directory has none; a
+/// directory or entry that cannot be read fails with its path. Skipped, it
+/// made the drift report check fewer references while reading as complete.
+pub(crate) fn reference_records() -> Result<Vec<PathBuf>> {
     let mut out = Vec::new();
-    for catalog in sorted_example_dirs() {
+    for catalog in sorted_example_dirs()? {
         let refs_dir = catalog.join("references");
-        let Ok(entries) = std::fs::read_dir(&refs_dir) else {
-            continue;
+        let entries = match std::fs::read_dir(&refs_dir) {
+            Ok(entries) => entries,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(error) => {
+                return Err(error).with_context(|| format!("listing {}", refs_dir.display()))
+            }
         };
-        for entry in entries.filter_map(|e| e.ok()) {
+        for entry in entries {
+            let entry =
+                entry.with_context(|| format!("reading an entry of {}", refs_dir.display()))?;
             let candidate = entry.path().join("reference.json");
             if candidate.is_file() {
                 out.push(candidate);
@@ -107,38 +117,35 @@ pub(crate) fn reference_records() -> Vec<PathBuf> {
         }
     }
     out.sort();
-    out
+    Ok(out)
 }
 
-/// Sorted `*-examples` directories containing a `references` directory.
-pub(crate) fn sorted_example_dirs() -> Vec<PathBuf> {
-    let mut dirs: Vec<PathBuf> = std::fs::read_dir(".")
-        .into_iter()
-        .flatten()
-        .filter_map(|e| e.ok())
-        .map(|e| {
-            let p = e.path();
-            p.strip_prefix(".").unwrap_or(p.as_path()).to_path_buf()
-        })
-        .filter(|p| {
-            p.is_dir()
-                && p.file_name()
-                    .map(|n| n.to_string_lossy().ends_with("-examples"))
-                    .unwrap_or(false)
-        })
-        .collect();
+/// Sorted `*-examples` directories of the working directory, or the listing
+/// failure that would otherwise have dropped catalogs from the check.
+pub(crate) fn sorted_example_dirs() -> Result<Vec<PathBuf>> {
+    let mut dirs = Vec::new();
+    for entry in std::fs::read_dir(".").context("listing the working directory")? {
+        let entry = entry.context("reading an entry of the working directory")?;
+        let path = PathBuf::from(entry.file_name());
+        let named = path
+            .file_name()
+            .is_some_and(|name| name.to_string_lossy().ends_with("-examples"));
+        if named && path.is_dir() {
+            dirs.push(path);
+        }
+    }
     dirs.sort();
-    dirs
+    Ok(dirs)
 }
 
-pub(crate) fn sorted_glob_examples_files(name: &str) -> Vec<PathBuf> {
-    let mut files: Vec<PathBuf> = sorted_example_dirs()
+pub(crate) fn sorted_glob_examples_files(name: &str) -> Result<Vec<PathBuf>> {
+    let mut files: Vec<PathBuf> = sorted_example_dirs()?
         .into_iter()
         .map(|d| d.join(name))
         .filter(|p| p.is_file())
         .collect();
     files.sort();
-    files
+    Ok(files)
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
@@ -163,7 +170,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         if !skip_readme {
             check_readmes(&shared)?;
         }
-        check_sources(&shared);
+        check_sources(&shared)?;
         let net = shared.into_inner();
         drift.readme_changed = net.readme_changed;
         drift.readme_unreachable = net.readme_unreachable;
