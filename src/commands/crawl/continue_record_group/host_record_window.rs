@@ -76,6 +76,9 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
         if host.is_empty() {
             continue;
         }
+        // A recorded identity that does not parse is refused by name: read as
+        // "no identity", the host would be preflighted without the release
+        // check the record asked for.
         let service_identity: Option<RuntimeServiceIdentity> = catalog_entry
             .get("records")
             .and_then(Value::as_array)
@@ -83,7 +86,12 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
             .flatten()
             .find_map(|record| record.pointer("/manifest/service_identity"))
             .filter(|value| value.is_object())
-            .and_then(|value| serde_json::from_value(value.clone()).ok());
+            .map(|value| {
+                serde_json::from_value(value.clone()).with_context(|| {
+                    format!("host {host}: a record's manifest service_identity is not a runtime service identity")
+                })
+            })
+            .transpose()?;
         let host_report =
             ensure_host_preflight(run_id, &catalog, &engine, &host, service_identity.as_ref())?;
         let records = catalog_entry
