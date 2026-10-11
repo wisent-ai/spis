@@ -46,12 +46,13 @@ fn load_sources(directory: &std::path::Path) -> Value {
             directory.file_name().unwrap_or_default().to_string_lossy()
         ));
     }
-    match std::fs::read_to_string(&sources)
-        .ok()
-        .and_then(|t| serde_json::from_str::<Value>(&t).ok())
-    {
-        Some(v) => v,
-        None => fail("sources.json is not valid JSON"),
+    let text = match std::fs::read_to_string(&sources) {
+        Ok(text) => text,
+        Err(e) => fail(&format!("{} cannot be read: {e}", sources.display())),
+    };
+    match serde_json::from_str::<Value>(&text) {
+        Ok(v) => v,
+        Err(e) => fail(&format!("{} is not valid JSON: {e}", sources.display())),
     }
 }
 
