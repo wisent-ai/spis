@@ -14,9 +14,9 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut runtime_manifest_base64: Option<String> = None;
     let mut max_states = 200usize;
     let mut max_depth = 8usize;
-    let mut output = PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
-        .join(".spis")
-        .join("crawls");
+    // `--output`, else `~/.spis/crawls`, resolved only when it is needed so an
+    // unset HOME refuses only a run that has no `--output`.
+    let mut output: Option<PathBuf> = None;
     let mut i = 0;
     while i < rest.len() {
         match rest[i].as_str() {
@@ -61,10 +61,10 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--output" => {
                 i += 1;
-                output = PathBuf::from(crate::commands::required(
+                output = Some(PathBuf::from(crate::commands::required(
                     rest.get(i),
                     "--output needs a value",
-                )?);
+                )?));
             }
             "--help" | "-h" => {
                 println!("usage: spis crawl-mobile <ios-app-examples|android-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--driver-url URL] [--max-states N] [--max-depth N]\n--driver-url is the Appium server on that host; absent, the runtime manifest's bound address (the host's mobile_runtime.address in the Stado registry) is used.\nworker mode requires the same immutable runtime manifest and exact record.");
@@ -131,6 +131,10 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
     };
     let appium = Appium::new(&driver_url)?;
+    let output = match output {
+        Some(output) => output,
+        None => crate::commands::docs_corpus::crawl_root()?,
+    };
     let run_root = attempt_root(&output, &manifest)?;
     std::fs::create_dir_all(&run_root)?;
     let entry = records(&catalog, Some(&record))?

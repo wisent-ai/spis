@@ -8,9 +8,9 @@ pub(crate) const WIDTHS: &[(u32, u32)] = &[(390, 844), (768, 1024), (1440, 1000)
 
 /// Deviation from the Python original, which used ~/.stado/work: this port
 /// keeps all generated working files under ~/.spis/work per harness policy.
-pub(crate) fn work_root() -> PathBuf {
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    Path::new(&home).join(".spis").join("work")
+/// An unset HOME is refused rather than read as the working directory.
+pub(crate) fn work_root() -> anyhow::Result<PathBuf> {
+    Ok(crate::commands::docs_corpus::home_dir()?.join(".spis").join("work"))
 }
 
 pub(crate) fn fail(message: &str) -> ! {

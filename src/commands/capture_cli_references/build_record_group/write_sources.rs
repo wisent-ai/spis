@@ -160,7 +160,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let catalog = catalog_dir();
     std::fs::create_dir_all(&catalog)?;
     std::fs::create_dir_all(catalog.join("references"))?;
-    std::fs::create_dir_all(scratch_root())?;
+    std::fs::create_dir_all(scratch_root()?)?;
 
     if !catalog_only {
         font(terminal().font_px as f32)?;

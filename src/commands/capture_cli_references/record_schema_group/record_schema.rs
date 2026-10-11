@@ -22,12 +22,10 @@ pub(crate) fn catalog_dir() -> PathBuf {
     root().join(&plan().catalog)
 }
 
-pub(crate) fn scratch_root() -> PathBuf {
-    home_dir().join(".spis").join("work").join("cli-capture")
-}
-
-pub(crate) fn home_dir() -> PathBuf {
-    PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| "/tmp".into()))
+/// The scratch tree under `~/.spis`; an unset HOME is refused by the shared
+/// helper rather than putting the tree under `/tmp`.
+pub(crate) fn scratch_root() -> anyhow::Result<PathBuf> {
+    Ok(crate::commands::docs_corpus::home_dir()?.join(".spis").join("work").join("cli-capture"))
 }
 
 // ---------------------------------------------------------------- the plan

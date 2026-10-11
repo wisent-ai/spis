@@ -1,7 +1,7 @@
 use super::*;
 
 pub(crate) fn save_state(state: &Value) -> Result<()> {
-    let path = state_path();
+    let path = state_path()?;
     let parent = path
         .parent()
         .context("onboarding state path has no parent")?;
@@ -54,12 +54,12 @@ pub(crate) fn wait_for_enter() -> Result<()> {
     Ok(())
 }
 
-pub(crate) fn state_path() -> PathBuf {
+/// `$XDG_STATE_HOME/spis/onboarding.json`, else `~/.local/state/spis/onboarding.json`.
+/// With neither set the location is refused rather than read as `./.spis`, where
+/// each directory the journey ran from kept its own progress.
+pub(crate) fn state_path() -> Result<PathBuf> {
     if let Some(path) = std::env::var_os("XDG_STATE_HOME") {
-        return PathBuf::from(path).join("spis/onboarding.json");
+        return Ok(PathBuf::from(path).join("spis/onboarding.json"));
     }
-    if let Some(home) = std::env::var_os("HOME") {
-        return PathBuf::from(home).join(".local/state/spis/onboarding.json");
-    }
-    PathBuf::from(".spis/onboarding.json")
+    Ok(crate::commands::docs_corpus::home_dir()?.join(".local/state/spis/onboarding.json"))
 }

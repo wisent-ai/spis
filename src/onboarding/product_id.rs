@@ -76,20 +76,14 @@ pub fn record_first_success() -> Result<()> {
         .get("entry_screen_id")
         .and_then(Value::as_str)
         .context("canonical onboarding journey has no entry screen")?;
-    let path = state_path();
+    let path = state_path()?;
+    // A state that cannot be read, or that belongs to another journey, is
+    // refused with its cause: replacing it would erase the progress it holds,
+    // and the caller reports the refusal as a warning.
     let mut state = if path.exists() {
-        match read_state(&path) {
-            Ok(state) if validate_state_identity(&state).is_ok() => state,
-            _ => json!({
-                "schema": STATE_SCHEMA,
-                "product_id": PRODUCT_ID,
-                "journey_id": JOURNEY_ID,
-                "journey_version": JOURNEY_VERSION,
-                "current_screen_id": entry,
-                "status": "in_progress",
-                "evidence": Map::<String, Value>::new(),
-            }),
-        }
+        let state = read_state(&path)?;
+        validate_state_identity(&state)?;
+        state
     } else {
         json!({
             "schema": STATE_SCHEMA,
@@ -228,7 +222,7 @@ pub(crate) fn evidence_satisfied(screen: &Value, state: &Value) -> Result<bool> 
 }
 
 pub(crate) fn load_or_start_state(definition: &Value, reset: bool) -> Result<Value> {
-    let path = state_path();
+    let path = state_path()?;
     if !reset && path.exists() {
         let state = read_state(&path)?;
         validate_state_identity(&state)?;

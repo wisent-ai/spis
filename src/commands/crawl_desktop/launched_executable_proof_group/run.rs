@@ -9,9 +9,9 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut worker = false;
     let mut artifact_uri: Option<String> = None;
     let mut runtime_manifest_base64: Option<String> = None;
-    let mut output = PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
-        .join(".spis")
-        .join("crawls");
+    // `--output`, else `~/.spis/crawls`, resolved only when it is needed so an
+    // unset HOME refuses only a run that has no `--output`.
+    let mut output: Option<PathBuf> = None;
     let mut i = 0;
     while i < rest.len() {
         match rest[i].as_str() {
@@ -50,10 +50,10 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--output" => {
                 i += 1;
-                output = PathBuf::from(crate::commands::required(
+                output = Some(PathBuf::from(crate::commands::required(
                     rest.get(i),
                     "--output needs a value",
-                )?);
+                )?));
             }
             "--help" | "-h" => {
                 println!("usage: spis crawl-desktop <macos-app-examples|desktop-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
@@ -104,6 +104,10 @@ pub fn run(rest: &[String]) -> Result<()> {
     if artifact_uri != manifest.artifact_uri {
         bail!("worker artifact URI does not match immutable runtime manifest");
     }
+    let output = match output {
+        Some(output) => output,
+        None => crate::commands::docs_corpus::crawl_root()?,
+    };
     let run_root = attempt_root(&output, &manifest)?;
     std::fs::create_dir_all(&run_root)?;
     let entry = records(&catalog, Some(&record))?

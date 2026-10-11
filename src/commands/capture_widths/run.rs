@@ -88,7 +88,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         "target": host,
         "captures": captures,
     });
-    let plan_dir = work_root().join("landing-width-plans");
+    let plan_dir = work_root()?.join("landing-width-plans");
     std::fs::create_dir_all(&plan_dir)?;
     let plan_path = plan_dir.join(format!("{batch}.json"));
     std::fs::write(&plan_path, serde_json::to_string_pretty(&plan)? + "\n")?;
@@ -146,7 +146,7 @@ pub fn run(rest: &[String]) -> Result<()> {
              \"$STADO\" workload run weles-capture --target {host} --plan /tmp/spis-widths-plan.json --json\n",
             plan = plan_path.display(),
         );
-        let job_dir = work_root();
+        let job_dir = work_root()?;
         std::fs::create_dir_all(&job_dir)?;
         let job_script = job_dir.join(format!("spis-widths-{batch}.sh"));
         std::fs::write(&job_script, script)?;

@@ -8,9 +8,7 @@ pub(crate) fn run_worker(
     if catalog != manifest.catalog || record != manifest.record {
         bail!("worker catalog/record differ from the immutable runtime manifest");
     }
-    let base = PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
-        .join(".spis")
-        .join("crawls");
+    let base = crate::commands::docs_corpus::crawl_root()?;
     let attempt_root = crate::commands::crawl::native_attempt_root(&base, manifest)?;
     std::fs::create_dir_all(&attempt_root)?;
     prune_stale_attempt_temporaries(&attempt_root)?;
