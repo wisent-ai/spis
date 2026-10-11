@@ -18,8 +18,18 @@ use std::path::PathBuf;
 use std::process::Command;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
+mod catalogs;
 mod check_sources;
 mod report;
 
 pub use check_sources::*;
 pub use report::*;
+
+/// `spis check-upstream-drift`. Every catalog file the checks read is read
+/// strictly first, so a catalog whose files cannot be read or parsed is
+/// refused by name instead of being checked as a catalog with nothing
+/// upstream; this definition takes the name over the re-exported one.
+pub fn run(rest: &[String]) -> Result<()> {
+    catalogs::verify_readable()?;
+    check_sources::run(rest)
+}

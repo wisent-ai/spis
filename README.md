@@ -135,7 +135,11 @@ completed measurement.
 `spis check-upstream-drift --write-report` follows the same rule: its observed
 integrity and reachability results go to private `.build/upstream-drift.json`,
 not a tracked corpus-root report. `--skip-network` measures local bytes only;
-`--strict` returns a failure for missing media or a hash mismatch.
+`--strict` returns a failure for missing media or a hash mismatch. Before any
+check runs, every `*-examples/sources.json`, `references/` directory and
+`references/*/reference.json` it reads must be readable and parse: one that
+cannot be read, listed or parsed fails the command naming the file and the
+cause, instead of counting as a catalog with nothing upstream to check.
 
 The live qualification target uses actual catalog data and a Stado-selected
 browser host. The selected record must include a retained state artifact and
