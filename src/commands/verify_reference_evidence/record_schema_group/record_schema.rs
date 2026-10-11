@@ -236,9 +236,20 @@ pub(crate) fn probe_cast(path: &Path) -> Result<Probe> {
         if line.is_empty() {
             continue;
         }
+        // A damaged event line is damaged evidence: skipped, the cast would
+        // verify with fewer frames and a shorter duration than recorded.
         let event: Value = match serde_json::from_str(line) {
             Ok(v) => v,
-            Err(_) => continue,
+            Err(error) => {
+                return Ok(Probe {
+                    exists: true,
+                    bytes: Some(size),
+                    sha256: Some(sha),
+                    kind: Some("terminal-cast".into()),
+                    error: Some(format!("cast event is not JSON ({error}): {line}")),
+                    ..Default::default()
+                })
+            }
         };
         if let Some(arr) = event.as_array() {
             if arr.is_empty() {
