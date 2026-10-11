@@ -180,7 +180,7 @@ pub(crate) fn plan_path_for(plan_arg: Option<&String>, batch: &str) -> Result<Pa
     let cwd = std::env::current_dir().context("locate the selected corpus directory")?;
     let work = lex_norm(&cwd.join(work_root()));
     let raw = match plan_arg {
-        Some(arg) => PathBuf::from(expand_home(arg)),
+        Some(arg) => expand_home(arg)?,
         None => work.join("plans").join(format!("{batch}.json")),
     };
     let resolved = lex_norm(&cwd.join(raw));
@@ -194,21 +194,15 @@ pub(crate) fn plan_path_for(plan_arg: Option<&String>, batch: &str) -> Result<Pa
     Ok(resolved)
 }
 
-/// Expand a leading `~` to the user's home: HOME, else the home the user
-/// database records. With neither it stops with the cause; a `~/` left in
-/// place named a directory called `~` under the working directory.
-pub(crate) fn expand_home(input: &str) -> String {
-    let home = || {
-        std::env::home_dir()
-            .expect("neither HOME nor the user database names a home directory, so `~` cannot be expanded")
-            .to_string_lossy()
-            .into_owned()
-    };
+/// Expand a leading `~` to the user's home through `docs_corpus::home_dir`,
+/// which refuses with the cause when HOME is unset; a `~/` left in place
+/// named a directory called `~` under the working directory.
+pub(crate) fn expand_home(input: &str) -> Result<PathBuf> {
     if input == "~" {
-        return home();
+        return crate::commands::docs_corpus::home_dir();
     }
     match input.strip_prefix("~/") {
-        Some(rest) => format!("{}/{rest}", home()),
-        None => input.to_string(),
+        Some(rest) => Ok(crate::commands::docs_corpus::home_dir()?.join(rest)),
+        None => Ok(PathBuf::from(input)),
     }
 }
