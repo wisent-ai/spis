@@ -250,9 +250,13 @@ pub(crate) fn full_reference_index<'a>(catalog: &'a Value) -> &'a Value {
 /// catalog added with `spis catalog-type add` is accepted beside them, after
 /// them in name order, and holds as many records as its sources declare.
 pub(crate) fn discovered_catalogs() -> Result<Vec<String>> {
+    // An entry that cannot be read refuses the listing: skipped, its catalog
+    // read as missing from the corpus.
     let found: BTreeSet<String> = std::fs::read_dir(".")?
-        .filter_map(Result::ok)
-        .map(|entry| entry.file_name().to_string_lossy().to_string())
+        .map(|entry| entry.map(|entry| entry.file_name().to_string_lossy().to_string()))
+        .collect::<std::io::Result<Vec<_>>>()
+        .context("list the corpus catalogs")?
+        .into_iter()
         .filter(|name| name.ends_with("-examples") && Path::new(name).join("references").is_dir())
         .collect();
     let missing: Vec<&str> = CATALOGS

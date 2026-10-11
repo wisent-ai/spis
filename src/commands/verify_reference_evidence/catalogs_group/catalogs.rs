@@ -4,9 +4,13 @@ use super::*;
 /// order; a catalog added with `spis catalog-type add` follows them in name
 /// order.
 pub(crate) fn catalogs(selected: Option<&str>) -> Result<Vec<PathBuf>> {
+    // An entry that cannot be read refuses the listing: skipped, its catalog
+    // read as missing from the corpus or simply went unverified.
     let mut found: Vec<String> = std::fs::read_dir(".")?
-        .filter_map(Result::ok)
-        .map(|entry| entry.file_name().to_string_lossy().to_string())
+        .map(|entry| entry.map(|entry| entry.file_name().to_string_lossy().to_string()))
+        .collect::<std::io::Result<Vec<_>>>()
+        .context("list the corpus catalogs")?
+        .into_iter()
         .filter(|name| name.ends_with("-examples") && Path::new(name).join("references").is_dir())
         .collect();
     found.sort();
@@ -41,9 +45,12 @@ pub(crate) fn catalogs(selected: Option<&str>) -> Result<Vec<PathBuf>> {
 }
 
 pub(crate) fn records_in(catalog: &Path) -> Result<Vec<PathBuf>> {
-    let mut records: Vec<PathBuf> = std::fs::read_dir(catalog.join("references"))?
-        .filter_map(Result::ok)
-        .map(|entry| entry.path().join("reference.json"))
+    let references = catalog.join("references");
+    let mut records: Vec<PathBuf> = std::fs::read_dir(&references)?
+        .map(|entry| entry.map(|entry| entry.path().join("reference.json")))
+        .collect::<std::io::Result<Vec<_>>>()
+        .with_context(|| format!("list {}", references.display()))?
+        .into_iter()
         .filter(|path| path.is_file())
         .collect();
     records.sort();
