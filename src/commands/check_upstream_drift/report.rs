@@ -154,11 +154,13 @@ pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value
                         }
                         return ("guarded", json!(inner));
                     }
-                    Err(_) => {
-                        // Python reported "{code} then {ExceptionName}".
+                    Err(error) => {
+                        // HEAD was refused and the one-byte GET did not
+                        // arrive at all: nothing says the source is still
+                        // there, so it is unresolved, with both answers.
                         return (
-                            "guarded",
-                            json!(format!("{} then TransportError", resp.status())),
+                            "unresolved",
+                            json!(format!("HEAD {} then GET failed: {error}", resp.status())),
                         );
                     }
                 }
@@ -168,17 +170,7 @@ pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value
             }
             ("guarded", json!(code))
         }
-        Err(e) => ("unresolved", json!(format!("{}", e_kind(&e)))),
-    }
-}
-
-pub(crate) fn e_kind(e: &ureq::Error) -> &'static str {
-    match e {
-        ureq::Error::Status(_, _) => "Status",
-        ureq::Error::Transport(t) => match t.kind() {
-            ureq::ErrorKind::Dns => "Dns",
-            _ => "URLError",
-        },
+        Err(error) => ("unresolved", json!(error.to_string())),
     }
 }
 
