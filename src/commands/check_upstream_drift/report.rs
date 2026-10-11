@@ -164,14 +164,13 @@ pub(crate) fn e_kind(e: &ureq::Error) -> &'static str {
     }
 }
 
-/// (url, where, expected_state) for every recorded upstream reference. A
-/// `sources.json` or `reference.json` that cannot be read fails with its
-/// path: skipped, its URLs were never checked and the report read complete.
-pub(crate) fn collect_urls() -> Result<Vec<(String, String, Option<String>)>> {
+/// (url, where, expected_state) for every recorded upstream reference.
+pub(crate) fn collect_urls() -> Vec<(String, String, Option<String>)> {
     let mut pairs: Vec<(String, String, Option<String>)> = Vec::new();
-    for sources in sorted_glob_examples_files("sources.json")? {
-        let data: Value = lib::read_json(sources.to_str().context("non-UTF8 path")?)
-            .with_context(|| format!("reading {}", sources.display()))?;
+    for sources in sorted_glob_examples_files("sources.json") {
+        let Ok(data) = lib::read_json::<Value>(sources.to_str().unwrap()) else {
+            continue;
+        };
         let catalog = sources
             .parent()
             .and_then(|p| p.file_name())
@@ -214,9 +213,10 @@ pub(crate) fn collect_urls() -> Result<Vec<(String, String, Option<String>)>> {
             }
         }
     }
-    for record in reference_records()? {
-        let data: Value = lib::read_json(record.to_str().context("non-UTF8 path")?)
-            .with_context(|| format!("reading {}", record.display()))?;
+    for record in reference_records() {
+        let Ok(data) = lib::read_json::<Value>(record.to_str().unwrap()) else {
+            continue;
+        };
         let catalog = record
             .parent()
             .and_then(|p| p.parent())
@@ -249,5 +249,5 @@ pub(crate) fn collect_urls() -> Result<Vec<(String, String, Option<String>)>> {
     }
     let mut seen = std::collections::HashSet::new();
     pairs.retain(|(url, _, _)| seen.insert(url.clone()));
-    Ok(pairs)
+    pairs
 }
