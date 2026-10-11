@@ -10,7 +10,9 @@ pub(crate) const WIDTHS: &[(u32, u32)] = &[(390, 844), (768, 1024), (1440, 1000)
 /// keeps all generated working files under ~/.spis/work per harness policy.
 /// An unset HOME is refused rather than read as the working directory.
 pub(crate) fn work_root() -> anyhow::Result<PathBuf> {
-    Ok(crate::commands::docs_corpus::home_dir()?.join(".spis").join("work"))
+    Ok(crate::commands::docs_corpus::home_dir()?
+        .join(".spis")
+        .join("work"))
 }
 
 pub(crate) fn fail(message: &str) -> ! {

@@ -131,7 +131,8 @@ pub(crate) fn crawl_attempt(
     let options = WorkerOptions::parse(rest)?;
     let structure_dir = source_root().join("documentation-site-examples/content-structure");
     let mut slugs: Vec<String> = std::fs::read_dir(&structure_dir)?
-        .filter_map(|entry| entry.ok())
+        .collect::<std::io::Result<Vec<_>>>()?
+        .into_iter()
         .map(|entry| entry.file_name().to_string_lossy().to_string())
         .filter(|file| file.ends_with(".json"))
         .map(|file| file.trim_end_matches(".json").to_string())

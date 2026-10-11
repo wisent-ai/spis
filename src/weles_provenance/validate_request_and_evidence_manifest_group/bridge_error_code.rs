@@ -38,8 +38,12 @@ pub(crate) fn resolve_retained_file(base: &Path, relative: &str) -> Result<PathB
     if link_metadata.file_type().is_symlink() || !link_metadata.is_file() {
         return Err("retained path is not a regular non-symlink file".to_string());
     }
-    let canonical_file =
-        fs::canonicalize(&joined).map_err(|error| format!("retained file {} could not be resolved: {error}", joined.display()))?;
+    let canonical_file = fs::canonicalize(&joined).map_err(|error| {
+        format!(
+            "retained file {} could not be resolved: {error}",
+            joined.display()
+        )
+    })?;
     if !canonical_file.starts_with(&canonical_base) {
         return Err("retained file resolves outside the record directory".to_string());
     }
@@ -59,11 +63,21 @@ pub(crate) fn read_stream(mut reader: impl Read, label: &str) -> Result<Vec<u8>,
 /// A retained file read up to the byte count its signed inventory or receipt states;
 /// more is refused, because the signature covers exactly that many bytes.
 pub(crate) fn read_limited(path: &Path, limit: u64) -> Result<Vec<u8>, String> {
-    let file = fs::File::open(path).map_err(|error| format!("retained file {} could not be opened: {error}", path.display()))?;
+    let file = fs::File::open(path).map_err(|error| {
+        format!(
+            "retained file {} could not be opened: {error}",
+            path.display()
+        )
+    })?;
     let mut bytes = Vec::new();
     file.take(limit + 1)
         .read_to_end(&mut bytes)
-        .map_err(|error| format!("retained file {} could not be read: {error}", path.display()))?;
+        .map_err(|error| {
+            format!(
+                "retained file {} could not be read: {error}",
+                path.display()
+            )
+        })?;
     if bytes.len() as u64 > limit {
         return Err("retained file is longer than its signed byte count".to_string());
     }
@@ -72,16 +86,29 @@ pub(crate) fn read_limited(path: &Path, limit: u64) -> Result<Vec<u8>, String> {
 
 /// A retained file read whole; its digest is then checked against the reference.
 pub(crate) fn read_whole(path: &Path) -> Result<Vec<u8>, String> {
-    let file = fs::File::open(path).map_err(|error| format!("retained file {} could not be opened: {error}", path.display()))?;
+    let file = fs::File::open(path).map_err(|error| {
+        format!(
+            "retained file {} could not be opened: {error}",
+            path.display()
+        )
+    })?;
     read_stream(file, "retained JSON document")
 }
 
 pub(crate) fn sha256_file(path: &Path) -> Result<String, String> {
-    let mut file =
-        fs::File::open(path).map_err(|error| format!("retained artifact {} could not be opened: {error}", path.display()))?;
+    let mut file = fs::File::open(path).map_err(|error| {
+        format!(
+            "retained artifact {} could not be opened: {error}",
+            path.display()
+        )
+    })?;
     let mut hash = Sha256::new();
-    std::io::copy(&mut file, &mut DigestWriter(&mut hash))
-        .map_err(|error| format!("retained artifact {} could not be hashed: {error}", path.display()))?;
+    std::io::copy(&mut file, &mut DigestWriter(&mut hash)).map_err(|error| {
+        format!(
+            "retained artifact {} could not be hashed: {error}",
+            path.display()
+        )
+    })?;
     Ok(hex::encode(hash.finalize()))
 }
 

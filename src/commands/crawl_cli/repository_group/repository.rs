@@ -102,7 +102,9 @@ pub(crate) fn records(selected: Option<&str>) -> Result<Vec<Record>> {
         .join(CATALOG)
         .join("references");
     let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)?
-        .filter_map(|entry| entry.ok().map(|entry| entry.path()))
+        .map(|entry| entry.map(|entry| entry.path()))
+        .collect::<std::io::Result<Vec<_>>>()?
+        .into_iter()
         .filter(|path| path.is_dir())
         .collect();
     paths.sort();

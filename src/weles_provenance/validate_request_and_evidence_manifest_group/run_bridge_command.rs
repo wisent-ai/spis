@@ -27,15 +27,23 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
             "checked-in Weles bridge is not a regular non-symlink file",
         ));
     }
-    let script = fs::canonicalize(&script_path)
-        .map_err(|error| absent(&format!("checked-in Weles bridge {} could not be resolved: {error}", script_path.display())))?;
+    let script = fs::canonicalize(&script_path).map_err(|error| {
+        absent(&format!(
+            "checked-in Weles bridge {} could not be resolved: {error}",
+            script_path.display()
+        ))
+    })?;
     if script.parent() != Some(bridge_directory.as_path()) {
         return Err(absent(
             "checked-in Weles bridge escaped its canonical resource directory",
         ));
     }
-    let script_file = fs::File::open(&script)
-        .map_err(|error| absent(&format!("checked-in Weles bridge {} could not be opened: {error}", script.display())))?;
+    let script_file = fs::File::open(&script).map_err(|error| {
+        absent(&format!(
+            "checked-in Weles bridge {} could not be opened: {error}",
+            script.display()
+        ))
+    })?;
     let script_bytes = read_stream(script_file, "checked-in Weles bridge")
         .map_err(|message| BridgeFailure::new("absent", message))?;
     if sha256_bytes(&script_bytes) != BRIDGE_SCRIPT_SHA256 {
@@ -111,9 +119,9 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
         .take()
         .ok_or_else(|| BridgeFailure::new("io-failed", "Weles bridge stdin was unavailable"))?;
     let stdin_writer = std::thread::spawn(move || {
-        stdin
-            .write_all(&input_bytes)
-            .map_err(|error| format!("could not send the command document to the Weles bridge: {error}"))
+        stdin.write_all(&input_bytes).map_err(|error| {
+            format!("could not send the command document to the Weles bridge: {error}")
+        })
     });
     // The bridge runs to its own exit; the official client's own error is the
     // answer, with no deadline or poll (cli.md rule 8).

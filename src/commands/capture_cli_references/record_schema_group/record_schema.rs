@@ -25,7 +25,10 @@ pub(crate) fn catalog_dir() -> PathBuf {
 /// The scratch tree under `~/.spis`; an unset HOME is refused by the shared
 /// helper rather than putting the tree under `/tmp`.
 pub(crate) fn scratch_root() -> anyhow::Result<PathBuf> {
-    Ok(crate::commands::docs_corpus::home_dir()?.join(".spis").join("work").join("cli-capture"))
+    Ok(crate::commands::docs_corpus::home_dir()?
+        .join(".spis")
+        .join("work")
+        .join("cli-capture"))
 }
 
 // ---------------------------------------------------------------- the plan
