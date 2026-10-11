@@ -122,10 +122,19 @@ impl PrivateBridge {
 
     /// Removes the delivered bearer token from the host. `Drop` guarantees this runs on
     /// every exit this process controls, including a panic unwind; the explicit call in
-    /// `run_worker` only makes it prompt. A signal kill runs neither, which is why
-    /// `open` also prunes the configs earlier runs orphaned.
+    /// `run_worker` only makes it prompt, so the second call finds nothing to remove. A
+    /// signal kill runs neither, which is why `open` also prunes the configs earlier runs
+    /// orphaned. A config that is still there and cannot be removed holds a live bearer,
+    /// so that failure is said on stderr with the path and cause.
     pub(crate) fn discard(&self) {
-        let _ = std::fs::remove_file(&self.config);
+        match std::fs::remove_file(&self.config) {
+            Ok(()) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => eprintln!(
+                "spis: the Weles bridge config {} still holds the delivered bearer and could not be removed: {error}",
+                self.config.display()
+            ),
+        }
     }
 
     pub(crate) fn write_config(
