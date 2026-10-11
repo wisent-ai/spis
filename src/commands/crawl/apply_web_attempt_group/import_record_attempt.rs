@@ -171,7 +171,7 @@ pub(crate) fn import_record_attempt(
     // In the same record transaction, so the failure proofs and the accepted attempt are
     // persisted by the one `atomic_json_write` below or not at all.
     let non_success = if engine == "web" {
-        import_non_success_attempts(
+        let mut summaries = import_non_success_attempts(
             run_id,
             catalog,
             &manifest,
@@ -179,7 +179,9 @@ pub(crate) fn import_record_attempt(
             &mut record,
             &record_dir,
             run_dir,
-        )
+        );
+        summaries.extend(unreadable_attempts(entry)?);
+        summaries
     } else {
         Vec::new()
     };
