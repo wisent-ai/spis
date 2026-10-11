@@ -49,9 +49,15 @@ pub(crate) fn write_cast(
 pub(crate) fn write_media(run: &Run, ref_dir: &Path) -> Result<Value> {
     let media_dir = ref_dir.join("media");
     std::fs::create_dir_all(&media_dir)?;
-    for entry in std::fs::read_dir(&media_dir)?.flatten() {
-        if entry.path().is_file() {
-            std::fs::remove_file(entry.path())?;
+    // An entry that cannot be read refuses the refresh: skipped, a stale media
+    // file could stay beside the new recording.
+    for entry in std::fs::read_dir(&media_dir)? {
+        let path = entry
+            .with_context(|| format!("list {}", media_dir.display()))?
+            .path();
+        if path.is_file() {
+            std::fs::remove_file(&path)
+                .with_context(|| format!("remove stale media {}", path.display()))?;
         }
     }
 
@@ -130,8 +136,10 @@ pub(crate) fn load_records() -> Result<Vec<(PathBuf, Value)>> {
     let mut out = Vec::new();
     let refs_dir = catalog_dir().join("references");
     let mut dirs: Vec<PathBuf> = std::fs::read_dir(&refs_dir)?
-        .flatten()
-        .map(|e| e.path())
+        .map(|entry| entry.map(|entry| entry.path()))
+        .collect::<std::io::Result<Vec<_>>>()
+        .with_context(|| format!("list {}", refs_dir.display()))?
+        .into_iter()
         .filter(|p| p.join("reference.json").is_file())
         .collect();
     dirs.sort();
