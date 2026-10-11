@@ -28,14 +28,14 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
         ));
     }
     let script = fs::canonicalize(&script_path)
-        .map_err(|_| absent("checked-in Weles bridge could not be resolved"))?;
+        .map_err(|error| absent(&format!("checked-in Weles bridge {} could not be resolved: {error}", script_path.display())))?;
     if script.parent() != Some(bridge_directory.as_path()) {
         return Err(absent(
             "checked-in Weles bridge escaped its canonical resource directory",
         ));
     }
     let script_file = fs::File::open(&script)
-        .map_err(|_| absent("checked-in Weles bridge could not be opened"))?;
+        .map_err(|error| absent(&format!("checked-in Weles bridge {} could not be opened: {error}", script.display())))?;
     let script_bytes = read_stream(script_file, "checked-in Weles bridge")
         .map_err(|message| BridgeFailure::new("absent", message))?;
     if sha256_bytes(&script_bytes) != BRIDGE_SCRIPT_SHA256 {
@@ -113,20 +113,20 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
     let stdin_writer = std::thread::spawn(move || {
         stdin
             .write_all(&input_bytes)
-            .map_err(|_| "could not send the command document to the Weles bridge".to_string())
+            .map_err(|error| format!("could not send the command document to the Weles bridge: {error}"))
     });
     // The bridge runs to its own exit; the official client's own error is the
     // answer, with no deadline or poll (cli.md rule 8).
     let status = match child.wait() {
         Ok(status) => status,
-        Err(_) => {
+        Err(error) => {
             terminate_bridge_process_group(&mut child);
             let _ = stdin_writer.join();
             let _ = stdout_reader.join();
             let _ = stderr_reader.join();
             return Err(BridgeFailure::new(
                 "io-failed",
-                "could not collect the Weles bridge result",
+                format!("could not collect the Weles bridge result: {error}"),
             ));
         }
     };
