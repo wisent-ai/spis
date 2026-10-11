@@ -194,14 +194,21 @@ pub(crate) fn plan_path_for(plan_arg: Option<&String>, batch: &str) -> Result<Pa
     Ok(resolved)
 }
 
+/// Expand a leading `~` to the user's home: HOME, else the home the user
+/// database records. With neither it stops with the cause; a `~/` left in
+/// place named a directory called `~` under the working directory.
 pub(crate) fn expand_home(input: &str) -> String {
+    let home = || {
+        std::env::home_dir()
+            .expect("neither HOME nor the user database names a home directory, so `~` cannot be expanded")
+            .to_string_lossy()
+            .into_owned()
+    };
     if input == "~" {
-        return std::env::var("HOME").unwrap_or(input.to_string());
+        return home();
     }
-    if let Some(rest) = input.strip_prefix("~/") {
-        if let Ok(home) = std::env::var("HOME") {
-            return format!("{home}/{rest}");
-        }
+    match input.strip_prefix("~/") {
+        Some(rest) => format!("{}/{rest}", home()),
+        None => input.to_string(),
     }
-    input.to_string()
 }
