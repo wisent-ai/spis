@@ -214,7 +214,13 @@ pub(crate) fn write_if_changed(
     check: bool,
     stale: &mut Vec<String>,
 ) -> Result<()> {
-    let existing = std::fs::read_to_string(path).unwrap_or_default();
+    // A generated file that does not exist yet is stale; one that cannot be
+    // read is refused with its cause rather than reported stale or rewritten.
+    let existing = match std::fs::read_to_string(path) {
+        Ok(existing) => existing,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => String::new(),
+        Err(error) => return Err(error).with_context(|| format!("read {}", path.display())),
+    };
     if existing == contents {
         return Ok(());
     }
