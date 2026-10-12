@@ -261,7 +261,20 @@ pub(crate) fn write_private(path: &Path, bytes: &[u8]) -> Outcome<()> {
             std::fs::set_permissions(parent, std::fs::Permissions::from_mode(0o700))?;
         }
     }
-    let _ = std::fs::remove_file(path);
+    // A previous file that cannot be cleared is refused by its own cause; left
+    // in place it would surface only as create_new's "already exists".
+    match std::fs::remove_file(path) {
+        Err(error) if error.kind() != std::io::ErrorKind::NotFound => {
+            return Err(WorkerFailure::new(
+                "web_worker_io_failed",
+                format!(
+                    "the previous private file {} could not be cleared: {error}",
+                    path.display()
+                ),
+            ));
+        }
+        _ => {}
+    }
     let mut options = std::fs::OpenOptions::new();
     options.write(true).create_new(true);
     // The bridge refuses a config that any other user could read, so the bearer is never
