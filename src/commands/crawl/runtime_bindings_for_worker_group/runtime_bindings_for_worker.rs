@@ -47,17 +47,19 @@ pub(crate) fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<
             .output()
             .context("download immutable runtime bindings")?;
         if !output.status.success() {
-            let _ = std::fs::remove_file(&temporary);
             bail!(
-                "download runtime bindings {}: {}",
+                "download runtime bindings {}: {}{}",
                 manifest.bindings_uri,
-                String::from_utf8_lossy(&output.stderr).trim()
+                String::from_utf8_lossy(&output.stderr).trim(),
+                left_behind(&temporary)
             );
         }
         let downloaded = std::fs::read(&temporary)?;
         if crate::sha256_hex(&downloaded) != manifest.bindings_file_sha256 {
-            let _ = std::fs::remove_file(&temporary);
-            bail!("downloaded runtime bindings digest does not match manifest");
+            bail!(
+                "downloaded runtime bindings digest does not match manifest{}",
+                left_behind(&temporary)
+            );
         }
         #[cfg(unix)]
         {
@@ -65,7 +67,7 @@ pub(crate) fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<
             std::fs::set_permissions(&temporary, std::fs::Permissions::from_mode(0o600))?;
         }
         if cache.is_file() {
-            let _ = std::fs::remove_file(&temporary);
+            discard(&temporary)?;
         } else {
             std::fs::rename(&temporary, &cache)?;
             File::open(&directory)?.sync_all()?;
@@ -138,18 +140,39 @@ pub(crate) fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()>
         .output()
         .context("read back immutable runtime bindings")?;
     if !downloaded.status.success() {
-        let _ = std::fs::remove_file(&target);
         bail!(
-            "runtime bindings read-back failed: {}",
-            String::from_utf8_lossy(&downloaded.stderr).trim()
+            "runtime bindings read-back failed: {}{}",
+            String::from_utf8_lossy(&downloaded.stderr).trim(),
+            left_behind(&target)
         );
     }
     let stored = std::fs::read(&target)?;
-    let _ = std::fs::remove_file(&target);
+    discard(&target)?;
     if crate::sha256_hex(&stored) != bindings.sha256 || stored != bytes {
         bail!("immutable runtime bindings read-back differs from the planned exact input");
     }
     Ok(())
+}
+
+/// The sentence a refusal ends with when its temporary could not be removed;
+/// empty when the temporary is gone.
+fn left_behind(temporary: &std::path::Path) -> String {
+    match std::fs::remove_file(temporary) {
+        Err(error) if error.kind() != std::io::ErrorKind::NotFound => {
+            format!("; {} is left behind: {error}", temporary.display())
+        }
+        _ => String::new(),
+    }
+}
+
+/// Take back a temporary after its step succeeded; one that stays refuses.
+fn discard(temporary: &std::path::Path) -> Result<()> {
+    match std::fs::remove_file(temporary) {
+        Err(error) if error.kind() != std::io::ErrorKind::NotFound => {
+            bail!("{} is left behind: {error}", temporary.display())
+        }
+        _ => Ok(()),
+    }
 }
 
 /// A `ROLE#FIELD` reference Stado's `--secret-env` accepts: the vault role the
