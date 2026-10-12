@@ -128,14 +128,15 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
     let status = match child.wait() {
         Ok(status) => status,
         Err(error) => {
-            terminate_bridge_process_group(&mut child);
+            let survivor = terminate_bridge_process_group(&mut child);
             let _ = stdin_writer.join();
             let _ = stdout_reader.join();
             let _ = stderr_reader.join();
-            return Err(BridgeFailure::new(
-                "io-failed",
-                format!("could not collect the Weles bridge result: {error}"),
-            ));
+            let mut message = format!("could not collect the Weles bridge result: {error}");
+            if let Some(survivor) = survivor {
+                message = format!("{message}; {survivor}");
+            }
+            return Err(BridgeFailure::new("io-failed", message));
         }
     };
     let stdin_result = stdin_writer.join();
@@ -191,18 +192,24 @@ pub(crate) fn invoke_bridge(
         .map_err(|_| "official Weles bridge returned a malformed verification document".to_string())
 }
 
-pub(crate) fn terminate_bridge_process_group(child: &mut std::process::Child) {
+/// Kill the bridge's whole process group. `Some` names a bridge process that
+/// may still be running and why, so the refusal carries it.
+pub(crate) fn terminate_bridge_process_group(child: &mut std::process::Child) -> Option<String> {
+    let pid = child.id();
     #[cfg(unix)]
-    unsafe {
-        if libc::killpg(child.id() as libc::pid_t, libc::SIGKILL) == -1 {
-            let _ = child.kill();
-        }
-    }
+    let group_killed = unsafe { libc::killpg(pid as libc::pid_t, libc::SIGKILL) != -1 };
     #[cfg(not(unix))]
-    {
-        let _ = child.kill();
-    }
+    let group_killed = false;
+    let survivor = match group_killed {
+        true => None,
+        false => child
+            .kill()
+            .err()
+            .filter(|error| error.kind() != std::io::ErrorKind::InvalidInput)
+            .map(|error| format!("the Weles bridge process {pid} could not be killed: {error}")),
+    };
     let _ = child.wait();
+    survivor
 }
 
 pub(crate) fn validate_fresh_document(
