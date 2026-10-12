@@ -40,28 +40,33 @@ pub fn parse_sitemap(body: &[u8]) -> (Vec<String>, Vec<(String, Option<String>)>
     (children, pages)
 }
 
-pub(crate) const SKIP_TAGS: &[&str] = &[
-    "script", "style", "nav", "footer", "header", "aside", "form", "svg", "noscript", "template",
-];
-
 pub(crate) struct Extractor {
     pub(crate) out: String,
     pub(crate) title: String,
-    pub(crate) skip_depth: usize,
+    /// The open elements whose content renders no text.
+    pub(crate) hidden: Vec<super::hidden::HiddenElement>,
     pub(crate) in_pre: bool,
     pub(crate) in_title: bool,
     pub(crate) buf: String,
+    /// The page marks its main content with `<main>`
+    /// (https://html.spec.whatwg.org/multipage/grouping-content.html#the-main-element),
+    /// so only text inside it is kept; a page without one is kept whole.
+    pub(crate) main_only: bool,
+    /// The `<main>` elements open at this point of the page.
+    pub(crate) open_mains: Vec<String>,
 }
 
 impl Extractor {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(main_only: bool) -> Self {
         Self {
             out: String::new(),
             title: String::new(),
-            skip_depth: 0,
+            hidden: Vec::new(),
             in_pre: false,
             in_title: false,
             buf: String::new(),
+            main_only,
+            open_mains: Vec::new(),
         }
     }
 
@@ -75,6 +80,8 @@ impl Extractor {
         }
         if self.in_title {
             self.title.push_str(&squeezed);
+        } else if self.main_only && self.open_mains.is_empty() {
+            // Outside the page's main content.
         } else if self.in_pre {
             self.out.push_str(&squeezed);
         } else if !self.out.is_empty() && !self.out.ends_with('\n') {
@@ -94,11 +101,20 @@ impl Extractor {
             .take_while(|c| c.is_ascii_alphanumeric())
             .collect();
 
-        if SKIP_TAGS.contains(&name.as_str()) {
+        if name == "main" {
+            self.flush_text();
             if closing {
-                self.skip_depth = self.skip_depth.saturating_sub(1);
+                self.open_mains.pop();
+            } else {
+                self.open_mains.push(name);
+            }
+            return;
+        }
+        if let Some(element) = super::hidden::HiddenElement::named(&name) {
+            if closing {
+                self.hidden.pop();
             } else if !inner.ends_with('/') {
-                self.skip_depth += 1;
+                self.hidden.push(element);
             }
             return;
         }
@@ -140,14 +156,14 @@ impl Extractor {
         while pos < html.len() {
             match html[pos..].find('<') {
                 None => {
-                    if self.skip_depth == 0 {
+                    if self.hidden.is_empty() {
                         self.buf.push_str(&html[pos..]);
                     }
                     pos = html.len();
                 }
                 Some(rel) => {
                     let tag_start = pos + rel;
-                    if tag_start > pos && self.skip_depth == 0 {
+                    if tag_start > pos && self.hidden.is_empty() {
                         self.buf.push_str(&html[pos..tag_start]);
                         self.flush_text();
                     }
@@ -201,8 +217,11 @@ pub(crate) fn squeeze(s: &str) -> String {
     out
 }
 
+/// The text and title of an HTML page: its `<main>` content when it marks
+/// one, otherwise all of it, without the elements that render no text.
 pub fn extract_text(html: &str) -> (String, String) {
-    Extractor::new().feed(html).result()
+    let main_only = html.to_ascii_lowercase().contains("<main");
+    Extractor::new(main_only).feed(html).result()
 }
 
 pub fn sha256_hex(bytes: &[u8]) -> String {

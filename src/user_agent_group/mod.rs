@@ -1,5 +1,6 @@
 use super::*;
 
+mod hidden;
 mod html_unescape;
 mod user_agent;
 
