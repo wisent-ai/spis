@@ -133,7 +133,9 @@ pub(crate) fn analyze_catalog(slug: &str) -> Result<(usize, Vec<Value>)> {
             serde_json::to_string_pretty(&failures)? + "\n",
         )?;
     } else {
-        let _ = std::fs::remove_file(&failure_path);
+        // A previous run's failure report that stays would read as this
+        // clean run's failures, so one that cannot be removed refuses.
+        crate::discard(&failure_path)?;
     }
     println!("{slug}: analyzed={count} failures={}", failures.len());
     Ok((count, failures))
