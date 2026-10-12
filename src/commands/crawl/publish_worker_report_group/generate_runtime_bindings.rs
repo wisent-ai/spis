@@ -80,7 +80,10 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                 // rather than written as a configured record whose secret
                 // environment names nothing.
                 "web" if weles_token_ref.is_none() => safe_unconfigured_binding(engine),
-                "web" | "docs" => {
+                probed
+                    if serde_json::from_value::<ProbedEngine>(Value::String(probed.into()))
+                        .is_ok() =>
+                {
                     let reference: Value = crate::read_json(
                         directory
                             .join("reference.json")
@@ -207,10 +210,7 @@ pub(crate) fn write_generated_bindings(path: &Path, bytes: &[u8]) -> Result<&'st
         File::open(&parent)?.sync_all()?;
         Ok(())
     })();
-    if result.is_err() {
-        let _ = std::fs::remove_file(&staged);
-    }
-    result?;
+    crate::discarding(result, &staged)?;
     let installed = std::fs::read(path)?;
     if installed != bytes {
         bail!(
@@ -219,6 +219,15 @@ pub(crate) fn write_generated_bindings(path: &Path, bytes: &[u8]) -> Result<&'st
         );
     }
     Ok(if existed { "replaced" } else { "created" })
+}
+
+/// The engines whose records carry a configured probe binding; every other
+/// engine is declared unconfigured.
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+enum ProbedEngine {
+    Web,
+    Docs,
 }
 
 pub(crate) struct RuntimeBindings {
