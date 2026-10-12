@@ -97,3 +97,59 @@ impl ProductKind {
         matches!(self, ProductKind::CliBinary | ProductKind::TuiBinary)
     }
 }
+
+/// Whose account a record's crawl runs under.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub(crate) enum AccountMode {
+    /// No account: a public, read-only probe.
+    AnonymousReadOnlyProbe,
+    /// No account at all.
+    None,
+}
+
+impl AccountMode {
+    /// The mode `name` names, refused with the name when none is called that.
+    pub(crate) fn of(name: &str) -> Result<AccountMode> {
+        serde_json::from_value(Value::String(name.to_string()))
+            .with_context(|| format!("{name:?} is not a declared crawl account mode"))
+    }
+}
+
+/// How a record's worker receives its credentials.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub(crate) enum DeliveryKind {
+    /// Stado injects the Weles bearer and organization into the worker.
+    WelesServiceEnv,
+    /// The device or app is already signed in; nothing is injected.
+    PreauthenticatedDevice,
+    /// Stado injects the account's secret references as environment.
+    StadoSecretEnv,
+    /// Nothing is delivered.
+    None,
+}
+
+impl DeliveryKind {
+    /// The kind `name` names, refused with the name when none is called that.
+    pub(crate) fn of(name: &str) -> Result<DeliveryKind> {
+        serde_json::from_value(Value::String(name.to_string()))
+            .with_context(|| format!("{name:?} is not a declared credential delivery"))
+    }
+}
+
+/// How a Weles browser-evidence task may end, as Weles reports it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub(crate) enum WebOutcome {
+    Completed,
+    Failed,
+    Blocked,
+}
+
+impl WebOutcome {
+    /// The outcome `name` names, or nothing when Weles has none called that.
+    pub(crate) fn named(name: &str) -> Option<WebOutcome> {
+        serde_json::from_value(Value::String(name.to_string())).ok()
+    }
+}

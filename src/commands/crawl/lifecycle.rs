@@ -79,6 +79,11 @@ impl State {
         matches!(self, State::Planned | State::Preflighting)
     }
 
+    /// The worker delivered the attempt's artifact and it waits for import.
+    pub(crate) fn awaits_import(self) -> bool {
+        matches!(self, State::Completed | State::Uploaded)
+    }
+
     /// The attempt is accepted and waits for a worker.
     fn waiting(self) -> bool {
         matches!(

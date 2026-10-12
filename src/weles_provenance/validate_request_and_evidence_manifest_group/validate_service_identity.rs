@@ -109,9 +109,13 @@ pub(crate) fn validate_attempt_binding_derivation(
     Ok(())
 }
 
+/// The one check that `value` is a canonical Weles API base: a web address
+/// whose path is exactly `/api/v1`, with no credentials, query or fragment,
+/// written as it parses. The planner, the web worker and the receipt
+/// verifier all ask this.
 pub(crate) fn validate_api_endpoint(value: &str, label: &str) -> Result<(), String> {
     let endpoint = url::Url::parse(value).map_err(|_| format!("{label} is invalid"))?;
-    if !matches!(endpoint.scheme(), "http" | "https")
+    if crate::WebScheme::of(&endpoint).is_none()
         || !endpoint.username().is_empty()
         || endpoint.password().is_some()
         || endpoint.path() != "/api/v1"

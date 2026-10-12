@@ -33,20 +33,19 @@ pub(crate) fn runtime_binding(
             .context("record binding has no account declaration")?,
     )
     .context("record account declaration is invalid")?;
-    match account.mode.as_str() {
-        "anonymous-read-only-probe" => {
+    match AccountMode::of(&account.mode)? {
+        AccountMode::AnonymousReadOnlyProbe => {
             if account.account_id.as_deref() != Some("anonymous-read-only-probe")
                 || !account.credential_refs.is_empty()
             {
                 bail!("{catalog}/{slug}: anonymous read-only probe mode must be explicit and cannot carry credentials or an account claim");
             }
         }
-        "none" => {
+        AccountMode::None => {
             if account.account_id.is_some() || !account.credential_refs.is_empty() {
                 bail!("{catalog}/{slug}: explicit none account mode cannot carry identity or credentials");
             }
         }
-        mode => bail!("{catalog}/{slug}: unsupported account mode {mode}"),
     }
     if account
         .credential_refs
@@ -90,10 +89,11 @@ pub(crate) fn runtime_binding(
         .map(serde_json::from_value)
         .transpose()
         .context("prepared proof declaration is invalid")?;
-    match engine {
-        "web" => {
+    let delivery_kind = DeliveryKind::of(&delivery.kind)?;
+    match Engine::of(engine)? {
+        Engine::Web => {
             let expected = ["WELES_TOKEN", "WISENT_ORGANIZATION_ID"];
-            if delivery.kind != "weles-service-env"
+            if delivery_kind != DeliveryKind::WelesServiceEnv
                 || delivery.secret_env.len() != expected.len()
                 || expected
                     .iter()
@@ -102,34 +102,33 @@ pub(crate) fn runtime_binding(
                 bail!("{catalog}/{slug}: web binding needs only exact bearer and organization secret references; public receipt trust is checked in");
             }
         }
-        "mobile" | "desktop" => {
-            if delivery.kind != "preauthenticated-device"
+        Engine::Mobile | Engine::Desktop => {
+            if delivery_kind != DeliveryKind::PreauthenticatedDevice
                 || !delivery.secret_env.is_empty()
                 || prepared_proof.is_none()
             {
                 bail!("{catalog}/{slug}: native binding needs preauthenticated-device delivery, no secret injection, and prepared proof");
             }
         }
-        "cli" | "tui" => {
+        Engine::Cli | Engine::Tui => {
             let expected = if delivery.secret_env.is_empty() {
-                "none"
+                DeliveryKind::None
             } else {
-                "stado-secret-env"
+                DeliveryKind::StadoSecretEnv
             };
             let delivered: std::collections::BTreeSet<&str> =
                 delivery.secret_env.values().map(String::as_str).collect();
             let declared: std::collections::BTreeSet<&str> =
                 account.credential_refs.iter().map(String::as_str).collect();
-            if delivery.kind != expected || delivered != declared {
+            if delivery_kind != expected || delivered != declared {
                 bail!("{catalog}/{slug}: terminal delivery must exactly bind account refs through Stado secret-env");
             }
         }
-        "docs" => {
-            if delivery.kind != "none" || !delivery.secret_env.is_empty() {
+        Engine::Docs => {
+            if delivery_kind != DeliveryKind::None || !delivery.secret_env.is_empty() {
                 bail!("{catalog}/{slug}: documentation public delivery must be explicit none");
             }
         }
-        _ => bail!("{catalog}/{slug}: unsupported engine delivery"),
     }
     let surface = binding
         .get("surface")
@@ -159,12 +158,13 @@ pub(crate) fn runtime_product(
         .filter(|value| !value.is_empty())
         .context("record has no product_url")?
         .to_string();
-    let (kind, identifier, identity_source) = match (engine, catalog) {
-        ("mobile", "ios-app-examples") => {
+    let declared_engine = Engine::of(engine)?;
+    let (kind, identifier, identity_source) = match (declared_engine, catalog) {
+        (Engine::Mobile, "ios-app-examples") => {
             let (bundle, source) = crate::commands::crawl_mobile::ios_bundle_id_for(&product_url)?;
-            ("ios-bundle", bundle, source)
+            (ProductKind::IosBundle, bundle, source)
         }
-        ("mobile", "android-app-examples") => {
+        (Engine::Mobile, "android-app-examples") => {
             let parsed = url::Url::parse(&product_url)?;
             let package = parsed
                 .query_pairs()
@@ -172,45 +172,45 @@ pub(crate) fn runtime_product(
                 .map(|(_, value)| value.into_owned())
                 .filter(|value| !value.is_empty())
                 .context("Play product_url has no exact package id")?;
-            ("android-package", package, product_url.clone())
+            (ProductKind::AndroidPackage, package, product_url.clone())
         }
-        ("desktop", _) => {
+        (Engine::Desktop, _) => {
             let display_name = record
                 .get("name")
                 .and_then(Value::as_str)
                 .filter(|value| !value.is_empty())
                 .context("reference has no exact product display name")?;
             (
-                "desktop-display-name",
+                ProductKind::DesktopDisplayName,
                 display_name.to_string(),
                 "pending unique typed host resolution".into(),
             )
         }
-        ("cli", _) => (
-            "cli-binary",
+        (Engine::Cli, _) => (
+            ProductKind::CliBinary,
             crate::commands::crawl_cli::binary_for(slug),
             "Spis exact CLI catalog mapping".into(),
         ),
-        ("tui", _) => {
+        (Engine::Tui, _) => {
             let display_name = record
                 .get("name")
                 .and_then(Value::as_str)
                 .filter(|value| !value.is_empty())
                 .context("reference has no exact product display name")?;
             (
-                "tui-slug",
+                ProductKind::TuiSlug,
                 display_name.to_string(),
                 "pending unique typed host executable/version resolution".into(),
             )
         }
-        ("web" | "docs", _) => (
-            "url",
+        (Engine::Web | Engine::Docs, _) => (
+            ProductKind::Url,
             product_url.clone(),
             "reference.json product_url".into(),
         ),
         _ => bail!("{catalog}/{slug}: unsupported runtime identity for {engine}"),
     };
-    let surface = if engine == "web" {
+    let surface = if declared_engine == Engine::Web {
         let surface = surface.context("web record has no exact typed surface identity")?;
         let expected_family = catalog
             .strip_suffix("-examples")
@@ -238,7 +238,7 @@ pub(crate) fn runtime_product(
             || surface
                 .terminal_outcomes
                 .iter()
-                .any(|outcome| !matches!(outcome.as_str(), "completed" | "failed" | "blocked"))
+                .any(|outcome| WebOutcome::named(outcome).is_none())
         {
             bail!("{catalog}/{slug}: typed web surface family, origin, path, URL, allowed actions or terminal outcomes are not exact");
         }
@@ -246,13 +246,13 @@ pub(crate) fn runtime_product(
     } else {
         surface
     };
-    if matches!(engine, "desktop" | "cli" | "tui") && !is_host_query_literal(&identifier) {
+    if declared_engine.resolves_identity() && !is_host_query_literal(&identifier) {
         bail!(
             "{catalog}/{slug}: {engine} product identity {identifier:?} contains characters that cannot be embedded in a host resolution query"
         );
     }
     Ok(RuntimeProduct {
-        kind: kind.into(),
+        kind: kind.name(),
         declared_identifier: identifier.clone(),
         identifier,
         product_url,
@@ -269,7 +269,6 @@ pub(crate) fn runtime_product(
 /// that could close a literal or append a predicate.
 pub(crate) fn is_host_query_literal(value: &str) -> bool {
     !value.is_empty()
-        && value.len() <= 128
         && value.chars().all(|character| {
             character.is_ascii_alphanumeric() || matches!(character, ' ' | '.' | '_' | '-')
         })

@@ -96,9 +96,11 @@ pub(crate) fn validate_request_and_evidence_manifest(
     Ok(())
 }
 
+/// `value` as a web address without credentials, refused with `label`
+/// otherwise.
 pub(crate) fn parse_http_url(value: &str, label: &str) -> Result<url::Url, String> {
     let parsed = url::Url::parse(value).map_err(|_| format!("{label} is invalid"))?;
-    if !matches!(parsed.scheme(), "http" | "https")
+    if crate::WebScheme::of(&parsed).is_none()
         || !parsed.username().is_empty()
         || parsed.password().is_some()
     {

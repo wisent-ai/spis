@@ -142,8 +142,20 @@ pub(crate) fn planned_record(
         crate::sha256_hex(format!("{source_revision}\0{run_id}\0{catalog}").as_bytes());
     let record_key =
         crate::sha256_hex(format!("{catalog_key}\0{slug}\0{source_input_sha256}").as_bytes());
-    let correlation_id = format!("spis-{}", &record_key[..32]);
     let base_uri = crate::crawl_record_base_uri(run_id, catalog, &slug, &record_key);
+    let declared_engine = match Engine::of(engine) {
+        Ok(declared) => declared,
+        Err(error) => {
+            return unavailable_record(
+                run_id,
+                catalog,
+                &slug,
+                "undeclared_crawl_engine",
+                format!("{error:#}"),
+                json!({"engine": engine}),
+            );
+        }
+    };
     let mut manifest = RuntimeManifest {
         schema: RUNTIME_MANIFEST_SCHEMA.into(),
         run_id: run_id.into(),
@@ -155,10 +167,12 @@ pub(crate) fn planned_record(
         reference_sha256: crate::sha256_hex(&bytes),
         catalog_key,
         record_key,
-        correlation_id: correlation_id.clone(),
-        attempt: 1,
+        // finalize_manifest_identity derives the correlation and Stado run ids.
+        correlation_id: String::new(),
+        // A record's first attempt is the least attempt number.
+        attempt: std::num::NonZeroU32::MIN.get(),
         attempt_id: String::new(),
-        stado_run_id: correlation_id,
+        stado_run_id: String::new(),
         artifact_uri: format!("{base_uri}/artifacts.tar.gz"),
         output_uri: format!("{base_uri}/worker-output.log"),
         runtime_product: product,
@@ -172,9 +186,11 @@ pub(crate) fn planned_record(
         bindings_uri: bindings.uri.clone(),
         prepared_proof,
         execution_identity: None,
-        // Terminal surfaces share the registry host's tmux namespace, PATH and CPU,
-        // so they need a host-level exclusivity lease even though they need no device.
-        resource_lease: matches!(engine, "desktop" | "mobile" | "cli" | "tui")
+        // Engines that run the product on the host share its tmux namespace,
+        // PATH and CPU, so they need a host-level exclusivity lease even when
+        // they need no device.
+        resource_lease: declared_engine
+            .runs_on_host()
             .then(|| format!("stado-exclusive://{host}/{engine}")),
         service_identity,
         driver_url: driver_url.map(str::to_string),
@@ -191,7 +207,7 @@ pub(crate) fn planned_record(
     }
     json!({
         "record": slug,
-        "state": "planned",
+        "state": State::Planned.name(),
         "manifest": manifest,
         "command": Value::Null,
         "stado_job_id": Value::Null,
@@ -204,24 +220,10 @@ pub(crate) fn planned_record(
 }
 
 pub(crate) fn is_git_revision(value: &str) -> bool {
+    // A Git object name is a SHA-1 digest written as 40 hexadecimal digits:
+    // https://git-scm.com/docs/hash-function-transition
     value.len() == 40
         && value
             .bytes()
             .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-}
-
-/// A canonical Weles API base is exactly `<scheme>://<host>[:port]/api/v1` with
-/// no credentials, query or fragment. Both the bridge and the Rust verifier
-/// enforce the same shape, so an endpoint that would be rejected downstream must
-/// never enter a plan.
-pub(crate) fn canonical_api_endpoint(value: &str) -> bool {
-    url::Url::parse(value).is_ok_and(|endpoint| {
-        matches!(endpoint.scheme(), "http" | "https")
-            && endpoint.username().is_empty()
-            && endpoint.password().is_none()
-            && endpoint.path() == "/api/v1"
-            && endpoint.query().is_none()
-            && endpoint.fragment().is_none()
-            && endpoint.as_str() == value
-    })
 }

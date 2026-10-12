@@ -175,31 +175,22 @@ pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     Ok(())
 }
 
-/// Mirrors `weles_provenance::validate_api_endpoint`: the exact canonical `/api/v1` base.
+/// The exact canonical `/api/v1` base, as `weles_provenance::validate_api_endpoint`
+/// decides it, refused with this worker's failure code.
 pub(crate) fn validate_api_endpoint(value: &str) -> Outcome<()> {
-    let endpoint = url::Url::parse(value).map_err(|_| {
-        WorkerFailure::new("weles_service_endpoint_invalid", "endpoint is not a URL")
-    })?;
-    ensure(
-        matches!(endpoint.scheme(), "http" | "https")
-            && endpoint.username().is_empty()
-            && endpoint.password().is_none()
-            && endpoint.path() == "/api/v1"
-            && endpoint.query().is_none()
-            && endpoint.fragment().is_none()
-            && endpoint.as_str() == value,
-        "weles_service_endpoint_invalid",
-        "the Weles service endpoint is not the canonical exact /api/v1 base",
-    )
+    crate::weles_provenance::validate_api_endpoint(value, "Weles service endpoint").map_err(|_| {
+        WorkerFailure::new(
+            "weles_service_endpoint_invalid",
+            "the Weles service endpoint is not the canonical exact /api/v1 base",
+        )
+    })
 }
 
+/// `value` is a web address without credentials on the origin of
+/// `product_url`.
 pub(crate) fn same_origin(value: &str, product_url: &url::Url) -> bool {
-    url::Url::parse(value).is_ok_and(|parsed| {
-        matches!(parsed.scheme(), "http" | "https")
-            && parsed.username().is_empty()
-            && parsed.password().is_none()
-            && parsed.origin() == product_url.origin()
-    })
+    crate::weles_provenance::parse_http_url(value, "observed URL")
+        .is_ok_and(|parsed| parsed.origin() == product_url.origin())
 }
 
 pub(crate) fn attempt_base(binding: &weles::WelesAttemptBinding) -> String {

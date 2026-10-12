@@ -15,7 +15,7 @@ pub(crate) fn verify_attempt_binding(
         })?;
     let parsed_product_url = url::Url::parse(product_url)
         .map_err(|_| "current record product_url is not a valid URL".to_string())?;
-    if !matches!(parsed_product_url.scheme(), "http" | "https") {
+    if crate::WebScheme::of(&parsed_product_url).is_none() {
         return Err("current record product_url is not HTTP(S)".to_string());
     }
     if document.expected_claims.origin != parsed_product_url.origin().ascii_serialization() {

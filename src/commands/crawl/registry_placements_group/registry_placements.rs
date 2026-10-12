@@ -54,7 +54,9 @@ pub(crate) fn registry_placements() -> Result<RegistryPlacements> {
         let endpoint = service
             .pointer(&format!("/endpoints/{active_host}/url"))
             .and_then(Value::as_str)
-            .filter(|value| canonical_api_endpoint(value))?;
+            .filter(|value| {
+                crate::weles_provenance::validate_api_endpoint(value, "Weles endpoint").is_ok()
+            })?;
         let release_id = service
             .pointer(&format!("/endpoints/{active_host}/release_id"))
             .or_else(|| service.get("release_id"))

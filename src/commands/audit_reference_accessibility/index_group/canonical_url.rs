@@ -8,7 +8,7 @@ pub(crate) fn canonical_url(value: &Value, record_id: &str, field: &str) -> Resu
     let (scheme, rest) = raw
         .split_once("://")
         .ok_or_else(|| anyhow!("{record_id}: {field}: expected an http(s) URL, got {raw:?}"))?;
-    if scheme != "http" && scheme != "https" {
+    if crate::WebScheme::named(scheme).is_none() {
         bail!("{record_id}: {field}: expected an http(s) URL, got {raw:?}");
     }
     let netloc_end = rest

@@ -44,11 +44,12 @@ pub(crate) fn import_ready(run_id: &str, selected_record: Option<&str>) -> Resul
             if !selected_matches(&record_name, selected_record) {
                 continue;
             }
-            let state = record
+            let awaiting = record
                 .get("state")
-                .and_then(Value::as_str)
-                .unwrap_or_default();
-            if !matches!(state, "completed" | "uploaded") {
+                .map(State::of)
+                .transpose()?
+                .is_some_and(State::awaits_import);
+            if !awaiting {
                 continue;
             }
             let guard = match RecordMutationGuard::acquire(run_id, &catalog_name, &record_name) {
@@ -57,17 +58,19 @@ pub(crate) fn import_ready(run_id: &str, selected_record: Option<&str>) -> Resul
                 Err(error) => return Err(error),
             };
             let current = record_snapshot(run_id, &catalog_name, &record_name)?;
-            if !matches!(
-                current.get("state").and_then(Value::as_str),
-                Some("completed" | "uploaded")
-            ) {
+            let still_awaiting = current
+                .get("state")
+                .map(State::of)
+                .transpose()?
+                .is_some_and(State::awaits_import);
+            if !still_awaiting {
                 continue;
             }
             let outcome = import_record_attempt(run_id, &catalog_name, &engine, &current, &run_dir);
             match outcome {
                 Ok(import) => {
                     mutate_record(run_id, &catalog_name, &record_name, |entry| {
-                        entry["state"] = json!("imported");
+                        entry["state"] = json!(State::Imported.name());
                         entry["weles_task_id"] =
                             import.get("weles_task_id").cloned().unwrap_or(Value::Null);
                         entry["import"] = import;
@@ -78,7 +81,7 @@ pub(crate) fn import_ready(run_id: &str, selected_record: Option<&str>) -> Resul
                 }
                 Err(error) => {
                     mutate_record(run_id, &catalog_name, &record_name, |entry| {
-                        entry["state"] = json!("partial");
+                        entry["state"] = json!(State::Partial.name());
                         entry["diagnostic"] = json!({
                             "code": "attempt_import_failed",
                             "message": format!("{error:#}"),
@@ -194,25 +197,28 @@ pub(crate) fn import(rest: &[String]) -> Result<()> {
     Ok(())
 }
 
+/// Whether any catalog of `run` ended in a failed state. A catalog whose
+/// state is not a declared one (the aggregate left it null with a
+/// diagnostic) is a failure too.
 pub(crate) fn has_failures(run: &Value) -> bool {
     run.get("catalogs")
         .and_then(Value::as_array)
         .into_iter()
         .flatten()
-        .any(|entry| {
-            matches!(
-                entry.get("state").and_then(Value::as_str),
-                Some(
-                    "unavailable"
-                        | "preflight_failed"
-                        | "submission_failed"
-                        | "lost"
-                        | "failed"
-                        | "cancelled"
-                        | "partial"
-                )
-            )
+        .filter_map(|entry| entry.get("state"))
+        .any(|state| match State::of(state) {
+            Ok(state) => state.counts_as_failure(),
+            Err(_) => true,
         })
+}
+
+/// The label `entry`'s state is counted under: its state after `prefix`, or
+/// `unknown` when it has none.
+fn state_label(entry: &Value, prefix: &str) -> String {
+    match entry.get("state").and_then(Value::as_str) {
+        Some(state) => format!("{prefix}{state}"),
+        None => format!("{prefix}unknown"),
+    }
 }
 
 pub(crate) fn print_operation(
@@ -245,31 +251,22 @@ pub(crate) fn print_operation(
                 .is_some_and(|records| !records.is_empty())
         });
     }
-    let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+    let mut labels = Vec::new();
     for catalog in &catalogs {
-        *counts
-            .entry(
-                catalog
-                    .get("state")
-                    .and_then(Value::as_str)
-                    .unwrap_or("unknown")
-                    .to_string(),
-            )
-            .or_default() += 1;
-        if let Some(records) = catalog.get("records").and_then(Value::as_array) {
-            for record in records {
-                *counts
-                    .entry(format!(
-                        "record_{}",
-                        record
-                            .get("state")
-                            .and_then(Value::as_str)
-                            .unwrap_or("unknown")
-                    ))
-                    .or_default() += 1;
-            }
+        labels.push(state_label(catalog, ""));
+        for record in catalog
+            .get("records")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            labels.push(state_label(record, "record_"));
         }
     }
+    let counts: BTreeMap<&String, usize> = labels
+        .iter()
+        .map(|label| (label, labels.iter().filter(|other| *other == label).count()))
+        .collect();
     let document = json!({
         "schema": OP_SCHEMA,
         "operation": operation,

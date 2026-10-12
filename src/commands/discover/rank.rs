@@ -15,12 +15,13 @@ pub(crate) fn brama_rank(
         .iter()
         .map(|(url, text)| format!("- {url} | {text}"))
         .collect();
+    let families = serde_json::Value::Array(PageFamily::names()).to_string();
     let parsed = crate::commands::brama::ask_json(
         "discover asks Brama which pages to keep",
         &format!(
             "You classify pages of one product's website for an interface reference corpus. \
              Return STRICT JSON: {{\"pages\": [{{\"url\": string, \"family\": \
-             one of {FAMILIES:?}]}}}} . Only use URLs from the list. Pick at most {limit}."
+             one of {families}]}}}} . Only use URLs from the list. Pick at most {limit}."
         ),
         &format!(
             "Start page: {start_url}\nDiscovered links:\n{}",
@@ -33,7 +34,7 @@ pub(crate) fn brama_rank(
             continue;
         };
         if links.entries.iter().any(|(known, _)| known == url)
-            && FAMILIES.contains(&family)
+            && PageFamily::named(family).is_some()
             && !ranked.iter().any(|(seen, _)| seen == url)
         {
             ranked.push((url.to_string(), family.to_string()));

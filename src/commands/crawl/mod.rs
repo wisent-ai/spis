@@ -32,7 +32,7 @@ pub use apply_web_attempt_group::*;
 pub use cancel_group::*;
 pub use continue_record_group::*;
 pub use ios_booted_identity_group::*;
-pub(crate) use kinds::{Engine, ProductKind};
+pub(crate) use kinds::{AccountMode, DeliveryKind, Engine, ProductKind, WebOutcome};
 pub(crate) use lifecycle::{aggregate_catalog_entry, update_run_state, State};
 pub use op_schema_group::*;
 pub use publish_worker_report_group::*;

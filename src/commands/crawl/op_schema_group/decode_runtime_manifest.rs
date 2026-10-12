@@ -6,7 +6,7 @@ pub(crate) fn decode_runtime_manifest(
     engine: &str,
     record: Option<&str>,
 ) -> Result<RuntimeManifest> {
-    use base64::{engine::general_purpose::STANDARD, Engine};
+    use base64::{engine::general_purpose::STANDARD, Engine as _};
     let manifest: RuntimeManifest = serde_json::from_slice(
         &STANDARD
             .decode(encoded)
@@ -26,15 +26,17 @@ pub(crate) fn decode_runtime_manifest(
     safe_component(&manifest.catalog, "catalog")?;
     safe_component(&manifest.record, "record")?;
     safe_component(&manifest.attempt_id, "attempt id")?;
+    // A SHA-256 digest in hex is as long as any SHA-256 digest this crate writes.
+    let digest_length = crate::sha256_hex(&[]).len();
     if manifest.runtime_product.identifier.is_empty()
-        || manifest.source_input_sha256.len() != 64
+        || manifest.source_input_sha256.len() != digest_length
         || manifest.correlation_id.is_empty()
         || manifest.stado_run_id.is_empty()
         || manifest.execution_identity.is_none()
     {
         bail!("runtime manifest is incomplete and cannot authorize a worker");
     }
-    if manifest.attempt == 0 || manifest.attempt_id.is_empty() {
+    if std::num::NonZeroU32::new(manifest.attempt).is_none() || manifest.attempt_id.is_empty() {
         bail!("runtime manifest has no immutable execution attempt");
     }
     let execution_identity = manifest
@@ -118,7 +120,8 @@ pub(crate) fn decode_runtime_manifest(
         bail!("docs crawl definition digest differs from the committed exact structure");
     }
     let execution = manifest.execution_identity.as_ref().expect("checked above");
-    let resolving_engine = matches!(manifest.engine.as_str(), "desktop" | "cli" | "tui");
+    let engine = Engine::of(&manifest.engine)?;
+    let resolving_engine = engine.resolves_identity();
     // The declared identity is never rewritten, so this comparison covers every
     // engine — including desktop, cli and tui, whose resolved `identifier` is a
     // bundle id or binary name that legitimately differs from the record.
@@ -137,15 +140,16 @@ pub(crate) fn decode_runtime_manifest(
     if !resolving_engine && expected_product.kind != manifest.runtime_product.kind {
         bail!("runtime product kind differs from the committed record");
     }
-    match manifest.engine.as_str() {
-        "mobile" | "web" | "docs" => {
+    let kind = ProductKind::of(&manifest.runtime_product.kind)?;
+    match engine {
+        Engine::Mobile | Engine::Web | Engine::Docs => {
             if serde_json::to_value(&expected_product)?
                 != serde_json::to_value(&manifest.runtime_product)?
             {
                 bail!("canonical runtime product differs from the committed record");
             }
         }
-        "cli" => {
+        Engine::Cli => {
             let path = execution
                 .executable_path
                 .as_deref()
@@ -155,14 +159,14 @@ pub(crate) fn decode_runtime_manifest(
                 .as_deref()
                 .context("CLI identity has no executable digest")?;
             if expected_product.identifier != manifest.runtime_product.identifier
-                || manifest.runtime_product.kind != "cli-binary"
+                || kind != ProductKind::CliBinary
                 || manifest.runtime_product.identity_source
                     != format!("typed isolated host path resolution: {path}; sha256={digest}")
             {
                 bail!("canonical CLI runtime product is invalid");
             }
         }
-        "tui" => {
+        Engine::Tui => {
             let path = execution
                 .executable_path
                 .as_deref()
@@ -172,14 +176,14 @@ pub(crate) fn decode_runtime_manifest(
                 .as_deref()
                 .context("TUI identity has no executable digest")?;
             if execution.device_name.as_deref() != Some(expected_product.identifier.as_str())
-                || manifest.runtime_product.kind != "tui-binary"
+                || kind != ProductKind::TuiBinary
                 || manifest.runtime_product.identity_source
                     != format!("typed isolated host path resolution: {path}; sha256={digest}")
             {
                 bail!("canonical TUI runtime product is invalid");
             }
         }
-        "desktop" => {
+        Engine::Desktop => {
             let path = execution
                 .executable_path
                 .as_deref()
@@ -197,14 +201,13 @@ pub(crate) fn decode_runtime_manifest(
                 .map(|(value, _)| value)
                 .context("desktop executable is outside a canonical app bundle")?;
             if execution.device_name.as_deref() != Some(expected_product.identifier.as_str())
-                || manifest.runtime_product.kind != "desktop-bundle"
+                || kind != ProductKind::DesktopBundle
                 || manifest.runtime_product.identity_source
                     != format!("typed host display-name resolution: bundle={app_path}; executable={path}; version={version}; sha256={digest}")
             {
                 bail!("canonical desktop runtime product is invalid");
             }
         }
-        _ => bail!("unsupported runtime engine"),
     }
     let mut recomputed = manifest.clone();
     finalize_manifest_identity(&mut recomputed, &reference_bytes)?;
@@ -220,13 +223,12 @@ pub(crate) fn source_root() -> PathBuf {
 
 pub(crate) fn safe_component(value: &str, name: &str) -> Result<()> {
     if value.is_empty()
-        || value.len() > 128
         || matches!(value, "." | "..")
         || !value
             .bytes()
             .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_' | b'.'))
     {
-        bail!("{name} must be one strict ASCII path component of at most 128 bytes");
+        bail!("{name} must be one strict ASCII path component");
     }
     Ok(())
 }

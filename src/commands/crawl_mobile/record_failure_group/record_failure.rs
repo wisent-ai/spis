@@ -89,8 +89,9 @@ pub(crate) fn canonical_driver_url(value: &str) -> Result<String> {
     let parsed = url::Url::parse(value).context("--driver-url must be a URL")?;
     let local = matches!(parsed.host_str(), Some("127.0.0.1" | "localhost" | "::1"));
     // The driver is reached over TLS, or in the clear only on this machine.
-    let encrypted = parsed.scheme() == "https";
-    let plain = parsed.scheme() == "http";
+    let scheme = crate::WebScheme::of(&parsed);
+    let encrypted = scheme.is_some_and(crate::WebScheme::encrypted);
+    let plain = scheme == Some(crate::WebScheme::Http);
     if parsed.host_str().is_none() || !(encrypted || plain && local) {
         bail!("--driver-url must be HTTPS or loopback HTTP");
     }

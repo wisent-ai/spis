@@ -15,7 +15,7 @@ pub(super) fn checked_product_url(
         )
     })?;
     ensure(
-        matches!(parsed.scheme(), "http" | "https")
+        crate::WebScheme::of(&parsed).is_some()
             && parsed.username().is_empty()
             && parsed.password().is_none(),
         "web_product_url_invalid",

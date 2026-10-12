@@ -99,8 +99,8 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
             }
             ProductKind::Url => {
                 let parsed = url::Url::parse(product).context("declared URL is invalid")?;
-                if parsed.scheme() != "https"
-                    || parsed.username() != ""
+                if crate::WebScheme::of(&parsed) != Some(crate::WebScheme::Https)
+                    || !parsed.username().is_empty()
                     || parsed.password().is_some()
                     || parsed.host_str().is_none()
                 {

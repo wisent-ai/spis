@@ -149,7 +149,7 @@ impl UrlPolicy {
 }
 
 pub(crate) fn validate_url_shape(url: &Url, label: &str) -> Result<()> {
-    if !matches!(url.scheme(), "http" | "https") {
+    if crate::WebScheme::of(url).is_none() {
         bail!("{label} must use http or https");
     }
     if !url.username().is_empty() || url.password().is_some() {

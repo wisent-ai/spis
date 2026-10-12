@@ -4,9 +4,45 @@ pub(crate) const UA: &str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) spi
 
 pub(crate) const THUMB: &str = "https://image.thum.io/get/width/1400/crop/1000/noanimate/";
 
-pub(crate) const FAMILIES: &[&str] = &[
-    "pricing", "docs", "signup", "about", "product", "blog", "other",
-];
+/// The families Brama may sort a discovered page into: the answer vocabulary
+/// of `brama_rank`'s judgement, never matched against page text.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub(crate) enum PageFamily {
+    Pricing,
+    Docs,
+    Signup,
+    About,
+    Product,
+    Blog,
+    Other,
+}
+
+impl PageFamily {
+    /// Every family, in the order the question lists them.
+    pub(crate) const ALL: &'static [PageFamily] = &[
+        PageFamily::Pricing,
+        PageFamily::Docs,
+        PageFamily::Signup,
+        PageFamily::About,
+        PageFamily::Product,
+        PageFamily::Blog,
+        PageFamily::Other,
+    ];
+
+    /// The family Brama answered with, or nothing when it named none of them.
+    pub(crate) fn named(name: &str) -> Option<PageFamily> {
+        serde_json::from_value(serde_json::Value::String(name.to_string())).ok()
+    }
+
+    /// The names the question offers, as Brama must answer them.
+    pub(crate) fn names() -> Vec<serde_json::Value> {
+        PageFamily::ALL
+            .iter()
+            .filter_map(|family| serde_json::to_value(family).ok())
+            .collect()
+    }
+}
 
 /// GET raw bytes with the discovery User-Agent; returns (body, content type).
 pub(crate) fn fetch(url: &str) -> Result<(Vec<u8>, String)> {
@@ -149,7 +185,7 @@ pub(crate) fn remove_dot_segments(path: &str) -> String {
 }
 
 pub(crate) fn same_origin(url: &str, origin: &str) -> bool {
-    matches!(scheme_of(url), "http" | "https") && netloc_of(url) == netloc_of(origin)
+    crate::WebScheme::named(scheme_of(url)).is_some() && netloc_of(url) == netloc_of(origin)
 }
 
 /// Pull `<a href>` -> collapsed inner text from HTML, mimicking the original
