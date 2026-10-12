@@ -16,7 +16,7 @@ pub(crate) fn validate_motion(
         bail!("{record_path}: motion must be a list");
     };
     if motion.is_empty() {
-        if evidence_status_of(record) == Some("partial") {
+        if EvidenceStatus::of(record) == Some(EvidenceStatus::Partial) {
             return Ok(Vec::new());
         }
         bail!("{record_path}: complete evidence needs at least one motion asset");
@@ -25,42 +25,26 @@ pub(crate) fn validate_motion(
     let mut classes: Vec<String> = Vec::new();
     for (position, item) in motion.iter().enumerate() {
         let context = format!("{record_path}: motion {}", position + 1);
-        require_nonempty(
-            item,
-            &[
-                "local_path",
-                "source_url",
-                "media_kind",
-                "bytes",
-                "sha256",
-                "capture_method",
-                "provenance_class",
-            ],
-            &context,
-        )?;
+        require_nonempty(item, &field_names::<MotionEntry>(), &context)?;
         let media_kind = item.get("media_kind").and_then(Value::as_str).unwrap_or("");
-        if !CANONICAL_MOTION_KINDS.contains(&media_kind) {
-            bail!(
-                "{context}: media kind '{}' is not in the canonical vocabulary {:?}",
-                media_kind,
-                CANONICAL_MOTION_KINDS
-            );
+        if reference_contract::named::<MotionKind>(media_kind).is_none() {
+            bail!("{context}: media kind '{media_kind}' is not a canonical motion kind");
         }
         let provenance_class = item
             .get("provenance_class")
             .and_then(Value::as_str)
             .unwrap_or("");
-        if !PROVENANCE_CLASSES.contains(&provenance_class) {
+        let Some(declared) = reference_contract::named::<Provenance>(provenance_class) else {
             bail!("{context}: unknown provenance class '{provenance_class}'");
-        }
+        };
         let derived = verified_provenance.provenance_class(item);
         if provenance_class != derived {
             bail!(
                 "{context}: provenance class '{provenance_class}' contradicts typed provenance '{derived}'"
             );
         }
-        if provenance_class == "unverified-source-media"
-            && evidence_status_of(record) == Some("complete")
+        if declared == Provenance::UnverifiedSourceMedia
+            && EvidenceStatus::of(record) == Some(EvidenceStatus::Complete)
         {
             bail!("{context}: complete evidence requires verified typed motion provenance");
         }
@@ -73,7 +57,7 @@ pub(crate) fn validate_motion(
         }
         let local_path = item.get("local_path").and_then(Value::as_str).unwrap_or("");
         let motion_path = resolve_evidence_path(reference_dir, local_path, &context)?;
-        if !has_suffix(&motion_path, MOTION_SUFFIXES) {
+        if !Extension::of(&motion_path).is_some_and(Extension::holds_motion) {
             bail!("{context}: unsupported motion format");
         }
         let duration = item.get("duration_seconds").and_then(Value::as_f64);
@@ -86,8 +70,8 @@ pub(crate) fn validate_motion(
                 requirements.min_motion_seconds
             );
         }
-        if !has_suffix(&motion_path, &[".cast"]) {
-            require_nonempty(item, &["width", "height"], &context)?;
+        if Extension::of(&motion_path) != Some(Extension::Cast) {
+            require_nonempty(item, &field_names::<Dimensions>(), &context)?;
         }
         validate_file_metadata(&motion_path, item, &context)?;
         classes.push(provenance_class.to_string());
@@ -120,7 +104,9 @@ pub(crate) fn validate_states(
     let Some(states) = record.get("states").and_then(Value::as_array) else {
         bail!("{record_path}: states must be a list");
     };
-    if states.len() < requirements.min_states && evidence_status_of(record) == Some("complete") {
+    if states.len() < requirements.min_states
+        && EvidenceStatus::of(record) == Some(EvidenceStatus::Complete)
+    {
         bail!(
             "{record_path}: complete {} evidence needs at least {} local states",
             requirements.profile,
@@ -129,18 +115,14 @@ pub(crate) fn validate_states(
     }
     for (position, item) in states.iter().enumerate() {
         let context = format!("{record_path}: state {}", position + 1);
-        require_nonempty(
-            item,
-            &["local_path", "width", "height", "bytes", "sha256"],
-            &context,
-        )?;
+        require_nonempty(item, &field_names::<StateEntry>(), &context)?;
         let local_path = item.get("local_path").and_then(Value::as_str).unwrap_or("");
         let state_path = resolve_evidence_path(reference_dir, local_path, &context)?;
-        if !has_suffix(&state_path, STATE_SUFFIXES) {
+        if !Extension::of(&state_path).is_some_and(Extension::holds_state) {
             bail!("{context}: unsupported state-image format");
         }
         validate_file_metadata(&state_path, item, &context)?;
-        if evidence_status_of(record) == Some("complete") {
+        if EvidenceStatus::of(record) == Some(EvidenceStatus::Complete) {
             if !verified_provenance.supports_value(item) {
                 bail!("{context}: semantic state name lacks independently verified observation provenance");
             }

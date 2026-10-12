@@ -19,6 +19,13 @@ use std::path::{Path, PathBuf};
 // The split submodules reach their sibling commands through `super::`, which
 // resolves here by way of their `use super::*`.
 use crate::commands::reference_contract;
+// The one reference-evidence vocabulary; this generator keeps no copy.
+use crate::commands::reference_contract::{
+    field_names, spelling, Dimensions, EvidenceStatus, Extension, Family, Interaction, Journey,
+    JourneyStep, MotionAnalysis, MotionAnalysisExtras, MotionEntry, MotionKind, Provenance,
+    ReferenceIndex, ReferenceIndexEntry, StateEntry, TimingClass, CATALOG_SCHEMA, INDEX_SCHEMA,
+    RECORDS_PER_CATALOG, RECORD_SCHEMA,
+};
 
 mod catalog_schema_group;
 mod load_catalog_group;

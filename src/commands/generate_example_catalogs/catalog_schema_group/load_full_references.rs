@@ -10,11 +10,7 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
     let index_path_str = index_path.to_string_lossy().to_string();
     let mut index: Value = lib::read_json(index_path.to_str().unwrap())?;
 
-    require_nonempty(
-        &index,
-        &["schema", "catalog", "reference_count"],
-        &index_path_str,
-    )?;
+    require_nonempty(&index, &field_names::<ReferenceIndex>(), &index_path_str)?;
     if index.get("schema").and_then(Value::as_str) != Some(INDEX_SCHEMA) {
         bail!(
             "{index_path_str}: expected schema '{INDEX_SCHEMA}', found {}",
@@ -44,14 +40,14 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
     }
 
     let mut provenance: BTreeMap<String, usize> = BTreeMap::new();
-    let mut statuses: BTreeMap<String, usize> = BTreeMap::new();
+    let mut measured: Vec<EvidenceStatus> = Vec::new();
     let mut gap_total = 0usize;
 
     for (position, (entry, example)) in records.iter().zip(examples.iter()).enumerate() {
         let position = position + 1;
         require_nonempty(
             entry,
-            &["index", "name", "path", "evidence_status"],
+            &field_names::<ReferenceIndexEntry>(),
             &index_path_str,
         )?;
         if entry.get("index").and_then(Value::as_u64) != Some(position as u64)
@@ -63,7 +59,7 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
             .get("evidence_status")
             .and_then(Value::as_str)
             .unwrap_or("");
-        if !EVIDENCE_STATUSES.contains(&entry_status) {
+        if reference_contract::named::<EvidenceStatus>(entry_status).is_none() {
             bail!("{index_path_str}: reference {position} has status '{entry_status}'");
         }
 
@@ -84,18 +80,18 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
             bail!("{record_path_str}: evidence_gaps must be a list, empty when nothing is missing");
         };
         let expected = if gaps.is_empty() {
-            "complete"
+            EvidenceStatus::Complete
         } else {
-            "partial"
+            EvidenceStatus::Partial
         };
-        if evidence_status_of(&record) != Some(expected) {
+        if EvidenceStatus::of(&record) != Some(expected) {
             bail!(
                 "{record_path_str}: status {} contradicts {} recorded gaps",
                 python_repr(record.get("evidence_status")),
                 gaps.len()
             );
         }
-        if entry_status != expected
+        if entry_status != spelling(&expected)
             || entry.get("evidence_gap_count").and_then(Value::as_u64) != Some(gaps.len() as u64)
         {
             bail!("{index_path_str}: reference {position} disagrees with its record");
@@ -124,7 +120,7 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
             &verified_provenance,
         )?;
 
-        *statuses.entry(expected.to_string()).or_insert(0) += 1;
+        measured.push(expected);
         gap_total += gaps.len();
     }
 
@@ -138,18 +134,19 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
             .into(),
     );
     obj.insert("measured_gap_total".into(), json!(gap_total));
+    let count_of = |status: EvidenceStatus| measured.iter().filter(|seen| **seen == status).count();
     obj.insert(
         "complete_count".into(),
-        json!(statuses.get("complete").copied().unwrap_or(0)),
+        json!(count_of(EvidenceStatus::Complete)),
     );
     obj.insert(
         "partial_count".into(),
-        json!(statuses.get("partial").copied().unwrap_or(0)),
+        json!(count_of(EvidenceStatus::Partial)),
     );
-    let status_count = statuses.values().sum::<usize>();
-    if status_count != records.len() {
+    if measured.len() != records.len() {
         bail!(
-            "{index_path_str}: complete and partial counts cover {status_count} of {} references",
+            "{index_path_str}: complete and partial counts cover {} of {} references",
+            measured.len(),
             records.len()
         );
     }
@@ -157,7 +154,9 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
         "locally_driven_count".into(),
         json!(provenance
             .iter()
-            .filter(|(name, _)| LOCAL_PROVENANCE.contains(&name.as_str()))
+            .filter(|(name, _)| {
+                reference_contract::named::<Provenance>(name).is_some_and(Provenance::local)
+            })
             .map(|(_, count)| count)
             .sum::<usize>()),
     );

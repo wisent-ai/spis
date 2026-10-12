@@ -11,7 +11,7 @@ pub(crate) fn validate_behaviour(
         bail!("{record_path}: interactions must be a list");
     };
     if interactions.len() < requirements.min_interactions
-        && evidence_status_of(record) == Some("complete")
+        && EvidenceStatus::of(record) == Some(EvidenceStatus::Complete)
     {
         bail!(
             "{record_path}: complete {} evidence needs at least {} observed interactions",
@@ -22,7 +22,7 @@ pub(crate) fn validate_behaviour(
     for (position, item) in interactions.iter().enumerate() {
         require_nonempty(
             item,
-            INTERACTION_FIELDS,
+            &field_names::<Interaction>(),
             &format!("{record_path}: interaction {}", position + 1),
         )?;
         if !verified_provenance.supports_value(item) {
@@ -36,7 +36,11 @@ pub(crate) fn validate_behaviour(
     let journey_value = record.get("journey");
     if py_truthy(journey_value) {
         let journey = journey_value.expect("truthy");
-        require_nonempty(journey, JOURNEY_FIELDS, &format!("{record_path}: journey"))?;
+        require_nonempty(
+            journey,
+            &field_names::<Journey>(),
+            &format!("{record_path}: journey"),
+        )?;
         if !verified_provenance.supports_value(journey) {
             bail!("{record_path}: journey lacks verified typed provenance");
         }
@@ -55,7 +59,7 @@ pub(crate) fn validate_behaviour(
         for (position, step) in journey["steps"].as_array().unwrap().iter().enumerate() {
             require_nonempty(
                 step,
-                JOURNEY_STEP_FIELDS,
+                &field_names::<JourneyStep>(),
                 &format!("{record_path}: journey step {}", position + 1),
             )?;
             if !verified_provenance.supports_value(step) {
@@ -69,7 +73,7 @@ pub(crate) fn validate_behaviour(
                 bail!("{record_path}: journey step order is invalid");
             }
         }
-    } else if evidence_status_of(record) == Some("complete") {
+    } else if EvidenceStatus::of(record) == Some(EvidenceStatus::Complete) {
         bail!("{record_path}: complete evidence needs a journey");
     }
 
@@ -80,10 +84,9 @@ pub(crate) fn validate_behaviour(
                 other => vec![other.clone()],
             };
             for (position, item) in entries.iter().enumerate() {
-                let allowed: std::collections::HashSet<&str> = MOTION_ANALYSIS_FIELDS
-                    .iter()
-                    .chain(MOTION_ANALYSIS_OPTIONAL.iter())
-                    .copied()
+                let allowed: std::collections::HashSet<String> = field_names::<MotionAnalysis>()
+                    .into_iter()
+                    .chain(field_names::<MotionAnalysisExtras>())
                     .collect();
                 let obj = match item.as_object() {
                     Some(obj) => obj,
@@ -104,10 +107,9 @@ pub(crate) fn validate_behaviour(
                         unknown
                     );
                 }
-                let missing: Vec<&str> = MOTION_ANALYSIS_FIELDS
-                    .iter()
-                    .filter(|field| !obj.contains_key(**field))
-                    .copied()
+                let missing: Vec<String> = field_names::<MotionAnalysis>()
+                    .into_iter()
+                    .filter(|field| !obj.contains_key(field))
                     .collect();
                 if !missing.is_empty() {
                     bail!(
@@ -125,9 +127,11 @@ pub(crate) fn validate_behaviour(
                 if let Some(timing) = item.get("timing_class") {
                     if !timing.is_null() {
                         let timing = timing.as_str().unwrap_or("");
-                        if !TIMING_CLASSES.contains(&timing) {
+                        if reference_contract::named::<TimingClass>(timing).is_none() {
+                            let classes: Vec<String> =
+                                TimingClass::ALL.iter().map(spelling).collect();
                             bail!(
-                                "{record_path}: timing class '{timing}' is not one of {TIMING_CLASSES:?}"
+                                "{record_path}: timing class '{timing}' is not one of {classes:?}"
                             );
                         }
                     }
@@ -135,7 +139,7 @@ pub(crate) fn validate_behaviour(
             }
         }
         _ => {
-            if evidence_status_of(record) == Some("complete") {
+            if EvidenceStatus::of(record) == Some(EvidenceStatus::Complete) {
                 bail!("{record_path}: complete evidence needs motion_analysis");
             }
         }
@@ -162,7 +166,7 @@ pub(crate) fn validate_behaviour(
             );
         }
     }
-    if evidence_status_of(record) == Some("complete") {
+    if EvidenceStatus::of(record) == Some(EvidenceStatus::Complete) {
         let count = observations
             .and_then(Value::as_array)
             .map(Vec::len)
