@@ -29,12 +29,15 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
             .get("host")
             .and_then(Value::as_str)
             .context("host report has no host")?;
-        let (mut identity, mut checks) = match manifest.runtime_product.kind.as_str() {
-            "ios-bundle" => ios_booted_identity(host)?,
-            "android-package" => android_device_identity(host)?,
-            "desktop-display-name" => resolve_desktop_identity(manifest, host)?,
-            "cli-binary" | "tui-slug" => resolve_terminal_identity(manifest, host)?,
-            "url" => (
+        let declared_kind = ProductKind::of(&manifest.runtime_product.kind)?;
+        let (mut identity, mut checks) = match declared_kind {
+            ProductKind::IosBundle => ios_booted_identity(host)?,
+            ProductKind::AndroidPackage => android_device_identity(host)?,
+            ProductKind::DesktopDisplayName => resolve_desktop_identity(manifest, host)?,
+            ProductKind::CliBinary | ProductKind::TuiSlug => {
+                resolve_terminal_identity(manifest, host)?
+            }
+            ProductKind::Url => (
                 RuntimeExecutionIdentity {
                     host: host.into(),
                     observed_hostname: String::new(),
@@ -53,13 +56,17 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
                 },
                 Vec::new(),
             ),
-            kind => bail!("unsupported unresolved runtime product kind {kind}"),
+            kind => bail!(
+                "unsupported unresolved runtime product kind {}",
+                kind.name()
+            ),
         };
         identity.observed_hostname = observed_hostname(host_report)?;
         identity.resolved_product_identifier = manifest.runtime_product.identifier.clone();
         let product = manifest.runtime_product.identifier.as_str();
-        let check = match manifest.runtime_product.kind.as_str() {
-            "ios-bundle" => {
+        let resolved_kind = ProductKind::of(&manifest.runtime_product.kind)?;
+        let check = match resolved_kind {
+            ProductKind::IosBundle => {
                 let udid = identity
                     .device_id
                     .as_deref()
@@ -69,28 +76,28 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
                     &["xcrun", "simctl", "get_app_container", udid, product, "app"],
                 )
             }
-            "android-package" => {
+            ProductKind::AndroidPackage => {
                 let serial = identity
                     .device_id
                     .as_deref()
                     .context("Android identity has no serial")?;
                 host_probe(host, &["adb", "-s", serial, "shell", "pm", "path", product])
             }
-            "desktop-bundle" => {
+            ProductKind::DesktopBundle => {
                 let query = format!(
                     "kMDItemCFBundleIdentifier == '{}'",
                     product.replace('\'', "\\'")
                 );
                 host_probe(host, &["mdfind", &query])
             }
-            "cli-binary" | "tui-binary" => {
+            ProductKind::CliBinary | ProductKind::TuiBinary => {
                 let path = identity
                     .executable_path
                     .as_deref()
                     .context("terminal identity has no exact executable path")?;
                 host_probe(host, &["shasum", "-a", "256", path])
             }
-            "url" => {
+            ProductKind::Url => {
                 let parsed = url::Url::parse(product).context("declared URL is invalid")?;
                 if parsed.scheme() != "https"
                     || parsed.username() != ""
@@ -115,13 +122,13 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
                     "declared_url": product,
                 })
             }
-            _ => unreachable!(),
+            kind => bail!(
+                "runtime product kind {} was not resolved before its readiness check",
+                kind.name()
+            ),
         };
         let output = ready_output(&check, "verify exact runtime product")?;
-        if matches!(
-            manifest.runtime_product.kind.as_str(),
-            "cli-binary" | "tui-binary"
-        ) {
+        if resolved_kind.executable() {
             let observed = output.split_whitespace().next().unwrap_or_default();
             if identity.executable_sha256.as_deref() != Some(observed) {
                 bail!("terminal executable changed during preflight");
@@ -136,7 +143,7 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
             )?);
         }
         checks.push(check);
-        if matches!(manifest.engine.as_str(), "mobile" | "desktop") {
+        if Engine::of(&manifest.engine)?.prepares_runtime() {
             checks.push(prepared_runtime_check(manifest, &identity, host)?);
         }
         manifest.execution_identity = Some(identity.clone());
@@ -173,74 +180,6 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
                 "checks": [],
             })
         }
-    }
-}
-
-pub(crate) fn aggregate_catalog_entry(entry: &mut Value) {
-    let states: Vec<&str> = entry
-        .get("records")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-        .filter_map(|record| record.get("state").and_then(Value::as_str))
-        .collect();
-    let failure = |state: &&str| {
-        matches!(
-            *state,
-            "unavailable"
-                | "preflight_failed"
-                | "submission_failed"
-                | "lost"
-                | "failed"
-                | "cancelled"
-                | "partial"
-        )
-    };
-    let state = if states.iter().any(|state| *state == "running") {
-        "running"
-    } else if states.iter().any(|state| *state == "cancel_pending") {
-        "cancel_pending"
-    } else if states.iter().any(|state| *state == "pending_review") {
-        "pending_review"
-    } else if states
-        .iter()
-        .any(|state| matches!(*state, "queued" | "submitting" | "preflight_passed"))
-    {
-        "queued"
-    } else if states
-        .iter()
-        .any(|state| matches!(*state, "planned" | "preflighting"))
-    {
-        "planned"
-    } else if states.iter().all(|state| *state == "imported") && !states.is_empty() {
-        "imported"
-    } else if states
-        .iter()
-        .all(|state| matches!(*state, "completed" | "uploaded" | "imported"))
-        && !states.is_empty()
-    {
-        "completed"
-    } else if states.iter().any(failure) {
-        "partial"
-    } else {
-        "failed"
-    };
-    // Captured while `states` still borrows `entry`, used after the writes.
-    let no_planned_records = states.is_empty();
-    let mut failures: BTreeMap<String, usize> = BTreeMap::new();
-    for value in states.iter().filter(|state| failure(state)) {
-        *failures.entry((*value).to_string()).or_default() += 1;
-    }
-    entry["state"] = json!(state);
-    entry["partial"] = json!(!failures.is_empty());
-    entry["failure_counts"] = serde_json::to_value(failures).unwrap_or(Value::Null);
-    // An empty plan is not a failed crawl. Expose the missing record attempts
-    // through the same typed diagnostic shape as record-level refusals.
-    if no_planned_records {
-        entry["diagnostic"] = json!({
-            "code": "no_planned_records",
-            "message": "catalog carries no record attempts; nothing was planned, submitted or imported for it",
-        });
     }
 }
 

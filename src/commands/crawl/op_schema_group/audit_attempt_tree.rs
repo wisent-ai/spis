@@ -188,8 +188,10 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         crate::discard(&readback)?;
         let mut stado = crawl_storage_command();
         stado.args(["storage", "get", uri]).arg(&readback);
-        let output =
-            crate::discarding(command_output(&mut stado, "read back crawl attempt"), &readback)?;
+        let output = crate::discarding(
+            command_output(&mut stado, "read back crawl attempt"),
+            &readback,
+        )?;
         if !output.status.success() {
             return crate::discarding(
                 Err(anyhow::anyhow!(

@@ -1,44 +1,5 @@
 use super::*;
 
-pub(crate) fn update_run_state(run: &mut Value) {
-    let states: Vec<&str> = run
-        .get("catalogs")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-        .filter_map(|entry| entry.get("state").and_then(Value::as_str))
-        .collect();
-    let state = if states.iter().any(|state| *state == "running") {
-        "running"
-    } else if states.iter().any(|state| *state == "cancel_pending") {
-        "cancel_pending"
-    } else if states.iter().any(|state| *state == "pending_review") {
-        "pending_review"
-    } else if states.iter().any(|state| *state == "queued") {
-        "queued"
-    } else if states.iter().any(|state| *state == "planned") {
-        "planned"
-    } else if states.iter().all(|state| *state == "imported") && !states.is_empty() {
-        "imported"
-    } else if states
-        .iter()
-        .all(|state| matches!(*state, "completed" | "uploaded" | "imported"))
-        && !states.is_empty()
-    {
-        "completed"
-    } else if states
-        .iter()
-        .any(|state| matches!(*state, "partial" | "completed" | "uploaded" | "imported"))
-    {
-        "partial"
-    } else {
-        "failed"
-    };
-    let partial = states.iter().any(|state| *state == "partial");
-    run["state"] = json!(state);
-    run["partial"] = json!(partial);
-}
-
 pub(crate) fn status(rest: &[String]) -> Result<()> {
     let (run_id, record) = parse_run_and_record(rest, false)?;
     let mut selected = load(run_id.as_deref())?;
@@ -69,21 +30,21 @@ pub(crate) fn parse_run_and_record(
 ) -> Result<(Option<String>, Option<String>)> {
     let mut run = None;
     let mut record = None;
-    let mut i = 0;
-    while i < rest.len() {
-        match rest[i].as_str() {
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--run" => {
-                i += 1;
-                run = Some(crate::commands::required(rest.get(i), "--run needs a value")?.clone());
+                run = Some(
+                    crate::commands::required(arguments.next(), "--run needs a value")?.clone(),
+                );
             }
             "--record" => {
-                i += 1;
-                record =
-                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record = Some(
+                    crate::commands::required(arguments.next(), "--record needs a value")?.clone(),
+                );
             }
             value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
-        i += 1;
     }
     if require_run && run.is_none() {
         return Err(crate::commands::usage("--run is required"));
@@ -108,15 +69,12 @@ pub(crate) fn rearm_record_attempt(
 ) -> Result<Option<u32>> {
     let mut rearmed = None;
     mutate_record(run_id, catalog, record, |entry| {
-        let state = entry
-            .get("state")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .to_string();
-        if !matches!(
-            state.as_str(),
-            "failed" | "cancelled" | "lost" | "submission_failed" | "preflight_failed"
-        ) {
+        let state = State::of(
+            entry
+                .get("state")
+                .context("record entry carries no state, so it cannot be re-armed")?,
+        )?;
+        if !state.ended_undelivered() {
             return Ok(());
         }
         if entry.get("cancel_intent").is_some_and(Value::is_object) {
@@ -129,9 +87,9 @@ pub(crate) fn rearm_record_attempt(
         let mut manifest: RuntimeManifest =
             serde_json::from_value(entry.get("manifest").cloned().unwrap_or(Value::Null))
                 .context("terminal record retains no typed runtime manifest to re-arm")?;
-        manifest.attempt = manifest
-            .attempt
-            .checked_add(1)
+        // The next attempt is the first number after this one.
+        manifest.attempt = (manifest.attempt..=u32::MAX)
+            .find(|next| *next > manifest.attempt)
             .context("record has exhausted the attempt counter")?;
         manifest.execution_identity = None;
         let reference = reference_path(&manifest.catalog, &manifest.record)?;
@@ -143,7 +101,7 @@ pub(crate) fn rearm_record_attempt(
         entry["attempt_id"] = json!(manifest.attempt_id);
         entry["artifact_uri"] = json!(manifest.artifact_uri);
         entry["output_uri"] = json!(manifest.output_uri);
-        entry["state"] = json!("planned");
+        entry["state"] = json!(State::Planned.name());
         for cleared in [
             "command",
             "stado_job_id",
@@ -162,7 +120,8 @@ pub(crate) fn rearm_record_attempt(
         entry["diagnostic"] = json!({
             "code": "attempt_rearmed",
             "message": format!(
-                "terminal {state} attempt retained in history; attempt {} planned with fresh identity",
+                "terminal {} attempt retained in history; attempt {} planned with fresh identity",
+                state.name(),
                 manifest.attempt
             ),
         });

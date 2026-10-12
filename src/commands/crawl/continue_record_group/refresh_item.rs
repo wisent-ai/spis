@@ -214,7 +214,10 @@ pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String>
             &readback,
         );
     }
-    let recovered = crate::discarding(std::fs::read(&readback).map_err(anyhow::Error::from), &readback)?;
+    let recovered = crate::discarding(
+        std::fs::read(&readback).map_err(anyhow::Error::from),
+        &readback,
+    )?;
     crate::discard(&readback)?;
     if recovered != bytes || crate::sha256_hex(&recovered) != digest {
         bail!("cancel intent read-back differs from the exact requested cancellation");
