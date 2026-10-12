@@ -206,14 +206,16 @@ pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String>
         .output()
         .context("read back immutable crawl cancel intent")?;
     if !output.status.success() {
-        let _ = std::fs::remove_file(&readback);
-        bail!(
-            "cancel intent read-back failed: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
+        return crate::discarding(
+            Err(anyhow::anyhow!(
+                "cancel intent read-back failed: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            )),
+            &readback,
         );
     }
-    let recovered = std::fs::read(&readback)?;
-    let _ = std::fs::remove_file(&readback);
+    let recovered = crate::discarding(std::fs::read(&readback).map_err(anyhow::Error::from), &readback)?;
+    crate::discard(&readback)?;
     if recovered != bytes || crate::sha256_hex(&recovered) != digest {
         bail!("cancel intent read-back differs from the exact requested cancellation");
     }

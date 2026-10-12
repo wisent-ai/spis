@@ -19,3 +19,14 @@ pub fn discarding<T>(result: Result<T>, temporary: &Path) -> Result<T> {
         _ => Err(error),
     }
 }
+
+/// Remove a temporary whatever the step that used it answered: one already
+/// gone is no failure, one that stays is an error naming it and its cause.
+pub fn discard(temporary: &Path) -> Result<()> {
+    match std::fs::remove_file(temporary) {
+        Err(left) if left.kind() != std::io::ErrorKind::NotFound => {
+            Err(anyhow::anyhow!("{} is left behind: {left}", temporary.display()))
+        }
+        _ => Ok(()),
+    }
+}

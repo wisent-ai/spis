@@ -185,19 +185,22 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
             );
         }
         let readback = parent.join(format!(".{attempt_name}.{}.readback", std::process::id()));
-        let _ = std::fs::remove_file(&readback);
+        crate::discard(&readback)?;
         let mut stado = crawl_storage_command();
         stado.args(["storage", "get", uri]).arg(&readback);
-        let output = command_output(&mut stado, "read back crawl attempt")?;
+        let output =
+            crate::discarding(command_output(&mut stado, "read back crawl attempt"), &readback)?;
         if !output.status.success() {
-            let _ = std::fs::remove_file(&readback);
-            bail!(
-                "stado storage get refused the published crawl attempt: {}",
-                String::from_utf8_lossy(&output.stderr).trim()
+            return crate::discarding(
+                Err(anyhow::anyhow!(
+                    "stado storage get refused the published crawl attempt: {}",
+                    String::from_utf8_lossy(&output.stderr).trim()
+                )),
+                &readback,
             );
         }
         let observed = hash_regular_file(&readback, bytes);
-        let _ = std::fs::remove_file(&readback);
+        crate::discard(&readback)?;
         let (observed_sha256, observed_bytes) = observed?;
         if observed_sha256 != sha256 || observed_bytes != bytes {
             bail!(

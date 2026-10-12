@@ -61,22 +61,27 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
         manifest.attempt_id,
         std::process::id()
     ));
-    let _ = std::fs::remove_file(&readback);
-    let output = command_output(
-        crawl_storage_command()
-            .args(["storage", "get", &manifest.output_uri])
-            .arg(&readback),
-        "read back worker report",
+    crate::discard(&readback)?;
+    let output = crate::discarding(
+        command_output(
+            crawl_storage_command()
+                .args(["storage", "get", &manifest.output_uri])
+                .arg(&readback),
+            "read back worker report",
+        ),
+        &readback,
     )?;
     if !output.status.success() {
-        let _ = std::fs::remove_file(&readback);
-        bail!(
-            "stado storage get refused the published worker report: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
+        return crate::discarding(
+            Err(anyhow::anyhow!(
+                "stado storage get refused the published worker report: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            )),
+            &readback,
         );
     }
     let observed = std::fs::read(&readback);
-    let _ = std::fs::remove_file(&readback);
+    crate::discard(&readback)?;
     if observed? != bytes {
         bail!("published worker report read-back differs from the typed report");
     }

@@ -8,5 +8,5 @@ use std::time::Duration;
 mod staging;
 mod user_agent_group;
 
-pub use staging::discarding;
+pub use staging::{discard, discarding};
 pub use user_agent_group::*;
