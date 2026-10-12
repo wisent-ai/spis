@@ -99,7 +99,8 @@ pub(crate) fn measure_value(
                 Value::Array(a) => a,
                 other => vec![other],
             };
-            'items: for item in entries.iter_mut() {
+            let mut missing_reported = false;
+            for item in entries.iter_mut() {
                 let Some(obj) = item.as_object_mut() else {
                     continue;
                 };
@@ -131,7 +132,7 @@ pub(crate) fn measure_value(
                 );
                 if declared_timing.is_some() && canonical_timing.is_none() {
                     gaps.push(format!(
-                        "motion analysis timing class unrecognized: {}",
+                        "motion analysis timing class {:?} is not a timing class the contract declares and was removed",
                         declared_timing.unwrap()
                     ));
                 }
@@ -147,26 +148,28 @@ pub(crate) fn measure_value(
                         reference_contract::MotionAnalysisExtras,
                     >())
                     .collect();
-                let mut unknown: Vec<String> = obj
+                // A field the contract does not declare is removed from the
+                // record, and the gap names it with the value it held.
+                let unknown: Vec<String> = obj
                     .keys()
                     .filter(|k| !known.contains(k.as_str()))
                     .cloned()
                     .collect();
-                if !unknown.is_empty() {
-                    unknown.sort();
-                    gaps.push(format!(
-                        "motion analysis carries unknown fields {}",
-                        unknown.join(", ")
-                    ));
+                for field in unknown {
+                    if let Some(value) = obj.remove(&field) {
+                        gaps.push(format!(
+                            "motion analysis field {field:?} is not in the reference contract and was removed (it held {value})"
+                        ));
+                    }
                 }
                 let missing: Vec<&str> = required
                     .iter()
                     .map(String::as_str)
                     .filter(|f| !truthy(obj.get(*f)))
                     .collect();
-                if !missing.is_empty() {
+                if !missing.is_empty() && !missing_reported {
                     gaps.push(format!("motion analysis missing {}", missing.join(", ")));
-                    break 'items;
+                    missing_reported = true;
                 }
             }
             *analysis = if was_array {
