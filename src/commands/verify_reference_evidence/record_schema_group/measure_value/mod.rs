@@ -1,5 +1,6 @@
 use super::*;
 
+mod drift;
 mod motion;
 mod states;
 
@@ -49,15 +50,13 @@ pub(crate) fn measure_value(
             requirements.min_journey_steps, requirements.profile
         ));
     }
-    for key in [
-        "actor",
-        "goal",
-        "prerequisites",
-        "failure_route",
-        "recovery_route",
-        "completion_evidence",
-    ] {
-        if !truthy(journey.get(key)) {
+    // The journey's fields are the contract's declared shape; its steps are
+    // counted against the profile's floor above, not merely required.
+    for key in reference_contract::field_names::<reference_contract::Journey>()
+        .into_iter()
+        .filter(|key| key != "steps")
+    {
+        if !truthy(journey.get(&key)) {
             gaps.push(format!("journey missing {key}"));
         }
     }
@@ -74,10 +73,11 @@ pub(crate) fn measure_value(
             requirements.min_interactions, requirements.profile
         ));
     }
+    let interaction_fields = reference_contract::field_names::<reference_contract::Interaction>();
     for item in &interactions {
-        let missing: Vec<&str> = INTERACTION_FIELDS
+        let missing: Vec<&str> = interaction_fields
             .iter()
-            .copied()
+            .map(String::as_str)
             .filter(|f| !truthy(item.get(f)))
             .collect();
         if !missing.is_empty() {
@@ -103,9 +103,12 @@ pub(crate) fn measure_value(
                 let Some(obj) = item.as_object_mut() else {
                     continue;
                 };
-                for (alias, canonical) in MOTION_ANALYSIS_ALIASES {
-                    if let Some(alias_value) = obj.remove(*alias) {
-                        obj.entry(canonical.to_string()).or_insert(alias_value);
+                let older: Vec<String> = obj.keys().cloned().collect();
+                for key in older {
+                    if let Some(canonical) = reference_contract::canonical_analysis_field(&key) {
+                        if let Some(older_value) = obj.remove(&key) {
+                            obj.entry(canonical).or_insert(older_value);
+                        }
                     }
                 }
                 let declared_timing = obj
@@ -132,13 +135,17 @@ pub(crate) fn measure_value(
                         declared_timing.unwrap()
                     ));
                 }
-                for key in MOTION_ANALYSIS_FIELDS {
-                    obj.entry(key.to_string()).or_insert(Value::Null);
+                let required =
+                    reference_contract::field_names::<reference_contract::MotionAnalysis>();
+                for key in &required {
+                    obj.entry(key.clone()).or_insert(Value::Null);
                 }
-                let known: BTreeSet<&str> = MOTION_ANALYSIS_FIELDS
+                let known: BTreeSet<String> = required
                     .iter()
-                    .chain(MOTION_ANALYSIS_OPTIONAL.iter())
-                    .copied()
+                    .cloned()
+                    .chain(reference_contract::field_names::<
+                        reference_contract::MotionAnalysisExtras,
+                    >())
                     .collect();
                 let mut unknown: Vec<String> = obj
                     .keys()
@@ -152,9 +159,9 @@ pub(crate) fn measure_value(
                         unknown.join(", ")
                     ));
                 }
-                let missing: Vec<&str> = MOTION_ANALYSIS_FIELDS
+                let missing: Vec<&str> = required
                     .iter()
-                    .copied()
+                    .map(String::as_str)
                     .filter(|f| !truthy(obj.get(*f)))
                     .collect();
                 if !missing.is_empty() {

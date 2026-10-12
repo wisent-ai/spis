@@ -86,7 +86,8 @@ pub(super) fn measure_states(
             {
                 if let Some(matched) = locate_state_in_motion(&local, frames)? {
                     let diff = matched["mean_abs_diff"].as_f64().unwrap_or(f64::INFINITY);
-                    if diff <= STATE_MATCH_MAX_DIFF {
+                    let tolerance = super::drift::frame_drift(frames);
+                    if tolerance.is_some_and(|tolerance| diff <= tolerance) {
                         let rel = motion
                             .strip_prefix(base)
                             .unwrap_or(motion)
@@ -100,7 +101,13 @@ pub(super) fn measure_states(
                                 "method".into(),
                                 json!("16x16 grayscale mean-absolute-difference frame search"),
                             );
-                            details.insert("max_mean_abs_diff".into(), json!(STATE_MATCH_MAX_DIFF));
+                            details.insert("max_mean_abs_diff".into(), json!(tolerance));
+                            details.insert(
+                                "tolerance".into(),
+                                json!(
+                                    "mean difference between the motion's adjacent sampled frames"
+                                ),
+                            );
                         }
                         obj.insert("source_match".into(), source_match);
                         obj.insert(
