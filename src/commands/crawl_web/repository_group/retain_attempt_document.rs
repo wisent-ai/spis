@@ -39,11 +39,9 @@ pub(crate) fn retain_attempt_document(
     // The distinction between `weles-status.json` and `weles/status.json` is one
     // character, and getting it wrong reintroduces the permanent second-import failure,
     // so the merged subtrees are refused here rather than trusted to every call site.
-    if relative
-        .split('/')
-        .next()
-        .is_some_and(|leading| matches!(leading, "weles" | "recordings"))
-    {
+    if relative.split('/').next().is_some_and(|leading| {
+        serde_json::from_value::<MergedSubtree>(Value::String(leading.into())).is_ok()
+    }) {
         return Err(io_failed(
             "an operational attempt document may not be retained inside a merged record subtree",
         ));
@@ -65,7 +63,20 @@ pub(crate) fn retain_attempt_document(
         relative.replace('/', "."),
         std::process::id()
     ));
-    let _ = std::fs::remove_file(&temporary);
+    // A stale temporary that cannot be cleared would surface only as
+    // create_new's "already exists"; it refuses by its own cause instead.
+    match std::fs::remove_file(&temporary) {
+        Err(error) if error.kind() != std::io::ErrorKind::NotFound => {
+            return Err(WorkerFailure::new(
+                "web_worker_io_failed",
+                format!(
+                    "the stale temporary {} could not be cleared: {error}",
+                    temporary.display()
+                ),
+            ));
+        }
+        _ => {}
+    }
     let bytes = serde_json::to_vec_pretty(value)?;
     let result = (|| -> Outcome<()> {
         let mut file = std::fs::OpenOptions::new()
@@ -79,10 +90,27 @@ pub(crate) fn retain_attempt_document(
         std::fs::File::open(parent)?.sync_all()?;
         Ok(())
     })();
-    if result.is_err() {
-        let _ = std::fs::remove_file(&temporary);
-    }
-    result
+    result.map_err(|mut failure| {
+        if let Err(left) = std::fs::remove_file(&temporary) {
+            if left.kind() != std::io::ErrorKind::NotFound {
+                failure.message = format!(
+                    "{}; {} is left behind: {left}",
+                    failure.message,
+                    temporary.display()
+                );
+            }
+        }
+        failure
+    })
+}
+
+/// The record subtrees the importer merges from Weles; an operational
+/// document is never retained inside one.
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+enum MergedSubtree {
+    Weles,
+    Recordings,
 }
 
 /// Is `file_name` a document `retain_attempt_document` staged for THIS attempt, whose
