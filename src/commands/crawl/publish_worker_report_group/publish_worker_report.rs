@@ -262,9 +262,6 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
     })();
     let _ = unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_UN) };
     drop(lock);
-    if result.is_err() {
-        let _ = std::fs::remove_file(&temporary);
-    }
-    *run = result?;
+    *run = crate::discarding(result, &temporary)?;
     Ok(())
 }

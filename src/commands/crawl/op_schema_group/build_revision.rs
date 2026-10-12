@@ -235,8 +235,5 @@ pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {
     })();
     let _ = unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_UN) };
     drop(lock);
-    if result.is_err() {
-        let _ = std::fs::remove_file(&temporary);
-    }
-    result
+    crate::discarding(result, &temporary)
 }

@@ -244,10 +244,7 @@ pub(crate) fn write_immutable_file(path: &Path, bytes: &[u8]) -> Result<()> {
         File::open(parent)?.sync_all()?;
         Ok(())
     })();
-    if result.is_err() {
-        let _ = std::fs::remove_file(&staged);
-    }
-    result
+    crate::discarding(result, &staged)
 }
 
 /// Merge one immutable retained subtree into the record without disturbing the

@@ -60,10 +60,7 @@ pub(crate) fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
             .with_context(|| format!("fsync checkpoint parent {}", parent.display()))?;
         Ok(())
     })();
-    if result.is_err() && temporary.exists() {
-        let _ = std::fs::remove_file(&temporary);
-    }
-    result
+    crate::discarding(result, &temporary)
 }
 
 pub(crate) fn state_bytes(state: &DurableState) -> Result<Vec<u8>> {
