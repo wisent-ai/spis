@@ -238,7 +238,11 @@ impl Appium {
         Ok(())
     }
 
+    /// Ends the driver session. One the driver keeps holds the device for the
+    /// next crawl, so a delete that failed is said with the session and cause.
     pub(crate) fn delete_session(&self, session: &str) {
-        let _ = self.call("DELETE", &format!("/session/{session}"), None);
+        if let Err(error) = self.call("DELETE", &format!("/session/{session}"), None) {
+            eprintln!("spis: Appium session {session} was not deleted: {error:#}");
+        }
     }
 }
