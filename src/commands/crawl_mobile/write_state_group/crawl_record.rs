@@ -58,7 +58,7 @@ pub(crate) fn crawl_record(
                 break;
             }
             let state_id = hash_text(&current.source);
-            let available = actions(&current.source, platform);
+            let available = actions(&current.source, platform)?;
             if states.insert(state_id.clone()) {
                 let index = states.len();
                 let (screenshot, screenshot_owner_before, screenshot_owner_after) =
@@ -90,7 +90,7 @@ pub(crate) fn crawl_record(
                         "selector": action.selector,
                         "label": action.label,
                         "kind": action.kind,
-                        "destructive": action.destructive,
+                        "safety": action.safety.name(),
                         "withheld_reason": action_block_reason(action),
                     })).collect::<Vec<_>>(),
                 }));
@@ -144,7 +144,7 @@ pub(crate) fn crawl_record(
                 }));
                 break;
             }
-            let Some(action) = actions(&before.source, platform)
+            let Some(action) = actions(&before.source, platform)?
                 .into_iter()
                 .find(|action| {
                     action.selector == selected.selector && action.label == selected.label

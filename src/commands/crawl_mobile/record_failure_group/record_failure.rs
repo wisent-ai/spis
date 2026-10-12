@@ -75,7 +75,7 @@ pub(crate) struct Record {
 pub(crate) struct Action {
     pub(crate) selector: String,
     pub(crate) label: String,
-    pub(crate) destructive: bool,
+    pub(crate) safety: crate::commands::control_safety::Safety,
     pub(crate) kind: String,
 }
 
@@ -88,9 +88,10 @@ pub(crate) struct PathStep {
 pub(crate) fn canonical_driver_url(value: &str) -> Result<String> {
     let parsed = url::Url::parse(value).context("--driver-url must be a URL")?;
     let local = matches!(parsed.host_str(), Some("127.0.0.1" | "localhost" | "::1"));
-    if parsed.host_str().is_none()
-        || (parsed.scheme() != "https" && !(parsed.scheme() == "http" && local))
-    {
+    // The driver is reached over TLS, or in the clear only on this machine.
+    let encrypted = parsed.scheme() == "https";
+    let plain = parsed.scheme() == "http";
+    if parsed.host_str().is_none() || !(encrypted || plain && local) {
         bail!("--driver-url must be HTTPS or loopback HTTP");
     }
     if !parsed.username().is_empty()

@@ -37,7 +37,7 @@ pub(super) fn take_step(
         role: selected.role.clone(),
         label: selected.label.clone(),
     };
-    let Some(action) = matching_action(&pre, &step) else {
+    let Some(action) = matching_action(&pre, &step)? else {
         blocked.push(json!({
             "state": hash,
             "role": step.role,

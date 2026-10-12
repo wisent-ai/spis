@@ -109,7 +109,7 @@ pub(crate) fn crawl_record(
         let current = snapshot(driver, &session, pid, window_id, &observation_path)?;
         assert_target_surface(&current, pid, window_id, &bundle_id)?;
         let hash = state_hash(&current);
-        let available = actions(&current);
+        let available = actions(&current)?;
         if seen_states.insert(hash.clone()) {
             let index = seen_states.len();
             let snapshot_path = states_dir.join(format!("state-{index:04}.json"));
@@ -129,7 +129,7 @@ pub(crate) fn crawl_record(
                 "available_actions": available.iter().map(|action| json!({
                     "role": action.role,
                     "label": action.label,
-                    "destructive": action.destructive,
+                    "safety": action.safety.name(),
                     "kind": "click",
                     "withheld_reason": action_block_reason(action),
                 })).collect::<Vec<_>>(),

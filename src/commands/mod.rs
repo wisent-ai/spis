@@ -6,6 +6,7 @@ pub mod capture_widths;
 pub mod catalog_type;
 pub mod check_upstream_drift;
 pub mod collect_example_images;
+pub(crate) mod control_safety;
 pub mod corpus;
 pub mod crawl;
 pub mod crawl_cli;

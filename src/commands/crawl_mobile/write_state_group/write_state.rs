@@ -29,7 +29,7 @@ pub(crate) fn write_state(
             "actions": actions.iter().map(|action| json!({
                 "selector": action.selector,
                 "label": action.label,
-                "destructive": action.destructive,
+                "safety": action.safety.name(),
                 "kind": "click",
             })).collect::<Vec<_>>(),
         }))? + "\n",

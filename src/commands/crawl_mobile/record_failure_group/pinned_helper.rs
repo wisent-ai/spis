@@ -165,120 +165,83 @@ pub(crate) fn readiness_observation(
     Ok(observation)
 }
 
+/// Why a control is not pressed, from what Brama judged pressing it does.
 pub(crate) fn action_block_reason(action: &Action) -> Option<&'static str> {
-    if potential_consent_trigger(&action.label) {
-        return Some("permission/notification-like control withheld before delivery");
-    }
-    if action.destructive {
-        return Some("destructive control withheld before delivery");
-    }
-    if action.kind.ends_with("EditText")
-        || matches!(
-            action.kind.as_str(),
-            "XCUIElementTypeTextField"
-                | "XCUIElementTypeSecureTextField"
-                | "XCUIElementTypeSearchField"
-                | "XCUIElementTypeTextView"
-        )
-    {
-        return Some("editable control withheld before delivery");
-    }
-    let label = action.label.trim().to_ascii_lowercase();
-    if matches!(label.as_str(), "back" | "cancel" | "close" | "dismiss") {
-        return None;
-    }
-    Some("control has no digest-bound journey authorization and was withheld before delivery")
+    action.safety.withheld()
 }
 
-pub(crate) fn potential_consent_trigger(label: &str) -> bool {
-    Regex::new(
-        r"(?i)\b(allow while using|allow once|don'?t allow|enable (push )?notifications|turn on notifications|grant permission|camera access|microphone access|location access)\b",
-    )
-    .expect("static consent regex")
-    .is_match(label)
+/// The attribute `field` of `tag` when it names the element.
+fn named_by(tag: &str, field: &'static str) -> Option<(&'static str, String)> {
+    attribute(tag, field)
+        .filter(|value| !value.trim().is_empty())
+        .map(|value| (field, value))
 }
 
-pub(crate) fn actions(source: &str, platform: Platform) -> Vec<Action> {
+/// Every named element of `source`, each with what pressing it does as
+/// Brama judged it (`control_safety`). A screen nobody could judge is
+/// refused, never pressed.
+pub(crate) fn actions(source: &str, platform: Platform) -> Result<Vec<Action>> {
     let tags = Regex::new(r"<[^!?][^>]*>").expect("static tag regex");
-    let destructive = Regex::new(
-        r"(?i)\b(delete|remove|erase|close account|purchase|buy|pay|send|publish|post|confirm deletion|log ?out|sign ?out)\b",
-    )
-    .expect("static destructive regex");
     let mut found = Vec::new();
     let mut seen = HashSet::new();
-    let mut editable_index = 0usize;
     for tag in tags.find_iter(source).map(|value| value.as_str()) {
-        let node_name: String = tag[1..]
+        let node_name: String = tag
+            .trim_start_matches('<')
             .chars()
             .take_while(|character| {
                 character.is_ascii_alphanumeric() || matches!(character, '.' | '_' | '-')
             })
             .collect();
         let kind = attribute(tag, "type").unwrap_or_else(|| node_name.clone());
-        let editable = match platform {
-            Platform::Android => kind.ends_with("EditText"),
-            Platform::Ios => matches!(
-                kind.as_str(),
-                "XCUIElementTypeTextField"
-                    | "XCUIElementTypeSecureTextField"
-                    | "XCUIElementTypeSearchField"
-                    | "XCUIElementTypeTextView"
-            ),
-        };
-        let clickable = match platform {
-            Platform::Android => {
-                (editable || attribute(tag, "clickable").as_deref() == Some("true"))
-                    && attribute(tag, "enabled").as_deref() != Some("false")
-            }
-            Platform::Ios => {
-                (editable
-                    || matches!(
-                        kind.as_str(),
-                        "XCUIElementTypeButton"
-                            | "XCUIElementTypeCell"
-                            | "XCUIElementTypeLink"
-                            | "XCUIElementTypeTab"
-                            | "XCUIElementTypeMenuItem"
-                            | "XCUIElementTypeSwitch"
-                    ))
-                    && attribute(tag, "enabled").as_deref() != Some("false")
-            }
-        };
-        if !clickable {
+        if attribute(tag, "enabled").as_deref() == Some("false") {
             continue;
         }
-        let candidates: &[&str] = match platform {
-            Platform::Android => &["resource-id", "content-desc", "hint", "text"],
-            Platform::Ios => &["name", "label", "placeholder", "value"],
+        // Android says which elements take a tap; an input takes text.
+        if matches!(platform, Platform::Android)
+            && attribute(tag, "clickable").as_deref() != Some("true")
+            && !kind.ends_with("EditText")
+        {
+            continue;
+        }
+        // The attribute that names an element on each platform, in the
+        // order its accessibility tree states them.
+        let named = match platform {
+            Platform::Android => named_by(tag, "resource-id")
+                .or_else(|| named_by(tag, "content-desc"))
+                .or_else(|| named_by(tag, "hint"))
+                .or_else(|| named_by(tag, "text")),
+            Platform::Ios => named_by(tag, "name")
+                .or_else(|| named_by(tag, "label"))
+                .or_else(|| named_by(tag, "placeholder"))
+                .or_else(|| named_by(tag, "value")),
         };
-        let named = candidates
-            .iter()
-            .filter_map(|field| attribute(tag, field).map(|value| (*field, value)))
-            .find(|(_, value)| !value.trim().is_empty());
-        let (selector, label) = if let Some((field, value)) = named {
-            let Some(literal) = xpath_literal(&value) else {
-                continue;
-            };
-            (format!("//*[@{field}={literal}]"), value)
-        } else if editable {
-            editable_index += 1;
-            (
-                format!("(//{kind})[{editable_index}]"),
-                format!("unlabelled input {editable_index}"),
-            )
-        } else {
+        let Some((field, label)) = named else {
             continue;
         };
+        let Some(literal) = xpath_literal(&label) else {
+            continue;
+        };
+        let selector = format!("//*[@{field}={literal}]");
         if seen.insert(selector.clone()) {
-            found.push(Action {
-                selector,
-                destructive: destructive.is_match(&label),
-                label,
-                kind,
-            });
+            found.push((selector, label, kind));
         }
     }
-    found
+    let named: Vec<(String, String)> = found
+        .iter()
+        .map(|(_, label, kind)| (kind.clone(), label.clone()))
+        .collect();
+    let classes = crate::commands::control_safety::judge("crawl-mobile", &named)?;
+    Ok(found
+        .into_iter()
+        .zip(classes)
+        .filter(|(_, safety)| *safety != crate::commands::control_safety::Safety::Inert)
+        .map(|((selector, label, kind), safety)| Action {
+            selector,
+            label,
+            safety,
+            kind,
+        })
+        .collect())
 }
 
 pub(crate) fn hash_text(value: &str) -> String {

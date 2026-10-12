@@ -19,7 +19,7 @@ pub(crate) struct Action {
     pub(crate) role: String,
     pub(crate) label: String,
     pub(crate) token: String,
-    pub(crate) destructive: bool,
+    pub(crate) safety: crate::commands::control_safety::Safety,
 }
 
 /// Only the absolute bundle paths the coordinator itself admits. Inherited

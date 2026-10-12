@@ -24,8 +24,6 @@ pub(crate) fn snapshot(
             "session": session,
             "pid": pid,
             "window_id": window_id,
-            "max_elements": 4000,
-            "max_depth": 40,
         }),
         &[
             std::ffi::OsStr::new("--screenshot-out-file"),
@@ -34,13 +32,12 @@ pub(crate) fn snapshot(
     )?;
     let metadata = std::fs::symlink_metadata(screenshot)
         .with_context(|| format!("read fresh screenshot metadata {}", screenshot.display()))?;
+    // An empty file is not a PNG either, so the byte check below refuses it.
     if metadata.file_type().is_symlink()
         || !metadata.file_type().is_file()
-        || metadata.len() == 0
-        || metadata.len() > 16 * 1024 * 1024
         || metadata.modified().is_ok_and(|modified| modified < started)
     {
-        bail!("Cua screenshot is not a fresh bounded regular file");
+        bail!("Cua screenshot is not a fresh regular file");
     }
     let bytes = std::fs::read(screenshot)?;
     if !bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
@@ -67,73 +64,63 @@ pub(crate) fn normalize(value: &str) -> String {
         .to_lowercase()
 }
 
-pub(crate) fn actions(snapshot: &Value) -> Vec<Action> {
-    let roles = [
-        "button",
-        "link",
-        "menuitem",
-        "tab",
-        "checkbox",
-        "radiobutton",
-        "switch",
-        "cell",
-        "row",
-        "disclosuretriangle",
-        "combobox",
-        "popupbutton",
-        "textfield",
-        "textarea",
-        "searchfield",
-        "securetextfield",
-    ];
-    let destructive = regex::Regex::new(
-        r"(?i)\b(delete|remove|erase|close account|purchase|buy|pay|send|publish|post|confirm deletion|log ?out|sign ?out)\b",
-    )
-    .expect("static destructive regex");
+/// Every labelled element of `snapshot` with a token, each with what
+/// pressing it does as Brama judged it (`control_safety`). A window nobody
+/// could judge is refused, never pressed.
+pub(crate) fn actions(snapshot: &Value) -> Result<Vec<Action>> {
     let mut seen = HashSet::new();
     let mut found = Vec::new();
     for element in DriverResponse(snapshot).elements().into_iter().flatten() {
-        let role = element
-            .get("role")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .trim_start_matches("AX")
-            .to_lowercase();
-        if !roles.contains(&role.as_str()) || element.get("enabled") == Some(&Value::Bool(false)) {
+        if element.get("enabled") == Some(&Value::Bool(false)) {
             continue;
         }
-        let label = ["label", "title", "placeholder", "identifier", "value"]
-            .iter()
-            .filter_map(|key| element.get(*key).and_then(Value::as_str))
-            .find(|value| !value.trim().is_empty())
-            .unwrap_or_default()
-            .trim()
-            .to_string();
-        let token = element
-            .get("element_token")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .to_string();
-        if label.is_empty() || token.is_empty() {
+        let text = |key: &str| {
+            element
+                .get(key)
+                .and_then(Value::as_str)
+                .map(str::trim)
+                .filter(|value| !value.is_empty())
+        };
+        // The accessibility attributes that name an element, in the order a
+        // person reads them.
+        let (Some(role), Some(label), Some(token)) = (
+            text("role"),
+            text("label")
+                .or_else(|| text("title"))
+                .or_else(|| text("placeholder"))
+                .or_else(|| text("identifier"))
+                .or_else(|| text("value")),
+            text("element_token"),
+        ) else {
             continue;
-        }
-        let identity = format!("{}:{}", role, normalize(&label));
-        if seen.insert(identity) {
-            found.push(Action {
-                role,
-                destructive: destructive.is_match(&label),
-                label,
-                token,
-            });
+        };
+        let role = role.trim_start_matches("AX").to_lowercase();
+        if seen.insert(format!("{}:{}", role, normalize(label))) {
+            found.push((role, label.to_string(), token.to_string()));
         }
     }
-    found
+    let named: Vec<(String, String)> = found
+        .iter()
+        .map(|(role, label, _)| (role.clone(), label.clone()))
+        .collect();
+    let classes = crate::commands::control_safety::judge("crawl-desktop", &named)?;
+    Ok(found
+        .into_iter()
+        .zip(classes)
+        .filter(|(_, safety)| *safety != crate::commands::control_safety::Safety::Inert)
+        .map(|((role, label, token), safety)| Action {
+            role,
+            label,
+            token,
+            safety,
+        })
+        .collect())
 }
 
-pub(crate) fn matching_action(snapshot: &Value, step: &Step) -> Option<Action> {
-    actions(snapshot).into_iter().find(|action| {
+pub(crate) fn matching_action(snapshot: &Value, step: &Step) -> Result<Option<Action>> {
+    Ok(actions(snapshot)?.into_iter().find(|action| {
         action.role == step.role && normalize(&action.label) == normalize(&step.label)
-    })
+    }))
 }
 
 pub(crate) fn apply(
@@ -190,15 +177,7 @@ pub(crate) fn state_hash(snapshot: &Value) -> String {
 }
 
 pub(crate) fn action_block_reason(action: &Action) -> Option<&'static str> {
-    if action.destructive {
-        return Some("destructive action withheld before delivery");
-    }
-    let label = normalize(&action.label);
-    if action.role == "button" && matches!(label.as_str(), "back" | "cancel" | "dismiss" | "close")
-    {
-        return None;
-    }
-    Some("action is not independently safe navigation or cancellation and was withheld before delivery")
+    action.safety.withheld()
 }
 
 pub(crate) fn system_bundle(bundle: &str) -> bool {
