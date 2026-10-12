@@ -186,7 +186,7 @@ pub(crate) fn import_record_attempt(
         Vec::new()
     };
     atomic_json_write(&record_path, &record)?;
-    let _ = std::fs::remove_dir_all(&staging);
+    crate::discard(&staging)?;
     Ok(json!({
         "state": "imported",
         "attempt": manifest.attempt,

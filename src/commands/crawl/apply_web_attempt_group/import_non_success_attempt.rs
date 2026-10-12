@@ -76,7 +76,7 @@ pub(crate) fn import_non_success_attempt(
     ) else {
         // Nothing signed to verify: this attempt never reached a terminal outcome with a
         // provenance document, so there is no proof to import and nothing to diagnose.
-        let _ = std::fs::remove_dir_all(&staging);
+        crate::discard(&staging)?;
         return Ok(None);
     };
     if outcome == crate::weles_provenance::SUCCESSFUL_OUTCOME {
@@ -159,9 +159,11 @@ pub(crate) fn import_non_success_attempt(
             .and_then(Value::as_u64)
             .cmp(&right.get("attempt").and_then(Value::as_u64))
     });
+    // The staging is taken back before the caller's record changes, so a
+    // staging that stays refuses with the record exactly as it was.
+    crate::discard(&staging)?;
     // Nothing above this line has touched the caller's record.
     *record = staged_record;
-    let _ = std::fs::remove_dir_all(&staging);
     Ok(Some(json!({
         "attempt": manifest.attempt,
         "attempt_id": manifest.attempt_id,
