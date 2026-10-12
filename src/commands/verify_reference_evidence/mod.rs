@@ -23,6 +23,9 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 // The split submodules reach their sibling commands through `super::`, which
 // resolves here by way of their `use super::*`.
 use crate::commands::reference_contract;
+// The families and evidence statuses the catalog listing reads; the record
+// measurement takes the rest of the vocabulary through record_schema.
+use crate::commands::reference_contract::{spelling, EvidenceStatus, Family};
 
 mod catalogs_group;
 mod record_schema_group;

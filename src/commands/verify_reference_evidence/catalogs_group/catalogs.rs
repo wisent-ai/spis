@@ -1,6 +1,6 @@
 use super::*;
 
-/// Every interface family in [`KNOWN_CATALOGS`] is required and keeps its
+/// Every interface family in [`Family::ALL`] is required and keeps its
 /// order; a catalog added with `spis catalog-type add` follows them in name
 /// order.
 pub(crate) fn catalogs(selected: Option<&str>) -> Result<Vec<PathBuf>> {
@@ -14,15 +14,15 @@ pub(crate) fn catalogs(selected: Option<&str>) -> Result<Vec<PathBuf>> {
         .filter(|name| name.ends_with("-examples") && Path::new(name).join("references").is_dir())
         .collect();
     found.sort();
-    let missing: Vec<&str> = KNOWN_CATALOGS
+    let families: Vec<String> = Family::ALL.iter().map(|family| family.name()).collect();
+    let missing: Vec<&String> = families
         .iter()
-        .copied()
-        .filter(|family| !found.iter().any(|name| name == family))
+        .filter(|family| !found.contains(*family))
         .collect();
     if !missing.is_empty() {
         anyhow::bail!(
             "interface families missing from the corpus: {missing:?}; all {} are required",
-            KNOWN_CATALOGS.len()
+            families.len()
         );
     }
     if let Some(selected) = selected {
@@ -34,11 +34,11 @@ pub(crate) fn catalogs(selected: Option<&str>) -> Result<Vec<PathBuf>> {
         }
         return Ok(vec![PathBuf::from(selected)]);
     }
-    let mut ordered: Vec<PathBuf> = KNOWN_CATALOGS.iter().map(PathBuf::from).collect();
+    let mut ordered: Vec<PathBuf> = families.iter().map(PathBuf::from).collect();
     ordered.extend(
         found
             .iter()
-            .filter(|name| !KNOWN_CATALOGS.contains(&name.as_str()))
+            .filter(|name| !families.contains(*name))
             .map(PathBuf::from),
     );
     Ok(ordered)
@@ -67,7 +67,7 @@ pub(crate) fn records_in(catalog: &Path) -> Result<Vec<PathBuf>> {
         .context("sources.json has no examples array")?;
     let family = catalog
         .to_str()
-        .is_some_and(|name| KNOWN_CATALOGS.contains(&name));
+        .is_some_and(|name| reference_contract::named::<Family>(name).is_some());
     if family && (records.len() != RECORDS_PER_CATALOG || source_count != RECORDS_PER_CATALOG) {
         anyhow::bail!(
             "{}: the interface family contract requires {RECORDS_PER_CATALOG} records and sources, found {} records and {source_count} sources",
@@ -96,30 +96,36 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut catalog: Option<String> = None;
     let mut apply = false;
     let mut no_state_match = false;
-    let mut jobs: usize = 8;
-    let mut i = 0;
-    while i < rest.len() {
-        match rest[i].as_str() {
+    let mut jobs: Option<std::num::NonZeroUsize> = None;
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--catalog" => {
-                i += 1;
                 catalog = Some(
-                    crate::commands::required(rest.get(i), "--catalog needs a value")?.clone(),
+                    crate::commands::required(arguments.next(), "--catalog needs a value")?.clone(),
                 );
             }
             "--apply" => apply = true,
             "--no-state-match" => no_state_match = true,
             "--jobs" => {
-                i += 1;
-                jobs = rest
-                    .get(i)
-                    .context("--jobs needs a value")?
-                    .parse()
-                    .context("--jobs expects an integer")?;
+                jobs = Some(
+                    arguments
+                        .next()
+                        .context("--jobs needs a value")?
+                        .parse()
+                        .context("--jobs expects a positive integer")?,
+                );
             }
             other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
-        i += 1;
     }
+    // Without --jobs, as many records are measured at once as this machine
+    // runs threads.
+    let jobs = match jobs {
+        Some(jobs) => jobs,
+        None => std::thread::available_parallelism()
+            .context("--jobs is not set and the machine's parallelism is unreadable")?,
+    };
     let locate_states = !no_state_match;
 
     if !apply {
@@ -128,7 +134,7 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     let mut total = 0usize;
     let mut complete = 0usize;
-    let mut gap_counter: Vec<(String, usize)> = Vec::new();
+    let mut gap_keys: Vec<String> = Vec::new();
 
     for cat in catalogs(catalog.as_deref())? {
         let records = records_in(&cat)?;
@@ -137,7 +143,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         let errors: parking_lot::Mutex<Vec<(PathBuf, String)>> =
             parking_lot::Mutex::new(Vec::new());
         let next = AtomicUsize::new(0);
-        let workers = jobs.max(1).min(records.len().max(1));
+        let workers = jobs.get().min(records.len());
         std::thread::scope(|s| {
             for _ in 0..workers {
                 s.spawn(|| loop {
@@ -179,12 +185,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         complete += cat_complete;
         for (_, gaps) in &results {
             for gap in gaps {
-                let key = gap_key(gap);
-                if let Some(slot) = gap_counter.iter_mut().find(|(k, _)| *k == key) {
-                    slot.1 += 1;
-                } else {
-                    gap_counter.push((key, 1));
-                }
+                gap_keys.push(gap_key(gap));
             }
         }
         println!(
@@ -224,11 +225,11 @@ pub fn run(rest: &[String]) -> Result<()> {
                     if let Some(obj) = r.as_object_mut() {
                         obj.insert(
                             "evidence_status".into(),
-                            json!(if gaps.is_empty() {
-                                "complete"
+                            json!(spelling(&if gaps.is_empty() {
+                                EvidenceStatus::Complete
                             } else {
-                                "partial"
-                            }),
+                                EvidenceStatus::Partial
+                            })),
                         );
                         obj.insert("evidence_gap_count".into(), json!(gaps.len()));
                     }
@@ -248,8 +249,16 @@ pub fn run(rest: &[String]) -> Result<()> {
         "\nmeasured {total} records, {complete} complete, {} partial",
         total - complete
     );
-    let mut ranked = gap_counter;
-    ranked.sort_by(|a, b| b.1.cmp(&a.1)); // stable: ties keep first-seen order
+    // Each gap kind once, in the order first seen, then the most frequent
+    // first (a stable sort keeps first-seen order among ties).
+    let mut ranked: Vec<(String, usize)> = Vec::new();
+    for key in &gap_keys {
+        if !ranked.iter().any(|(seen, _)| seen == key) {
+            let count = gap_keys.iter().filter(|other| *other == key).count();
+            ranked.push((key.clone(), count));
+        }
+    }
+    ranked.sort_by(|a, b| b.1.cmp(&a.1));
     for (key, count) in ranked {
         println!("{count:5}  {key}");
     }
