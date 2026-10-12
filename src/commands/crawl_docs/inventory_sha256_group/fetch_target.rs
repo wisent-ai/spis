@@ -104,30 +104,12 @@ pub(crate) fn fetch_target(
             } else {
                 (body.to_string(), String::new())
             };
-            let brace_density = if text.is_empty() {
-                0.0
-            } else {
-                text.matches('{').count() as f64 * 100.0 / text.len() as f64
-            };
             let (quality, diagnostic, retained_text) = if text.trim().is_empty() {
                 (
                     "no_text",
                     Some(CrawlDiagnostic {
                         code: "no_text".into(),
                         message: "documentation page yielded no meaningful text".into(),
-                        url: target.url.clone(),
-                    }),
-                    None,
-                )
-            } else if brace_density > 1.0 {
-                (
-                    "css_js_noise",
-                    Some(CrawlDiagnostic {
-                        code: "quality_css_js_noise".into(),
-                        message: format!(
-                            "documentation page text has {:.3}% brace density",
-                            brace_density
-                        ),
                         url: target.url.clone(),
                     }),
                     None,
