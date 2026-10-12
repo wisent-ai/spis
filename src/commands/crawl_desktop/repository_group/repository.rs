@@ -192,11 +192,20 @@ pub(crate) struct SessionGuard {
 
 impl Drop for SessionGuard {
     fn drop(&mut self) {
-        let _ = call(
+        let ended = call(
             &self.driver,
             "end_session",
             &json!({"session": self.session}),
         );
+        said_cleanup(ended, "end_session", &self.session);
+    }
+}
+
+/// A guard's cleanup that failed leaves its session, app or recording live
+/// for the next record to contend with, so the step and its cause are said.
+fn said_cleanup(result: Result<Value>, step: &str, session: &str) {
+    if let Err(error) = result {
+        eprintln!("spis: cua-driver {step} for session {session} failed: {error:#}");
     }
 }
 
@@ -211,11 +220,12 @@ pub(crate) struct AppGuard {
 
 impl Drop for AppGuard {
     fn drop(&mut self) {
-        let _ = call(
+        let ended = call(
             &self.driver,
             "terminate_app",
             &json!({"session": self.session, "pid": self.pid}),
         );
+        said_cleanup(ended, "terminate_app", &self.session);
     }
 }
 
@@ -242,11 +252,12 @@ impl RecordingGuard {
 impl Drop for RecordingGuard {
     fn drop(&mut self) {
         if self.active {
-            let _ = call(
+            let stopped = call(
                 &self.driver,
                 "stop_recording",
                 &json!({"session": self.session}),
             );
+            said_cleanup(stopped, "stop_recording", &self.session);
         }
     }
 }
