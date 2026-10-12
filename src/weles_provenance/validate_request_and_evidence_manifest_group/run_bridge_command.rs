@@ -143,13 +143,19 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
     let stdout_result = stdout_reader.join();
     let stderr_result = stderr_reader.join();
     if !status.success() {
-        let stderr = match stderr_result {
-            Ok(Ok(stderr)) => stderr,
-            _ => Vec::new(),
+        // The bridge's code is read from its stderr; a stderr that could not
+        // be read is named, never taken for a bridge that said nothing.
+        let (stderr, unread) = match stderr_result {
+            Ok(Ok(stderr)) => (stderr, String::new()),
+            Ok(Err(error)) => (
+                Vec::new(),
+                format!("; its stderr could not be read: {error}"),
+            ),
+            Err(_) => (Vec::new(), "; its stderr reader panicked".to_string()),
         };
         let code = bridge_error_code(&stderr);
         return Err(BridgeFailure {
-            message: format!("official Weles bridge failed closed ({code})"),
+            message: format!("official Weles bridge failed closed ({code}){unread}"),
             code,
         });
     }
