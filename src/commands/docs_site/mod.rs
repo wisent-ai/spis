@@ -17,7 +17,7 @@
 //!   `crawl-docs`, `crawl-cli`, `crawl-desktop`, `crawl-mobile`, `crawl-web`,
 //!   `docs-corpus`, and the rest of [`super::SUBCOMMANDS`].
 //! * it declares `13` interface families; there are fifteen in
-//!   [`super::crawl::CATALOGS`].
+//!   [`super::reference_contract::Family`].
 //! * it declares no graphical surface at all, and the published prose calls
 //!   Spis "the command-line machinery that maintains it" — while
 //!   `wisent-ai/spis-desktop` ships a macOS application that starts crawls,

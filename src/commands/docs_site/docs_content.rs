@@ -43,14 +43,14 @@ pub(crate) fn command_bullets() -> Vec<String> {
 
 /// One line per family: its engine, and what its worker requires of a host.
 ///
-/// Derived from [`super::crawl::CATALOGS`] and
+/// Derived from [`super::crawl::crawl_catalogs`] and
 /// [`super::crawl::engine_preconditions`], so the documented host
 /// requirements cannot drift from the ones the preflight actually enforces.
 /// That drift is not hypothetical: the published documentation described host
 /// requirements nowhere at all, while five of the six engines were submitting
 /// workers that needed a program the preflight never checked.
 pub(crate) fn family_rows() -> Vec<Value> {
-    crate::commands::crawl::CATALOGS
+    crate::commands::crawl::crawl_catalogs()
         .iter()
         .map(|(catalog, engine)| {
             let requires: Vec<String> =

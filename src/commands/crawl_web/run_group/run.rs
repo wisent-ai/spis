@@ -52,8 +52,9 @@ pub fn run(rest: &[String]) -> Result<()> {
         i += 1;
     }
     let catalog = catalog.context("catalog is required")?;
-    if !CATALOGS.contains(&catalog.as_str()) {
-        bail!("crawl-web accepts {}", CATALOGS.join(", "));
+    let web_families = web_catalogs();
+    if !web_families.contains(&catalog) {
+        bail!("crawl-web accepts {}", web_families.join(", "));
     }
     let record = record.context("--record is required for one exact per-record job")?;
     let manifest = crate::commands::crawl::decode_runtime_manifest(

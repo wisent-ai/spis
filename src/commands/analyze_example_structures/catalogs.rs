@@ -1,23 +1,5 @@
 use super::*;
 
-pub(crate) const CATALOGS: &[&str] = &[
-    "ios-app-examples",
-    "android-app-examples",
-    "macos-app-examples",
-    "desktop-app-examples",
-    "web-app-examples",
-    "dashboard-console-examples",
-    "tui-examples",
-    "cli-examples",
-    "onboarding-auth-examples",
-    "documentation-site-examples",
-    "app-store-listing-examples",
-    "design-system-examples",
-    "report-evidence-examples",
-    "landing-page-examples",
-    "wisent-product-examples",
-];
-
 /// Python's round(): halves go to the nearest even value.
 pub(crate) fn py_round(value: f64, digits: i32) -> f64 {
     let factor = 10f64.powi(digits);

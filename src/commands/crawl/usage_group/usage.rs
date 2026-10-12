@@ -83,16 +83,16 @@ pub(crate) fn preflight(rest: &[String]) -> Result<()> {
     let host = host.context("preflight needs --host")?;
     safe_component(&catalog, "--catalog")?;
     safe_component(&host, "--host")?;
-    let engine = CATALOGS
-        .iter()
-        .find(|(name, _)| *name == catalog.as_str())
-        .map(|(_, engine)| *engine)
-        .with_context(|| format!("{catalog} is not a Spis catalog"))?;
+    let engine = crate::commands::reference_contract::named::<
+        crate::commands::reference_contract::Family,
+    >(&catalog)
+    .map(|family| crate::commands::reference_contract::spelling(&family.engine()))
+    .with_context(|| format!("{catalog} is not a Spis catalog"))?;
     // No service identity: the Weles release check belongs to a run that has
     // resolved one, and inventing it here would report a readiness this
     // command cannot stand behind. The web engine therefore reports its
     // program preconditions and says the admission check is unresolved.
-    let report = host_preflight(&catalog, engine, &host, None);
+    let report = host_preflight(&catalog, &engine, &host, None);
     let ready = report.get("ready").and_then(Value::as_bool) == Some(true);
     if json_output {
         println!("{}", serde_json::to_string_pretty(&report)?);

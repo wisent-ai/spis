@@ -149,9 +149,13 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
         requested.push(arg.clone());
     }
+    let families: Vec<String> = crate::commands::reference_contract::Family::ALL
+        .iter()
+        .map(|family| family.name())
+        .collect();
     let mut unknown: Vec<&String> = requested
         .iter()
-        .filter(|c| !CATALOGS.contains(&c.as_str()))
+        .filter(|requested| !families.contains(*requested))
         .collect();
     unknown.sort();
     if !unknown.is_empty() {
@@ -159,11 +163,11 @@ pub fn run(rest: &[String]) -> Result<()> {
         return Err(crate::commands::usage(format!(
             "unknown catalog(s): {}; known: {}",
             names.join(", "),
-            CATALOGS.join(", ")
+            families.join(", ")
         )));
     }
     let selected: Vec<&str> = if requested.is_empty() {
-        CATALOGS.to_vec()
+        families.iter().map(String::as_str).collect()
     } else {
         requested.iter().map(String::as_str).collect()
     };

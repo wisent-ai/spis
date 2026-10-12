@@ -60,7 +60,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                     "state": "current",
                     "site_content": site_content,
                     "landing_content": landing_content,
-                    "families": super::crawl::CATALOGS.len(),
+                    "families": crate::commands::reference_contract::Family::ALL.len(),
                     "commands": super::SUBCOMMANDS.len(),
                 }))?
             );
@@ -79,7 +79,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             "state": "generated",
             "wrote": [DOCS_BRIEF, DOCS_PLAN, DOCS_CONTENT],
             "landing_content": landing_content,
-            "families": super::crawl::CATALOGS.len(),
+            "families": crate::commands::reference_contract::Family::ALL.len(),
             "commands": super::SUBCOMMANDS.len(),
         }))?
     );

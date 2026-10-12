@@ -106,7 +106,8 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
         return Ok(());
     }
     let mut entries = Vec::new();
-    for (catalog, engine) in specs {
+    for (catalog, engine) in &specs {
+        let (catalog, engine) = (catalog.as_str(), engine.as_str());
         let paths = record_directories(catalog, record.as_deref())?;
         let host = host_for(catalog, engine, &hosts, &discovered_hosts);
         let unavailable = host

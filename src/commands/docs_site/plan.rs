@@ -8,7 +8,7 @@ pub(crate) fn plan(version: &str) -> Value {
         "generated_by": "spis docs-site",
         "sources": {
             "subcommands": { "kind": "code", "location": "src/commands/mod.rs SUBCOMMANDS" },
-            "families": { "kind": "code", "location": "src/commands/crawl.rs CATALOGS" },
+            "families": { "kind": "code", "location": "src/commands/reference_contract/catalog_schema.rs Family" },
             "preconditions": {
                 "kind": "code",
                 "location": "src/commands/crawl.rs engine_preconditions",

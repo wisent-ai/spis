@@ -6,28 +6,23 @@ pub(crate) const RUN_SCHEMA: &str = "wisent.crawl-run.v1";
 
 pub(crate) const SUBMISSION_SCHEMA: &str = "wisent.crawl-submission.v1";
 
-/// Every product family and the engine that crawls it.
+/// Every product family and the engine that crawls it, as
+/// `reference_contract::Family` declares them.
 ///
-/// Public because the generated documentation enumerates it: `docs_site`
-/// reads this table rather than restating a count in prose, which is how the
-/// published documentation came to claim thirteen families.
-pub(crate) const CATALOGS: &[(&str, &str)] = &[
-    ("ios-app-examples", "mobile"),
-    ("android-app-examples", "mobile"),
-    ("macos-app-examples", "desktop"),
-    ("desktop-app-examples", "desktop"),
-    ("web-app-examples", "web"),
-    ("dashboard-console-examples", "web"),
-    ("tui-examples", "tui"),
-    ("cli-examples", "cli"),
-    ("onboarding-auth-examples", "web"),
-    ("documentation-site-examples", "docs"),
-    ("app-store-listing-examples", "web"),
-    ("design-system-examples", "web"),
-    ("report-evidence-examples", "web"),
-    ("pricing-page-examples", "web"),
-    ("landing-page-examples", "web"),
-];
+/// The generated documentation enumerates it: `docs_site` reads this rather
+/// than restating a count in prose, which is how the published documentation
+/// came to claim thirteen families.
+pub(crate) fn crawl_catalogs() -> Vec<(String, String)> {
+    crate::commands::reference_contract::Family::ALL
+        .iter()
+        .map(|family| {
+            (
+                family.name(),
+                crate::commands::reference_contract::spelling(&family.engine()),
+            )
+        })
+        .collect()
+}
 
 pub(crate) const RUNTIME_MANIFEST_SCHEMA: &str = "wisent.crawl-runtime-manifest.v1";
 

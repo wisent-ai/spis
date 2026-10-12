@@ -66,7 +66,8 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
     }
 
     let mut catalogs = serde_json::Map::new();
-    for (catalog, engine) in CATALOGS {
+    for (catalog, engine) in crawl_catalogs() {
+        let (catalog, engine) = (catalog.as_str(), engine.as_str());
         let mut records = serde_json::Map::new();
         for directory in record_directories(catalog, None)? {
             let slug = directory
@@ -74,7 +75,7 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                 .and_then(|value| value.to_str())
                 .context("record directory name is not UTF-8")?
                 .to_string();
-            let binding = match *engine {
+            let binding = match engine {
                 // A web record without the pair of references has no
                 // authorized delivery, so it is declared unconfigured here
                 // rather than written as a configured record whose secret
@@ -99,7 +100,7 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                         })?;
                     let parsed = url::Url::parse(exact_url)
                         .with_context(|| format!("{catalog}/{slug}: product_url is invalid"))?;
-                    let delivery = if *engine == "web" {
+                    let delivery = if engine == "web" {
                         json!({
                             "kind": "weles-service-env",
                             "secret_env": {
@@ -115,7 +116,7 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                     object.insert("account".into(), anonymous_probe_account());
                     object.insert("constraints".into(), prohibited_action_constraints(engine));
                     object.insert("delivery".into(), delivery);
-                    if *engine == "web" {
+                    if engine == "web" {
                         object.insert(
                             "surface".into(),
                             json!({
@@ -126,7 +127,7 @@ pub(crate) fn generate_runtime_bindings(rest: &[String]) -> Result<()> {
                                 "path": parsed.path(),
                                 "allowed_origins": [parsed.origin().ascii_serialization()],
                                 "allowed_actions": ["generic_browser_task"],
-                                "terminal_outcomes": ["blocked", "completed", "failed"],
+                                "terminal_outcomes": [WebOutcome::Blocked, WebOutcome::Completed, WebOutcome::Failed],
                             }),
                         );
                     }

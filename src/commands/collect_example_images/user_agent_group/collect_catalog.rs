@@ -134,21 +134,23 @@ pub fn run(rest: &[String]) -> Result<()> {
             other => return Err(crate::commands::usage(format!("unknown argument: {other}\nusage: spis collect-example-images [--replace] [catalog ...]"))),
         }
     }
-    let unknown: Vec<&&str> = selected.iter().filter(|s| !CATALOGS.contains(s)).collect();
+    let families: Vec<String> = crate::commands::reference_contract::Family::ALL
+        .iter()
+        .map(|family| family.name())
+        .collect();
+    let unknown: Vec<&str> = selected
+        .iter()
+        .copied()
+        .filter(|name| !families.iter().any(|family| family == name))
+        .collect();
     if !unknown.is_empty() {
-        eprintln!(
-            "usage: spis collect-example-images [--replace] [catalog ...]\n\
-             collect-example-images: error: unknown catalog(s): {}",
-            unknown
-                .iter()
-                .map(|s| s.to_string())
-                .collect::<Vec<_>>()
-                .join(", ")
-        );
-        std::process::exit(2);
+        return Err(crate::commands::usage(format!(
+            "unknown catalog(s): {}\nusage: spis collect-example-images [--replace] [catalog ...]",
+            unknown.join(", ")
+        )));
     }
     let chosen: Vec<&str> = if selected.is_empty() {
-        CATALOGS.to_vec()
+        families.iter().map(String::as_str).collect()
     } else {
         selected
     };

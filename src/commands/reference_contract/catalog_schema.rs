@@ -81,6 +81,26 @@ impl Family {
             _ => "interactive-product",
         }
     }
+
+    /// The engine that crawls this family.
+    pub(crate) fn engine(self) -> crate::commands::crawl::Engine {
+        use crate::commands::crawl::Engine;
+        match self {
+            Family::IosAppExamples | Family::AndroidAppExamples => Engine::Mobile,
+            Family::MacosAppExamples | Family::DesktopAppExamples => Engine::Desktop,
+            Family::TuiExamples => Engine::Tui,
+            Family::CliExamples => Engine::Cli,
+            Family::DocumentationSiteExamples => Engine::Docs,
+            Family::WebAppExamples
+            | Family::DashboardConsoleExamples
+            | Family::OnboardingAuthExamples
+            | Family::AppStoreListingExamples
+            | Family::DesignSystemExamples
+            | Family::ReportEvidenceExamples
+            | Family::PricingPageExamples
+            | Family::LandingPageExamples => Engine::Web,
+        }
+    }
 }
 
 /// What a motion asset is, measured from its container, never from its file

@@ -2,16 +2,15 @@ use super::*;
 
 pub(crate) const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 
-pub(crate) const CATALOGS: &[&str] = &[
-    "web-app-examples",
-    "dashboard-console-examples",
-    "onboarding-auth-examples",
-    "app-store-listing-examples",
-    "design-system-examples",
-    "report-evidence-examples",
-    "pricing-page-examples",
-    "landing-page-examples",
-];
+/// The families the Weles browser engine crawls, as the reference contract
+/// declares them.
+pub(crate) fn web_catalogs() -> Vec<String> {
+    crate::commands::reference_contract::Family::ALL
+        .iter()
+        .filter(|family| family.engine() == crate::commands::crawl::Engine::Web)
+        .map(|family| family.name())
+        .collect()
+}
 
 pub(crate) const REPORT_SCHEMA: &str = "wisent.web-worker-report.v1";
 

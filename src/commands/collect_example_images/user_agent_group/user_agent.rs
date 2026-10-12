@@ -5,22 +5,6 @@ pub(crate) const USER_AGENT: &str = crate::USER_AGENT;
 // TARGET_SIZE (1400, 1000) applied only during Pillow resampling; kept for
 // reference because the thum.io fallback URL embeds 1400/1000.
 
-pub(crate) const CATALOGS: &[&str] = &[
-    "ios-app-examples",
-    "android-app-examples",
-    "macos-app-examples",
-    "desktop-app-examples",
-    "web-app-examples",
-    "dashboard-console-examples",
-    "tui-examples",
-    "cli-examples",
-    "onboarding-auth-examples",
-    "documentation-site-examples",
-    "app-store-listing-examples",
-    "design-system-examples",
-    "report-evidence-examples",
-];
-
 #[derive(Clone, Debug)]
 pub(crate) struct Candidate {
     pub(crate) url: String,

@@ -10,16 +10,19 @@ pub(crate) fn invoke_engine(args: &[String], host: &str, host_report: &Value) ->
     command_output(&mut command, "crawler coordinator")
 }
 
-pub(crate) fn selected_specs(selected: &[String]) -> Result<Vec<(&'static str, &'static str)>> {
+/// The selected families with the engine that crawls each, every family the
+/// reference contract declares when none is selected.
+pub(crate) fn selected_specs(selected: &[String]) -> Result<Vec<(String, String)>> {
+    let all = crawl_catalogs();
     if selected.is_empty() {
-        return Ok(CATALOGS.to_vec());
+        return Ok(all);
     }
     let mut out = Vec::new();
     for wanted in selected {
-        let spec = CATALOGS
+        let spec = all
             .iter()
             .find(|(catalog, _)| catalog == wanted)
-            .copied()
+            .cloned()
             .ok_or_else(|| anyhow!("unknown crawl catalog {wanted}"))?;
         if !out.contains(&spec) {
             out.push(spec);
@@ -80,47 +83,61 @@ pub(crate) fn record_directories(catalog: &str, selected: Option<&str>) -> Resul
     Ok(records)
 }
 
-pub(crate) fn require_exact_object_keys(
-    value: &Value,
-    expected: &[&str],
-    context: &str,
-) -> Result<()> {
-    let object = value
-        .as_object()
-        .with_context(|| format!("{context} must be an object"))?;
-    let mut actual = object.keys().map(String::as_str).collect::<Vec<_>>();
-    let mut expected = expected.to_vec();
-    actual.sort_unstable();
-    expected.sort_unstable();
-    if actual != expected {
-        bail!(
-            "{context} fields differ: expected {}, found {}",
-            expected.join(", "),
-            actual.join(", ")
-        );
-    }
-    Ok(())
+/// The whole runtime bindings document: its schema and one object of record
+/// bindings per family.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct BindingsDocument {
+    schema: String,
+    records: serde_json::Map<String, Value>,
+}
+
+/// A record binding declared unconfigured, with the reason.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+#[allow(dead_code)]
+struct UnconfiguredBinding {
+    configured: bool,
+    diagnostic: Value,
+}
+
+/// A configured record binding: account, constraints and delivery are
+/// required, a prepared proof and a surface are optional.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+#[allow(dead_code)]
+struct ConfiguredBinding {
+    configured: bool,
+    account: Value,
+    constraints: Value,
+    delivery: Value,
+    #[serde(default)]
+    prepared_proof: Option<Value>,
+    #[serde(default)]
+    surface: Option<Value>,
 }
 
 pub(crate) fn validate_runtime_bindings_document(document: &Value) -> Result<()> {
-    require_exact_object_keys(document, &["schema", "records"], "runtime bindings")?;
-    if document.get("schema").and_then(Value::as_str) != Some("wisent.crawl-runtime-bindings.v1") {
+    let document: BindingsDocument = serde_json::from_value(document.clone())
+        .context("runtime bindings must hold exactly a schema and records")?;
+    if document.schema != "wisent.crawl-runtime-bindings.v1" {
         bail!("runtime bindings must declare wisent.crawl-runtime-bindings.v1");
     }
-    let catalogs = document
-        .get("records")
-        .and_then(Value::as_object)
-        .context("runtime bindings records must be an object")?;
+    let catalogs = document.records;
+    let families = crawl_catalogs();
     let mut actual_catalogs = catalogs.keys().map(String::as_str).collect::<Vec<_>>();
-    let mut expected_catalogs = CATALOGS.iter().map(|(name, _)| *name).collect::<Vec<_>>();
+    let mut expected_catalogs = families
+        .iter()
+        .map(|(name, _)| name.as_str())
+        .collect::<Vec<_>>();
     actual_catalogs.sort_unstable();
     expected_catalogs.sort_unstable();
     if actual_catalogs != expected_catalogs {
         bail!("runtime bindings must contain every and only the checked-in crawl catalogs");
     }
-    for (catalog, _) in CATALOGS {
+    for (catalog, _) in &families {
         let records = catalogs
-            .get(*catalog)
+            .get(catalog)
             .and_then(Value::as_object)
             .with_context(|| format!("runtime bindings {catalog} must be a record object"))?;
         let mut actual_records = records.keys().map(String::as_str).collect::<Vec<_>>();
@@ -136,39 +153,15 @@ pub(crate) fn validate_runtime_bindings_document(document: &Value) -> Result<()>
         }
         for (slug, binding) in records {
             match binding.get("configured").and_then(Value::as_bool) {
-                Some(false) => require_exact_object_keys(
-                    binding,
-                    &["configured", "diagnostic"],
-                    &format!("{catalog}/{slug} binding"),
-                )?,
+                Some(false) => {
+                    serde_json::from_value::<UnconfiguredBinding>(binding.clone()).with_context(
+                        || format!("{catalog}/{slug}: an unconfigured binding holds only its diagnostic"),
+                    )?;
+                }
                 Some(true) => {
-                    let object = binding
-                        .as_object()
-                        .with_context(|| format!("{catalog}/{slug} binding must be an object"))?;
-                    let allowed = [
-                        "configured",
-                        "account",
-                        "constraints",
-                        "delivery",
-                        "prepared_proof",
-                        "surface",
-                    ];
-                    let unknown = object
-                        .keys()
-                        .filter(|key| !allowed.contains(&key.as_str()))
-                        .cloned()
-                        .collect::<Vec<_>>();
-                    if !unknown.is_empty() {
-                        bail!(
-                            "{catalog}/{slug}: unknown runtime binding fields: {}",
-                            unknown.join(", ")
-                        );
-                    }
-                    for required in ["account", "constraints", "delivery"] {
-                        if !object.contains_key(required) {
-                            bail!("{catalog}/{slug}: configured binding is missing {required}");
-                        }
-                    }
+                    serde_json::from_value::<ConfiguredBinding>(binding.clone()).with_context(
+                        || format!("{catalog}/{slug}: configured binding fields are not the declared ones"),
+                    )?;
                 }
                 _ => bail!("{catalog}/{slug}: configured must be an explicit boolean"),
             }

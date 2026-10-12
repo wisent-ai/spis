@@ -235,7 +235,11 @@ pub(crate) fn safe_component(value: &str, name: &str) -> Result<()> {
 
 pub(crate) fn catalog_root(catalog: &str) -> Result<PathBuf> {
     safe_component(catalog, "catalog")?;
-    if !CATALOGS.iter().any(|(known, _)| *known == catalog) {
+    if crate::commands::reference_contract::named::<crate::commands::reference_contract::Family>(
+        catalog,
+    )
+    .is_none()
+    {
         bail!("unknown crawl catalog {catalog}");
     }
     Ok(crate::commands::corpus::data_root().join(catalog))
