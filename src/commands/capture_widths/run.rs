@@ -35,26 +35,21 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     let data = load_catalog(&catalog);
     let selected: Vec<(Map<String, Value>, Map<String, Value>)> = match &record {
-        Some(selector) => vec![pick(&data.sources, &data.index, Some(selector))],
+        Some(selector) => vec![pick(&data.sources, &data.index, Some(selector))?],
         None => {
-            let examples = data.sources["examples"]
-                .as_array()
-                .cloned()
-                .unwrap_or_default();
-            let references = data.index["references"]
-                .as_array()
-                .cloned()
-                .unwrap_or_default();
+            let examples = list_field(&data.sources, "examples", "sources.json");
+            let references = list_field(&data.index, "references", "references.json");
             examples
-                .into_iter()
+                .iter()
                 .zip(references)
-                .map(|(e, r)| {
-                    (
-                        e.as_object().cloned().unwrap_or_default(),
-                        r.as_object().cloned().unwrap_or_default(),
-                    )
+                .enumerate()
+                .map(|(position, (e, r))| {
+                    Ok((
+                        object_entry(e, "sources.json", "examples", position)?,
+                        object_entry(r, "references.json", "references", position)?,
+                    ))
                 })
-                .collect()
+                .collect::<Result<Vec<_>>>()?
         }
     };
     if selected.is_empty() {
@@ -191,39 +186,26 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     // Record the batch on each touched reference so retrieval can find it.
     for (_, entry) in &selected {
-        let record_path = data
-            .directory
-            .join(entry["path"].as_str().unwrap_or_default());
+        let Some(relative) = entry["path"].as_str() else {
+            bail!(
+                "reference {} in {} has no \"path\", so its record cannot be updated with batch {batch}",
+                slug_of(entry),
+                data.directory.display()
+            );
+        };
+        let record_path = data.directory.join(relative);
+        // A record that is not a JSON object is refused as a parse failure
+        // naming the file; emptying it would write back a record holding
+        // nothing but this batch.
         let mut record: Map<String, Value> =
-            crate::read_json::<serde_json::Value>(record_path.to_str().unwrap())?
-                .as_object()
-                .cloned()
-                .unwrap_or_default();
-        {
-            let batches = record
-                .entry("capture_batches".to_string())
-                .or_insert_with(|| Value::Array(Vec::new()));
-            if !batches.is_array() {
-                *batches = Value::Array(Vec::new());
-            }
-            let list = batches.as_array_mut().unwrap();
-            if !list.iter().any(|v| v == &Value::String(batch.clone())) {
-                list.push(Value::String(batch.clone()));
-            }
-        }
-        {
-            let gaps = record
-                .entry("evidence_gaps".to_string())
-                .or_insert_with(|| Value::Array(Vec::new()));
-            if !gaps.is_array() {
-                *gaps = Value::Array(Vec::new());
-            }
-            let pending = "width captures enqueued; awaiting retrieval";
-            let list = gaps.as_array_mut().unwrap();
-            if !list.iter().any(|v| v.as_str() == Some(pending)) {
-                list.push(Value::String(pending.to_string()));
-            }
-        }
+            crate::read_json::<Map<String, Value>>(record_path.to_str().unwrap())?;
+        append_unique(&mut record, "capture_batches", &record_path, batch.clone())?;
+        append_unique(
+            &mut record,
+            "evidence_gaps",
+            &record_path,
+            "width captures enqueued; awaiting retrieval".to_string(),
+        )?;
         crate::write_pretty_json(record_path.to_str().unwrap(), &Value::Object(record))?;
     }
 
@@ -233,6 +215,30 @@ pub fn run(rest: &[String]) -> Result<()> {
         batch
     );
     println!("retrieve with spis verify --apply after the host finishes the batch");
+    Ok(())
+}
+
+/// Append `item` to the list under `key` of a record unless it is already
+/// there. A field that exists but is not a list is refused naming the record
+/// and what it holds, instead of being replaced.
+fn append_unique(
+    record: &mut Map<String, Value>,
+    key: &str,
+    record_path: &std::path::Path,
+    item: String,
+) -> Result<()> {
+    let field = record
+        .entry(key.to_string())
+        .or_insert_with(|| Value::Array(Vec::new()));
+    let Some(list) = field.as_array_mut() else {
+        bail!(
+            "{}: {key} holds {field} where a list of strings is expected; the record is left as it is",
+            record_path.display()
+        );
+    };
+    if !list.iter().any(|v| v.as_str() == Some(item.as_str())) {
+        list.push(Value::String(item));
+    }
     Ok(())
 }
 

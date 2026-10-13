@@ -24,6 +24,11 @@ name = "catalog-type-lifecycle"
 path = "tests/catalog_type/main.rs"
 harness = false
 
+[[test]]
+name = "capture-widths-refusals"
+path = "tests/capture_widths/main.rs"
+harness = false
+
 [dependencies]
 ureq = { version = "2", features = ["gzip", "json"] }
 serde = { version = "1", features = ["derive"] }
