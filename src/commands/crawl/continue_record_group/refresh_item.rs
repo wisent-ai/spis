@@ -115,7 +115,10 @@ pub(crate) fn migrate_legacy_catalog_jobs(run: &mut Value) {
         let record = format!("legacy-job-{suffix}");
         entry["records"] = json!([{
             "record": record,
-            "state": entry.get("state").cloned().unwrap_or_else(|| json!("unknown")),
+            "state": match entry.get("state") {
+                Some(state) => state.clone(),
+                None => json!(STATE_NOT_REPORTED),
+            },
             "stado_job_id": job_id,
             "attempt_id": format!("legacy-attempt-{suffix}"),
             "artifact_uri": entry.get("artifact_uri").cloned().unwrap_or(Value::Null),
@@ -130,11 +133,20 @@ pub(crate) fn migrate_legacy_catalog_jobs(run: &mut Value) {
     }
 }
 
+/// What a record or job reads as when Stado's answer carries neither `state`
+/// nor `status`: named as such, so it is neither cancellable nor terminal
+/// and every report says the state was not reported instead of guessing.
+pub(crate) const STATE_NOT_REPORTED: &str = "state_not_reported";
+
 pub(crate) fn machine_state(job: &Value) -> &str {
-    job.get("state")
+    match job
+        .get("state")
         .or_else(|| job.get("status"))
         .and_then(Value::as_str)
-        .unwrap_or("unknown")
+    {
+        Some(state) => state,
+        None => STATE_NOT_REPORTED,
+    }
 }
 
 pub(crate) fn terminal_machine_state(state: &str) -> bool {

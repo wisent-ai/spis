@@ -94,9 +94,10 @@ pub(crate) fn enqueue(
 }
 
 pub(crate) fn state_of(row: &Value) -> String {
-    pick(row, &["state", "status"])
-        .map(|v| v.to_string().trim_matches('"').to_lowercase())
-        .unwrap_or_else(|| "unknown".to_string())
+    match pick(row, &["state", "status"]) {
+        Some(state) => state.to_string().trim_matches('"').to_lowercase(),
+        None => crate::commands::crawl::STATE_NOT_REPORTED.to_owned(),
+    }
 }
 
 /// One read of Stado's batch record after the synchronous enqueue returned.
