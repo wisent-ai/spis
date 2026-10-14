@@ -42,7 +42,7 @@ pub(crate) fn refresh_item(entry: &mut Value) {
                     return;
                 }
             }
-            if entry.get("state").and_then(Value::as_str) != Some("imported") {
+            if State::of(&entry["state"]).ok() != Some(State::Imported) {
                 match job.get("state") {
                     Some(state) => entry["state"] = state.clone(),
                     // A job that reports no state leaves the record's state

@@ -142,7 +142,7 @@ pub(crate) fn import(rest: &[String]) -> Result<()> {
         for record in catalog.records {
             let name = record_name(catalog.name, record)?;
             if selected_matches(name, selected_record.as_deref())
-                && record.get("state").and_then(Value::as_str) != Some("imported")
+                && State::of(&record["state"])? != State::Imported
             {
                 pending.push(name.to_string());
             }
