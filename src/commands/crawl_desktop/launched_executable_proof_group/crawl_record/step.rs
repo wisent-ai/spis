@@ -76,14 +76,14 @@ pub(super) fn take_step(
             return Ok(true);
         }
     };
+    // What the driver states, or nothing: 'missing' read like an effect and a
+    // route the driver named.
     let driver_effect = DriverResponse(&driver_response)
         .text("effect")
-        .unwrap_or("missing")
-        .to_string();
+        .map(str::to_string);
     let driver_route = DriverResponse(&driver_response)
         .text("route")
-        .unwrap_or("missing")
-        .to_string();
+        .map(str::to_string);
     let post_image = transitions_dir.join(format!("step-{transition_index:04}-after.png"));
     let post = match snapshot(driver, &session, pid, window_id, &post_image) {
         Ok(post) => post,
@@ -155,14 +155,15 @@ pub(super) fn take_step(
         }));
         return Ok(true);
     }
-    if driver_effect != "confirmed" {
+    if driver_effect.as_deref() != Some("confirmed") {
         blocked.push(json!({
             "state": after_hash,
             "role": action.role,
             "label": action.label,
-            "reason": format!(
-                "driver action effect was {driver_effect:?}; fresh postcondition was retained, and further input was withheld"
-            ),
+            "reason": match &driver_effect {
+                Some(effect) => format!("driver action effect was {effect:?}; fresh postcondition was retained, and further input was withheld"),
+                None => "the driver stated no action effect; fresh postcondition was retained, and further input was withheld".to_string(),
+            },
             "further_input_withheld": true,
         }));
         return Ok(true);
