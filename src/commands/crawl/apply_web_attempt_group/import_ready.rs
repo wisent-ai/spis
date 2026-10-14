@@ -179,11 +179,12 @@ pub(crate) fn has_failures(run: &Value) -> Result<bool> {
 }
 
 /// The label `entry`'s state is counted under: its state after `prefix`, or
-/// `unknown` when it has none.
+/// `undeclared` when the aggregate left none (its `undeclared_crawl_state`
+/// diagnostic says why).
 fn state_label(entry: &Value, prefix: &str) -> String {
     match entry.get("state").and_then(Value::as_str) {
         Some(state) => format!("{prefix}{state}"),
-        None => format!("{prefix}unknown"),
+        None => format!("{prefix}undeclared"),
     }
 }
 
@@ -192,21 +193,19 @@ pub(crate) fn print_operation(
     run: &Value,
     record_filter: Option<&str>,
 ) -> Result<()> {
-    let mut catalogs = run
-        .get("catalogs")
-        .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default();
-    if let Some(record) = record_filter {
+    // The catalogs as the run reader reads them, narrowed by the one record
+    // selector every crawl verb uses.
+    let mut catalogs: Vec<Value> = run_catalogs(run)?
+        .into_iter()
+        .map(|catalog| catalog.entry.clone())
+        .collect();
+    if record_filter.is_some() {
         for catalog in &mut catalogs {
             if let Some(records) = catalog.get_mut("records").and_then(Value::as_array_mut) {
                 records.retain(|item| {
                     item.get("record")
                         .and_then(Value::as_str)
-                        .is_some_and(|value| {
-                            value == record
-                                || value.split_once('-').map(|(_, tail)| tail) == Some(record)
-                        })
+                        .is_some_and(|name| selected_matches(name, record_filter))
                 });
             }
         }
