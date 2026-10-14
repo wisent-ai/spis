@@ -57,7 +57,7 @@ pub fn data_root() -> PathBuf {
 }
 
 pub fn configured_root() -> Result<Option<PathBuf>> {
-    let path = config_path();
+    let path = config_path()?;
     // `exists` answers false when the directory cannot be searched, which
     // read an adopted corpus as never adopted.
     if !path

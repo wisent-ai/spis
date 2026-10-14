@@ -33,23 +33,24 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
         if !slugs.insert(slug.to_string()) {
             bail!("canonical corpus index repeats catalog {slug}");
         }
-        for key in ["title", "description"] {
-            required_text(catalog, key, &format!("catalog {slug} has no {key}"))?;
-        }
+        required_text(catalog, "title", &format!("catalog {slug} has no title"))?;
+        required_text(
+            catalog,
+            "description",
+            &format!("catalog {slug} has no description"),
+        )?;
         let declared_count = catalog
             .get("count")
             .and_then(Value::as_u64)
             .with_context(|| format!("catalog {slug} has no numeric count"))?;
-        for key in [
-            "image_count",
-            "structure_count",
-            "complete_record_count",
-            "partial_record_count",
-        ] {
-            if catalog.get(key).and_then(Value::as_u64).is_none() {
-                bail!("catalog {slug} has no numeric {key}");
-            }
-        }
+        let count = |key: &str| match catalog.get(key).and_then(Value::as_u64) {
+            Some(_) => Ok(()),
+            None => Err(anyhow::anyhow!("catalog {slug} has no numeric {key}")),
+        };
+        count("image_count")?;
+        count("structure_count")?;
+        count("complete_record_count")?;
+        count("partial_record_count")?;
         if catalog
             .get("measured_provenance")
             .and_then(Value::as_object)
@@ -265,7 +266,7 @@ pub(crate) fn validate_local_paths(
 }
 
 pub(crate) fn write_config(summary: &CorpusSummary) -> Result<()> {
-    let path = config_path();
+    let path = config_path()?;
     let parent = path
         .parent()
         .context("corpus location path has no parent")?;
@@ -299,12 +300,10 @@ pub(crate) fn write_config(summary: &CorpusSummary) -> Result<()> {
     Ok(())
 }
 
-pub(crate) fn config_path() -> PathBuf {
+/// XDG_CONFIG_HOME, else HOME (refused when unset); never the working directory.
+pub(crate) fn config_path() -> Result<PathBuf> {
     if let Some(root) = std::env::var_os("XDG_CONFIG_HOME") {
-        return PathBuf::from(root).join("spis/corpus.json");
+        return Ok(PathBuf::from(root).join("spis/corpus.json"));
     }
-    if let Some(home) = std::env::var_os("HOME") {
-        return PathBuf::from(home).join(".config/spis/corpus.json");
-    }
-    PathBuf::from(".spis/corpus.json")
+    Ok(crate::commands::docs_corpus::home_dir()?.join(".config/spis/corpus.json"))
 }
