@@ -23,11 +23,18 @@ pub(crate) fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<V
             .ok_or_else(|| {
                 anyhow!("{slug}/sources.json: examples[{position}] must be an object")
             })?;
-        let name = example_obj["name"].as_str().unwrap_or_default().to_string();
-        let source_url = example_obj["source_url"]
-            .as_str()
-            .unwrap_or_default()
-            .to_string();
+        let field = |key: &str| -> Result<String> {
+            let text = example_obj
+                .get(key)
+                .and_then(Value::as_str)
+                .filter(|text| !text.is_empty());
+            Ok(text
+                .with_context(|| {
+                    format!("{slug}/sources.json: examples[{position}] has no \"{key}\"")
+                })?
+                .to_string())
+        };
+        let (name, source_url) = (field("name")?, field("source_url")?);
 
         if example_obj
             .get("visual")
