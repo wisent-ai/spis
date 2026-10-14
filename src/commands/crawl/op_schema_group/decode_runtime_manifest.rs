@@ -270,8 +270,13 @@ pub(crate) fn migrate_run_state(run_id: Option<&str>) -> Result<()> {
         safe_component(run_id, "run id")?;
         vec![run_id.to_string()]
     } else {
-        std::fs::read_dir(&legacy)?
-            .filter_map(Result::ok)
+        // An entry that cannot be read is refused: skipped, its run was left
+        // unmigrated and could not be loaded afterwards.
+        std::fs::read_dir(&legacy)
+            .with_context(|| format!("list legacy crawl runs under {}", legacy.display()))?
+            .collect::<std::io::Result<Vec<_>>>()
+            .with_context(|| format!("read an entry of {}", legacy.display()))?
+            .into_iter()
             .filter(|entry| entry.path().join("run.json").is_file())
             .filter_map(|entry| entry.file_name().to_str().map(str::to_string))
             .collect()
