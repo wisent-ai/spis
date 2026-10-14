@@ -100,13 +100,9 @@ pub(crate) fn is_lowercase_hex(value: &str, length: usize) -> bool {
             .all(|byte| matches!(byte, b'0'..=b'9' | b'a'..=b'f'))
 }
 
-// A SHA-256 digest and a `sha256:` identifier have one shape check, the
-// provenance module's; crawl-web reads them through it.
-pub(crate) use crate::weles_provenance::{is_sha256, is_sha256_id};
-
-pub(crate) fn is_git_revision(value: &str) -> bool {
-    is_lowercase_hex(value, 40)
-}
+// A SHA-256 digest, a `sha256:` identifier and a Git revision have one shape
+// check each, the provenance module's; crawl-web reads them through it.
+pub(crate) use crate::weles_provenance::{is_git_revision, is_sha256, is_sha256_id};
 
 /// `weles_provenance::is_portable_attempt_component` and the bridge's
 /// `portableAttemptComponent` accept exactly this alphabet.
