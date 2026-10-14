@@ -116,7 +116,10 @@ pub(crate) fn pick(
             ));
         }
     }
-    fail(&format!("record {:?} not found", selector.unwrap_or("")));
+    match selector {
+        Some(selector) => fail(&format!("record {selector:?} not found")),
+        None => fail("sources.json lists no examples, so there is no record to capture"),
+    }
 }
 
 /// The record directory a reference's `path` lies in; a reference without
