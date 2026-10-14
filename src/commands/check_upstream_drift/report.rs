@@ -182,12 +182,12 @@ pub(crate) fn collect_urls() -> Result<Vec<(String, String, Option<String>)>> {
     for sources in sorted_glob_examples_files("sources.json") {
         let data = lib::read_json::<Value>(&sources.to_string_lossy())?;
         let catalog = directory_name(sources.parent(), &sources)?;
-        for example in data
+        // A catalog's examples are its records; one without the list is damaged.
+        let examples = data
             .get("examples")
-            .and_then(|v| v.as_array())
-            .map(|a| a.as_slice())
-            .unwrap_or(&[])
-        {
+            .and_then(Value::as_array)
+            .with_context(|| format!("{}: \"examples\" is not a list", sources.display()))?;
+        for example in examples {
             let name = example
                 .get("name")
                 .and_then(|v| v.as_str())
@@ -229,12 +229,13 @@ pub(crate) fn collect_urls() -> Result<Vec<(String, String, Option<String>)>> {
             &record,
         )?;
         let dir_name = directory_name(record.parent(), &record)?;
-        for entry in data
-            .get("motion")
-            .and_then(|v| v.as_array())
-            .map(|a| a.as_slice())
-            .unwrap_or(&[])
-        {
+        let motion: &[Value] = match data.get("motion") {
+            None => &[],
+            Some(motion) => motion
+                .as_array()
+                .with_context(|| format!("{}: \"motion\" is not a list", record.display()))?,
+        };
+        for entry in motion {
             if let Some(url) = entry.get("source_url").and_then(|v| v.as_str()) {
                 pairs.push((
                     url.to_string(),
