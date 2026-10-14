@@ -92,18 +92,16 @@ pub(crate) fn continue_record(
             "durable cancel intent won the submission race".into(),
         );
     }
-    if !matches!(
-        before_submit.get("state").and_then(Value::as_str),
-        Some("preflight_passed" | "submitting")
-    ) {
+    let before = State::of(&before_submit["state"])?;
+    if !matches!(before, State::PreflightPassed | State::Submitting) {
         return Ok(());
     }
-    if before_submit.get("state").and_then(Value::as_str) == Some("preflight_passed") {
+    if before == State::PreflightPassed {
         mutate_record(run_id, catalog, record_name, |entry| {
-            if entry.get("state").and_then(Value::as_str) == Some("preflight_passed")
+            if State::of(&entry["state"])? == State::PreflightPassed
                 && !entry.get("cancel_intent").is_some_and(Value::is_object)
             {
-                entry["state"] = json!("submitting");
+                entry["state"] = json!(State::Submitting.name());
                 entry["submission_transition"] = json!({
                     "state": "intent_persisted",
                     "attempt_id": manifest.attempt_id,
@@ -113,7 +111,7 @@ pub(crate) fn continue_record(
         })?;
     }
     let armed = record_snapshot(run_id, catalog, record_name)?;
-    if armed.get("state").and_then(Value::as_str) != Some("submitting") {
+    if State::of(&armed["state"])? != State::Submitting {
         return Ok(());
     }
     let recovered =
