@@ -38,23 +38,21 @@ pub(crate) fn collect_sites() -> Result<Vec<SiteInfo>> {
             .and_then(Value::as_i64)
             .or_else(|| meta.get("inventory_url_count").and_then(Value::as_i64))
             .unwrap_or(0);
+        // A structure file that names no site, category or source is refused
+        // with its slug, never listed with an empty one.
+        let stated = |field: &str| {
+            meta.get(field)
+                .and_then(Value::as_str)
+                .map(str::to_string)
+                .with_context(|| format!("documentation site {slug} states no {field}"))
+        };
+        let (name, category, source_url) =
+            (stated("name")?, stated("category")?, stated("source_url")?);
         out.push(SiteInfo {
             slug,
-            name: meta
-                .get("name")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_string(),
-            category: meta
-                .get("category")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_string(),
-            source_url: meta
-                .get("source_url")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_string(),
+            name,
+            category,
+            source_url,
             inventory_url_count: target_count,
             seen,
             cumulative_ok,
