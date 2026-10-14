@@ -216,17 +216,17 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
             .unwrap_or(0);
         if path.is_file() {
             let current: Value = crate::read_json(path.to_str().context("run path is not UTF-8")?)?;
-            // Every persisted run states the revision it was written at; one
-            // that states none is refused, never compared as revision zero.
-            let actual = current
-                .get("mutation_revision")
-                .and_then(Value::as_u64)
-                .with_context(|| {
-                    format!("crawl run {run_id} on disk states no mutation_revision")
-                })?;
-            if actual != expected {
+            // The revision on disk and the one this run was read at are
+            // compared as each states it: a run written before revisions
+            // existed states none on either side and still matches, and one
+            // side stating none while the other states one is a change.
+            let stated =
+                |document: &Value| document.get("mutation_revision").and_then(Value::as_u64);
+            if stated(&current) != stated(run) {
                 bail!(
-                    "crawl run {run_id} changed concurrently: expected revision {expected}, found {actual}"
+                    "crawl run {run_id} changed concurrently: expected revision {:?}, found {:?}",
+                    stated(run),
+                    stated(&current)
                 );
             }
         } else if expected != 0 {
