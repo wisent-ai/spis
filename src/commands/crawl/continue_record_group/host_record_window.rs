@@ -56,18 +56,19 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
         .get("catalogs")
         .and_then(Value::as_array)
         .cloned()
-        .unwrap_or_default();
+        .with_context(|| format!("run {run_id} records no catalogs list"))?;
     for catalog_entry in catalogs {
-        let catalog = catalog_entry
-            .get("catalog")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .to_string();
-        let engine = catalog_entry
-            .get("engine")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .to_string();
+        let named = |field: &str| {
+            catalog_entry
+                .get(field)
+                .and_then(Value::as_str)
+                .map(str::to_string)
+                .with_context(|| {
+                    format!("run {run_id}: a catalog entry names no {field}: {catalog_entry}")
+                })
+        };
+        let catalog = named("catalog")?;
+        let engine = named("engine")?;
         let host = catalog_entry
             .get("host")
             .and_then(Value::as_str)
