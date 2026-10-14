@@ -106,7 +106,7 @@ pub(crate) fn write_sources() -> Result<Value> {
              or a service are not planned.",
             examples.len()
         ),
-        "capture_host": host_facts().host.clone(),
+        "capture_host": host_facts()?.host.clone(),
         "excluded_from_scope": plan().exclusions.iter().map(|exclusion| json!({
             "binary": exclusion.binary,
             "resolved": exclusion.resolved,

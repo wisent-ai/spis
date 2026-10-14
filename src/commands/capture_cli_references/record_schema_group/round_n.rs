@@ -108,23 +108,71 @@ pub(crate) fn today_utc() -> String {
 
 // ---------------------------------------------------------------------- host
 
-pub(crate) fn sw_vers(arg: &str) -> String {
-    Command::new("sw_vers")
-        .arg(arg)
-        .output()
-        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
-        .unwrap_or_default()
+/// A system call's status: these calls report failure as a negative status
+/// and leave the cause in errno.
+fn os_status(status: libc::c_int, what: &str) -> std::result::Result<(), String> {
+    if status.is_negative() {
+        return Err(format!("{what}: {}", std::io::Error::last_os_error()));
+    }
+    Ok(())
 }
 
-pub(crate) fn uname_field(field: fn(&libc::utsname) -> &[libc::c_char]) -> String {
+/// One text value the kernel reports through sysctl, such as the macOS
+/// product version; an unreadable or empty value is refused, never written
+/// into a record as a blank host fact.
+pub(crate) fn sysctl_text(name: &str) -> std::result::Result<String, String> {
+    let key =
+        std::ffi::CString::new(name).map_err(|error| format!("sysctl name {name:?}: {error}"))?;
+    let mut buffer: Vec<u8> = Vec::new();
+    let mut length = buffer.len();
+    let what = format!("sysctl {name}");
+    unsafe {
+        os_status(
+            libc::sysctlbyname(
+                key.as_ptr(),
+                std::ptr::null_mut(),
+                &mut length,
+                std::ptr::null_mut(),
+                buffer.len(),
+            ),
+            &what,
+        )?;
+        buffer.resize(length, b'\0');
+        os_status(
+            libc::sysctlbyname(
+                key.as_ptr(),
+                buffer.as_mut_ptr().cast(),
+                &mut length,
+                std::ptr::null_mut(),
+                Vec::<u8>::new().len(),
+            ),
+            &what,
+        )?;
+    }
+    let text = std::ffi::CStr::from_bytes_until_nul(&buffer)
+        .map_err(|error| format!("{what} returned no terminated text: {error}"))?
+        .to_string_lossy()
+        .trim()
+        .to_string();
+    if text.is_empty() {
+        return Err(format!("{what} reported nothing"));
+    }
+    Ok(text)
+}
+
+pub(crate) fn uname_field(
+    name: &str,
+    field: fn(&libc::utsname) -> &[libc::c_char],
+) -> std::result::Result<String, String> {
     unsafe {
         let mut uts: libc::utsname = std::mem::zeroed();
-        if libc::uname(&mut uts) != 0 {
-            return String::new();
-        }
-        std::ffi::CStr::from_ptr(field(&uts).as_ptr())
+        os_status(
+            libc::uname(&mut uts),
+            &format!("uname cannot report the {name}"),
+        )?;
+        Ok(std::ffi::CStr::from_ptr(field(&uts).as_ptr())
             .to_string_lossy()
-            .into_owned()
+            .into_owned())
     }
 }
 
@@ -133,34 +181,36 @@ pub(crate) struct HostFacts {
     pub(crate) sentence: String,
 }
 
-pub(crate) fn host_facts() -> &'static HostFacts {
-    static HOST: LazyLock<HostFacts> = LazyLock::new(|| {
+/// The capture host as every record states it, read once; a host that cannot
+/// be read refuses the capture rather than recording blank host facts.
+pub(crate) fn host_facts() -> Result<&'static HostFacts> {
+    static HOST: LazyLock<std::result::Result<HostFacts, String>> = LazyLock::new(|| {
+        let os_version = sysctl_text("kern.osproductversion")?;
+        let os_build = sysctl_text("kern.osversion")?;
+        let arch = uname_field("machine", |u| &u.machine)?;
+        let kernel = format!(
+            "{} {}",
+            uname_field("system name", |u| &u.sysname)?,
+            uname_field("release", |u| &u.release)?
+        );
+        let sentence = format!("macOS {os_version} ({os_build}) {arch}");
         let host = json!({
             "os": "macOS",
-            "os_version": sw_vers("-productVersion"),
-            "os_build": sw_vers("-buildVersion"),
-            "arch": uname_field(|u| &u.machine),
-            "kernel": format!(
-                "{} {}",
-                uname_field(|u| &u.sysname),
-                uname_field(|u| &u.release)
-            ),
+            "os_version": os_version,
+            "os_build": os_build,
+            "arch": arch,
+            "kernel": kernel,
             "shell": SHELL,
             "terminal": format!("pseudo-terminal, {}x{}, TERM=xterm-256color", terminal().columns, terminal().rows),
         });
-        let sentence = format!(
-            "macOS {} ({}) {}",
-            host["os_version"].as_str().unwrap_or_default(),
-            host["os_build"].as_str().unwrap_or_default(),
-            host["arch"].as_str().unwrap_or_default(),
-        );
-        HostFacts { host, sentence }
+        Ok(HostFacts { host, sentence })
     });
-    &HOST
+    HOST.as_ref()
+        .map_err(|cause| anyhow::anyhow!("cannot read the capture host: {cause}"))
 }
 
-pub(crate) fn host_sentence() -> &'static str {
-    &host_facts().sentence
+pub(crate) fn host_sentence() -> Result<&'static str> {
+    Ok(&host_facts()?.sentence)
 }
 
 // ---------------------------------------------------------------- resolution

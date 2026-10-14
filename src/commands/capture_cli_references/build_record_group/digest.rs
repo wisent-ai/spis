@@ -66,7 +66,7 @@ pub(crate) fn write_media(run: &Run, ref_dir: &Path) -> Result<Value> {
     let title = format!(
         "{} — real local first-look on {}",
         run.product.name,
-        host_sentence()
+        host_sentence()?
     );
     write_cast(&cast_path, events, &title, run.wall_start)?;
     let (size, sha) = digest(&cast_path)?;
@@ -122,7 +122,7 @@ pub(crate) fn write_reference(run: &Run, measured: &Value) -> Result<(PathBuf, V
         .join(format!("{:02}-{}", run.index, run.product.slug));
     std::fs::create_dir_all(&ref_dir)?;
     let media = write_media(run, &ref_dir)?;
-    let record = build_record(run, measured, &media);
+    let record = build_record(run, measured, &media)?;
     std::fs::write(
         ref_dir.join("reference.json"),
         serde_json::to_string_pretty(&record)? + "\n",

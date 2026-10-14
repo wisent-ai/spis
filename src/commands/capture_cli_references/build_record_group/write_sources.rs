@@ -40,7 +40,7 @@ pub(crate) fn write_index() -> Result<Value> {
 // ----------------------------------------------------------------------- cli
 
 pub(crate) fn cmd_list() -> Result<()> {
-    println!("Products of the plan on this host ({}):", host_sentence());
+    println!("Products of the plan on this host ({}):", host_sentence()?);
     println!();
     let mut found = 0usize;
     for (index, product) in products().iter().enumerate() {

@@ -10,7 +10,8 @@ use observations::{accessibility, journey_steps, Accessibility};
 
 // -------------------------------------------------------------- record build
 
-pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value {
+pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result<Value> {
+    let host = host_facts()?;
     let f = Facts::read(run, measured, media);
     let interactions = interactions(&f);
     let journey_steps = journey_steps(&f);
@@ -48,7 +49,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
     let owner = product.repository.split('/').next().unwrap_or_default();
     let (columns, rows) = (terminal().columns, terminal().rows);
 
-    json!({
+    Ok(json!({
         "schema": RECORD_SCHEMA,
         "name": name,
         "product_url": product.product_url,
@@ -57,7 +58,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
         "wisent_product": owner == "wisent-ai",
         "repository": product.repository,
         "captured_at": media["captured_at"].clone(),
-        "capture_host": host_facts().host.clone(),
+        "capture_host": host.host.clone(),
         "installed": {
             "binary": binary,
             "resolved_path": run.binary_path,
@@ -85,7 +86,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
                  NO_COLOR=1 — from an empty scratch working directory. No host was contacted, no \
                  credential minted, no vault written, no job submitted and no service restarted.",
                 run.binary_path,
-                host_sentence()
+                host.sentence
             ),
             "recording_environment": format!(
                 "{SHELL} --norc --noprofile -i on a {columns}x{rows} PTY, TERM=xterm-256color, PAGER=cat, cwd={}",
@@ -119,7 +120,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
                 format!("{} installed on this workstation at {} (from {})", name, run.binary_path, product.repository),
                 format!("An empty scratch working directory ({}) with no project or product state in it", run.workdir),
                 format!("A pseudo-terminal at {columns}x{rows} with TERM=xterm-256color, PAGER=cat and NO_COLOR unset"),
-                host_sentence().to_string(),
+                host.sentence.clone(),
             ],
             "steps": journey_steps,
             "failure_route": [
@@ -230,5 +231,5 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Value 
         }).collect::<Vec<_>>(),
         "evidence_gaps": [],
         "measured_at": Value::Null,
-    })
+    }))
 }
