@@ -251,11 +251,24 @@ fn stream(request: tiny_http::Request, program: &Path, jobs: &Mutex<()>, argv: &
     }
     let result = match child.wait() {
         Ok(status) if status.success() => json!({ "type": "result", "status": 0, "json": {} }),
-        Ok(status) => json!({
-            "type": "result",
-            "status": status.code().unwrap_or(1),
-            "json": { "error": endpoints::refusal_sentence(&stderr) },
-        }),
+        // A run ended by a signal has no exit code; the result still says
+        // it failed, and its sentence names how it ended instead of letting
+        // a code read as spis's own exit.
+        Ok(status) => match status.code() {
+            Some(code) => json!({
+                "type": "result",
+                "status": code,
+                "json": { "error": endpoints::refusal_sentence(&stderr) },
+            }),
+            None => json!({
+                "type": "result",
+                "status": 1,
+                "json": { "error": format!(
+                    "spis was ended without an exit code ({status}): {}",
+                    endpoints::refusal_sentence(&stderr)
+                ) },
+            }),
+        },
         Err(error) => json!({
             "type": "result",
             "status": 1,
