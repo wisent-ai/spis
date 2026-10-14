@@ -198,7 +198,7 @@ pub fn run(rest: &[String]) -> Result<()> {
 
         let index = cat.join("references.json");
         if apply && index.exists() {
-            let mut payload: Value = lib::read_json(index.to_str().context("non-UTF8 path")?)?;
+            let mut payload: Value = lib::read_json(&index)?;
             let by_path: HashMap<String, &Vec<String>> = results
                 .iter()
                 .map(|(path, gaps)| {

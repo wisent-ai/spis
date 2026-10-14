@@ -210,7 +210,7 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
             .and_then(Value::as_u64)
             .unwrap_or(0);
         if path.is_file() {
-            let current: Value = crate::read_json(path.to_str().context("run path is not UTF-8")?)?;
+            let current: Value = crate::read_json(&path)?;
             // The revision on disk and the one this run was read at are
             // compared as each states it: a run written before revisions
             // existed states none on either side and still matches, and one

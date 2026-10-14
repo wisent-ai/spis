@@ -226,15 +226,14 @@ pub(crate) fn persist_submission_receipt(
 ) -> Result<()> {
     let path = submission_receipt_path(run_id, catalog, record, attempt_id)?;
     if path.is_file() {
-        let existing: Value =
-            crate::read_json(path.to_str().context("receipt path is not UTF-8")?)?;
+        let existing: Value = crate::read_json(&path)?;
         if existing == *receipt {
             return Ok(());
         }
         bail!("immutable submission receipt already exists with different content");
     }
     atomic_json_write(&path, receipt)?;
-    let recovered: Value = crate::read_json(path.to_str().context("receipt path is not UTF-8")?)?;
+    let recovered: Value = crate::read_json(&path)?;
     if recovered != *receipt {
         bail!("submission receipt read-back differs from accepted content");
     }

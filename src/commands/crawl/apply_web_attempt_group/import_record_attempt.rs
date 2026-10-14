@@ -77,8 +77,7 @@ pub(crate) fn import_record_attempt(
     )?;
     install_staged_tree(&attempt_staged, &attempt_destination)?;
     let record_path = record_dir.join("reference.json");
-    let mut record: Value =
-        crate::read_json(record_path.to_str().context("record path is not UTF-8")?)?;
+    let mut record: Value = crate::read_json(&record_path)?;
     let source_url = record
         .get("product_url")
         .and_then(Value::as_str)

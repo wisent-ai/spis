@@ -21,7 +21,7 @@ pub(crate) fn load(run_id: Option<&str>) -> Result<Value> {
         }
     };
     let path = run_path(&selected)?;
-    crate::read_json(path.to_str().context("run path is not UTF-8")?)
+    crate::read_json(&path)
 }
 
 pub(crate) const STADO_SUBMISSION_RECEIPT_SCHEMA: &str = "stado.submission-receipt.v3";

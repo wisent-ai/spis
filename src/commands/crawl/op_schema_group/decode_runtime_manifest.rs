@@ -283,14 +283,9 @@ pub(crate) fn migrate_run_state(run_id: Option<&str>) -> Result<()> {
         if !source.is_file() || destination.is_file() {
             continue;
         }
-        let document: Value =
-            crate::read_json(source.to_str().context("legacy run path is not UTF-8")?)?;
+        let document: Value = crate::read_json(&source)?;
         atomic_json_write(&destination, &document)?;
-        let recovered: Value = crate::read_json(
-            destination
-                .to_str()
-                .context("migrated run path is not UTF-8")?,
-        )?;
+        let recovered: Value = crate::read_json(&destination)?;
         if recovered != document {
             bail!("legacy crawl run {id} migration read-back differs");
         }

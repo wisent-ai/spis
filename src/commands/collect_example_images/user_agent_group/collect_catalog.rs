@@ -2,7 +2,7 @@ use super::*;
 
 pub(crate) fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<Value>)> {
     let source_path = PathBuf::from(slug).join("sources.json");
-    let mut catalog: Value = crate::read_json(source_path.to_str().context("path")?)?;
+    let mut catalog: Value = crate::read_json(&source_path)?;
     let mut failures: Vec<Value> = Vec::new();
     let mut collected = 0usize;
 
