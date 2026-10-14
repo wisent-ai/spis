@@ -179,7 +179,7 @@ pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value
 /// references would silently drop out of the drift report.
 pub(crate) fn collect_urls() -> Result<Vec<(String, String, Option<String>)>> {
     let mut pairs: Vec<(String, String, Option<String>)> = Vec::new();
-    for sources in sorted_glob_examples_files("sources.json") {
+    for sources in sorted_glob_examples_files("sources.json")? {
         let data = lib::read_json::<Value>(&sources)?;
         let catalog = directory_name(sources.parent(), &sources)?;
         // A catalog's examples are its records; one without the list is damaged.
@@ -219,7 +219,7 @@ pub(crate) fn collect_urls() -> Result<Vec<(String, String, Option<String>)>> {
             }
         }
     }
-    for record in reference_records() {
+    for record in reference_records()? {
         let data = lib::read_json::<Value>(&record)?;
         let catalog = directory_name(
             record

@@ -37,7 +37,7 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
 }
 
 pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
-    for record in reference_records() {
+    for record in reference_records()? {
         let data: Value = lib::read_json(&record)?;
         let base = record.parent().context("record without parent")?;
         // Every media entry the record carries, whichever list holds it (the
@@ -75,15 +75,23 @@ pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
     Ok(())
 }
 
-/// Sorted `*-examples/references/*/reference.json` under the working directory.
-pub(crate) fn reference_records() -> Vec<PathBuf> {
+/// Sorted `*-examples/references/*/reference.json` under the working
+/// directory. A directory or entry that cannot be read is refused naming it:
+/// skipped, its records were reported as having no drift.
+pub(crate) fn reference_records() -> Result<Vec<PathBuf>> {
     let mut out = Vec::new();
-    for catalog in sorted_example_dirs() {
+    for catalog in sorted_example_dirs()? {
         let refs_dir = catalog.join("references");
-        let Ok(entries) = std::fs::read_dir(&refs_dir) else {
-            continue;
+        let entries = match std::fs::read_dir(&refs_dir) {
+            Ok(entries) => entries,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(error) => {
+                return Err(error).with_context(|| format!("list {}", refs_dir.display()))
+            }
         };
-        for entry in entries.filter_map(|e| e.ok()) {
+        for entry in entries {
+            let entry =
+                entry.with_context(|| format!("read an entry of {}", refs_dir.display()))?;
             let candidate = entry.path().join("reference.json");
             if candidate.is_file() {
                 out.push(candidate);
@@ -91,38 +99,32 @@ pub(crate) fn reference_records() -> Vec<PathBuf> {
         }
     }
     out.sort();
-    out
+    Ok(out)
 }
 
-/// Sorted `*-examples` directories containing a `references` directory.
-pub(crate) fn sorted_example_dirs() -> Vec<PathBuf> {
-    let mut dirs: Vec<PathBuf> = std::fs::read_dir(".")
-        .into_iter()
-        .flatten()
-        .filter_map(|e| e.ok())
-        .map(|e| {
-            let p = e.path();
-            p.strip_prefix(".").unwrap_or(p.as_path()).to_path_buf()
-        })
-        .filter(|p| {
-            p.is_dir()
-                && p.file_name()
-                    .map(|n| n.to_string_lossy().ends_with("-examples"))
-                    .unwrap_or(false)
-        })
-        .collect();
+/// Sorted `*-examples` directories under the working directory; one that
+/// cannot be listed, or an entry that cannot be read, is refused.
+pub(crate) fn sorted_example_dirs() -> Result<Vec<PathBuf>> {
+    let mut dirs = Vec::new();
+    for entry in std::fs::read_dir(".").context("list the working directory")? {
+        let entry = entry.context("read an entry of the working directory")?;
+        let path = PathBuf::from(entry.file_name());
+        if path.is_dir() && entry.file_name().to_string_lossy().ends_with("-examples") {
+            dirs.push(path);
+        }
+    }
     dirs.sort();
-    dirs
+    Ok(dirs)
 }
 
-pub(crate) fn sorted_glob_examples_files(name: &str) -> Vec<PathBuf> {
-    let mut files: Vec<PathBuf> = sorted_example_dirs()
+pub(crate) fn sorted_glob_examples_files(name: &str) -> Result<Vec<PathBuf>> {
+    let mut files: Vec<PathBuf> = sorted_example_dirs()?
         .into_iter()
         .map(|d| d.join(name))
         .filter(|p| p.is_file())
         .collect();
     files.sort();
-    files
+    Ok(files)
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
