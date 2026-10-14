@@ -67,7 +67,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
             json!({
                 "index": 5,
                 "user_action": format!("Run `{invalid_cmd}`."),
-                "system_response": format!("The option is refused: `{}`, status {}.", quote(refusal_line), refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                "system_response": format!("The option is refused: `{}`, status {}.", quote(refusal_line), super::facts::status(refusal_status)),
                 "state": "observed refusal",
                 "evidence": ev("invalid-flag", "media/04-refusal.png"),
             })
@@ -198,9 +198,7 @@ pub(super) fn accessibility<'a>(f: &Facts<'a>) -> Accessibility<'a> {
             "State without colour: success and refusal differ by exit status in the cast \
              ({} against {}), which the shell prints as text.",
             steps["recovery-help"]["exit_status"],
-            refusal_status
-                .map(|v| v.to_string())
-                .unwrap_or_else(|| "None".into())
+            super::facts::status(refusal_status)
         ),
     ];
     Accessibility {

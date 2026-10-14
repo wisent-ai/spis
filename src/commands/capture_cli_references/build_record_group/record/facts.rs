@@ -95,3 +95,12 @@ impl<'a> Facts<'a> {
         base
     }
 }
+
+/// An exit status the capture recorded, as the record's sentences say it;
+/// one it did not record is "not recorded", never Python's "None".
+pub(super) fn status(code: Option<i64>) -> String {
+    match code {
+        Some(code) => code.to_string(),
+        None => "not recorded".to_string(),
+    }
+}

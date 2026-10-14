@@ -29,7 +29,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "response": format!("{name} starts from {} and writes to the pseudo-terminal.", run.binary_path),
                 "feedback": if version_line.is_empty() { "no output on the version form".to_string() } else { quote(version_line) },
                 "cancellation": format!("{cancellation_sentence}; nothing was submitted."),
-                "failure": format!("`{invalid_cmd}` reaches the same parser and is refused with status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                "failure": format!("`{invalid_cmd}` reaches the same parser and is refused with status {}.", super::facts::status(refusal_status)),
                 "recovery": format!("Re-enter `{}`.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
                 "evidence": ev("version", "media/01-version-identity.png"),
             })
@@ -45,19 +45,19 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 } else {
                     format!(
                         "{name} has no version flag: it refuses the option with status {} and answers with its usage surface instead.",
-                        st.map(|v| v.to_string()).unwrap_or_else(|| "None".into())
+                        super::facts::status(st)
                     )
                 },
                 "feedback": if version_line.is_empty() {
-                    format!("The process returns exit status {}.", st.map(|v| v.to_string()).unwrap_or_else(|| "None".into()))
+                    format!("The process returns exit status {}.", super::facts::status(st))
                 } else {
                     quote(version_line)
                 },
                 "cancellation": "The version form returns on its own; Ctrl-C is available at the prompt.",
                 "failure": if version_ok {
-                    format!("No failure on this path: exit {}.", st.map(|v| v.to_string()).unwrap_or_else(|| "None".into()))
+                    format!("No failure on this path: exit {}.", super::facts::status(st))
                 } else {
-                    format!("The version request itself is the failure: exit {}.", st.map(|v| v.to_string()).unwrap_or_else(|| "None".into()))
+                    format!("The version request itself is the failure: exit {}.", super::facts::status(st))
                 },
                 "recovery": if version_ok {
                     "None needed.".to_string()
@@ -77,11 +77,11 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                     s["line_count"], measured["help_max_line_width"]
                 ),
                 "feedback": match s["first_line"].as_str().unwrap_or_default() {
-                    "" => format!("The help process returns exit status {}.", s["exit_status"].as_i64().map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                    "" => format!("The help process returns exit status {}.", super::facts::status(s["exit_status"].as_i64())),
                     fl => quote(fl),
                 },
                 "cancellation": "The stream is short enough to complete; the prompt stays interruptible.",
-                "failure": format!("A misspelled flag on the same surface is refused with status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                "failure": format!("A misspelled flag on the same surface is refused with status {}.", super::facts::status(refusal_status)),
                 "recovery": format!("Re-run `{}`.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
                 "evidence": ev("help", "media/02-help-surface.png"),
             })
@@ -93,7 +93,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "trigger": format!("Run `{}`.", s["command"].as_str().unwrap_or_default()),
                 "response": product.sub_note,
                 "feedback": match s["first_line"].as_str().unwrap_or_default() {
-                    "" => format!("The subcommand surface returns exit status {}.", s["exit_status"].as_i64().map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                    "" => format!("The subcommand surface returns exit status {}.", super::facts::status(s["exit_status"].as_i64())),
                     fl => quote(fl),
                 },
                 "cancellation": "Ctrl-C at the prompt abandons the request before submission.",
@@ -110,14 +110,14 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
             json!({
                 "name": "invalid flag refusal",
                 "trigger": format!("Run `{invalid_cmd}`."),
-                "response": format!("{name} refuses the unknown option and returns status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                "response": format!("{name} refuses the unknown option and returns status {}.", super::facts::status(refusal_status)),
                 "feedback": if refusal_line.is_empty() {
-                    format!("The refusal returns exit status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into()))
+                    format!("The refusal returns exit status {}.", super::facts::status(refusal_status))
                 } else {
                     quote(refusal_line)
                 },
                 "cancellation": "The refusal returns immediately; no cancellation was required.",
-                "failure": format!("Observed status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                "failure": format!("Observed status {}.", super::facts::status(refusal_status)),
                 "recovery": if measured["refusal_names_next_action"].as_bool().unwrap_or(false) {
                     format!(
                         "The refusal names the next action ({}); running `{}` recovers.",
@@ -187,7 +187,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                     quote(recovery_line)
                 },
                 "cancellation": "The recovery can itself be interrupted with Ctrl-C at the prompt.",
-                "failure": format!("Repeating `{invalid_cmd}` reproduces status {}.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                "failure": format!("Repeating `{invalid_cmd}` reproduces status {}.", super::facts::status(refusal_status)),
                 "recovery": "The valid help form completes the first-success journey.",
                 "evidence": ev("recovery-help", "media/05-recovery.png"),
             })

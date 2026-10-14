@@ -126,7 +126,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result
             "failure_route": [
                 format!("Run `{invalid_cmd}`."),
                 quote(refusal_line),
-                format!("Observe status {} printed by the recorded shell, and the prompt restored.", refusal_status.map(|v| v.to_string()).unwrap_or_else(|| "None".into())),
+                format!("Observe status {} printed by the recorded shell, and the prompt restored.", facts::status(refusal_status)),
             ],
             "recovery_route": [
                 format!("Run `{}`.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
