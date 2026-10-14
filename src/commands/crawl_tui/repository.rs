@@ -32,27 +32,7 @@ pub(crate) const REPRESENTATIVE_INPUT_CLASSES: &[(&str, &str)] = &[
     ),
 ];
 
-pub(crate) struct TmuxSession {
-    pub(crate) name: String,
-    pub(crate) socket: PathBuf,
-    pub(crate) environment: BTreeMap<OsString, OsString>,
-}
-
-impl Drop for TmuxSession {
-    fn drop(&mut self) {
-        // Short deadline: cleanup must never block the worker (finding 4).
-        let mut command = Command::new("tmux");
-        command
-            .env_clear()
-            .env(
-                "PATH",
-                "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
-            )
-            .args(["-S", self.socket.to_string_lossy().as_ref()])
-            .args(["kill-session", "-t", &self.name]);
-        let _ = crate::commands::crawl::command_output(&mut command, "close private TUI PTY");
-    }
-}
+pub(crate) use crate::commands::crawl_cli::TmuxSession;
 
 /// Typed record failure so the worker report can name a stable machine code
 /// instead of a free-text diagnostic.

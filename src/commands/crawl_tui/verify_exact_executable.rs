@@ -123,41 +123,7 @@ pub(crate) fn verify_exact_executable(
     Ok(path)
 }
 
-pub(crate) fn tmux(
-    socket: &Path,
-    environment: &BTreeMap<OsString, OsString>,
-    args: &[&str],
-    context: &str,
-) -> Result<String> {
-    let mut command = Command::new("tmux");
-    command
-        .env_clear()
-        .envs(environment)
-        .args(["-S", socket.to_string_lossy().as_ref()])
-        .args(args);
-    let output = crate::commands::crawl::command_output(&mut command, context)?;
-    if !output.status.success() {
-        bail!(
-            "{context}: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    Ok(String::from_utf8_lossy(&output.stdout).to_string())
-}
-
-pub(crate) fn capture_range(
-    session: &TmuxSession,
-    start: &str,
-    context: &'static str,
-) -> Result<String> {
-    let screen = tmux(
-        &session.socket,
-        &session.environment,
-        &["capture-pane", "-t", &session.name, "-p", "-e", "-S", start],
-        context,
-    )?;
-    Ok(screen)
-}
+pub(crate) use crate::commands::crawl_cli::{capture_range, tmux};
 
 /// Exactly one bounded full capture per record (finding 8).
 pub(crate) fn capture(session: &TmuxSession) -> Result<String> {

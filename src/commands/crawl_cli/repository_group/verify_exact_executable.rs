@@ -149,6 +149,8 @@ pub(crate) fn tmux(
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
+/// A private tmux server and session a CLI or TUI crawl drives a fixture in;
+/// the one session type both crawls use.
 pub(crate) struct TmuxSession {
     pub(crate) name: String,
     pub(crate) socket: PathBuf,
@@ -157,17 +159,21 @@ pub(crate) struct TmuxSession {
 
 impl Drop for TmuxSession {
     fn drop(&mut self) {
-        // Short deadline: cleanup must never block the worker (finding 4).
-        let mut command = Command::new("tmux");
-        command
-            .env_clear()
-            .env(
-                "PATH",
-                "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
-            )
-            .args(["-S", self.socket.to_string_lossy().as_ref()])
-            .args(["kill-session", "-t", &self.name]);
-        let _ = crate::commands::crawl::command_output(&mut command, "close private CLI PTY");
+        // Closed through the same tmux call and environment the session ran
+        // with; one that cannot be closed is said with its cause, since it
+        // stays on the host holding the fixture's terminal.
+        if let Err(error) = tmux(
+            &self.socket,
+            &self.environment,
+            &["kill-session", "-t", &self.name],
+            "close private PTY",
+        ) {
+            eprintln!(
+                "spis: the private PTY {} on {} stays open: {error:#}",
+                self.name,
+                self.socket.display()
+            );
+        }
     }
 }
 

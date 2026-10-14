@@ -176,12 +176,8 @@ pub(crate) fn crawl_one(
     )?;
     reports.push(invocation_json(&recovery, "recovery"));
 
-    let _ = tmux(
-        &session.socket,
-        &session.environment,
-        &["kill-session", "-t", &session.name],
-        "close CLI PTY",
-    );
+    // The PTY is closed when `session` is dropped, which says a session it
+    // could not close; a second, silent kill here only hid that.
     let variant_events: Vec<Value> = reports
         .iter()
         .enumerate()
