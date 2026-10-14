@@ -39,11 +39,11 @@ pub fn run(rest: &[String]) -> Result<()> {
         .max()
         .expect("curated_at present on every loaded catalog");
 
-    let catalog_entries: Vec<Value> = catalogs
+    let catalog_entries: Vec<Value> = slugs
         .iter()
-        .map(|catalog| {
+        .zip(&catalogs)
+        .map(|(slug, catalog)| {
             let index = full_reference_index(catalog);
-            let slug = catalog["catalog"].as_str().unwrap_or("");
             json!({
                 "slug": slug,
                 "title": catalog["title"],
@@ -63,17 +63,13 @@ pub fn run(rest: &[String]) -> Result<()> {
     // Every count is summed from what each catalog states; a catalog that
     // states none is refused naming it, never added as zero.
     let sum = |name: &str, read: &dyn Fn(&Value) -> Value| -> Result<u64> {
-        catalogs
+        slugs
             .iter()
-            .map(|catalog| {
-                read(catalog).as_u64().with_context(|| {
-                    format!(
-                        "catalog {} states no {name}",
-                        catalog["slug"]
-                            .as_str()
-                            .map_or_else(|| catalog.to_string(), str::to_string)
-                    )
-                })
+            .zip(&catalogs)
+            .map(|(slug, catalog)| {
+                read(catalog)
+                    .as_u64()
+                    .with_context(|| format!("catalog {slug} states no {name}"))
             })
             .sum::<Result<u64>>()
     };

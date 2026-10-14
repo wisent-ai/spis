@@ -81,14 +81,12 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
                 missing_list(&missing)
             );
         }
-        let source_url = example
-            .get("source_url")
-            .and_then(Value::as_str)
-            .unwrap_or("");
+        let example_context = format!("{source_path_str}: example {index}");
+        let source_url = required_text(example, "source_url", &example_context)?;
         if !url_ok(source_url) {
-            bail!("{source_path_str}: example {index} has an invalid URL");
+            bail!("{example_context} has an invalid URL");
         }
-        let name = example.get("name").and_then(Value::as_str).unwrap_or("");
+        let name = required_text(example, "name", &example_context)?;
         let folded_name = name.to_lowercase();
         if !names.insert(folded_name) {
             bail!("{source_path_str}: duplicate example name '{name}'");
@@ -124,10 +122,8 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
             "bytes",
             "sha256",
         ];
-        let capture_kind = visual
-            .get("capture_kind")
-            .and_then(Value::as_str)
-            .unwrap_or("");
+        let visual_context = format!("{example_context} visual");
+        let capture_kind = required_text(visual, "capture_kind", &visual_context)?;
         if capture_kind == "local-terminal-render" {
             visual_required.push("source_recording_path");
         } else if capture_kind != "local-browser-screenshot" {
@@ -144,10 +140,7 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
                 missing_list(&visual_missing)
             );
         }
-        let visual_local = visual
-            .get("local_path")
-            .and_then(Value::as_str)
-            .unwrap_or("");
+        let visual_local = required_text(visual, "local_path", &visual_context)?;
         let image_path = catalog_dir.join(visual_local);
         let contained = resolve_evidence_path(catalog_dir, visual_local, &source_path_str).is_ok();
         if !contained || !image_path.is_file() {
@@ -195,8 +188,7 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
         let regions_ok = structure
             .get("regions")
             .and_then(Value::as_array)
-            .map(|r| !r.is_empty())
-            .unwrap_or(false);
+            .is_some_and(|regions| !regions.is_empty());
         if !regions_ok {
             bail!("{source_path_str}: example {index} has no structural regions");
         }

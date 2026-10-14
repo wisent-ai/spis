@@ -49,6 +49,17 @@ pub(crate) fn require_nonempty(record: &Value, fields: &[String], context: &str)
     Ok(())
 }
 
+/// The text `record` states under `field`. A field that is absent, not text
+/// or empty is refused naming it, never read as an empty string that a later
+/// check reports as some other defect.
+pub(crate) fn required_text<'a>(record: &'a Value, field: &str, context: &str) -> Result<&'a str> {
+    match record.get(field) {
+        Some(Value::String(text)) if !text.is_empty() => Ok(text),
+        Some(other) => bail!("{context}: {field} must be non-empty text, found {other}"),
+        None => bail!("{context}: {field} is missing"),
+    }
+}
+
 pub(crate) fn python_repr(value: Option<&Value>) -> String {
     match value {
         None | Some(Value::Null) => "None".into(),

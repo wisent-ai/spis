@@ -55,15 +55,13 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
         {
             bail!("{index_path_str}: reference {position} does not match sources.json");
         }
-        let entry_status = entry
-            .get("evidence_status")
-            .and_then(Value::as_str)
-            .unwrap_or("");
+        let entry_context = format!("{index_path_str}: reference {position}");
+        let entry_status = required_text(entry, "evidence_status", &entry_context)?;
         if reference_contract::named::<EvidenceStatus>(entry_status).is_none() {
-            bail!("{index_path_str}: reference {position} has status '{entry_status}'");
+            bail!("{entry_context} has status '{entry_status}'");
         }
 
-        let entry_path = entry.get("path").and_then(Value::as_str).unwrap_or("");
+        let entry_path = required_text(entry, "path", &entry_context)?;
         let record_path = resolve_evidence_path(&catalog_dir, entry_path, &index_path_str)?;
         let record_path_str = record_path.to_string_lossy().to_string();
         let record: Value = lib::read_json(&record_path)?;

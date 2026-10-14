@@ -26,14 +26,11 @@ pub(crate) fn validate_motion(
     for (position, item) in motion.iter().enumerate() {
         let context = format!("{record_path}: motion {}", position + 1);
         require_nonempty(item, &field_names::<MotionEntry>(), &context)?;
-        let media_kind = item.get("media_kind").and_then(Value::as_str).unwrap_or("");
+        let media_kind = required_text(item, "media_kind", &context)?;
         if reference_contract::named::<MotionKind>(media_kind).is_none() {
             bail!("{context}: media kind '{media_kind}' is not a canonical motion kind");
         }
-        let provenance_class = item
-            .get("provenance_class")
-            .and_then(Value::as_str)
-            .unwrap_or("");
+        let provenance_class = required_text(item, "provenance_class", &context)?;
         let Some(declared) = reference_contract::named::<Provenance>(provenance_class) else {
             bail!("{context}: unknown provenance class '{provenance_class}'");
         };
@@ -51,11 +48,11 @@ pub(crate) fn validate_motion(
         if !py_truthy(item.get("measured")) {
             bail!("{context}: asset was never measured; run verify-reference-evidence.py");
         }
-        let source_url = item.get("source_url").and_then(Value::as_str).unwrap_or("");
+        let source_url = required_text(item, "source_url", &context)?;
         if !url_ok(source_url) {
             bail!("{context}: invalid source URL");
         }
-        let local_path = item.get("local_path").and_then(Value::as_str).unwrap_or("");
+        let local_path = required_text(item, "local_path", &context)?;
         let motion_path = resolve_evidence_path(reference_dir, local_path, &context)?;
         if !Extension::of(&motion_path).is_some_and(Extension::holds_motion) {
             bail!("{context}: unsupported motion format");
@@ -77,16 +74,13 @@ pub(crate) fn validate_motion(
         classes.push(provenance_class.to_string());
     }
 
-    let declared: BTreeSet<String> = record
-        .get("motion_provenance")
-        .and_then(Value::as_array)
-        .map(|entries| {
-            entries
-                .iter()
-                .filter_map(|v| v.as_str().map(str::to_string))
-                .collect()
-        })
-        .unwrap_or_default();
+    let Some(entries) = record.get("motion_provenance").and_then(Value::as_array) else {
+        bail!("{record_path}: motion_provenance must be a list");
+    };
+    let declared: BTreeSet<String> = entries
+        .iter()
+        .filter_map(|v| v.as_str().map(str::to_string))
+        .collect();
     let measured: BTreeSet<String> = classes.iter().cloned().collect();
     if measured != declared {
         bail!("{record_path}: motion_provenance does not match the motion entries");
@@ -116,7 +110,7 @@ pub(crate) fn validate_states(
     for (position, item) in states.iter().enumerate() {
         let context = format!("{record_path}: state {}", position + 1);
         require_nonempty(item, &field_names::<StateEntry>(), &context)?;
-        let local_path = item.get("local_path").and_then(Value::as_str).unwrap_or("");
+        let local_path = required_text(item, "local_path", &context)?;
         let state_path = resolve_evidence_path(reference_dir, local_path, &context)?;
         if !Extension::of(&state_path).is_some_and(Extension::holds_state) {
             bail!("{context}: unsupported state-image format");
