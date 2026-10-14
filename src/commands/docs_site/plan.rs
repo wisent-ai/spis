@@ -179,18 +179,30 @@ pub(crate) fn docs_payload(plan: &Value) -> Result<Value> {
                         "items": items,
                     }));
                 }
-                json!({
-                    "heading": section.get("title").and_then(Value::as_str).unwrap_or_default(),
+                let heading = section
+                    .get("title")
+                    .and_then(Value::as_str)
+                    .context("a generated section carries no title")?;
+                Ok(json!({
+                    "heading": heading,
                     "blocks": blocks,
-                })
+                }))
             })
-            .collect::<Vec<_>>();
+            .collect::<Result<Vec<_>>>()?;
+        // Every field the documentation site renders is the plan's own; a
+        // page without one is refused naming the field, never published
+        // with an empty slug or title or under a category nobody chose.
+        let field = |name: &str| {
+            page.get(name)
+                .and_then(Value::as_str)
+                .with_context(|| format!("a generated page carries no {name}: {page}"))
+        };
         rendered_pages.push(json!({
-            "slug": page.get("slug").and_then(Value::as_str).unwrap_or_default(),
-            "nav": page.get("nav").and_then(Value::as_str).unwrap_or_default(),
-            "title": page.get("title").and_then(Value::as_str).unwrap_or_default(),
-            "description": page.get("description").and_then(Value::as_str).unwrap_or_default(),
-            "category": page.get("eyebrow").and_then(Value::as_str).unwrap_or("Guides"),
+            "slug": field("slug")?,
+            "nav": field("nav")?,
+            "title": field("title")?,
+            "description": field("description")?,
+            "category": field("eyebrow")?,
             "sections": sections,
         }));
     }
