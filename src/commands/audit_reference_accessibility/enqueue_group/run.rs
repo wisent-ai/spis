@@ -266,16 +266,24 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
 
     let payload = write_index(&rows, &batch, &target, &plan_path, &verifier_errors)?;
-    let totals = payload.get("totals").cloned().unwrap_or(Value::Null);
-    let total = |key: &str| totals.get(key).and_then(Value::as_u64).unwrap_or(0);
+    // The index this run just wrote states every total; one it does not state
+    // is refused, never read as zero, so a missing failure count cannot pass.
+    let total = |key: &str| {
+        payload
+            .pointer(&format!("/totals/{key}"))
+            .and_then(Value::as_u64)
+            .with_context(|| format!("{INDEX} states no totals.{key}"))
+    };
+    let (planned, complete, failed, pending) = (
+        total("planned")?,
+        total("complete")?,
+        total("failed")?,
+        total("pending")?,
+    );
     log(&format!(
-        "{INDEX}: planned={} complete={} failed={} pending={}",
-        total("planned"),
-        total("complete"),
-        total("failed"),
-        total("pending")
+        "{INDEX}: planned={planned} complete={complete} failed={failed} pending={pending}"
     ));
-    if total("failed") == 0 && total("pending") == 0 && verifier_errors.is_empty() {
+    if failed == 0 && pending == 0 && verifier_errors.is_empty() {
         Ok(())
     } else {
         std::process::exit(3);
