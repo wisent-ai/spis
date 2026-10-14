@@ -164,19 +164,19 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
             }
             Ok(argv)
         }
-        "catalog-add" => {
-            let mut argv = vec![
-                "catalog-type".into(),
-                "add".into(),
-                text(body, "slug", "adding a product type requires a slug")?,
-                "--title".into(),
-                text(body, "title", "adding a product type requires a title")?,
-            ];
-            if let Ok(description) = text(body, "description", "") {
-                argv.extend(["--description".into(), description]);
-            }
-            Ok(argv)
-        }
+        "catalog-add" => Ok(vec![
+            "catalog-type".into(),
+            "add".into(),
+            text(body, "slug", "adding a product type requires a slug")?,
+            "--title".into(),
+            text(body, "title", "adding a product type requires a title")?,
+            "--description".into(),
+            text(
+                body,
+                "description",
+                "adding a product type requires a description",
+            )?,
+        ]),
         "catalog-edit" => {
             let mut argv = vec![
                 "catalog-type".into(),

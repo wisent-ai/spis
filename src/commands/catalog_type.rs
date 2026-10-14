@@ -152,6 +152,12 @@ fn cmd_add(rest: &[String]) -> Result<()> {
         Some(t) if !t.is_empty() => t.clone(),
         _ => fail("--title is required for add"),
     };
+    // The corpus refuses a catalog without a description, so add does too,
+    // before anything is created; '' made a catalog the corpus then refused.
+    let description = match &args.description {
+        Some(d) if !d.trim().is_empty() => d.clone(),
+        _ => fail("--description is required for add"),
+    };
     std::fs::create_dir(&directory)?;
     std::fs::create_dir(directory.join("references"))?;
     let sources = json!({
@@ -159,7 +165,7 @@ fn cmd_add(rest: &[String]) -> Result<()> {
         "catalog": slug,
         "slug": slug,
         "title": title,
-        "description": args.description.unwrap_or_default(),
+        "description": description,
         "status": "scaffolded",
         "curated_at": today_utc(),
         "count": 0,
@@ -298,7 +304,7 @@ fn cmd_remove(rest: &[String]) -> Result<()> {
 }
 
 const USAGE: &str = "usage: spis catalog-type <add|edit|remove> <slug> [flags]
-  spis catalog-type add <slug> [--title TEXT] [--description TEXT]
+  spis catalog-type add <slug> --title TEXT --description TEXT
       scaffold a new <slug>-examples catalog and refresh the index
   spis catalog-type edit <slug> [--title TEXT] [--description TEXT] [--status TEXT] [--rename NEW-SLUG]
       change a catalog's metadata or rename its directory
