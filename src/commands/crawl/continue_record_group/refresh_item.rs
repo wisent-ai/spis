@@ -43,7 +43,20 @@ pub(crate) fn refresh_item(entry: &mut Value) {
                 }
             }
             if entry.get("state").and_then(Value::as_str) != Some("imported") {
-                entry["state"] = job.get("state").cloned().unwrap_or_else(|| json!("failed"));
+                match job.get("state") {
+                    Some(state) => entry["state"] = state.clone(),
+                    // A job that reports no state leaves the record's state
+                    // as it was and says so; it had been recorded as failed.
+                    None => {
+                        entry["diagnostic"] = json!({
+                            "code": "stado_job_state_unreported",
+                            "message": format!("Stado reported job {job_id} without a state"),
+                            "stado_job_id": job_id,
+                        });
+                        entry["job"] = job;
+                        return;
+                    }
+                }
             }
             entry["job"] = job;
             entry["lookup_error"] = Value::Null;
