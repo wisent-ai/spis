@@ -116,10 +116,7 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
             if !entry.get("cancel_intent").is_some_and(Value::is_object) {
                 entry["cancel_intent"] = intent.clone();
             }
-            if matches!(
-                entry.get("state").and_then(Value::as_str),
-                Some("planned" | "preflighting" | "preflight_passed" | "unavailable")
-            ) {
+            if State::of(&entry["state"])?.before_submission() {
                 entry["state"] = json!("cancelled");
                 entry["diagnostic"] = json!({
                     "code": "cancelled_before_submission",

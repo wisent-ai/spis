@@ -112,6 +112,12 @@ impl State {
                     | State::Cancelled
             )
     }
+
+    /// The attempt has not been handed to Stado: still planning, cleared to
+    /// submit, or found unplaceable. Cancelling it needs no job cancelled.
+    pub(crate) fn before_submission(self) -> bool {
+        self.planning() || matches!(self, State::PreflightPassed | State::Unavailable)
+    }
 }
 
 /// The state a set of attempts aggregates to: work still moving wins, in the
