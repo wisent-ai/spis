@@ -76,11 +76,12 @@ where
 /// `stado credentials get --role` (cli.md rule 15). `STADO_BIN` names another
 /// executable.
 pub fn role_secret(variable: &str) -> Result<Option<String>> {
-    let Some(reference) = std::env::var(variable)
-        .ok()
-        .filter(|value| !value.trim().is_empty())
-    else {
-        return Ok(None);
+    // A reference that is not text is named, not read as absent: read as
+    // absent, a declared secret was silently replaced by none.
+    let reference = match std::env::var(variable) {
+        Ok(value) if !value.trim().is_empty() => value,
+        Ok(_) | Err(std::env::VarError::NotPresent) => return Ok(None),
+        Err(error) => return Err(usage(format!("{variable} cannot be read: {error}"))),
     };
     let reference = reference.trim();
     let Some((role, field)) = reference
@@ -91,8 +92,14 @@ pub fn role_secret(variable: &str) -> Result<Option<String>> {
             "{variable} must be a role reference ROLE#FIELD, not {reference:?}"
         )));
     };
-    let binary = std::env::var("STADO_BIN").unwrap_or_else(|_| "stado".into());
-    let output = std::process::Command::new(&binary)
+    // STADO_BIN names another Stado program, any path the system accepts;
+    // without it the `stado` the PATH finds is asked.
+    let program = match std::env::var_os("STADO_BIN").filter(|path| !path.is_empty()) {
+        Some(path) => std::path::PathBuf::from(path),
+        None => std::path::PathBuf::from("stado"),
+    };
+    let binary = program.display();
+    let output = std::process::Command::new(&program)
         .args(["credentials", "get", "--role", role, "--field", field])
         .output()
         .map_err(|error| anyhow::anyhow!("{variable}: {binary} could not be run: {error}"))?;
