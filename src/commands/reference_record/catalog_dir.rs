@@ -79,13 +79,28 @@ pub(crate) fn today_iso() -> String {
 
 /// Refresh the counters on both catalog files and regenerate the rendered indexes.
 pub(crate) fn save_all(directory: &Path, sources: &mut Value, index: &mut Value) -> Result<()> {
-    let examples = sources["examples"].as_array().map(Vec::len).unwrap_or(0);
+    // A catalog file without its list is refused, never written back with
+    // its counters set to nothing.
+    let examples = sources["examples"]
+        .as_array()
+        .map(Vec::len)
+        .with_context(|| {
+            format!(
+                "{}/sources.json holds no examples list",
+                directory.display()
+            )
+        })?;
     sources["count"] = json!(examples);
     sources["visual_count"] = json!(examples);
     sources["structure_count"] = json!(examples);
     lib::write_pretty_json(&directory.join("sources.json").to_string_lossy(), sources)?;
 
-    let references = index["references"].as_array().cloned().unwrap_or_default();
+    let references = index["references"].as_array().cloned().with_context(|| {
+        format!(
+            "{}/references.json holds no references list",
+            directory.display()
+        )
+    })?;
     index["reference_count"] = json!(references.len());
     index["complete_count"] = json!(references
         .iter()
@@ -112,11 +127,21 @@ pub(crate) fn find_record(directory: &Path, index: &Value, identifier: &str) -> 
             None
         };
     let wanted = identifier.to_lowercase();
-    let references = index["references"].as_array().cloned().unwrap_or_default();
+    let references = index["references"].as_array().with_context(|| {
+        format!(
+            "{}/references.json holds no references list",
+            directory.display()
+        )
+    })?;
     for (position, entry) in references.iter().enumerate() {
         let name_key = entry["name"]
             .as_str()
-            .unwrap_or_default()
+            .with_context(|| {
+                format!(
+                    "{}/references.json entry {position} names no record",
+                    directory.display()
+                )
+            })?
             .to_lowercase()
             .replace('_', "-")
             .replace(' ', "-");
