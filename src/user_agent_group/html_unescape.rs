@@ -266,9 +266,12 @@ pub fn now_iso_utc() -> String {
     format!("{y:04}-{m:02}-{d:02}T{h:02}:{mi:02}:{s:02}Z")
 }
 
-pub fn read_json<T: serde::de::DeserializeOwned>(path: &str) -> Result<T> {
-    let text = std::fs::read_to_string(path).with_context(|| format!("read {path}"))?;
-    serde_json::from_str(&text).with_context(|| format!("parse {path}"))
+/// The JSON document at `path`; a file that cannot be read or parsed is
+/// refused naming the path and the cause.
+pub fn read_json<T: serde::de::DeserializeOwned>(path: impl AsRef<std::path::Path>) -> Result<T> {
+    let path = path.as_ref();
+    let bytes = std::fs::read(path).with_context(|| format!("read {}", path.display()))?;
+    serde_json::from_slice(&bytes).with_context(|| format!("parse {}", path.display()))
 }
 
 pub fn write_pretty_json(path: &str, value: &serde_json::Value) -> Result<()> {

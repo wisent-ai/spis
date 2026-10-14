@@ -225,34 +225,11 @@ pub(crate) fn crawl_one(
 }
 
 pub(crate) fn records(selected: Option<&str>) -> Result<Vec<(String, String)>> {
-    let directory = crate::commands::corpus::data_root()
-        .join("tui-examples")
-        .join("references");
-    let mut paths: Vec<PathBuf> = std::fs::read_dir(directory)?
-        .map(|entry| entry.map(|entry| entry.path()))
-        .collect::<std::io::Result<Vec<_>>>()?
-        .into_iter()
-        .filter(|path| path.is_dir())
-        .collect();
-    paths.sort();
-    let mut records = Vec::new();
-    for path in paths {
-        let slug = path
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or_default();
-        if selected.is_some_and(|value| {
-            value != slug && value != slug.split_once('-').map(|(_, tail)| tail).unwrap_or(slug)
-        }) {
-            continue;
-        }
-        let record: Value = serde_json::from_slice(&std::fs::read(path.join("reference.json"))?)?;
-        let name = record
-            .get("name")
-            .and_then(Value::as_str)
-            .unwrap_or_default();
-        records.push((slug.to_string(), name.to_string()));
-    }
+    let records: Vec<(String, String)> =
+        crate::commands::reference_record::catalog_records("tui-examples", selected)?
+            .into_iter()
+            .map(|record| (record.slug, record.name))
+            .collect();
     if records.is_empty() {
         bail!("no matching TUI records");
     }

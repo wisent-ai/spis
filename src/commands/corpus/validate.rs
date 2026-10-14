@@ -73,8 +73,8 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
         let references_path = contained_file(root, references_relative, "reference index")?;
         files.insert(source_path.clone());
         files.insert(references_path.clone());
-        let source: Value = read_json(&source_path)?;
-        let references: Value = read_json(&references_path)?;
+        let source: Value = crate::read_json(&source_path)?;
+        let references: Value = crate::read_json(&references_path)?;
         if source.get("schema").and_then(Value::as_str) != Some(SOURCES_SCHEMA)
             || source.get("catalog").and_then(Value::as_str) != Some(slug)
         {
@@ -134,7 +134,7 @@ pub(crate) fn validate(root: &Path) -> Result<CorpusSummary> {
                 bail!("reference catalog {slug} repeats record path {relative}");
             }
             files.insert(record_path.clone());
-            let record: Value = read_json(&record_path)?;
+            let record: Value = crate::read_json(&record_path)?;
             if record.get("schema").and_then(Value::as_str) != Some(RECORD_SCHEMA) {
                 bail!(
                     "{} is not a canonical {} record",
@@ -229,11 +229,6 @@ pub(crate) fn contained_file(root: &Path, relative: &str, label: &str) -> Result
         );
     }
     Ok(canonical)
-}
-
-pub(crate) fn read_json(path: &Path) -> Result<Value> {
-    serde_json::from_slice(&fs::read(path).with_context(|| format!("read {}", path.display()))?)
-        .with_context(|| format!("parse {}", path.display()))
 }
 
 pub(crate) fn validate_local_paths(

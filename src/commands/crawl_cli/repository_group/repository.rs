@@ -98,38 +98,15 @@ pub(crate) fn binary_for(slug: &str) -> String {
 }
 
 pub(crate) fn records(selected: Option<&str>) -> Result<Vec<Record>> {
-    let directory = crate::commands::corpus::data_root()
-        .join(CATALOG)
-        .join("references");
-    let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)?
-        .map(|entry| entry.map(|entry| entry.path()))
-        .collect::<std::io::Result<Vec<_>>>()?
-        .into_iter()
-        .filter(|path| path.is_dir())
-        .collect();
-    paths.sort();
-    let mut records = Vec::new();
-    for path in paths {
-        let slug = path
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or_default();
-        if selected.is_some_and(|value| {
-            value != slug && value != slug.split_once('-').map(|(_, tail)| tail).unwrap_or(slug)
-        }) {
-            continue;
-        }
-        let document: Value = serde_json::from_slice(&std::fs::read(path.join("reference.json"))?)?;
-        records.push(Record {
-            slug: slug.to_string(),
-            name: document
-                .get("name")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_string(),
-            binary: binary_for(slug),
-        });
-    }
+    let records: Vec<Record> =
+        crate::commands::reference_record::catalog_records(CATALOG, selected)?
+            .into_iter()
+            .map(|record| Record {
+                binary: binary_for(&record.slug),
+                slug: record.slug,
+                name: record.name,
+            })
+            .collect();
     if records.is_empty() {
         bail!("no matching CLI records");
     }

@@ -205,3 +205,51 @@ pub(crate) fn catalog_example<'a>(
             format!("{file} has no example at position {position} though references.json does")
         })
 }
+
+/// One reference record of a catalog: its directory slug, the name the record
+/// states and its `reference.json`.
+#[derive(Clone, Debug)]
+pub(crate) struct CatalogRecord {
+    pub(crate) slug: String,
+    pub(crate) name: String,
+    pub(crate) path: PathBuf,
+}
+
+/// The records under the adopted corpus's `<catalog>/references`, by slug,
+/// narrowed to `selected` (a whole slug or the slug after its number). Every
+/// crawl lists its records here. A directory or record that cannot be read, a
+/// directory name that is not UTF-8 and a record that states no name are
+/// refused naming the path; none is listed under an empty slug or name.
+pub(crate) fn catalog_records(catalog: &str, selected: Option<&str>) -> Result<Vec<CatalogRecord>> {
+    let directory = crate::commands::corpus::data_root()
+        .join(catalog)
+        .join("references");
+    let mut paths = std::fs::read_dir(&directory)
+        .with_context(|| format!("read {}", directory.display()))?
+        .map(|entry| entry.map(|entry| entry.path()))
+        .collect::<std::io::Result<Vec<_>>>()
+        .with_context(|| format!("list {}", directory.display()))?;
+    paths.retain(|path| path.is_dir());
+    paths.sort();
+    let mut records = Vec::new();
+    for path in paths {
+        let slug = path
+            .file_name()
+            .and_then(|name| name.to_str())
+            .with_context(|| format!("{} is not a UTF-8 record directory", path.display()))?
+            .to_string();
+        let tail = slug.split_once('-').map(|(_, tail)| tail);
+        if selected.is_some_and(|value| value != slug && Some(value) != tail) {
+            continue;
+        }
+        let path = path.join("reference.json");
+        let document: Value = lib::read_json(&path)?;
+        let name = document
+            .get("name")
+            .and_then(Value::as_str)
+            .with_context(|| format!("{} states no name", path.display()))?
+            .to_string();
+        records.push(CatalogRecord { slug, name, path });
+    }
+    Ok(records)
+}

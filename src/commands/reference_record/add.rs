@@ -4,8 +4,8 @@ use super::*;
 /// `references/<NN-slug>/reference.json`, and an index entry.
 pub fn add(args: &AddArgs) -> Result<()> {
     let directory = catalog_dir(&args.catalog)?;
-    let mut sources: Value = lib::read_json(&directory.join("sources.json").to_string_lossy())?;
-    let mut index: Value = lib::read_json(&directory.join("references.json").to_string_lossy())?;
+    let mut sources: Value = lib::read_json(directory.join("sources.json"))?;
+    let mut index: Value = lib::read_json(directory.join("references.json"))?;
 
     let visual_source = PathBuf::from(&args.visual);
     if !visual_source.is_file() {
@@ -171,13 +171,13 @@ pub fn add(args: &AddArgs) -> Result<()> {
 
 pub(crate) fn get(catalog: &str, identifier: &str) -> Result<()> {
     let directory = catalog_dir(catalog)?;
-    let sources: Value = lib::read_json(&directory.join("sources.json").to_string_lossy())?;
-    let index: Value = lib::read_json(&directory.join("references.json").to_string_lossy())?;
+    let sources: Value = lib::read_json(directory.join("sources.json"))?;
+    let index: Value = lib::read_json(directory.join("references.json"))?;
     let position = find_record(&directory, &index, identifier)?;
     let example = catalog_example(&directory, &sources, position)?.clone();
     let entry = index["references"][position].clone();
     let record_path = record_path(&directory, &index, position)?;
-    let record: Value = lib::read_json(&record_path.to_string_lossy())?;
+    let record: Value = lib::read_json(&record_path)?;
     println!(
         "{}",
         serde_json::to_string_pretty(&json!({
@@ -203,11 +203,11 @@ pub(crate) fn truthy(value: &Value) -> bool {
 
 pub(crate) fn remove(catalog: &str, identifier: &str, force: bool) -> Result<()> {
     let directory = catalog_dir(catalog)?;
-    let mut sources: Value = lib::read_json(&directory.join("sources.json").to_string_lossy())?;
-    let mut index: Value = lib::read_json(&directory.join("references.json").to_string_lossy())?;
+    let mut sources: Value = lib::read_json(directory.join("sources.json"))?;
+    let mut index: Value = lib::read_json(directory.join("references.json"))?;
     let position = find_record(&directory, &index, identifier)?;
     let record_path = record_path(&directory, &index, position)?;
-    let record: Value = lib::read_json(&record_path.to_string_lossy())?;
+    let record: Value = lib::read_json(&record_path)?;
     if (truthy(&record["motion"]) || truthy(&record["journey"])) && !force {
         bail!("reference: the record carries motion or journey evidence; pass --force to delete it permanently");
     }

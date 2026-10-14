@@ -28,11 +28,11 @@ pub(crate) fn edit(args: &EditArgs) -> Result<()> {
         ));
     }
     let directory = catalog_dir(&args.catalog)?;
-    let mut sources: Value = lib::read_json(&directory.join("sources.json").to_string_lossy())?;
-    let mut index: Value = lib::read_json(&directory.join("references.json").to_string_lossy())?;
+    let mut sources: Value = lib::read_json(directory.join("sources.json"))?;
+    let mut index: Value = lib::read_json(directory.join("references.json"))?;
     let position = find_record(&directory, &index, &args.identifier)?;
     let record_path = record_path(&directory, &index, position)?;
-    let mut record: Value = lib::read_json(&record_path.to_string_lossy())?;
+    let mut record: Value = lib::read_json(&record_path)?;
     let example = sources["examples"]
         .get_mut(position)
         .with_context(|| format!("reference: sources.json has no example at position {position} though references.json does"))?;

@@ -1,39 +1,14 @@
 use super::*;
 
 pub(crate) fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
-    let directory = crate::commands::corpus::data_root()
-        .join(catalog)
-        .join("references");
-    let mut entries: Vec<PathBuf> = std::fs::read_dir(&directory)
-        .with_context(|| format!("read {}", directory.display()))?
-        .filter_map(|entry| entry.ok().map(|entry| entry.path()))
-        .filter(|path| path.is_dir())
+    let found: Vec<Record> = crate::commands::reference_record::catalog_records(catalog, selected)?
+        .into_iter()
+        .map(|record| Record {
+            slug: record.slug,
+            name: record.name,
+            path: record.path,
+        })
         .collect();
-    entries.sort();
-    let mut found = Vec::new();
-    for path in entries {
-        let slug = path
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or_default()
-            .to_string();
-        if selected.is_some_and(|value| {
-            value != slug && value != slug.split_once('-').map(|(_, tail)| tail).unwrap_or(&slug)
-        }) {
-            continue;
-        }
-        let record_path = path.join("reference.json");
-        let document: Value = serde_json::from_slice(&std::fs::read(&record_path)?)?;
-        found.push(Record {
-            slug,
-            name: document
-                .get("name")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_string(),
-            path: record_path,
-        });
-    }
     if found.is_empty() {
         bail!("no matching records in {catalog}");
     }
@@ -50,7 +25,7 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
     let url = format!("https://itunes.apple.com/lookup?id={track_id}");
     let cache = Path::new(".wisent-output/product-resolution/ios").join(format!("{track_id}.json"));
     let response: Value = if cache.is_file() {
-        serde_json::from_slice(&std::fs::read(&cache)?)?
+        crate::read_json(&cache)?
     } else {
         // Same bounded, redirect-free treatment as every Appium read: no
         // unbounded into_json and no cross-origin redirect (findings 12/12b).

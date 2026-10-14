@@ -180,38 +180,14 @@ pub(crate) fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Recor
     if !matches!(catalog, "macos-app-examples" | "desktop-app-examples") {
         bail!("crawl-desktop accepts macos-app-examples or desktop-app-examples");
     }
-    let directory = crate::commands::corpus::data_root()
-        .join(catalog)
-        .join("references");
-    let mut paths: Vec<PathBuf> = std::fs::read_dir(&directory)?
-        .map(|entry| entry.map(|entry| entry.path()))
-        .collect::<std::io::Result<Vec<_>>>()?
-        .into_iter()
-        .filter(|path| path.is_dir())
-        .collect();
-    paths.sort();
-    let mut records = Vec::new();
-    for path in paths {
-        let slug = path
-            .file_name()
-            .and_then(|name| name.to_str())
-            .unwrap_or_default();
-        if selected.is_some_and(|selected| {
-            selected != slug
-                && selected != slug.split_once('-').map(|(_, tail)| tail).unwrap_or(slug)
-        }) {
-            continue;
-        }
-        let record: Value = serde_json::from_slice(&std::fs::read(path.join("reference.json"))?)?;
-        records.push(Record {
-            slug: slug.to_string(),
-            name: record
-                .get("name")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_string(),
-        });
-    }
+    let records: Vec<Record> =
+        crate::commands::reference_record::catalog_records(catalog, selected)?
+            .into_iter()
+            .map(|record| Record {
+                slug: record.slug,
+                name: record.name,
+            })
+            .collect();
     if records.is_empty() {
         bail!("no matching records in {catalog}");
     }
