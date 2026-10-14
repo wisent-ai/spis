@@ -9,9 +9,14 @@ pub(crate) fn load(run_id: Option<&str>) -> Result<Value> {
         }
         None => {
             let root = run_root()?;
-            let mut ids: Vec<String> = std::fs::read_dir(&root)
+            // An entry that cannot be read is refused: skipped, the newest
+            // run could be passed over for an older one.
+            let entries = std::fs::read_dir(&root)
                 .with_context(|| format!("no crawl runs exist under {}", root.display()))?
-                .filter_map(|entry| entry.ok())
+                .collect::<std::io::Result<Vec<_>>>()
+                .with_context(|| format!("list crawl runs under {}", root.display()))?;
+            let mut ids: Vec<String> = entries
+                .iter()
                 .filter(|entry| entry.path().join("run.json").is_file())
                 .filter_map(|entry| entry.file_name().to_str().map(str::to_string))
                 .filter(|id| safe_component(id, "run id").is_ok())
