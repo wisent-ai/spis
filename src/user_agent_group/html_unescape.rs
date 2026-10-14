@@ -274,7 +274,12 @@ pub fn read_json<T: serde::de::DeserializeOwned>(path: impl AsRef<std::path::Pat
     serde_json::from_slice(&bytes).with_context(|| format!("parse {}", path.display()))
 }
 
-pub fn write_pretty_json(path: &str, value: &serde_json::Value) -> Result<()> {
-    std::fs::write(path, serde_json::to_string_pretty(value)? + "\n")?;
-    Ok(())
+/// Write `value` as pretty JSON to `path`; a failure names the path.
+pub fn write_pretty_json(
+    path: impl AsRef<std::path::Path>,
+    value: &serde_json::Value,
+) -> Result<()> {
+    let path = path.as_ref();
+    std::fs::write(path, serde_json::to_string_pretty(value)? + "\n")
+        .with_context(|| format!("write {}", path.display()))
 }

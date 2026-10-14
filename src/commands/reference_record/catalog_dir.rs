@@ -109,7 +109,7 @@ pub(crate) fn save_all(directory: &Path, sources: &mut Value, index: &mut Value)
     sources["count"] = json!(examples);
     sources["visual_count"] = json!(examples);
     sources["structure_count"] = json!(examples);
-    lib::write_pretty_json(&directory.join("sources.json").to_string_lossy(), sources)?;
+    lib::write_pretty_json(directory.join("sources.json"), sources)?;
 
     let references_file = format!("{}/references.json", directory.display());
     let references = catalog_list(index, "references", &references_file)?.to_vec();
@@ -125,7 +125,7 @@ pub(crate) fn save_all(directory: &Path, sources: &mut Value, index: &mut Value)
     let now = lib::now_iso_utc();
     index["generated_at"] = json!(now.clone());
     index["measured_at"] = json!(now);
-    lib::write_pretty_json(&directory.join("references.json").to_string_lossy(), index)?;
+    lib::write_pretty_json(directory.join("references.json"), index)?;
 
     super::reference_contract::regenerate_index()
 }

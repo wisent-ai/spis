@@ -140,10 +140,7 @@ pub fn add(args: &AddArgs) -> Result<()> {
         "evidence_gaps": gaps,
         "measured_at": now,
     });
-    lib::write_pretty_json(
-        &record_dir.join("reference.json").to_string_lossy(),
-        &record,
-    )?;
+    lib::write_pretty_json(record_dir.join("reference.json"), &record)?;
     index["references"]
         .as_array_mut()
         .context("references must be an array")?

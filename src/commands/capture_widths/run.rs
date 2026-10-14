@@ -144,7 +144,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             &record_path,
             "width captures enqueued; awaiting retrieval".to_string(),
         )?;
-        crate::write_pretty_json(record_path.to_str().unwrap(), &Value::Object(record))?;
+        crate::write_pretty_json(&record_path, &Value::Object(record))?;
     }
 
     println!(

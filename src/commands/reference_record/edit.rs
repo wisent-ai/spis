@@ -59,7 +59,7 @@ pub(crate) fn edit(args: &EditArgs) -> Result<()> {
     }
     let name = example["name"].as_str().unwrap_or_default().to_string();
 
-    lib::write_pretty_json(&record_path.to_string_lossy(), &record)?;
+    lib::write_pretty_json(&record_path, &record)?;
     save_all(&directory, &mut sources, &mut index)?;
     println!(
         "edited {}/{}: {name} ({})",
