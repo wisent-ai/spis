@@ -186,12 +186,13 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
             },
             None => json!({"state": "not_submitted"}),
         };
-        let before_state = status_before
-            .get("state")
-            .and_then(Value::as_str)
-            .unwrap_or("lookup_failed");
         let (action, status_after) = if let Some(job_id) = job_id {
-            if matches!(before_state, "queued" | "running") {
+            // Stado's job record says whether the job has ended
+            // (`terminal`); a job it holds that has not ended is cancelled.
+            if status_before
+                .get("job")
+                .is_some_and(|job| !machine_terminal(job))
+            {
                 let output = stado_command()
                     .args(["machine", "cancel", job_id])
                     .output()
@@ -215,7 +216,7 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
                         });
                     (json!({"state": "cancel_dispatched"}), after)
                 }
-            } else if terminal_machine_state(before_state) {
+            } else if status_before.get("job").is_some_and(machine_terminal) {
                 (json!({"state": "already_terminal"}), status_before.clone())
             } else {
                 (json!({"state": "not_cancellable"}), status_before.clone())
@@ -270,7 +271,7 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
             .pointer("/cancel/status_after/state")
             .and_then(Value::as_str)
             .unwrap_or("lookup_failed");
-        if matches!(final_state, "cancelled" | "canceled")
+        if final_state == "cancelled"
             || target
                 .pointer("/cancel/stado_action/state")
                 .and_then(Value::as_str)

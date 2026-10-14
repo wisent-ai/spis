@@ -11,7 +11,7 @@ pub(super) fn settle_cancel_race(run_id: &str, catalog: &str, record_name: &str)
         return Ok(());
     };
     let cancellation = match machine_status(job_id) {
-        Ok(job) if terminal_machine_state(machine_state(&job)) => {
+        Ok(job) if machine_terminal(&job) => {
             Ok(json!({"state": "noop_terminal", "observed_job": job}))
         }
         Ok(job) => {

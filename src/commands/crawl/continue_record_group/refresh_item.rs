@@ -149,11 +149,11 @@ pub(crate) fn machine_state(job: &Value) -> &str {
     }
 }
 
-pub(crate) fn terminal_machine_state(state: &str) -> bool {
-    matches!(
-        state,
-        "completed" | "succeeded" | "failed" | "cancelled" | "canceled" | "lost" | "reaped"
-    )
+/// Whether Stado's job record says the job has ended: its own `terminal`
+/// flag, read from `stado machine status`, never Spis's guess from the
+/// state's word. A record that does not state it has not ended.
+pub(crate) fn machine_terminal(job: &Value) -> bool {
+    job.get("terminal").and_then(Value::as_bool) == Some(true)
 }
 
 pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String> {
