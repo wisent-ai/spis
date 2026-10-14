@@ -61,30 +61,32 @@ pub fn run(rest: &[String]) -> Result<()> {
         })
         .collect();
 
-    let record_count = catalogs
-        .iter()
-        .map(|c| {
-            full_reference_index(c)["reference_count"]
-                .as_u64()
-                .unwrap_or(0)
-        })
-        .sum::<u64>();
-    let complete_record_count = catalogs
-        .iter()
-        .map(|c| {
-            full_reference_index(c)["complete_count"]
-                .as_u64()
-                .unwrap_or(0)
-        })
-        .sum::<u64>();
-    let partial_record_count = catalogs
-        .iter()
-        .map(|c| {
-            full_reference_index(c)["partial_count"]
-                .as_u64()
-                .unwrap_or(0)
-        })
-        .sum::<u64>();
+    // Every count is summed from what each catalog states; a catalog that
+    // states none is refused naming it, never added as zero.
+    let sum = |name: &str, read: &dyn Fn(&Value) -> Value| -> Result<u64> {
+        catalogs
+            .iter()
+            .map(|catalog| {
+                read(catalog).as_u64().with_context(|| {
+                    format!(
+                        "catalog {} states no {name}",
+                        catalog["slug"]
+                            .as_str()
+                            .map_or_else(|| catalog.to_string(), str::to_string)
+                    )
+                })
+            })
+            .sum::<Result<u64>>()
+    };
+    let record_count = sum("reference_count", &|c| {
+        full_reference_index(c)["reference_count"].clone()
+    })?;
+    let complete_record_count = sum("complete_count", &|c| {
+        full_reference_index(c)["complete_count"].clone()
+    })?;
+    let partial_record_count = sum("partial_count", &|c| {
+        full_reference_index(c)["partial_count"].clone()
+    })?;
     if complete_record_count + partial_record_count != record_count {
         bail!(
             "generated status counts cover {} of {record_count} records",
@@ -96,13 +98,13 @@ pub fn run(rest: &[String]) -> Result<()> {
         "schema": CATALOG_SCHEMA,
         "generated_at": generated_at,
         "catalog_count": catalogs.len(),
-        "example_count": catalogs.iter().map(|c| c["count"].as_u64().unwrap_or(0)).sum::<u64>(),
-        "image_count": catalogs.iter().map(|c| c["visual_count"].as_u64().unwrap_or(0)).sum::<u64>(),
-        "structure_count": catalogs.iter().map(|c| c["structure_count"].as_u64().unwrap_or(0)).sum::<u64>(),
+        "example_count": sum("count", &|c| c["count"].clone())?,
+        "image_count": sum("visual_count", &|c| c["visual_count"].clone())?,
+        "structure_count": sum("structure_count", &|c| c["structure_count"].clone())?,
         "record_count": record_count,
         "complete_record_count": complete_record_count,
         "partial_record_count": partial_record_count,
-        "locally_driven_motion_count": catalogs.iter().map(|c| full_reference_index(c)["locally_driven_count"].as_u64().unwrap_or(0)).sum::<u64>(),
+        "locally_driven_motion_count": sum("locally_driven_count", &|c| full_reference_index(c)["locally_driven_count"].clone())?,
         "catalogs": catalog_entries,
     });
     lib::write_pretty_json("example-catalogs.json", &index)?;
