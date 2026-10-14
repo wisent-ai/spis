@@ -238,8 +238,8 @@ pub(crate) fn is_executable(path: &Path) -> bool {
 }
 
 pub(crate) enum QuickOutcome {
-    Ran(i32, String), // exit status, first line
-    Failed(String),   // why the version command could not be started
+    Ran(std::process::ExitStatus, String), // how it ended, first line
+    Failed(String),                        // why the version command could not be started
     Missing,
 }
 
@@ -259,7 +259,7 @@ pub(crate) fn quick_version(product: &Product) -> (Option<String>, QuickOutcome)
 }
 
 pub(crate) enum QuickRun {
-    Done(i32, String, String),
+    Done(std::process::ExitStatus, String, String),
     SpawnError(String),
 }
 
@@ -273,7 +273,7 @@ pub(crate) fn run_to_exit(argv: &[&str]) -> QuickRun {
         .output()
     {
         Ok(output) => QuickRun::Done(
-            output.status.code().unwrap_or(-1),
+            output.status,
             String::from_utf8_lossy(&output.stdout).into_owned(),
             String::from_utf8_lossy(&output.stderr).into_owned(),
         ),

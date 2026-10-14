@@ -77,10 +77,11 @@ pub(crate) fn cmd_list() -> Result<()> {
         };
         found += 1;
         let identity = match outcome {
-            QuickOutcome::Ran(0, first) => first,
-            QuickOutcome::Ran(rc, first) => {
+            QuickOutcome::Ran(status, first) if status.success() => first,
+            // `status` prints the exit code or the signal that ended it.
+            QuickOutcome::Ran(status, first) => {
                 format!(
-                    "(no version flag; `{}` exits {rc}) {first}",
+                    "(no version flag; `{}` ended with {status}) {first}",
                     product.version_cmd
                 )
             }
@@ -205,9 +206,9 @@ pub fn run(rest: &[String]) -> Result<()> {
                 .into_owned();
             println!(
                 "    -> {rel}: {} s, {} events, {} states",
-                g(motion["duration_seconds"].as_f64().unwrap_or(0.0)),
+                motion["duration_seconds"],
                 motion["frame_count"],
-                record["states"].as_array().map(|v| v.len()).unwrap_or(0),
+                json!(record["states"].as_array().map(Vec::len)),
             );
         }
     }
