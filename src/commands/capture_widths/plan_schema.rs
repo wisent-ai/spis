@@ -100,7 +100,11 @@ pub(crate) fn pick(
         let entry = &entry;
         let number = position + 1;
         let slug = slug_of(entry)?;
-        let name_lower = example["name"].as_str().unwrap_or("").to_lowercase();
+        let name_lower = example
+            .get("name")
+            .and_then(Value::as_str)
+            .with_context(|| format!("sources.json: examples[{position}] has no \"name\""))?
+            .to_lowercase();
         let matched = match selector {
             None => true,
             Some(sel) => sel == number.to_string() || sel == slug || sel == name_lower,
