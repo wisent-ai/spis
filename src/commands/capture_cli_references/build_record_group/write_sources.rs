@@ -8,13 +8,31 @@ pub(crate) fn write_index() -> Result<Value> {
             .parent()
             .and_then(|p| p.file_name())
             .and_then(|n| n.to_str())
-            .unwrap_or("");
+            .with_context(|| {
+                format!(
+                    "{} is not inside a named reference directory",
+                    path.display()
+                )
+            })?;
+        // Every record the capture writes states its status and its gap list;
+        // one that states neither is refused, never indexed as pending with
+        // no gaps.
+        let evidence_status = record
+            .get("evidence_status")
+            .filter(|status| status.is_string())
+            .cloned()
+            .with_context(|| format!("{} states no evidence_status", path.display()))?;
+        let evidence_gap_count = record
+            .get("evidence_gaps")
+            .and_then(|g| g.as_array())
+            .map(Vec::len)
+            .with_context(|| format!("{} states no evidence_gaps list", path.display()))?;
         references.push(json!({
             "index": i + 1,
             "name": record["name"].clone(),
             "path": format!("references/{parent}/reference.json"),
-            "evidence_status": record.get("evidence_status").cloned().unwrap_or(json!("pending-verification")),
-            "evidence_gap_count": record.get("evidence_gaps").and_then(|g| g.as_array()).map(|a| a.len()).unwrap_or(0),
+            "evidence_status": evidence_status,
+            "evidence_gap_count": evidence_gap_count,
         }));
     }
     let complete_count = references
