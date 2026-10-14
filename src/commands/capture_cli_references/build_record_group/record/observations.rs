@@ -3,7 +3,6 @@ use super::*;
 /// The record's journey: the steps a person takes through the product, in order.
 pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
     let Facts {
-        measured,
         steps,
         name,
         version_line,
@@ -76,7 +75,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
             json!({
                 "index": 6,
                 "user_action": format!("Type `{invalid_cmd}` again and press Ctrl-C before Enter."),
-                "system_response": if measured["cancel_prompt_restored"].as_bool().unwrap_or(false) {
+                "system_response": if f.prompt_restored {
                     "The unsubmitted line is discarded and the prompt returns; nothing ran."
                 } else {
                     "Ctrl-C is accepted and the session continues at the prompt."
@@ -102,7 +101,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
             json!({
                 "index": 8,
                 "user_action": format!("Run `{}`.", steps["no-color-help"]["command"].as_str().unwrap_or_default()),
-                "system_response": if measured["no_color_text_identical"].as_bool().unwrap_or(false) {
+                "system_response": if f.text_identical {
                     "The same help text appears with colour removed, so no state was carried by colour."
                 } else {
                     "The help text changes once colour is removed, which is recorded as a difference, not a claim of parity."
@@ -136,13 +135,8 @@ pub(super) fn accessibility<'a>(f: &Facts<'a>) -> Accessibility<'a> {
         phrase,
         ..
     } = *f;
-    let colors_help = measured["colors_help"].as_bool().unwrap_or(false);
-    let identical = measured["no_color_text_identical"]
-        .as_bool()
-        .unwrap_or(false);
-    let names_next = measured["refusal_names_next_action"]
-        .as_bool()
-        .unwrap_or(false);
+    let (colors_help, identical, names_next) =
+        (f.colors_help, f.text_identical, f.names_next_action);
     let fits80 = measured["help_fits_80"].as_bool().unwrap_or(false);
     let help_command = steps["help"]["command"].as_str().unwrap_or_default();
     let nocolor_command = steps["no-color-help"]["command"]

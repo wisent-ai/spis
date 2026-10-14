@@ -43,8 +43,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result
         ..
     } = f;
 
-    let repainted = measured["screen_cleared"].as_bool().unwrap_or(false)
-        || measured["cursor_addressed"].as_bool().unwrap_or(false);
+    let repainted = f.repainted;
     let duration = facts::seconds(&cast["duration_seconds"]);
     let owner = product.repository.split('/').next().unwrap_or_default();
     let (columns, rows) = (terminal().columns, terminal().rows);
@@ -167,7 +166,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result
             "interruption_or_reversal": format!(
                 "Ctrl-C at {} s on the unsubmitted `{invalid_cmd}` line: {}",
                 facts::seconds(&steps["cancellation"]["started_at"]),
-                if measured["cancel_echoed_interrupt"].as_bool().unwrap_or(false) {
+                if f.echoed_interrupt {
                     "the shell echoed `^C`, discarded the line and reprinted the prompt, and the product never ran."
                 } else {
                     "the line was discarded and the prompt returned, and the product never ran."

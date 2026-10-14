@@ -118,7 +118,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 },
                 "cancellation": "The refusal returns immediately; no cancellation was required.",
                 "failure": format!("Observed status {}.", super::facts::status(refusal_status)),
-                "recovery": if measured["refusal_names_next_action"].as_bool().unwrap_or(false) {
+                "recovery": if f.names_next_action {
                     format!(
                         "The refusal names the next action ({}); running `{}` recovers.",
                         py_repr(phrase),
@@ -155,12 +155,12 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
             json!({
                 "name": "cancellation",
                 "trigger": format!("Type `{invalid_cmd}` and press Ctrl-C instead of Enter."),
-                "response": if measured["cancel_prompt_restored"].as_bool().unwrap_or(false) {
+                "response": if f.prompt_restored {
                     "The pending line is discarded and the prompt returns; the product never ran."
                 } else {
                     "Ctrl-C was accepted and the session continued at the prompt."
                 },
-                "feedback": if measured["cancel_echoed_interrupt"].as_bool().unwrap_or(false) {
+                "feedback": if f.echoed_interrupt {
                     "`^C` is echoed in the cast, then a fresh prompt."
                 } else {
                     "A fresh prompt follows the interrupt in the cast."
@@ -199,7 +199,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "trigger": format!("Run `{}`.", s["command"].as_str().unwrap_or_default()),
                 "response": format!(
                     "{} ({} lines).",
-                    if measured["no_color_text_identical"].as_bool().unwrap_or(false) {
+                    if f.text_identical {
                         "The same help text is printed with the same line count"
                     } else {
                         "The help text differs from the colored run once color is removed"

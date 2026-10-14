@@ -19,6 +19,13 @@ pub(super) struct Facts<'a> {
     pub(super) invalid_cmd: &'a str,
     pub(super) cancellation_sentence: String,
     pub(super) phrase: &'a str,
+    /// The measured flags each sentence is chosen by, read once.
+    pub(super) prompt_restored: bool,
+    pub(super) echoed_interrupt: bool,
+    pub(super) names_next_action: bool,
+    pub(super) text_identical: bool,
+    pub(super) colors_help: bool,
+    pub(super) repainted: bool,
 }
 
 impl<'a> Facts<'a> {
@@ -52,7 +59,8 @@ impl<'a> Facts<'a> {
         )?;
         let invalid_cmd = text(&steps["invalid-flag"]["command"], "invalid-flag command")?;
 
-        let cancellation_sentence = if flag("cancel_prompt_restored")? {
+        let prompt_restored = flag("cancel_prompt_restored")?;
+        let cancellation_sentence = if prompt_restored {
             format!(
                 "Ctrl-C on the unsubmitted `{invalid_cmd}` line discarded it and restored the prompt"
             )
@@ -80,6 +88,12 @@ impl<'a> Facts<'a> {
             invalid_cmd,
             cancellation_sentence,
             phrase,
+            prompt_restored,
+            echoed_interrupt: flag("cancel_echoed_interrupt")?,
+            names_next_action: flag("refusal_names_next_action")?,
+            text_identical: flag("no_color_text_identical")?,
+            colors_help: flag("colors_help")?,
+            repainted: flag("screen_cleared")? || flag("cursor_addressed")?,
         })
     }
 
