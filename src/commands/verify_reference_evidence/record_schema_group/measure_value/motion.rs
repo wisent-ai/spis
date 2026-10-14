@@ -105,13 +105,16 @@ pub(super) fn measure_motion(
         if is_still {
             gaps.push(format!("motion asset is a still image: {local_path}"));
         }
-        if probe.duration_seconds.unwrap_or(0.0) < requirements.min_motion_seconds && !is_still {
-            gaps.push(format!(
+        match probe.duration_seconds {
+            _ if is_still => {}
+            None => gaps.push(format!("motion duration was not measured: {local_path}")),
+            Some(duration) if duration < requirements.min_motion_seconds => gaps.push(format!(
                 "motion shorter than {} for {} profile: {local_path} ({})",
                 fmt_g(requirements.min_motion_seconds),
                 requirements.profile,
-                fmt_opt_num(probe.duration_seconds)
-            ));
+                fmt_g(duration)
+            )),
+            Some(_) => {}
         }
         let provenance = provenance_class(&Value::Object(obj.clone()), &provenance_context);
         obj.insert("provenance_class".into(), json!(provenance));
