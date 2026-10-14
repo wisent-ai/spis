@@ -99,13 +99,7 @@ pub(crate) fn pick(
         }?;
         let entry = &entry;
         let number = position + 1;
-        let slug = entry["path"]
-            .as_str()
-            .map(Path::new)
-            .and_then(Path::parent)
-            .and_then(Path::file_name)
-            .map(|s| s.to_string_lossy().to_string())
-            .unwrap_or_default();
+        let slug = slug_of(entry)?;
         let name_lower = example["name"].as_str().unwrap_or("").to_lowercase();
         let matched = match selector {
             None => true,
@@ -121,27 +115,27 @@ pub(crate) fn pick(
     fail(&format!("record {:?} not found", selector.unwrap_or("")));
 }
 
-pub(crate) fn slug_of(entry: &Map<String, Value>) -> String {
-    entry["path"]
-        .as_str()
-        .map(Path::new)
-        .and_then(Path::parent)
+/// The record directory a reference's `path` lies in; a reference without
+/// one is refused, never captured under an empty slug that every such
+/// reference would share.
+pub(crate) fn slug_of(entry: &Map<String, Value>) -> Result<String> {
+    let path = entry
+        .get("path")
+        .and_then(Value::as_str)
+        .with_context(|| format!("reference {} has no \"path\"", Value::Object(entry.clone())))?;
+    Path::new(path)
+        .parent()
         .and_then(Path::file_name)
-        .map(|s| s.to_string_lossy().to_string())
-        .unwrap_or_default()
+        .map(|name| name.to_string_lossy().to_string())
+        .with_context(|| format!("reference path {path:?} is not inside a record directory"))
 }
 
-/// Compact UTC stamp like 20260823t123456Z from now_iso_utc().
+/// Compact UTC stamp like 20260823t123456Z: now_iso_utc() without its date
+/// and time separators, the date/time mark lower-cased.
 pub(crate) fn compact_stamp() -> String {
-    // Python: strftime("%Y%m%dt%H%M%SZ")
-    let iso = crate::now_iso_utc(); // YYYY-MM-DDTHH:MM:SSZ
-    format!(
-        "{}{}{}t{}{}{}Z",
-        &iso[0..4],
-        &iso[5..7],
-        &iso[8..10],
-        &iso[11..13],
-        &iso[14..16],
-        &iso[17..19]
-    )
+    crate::now_iso_utc()
+        .chars()
+        .filter(|character| !matches!(character, '-' | ':'))
+        .map(|character| if character == 'T' { 't' } else { character })
+        .collect()
 }

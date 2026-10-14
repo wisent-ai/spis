@@ -59,7 +59,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     let batch = format!("widths-{}", compact_stamp());
     let mut captures: Vec<Value> = Vec::new();
     for (example, entry) in &selected {
-        let slug = slug_of(entry);
+        let slug = slug_of(entry)?;
         let source_url = example["source_url"].as_str().unwrap_or_default();
         for (width, height) in WIDTHS {
             captures.push(json!({
@@ -189,7 +189,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         let Some(relative) = entry["path"].as_str() else {
             bail!(
                 "reference {} in {} has no \"path\", so its record cannot be updated with batch {batch}",
-                slug_of(entry),
+                Value::Object(entry.clone()),
                 data.directory.display()
             );
         };
