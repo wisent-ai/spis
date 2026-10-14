@@ -60,7 +60,13 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut captures: Vec<Value> = Vec::new();
     for (example, entry) in &selected {
         let slug = slug_of(entry)?;
-        let source_url = example["source_url"].as_str().unwrap_or_default();
+        let source_url = example
+            .get("source_url")
+            .and_then(Value::as_str)
+            .filter(|url| !url.is_empty())
+            .with_context(|| {
+                format!("sources.json: example {slug} has no \"source_url\" to capture")
+            })?;
         for (width, height) in WIDTHS {
             captures.push(json!({
                 "batch": batch,
