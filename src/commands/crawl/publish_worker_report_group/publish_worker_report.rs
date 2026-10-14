@@ -216,10 +216,14 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
             .unwrap_or(0);
         if path.is_file() {
             let current: Value = crate::read_json(path.to_str().context("run path is not UTF-8")?)?;
+            // Every persisted run states the revision it was written at; one
+            // that states none is refused, never compared as revision zero.
             let actual = current
                 .get("mutation_revision")
                 .and_then(Value::as_u64)
-                .unwrap_or(0);
+                .with_context(|| {
+                    format!("crawl run {run_id} on disk states no mutation_revision")
+                })?;
             if actual != expected {
                 bail!(
                     "crawl run {run_id} changed concurrently: expected revision {expected}, found {actual}"
