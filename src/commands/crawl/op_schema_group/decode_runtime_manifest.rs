@@ -254,12 +254,7 @@ pub(crate) fn reference_path(catalog: &str, record: &str) -> Result<PathBuf> {
 }
 
 pub(crate) fn run_root() -> Result<PathBuf> {
-    let home = std::env::var_os("HOME").context("HOME is required for durable crawl run state")?;
-    Ok(PathBuf::from(home)
-        .join(".stado")
-        .join("work")
-        .join("spis")
-        .join("crawl-runs"))
+    crate::commands::docs_corpus::work_area("crawl-runs")
 }
 
 pub(crate) fn legacy_run_root() -> PathBuf {

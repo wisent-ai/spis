@@ -22,8 +22,20 @@ pub(crate) fn crawl_root() -> Result<PathBuf> {
     Ok(home_dir()?.join(".spis/crawls"))
 }
 
+/// Spis's private work area named `purpose` under `~/.stado/work/spis`:
+/// every cache, intent and staging directory Spis keeps for Stado work lives
+/// here, and an unset HOME is refused rather than read as the working
+/// directory.
+pub(crate) fn work_area(purpose: &str) -> Result<PathBuf> {
+    Ok(home_dir()?
+        .join(".stado")
+        .join("work")
+        .join("spis")
+        .join(purpose))
+}
+
 pub(crate) fn imports_root() -> Result<PathBuf> {
-    Ok(home_dir()?.join(".stado/work/spis/docs-corpus-imports"))
+    work_area("docs-corpus-imports")
 }
 
 /// Where a discovered corpus came from. `Imported` corpora were installed by

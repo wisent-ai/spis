@@ -98,13 +98,7 @@ pub(crate) struct PrivateBridge {
 
 impl PrivateBridge {
     pub(crate) fn open(manifest: &super::crawl::RuntimeManifest) -> Result<Self> {
-        let home = std::env::var_os("HOME")
-            .context("HOME is required for the private Weles bridge work directory")?;
-        let directory = PathBuf::from(home)
-            .join(".stado")
-            .join("work")
-            .join("spis")
-            .join("weles-bridge");
+        let directory = crate::commands::docs_corpus::work_area("weles-bridge")?;
         std::fs::create_dir_all(&directory)?;
         #[cfg(unix)]
         {

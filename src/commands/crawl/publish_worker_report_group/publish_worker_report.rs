@@ -17,12 +17,7 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
     {
         bail!("worker report URI is outside the canonical Spis attempt coordinates");
     }
-    let home = std::env::var_os("HOME").context("HOME is required for worker report cache")?;
-    let directory = PathBuf::from(home)
-        .join(".stado")
-        .join("work")
-        .join("spis")
-        .join("worker-reports");
+    let directory = crate::commands::docs_corpus::work_area("worker-reports")?;
     std::fs::create_dir_all(&directory)?;
     #[cfg(unix)]
     {

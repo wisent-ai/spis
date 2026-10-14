@@ -159,12 +159,7 @@ pub(crate) fn machine_terminal(job: &Value) -> bool {
 pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String> {
     let bytes = serde_json::to_vec(intent)?;
     let digest = crate::sha256_hex(&bytes);
-    let home = std::env::var_os("HOME").context("HOME is required for private Stado work state")?;
-    let directory = PathBuf::from(home)
-        .join(".stado")
-        .join("work")
-        .join("spis")
-        .join("cancel-intents");
+    let directory = crate::commands::docs_corpus::work_area("cancel-intents")?;
     std::fs::create_dir_all(&directory)?;
     #[cfg(unix)]
     {

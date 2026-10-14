@@ -20,12 +20,7 @@ pub(crate) fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<
         &token_path,
         token_path.is_file(),
     )?;
-    let home = std::env::var_os("HOME").context("HOME is required for private Stado work cache")?;
-    let directory = PathBuf::from(home)
-        .join(".stado")
-        .join("work")
-        .join("spis")
-        .join("runtime-bindings");
+    let directory = crate::commands::docs_corpus::work_area("runtime-bindings")?;
     std::fs::create_dir_all(&directory)?;
     #[cfg(unix)]
     {
@@ -122,12 +117,7 @@ pub(crate) fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()>
             String::from_utf8_lossy(&output.stderr).trim()
         );
     }
-    let home = std::env::var_os("HOME").context("HOME is required for private Stado work cache")?;
-    let directory = PathBuf::from(home)
-        .join(".stado")
-        .join("work")
-        .join("spis")
-        .join("runtime-bindings");
+    let directory = crate::commands::docs_corpus::work_area("runtime-bindings")?;
     std::fs::create_dir_all(&directory)?;
     #[cfg(unix)]
     {
