@@ -22,30 +22,37 @@ pub(super) struct Facts<'a> {
 }
 
 impl<'a> Facts<'a> {
-    pub(super) fn read(run: &'a Run, measured: &'a Value, media: &'a Value) -> Self {
+    /// Every field read here is written by the measurement this record is
+    /// built from; one it lacks is refused naming it, never read as an empty
+    /// line, an empty command or a `false` that picks the other sentence.
+    pub(super) fn read(run: &'a Run, measured: &'a Value, media: &'a Value) -> Result<Self> {
         let product = run.product;
         let steps = &measured["steps"];
         let cast = &media["cast"];
         let states = &media["states"];
         let name = product.name.as_str();
         let binary = product.binary.as_str();
-        let version_line = steps["version"]["first_line"].as_str().unwrap_or_default();
-        let version_ok = measured["version_flag_supported"]
-            .as_bool()
-            .unwrap_or(false);
-        let refusal_line = measured["refusal_first_line"].as_str().unwrap_or_default();
+        let text = |value: &'a Value, field: &str| -> Result<&'a str> {
+            value
+                .as_str()
+                .with_context(|| format!("the measured capture states no {field}"))
+        };
+        let flag = |field: &str| -> Result<bool> {
+            measured[field]
+                .as_bool()
+                .with_context(|| format!("the measured capture states no {field}"))
+        };
+        let version_line = text(&steps["version"]["first_line"], "version first line")?;
+        let version_ok = flag("version_flag_supported")?;
+        let refusal_line = text(&measured["refusal_first_line"], "refusal_first_line")?;
         let refusal_status = measured["refusal_exit_status"].as_i64();
-        let recovery_line = steps["recovery-help"]["first_line"]
-            .as_str()
-            .unwrap_or_default();
-        let invalid_cmd = steps["invalid-flag"]["command"]
-            .as_str()
-            .unwrap_or_default();
+        let recovery_line = text(
+            &steps["recovery-help"]["first_line"],
+            "recovery-help first line",
+        )?;
+        let invalid_cmd = text(&steps["invalid-flag"]["command"], "invalid-flag command")?;
 
-        let cancellation_sentence = if measured["cancel_prompt_restored"]
-            .as_bool()
-            .unwrap_or(false)
-        {
+        let cancellation_sentence = if flag("cancel_prompt_restored")? {
             format!(
                 "Ctrl-C on the unsubmitted `{invalid_cmd}` line discarded it and restored the prompt"
             )
@@ -55,7 +62,7 @@ impl<'a> Facts<'a> {
         let phrase = measured["refusal_next_action_phrase"]
             .as_str()
             .unwrap_or("");
-        Facts {
+        Ok(Facts {
             run,
             measured,
             media,
@@ -73,7 +80,7 @@ impl<'a> Facts<'a> {
             invalid_cmd,
             cancellation_sentence,
             phrase,
-        }
+        })
     }
 
     /// Where in the recording a step happened, its exit status, and any extra evidence.

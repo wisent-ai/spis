@@ -12,7 +12,7 @@ use observations::{accessibility, journey_steps, Accessibility};
 
 pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result<Value> {
     let host = host_facts()?;
-    let f = Facts::read(run, measured, media);
+    let f = Facts::read(run, measured, media)?;
     let interactions = interactions(&f);
     let journey_steps = journey_steps(&f);
     let Accessibility {
