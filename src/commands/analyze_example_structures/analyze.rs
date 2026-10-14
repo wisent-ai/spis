@@ -78,11 +78,12 @@ pub(crate) fn analyze_catalog(slug: &str) -> Result<(usize, Vec<Value>)> {
     let mut count = 0usize;
     // A catalog states its examples; one that states none is refused, never
     // analyzed as an empty catalog that passed.
-    let example_count = catalog
-        .get("examples")
-        .and_then(Value::as_array)
-        .map(Vec::len)
-        .with_context(|| format!("{} states no examples list", source_path.display()))?;
+    let example_count = crate::commands::reference_record::catalog_list(
+        &catalog,
+        "examples",
+        &source_path.display().to_string(),
+    )?
+    .len();
     for position in 0..example_count {
         let index = position + 1;
         let (name, local_path) = {
@@ -106,9 +107,13 @@ pub(crate) fn analyze_catalog(slug: &str) -> Result<(usize, Vec<Value>)> {
                 let example = catalog["examples"][position].clone();
                 match analyze(&example, slug, &image_path) {
                     Ok(structure) => {
-                        if let Some(obj) = catalog["examples"][position].as_object_mut() {
-                            obj.insert("interface_structure".into(), structure);
-                        }
+                        // An example that is not a record object cannot hold
+                        // its structure; it is a failure, never counted.
+                        let Some(obj) = catalog["examples"][position].as_object_mut() else {
+                            failures.push(json!({"index": index, "name": name, "error": "the example is not a record object"}));
+                            continue;
+                        };
+                        obj.insert("interface_structure".into(), structure);
                         count += 1;
                     }
                     Err(error) => failures
