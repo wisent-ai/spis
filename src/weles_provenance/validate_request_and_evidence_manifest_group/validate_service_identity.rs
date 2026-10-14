@@ -218,3 +218,47 @@ pub struct BridgeInvocation<'a> {
     /// reads a config at all.
     pub config: Option<&'a Path>,
 }
+
+impl VerifiedProvenanceSet {
+    /// `Ok` when the value names no retained file, or one whose bytes still hash (and
+    /// measure) as recorded; otherwise what differs or could not be read, with the path.
+    pub(crate) fn retained_member(&self, value: &Value) -> Result<(), String> {
+        let local_path = value.get("local_path").and_then(Value::as_str);
+        let expected_sha256 = value.get("sha256").and_then(Value::as_str);
+        let (local_path, expected_sha256) = match (local_path, expected_sha256) {
+            (None, None) => return Ok(()),
+            (Some(local_path), Some(expected)) if is_sha256(expected) => (local_path, expected),
+            _ => return Err("it names a retained file without a sha256, or the reverse".into()),
+        };
+        let record_dir = self
+            .record_dir
+            .as_deref()
+            .ok_or("no record directory was verified to hold its retained file")?;
+        let path = resolve_retained_file(record_dir, local_path)
+            .map_err(|reason| format!("retained file {local_path}: {reason}"))?;
+        let actual_sha256 = sha256_file(&path)?;
+        if actual_sha256 != expected_sha256 {
+            return Err(format!(
+                "retained file {} hashes to {actual_sha256}, not {expected_sha256}",
+                path.display()
+            ));
+        }
+        if let Some(expected_bytes) = value.get("bytes").and_then(Value::as_u64) {
+            let bytes = fs::metadata(&path)
+                .map_err(|error| {
+                    format!(
+                        "retained file {} cannot be measured: {error}",
+                        path.display()
+                    )
+                })?
+                .len();
+            if bytes != expected_bytes {
+                return Err(format!(
+                    "retained file {} holds {bytes} bytes, not {expected_bytes}",
+                    path.display()
+                ));
+            }
+        }
+        Ok(())
+    }
+}

@@ -25,9 +25,9 @@ pub(crate) fn validate_behaviour(
             &field_names::<Interaction>(),
             &format!("{record_path}: interaction {}", position + 1),
         )?;
-        if !verified_provenance.supports_value(item) {
+        if let Err(reason) = verified_provenance.supports_value(item) {
             bail!(
-                "{record_path}: interaction {} lacks verified typed provenance",
+                "{record_path}: interaction {} lacks verified typed provenance: {reason}",
                 position + 1
             );
         }
@@ -41,8 +41,8 @@ pub(crate) fn validate_behaviour(
             &field_names::<Journey>(),
             &format!("{record_path}: journey"),
         )?;
-        if !verified_provenance.supports_value(journey) {
-            bail!("{record_path}: journey lacks verified typed provenance");
+        if let Err(reason) = verified_provenance.supports_value(journey) {
+            bail!("{record_path}: journey lacks verified typed provenance: {reason}");
         }
         let steps_ok = journey
             .get("steps")
@@ -62,9 +62,9 @@ pub(crate) fn validate_behaviour(
                 &field_names::<JourneyStep>(),
                 &format!("{record_path}: journey step {}", position + 1),
             )?;
-            if !verified_provenance.supports_value(step) {
+            if let Err(reason) = verified_provenance.supports_value(step) {
                 bail!(
-                    "{record_path}: journey step {} lacks verified typed provenance",
+                    "{record_path}: journey step {} lacks verified typed provenance: {reason}",
                     position + 1
                 );
             }
@@ -118,9 +118,9 @@ pub(crate) fn validate_behaviour(
                         missing
                     );
                 }
-                if !verified_provenance.supports_value(item) {
+                if let Err(reason) = verified_provenance.supports_value(item) {
                     bail!(
-                        "{record_path}: motion analysis {} lacks verified typed provenance",
+                        "{record_path}: motion analysis {} lacks verified typed provenance: {reason}",
                         position + 1
                     );
                 }
@@ -159,12 +159,18 @@ pub(crate) fn validate_behaviour(
         .flatten()
         .enumerate()
     {
-        if !nonempty_observation(observation) || !verified_provenance.supports_value(observation) {
-            bail!(
-                "{record_path}: accessibility observation {} lacks a typed statement or verified provenance",
-                position + 1
-            );
-        }
+        let why = match (
+            nonempty_observation(observation),
+            verified_provenance.supports_value(observation),
+        ) {
+            (true, Ok(())) => continue,
+            (false, _) => "it carries no typed statement".to_string(),
+            (true, Err(reason)) => reason,
+        };
+        bail!(
+            "{record_path}: accessibility observation {} lacks a typed statement or verified provenance: {why}",
+            position + 1
+        );
     }
     if EvidenceStatus::of(record) == Some(EvidenceStatus::Complete) {
         let count = observations

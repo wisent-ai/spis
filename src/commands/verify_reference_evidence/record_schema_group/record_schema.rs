@@ -32,7 +32,7 @@ impl ProvenanceContext {
 }
 
 pub(crate) fn observation_supported(value: &Value, context: &ProvenanceContext) -> bool {
-    context.verified.supports_value(value)
+    context.verified.supports_value(value).is_ok()
 }
 
 pub(crate) fn provenance_class(value: &Value, context: &ProvenanceContext) -> &'static str {

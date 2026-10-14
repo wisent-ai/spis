@@ -114,110 +114,112 @@ impl VerifiedProvenanceSet {
         &self.failures
     }
 
-    /// True only when the value's typed link resolves to freshly verified receipt and
+    /// `Ok` only when the value's typed link resolves to freshly verified receipt and
     /// artifact bytes, the link is independently bound to this exact value, AND the
-    /// document proves the successful outcome.
+    /// document proves the successful outcome; otherwise the one reason it is not.
     ///
     /// THIS IS THE BOUNDARY. A failure provenance document is verified as a document —
     /// its receipt, claims, manifest, envelope and retained bytes are all re-proved — but
     /// it proves that the browser task did NOT produce evidence, so it can never support a
-    /// claim that a record's material is confirmed. Both consumers of this predicate
+    /// claim that a record's material is confirmed. Both consumers of this check
     /// (`verify_reference_evidence` and `generate_example_catalogs`) classify and admit
     /// material through here and through `provenance_class`, so binding the support to
     /// `SUCCESSFUL_OUTCOME` in this one place keeps a non-success out of every confirmed
     /// claim without weakening its own verification.
-    pub fn supports_value(&self, value: &Value) -> bool {
-        let Some(link_value) = value.get("provenance") else {
-            return false;
-        };
-        let Ok(link) = serde_json::from_value::<WelesProvenanceLink>(link_value.clone()) else {
-            return false;
-        };
+    pub fn supports_value(&self, value: &Value) -> Result<(), String> {
+        let link_value = value
+            .get("provenance")
+            .ok_or("it carries no provenance link")?;
+        let link = serde_json::from_value::<WelesProvenanceLink>(link_value.clone())
+            .map_err(|error| format!("its provenance link is not the typed link: {error}"))?;
         if link.schema != PROVENANCE_LINK_SCHEMA
             || !is_sha256_id(&link.document_id)
             || !is_sha256(&link.artifact_sha256)
         {
-            return false;
+            return Err(format!(
+                "its provenance link is not a {PROVENANCE_LINK_SCHEMA} link naming a sha256 document and artifact"
+            ));
         }
-        let Some(document) = self.documents.get(&link.document_id) else {
-            return false;
-        };
+        let document = self.documents.get(&link.document_id).ok_or_else(|| {
+            format!(
+                "provenance document {} is not among the record's verified documents",
+                link.document_id
+            )
+        })?;
         // Verified, and still not evidence of anything having been captured.
         if document.outcome != SUCCESSFUL_OUTCOME {
-            return false;
+            return Err(format!(
+                "provenance document {} proves the outcome {}, not {SUCCESSFUL_OUTCOME}",
+                document.id, document.outcome
+            ));
         }
         if link.artifact_path != document.artifact.path
             || link.artifact_sha256 != document.artifact.sha256
         {
-            return false;
+            return Err(format!(
+                "its link names another artifact than document {} verified",
+                document.id
+            ));
         }
         match link.kind {
             ProvenanceLinkKind::Artifact => {
                 if link.artifact_pointer.is_some() || link.value_sha256.is_some() {
-                    return false;
+                    return Err("its artifact link carries an observation pointer or digest".into());
                 }
-                value.get("local_path").and_then(Value::as_str)
-                    == Some(document.artifact.path.as_str())
-                    && value.get("sha256").and_then(Value::as_str)
-                        == Some(document.artifact.sha256.as_str())
-                    && self.retained_member_matches(value)
+                if value.get("local_path").and_then(Value::as_str)
+                    != Some(document.artifact.path.as_str())
+                    || value.get("sha256").and_then(Value::as_str)
+                        != Some(document.artifact.sha256.as_str())
+                {
+                    return Err(format!(
+                        "its local_path and sha256 are not the artifact document {} verified",
+                        document.id
+                    ));
+                }
             }
             ProvenanceLinkKind::Observation => {
-                let (Some(pointer), Some(expected_digest), Some(artifact_value)) = (
+                let (Some(pointer), Some(expected_digest)) = (
                     link.artifact_pointer.as_deref(),
                     link.value_sha256.as_deref(),
-                    document.artifact_value.as_ref(),
                 ) else {
-                    return false;
+                    return Err("its observation link names no artifact pointer or digest".into());
                 };
+                let artifact_value = document.artifact_value.as_ref().ok_or_else(|| {
+                    format!(
+                        "verified document {} carries no artifact value to observe",
+                        document.id
+                    )
+                })?;
                 if !pointer.starts_with('/') || !is_sha256(expected_digest) {
-                    return false;
+                    return Err(format!(
+                        "observation pointer {pointer} or its digest is malformed"
+                    ));
                 }
-                let Some(source_value) = artifact_value.pointer(pointer) else {
-                    return false;
-                };
-                let stripped = strip_provenance(value);
-                canonical_json_sha256(source_value).is_ok_and(|digest| digest == expected_digest)
-                    && *source_value == stripped
-                    && self.retained_member_matches(value)
-            }
-        }
-    }
-
-    pub(crate) fn retained_member_matches(&self, value: &Value) -> bool {
-        let local_path = value.get("local_path").and_then(Value::as_str);
-        let expected_sha256 = value.get("sha256").and_then(Value::as_str);
-        match (local_path, expected_sha256) {
-            (None, None) => true,
-            (Some(local_path), Some(expected_sha256)) if is_sha256(expected_sha256) => {
-                let Some(record_dir) = self.record_dir.as_deref() else {
-                    return false;
-                };
-                let Ok(path) = resolve_retained_file(record_dir, local_path) else {
-                    return false;
-                };
-                let Ok(actual_sha256) = sha256_file(&path) else {
-                    return false;
-                };
-                if actual_sha256 != expected_sha256 {
-                    return false;
+                let source_value = artifact_value.pointer(pointer).ok_or_else(|| {
+                    format!(
+                        "observation pointer {pointer} names nothing in document {}",
+                        document.id
+                    )
+                })?;
+                if canonical_json_sha256(source_value)? != expected_digest {
+                    return Err(format!(
+                        "the value at {pointer} does not have the linked digest"
+                    ));
                 }
-                match value.get("bytes").and_then(Value::as_u64) {
-                    Some(expected_bytes) => fs::metadata(path)
-                        .map(|metadata| metadata.len() == expected_bytes)
-                        .unwrap_or(false),
-                    None => true,
+                if *source_value != strip_provenance(value) {
+                    return Err(format!(
+                        "the value differs from the observation at {pointer}"
+                    ));
                 }
             }
-            _ => false,
         }
+        self.retained_member(value)
     }
 
     pub fn provenance_class(&self, value: &Value) -> &'static str {
-        if self.supports_value(value) {
-            "weles-signed-browser-evidence"
-        } else {
-            "unverified-source-media"
+        match self.supports_value(value) {
+            Ok(()) => "weles-signed-browser-evidence",
+            Err(_) => "unverified-source-media",
         }
     }
 }

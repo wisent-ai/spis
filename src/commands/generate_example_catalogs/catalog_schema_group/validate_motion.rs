@@ -123,8 +123,8 @@ pub(crate) fn validate_states(
         }
         validate_file_metadata(&state_path, item, &context)?;
         if EvidenceStatus::of(record) == Some(EvidenceStatus::Complete) {
-            if !verified_provenance.supports_value(item) {
-                bail!("{context}: semantic state name lacks independently verified observation provenance");
+            if let Err(reason) = verified_provenance.supports_value(item) {
+                bail!("{context}: semantic state name lacks independently verified observation provenance: {reason}");
             }
             if !py_truthy(item.get("source_motion_path"))
                 || !item.get("source_match").is_some_and(Value::is_object)
