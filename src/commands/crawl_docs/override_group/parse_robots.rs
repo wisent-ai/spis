@@ -32,76 +32,16 @@ pub(crate) fn parse_robots(
             );
         }
     };
-    let mut groups: Vec<(Vec<String>, Vec<RobotsRule>)> = Vec::new();
-    let mut agents = Vec::new();
-    let mut directives = Vec::new();
-    let mut sitemaps = Vec::new();
-    for raw in text.lines() {
-        let line = raw.split('#').next().unwrap_or("").trim();
-        let Some((field, value)) = line.split_once(':') else {
-            continue;
-        };
-        let field = field.trim();
-        let value = value.trim();
-        if field.eq_ignore_ascii_case("sitemap") {
-            sitemaps.push(value.to_string());
-            continue;
-        }
-        if field.eq_ignore_ascii_case("user-agent") {
-            if !directives.is_empty() {
-                groups.push((std::mem::take(&mut agents), std::mem::take(&mut directives)));
-            }
-            agents.push(value.to_ascii_lowercase());
-        } else if (field.eq_ignore_ascii_case("allow") || field.eq_ignore_ascii_case("disallow"))
-            && !agents.is_empty()
-            && !value.is_empty()
-        {
-            let terminal = value.ends_with('$');
-            let source = value.strip_suffix('$').unwrap_or(value);
-            directives.push(RobotsRule {
-                pattern: format!(
-                    "^{}{}",
-                    regex::escape(source).replace(r"\*", ".*"),
-                    if terminal { "$" } else { "" }
-                ),
-                specificity: source.chars().filter(|character| *character != '*').count(),
-                allow: field.eq_ignore_ascii_case("allow"),
-            });
-        }
-    }
-    if !agents.is_empty() {
-        groups.push((agents, directives));
-    }
-    let user_agent = lib::USER_AGENT.to_ascii_lowercase();
-    let specificity = groups
-        .iter()
-        .flat_map(|(agents, _)| agents)
-        .filter_map(|agent| {
-            if agent == "*" {
-                Some(0)
-            } else if user_agent.starts_with(agent) {
-                Some(agent.len())
-            } else {
-                None
-            }
+    // The one reading of robots.txt, shared with every library fetch.
+    let (directives, sitemaps) = lib::robots_directives(text);
+    let directives = directives
+        .into_iter()
+        .map(|directive| RobotsRule {
+            pattern: directive.pattern,
+            specificity: directive.specificity,
+            allow: directive.allow,
         })
-        .max();
-    let directives = specificity
-        .map(|wanted| {
-            groups
-                .into_iter()
-                .filter(|(agents, _)| {
-                    agents.iter().any(|agent| {
-                        (agent == "*" && wanted == 0)
-                            || (agent != "*"
-                                && agent.len() == wanted
-                                && user_agent.starts_with(agent))
-                    })
-                })
-                .flat_map(|(_, rules)| rules)
-                .collect()
-        })
-        .unwrap_or_default();
+        .collect();
     let snapshot = RobotsSnapshot { directives };
     match CompiledRobots::compile(&snapshot) {
         Ok(compiled) => Ok((snapshot, compiled, sitemaps)),

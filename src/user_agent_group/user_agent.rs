@@ -90,106 +90,69 @@ pub(crate) mod robots {
         }
     }
 
+    /// Every path refused: the robots.txt that disallows `/` to everyone,
+    /// read the one way every robots.txt is. The answer to an origin whose
+    /// robots.txt is withheld or could not be read whole, or that holds a
+    /// rule that does not compile.
+    fn deny_all() -> Rules {
+        let (directives, _) = super::robots_directives("User-agent: *\nDisallow: /");
+        Rules {
+            directives: directives
+                .into_iter()
+                .map(|directive| Rule {
+                    pattern: regex::Regex::new(&directive.pattern)
+                        .expect("the deny-all rule compiles"),
+                    specificity: directive.specificity,
+                    allow: directive.allow,
+                })
+                .collect(),
+        }
+    }
+
     fn compute(origin: &str) -> Rules {
-        let mut groups: Vec<(Vec<String>, Vec<Rule>)> = Vec::new();
         let url = format!("{origin}/robots.txt");
         let response = ureq::get(&url).set("User-Agent", USER_AGENT).call();
         let body = match response {
-            Ok(response) => response.into_string().ok(),
+            Ok(response) => match response.into_string() {
+                Ok(body) => Some(body),
+                Err(error) => {
+                    eprintln!(
+                        "robots.txt of {origin} could not be read, so every path is denied: {error}"
+                    );
+                    return deny_all();
+                }
+            },
             Err(ureq::Error::Status(status, _)) if status == 401 || status == 403 => {
-                return Rules {
-                    directives: vec![Rule {
-                        pattern: regex::Regex::new("^/").expect("fixed robots pattern"),
-                        specificity: 1,
-                        allow: false,
-                    }],
-                };
+                return deny_all();
             }
             Err(ureq::Error::Status(status, _)) if (400..500).contains(&status) => None,
-            Err(_) => {
-                return Rules {
-                    directives: vec![Rule {
-                        pattern: regex::Regex::new("^/").expect("fixed robots pattern"),
-                        specificity: 1,
-                        allow: false,
-                    }],
-                };
-            }
+            Err(_) => return deny_all(),
         };
-        if let Some(body) = body {
-            let mut agents = Vec::new();
-            let mut directives = Vec::new();
-            for raw in body.lines() {
-                let line = raw.split('#').next().unwrap_or("").trim();
-                let Some((field, value)) = line.split_once(':') else {
-                    continue;
-                };
-                let field = field.trim();
-                let value = value.trim();
-                if field.eq_ignore_ascii_case("user-agent") {
-                    if !directives.is_empty() {
-                        groups.push((std::mem::take(&mut agents), std::mem::take(&mut directives)));
-                    }
-                    agents.push(value.to_ascii_lowercase());
-                } else if field.eq_ignore_ascii_case("allow")
-                    || field.eq_ignore_ascii_case("disallow")
-                {
-                    if !agents.is_empty() && !value.is_empty() {
-                        let terminal = value.ends_with('$');
-                        let source = value.strip_suffix('$').unwrap_or(value);
-                        let expression = format!(
-                            "^{}{}",
-                            regex::escape(source).replace(r"\*", ".*"),
-                            if terminal { "$" } else { "" }
-                        );
-                        if let Ok(pattern) = regex::Regex::new(&expression) {
-                            directives.push(Rule {
-                                pattern,
-                                specificity: source
-                                    .chars()
-                                    .filter(|character| *character != '*')
-                                    .count(),
-                                allow: field.eq_ignore_ascii_case("allow"),
-                            });
-                        }
-                    }
-                }
-            }
-            if !agents.is_empty() {
-                groups.push((agents, directives));
+        let Some(body) = body else {
+            return Rules {
+                directives: Vec::new(),
+            };
+        };
+        let (directives, _) = super::robots_directives(&body);
+        let compiled: Result<Vec<Rule>, regex::Error> = directives
+            .into_iter()
+            .map(|directive| {
+                regex::Regex::new(&directive.pattern).map(|pattern| Rule {
+                    pattern,
+                    specificity: directive.specificity,
+                    allow: directive.allow,
+                })
+            })
+            .collect();
+        match compiled {
+            Ok(directives) => Rules { directives },
+            // A served rule that does not compile denies, as crawl-docs does;
+            // dropping it would allow the very paths it disallows.
+            Err(error) => {
+                eprintln!("robots.txt of {origin} holds a rule that does not compile, so every path is denied: {error}");
+                deny_all()
             }
         }
-        let user_agent = USER_AGENT.to_ascii_lowercase();
-        let specificity = groups
-            .iter()
-            .flat_map(|(agents, _)| agents)
-            .filter_map(|agent| {
-                if agent == "*" {
-                    Some(0)
-                } else if user_agent.starts_with(agent) {
-                    Some(agent.len())
-                } else {
-                    None
-                }
-            })
-            .max();
-        let directives = specificity
-            .map(|wanted| {
-                groups
-                    .into_iter()
-                    .filter(|(agents, _)| {
-                        agents.iter().any(|agent| {
-                            (agent == "*" && wanted == 0)
-                                || (agent != "*"
-                                    && agent.len() == wanted
-                                    && user_agent.starts_with(agent))
-                        })
-                    })
-                    .flat_map(|(_, rules)| rules)
-                    .collect()
-            })
-            .unwrap_or_default();
-        Rules { directives }
     }
 
     static CACHE: Mutex<Option<HashMap<String, Rules>>> = Mutex::new(None);
