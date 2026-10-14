@@ -146,25 +146,13 @@ pub fn run(rest: &[String]) -> Result<()> {
     for (url, family) in &selected {
         let thumb_url = format!("{THUMB}{url}");
         let (image_bytes, _) = fetch(&thumb_url)?;
-        let tmp_name: String = url
-            .to_lowercase()
-            .chars()
-            .map(|c| {
-                if c.is_ascii_lowercase() || c.is_ascii_digit() {
-                    c
-                } else {
-                    '-'
-                }
-            })
-            .collect::<String>()
-            .split('-')
-            .filter(|segment| !segment.is_empty())
-            .collect::<Vec<_>>()
-            .join("-")
-            .chars()
-            .take(60)
-            .collect();
-        let tmp = std::path::PathBuf::from(format!("/tmp/{tmp_name}.png"));
+        // The thumbnail is staged in Spis's own work area, named by its URL's
+        // digest, and taken back once the record holds its copy; nothing is
+        // written to /tmp and no name is cut.
+        let staging = crate::commands::capture_widths::work_root()?.join("discover");
+        std::fs::create_dir_all(&staging)
+            .with_context(|| format!("create {}", staging.display()))?;
+        let tmp = staging.join(format!("{}.png", crate::sha256_hex(url.as_bytes())));
         std::fs::write(&tmp, &image_bytes).with_context(|| format!("write {}", tmp.display()))?;
         let last_segment: String = url
             .split_once("://")
@@ -177,9 +165,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             .rsplit('/')
             .next()
             .unwrap_or("")
-            .chars()
-            .take(40)
-            .collect();
+            .to_string();
         let capitalized_family = {
             let mut chars = family.chars();
             match chars.next() {
@@ -187,7 +173,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 None => String::new(),
             }
         };
-        reference_record::add(&AddArgs {
+        let added = reference_record::add(&AddArgs {
             catalog: slug.clone(),
             name: format!("{capitalized_family} \u{2014} {last_segment}"),
             source_url: url.clone(),
@@ -195,7 +181,9 @@ pub fn run(rest: &[String]) -> Result<()> {
             selection_note: format!("auto-discovered from {start_url}; family {family}"),
             visual: tmp.display().to_string(),
             owner: Some(netloc_of(url).to_string()),
-        })?;
+        });
+        crate::discarding(added, &tmp)?;
+        crate::discard(&tmp)?;
     }
 
     super::reference_contract::regenerate_index()?;
