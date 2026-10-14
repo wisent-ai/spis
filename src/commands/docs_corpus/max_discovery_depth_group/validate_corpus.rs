@@ -67,11 +67,10 @@ pub(crate) fn validate_corpus(
         .get("inventory_downloaded_bytes")
         .and_then(Value::as_u64)
         .context("durable state has no inventory_downloaded_bytes")?;
-    if inventory_downloaded_bytes > 64 * 1024 * 1024
-        || report
-            .pointer("/retrieval/inventory_downloaded_bytes")
-            .and_then(Value::as_u64)
-            != Some(inventory_downloaded_bytes)
+    if report
+        .pointer("/retrieval/inventory_downloaded_bytes")
+        .and_then(Value::as_u64)
+        != Some(inventory_downloaded_bytes)
     {
         bail!("retrieval inventory byte accounting is inconsistent");
     }

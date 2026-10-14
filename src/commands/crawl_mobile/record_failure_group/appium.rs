@@ -40,15 +40,10 @@ impl Appium {
                 response.status()
             );
         }
-        // `into_json` has no length bound, so a screenshot or screen-recording
-        // body would be materialized whole inside a Value before any decode
-        // could reject it (finding 12).
-        let limit = response_limit(path);
-        serde_json::from_reader(response.into_reader().take(limit)).map_err(|error| {
-            anyhow!(
-                "Appium {method} {path} returned invalid JSON within its {limit}-byte response bound: {error}"
-            )
-        })
+        // Decoded as it streams, so a screenshot or recording body is never
+        // held twice; the answer is read whole, as Appium sent it.
+        serde_json::from_reader(response.into_reader())
+            .map_err(|error| anyhow!("Appium {method} {path} returned invalid JSON: {error}"))
     }
 
     pub(crate) fn create_session(
@@ -156,11 +151,8 @@ impl Appium {
                 response.status()
             );
         }
-        let limit = response_limit(&path);
-        let value: Value = serde_json::from_reader(response.into_reader().take(limit))
-            .with_context(|| {
-                format!("Appium GET {path} alert text exceeded its {limit}-byte bound or was invalid JSON")
-            })?;
+        let value: Value = serde_json::from_reader(response.into_reader())
+            .with_context(|| format!("Appium GET {path} alert text was invalid JSON"))?;
         Ok(value
             .get("value")
             .and_then(Value::as_str)

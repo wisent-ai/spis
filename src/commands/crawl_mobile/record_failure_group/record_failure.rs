@@ -106,17 +106,6 @@ pub(crate) fn canonical_driver_url(value: &str) -> Result<String> {
     Ok(parsed.as_str().trim_end_matches('/').to_string())
 }
 
-/// Per-endpoint response bound in bytes.
-pub(crate) fn response_limit(path: &str) -> u64 {
-    if path.ends_with("/screenshot") {
-        32 * 1024 * 1024
-    } else if path.ends_with("/stop_recording_screen") {
-        256 * 1024 * 1024
-    } else {
-        8 * 1024 * 1024
-    }
-}
-
 pub(crate) struct Appium {
     pub(crate) base: String,
     pub(crate) agent: ureq::Agent,

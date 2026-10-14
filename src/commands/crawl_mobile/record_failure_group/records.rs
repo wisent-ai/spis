@@ -65,11 +65,8 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
                 response.status()
             );
         }
-        let limit = response_limit(&url);
-        let value: Value = serde_json::from_reader(response.into_reader().take(limit))
-            .with_context(|| {
-                format!("Apple lookup response exceeded its {limit}-byte bound or was invalid JSON")
-            })?;
+        let value: Value = serde_json::from_reader(response.into_reader())
+            .context("Apple lookup response was invalid JSON")?;
         crate::commands::crawl::atomic_json_write(&cache, &value)?;
         value
     };

@@ -53,7 +53,6 @@ pub(crate) fn fetch(url: &str) -> Result<(Vec<u8>, String)> {
     let content_type = resp.content_type().to_string();
     let mut bytes = Vec::new();
     resp.into_reader()
-        .take(64 << 20)
         .read_to_end(&mut bytes)
         .with_context(|| format!("read body of {url}"))?;
     Ok((bytes, content_type))
