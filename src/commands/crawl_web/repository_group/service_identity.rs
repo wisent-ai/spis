@@ -49,6 +49,8 @@ pub(crate) fn service_identity(
 pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) -> Outcome<()> {
     let url = format!("{}/version", identity.endpoint);
     let mut curl = Command::new("curl");
+    // The request waits for the endpoint's own answer: a refusal or a dropped
+    // connection is reported by curl with its cause.
     curl.args([
         "--fail",
         "--silent",
@@ -56,8 +58,6 @@ pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) ->
         "--location-trusted",
         "--max-redirs",
         "0",
-        "--max-time",
-        "20",
         "-H",
         "Accept: application/json",
     ])
@@ -81,35 +81,23 @@ pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) ->
             "the Weles version endpoint did not return a JSON document",
         )
     })?;
-    let release_id = alternate(&document, "release_id", "releaseId").ok_or_else(|| {
-        WorkerFailure::new(
-            "weles_service_release_mismatch",
-            "the Weles version endpoint declares no release_id",
-        )
-    })?;
-    let source_revision =
-        alternate(&document, "source_revision", "sourceRevision").ok_or_else(|| {
+    // Weles's public version document names its release `releaseId` and its
+    // source `sourceRevision`; those fields are read as written.
+    let field = |name: &str| {
+        document.get(name).and_then(Value::as_str).ok_or_else(|| {
             WorkerFailure::new(
                 "weles_service_release_mismatch",
-                "the Weles version endpoint declares no source_revision",
+                format!("the Weles version endpoint declares no {name}"),
             )
-        })?;
+        })
+    };
+    let release_id = field("releaseId")?;
+    let source_revision = field("sourceRevision")?;
     ensure(
         release_id == identity.release_id && source_revision == identity.source_revision,
         "weles_service_release_mismatch",
         "the live Weles release differs from the runtime manifest service directory",
     )
-}
-
-pub(crate) fn alternate<'a>(
-    document: &'a Value,
-    primary: &str,
-    secondary: &str,
-) -> Option<&'a str> {
-    document
-        .get(primary)
-        .or_else(|| document.get(secondary))
-        .and_then(Value::as_str)
 }
 
 /// Mirrors `weles_provenance::validate_spis_binding` before the binding is ever signed.
@@ -155,7 +143,7 @@ pub(crate) fn attempt_binding(
         )?;
     }
     ensure(
-        binding.attempt >= 1,
+        std::num::NonZeroU32::new(binding.attempt).is_some(),
         "web_attempt_component_invalid",
         "the attempt number must be at least one",
     )?;
