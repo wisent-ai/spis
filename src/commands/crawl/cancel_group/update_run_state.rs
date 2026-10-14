@@ -153,28 +153,32 @@ pub(crate) fn resume(rest: &[String]) -> Result<()> {
             "run {run_id} belongs to Spis revision {original}; resumption with revision {current} is refused"
         );
     }
+    // A run whose catalogs or records cannot be read is refused naming what
+    // is missing, never read as one that holds no record to resume.
     let mut targets = Vec::new();
-    for catalog in snapshot
+    let catalogs = snapshot
         .get("catalogs")
         .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-    {
+        .with_context(|| format!("run {run_id} records no catalogs list"))?;
+    for (position, catalog) in catalogs.iter().enumerate() {
         let catalog_name = catalog
             .get("catalog")
             .and_then(Value::as_str)
-            .unwrap_or_default()
+            .with_context(|| format!("run {run_id} catalogs[{position}] names no catalog"))?
             .to_string();
-        for record in catalog
+        let records = catalog
             .get("records")
             .and_then(Value::as_array)
-            .into_iter()
-            .flatten()
-        {
+            .with_context(|| {
+                format!("run {run_id} catalog {catalog_name} records no records list")
+            })?;
+        for (index, record) in records.iter().enumerate() {
             let record_name = record
                 .get("record")
                 .and_then(Value::as_str)
-                .unwrap_or_default()
+                .with_context(|| {
+                    format!("run {run_id} catalog {catalog_name} records[{index}] names no record")
+                })?
                 .to_string();
             if selected_matches(&record_name, selected_record.as_deref()) {
                 targets.push((catalog_name.clone(), record_name));
