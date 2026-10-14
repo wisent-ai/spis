@@ -37,7 +37,6 @@ pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) ->
     extract_embedded_candidates(&text, &mut raw, &mut order);
 
     let mut unique: std::collections::HashMap<String, Candidate> = std::collections::HashMap::new();
-    let mut insert_order: Vec<String> = Vec::new();
     for candidate in raw {
         let Some(resolved) = join_url(page_url, &candidate.url) else {
             continue;
@@ -53,18 +52,16 @@ pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) ->
             unique.insert(
                 clean.clone(),
                 Candidate {
-                    url: clean.clone(),
+                    url: clean,
                     hint: candidate.hint.trim().to_string(),
                     order: candidate.order,
                     origin: candidate.origin,
                 },
             );
-            insert_order.push(clean);
         }
     }
     // Candidates keep the order the page lists them in; which one shows the
     // product is Brama's answer in `select_image`, not a word score here.
-    let _ = insert_order;
     let mut result: Vec<Candidate> = unique.into_values().collect();
     result.sort_by_key(|candidate| candidate.order);
     result
