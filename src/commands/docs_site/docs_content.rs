@@ -67,24 +67,18 @@ pub(crate) fn family_rows() -> Vec<Value> {
         .collect()
 }
 
+/// The same families as [`family_rows`], read from the declarations rather
+/// than back out of their JSON, where a missing field had read as ''.
 pub(crate) fn family_bullets() -> Vec<String> {
-    family_rows()
+    crate::commands::crawl::crawl_catalogs()
         .iter()
-        .map(|row| {
-            let family = row["family"].as_str().unwrap_or_default();
-            let engine = row["engine"].as_str().unwrap_or_default();
-            let requires = row["requires"]
-                .as_array()
-                .map(|values| {
-                    values
-                        .iter()
-                        .filter_map(Value::as_str)
-                        .map(|value| format!("`{value}`"))
-                        .collect::<Vec<String>>()
-                        .join(", ")
-                })
-                .unwrap_or_default();
-            format!("`{family}` — {engine} engine; the host must answer {requires}.")
+        .map(|(catalog, engine)| {
+            let requires = crate::commands::crawl::engine_preconditions(engine, catalog)
+                .into_iter()
+                .map(|command| format!("`{}`", command.join(" ")))
+                .collect::<Vec<String>>()
+                .join(", ");
+            format!("`{catalog}` — {engine} engine; the host must answer {requires}.")
         })
         .collect()
 }
