@@ -241,10 +241,7 @@ pub(crate) fn locate_state_in_motion(
     let mut best: Option<StateMatch> = None;
     for (index, sig) in motion_frames.iter().enumerate() {
         let dist = mean_abs_diff(sig, &target);
-        if best
-            .as_ref()
-            .map_or(true, |found| dist < found.mean_abs_diff)
-        {
+        if best.as_ref().is_none_or(|found| dist < found.mean_abs_diff) {
             best = Some(StateMatch {
                 timestamp_seconds: index as f64 / SAMPLE_FPS,
                 mean_abs_diff: dist,
