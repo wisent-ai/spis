@@ -125,24 +125,23 @@ pub(crate) fn retrieve(
     batch: &str,
 ) -> Result<Value> {
     let rid = reference.id();
-    if let Some(site_slug) = row.get("site_slug").and_then(Value::as_str) {
-        if site_slug != reference.slug {
-            bail!(
-                "{rid}: status.site_slug: expected {:?}, got {site_slug:?}",
-                reference.slug
-            );
-        }
+    let what = format!("{rid}: status");
+    let site_slug = answer_text(row, "site_slug", &what)?;
+    if site_slug != reference.slug {
+        bail!(
+            "{rid}: status.site_slug: expected {:?}, got {site_slug:?}",
+            reference.slug
+        );
     }
-    if let Some(prefix) = row.get("artifact_prefix").and_then(Value::as_str) {
-        let expected = action
-            .get("artifact_prefix")
-            .and_then(Value::as_str)
-            .unwrap_or_default();
-        if prefix != expected {
-            bail!("{rid}: status.artifact_prefix: expected {expected:?}, got {prefix:?}");
-        }
+    let prefix = answer_text(row, "artifact_prefix", &what)?;
+    let expected = action
+        .get("artifact_prefix")
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("{rid}: the plan's capture names no artifact_prefix"))?;
+    if prefix != expected {
+        bail!("{rid}: status.artifact_prefix: expected {expected:?}, got {prefix:?}");
     }
-    let keys = artifact_keys(row);
+    let keys = artifact_keys(row)?;
     let raw_key = named_artifact(&keys, "axe.json", reference)?;
     let summary_key = named_artifact(&keys, "axe-summary.json", reference)?;
     let stage = work_root()

@@ -22,13 +22,13 @@ pub(crate) fn enqueue(
         ],
         true,
     )?;
-    let payload = payload.unwrap_or(Value::Null);
-    let rows = action_rows(&payload, "weles-capture")?;
+    const WHAT: &str = "weles-capture";
+    let payload = payload.ok_or_else(|| anyhow!("{WHAT}: Stado answered no JSON"))?;
+    let rows = action_rows(&payload, WHAT)?;
     let captures = plan
         .get("captures")
         .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default();
+        .ok_or_else(|| anyhow!("{WHAT}: the plan holds no `captures` list"))?;
     if rows.len() != captures.len() {
         bail!(
             "weles-capture enqueued {} actions for a plan of {}; \
@@ -37,67 +37,41 @@ pub(crate) fn enqueue(
             captures.len()
         );
     }
-    if let Some(returned_action) = payload.get("action") {
-        if returned_action.as_str() != Some(ACTION) {
-            bail!("weles-capture: action: expected {ACTION}, got {returned_action}");
-        }
+    let returned_action = answer_text(&payload, "action", WHAT)?;
+    if returned_action != ACTION {
+        bail!("{WHAT}: action: expected {ACTION}, got {returned_action}");
     }
-    let returned_batch = pick(&payload, &["batch", "batch_id", "id"])
-        .map(|v| v.to_string())
-        .unwrap_or_else(|| {
-            plan.get("batch")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_string()
-        })
-        .trim_matches('"')
-        .to_string();
+    let returned_batch = answer_text(&payload, "batch", WHAT)?.to_string();
     let planned_batch = plan
         .get("batch")
         .and_then(Value::as_str)
-        .unwrap_or_default();
+        .ok_or_else(|| anyhow!("{WHAT}: the plan names no batch"))?;
     if returned_batch != planned_batch {
-        bail!("weles-capture: batch: expected {planned_batch:?}, got {returned_batch:?}");
+        bail!("{WHAT}: batch: expected {planned_batch:?}, got {returned_batch:?}");
     }
     let mut ids: Vec<String> = Vec::new();
     for (position, (row, capture)) in rows.iter().zip(captures.iter()).enumerate() {
-        let position = position + 1;
-        let Some(identifier) = action_id(row) else {
-            bail!("weles-capture action {position}: action_id: missing");
-        };
-        let identifier_trimmed = identifier.trim_matches('"').to_string();
-        if let Some(site_slug) = row.get("site_slug").and_then(Value::as_str) {
-            if let Some(expected_slug) = capture.get("site_slug").and_then(Value::as_str) {
-                if site_slug != expected_slug {
-                    bail!(
-                        "weles-capture action {position}: site_slug: expected {expected_slug:?}, got {site_slug:?}"
-                    );
-                }
+        let what = format!("{WHAT} action {}", position + 1);
+        let identifier = action_id(row, &what)?;
+        for field in ["site_slug", "artifact_prefix"] {
+            let returned = answer_text(row, field, &what)?;
+            let planned = answer_text(capture, field, &format!("{what} in the plan"))?;
+            if returned != planned {
+                bail!("{what}: {field}: expected {planned:?}, got {returned:?}");
             }
         }
-        if let Some(prefix) = row.get("artifact_prefix").and_then(Value::as_str) {
-            if let Some(expected_prefix) = capture.get("artifact_prefix").and_then(Value::as_str) {
-                if prefix != expected_prefix {
-                    bail!(
-                        "weles-capture action {position}: artifact_prefix: expected {expected_prefix:?}, got {prefix:?}"
-                    );
-                }
-            }
-        }
-        ids.push(identifier_trimmed);
+        ids.push(identifier);
     }
     let unique = ids.iter().cloned().collect::<HashSet<_>>();
     if unique.len() != ids.len() {
-        bail!("weles-capture: action_id: duplicate ids prevent record attribution");
+        bail!("{WHAT}: action_id: duplicate ids prevent record attribution");
     }
     Ok((returned_batch, ids))
 }
 
-pub(crate) fn state_of(row: &Value) -> String {
-    match pick(row, &["state", "status"]) {
-        Some(state) => state.to_string().trim_matches('"').to_lowercase(),
-        None => crate::commands::crawl::STATE_NOT_REPORTED.to_owned(),
-    }
+/// The state Stado recorded for one capture run.
+pub(crate) fn state_of(row: &Value) -> Result<String> {
+    answer_text(row, "state", "weles-capture status").map(str::to_string)
 }
 
 /// One read of Stado's batch record after the synchronous enqueue returned.
@@ -119,25 +93,23 @@ pub(crate) fn read_states(
         ],
         true,
     )?;
-    let payload = payload.unwrap_or(Value::Null);
-    if let Some(returned_action) = payload.get("action") {
-        if returned_action.as_str() != Some(ACTION) {
-            bail!("weles-capture-status: action: expected {ACTION}, got {returned_action}");
-        }
+    const WHAT: &str = "weles-capture status";
+    let payload = payload.ok_or_else(|| anyhow!("{WHAT}: Stado answered no JSON"))?;
+    let returned_action = answer_text(&payload, "action", WHAT)?;
+    if returned_action != ACTION {
+        bail!("{WHAT}: action: expected {ACTION}, got {returned_action}");
     }
-    let rows = action_rows(&payload, "weles-capture status")?;
+    let rows = action_rows(&payload, WHAT)?;
     let mut latest: std::collections::HashMap<String, Value> = std::collections::HashMap::new();
     for row in &rows {
-        if let Some(identifier) = action_id(row) {
-            let identifier = identifier.trim_matches('"').to_string();
-            if expected_ids.contains(&identifier) {
-                latest.insert(identifier, row.clone());
-            }
+        let identifier = action_id(row, WHAT)?;
+        if expected_ids.contains(&identifier) {
+            latest.insert(identifier, row.clone());
         }
     }
     let mut counts: BTreeMap<String, usize> = BTreeMap::new();
     for row in latest.values() {
-        *counts.entry(state_of(row)).or_insert(0) += 1;
+        *counts.entry(state_of(row)?).or_default() += 1;
     }
     let counts_text = counts
         .iter()
@@ -152,36 +124,20 @@ pub(crate) fn read_states(
     Ok(latest)
 }
 
-pub(crate) fn artifact_keys(row: &Value) -> Vec<String> {
-    let raw = match pick(row, &["artifacts", "artefacts", "objects", "keys"]) {
-        Some(value) => value.clone(),
-        None => return Vec::new(),
-    };
-    let mut result: Vec<String> = Vec::new();
-    match raw {
-        Value::String(item) => result.push(item),
-        Value::Array(items) => {
-            for item in items {
-                match item {
-                    Value::String(text) => result.push(text),
-                    Value::Object(map) => {
-                        let holder = Value::Object(map);
-                        if let Some(value) = pick(
-                            &holder,
-                            &[
-                                "key", "uri", "url", "artifact", "artefact", "object", "path",
-                            ],
-                        ) {
-                            result.push(value.to_string().trim_matches('"').to_string());
-                        }
-                    }
-                    _ => {}
-                }
-            }
-        }
-        _ => {}
-    }
-    result
+/// The storage keys Stado lists under one capture's prefix: its `artifacts`.
+pub(crate) fn artifact_keys(row: &Value) -> Result<Vec<String>> {
+    const WHAT: &str = "weles-capture status";
+    row.get("artifacts")
+        .and_then(Value::as_array)
+        .ok_or_else(|| anyhow!("{WHAT}: artifacts: expected a list"))?
+        .iter()
+        .enumerate()
+        .map(|(position, key)| {
+            key.as_str()
+                .map(str::to_string)
+                .ok_or_else(|| anyhow!("{WHAT}: artifacts[{position}]: expected a string"))
+        })
+        .collect()
 }
 
 pub(crate) fn named_artifact(keys: &[String], name: &str, reference: &Reference) -> Result<String> {

@@ -236,44 +236,34 @@ pub(crate) fn strict_json(text: &str, what: &str) -> Result<Value> {
 }
 
 // ---------------------------------------------------------------------------
-// Row helpers
+// Stado's `weles-capture` answer, read by the field names Stado writes
+// (`stado workload run|status weles-capture --json`); a field it lacks is
+// refused by name, never looked up under another name.
 
-pub(crate) fn pick<'a>(row: &'a Value, names: &[&str]) -> Option<&'a Value> {
-    for name in names {
-        if let Some(value) = row.get(*name) {
-            if !value.is_null() {
-                return Some(value);
-            }
-        }
-    }
-    None
-}
-
+/// The answer's `actions` list, every entry an object.
 pub(crate) fn action_rows(payload: &Value, what: &str) -> Result<Vec<Value>> {
-    let rows_from = |list: &Value| -> Option<Vec<Value>> {
-        list.as_array().map(|items| {
-            items
-                .iter()
-                .filter(|item| item.is_object())
-                .cloned()
-                .collect()
+    let actions = payload
+        .get("actions")
+        .and_then(Value::as_array)
+        .ok_or_else(|| anyhow!("{what}: the answer holds no `actions` list"))?;
+    actions
+        .iter()
+        .enumerate()
+        .map(|(position, row)| match row {
+            Value::Object(_) => Ok(row.clone()),
+            other => bail!("{what}: actions[{position}]: expected an object, got {other}"),
         })
-    };
-    if let Some(rows) = rows_from(payload) {
-        return Ok(rows);
-    }
-    if let Some(map) = payload.as_object() {
-        for key in ["actions", "jobs", "captures", "items", "results"] {
-            if let Some(value) = map.get(key) {
-                if let Some(rows) = rows_from(value) {
-                    return Ok(rows);
-                }
-            }
-        }
-    }
-    bail!("{what}: no per-action list in the response")
+        .collect()
 }
 
-pub(crate) fn action_id(row: &Value) -> Option<String> {
-    pick(row, &["action_id", "actionId", "id", "job_id", "jobId"]).map(|v| v.to_string())
+/// A text field of the answer or of one of its actions.
+pub(crate) fn answer_text<'a>(row: &'a Value, field: &str, what: &str) -> Result<&'a str> {
+    row.get(field)
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("{what}: {field}: expected a string"))
+}
+
+/// One action's `action_id`.
+pub(crate) fn action_id(row: &Value, what: &str) -> Result<String> {
+    answer_text(row, "action_id", what).map(str::to_string)
 }

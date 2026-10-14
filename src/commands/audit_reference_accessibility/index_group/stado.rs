@@ -16,36 +16,20 @@ pub(crate) fn stado(args: &[&str], parse_json: bool) -> Result<(Option<Value>, S
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     let stderr = String::from_utf8_lossy(&output.stderr).to_string();
     if !output.status.success() {
-        let combined = if stderr.trim().is_empty() {
-            &stdout
-        } else {
-            &stderr
+        // Stado's refusal is what it wrote to stderr, or to stdout when it
+        // wrote nothing there, quoted whole.
+        let said = match stderr.trim() {
+            "" => stdout.trim(),
+            text => text,
         };
-        let lines: Vec<&str> = combined
-            .lines()
-            .map(str::trim)
-            .filter(|l| !l.is_empty())
-            .collect();
-        let said: Vec<&str> = lines
-            .iter()
-            .copied()
-            .filter(|line| {
-                let lower = line.to_lowercase();
-                lower.starts_with("error") || lower.starts_with("warning")
-            })
-            .collect();
-        let detail = said.first().is_some().then_some(said).unwrap_or(lines);
-        let tail = if detail.is_empty() {
-            format!("exit {}", output.status.code().unwrap_or(-1))
-        } else {
-            detail
-                .iter()
-                .take(4)
-                .cloned()
-                .collect::<Vec<_>>()
-                .join(" | ")
-        };
-        bail!("stado {}: {}", args.join(" "), tail);
+        if said.is_empty() {
+            bail!(
+                "stado {} ended with {} and said nothing",
+                args.join(" "),
+                output.status
+            );
+        }
+        bail!("stado {}: {said}", args.join(" "));
     }
     if !parse_json {
         return Ok((None, stdout));

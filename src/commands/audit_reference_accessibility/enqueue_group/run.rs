@@ -194,18 +194,31 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             continue;
         };
-        let state = state_of(state_row);
-        if state != "done" {
-            let exact_error = match pick(state_row, &["error", "message", "reason"]) {
-                Some(error) => {
-                    let text = error.to_string();
-                    let trimmed = text.trim_matches('"').to_string();
-                    if trimmed.is_empty() {
-                        format!("action ended in state {state}")
-                    } else {
-                        trimmed
-                    }
+        // Stado records `error` as null for a run that said nothing; the
+        // state it ended in is then the whole of what is known.
+        let recorded = state_of(state_row).and_then(|state| {
+            let error = match state_row.get("error") {
+                Some(Value::String(error)) if !error.trim().is_empty() => Some(error.clone()),
+                Some(Value::String(_)) | Some(Value::Null) | None => None,
+                Some(other) => bail!("weles-capture status: error: expected a string, got {other}"),
+            };
+            Ok((state, error))
+        });
+        let (state, error) = match recorded {
+            Ok(recorded) => recorded,
+            Err(e) => {
+                let reason = format!("{e:#}");
+                if let Some(obj) = rows[position].as_object_mut() {
+                    obj.insert("status".into(), Value::String("failed".into()));
+                    obj.insert("reason".into(), Value::String(reason.clone()));
                 }
+                log(&format!("REFUSED {}: {reason}", reference.id()));
+                continue;
+            }
+        };
+        if state != "done" {
+            let exact_error = match error {
+                Some(error) => error,
                 None => format!("action ended in state {state}"),
             };
             if let Some(obj) = rows[position].as_object_mut() {
