@@ -14,33 +14,18 @@ pub(crate) fn import_ready(run_id: &str, selected_record: Option<&str>) -> Resul
         .to_path_buf();
     let snapshot = load(Some(run_id))?;
     let mut touched_catalogs: BTreeMap<String, String> = BTreeMap::new();
-    for catalog in snapshot
-        .get("catalogs")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-    {
-        let catalog_name = catalog
-            .get("catalog")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .to_string();
+    for catalog in run_catalogs(&snapshot)? {
+        let catalog_name = catalog.name.to_string();
+        // The engine decides which maintenance an imported catalog gets; an
+        // entry that names none is refused, never imported as no engine.
         let engine = catalog
+            .entry
             .get("engine")
             .and_then(Value::as_str)
-            .unwrap_or_default()
+            .with_context(|| format!("run {run_id}: catalog {catalog_name} names no engine"))?
             .to_string();
-        for record in catalog
-            .get("records")
-            .and_then(Value::as_array)
-            .into_iter()
-            .flatten()
-        {
-            let record_name = record
-                .get("record")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .to_string();
+        for record in catalog.records {
+            let record_name = record_name(&catalog_name, record)?.to_string();
             if !selected_matches(&record_name, selected_record) {
                 continue;
             }

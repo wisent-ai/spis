@@ -44,26 +44,10 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
     }
     let snapshot = load(Some(&run_id))?;
     let mut targets = Vec::new();
-    for catalog in snapshot
-        .get("catalogs")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-    {
-        let catalog_name = catalog
-            .get("catalog")
-            .and_then(Value::as_str)
-            .unwrap_or_default();
-        for record in catalog
-            .get("records")
-            .and_then(Value::as_array)
-            .into_iter()
-            .flatten()
-        {
-            let record_name = record
-                .get("record")
-                .and_then(Value::as_str)
-                .unwrap_or_default();
+    for catalog in run_catalogs(&snapshot)? {
+        let catalog_name = catalog.name;
+        for record in catalog.records {
+            let record_name = record_name(catalog_name, record)?;
             if selected_record.as_deref().is_none_or(|wanted| {
                 record_name == wanted
                     || record_name.split_once('-').map(|(_, tail)| tail) == Some(wanted)
@@ -81,23 +65,9 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
     for (catalog_name, record_name) in targets {
         let _record_guard = RecordMutationGuard::acquire(&run_id, &catalog_name, &record_name)?;
         let current = load(Some(&run_id))?;
-        let record = current
-            .get("catalogs")
-            .and_then(Value::as_array)
-            .into_iter()
-            .flatten()
-            .find(|catalog| {
-                catalog.get("catalog").and_then(Value::as_str) == Some(catalog_name.as_str())
-            })
-            .and_then(|catalog| catalog.get("records"))
-            .and_then(Value::as_array)
-            .into_iter()
-            .flatten()
-            .find(|record| {
-                record.get("record").and_then(Value::as_str) == Some(record_name.as_str())
-            })
-            .cloned()
-            .context("crawl record disappeared during cancellation")?;
+        let record = run_record(&current, &catalog_name, &record_name)
+            .context("crawl record disappeared during cancellation")?
+            .clone();
         let manifest = record
             .get("manifest")
             .filter(|value| value.is_object())
