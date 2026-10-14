@@ -124,9 +124,18 @@ pub(crate) fn select_image(page_url: &str) -> Result<(Candidate, Probe)> {
          listed index, or {\"index\": null} when no image shows the interface.",
         &format!("Page: {final_page_url}\nImages:\n{}", listing.join("\n")),
     )?;
-    let index = answer["index"].as_u64().with_context(|| {
-        format!("Brama found no image of the product's interface on {final_page_url}")
-    })?;
+    // A null index is Brama's statement that no image shows the interface; an
+    // answer without an index, or with one that is not a number, is a
+    // malformed answer and is said as such with the answer itself.
+    let index = match answer.get("index") {
+        Some(serde_json::Value::Null) => {
+            bail!("Brama found no image of the product's interface on {final_page_url}")
+        }
+        Some(index) => index.as_u64().with_context(|| {
+            format!("Brama's image choice for {final_page_url} is not an index: {answer}")
+        })?,
+        None => bail!("Brama's image choice for {final_page_url} names no index: {answer}"),
+    };
     let index = usize::try_from(index)
         .ok()
         .filter(|index| *index < probed.len())
