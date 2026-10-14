@@ -24,15 +24,21 @@ pub fn add(args: &AddArgs) -> Result<()> {
     }
 
     let slug = format!("{:02}-{}", count_before + 1, kebab(&args.name)?);
-    let extension = visual_source
-        .extension()
-        .map(|e| e.to_string_lossy().to_lowercase())
-        .unwrap_or_default();
-    let suffix = if extension.is_empty() {
-        "png".to_string()
-    } else {
-        extension
-    };
+    // The image's format is what its bytes are, as the image library reads
+    // them; a file with no extension is not assumed to be a PNG.
+    let bytes = std::fs::read(&visual_source)
+        .with_context(|| format!("read {}", visual_source.display()))?;
+    let format = image::guess_format(&bytes).with_context(|| {
+        format!(
+            "{} is not an image format Spis reads",
+            visual_source.display()
+        )
+    })?;
+    let suffix = format
+        .extensions_str()
+        .first()
+        .with_context(|| format!("the image format {format:?} names no file extension"))?
+        .to_string();
     let images_dir = directory.join("images");
     if !images_dir.exists() {
         std::fs::create_dir(&images_dir)
