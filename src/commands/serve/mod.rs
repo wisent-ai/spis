@@ -64,7 +64,12 @@ fn document(request: tiny_http::Request, status: u16, body: Vec<u8>) {
     let response = tiny_http::Response::from_data(body)
         .with_status_code(status)
         .with_header(header);
-    let _ = request.respond(response);
+    let asked = format!("{} {}", request.method(), request.url());
+    // A client that left before its answer is said on stderr with the
+    // request, so the serving log never shows an answer nobody received.
+    if let Err(error) = request.respond(response) {
+        eprintln!("spis serve: the answer {status} to {asked} could not be written: {error}");
+    }
 }
 
 fn refuse(request: tiny_http::Request, refusal: Refusal) {
