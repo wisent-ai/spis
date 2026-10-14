@@ -49,7 +49,7 @@ pub fn add(args: &AddArgs) -> Result<()> {
         .with_context(|| format!("copy {} -> {}", args.visual, visual_path.display()))?;
 
     let (width, height) = image_dimensions(&visual_path)?;
-    let digest = sha256_file(&visual_path)?;
+    let digest = crate::sha256_file(&visual_path)?;
     let today = today_iso();
 
     let orientation = if width >= height {

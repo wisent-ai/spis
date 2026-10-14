@@ -35,11 +35,6 @@ pub(crate) fn kebab(name: &str) -> Result<String> {
     Ok(slug)
 }
 
-pub(crate) fn sha256_file(path: &Path) -> Result<String> {
-    let bytes = std::fs::read(path).with_context(|| format!("read {}", path.display()))?;
-    Ok(lib::sha256_hex(&bytes))
-}
-
 /// Image dimensions via macOS `sips`, exactly like the original script.
 pub(crate) fn image_dimensions(path: &Path) -> Result<(i64, i64)> {
     let output = std::process::Command::new("sips")

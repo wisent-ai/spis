@@ -46,7 +46,7 @@ pub(crate) fn launched_executable_proof(
         .executable_sha256
         .as_deref()
         .context("desktop execution identity has no executable SHA-256")?;
-    let observed_sha = hash_file(path)?;
+    let observed_sha = crate::sha256_file(path)?;
     if !observed_sha.eq_ignore_ascii_case(expected_sha) {
         bail!(
             "launched executable SHA-256 differs from the manifest: expected {expected_sha}, observed {observed_sha}"

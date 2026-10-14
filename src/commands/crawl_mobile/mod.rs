@@ -11,7 +11,6 @@ use regex::Regex;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
-use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 // The split submodules reach their sibling commands through `super::`, which

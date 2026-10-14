@@ -41,22 +41,6 @@ pub(crate) struct CuaDriver {
     pub(crate) version: String,
 }
 
-pub(crate) fn hash_file(path: &Path) -> Result<String> {
-    let mut file = std::fs::File::open(path).with_context(|| format!("open {}", path.display()))?;
-    let mut digest = Sha256::new();
-    let mut buffer = [0_u8; 64 * 1024];
-    loop {
-        let count = file
-            .read(&mut buffer)
-            .with_context(|| format!("hash {}", path.display()))?;
-        if count == 0 {
-            break;
-        }
-        digest.update(&buffer[..count]);
-    }
-    Ok(hex::encode(digest.finalize()))
-}
-
 /// Resolve, canonicalize, hash and version-stamp the driver exactly once per
 /// record. Re-resolving inside every call left the binary unstable even within
 /// one record, and following a symlink out of the bundle defeated the pin
@@ -80,7 +64,7 @@ pub(crate) fn pin_cua_driver() -> Result<CuaDriver> {
             canonical.display()
         );
     }
-    let sha256 = hash_file(&path)?;
+    let sha256 = crate::sha256_file(&path)?;
     let mut version_command = Command::new(&path);
     version_command.arg("--version");
     let output = crate::commands::crawl::command_output(
@@ -134,7 +118,7 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
             canonical.display()
         );
     }
-    let sha256 = hash_file(&path)?;
+    let sha256 = crate::sha256_file(&path)?;
     let mut version_command = Command::new(&path);
     version_command
         .arg("--version")

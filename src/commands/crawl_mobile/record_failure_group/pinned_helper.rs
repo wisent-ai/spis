@@ -36,7 +36,7 @@ pub(crate) fn pinned_readiness_helper() -> Result<PinnedHelper> {
             canonical.display()
         );
     }
-    let sha256 = hash_file(&path)?;
+    let sha256 = crate::sha256_file(&path)?;
     let mut version_command = Command::new(&path);
     version_command
         .arg("--version")

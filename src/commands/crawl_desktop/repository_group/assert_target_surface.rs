@@ -183,7 +183,7 @@ pub(crate) fn verify_desktop_executable(
         .executable_sha256
         .as_deref()
         .context("desktop execution identity has no executable SHA-256")?;
-    let observed_sha = hash_file(path)?;
+    let observed_sha = crate::sha256_file(path)?;
     if !observed_sha.eq_ignore_ascii_case(expected_sha) {
         bail!(
             "desktop executable SHA-256 changed immediately before launch: expected {expected_sha}, observed {observed_sha}"

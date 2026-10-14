@@ -231,6 +231,18 @@ pub fn sha256_hex(bytes: &[u8]) -> String {
     h.finalize().iter().map(|b| format!("{b:02x}")).collect()
 }
 
+/// The SHA-256 of one file's bytes, streamed. Every executable, helper and
+/// visual digest Spis records or checks is read through this; a failure
+/// names the file.
+pub fn sha256_file(path: &std::path::Path) -> Result<String> {
+    use sha2::{Digest, Sha256};
+    let mut file =
+        std::fs::File::open(path).with_context(|| format!("open {} to hash it", path.display()))?;
+    let mut digest = Sha256::new();
+    std::io::copy(&mut file, &mut digest).with_context(|| format!("hash {}", path.display()))?;
+    Ok(hex::encode(digest.finalize()))
+}
+
 pub fn now_iso_utc() -> String {
     let secs = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
