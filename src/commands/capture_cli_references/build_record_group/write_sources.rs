@@ -84,12 +84,7 @@ pub(crate) fn cmd_list() -> Result<()> {
                     product.version_cmd
                 )
             }
-            QuickOutcome::Failed(tag) => {
-                format!(
-                    "(no version flag; `{}` exits None) {tag}",
-                    product.version_cmd
-                )
-            }
+            QuickOutcome::Failed(cause) => format!("(version command did not run) {cause}"),
             QuickOutcome::Missing => unreachable!(),
         };
         println!(

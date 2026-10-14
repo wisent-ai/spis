@@ -239,7 +239,7 @@ pub(crate) fn is_executable(path: &Path) -> bool {
 
 pub(crate) enum QuickOutcome {
     Ran(i32, String), // exit status, first line
-    Failed(String),   // exception type name, like the Python returned
+    Failed(String),   // why the version command could not be started
     Missing,
 }
 
@@ -249,7 +249,7 @@ pub(crate) fn quick_version(product: &Product) -> (Option<String>, QuickOutcome)
     };
     let args: Vec<&str> = product.version_cmd.split_whitespace().collect();
     match run_to_exit(&args) {
-        QuickRun::SpawnError => (Some(path), QuickOutcome::Failed("OSError".into())),
+        QuickRun::SpawnError(cause) => (Some(path), QuickOutcome::Failed(cause)),
         QuickRun::Done(status, out, err) => {
             let text = strip_ansi(&(out + &err)).trim().to_string();
             let first = text.split('\n').next().unwrap_or("").to_string();
@@ -260,7 +260,7 @@ pub(crate) fn quick_version(product: &Product) -> (Option<String>, QuickOutcome)
 
 pub(crate) enum QuickRun {
     Done(i32, String, String),
-    SpawnError,
+    SpawnError(String),
 }
 
 /// Runs `argv` to its own exit and captures both streams. There is no
@@ -277,6 +277,8 @@ pub(crate) fn run_to_exit(argv: &[&str]) -> QuickRun {
             String::from_utf8_lossy(&output.stdout).into_owned(),
             String::from_utf8_lossy(&output.stderr).into_owned(),
         ),
-        Err(_) => QuickRun::SpawnError,
+        Err(error) => {
+            QuickRun::SpawnError(format!("`{}` could not start: {error}", argv.join(" ")))
+        }
     }
 }
