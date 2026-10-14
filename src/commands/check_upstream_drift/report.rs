@@ -174,18 +174,14 @@ pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value
     }
 }
 
-/// (url, where, expected_state) for every recorded upstream reference.
-pub(crate) fn collect_urls() -> Vec<(String, String, Option<String>)> {
+/// (url, where, expected_state) for every recorded upstream reference. A
+/// catalog or record that cannot be read refuses the check: skipped, its
+/// references would silently drop out of the drift report.
+pub(crate) fn collect_urls() -> Result<Vec<(String, String, Option<String>)>> {
     let mut pairs: Vec<(String, String, Option<String>)> = Vec::new();
     for sources in sorted_glob_examples_files("sources.json") {
-        let Ok(data) = lib::read_json::<Value>(sources.to_str().unwrap()) else {
-            continue;
-        };
-        let catalog = sources
-            .parent()
-            .and_then(|p| p.file_name())
-            .map(|n| n.to_string_lossy().to_string())
-            .unwrap_or_default();
+        let data = lib::read_json::<Value>(&sources.to_string_lossy())?;
+        let catalog = directory_name(sources.parent(), &sources)?;
         for example in data
             .get("examples")
             .and_then(|v| v.as_array())
@@ -195,7 +191,7 @@ pub(crate) fn collect_urls() -> Vec<(String, String, Option<String>)> {
             let name = example
                 .get("name")
                 .and_then(|v| v.as_str())
-                .unwrap_or("?")
+                .with_context(|| format!("{}: an example has no \"name\"", sources.display()))?
                 .to_string();
             if let Some(url) = example.get("source_url").and_then(|v| v.as_str()) {
                 pairs.push((
@@ -224,21 +220,15 @@ pub(crate) fn collect_urls() -> Vec<(String, String, Option<String>)> {
         }
     }
     for record in reference_records() {
-        let Ok(data) = lib::read_json::<Value>(record.to_str().unwrap()) else {
-            continue;
-        };
-        let catalog = record
-            .parent()
-            .and_then(|p| p.parent())
-            .and_then(|p| p.parent())
-            .and_then(|p| p.file_name())
-            .map(|n| n.to_string_lossy().to_string())
-            .unwrap_or_default();
-        let dir_name = record
-            .parent()
-            .and_then(|p| p.file_name())
-            .map(|n| n.to_string_lossy().to_string())
-            .unwrap_or_default();
+        let data = lib::read_json::<Value>(&record.to_string_lossy())?;
+        let catalog = directory_name(
+            record
+                .parent()
+                .and_then(|p| p.parent())
+                .and_then(|p| p.parent()),
+            &record,
+        )?;
+        let dir_name = directory_name(record.parent(), &record)?;
         for entry in data
             .get("motion")
             .and_then(|v| v.as_array())
@@ -259,5 +249,18 @@ pub(crate) fn collect_urls() -> Vec<(String, String, Option<String>)> {
     }
     let mut seen = std::collections::HashSet::new();
     pairs.retain(|(url, _, _)| seen.insert(url.clone()));
-    pairs
+    Ok(pairs)
+}
+
+/// The name of `directory`, which a catalog file's location must have.
+fn directory_name(directory: Option<&std::path::Path>, file: &std::path::Path) -> Result<String> {
+    directory
+        .and_then(|p| p.file_name())
+        .map(|n| n.to_string_lossy().to_string())
+        .with_context(|| {
+            format!(
+                "{} does not lie in a named catalog directory",
+                file.display()
+            )
+        })
 }

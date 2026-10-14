@@ -1,7 +1,7 @@
 use super::*;
 
-pub(crate) fn check_sources(drift: &Mutex<Drift>) {
-    let pairs = collect_urls();
+pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
+    let pairs = collect_urls()?;
     pool(&pairs, 12, |pair| {
         let (url, where_, expected) = pair;
         if !(url.starts_with("http://") || url.starts_with("https://")) {
@@ -33,6 +33,7 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) {
             _ => guard.sources_unresolved.push(item),
         }
     });
+    Ok(())
 }
 
 pub(crate) fn stream_sha256(path: &std::path::Path) -> Result<String> {
@@ -59,19 +60,22 @@ pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
     for record in reference_records() {
         let data: Value = lib::read_json(record.to_str().context("non-UTF8 path")?)?;
         let base = record.parent().context("record without parent")?;
-        for key in ["motion", "states"] {
-            for entry in data
-                .get(key)
-                .and_then(|v| v.as_array())
-                .map(|a| a.as_slice())
-                .unwrap_or(&[])
-            {
-                let local = base.join(
-                    entry
-                        .get("local_path")
-                        .and_then(|v| v.as_str())
-                        .unwrap_or(""),
-                );
+        // Every media entry the record carries, whichever list holds it (the
+        // recording under motion, the still states, or any list a later
+        // record schema adds), is one that names a local_path beside the
+        // record; an entry without one carries no local media. Each such
+        // file must exist and, where the record states its sha256, still
+        // hash to it.
+        let lists = data
+            .as_object()
+            .into_iter()
+            .flat_map(|object| object.values());
+        for entries in lists.filter_map(Value::as_array) {
+            for entry in entries {
+                let Some(path) = entry.get("local_path").and_then(Value::as_str) else {
+                    continue;
+                };
+                let local = base.join(path);
                 let rel = local.to_string_lossy().to_string();
                 if !local.exists() {
                     drift.media_missing.push(rel);
@@ -163,7 +167,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         if !skip_readme {
             check_readmes(&shared)?;
         }
-        check_sources(&shared);
+        check_sources(&shared)?;
         let net = shared.into_inner();
         drift.readme_changed = net.readme_changed;
         drift.readme_unreachable = net.readme_unreachable;
