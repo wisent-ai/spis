@@ -101,7 +101,7 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
                 outcome
                     .get("downloaded_bytes")
                     .and_then(Value::as_u64)
-                    .unwrap_or(0),
+                    .context("durable outcome has no downloaded_bytes")?,
             )
             .context("durable download byte counter overflow")?;
         let digest = outcome.get("record_sha256").and_then(Value::as_str);
