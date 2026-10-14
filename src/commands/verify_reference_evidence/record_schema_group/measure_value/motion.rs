@@ -41,20 +41,19 @@ pub(super) fn measure_motion(
                 .unwrap_or(Value::Null),
         );
         if !probe.exists {
+            // The file is absent: its kind is what the record declared, or
+            // none; "missing" is not a media kind, the gap below says it.
             obj.insert(
                 "media_kind".into(),
-                json!(canonical.clone().unwrap_or_else(|| "missing".into())),
+                canonical.clone().map_or(Value::Null, Value::String),
             );
             obj.insert("measured".into(), json!(false));
             gaps.push(format!("motion file missing: {local_path}"));
             continue;
         }
-        let kind = probe
-            .kind
-            .clone()
-            .or(canonical)
-            .unwrap_or_else(|| "unknown".into());
-        let is_still = kind == STILL_KIND;
+        // The probed kind, else the declared one; neither is no kind at all.
+        let kind = probe.kind.clone().or(canonical);
+        let is_still = kind.as_deref() == Some(STILL_KIND);
         if truthy(obj.get("sha256"))
             && probe.sha256.as_deref() != obj.get("sha256").and_then(|v| v.as_str())
         {
@@ -93,7 +92,7 @@ pub(super) fn measure_motion(
         );
         obj.insert(
             "measurement_method".into(),
-            json!(if kind == "terminal-cast" {
+            json!(if kind.as_deref() == Some("terminal-cast") {
                 "asciinema-v2 header and event stream"
             } else {
                 "ffprobe -count_frames"
