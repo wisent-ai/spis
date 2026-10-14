@@ -180,26 +180,35 @@ pub(crate) fn screen_by_id<'a>(definition: &'a Value, screen_id: &str) -> Result
         .with_context(|| format!("published onboarding screen is unavailable: {screen_id}"))
 }
 
+/// The screen the highest-priority transition leads to; `None` for a screen
+/// with no transition. A transition without a priority or a target is
+/// refused, never ranked as priority zero.
 pub(crate) fn next_screen_id(screen: &Value) -> Result<Option<String>> {
-    screen
+    let mut best: Option<(i64, String)> = None;
+    for transition in screen
         .get("transitions")
         .and_then(Value::as_array)
         .into_iter()
         .flatten()
-        .max_by_key(|transition| {
-            transition
-                .get("priority")
-                .and_then(Value::as_i64)
-                .unwrap_or_default()
-        })
-        .map(|transition| {
-            transition
-                .get("next_screen_id")
-                .and_then(Value::as_str)
-                .map(str::to_string)
-                .context("canonical onboarding transition has no target")
-        })
-        .transpose()
+    {
+        let priority = transition
+            .get("priority")
+            .and_then(Value::as_i64)
+            .with_context(|| {
+                format!("canonical onboarding transition states no priority: {transition}")
+            })?;
+        let target = transition
+            .get("next_screen_id")
+            .and_then(Value::as_str)
+            .context("canonical onboarding transition has no target")?;
+        if best
+            .as_ref()
+            .is_none_or(|(highest, _)| priority >= *highest)
+        {
+            best = Some((priority, target.to_string()));
+        }
+    }
+    Ok(best.map(|(_, target)| target))
 }
 
 pub(crate) fn evidence_satisfied(screen: &Value, state: &Value) -> Result<bool> {
