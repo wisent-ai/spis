@@ -5,7 +5,7 @@ use super::*;
 #[allow(clippy::too_many_arguments)]
 pub(super) fn prepared_command(
     snapshot: &Value,
-    state: &str,
+    state: State,
     run_id: &str,
     catalog: &str,
     host: &str,
@@ -13,7 +13,7 @@ pub(super) fn prepared_command(
     record_name: &str,
     manifest: &mut RuntimeManifest,
 ) -> Result<Option<Vec<String>>> {
-    if matches!(state, "preflight_passed" | "submitting") {
+    if matches!(state, State::PreflightPassed | State::Submitting) {
         let retained = snapshot
             .get("command")
             .and_then(Value::as_array)

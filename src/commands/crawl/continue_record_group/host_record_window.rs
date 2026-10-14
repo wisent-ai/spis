@@ -43,12 +43,10 @@ pub(crate) fn host_record_window(host_report: &Value, records: &[Value]) -> usiz
 }
 
 /// Whether this record is holding a slot on the host right now: submitted and
-/// not yet terminal, or mid-submission with a job that may already exist.
-pub(crate) fn record_occupies_host(record: &Value) -> bool {
-    matches!(
-        record.get("state").and_then(Value::as_str),
-        Some("preflight_passed" | "submitting" | "queued" | "running")
-    )
+/// not yet terminal, or mid-submission with a job that may already exist. A
+/// record whose state is not a declared one is refused naming it.
+pub(crate) fn record_occupies_host(record: &Value) -> Result<bool> {
+    Ok(State::of(&record["state"])?.occupies_host())
 }
 
 pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
@@ -97,15 +95,15 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
         let host_report =
             ensure_host_preflight(run_id, &catalog, &engine, &host, service_identity.as_ref())?;
         let window = host_record_window(&host_report, &records);
-        let mut occupied = records
+        let occupancy = records
             .iter()
-            .filter(|record| record_occupies_host(record))
-            .count();
-        for record in records {
+            .map(record_occupies_host)
+            .collect::<Result<Vec<bool>>>()?;
+        let mut occupied = occupancy.iter().filter(|occupies| **occupies).count();
+        for (record, occupies) in records.into_iter().zip(occupancy) {
             let Some(record_name) = record.get("record").and_then(Value::as_str) else {
                 continue;
             };
-            let occupies = record_occupies_host(&record);
             if !occupies && occupied >= window {
                 continue;
             }

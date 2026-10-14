@@ -91,6 +91,27 @@ impl State {
             State::Queued | State::Submitting | State::PreflightPassed
         )
     }
+
+    /// The attempt holds a slot on its host: accepted, mid-submission or
+    /// running, and not yet ended.
+    pub(crate) fn occupies_host(self) -> bool {
+        self.waiting() || self == State::Running
+    }
+
+    /// Nothing is left to submit for the attempt: it is placed, under way,
+    /// delivered, waiting on a decision, cancelled or cannot be placed.
+    pub(crate) fn submission_settled(self) -> bool {
+        self.delivered()
+            || matches!(
+                self,
+                State::Unavailable
+                    | State::Running
+                    | State::Queued
+                    | State::CancelPending
+                    | State::PendingReview
+                    | State::Cancelled
+            )
+    }
 }
 
 /// The state a set of attempts aggregates to: work still moving wins, in the

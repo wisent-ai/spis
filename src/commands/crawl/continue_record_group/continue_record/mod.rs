@@ -12,27 +12,14 @@ pub(crate) fn continue_record(
 ) -> Result<()> {
     let record_guard = RecordMutationGuard::acquire(run_id, catalog, record_name)?;
     let snapshot = record_snapshot(run_id, catalog, record_name)?;
-    let state = snapshot
-        .get("state")
-        .and_then(Value::as_str)
-        .unwrap_or("unavailable")
-        .to_string();
+    // A record whose state is not a declared one is refused naming the value;
+    // read as "unavailable" it was skipped without a word.
+    let state = State::of(&snapshot["state"])?;
     if snapshot
         .get("stado_job_id")
         .and_then(Value::as_str)
         .is_some()
-        || matches!(
-            state.as_str(),
-            "unavailable"
-                | "completed"
-                | "uploaded"
-                | "imported"
-                | "running"
-                | "queued"
-                | "cancel_pending"
-                | "pending_review"
-                | "cancelled"
-        )
+        || state.submission_settled()
     {
         return Ok(());
     }
@@ -79,7 +66,7 @@ pub(crate) fn continue_record(
 
     let Some(command) = command::prepared_command(
         &snapshot,
-        &state,
+        state,
         run_id,
         catalog,
         host,
