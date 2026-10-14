@@ -118,6 +118,21 @@ pub(crate) fn save_all(directory: &Path, sources: &mut Value, index: &mut Value)
     super::reference_contract::regenerate_index()
 }
 
+/// The record file of the reference at `position` in `index`; an entry
+/// without its path is refused naming the catalog, never read as the
+/// catalog directory itself.
+pub(crate) fn record_path(directory: &Path, index: &Value, position: usize) -> Result<PathBuf> {
+    let path = index["references"][position]["path"]
+        .as_str()
+        .with_context(|| {
+            format!(
+                "reference: references[{position}].path is missing in {}",
+                directory.display()
+            )
+        })?;
+    Ok(directory.join(path))
+}
+
 /// Locate a record by 1-based number or normalized name; returns its position.
 pub(crate) fn find_record(directory: &Path, index: &Value, identifier: &str) -> Result<usize> {
     let number: Option<usize> =

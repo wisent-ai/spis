@@ -31,16 +31,7 @@ pub(crate) fn edit(args: &EditArgs) -> Result<()> {
     let mut sources: Value = lib::read_json(&directory.join("sources.json").to_string_lossy())?;
     let mut index: Value = lib::read_json(&directory.join("references.json").to_string_lossy())?;
     let position = find_record(&directory, &index, &args.identifier)?;
-    let record_path = directory.join(
-        index["references"][position]["path"]
-            .as_str()
-            .with_context(|| {
-                format!(
-                    "reference: references[{position}].path is missing in {}",
-                    directory.display()
-                )
-            })?,
-    );
+    let record_path = record_path(&directory, &index, position)?;
     let mut record: Value = lib::read_json(&record_path.to_string_lossy())?;
     let example = sources["examples"]
         .get_mut(position)

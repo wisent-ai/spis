@@ -176,7 +176,7 @@ pub(crate) fn get(catalog: &str, identifier: &str) -> Result<()> {
     let position = find_record(&directory, &index, identifier)?;
     let example = sources["examples"][position].clone();
     let entry = index["references"][position].clone();
-    let record_path = directory.join(entry["path"].as_str().unwrap_or_default());
+    let record_path = record_path(&directory, &index, position)?;
     let record: Value = lib::read_json(&record_path.to_string_lossy())?;
     println!(
         "{}",
@@ -206,11 +206,7 @@ pub(crate) fn remove(catalog: &str, identifier: &str, force: bool) -> Result<()>
     let mut sources: Value = lib::read_json(&directory.join("sources.json").to_string_lossy())?;
     let mut index: Value = lib::read_json(&directory.join("references.json").to_string_lossy())?;
     let position = find_record(&directory, &index, identifier)?;
-    let record_path = directory.join(
-        index["references"][position]["path"]
-            .as_str()
-            .unwrap_or_default(),
-    );
+    let record_path = record_path(&directory, &index, position)?;
     let record: Value = lib::read_json(&record_path.to_string_lossy())?;
     if (truthy(&record["motion"]) || truthy(&record["journey"])) && !force {
         bail!("reference: the record carries motion or journey evidence; pass --force to delete it permanently");
