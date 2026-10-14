@@ -85,7 +85,7 @@ pub(crate) fn write_sources() -> Result<Value> {
                 "frame_count": motion["frame_count"].clone(),
                 "bytes": motion["bytes"].clone(),
                 "sha256": motion["sha256"].clone(),
-                "state_count": record["states"].as_array().map(|v| v.len()).unwrap_or(0),
+                "state_count": record["states"].as_array().map(Vec::len),
                 "captured_at": record["captured_at"].clone(),
             },
         }));
