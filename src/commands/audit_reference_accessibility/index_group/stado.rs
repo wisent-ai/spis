@@ -34,26 +34,16 @@ pub(crate) fn stado(args: &[&str], parse_json: bool) -> Result<(Option<Value>, S
     if !parse_json {
         return Ok((None, stdout));
     }
-    let value = load_json(&stdout, &format!("stado {}", args.join(" ")))?;
+    // `--json` writes one JSON document on stdout and its waits on stderr,
+    // so stdout is read as it is; text around it is a defect to name.
+    let value = serde_json::from_str::<Value>(&stdout).with_context(|| {
+        format!(
+            "stado {}: expected one JSON document on stdout, got {:?}",
+            args.join(" "),
+            stdout.trim()
+        )
+    })?;
     Ok((Some(value), stdout))
-}
-
-pub(crate) fn load_json(text: &str, what: &str) -> Result<Value> {
-    match serde_json::from_str::<Value>(text) {
-        Ok(value) => Ok(value),
-        Err(_) => {
-            let start = text.find('{');
-            let end = text.rfind('}');
-            if let (Some(start), Some(end)) = (start, end) {
-                if end > start {
-                    if let Ok(value) = serde_json::from_str::<Value>(&text[start..=end]) {
-                        return Ok(value);
-                    }
-                }
-            }
-            bail!("{what}: expected JSON on stdout, got {:?}", text.trim());
-        }
-    }
 }
 
 // ---------------------------------------------------------------------------
