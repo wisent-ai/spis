@@ -107,12 +107,6 @@ fn validate(selector: &Selector) -> Result<()> {
         if !url.starts_with("https://") {
             bail!("{category}: source is not HTTPS: {url}");
         }
-        if category == "pricing" {
-            let lower = url.to_ascii_lowercase();
-            if !lower.contains("pricing") && !lower.contains("plan") {
-                bail!("pricing source does not identify pricing/plans: {url}");
-            }
-        }
     }
     Ok(())
 }
