@@ -66,7 +66,9 @@ fn save_sources(directory: &std::path::Path, sources: &Value) -> Result<()> {
 
 /// Rebuild the index; on refusal return the generator's own output.
 fn regenerate() -> std::result::Result<(), String> {
-    let exe = std::env::current_exe().unwrap_or_else(|_| PathBuf::from("spis"));
+    let exe = std::env::current_exe().map_err(|error| {
+        format!("cannot locate the running spis binary to regenerate the index with: {error}")
+    })?;
     match Command::new(exe).arg("generate-example-catalogs").output() {
         Ok(out) if out.status.success() => Ok(()),
         Ok(out) => Err(format!(
