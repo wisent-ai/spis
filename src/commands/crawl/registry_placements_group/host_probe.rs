@@ -18,8 +18,8 @@ pub(crate) fn host_probe(host: &str, arguments: &[&str]) -> Value {
         // survives the failure now.
         let receipt: Value = serde_json::from_slice(&output.stdout).with_context(|| {
             format!(
-                "host probe receipt is not JSON (exit {}): {}",
-                output.status.code().unwrap_or(-1),
+                "host probe receipt is not JSON (the probe ended {}): {}",
+                output.status,
                 String::from_utf8_lossy(&output.stderr).trim()
             )
         })?;
