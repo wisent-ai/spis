@@ -265,13 +265,19 @@ fn cmd_remove(rest: &[String]) -> Result<()> {
         fail(&format!("{} does not exist", directory.display()));
     }
     let sources = load_sources(&directory);
-    // The Python original counted `records` here even though add scaffolds an
-    // `examples` array; keep the same key for parity.
+    // A catalog holds its evidence in `examples`, the list `add` scaffolds and
+    // every reader of sources.json reads. Counting a `records` key no catalog
+    // carries let a catalog of examples be deleted without --force.
     let record_count = sources
-        .get("records")
+        .get("examples")
         .and_then(|v| v.as_array())
         .map(|a| a.len())
-        .unwrap_or(0);
+        .with_context(|| {
+            format!(
+                "{}/sources.json states no examples list",
+                directory.display()
+            )
+        })?;
     let references_dir = directory.join("references");
     let stored = if references_dir.is_dir() {
         std::fs::read_dir(&references_dir)?.count()
@@ -280,7 +286,7 @@ fn cmd_remove(rest: &[String]) -> Result<()> {
     };
     if (record_count > 0 || stored > 0) && !args.force {
         fail(&format!(
-            "{} holds {record_count} indexed record(s) and {stored} \
+            "{} holds {record_count} example(s) and {stored} \
              reference director(ies); passing --force deletes that evidence permanently",
             directory.display()
         ));
