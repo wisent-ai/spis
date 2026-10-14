@@ -68,10 +68,7 @@ pub(crate) fn work_layout(manifest: &super::crawl::RuntimeManifest) -> Result<Wo
     crate::weles_provenance::require_sha256(&manifest.record_key, "runtime manifest record_key")?;
     let (_, attempt_id) = manifest_attempt(manifest)?;
     safe_path_component(&attempt_id, "runtime manifest attempt_id")?;
-    let home = std::env::var_os("HOME")
-        .filter(|value| !value.is_empty())
-        .context("HOME is not set; cannot locate the durable crawl work root")?;
-    let base = PathBuf::from(home).join(".spis/crawls");
+    let base = crate::commands::docs_corpus::crawl_root()?;
     let root = crate::commands::crawl::native_attempt_root(&base, manifest)?;
     let corpus = root.clone();
     Ok(WorkLayout {
