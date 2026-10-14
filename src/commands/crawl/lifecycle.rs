@@ -122,15 +122,22 @@ pub(crate) fn aggregate(states: &[State]) -> State {
     }
 }
 
-/// The states held under `key` in every entry of `container[list]`.
+/// The states held under `key` in every entry of `container[list]`. A missing
+/// list, or an entry without its state, is refused: read as no entries the
+/// catalog was failed with nothing planned, and an entry left out let the
+/// rest aggregate to imported while it had not been.
 fn states_in(container: &Value, list: &str) -> Result<Vec<State>> {
     container
         .get(list)
         .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-        .filter_map(|entry| entry.get("state"))
-        .map(State::of)
+        .with_context(|| format!("it records no {list} list"))?
+        .iter()
+        .map(|entry| {
+            entry
+                .get("state")
+                .with_context(|| format!("an entry of {list} records no state: {entry}"))
+                .and_then(State::of)
+        })
         .collect()
 }
 
