@@ -174,7 +174,7 @@ pub(crate) fn get(catalog: &str, identifier: &str) -> Result<()> {
     let sources: Value = lib::read_json(&directory.join("sources.json").to_string_lossy())?;
     let index: Value = lib::read_json(&directory.join("references.json").to_string_lossy())?;
     let position = find_record(&directory, &index, identifier)?;
-    let example = sources["examples"][position].clone();
+    let example = catalog_example(&directory, &sources, position)?.clone();
     let entry = index["references"][position].clone();
     let record_path = record_path(&directory, &index, position)?;
     let record: Value = lib::read_json(&record_path.to_string_lossy())?;
@@ -211,16 +211,17 @@ pub(crate) fn remove(catalog: &str, identifier: &str, force: bool) -> Result<()>
     if (truthy(&record["motion"]) || truthy(&record["journey"])) && !force {
         bail!("reference: the record carries motion or journey evidence; pass --force to delete it permanently");
     }
-
-    let record_dir = record_path
-        .parent()
-        .map(Path::to_path_buf)
-        .unwrap_or_else(|| record_path.clone());
-    std::fs::remove_dir_all(&record_dir)
-        .with_context(|| format!("remove {}", record_dir.display()))?;
-    let visual_local = sources["examples"][position]["visual"]["local_path"]
+    // The record's example is read before anything is deleted: a sources.json
+    // without one at this position is refused, never left half removed.
+    let visual_local = catalog_example(&directory, &sources, position)?["visual"]["local_path"]
         .as_str()
         .map(str::to_string);
+    let record_dir = record_path
+        .parent()
+        .with_context(|| format!("{} has no record directory", record_path.display()))?
+        .to_path_buf();
+    std::fs::remove_dir_all(&record_dir)
+        .with_context(|| format!("remove {}", record_dir.display()))?;
     if let Some(local) = visual_local {
         let visual_path = directory.join(local);
         if visual_path.is_file() {

@@ -189,3 +189,19 @@ pub struct AddArgs {
     pub visual: String,
     pub owner: Option<String>,
 }
+
+/// The sources.json example of the record at `position`; a sources.json
+/// without one there is refused naming the file, never read as null or
+/// removed past its end.
+pub(crate) fn catalog_example<'a>(
+    directory: &Path,
+    sources: &'a Value,
+    position: usize,
+) -> Result<&'a Value> {
+    let file = format!("{}/sources.json", directory.display());
+    catalog_list(sources, "examples", &file)?
+        .get(position)
+        .with_context(|| {
+            format!("{file} has no example at position {position} though references.json does")
+        })
+}
