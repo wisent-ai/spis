@@ -4,16 +4,13 @@ pub(crate) fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<
     let stado_path = std::env::var_os("SPIS_STADO_BIN")
         .map(PathBuf::from)
         .context("worker_stado_binary_undeclared: the coordinator passed no Stado binary")?;
-    let token_path = std::env::var_os("SPIS_CRAWL_OBJECT_TOKEN_FILE")
-        .map(PathBuf::from)
-        .or_else(|| {
-            std::env::var_os("HOME")
-                .map(PathBuf::from)
-                .map(|home| host_home_crawl_token_path(&home))
-        })
-        .context(
-            "worker_crawl_token_undeclared: HOME and SPIS_CRAWL_OBJECT_TOKEN_FILE are absent",
-        )?;
+    let token_path = match std::env::var_os("SPIS_CRAWL_OBJECT_TOKEN_FILE") {
+        Some(path) => PathBuf::from(path),
+        None => host_home_crawl_token_path(
+            &crate::commands::docs_corpus::home_dir()
+                .context("worker_crawl_token_undeclared: SPIS_CRAWL_OBJECT_TOKEN_FILE is absent")?,
+        ),
+    };
     validate_worker_runtime_files(
         &stado_path,
         stado_path.is_file(),
