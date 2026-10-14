@@ -74,16 +74,17 @@ pub(crate) fn measure_value(
         ));
     }
     let interaction_fields = reference_contract::field_names::<reference_contract::Interaction>();
-    for item in &interactions {
+    for (index, item) in interactions.iter().enumerate() {
         let missing: Vec<&str> = interaction_fields
             .iter()
             .map(String::as_str)
             .filter(|f| !truthy(item.get(f)))
             .collect();
         if !missing.is_empty() {
-            let name = item.get("name").and_then(|v| v.as_str()).unwrap_or("?");
+            // Named by its place in the record, which it always has; its
+            // name may itself be one of the missing fields.
             gaps.push(format!(
-                "interaction '{name}' missing {}",
+                "interactions[{index}] missing {}",
                 missing.join(", ")
             ));
             break;
