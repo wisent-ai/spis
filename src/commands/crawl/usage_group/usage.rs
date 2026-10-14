@@ -118,21 +118,22 @@ pub(crate) fn preflight(rest: &[String]) -> Result<()> {
                         .join(" ")
                 })
                 .unwrap_or_default();
-            let verdict = if check.get("ready").and_then(Value::as_bool) == Some(true) {
-                "ok"
+            let ready = check.get("ready").and_then(Value::as_bool) == Some(true);
+            let verdict = if ready { "ok" } else { "MISSING" };
+            // A ready check shows the first line it printed; a missing one
+            // shows why it is missing.
+            let detail = if ready {
+                match check
+                    .get("stdout")
+                    .and_then(Value::as_str)
+                    .and_then(|stdout| stdout.lines().next())
+                {
+                    Some(line) => line.trim().to_string(),
+                    None => "(printed nothing)".to_string(),
+                }
             } else {
-                "MISSING"
+                crate::commands::crawl::unready_cause(check)
             };
-            let detail = check
-                .get("error")
-                .and_then(Value::as_str)
-                .or_else(|| check.get("stdout").and_then(Value::as_str))
-                .unwrap_or_default()
-                .lines()
-                .next()
-                .unwrap_or_default()
-                .trim()
-                .to_string();
             println!("  {verdict:<8} {command:<52} {detail}");
         }
     }

@@ -214,6 +214,29 @@ pub fn executable_word_from_host_receipt(host: &str, receipt: &Value) -> Result<
     bail!("host {host} probe reported non-absolute selected executable {selected:?}")
 }
 
+/// Why the host probe `check` was not ready: the failure that stopped it,
+/// or the command's own exit and stderr. The one sentence every caller
+/// prints for an unready probe, so none of them says less than the probe
+/// recorded.
+pub(crate) fn unready_cause(check: &Value) -> String {
+    if let Some(error) = check.get("error").and_then(Value::as_str) {
+        return error.trim().to_string();
+    }
+    let recorded = |pointer: &str, name: &str| match check.pointer(pointer) {
+        Some(value) => value.to_string(),
+        None => format!("(no {name} recorded)"),
+    };
+    let ended = format!(
+        "ended {} with exit code {}",
+        recorded("/stado_receipt/status", "status"),
+        recorded("/stado_receipt/exit_code", "exit code"),
+    );
+    match check.get("stderr").and_then(Value::as_str).map(str::trim) {
+        Some(stderr) if !stderr.is_empty() => format!("{ended}: {stderr}"),
+        _ => format!("{ended} and wrote nothing to stderr"),
+    }
+}
+
 /// The shell word for the program that the placement host actually selected.
 pub(crate) fn resolved_program(host: &str, arguments: &[&str]) -> Result<String> {
     let check = host_probe(host, arguments);
@@ -221,12 +244,7 @@ pub(crate) fn resolved_program(host: &str, arguments: &[&str]) -> Result<String>
         bail!(
             "host {host} cannot run `{}`: {}",
             arguments.join(" "),
-            check
-                .get("error")
-                .and_then(Value::as_str)
-                .or_else(|| check.get("stderr").and_then(Value::as_str))
-                .unwrap_or("probe was not ready")
-                .trim()
+            unready_cause(&check)
         );
     }
     let receipt = check

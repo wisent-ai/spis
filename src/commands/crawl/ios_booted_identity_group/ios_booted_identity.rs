@@ -103,10 +103,7 @@ pub(crate) fn ready_output(check: &Value, context: &str) -> Result<String> {
     if check.get("ready").and_then(Value::as_bool) != Some(true) {
         bail!(
             "{context}: {}",
-            check
-                .get("stderr")
-                .and_then(Value::as_str)
-                .unwrap_or("host command failed")
+            crate::commands::crawl::unready_cause(check)
         );
     }
     let output = check
