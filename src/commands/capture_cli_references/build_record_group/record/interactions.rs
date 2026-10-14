@@ -22,15 +22,14 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
     let ev = |kind: &str, extra: &str| f.ev(kind, extra);
     let interactions = vec![
         {
-            let s = &steps["version"];
             json!({
                 "name": "command entry",
-                "trigger": format!("Type `{}` at the `{}` prompt and press Enter.", s["command"].as_str().unwrap_or_default(), PROMPT.trim()),
+                "trigger": format!("Type `{}` at the `{}` prompt and press Enter.", f.version_command, PROMPT.trim()),
                 "response": format!("{name} starts from {} and writes to the pseudo-terminal.", run.binary_path),
                 "feedback": if version_line.is_empty() { "no output on the version form".to_string() } else { quote(version_line) },
                 "cancellation": format!("{cancellation_sentence}; nothing was submitted."),
                 "failure": format!("`{invalid_cmd}` reaches the same parser and is refused with status {}.", super::facts::status(refusal_status)),
-                "recovery": format!("Re-enter `{}`.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
+                "recovery": format!("Re-enter `{}`.", f.recovery_command),
                 "evidence": ev("version", "media/01-version-identity.png"),
             })
         },
@@ -39,7 +38,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
             let st = s["exit_status"].as_i64();
             json!({
                 "name": "version identity",
-                "trigger": format!("Ask the installed binary what it is with `{}`.", s["command"].as_str().unwrap_or_default()),
+                "trigger": format!("Ask the installed binary what it is with `{}`.", f.version_command),
                 "response": if version_ok {
                     format!("{name} prints its version identity and exits 0.")
                 } else {
@@ -62,7 +61,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "recovery": if version_ok {
                     "None needed.".to_string()
                 } else {
-                    format!("Read the identity out of `{}` instead.", steps["help"]["command"].as_str().unwrap_or_default())
+                    format!("Read the identity out of `{}` instead.", f.help_command)
                 },
                 "evidence": ev("version", "media/01-version-identity.png"),
             })
@@ -71,7 +70,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
             let s = &steps["help"];
             json!({
                 "name": "help discovery",
-                "trigger": format!("Run `{}`.", s["command"].as_str().unwrap_or_default()),
+                "trigger": format!("Run `{}`.", f.help_command),
                 "response": format!(
                     "{name} prints {} lines of its own top-level help, widest line {} characters.",
                     s["line_count"], measured["help_max_line_width"]
@@ -82,7 +81,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 },
                 "cancellation": "The stream is short enough to complete; the prompt stays interruptible.",
                 "failure": format!("A misspelled flag on the same surface is refused with status {}.", super::facts::status(refusal_status)),
-                "recovery": format!("Re-run `{}`.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
+                "recovery": format!("Re-run `{}`.", f.recovery_command),
                 "evidence": ev("help", "media/02-help-surface.png"),
             })
         },
@@ -90,7 +89,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
             let s = &steps["subcommand-help"];
             json!({
                 "name": "subcommand surface",
-                "trigger": format!("Run `{}`.", s["command"].as_str().unwrap_or_default()),
+                "trigger": format!("Run `{}`.", f.subcommand_command),
                 "response": product.sub_note,
                 "feedback": match s["first_line"].as_str().unwrap_or_default() {
                     "" => format!("The subcommand surface returns exit status {}.", super::facts::status(s["exit_status"].as_i64())),
@@ -102,7 +101,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 } else {
                     "This path returned 0; failure is shown by the invalid flag instead.".to_string()
                 },
-                "recovery": format!("Return to `{}` for the documented grammar.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
+                "recovery": format!("Return to `{}` for the documented grammar.", f.recovery_command),
                 "evidence": ev("subcommand-help", "media/03-subcommand-help.png"),
             })
         },
@@ -122,10 +121,10 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                     format!(
                         "The refusal names the next action ({}); running `{}` recovers.",
                         py_repr(phrase),
-                        steps["recovery-help"]["command"].as_str().unwrap_or_default()
+                        f.recovery_command
                     )
                 } else {
-                    format!("The refusal names no next action; `{}` recovers anyway.", steps["recovery-help"]["command"].as_str().unwrap_or_default())
+                    format!("The refusal names no next action; `{}` recovers anyway.", f.recovery_command)
                 },
                 "evidence": ev("invalid-flag", "media/04-refusal.png"),
             })
@@ -167,7 +166,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 },
                 "cancellation": "Ctrl-C is the observed cancellation mechanism for unsubmitted input.",
                 "failure": "The typed command is abandoned on purpose rather than executed.",
-                "recovery": format!("Submit `{}` at the restored prompt.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
+                "recovery": format!("Submit `{}` at the restored prompt.", f.recovery_command),
                 "evidence": format!(
                     "media/session.cast at {}–{} s",
                     super::facts::seconds(&s["started_at"]),
@@ -179,7 +178,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
             let s = &steps["recovery-help"];
             json!({
                 "name": "recovery",
-                "trigger": format!("After the refusal and the cancellation, run `{}` again.", s["command"].as_str().unwrap_or_default()),
+                "trigger": format!("After the refusal and the cancellation, run `{}` again.", f.recovery_command),
                 "response": format!("The same installed binary prints valid help and returns status {}.", s["exit_status"]),
                 "feedback": if recovery_line.is_empty() {
                     format!("The recovery help returns exit status {}.", s["exit_status"])
@@ -196,7 +195,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
             let s = &steps["no-color-help"];
             json!({
                 "name": "color-free equivalence",
-                "trigger": format!("Run `{}`.", s["command"].as_str().unwrap_or_default()),
+                "trigger": format!("Run `{}`.", f.nocolor_command),
                 "response": format!(
                     "{} ({} lines).",
                     if f.text_identical {

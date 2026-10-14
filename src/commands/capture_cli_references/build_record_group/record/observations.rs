@@ -26,7 +26,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
         {
             json!({
                 "index": 2,
-                "user_action": format!("Run `{}`.", steps["version"]["command"].as_str().unwrap_or_default()),
+                "user_action": format!("Run `{}`.", f.version_command),
                 "system_response": if version_ok {
                     format!(
                         "{name} prints `{}` and exits {}.",
@@ -47,7 +47,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
         {
             json!({
                 "index": 3,
-                "user_action": format!("Run `{}`.", steps["help"]["command"].as_str().unwrap_or_default()),
+                "user_action": format!("Run `{}`.", f.help_command),
                 "system_response": format!("{} lines of the product's own top-level help are printed.", steps["help"]["line_count"]),
                 "state": "top-level help surface",
                 "evidence": ev("help", "media/02-help-surface.png"),
@@ -56,7 +56,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
         {
             json!({
                 "index": 4,
-                "user_action": format!("Run `{}`.", steps["subcommand-help"]["command"].as_str().unwrap_or_default()),
+                "user_action": format!("Run `{}`.", f.subcommand_command),
                 "system_response": f.product.sub_note,
                 "state": "subcommand help surface",
                 "evidence": ev("subcommand-help", "media/03-subcommand-help.png"),
@@ -91,7 +91,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
         {
             json!({
                 "index": 7,
-                "user_action": format!("Run `{}` again.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
+                "user_action": format!("Run `{}` again.", f.recovery_command),
                 "system_response": format!("Valid help is printed again with status {}: first success is recovered.", steps["recovery-help"]["exit_status"]),
                 "state": "recovered first success",
                 "evidence": ev("recovery-help", "media/05-recovery.png"),
@@ -100,7 +100,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
         {
             json!({
                 "index": 8,
-                "user_action": format!("Run `{}`.", steps["no-color-help"]["command"].as_str().unwrap_or_default()),
+                "user_action": format!("Run `{}`.", f.nocolor_command),
                 "system_response": if f.text_identical {
                     "The same help text appears with colour removed, so no state was carried by colour."
                 } else {
@@ -138,10 +138,7 @@ pub(super) fn accessibility<'a>(f: &Facts<'a>) -> Accessibility<'a> {
     let (colors_help, identical, names_next) =
         (f.colors_help, f.text_identical, f.names_next_action);
     let fits80 = measured["help_fits_80"].as_bool().unwrap_or(false);
-    let help_command = steps["help"]["command"].as_str().unwrap_or_default();
-    let nocolor_command = steps["no-color-help"]["command"]
-        .as_str()
-        .unwrap_or_default();
+    let (help_command, nocolor_command) = (f.help_command, f.nocolor_command);
 
     let accessibility_observations = vec![
         format!(

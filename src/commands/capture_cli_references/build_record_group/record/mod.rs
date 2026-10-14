@@ -128,7 +128,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result
                 format!("Observe status {} printed by the recorded shell, and the prompt restored.", facts::status(refusal_status)),
             ],
             "recovery_route": [
-                format!("Run `{}`.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
+                format!("Run `{}`.", f.recovery_command),
                 quote(recovery_line),
                 format!("Observe status {} and the prompt returned with nothing changed on disk.", steps["recovery-help"]["exit_status"]),
             ],

@@ -26,6 +26,12 @@ pub(super) struct Facts<'a> {
     pub(super) text_identical: bool,
     pub(super) colors_help: bool,
     pub(super) repainted: bool,
+    /// The command each recorded step ran, read once.
+    pub(super) version_command: &'a str,
+    pub(super) help_command: &'a str,
+    pub(super) subcommand_command: &'a str,
+    pub(super) recovery_command: &'a str,
+    pub(super) nocolor_command: &'a str,
 }
 
 impl<'a> Facts<'a> {
@@ -94,6 +100,14 @@ impl<'a> Facts<'a> {
             text_identical: flag("no_color_text_identical")?,
             colors_help: flag("colors_help")?,
             repainted: flag("screen_cleared")? || flag("cursor_addressed")?,
+            version_command: text(&steps["version"]["command"], "version command")?,
+            help_command: text(&steps["help"]["command"], "help command")?,
+            subcommand_command: text(
+                &steps["subcommand-help"]["command"],
+                "subcommand-help command",
+            )?,
+            recovery_command: text(&steps["recovery-help"]["command"], "recovery-help command")?,
+            nocolor_command: text(&steps["no-color-help"]["command"], "no-color-help command")?,
         })
     }
 
