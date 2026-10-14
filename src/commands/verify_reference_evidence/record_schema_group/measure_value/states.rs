@@ -85,7 +85,7 @@ pub(super) fn measure_states(
                 (motion_frames_cache.as_ref(), primary_motion.as_ref())
             {
                 if let Some(matched) = locate_state_in_motion(&local, frames)? {
-                    let diff = matched["mean_abs_diff"].as_f64().unwrap_or(f64::INFINITY);
+                    let diff = round4(matched.mean_abs_diff);
                     let tolerance = super::drift::frame_drift(frames);
                     if tolerance.is_some_and(|tolerance| diff <= tolerance) {
                         let rel = motion
@@ -93,8 +93,8 @@ pub(super) fn measure_states(
                             .unwrap_or(motion)
                             .to_string_lossy()
                             .to_string();
-                        let ts = matched["timestamp_seconds"].as_f64().unwrap_or(0.0);
-                        let mut source_match = matched;
+                        let ts = round3(matched.timestamp_seconds);
+                        let mut source_match = matched.record();
                         if let Some(details) = source_match.as_object_mut() {
                             details.insert("motion_path".into(), json!(rel));
                             details.insert(

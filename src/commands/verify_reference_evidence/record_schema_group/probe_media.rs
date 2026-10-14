@@ -194,6 +194,35 @@ pub(crate) fn still_signature(path: &Path) -> Option<Signature> {
     .next()
 }
 
+/// The mean absolute difference of two signatures, per byte: the one distance
+/// a state frame and a motion frame, or two motion frames, are compared by.
+pub(crate) fn mean_abs_diff(left: &Signature, right: &Signature) -> f64 {
+    let total: u64 = left
+        .iter()
+        .zip(right)
+        .map(|(a, b)| u64::from(a.abs_diff(*b)))
+        .sum();
+    total as f64 / left.len() as f64
+}
+
+/// The motion frame closest to a state image.
+pub(crate) struct StateMatch {
+    pub(crate) timestamp_seconds: f64,
+    pub(crate) mean_abs_diff: f64,
+    pub(crate) sampled_frames: usize,
+}
+
+impl StateMatch {
+    /// The match as the record's `source_match` states it.
+    pub(crate) fn record(&self) -> Value {
+        json!({
+            "timestamp_seconds": round3(self.timestamp_seconds),
+            "mean_abs_diff": round4(self.mean_abs_diff),
+            "sampled_frames": self.sampled_frames,
+        })
+    }
+}
+
 /// Find the timestamp in `motion` whose frame is closest to `state`.
 ///
 /// Deterministic: the motion is decoded once at two frames per second into
@@ -202,36 +231,28 @@ pub(crate) fn still_signature(path: &Path) -> Option<Signature> {
 pub(crate) fn locate_state_in_motion(
     state: &Path,
     motion_frames: &[Signature],
-) -> Result<Option<Value>> {
+) -> Result<Option<StateMatch>> {
     if !state.exists() || state.extension().and_then(|e| e.to_str()) == Some("cast") {
         return Ok(None);
     }
     let Some(target) = still_signature(state) else {
         return Ok(None);
     };
-    if motion_frames.is_empty() {
-        return Ok(None);
-    }
-    let mut best: Option<(f64, f64)> = None;
+    let mut best: Option<StateMatch> = None;
     for (index, sig) in motion_frames.iter().enumerate() {
-        let dist = sig
-            .iter()
-            .zip(target.iter())
-            .map(|(a, b)| (*a as i64 - *b as i64).unsigned_abs())
-            .sum::<u64>() as f64
-            / sig.len() as f64;
-        if best.map_or(true, |(_, bd)| dist < bd) {
-            best = Some((index as f64 / SAMPLE_FPS, dist));
+        let dist = mean_abs_diff(sig, &target);
+        if best
+            .as_ref()
+            .map_or(true, |found| dist < found.mean_abs_diff)
+        {
+            best = Some(StateMatch {
+                timestamp_seconds: index as f64 / SAMPLE_FPS,
+                mean_abs_diff: dist,
+                sampled_frames: motion_frames.len(),
+            });
         }
     }
-    let Some((timestamp, diff)) = best else {
-        return Ok(None);
-    };
-    Ok(Some(json!({
-        "timestamp_seconds": round3(timestamp),
-        "mean_abs_diff": round4(diff),
-        "sampled_frames": motion_frames.len(),
-    })))
+    Ok(best)
 }
 
 // ------------------------------------------------------------- measurement --

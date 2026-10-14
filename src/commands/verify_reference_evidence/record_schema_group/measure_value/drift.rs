@@ -6,16 +6,6 @@
 
 use super::*;
 
-/// The mean absolute difference of two signatures, per byte.
-pub(super) fn mean_abs_diff(left: &Signature, right: &Signature) -> f64 {
-    let total: u64 = left
-        .iter()
-        .zip(right)
-        .map(|(a, b)| u64::from(a.abs_diff(*b)))
-        .sum();
-    total as f64 / left.len() as f64
-}
-
 /// The motion's own drift between adjacent sampled frames, or nothing when
 /// it has fewer than two, since one frame has no neighbour to measure.
 pub(super) fn frame_drift(frames: &[Signature]) -> Option<f64> {
