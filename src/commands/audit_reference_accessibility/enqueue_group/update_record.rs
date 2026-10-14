@@ -77,29 +77,37 @@ pub(crate) fn update_record(
     accessibility.insert("unknowns".into(), unknowns_value);
     accessibility.insert("measured".into(), Value::Bool(true));
 
-    let get_str = |key: &str| -> String {
+    // The measurement states what axe-core measured; a summary missing one of
+    // these is refused, never recorded as a measured audit with blank fields.
+    let get_num = |key: &str| -> Result<Value> {
         summary
             .get(key)
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .to_string()
+            .filter(|value| !value.is_null())
+            .cloned()
+            .with_context(|| format!("{rid}: axe-summary.json: no \"{key}\""))
     };
-    let get_num = |key: &str| -> Value { summary.get(key).cloned().unwrap_or(Value::Null) };
+    let get_str = |key: &str| -> Result<Value> {
+        let value = get_num(key)?;
+        value
+            .as_str()
+            .with_context(|| format!("{rid}: axe-summary.json: \"{key}\" is not text"))?;
+        Ok(value)
+    };
     let measurement = json!({
         "tool": "axe-core",
-        "version": get_str("axe_version"),
-        "captured_at": get_str("captured_at"),
-        "renderer": get_str("renderer"),
-        "weles_version": get_str("weles_version"),
-        "source_url": get_str("source_url"),
-        "viewport": summary.get("viewport").cloned().unwrap_or(Value::Null),
+        "version": get_str("axe_version")?,
+        "captured_at": get_str("captured_at")?,
+        "renderer": get_str("renderer")?,
+        "weles_version": get_str("weles_version")?,
+        "source_url": get_str("source_url")?,
+        "viewport": get_num("viewport")?,
         "raw_path": "media/accessibility/axe.json",
         "summary_path": "media/accessibility/axe-summary.json",
-        "raw_bytes": get_num("bytes"),
-        "raw_sha256": get_num("sha256"),
-        "violation_count": get_num("violation_count"),
-        "passes_count": get_num("passes_count"),
-        "incomplete_count": get_num("incomplete_count"),
+        "raw_bytes": get_num("bytes")?,
+        "raw_sha256": get_num("sha256")?,
+        "violation_count": get_num("violation_count")?,
+        "passes_count": get_num("passes_count")?,
+        "incomplete_count": get_num("incomplete_count")?,
     });
     accessibility.insert("measurement".into(), measurement);
     document.insert("accessibility".into(), Value::Object(accessibility));
