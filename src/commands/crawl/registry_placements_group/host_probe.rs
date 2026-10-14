@@ -115,8 +115,8 @@ pub(crate) fn host_probe(host: &str, arguments: &[&str]) -> Value {
             },
             "ready": receipt.get("status").and_then(Value::as_str) == Some("ok")
                 && receipt.get("exit_code").and_then(Value::as_i64) == Some(0),
-            "stdout": receipt.get("stdout").and_then(Value::as_str).unwrap_or_default(),
-            "stderr": receipt.get("stderr").and_then(Value::as_str).unwrap_or_default(),
+            "stdout": receipt.get("stdout").cloned(),
+            "stderr": receipt.get("stderr").cloned(),
             "stado_receipt": receipt,
         }),
         Err(error) => {
