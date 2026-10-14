@@ -45,7 +45,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result
 
     let repainted = measured["screen_cleared"].as_bool().unwrap_or(false)
         || measured["cursor_addressed"].as_bool().unwrap_or(false);
-    let duration = cast["duration_seconds"].as_f64().unwrap_or(0.0);
+    let duration = facts::seconds(&cast["duration_seconds"]);
     let owner = product.repository.split('/').next().unwrap_or_default();
     let (columns, rows) = (terminal().columns, terminal().rows);
 
@@ -137,9 +137,9 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result
                 "media/session.cast at {}–{} s plus media/05-recovery.png: the same installed binary answers \
                  again after the refusal and the cancellation. The whole {} s session is local and replayable \
                  with `asciinema play media/session.cast`.",
-                g(steps["recovery-help"]["started_at"].as_f64().unwrap_or(0.0)),
-                g(steps["recovery-help"]["ended_at"].as_f64().unwrap_or(0.0)),
-                g(duration)
+                facts::seconds(&steps["recovery-help"]["started_at"]),
+                facts::seconds(&steps["recovery-help"]["ended_at"]),
+                duration
             ),
         },
         "motion_analysis": {
@@ -166,7 +166,7 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result
             "timing_description": timing_description(measured),
             "interruption_or_reversal": format!(
                 "Ctrl-C at {} s on the unsubmitted `{invalid_cmd}` line: {}",
-                g(steps["cancellation"]["started_at"].as_f64().unwrap_or(0.0)),
+                facts::seconds(&steps["cancellation"]["started_at"]),
                 if measured["cancel_echoed_interrupt"].as_bool().unwrap_or(false) {
                     "the shell echoed `^C`, discarded the line and reprinted the prompt, and the product never ran."
                 } else {

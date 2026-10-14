@@ -145,8 +145,8 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "recovery": "Not applicable: the status is evidence, not an action.",
                 "evidence": format!(
                     "media/session.cast at {}–{} s and after every other command",
-                    g(s["ended_at"].as_f64().unwrap_or(0.0)),
-                    g(s["status_reported_at"].as_f64().unwrap_or(0.0)),
+                    super::facts::seconds(&s["ended_at"]),
+                    super::facts::seconds(&s["status_reported_at"]),
                 ),
             })
         },
@@ -170,8 +170,8 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "recovery": format!("Submit `{}` at the restored prompt.", steps["recovery-help"]["command"].as_str().unwrap_or_default()),
                 "evidence": format!(
                     "media/session.cast at {}–{} s",
-                    g(s["started_at"].as_f64().unwrap_or(0.0)),
-                    g(s["ended_at"].as_f64().unwrap_or(0.0))
+                    super::facts::seconds(&s["started_at"]),
+                    super::facts::seconds(&s["ended_at"])
                 ),
             })
         },

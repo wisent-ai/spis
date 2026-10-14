@@ -82,8 +82,8 @@ impl<'a> Facts<'a> {
         let s = &steps[kind];
         let mut base = format!(
             "media/session.cast at {}–{} s",
-            g(s["started_at"].as_f64().unwrap_or(0.0)),
-            g(s["ended_at"].as_f64().unwrap_or(0.0)),
+            seconds(&s["started_at"]),
+            seconds(&s["ended_at"]),
         );
         if let Some(st) = s["exit_status"].as_i64() {
             base.push_str(&format!("; observed exit {st}"));
@@ -102,5 +102,14 @@ pub(super) fn status(code: Option<i64>) -> String {
     match code {
         Some(code) => code.to_string(),
         None => "not recorded".to_string(),
+    }
+}
+
+/// A time in seconds the capture recorded, as the record's sentences say it;
+/// one it did not record is "(time not recorded)", never a zero second.
+pub(super) fn seconds(value: &Value) -> String {
+    match value.as_f64() {
+        Some(seconds) => g(seconds),
+        None => "(time not recorded)".to_string(),
     }
 }

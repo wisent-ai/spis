@@ -84,8 +84,8 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
                 "state": "cancelled pending command",
                 "evidence": format!(
                     "media/session.cast at {}–{} s",
-                    g(steps["cancellation"]["started_at"].as_f64().unwrap_or(0.0)),
-                    g(steps["cancellation"]["ended_at"].as_f64().unwrap_or(0.0))
+                    super::facts::seconds(&steps["cancellation"]["started_at"]),
+                    super::facts::seconds(&steps["cancellation"]["ended_at"])
                 ),
             })
         },
