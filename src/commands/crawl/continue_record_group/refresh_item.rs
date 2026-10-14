@@ -60,7 +60,7 @@ pub(crate) fn refresh_item(entry: &mut Value) {
             }
             entry["job"] = job;
             entry["lookup_error"] = Value::Null;
-            if entry.get("state").and_then(Value::as_str) != Some("partial") {
+            if State::of(&entry["state"]).ok() != Some(State::Partial) {
                 entry["diagnostic"] = Value::Null;
                 entry["error"] = Value::Null;
             }
