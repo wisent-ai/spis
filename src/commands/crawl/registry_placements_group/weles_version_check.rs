@@ -6,53 +6,6 @@ use super::*;
 /// selected host is the second. Both must report the same `release_id` and
 /// `source_revision`, and redirects are refused, so a relocated or rolled-back
 /// worker cannot silently sign attempts as the planned release.
-pub(crate) fn weles_version_check(host: &str, service: &RuntimeServiceIdentity) -> Value {
-    let url = format!("{}/version", service.endpoint);
-    let mut check = host_probe(
-        host,
-        &[
-            "curl",
-            "--fail",
-            "--silent",
-            "--show-error",
-            "--max-redirs",
-            "0",
-            "--max-time",
-            "20",
-            "--header",
-            "Accept: application/json",
-            url.as_str(),
-        ],
-    );
-    if check.get("ready").and_then(Value::as_bool) != Some(true) {
-        return check;
-    }
-    let reported: Option<Value> = check
-        .get("stdout")
-        .and_then(Value::as_str)
-        .and_then(|stdout| serde_json::from_str(stdout.trim()).ok());
-    let field = |document: &Value, snake: &str, camel: &str| -> Option<String> {
-        document
-            .get(snake)
-            .or_else(|| document.get(camel))
-            .and_then(Value::as_str)
-            .map(str::to_string)
-    };
-    let agreed = reported.as_ref().is_some_and(|document| {
-        field(document, "release_id", "releaseId").as_deref() == Some(service.release_id.as_str())
-            && field(document, "source_revision", "sourceRevision").as_deref()
-                == Some(service.source_revision.as_str())
-    });
-    if !agreed {
-        check["ready"] = json!(false);
-        check["error"] = json!(format!(
-            "{url} does not report the service-directory release {} at revision {}",
-            service.release_id, service.source_revision
-        ));
-    }
-    check["weles_version"] = reported.unwrap_or(Value::Null);
-    check
-}
 
 /// The program every Spis crawl worker IS, as an approved host-exec probe.
 ///

@@ -124,9 +124,35 @@ pub(crate) fn host_preflight(
     } else {
         true
     };
+    // The planner confirms the live Weles release with the one readback the
+    // web worker makes before it signs (`live_release`), against the same
+    // service-directory identity. It is not a host probe: `stado host exec`
+    // approves no request to a web endpoint.
     let admission = match (engine, service_identity) {
         ("web", Some(service)) => {
-            let check = weles_version_check(host, service);
+            let endpoint = &service.endpoint;
+            let check = match crate::commands::crawl_web::live_release(endpoint) {
+                Ok((release_id, source_revision))
+                    if release_id == service.release_id
+                        && source_revision == service.source_revision =>
+                {
+                    json!({"probe": "weles release readback", "endpoint": endpoint, "ready": true,
+                           "release_id": release_id, "source_revision": source_revision})
+                }
+                Ok((release_id, source_revision)) => json!({
+                    "probe": "weles release readback", "endpoint": endpoint, "ready": false,
+                    "release_id": release_id, "source_revision": source_revision,
+                    "error": format!(
+                        "{endpoint}/version reports release {release_id} at revision {source_revision}, \
+                         not the service-directory release {} at revision {}",
+                        service.release_id, service.source_revision
+                    ),
+                }),
+                Err(failure) => json!({
+                    "probe": "weles release readback", "endpoint": endpoint, "ready": false,
+                    "code": failure.code, "error": failure.message,
+                }),
+            };
             let ready = check.get("ready").and_then(Value::as_bool) == Some(true);
             checks.push(check);
             ready

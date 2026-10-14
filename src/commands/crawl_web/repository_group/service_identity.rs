@@ -44,13 +44,14 @@ pub(crate) fn service_identity(
     Ok(identity)
 }
 
-/// Independently reads the live release identity from the public version endpoint, so the
-/// directory copy in the runtime manifest can never stand in for the running service.
-pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) -> Outcome<()> {
-    let url = format!("{}/version", identity.endpoint);
+/// The release Weles's public version document reports at `endpoint`, as
+/// `(releaseId, sourceRevision)`: the one readback the web worker makes before
+/// it signs and the planner's host preflight makes before it places a record.
+/// The request waits for the endpoint's own answer; a refusal, a dropped
+/// connection or a document without either field is a failure naming it.
+pub(crate) fn live_release(endpoint: &str) -> Outcome<(String, String)> {
+    let url = format!("{endpoint}/version");
     let mut curl = Command::new("curl");
-    // The request waits for the endpoint's own answer: a refusal or a dropped
-    // connection is reported by curl with its cause.
     curl.args([
         "--fail",
         "--silent",
@@ -70,29 +71,38 @@ pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) ->
         return Err(WorkerFailure::new(
             "weles_service_release_unavailable",
             format!(
-                "the Weles version endpoint refused the release readback: {}",
+                "{url} refused the release readback: {}",
                 String::from_utf8_lossy(&output.stderr).trim()
             ),
         ));
     }
-    let document: Value = serde_json::from_slice(&output.stdout).map_err(|_| {
+    let document: Value = serde_json::from_slice(&output.stdout).map_err(|error| {
         WorkerFailure::new(
             "weles_service_release_mismatch",
-            "the Weles version endpoint did not return a JSON document",
+            format!("{url} did not return a JSON document: {error}"),
         )
     })?;
     // Weles's public version document names its release `releaseId` and its
     // source `sourceRevision`; those fields are read as written.
     let field = |name: &str| {
-        document.get(name).and_then(Value::as_str).ok_or_else(|| {
-            WorkerFailure::new(
-                "weles_service_release_mismatch",
-                format!("the Weles version endpoint declares no {name}"),
-            )
-        })
+        document
+            .get(name)
+            .and_then(Value::as_str)
+            .map(str::to_string)
+            .ok_or_else(|| {
+                WorkerFailure::new(
+                    "weles_service_release_mismatch",
+                    format!("{url} declares no {name}"),
+                )
+            })
     };
-    let release_id = field("releaseId")?;
-    let source_revision = field("sourceRevision")?;
+    Ok((field("releaseId")?, field("sourceRevision")?))
+}
+
+/// Independently reads the live release identity from the public version endpoint, so the
+/// directory copy in the runtime manifest can never stand in for the running service.
+pub(crate) fn confirm_service_release(identity: &weles::WelesServiceIdentity) -> Outcome<()> {
+    let (release_id, source_revision) = live_release(&identity.endpoint)?;
     ensure(
         release_id == identity.release_id && source_revision == identity.source_revision,
         "weles_service_release_mismatch",
