@@ -21,14 +21,13 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
 
     if check {
-        for catalog in &catalogs {
+        for (slug, catalog) in slugs.iter().zip(&catalogs) {
             let index = full_reference_index(catalog);
             println!(
-                "{}: {} complete, {} partial, {}",
-                catalog["catalog"].as_str().unwrap_or("?"),
+                "{slug}: {} complete, {} partial, {}",
                 index["complete_count"],
                 index["partial_count"],
-                provenance_sentence(&index["measured_provenance"])
+                provenance_sentence(slug, &index["measured_provenance"])?
             );
         }
         return Ok(());

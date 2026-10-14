@@ -216,21 +216,27 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
 // Rendering
 // ---------------------------------------------------------------------------
 
-/// Comma-separated "N label" sentence, strongest-provenance first.
-pub(crate) fn provenance_sentence(measured_provenance: &Value) -> String {
-    let mut pairs: Vec<(String, usize)> = measured_provenance
+/// Comma-separated "N label" sentence, strongest-provenance first. A catalog
+/// whose measured provenance is not a map of counts is refused naming it.
+pub(crate) fn provenance_sentence(slug: &str, measured_provenance: &Value) -> Result<String> {
+    let mut pairs: Vec<(String, u64)> = measured_provenance
         .as_object()
-        .map(|obj| {
-            obj.iter()
-                .map(|(k, v)| (k.clone(), v.as_u64().unwrap_or(0) as usize))
-                .collect()
+        .with_context(|| format!("catalog {slug} states no measured_provenance map"))?
+        .iter()
+        .map(|(name, count)| {
+            count
+                .as_u64()
+                .map(|count| (name.clone(), count))
+                .with_context(|| {
+                    format!("catalog {slug} measured_provenance.{name} is not a count: {count}")
+                })
         })
-        .unwrap_or_default();
+        .collect::<Result<_>>()?;
     pairs.sort_by(|a, b| b.1.cmp(&a.1)); // stable: ties stay in stored order
     if pairs.is_empty() {
-        return "no measured motion".into();
+        return Ok("no measured motion".into());
     }
-    pairs
+    Ok(pairs
         .iter()
         .map(|(name, count)| {
             let label = match reference_contract::named::<Provenance>(name) {
@@ -240,7 +246,7 @@ pub(crate) fn provenance_sentence(measured_provenance: &Value) -> String {
             format!("{count} {label}")
         })
         .collect::<Vec<_>>()
-        .join(", ")
+        .join(", "))
 }
 
 pub(crate) fn full_reference_index<'a>(catalog: &'a Value) -> &'a Value {
