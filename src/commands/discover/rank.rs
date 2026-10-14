@@ -28,15 +28,25 @@ pub(crate) fn brama_rank(
             listing.join("\n")
         ),
     )?;
+    // Every page Brama names must be one of the listed links in a declared
+    // family; an answer without its list, an entry without a URL or family,
+    // and an entry outside the listing or the families are refused quoting
+    // the answer, never dropped so the rest reads as Brama's whole choice.
+    let pages = parsed["pages"]
+        .as_array()
+        .with_context(|| format!("Brama's page choice names no pages list: {parsed}"))?;
     let mut ranked: Vec<(String, String)> = Vec::new();
-    for page in parsed["pages"].as_array().unwrap_or(&Vec::new()) {
+    for page in pages {
         let (Some(url), Some(family)) = (page["url"].as_str(), page["family"].as_str()) else {
-            continue;
+            bail!("Brama's page choice holds an entry without url or family: {page}");
         };
-        if links.entries.iter().any(|(known, _)| known == url)
-            && PageFamily::named(family).is_some()
-            && !ranked.iter().any(|(seen, _)| seen == url)
-        {
+        if !links.entries.iter().any(|(known, _)| known == url) {
+            bail!("Brama chose {url}, which is not one of the discovered links");
+        }
+        if PageFamily::named(family).is_none() {
+            bail!("Brama placed {url} in family {family:?}, which is not a declared page family");
+        }
+        if !ranked.iter().any(|(seen, _)| seen == url) {
             ranked.push((url.to_string(), family.to_string()));
         }
     }
