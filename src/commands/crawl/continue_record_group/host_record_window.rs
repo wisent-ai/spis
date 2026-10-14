@@ -101,9 +101,12 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
             .collect::<Result<Vec<bool>>>()?;
         let mut occupied = occupancy.iter().filter(|occupies| **occupies).count();
         for (record, occupies) in records.into_iter().zip(occupancy) {
-            let Some(record_name) = record.get("record").and_then(Value::as_str) else {
-                continue;
-            };
+            let record_name = record
+                .get("record")
+                .and_then(Value::as_str)
+                .with_context(|| {
+                    format!("run {run_id}: catalog {catalog} holds a record entry without its name: {record}")
+                })?;
             if !occupies && occupied >= window {
                 continue;
             }
