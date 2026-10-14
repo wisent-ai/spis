@@ -240,27 +240,15 @@ pub(crate) fn run_verifier(catalog: &str) -> Result<()> {
         .output()
         .context("spawn spis verify-reference-evidence")?;
     if !output.status.success() {
-        let combined = if output.stderr.is_empty() {
-            String::from_utf8_lossy(&output.stdout).to_string()
-        } else {
-            String::from_utf8_lossy(&output.stderr).to_string()
-        };
-        let lines: Vec<&str> = combined
-            .lines()
-            .map(str::trim)
-            .filter(|l| !l.is_empty())
-            .collect();
-        let detail = if lines.is_empty() {
-            format!("exit {}", output.status.code().unwrap_or(-1))
-        } else {
-            lines
-                .iter()
-                .take(4)
-                .cloned()
-                .collect::<Vec<_>>()
-                .join(" | ")
-        };
-        bail!("spis verify-reference-evidence --catalog {catalog}: {detail}");
+        // The verifier's refusal is reported whole: its status as the
+        // process ended (a signal included) and both streams, never the
+        // first lines of one or an exit code it did not return.
+        bail!(
+            "spis verify-reference-evidence --catalog {catalog} ended {}; stderr: {}; stdout: {}",
+            output.status,
+            String::from_utf8_lossy(&output.stderr).trim(),
+            String::from_utf8_lossy(&output.stdout).trim()
+        );
     }
     Ok(())
 }
