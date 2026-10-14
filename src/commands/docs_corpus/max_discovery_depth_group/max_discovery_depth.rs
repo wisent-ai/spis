@@ -166,17 +166,6 @@ pub(crate) fn hash_file(path: &Path) -> Result<(String, u64)> {
     Ok((hex::encode(hasher.finalize()), bytes))
 }
 
-pub(crate) fn exact_lower_hex(value: &str, label: &str) -> Result<()> {
-    if value.len() != 64
-        || !value
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-    {
-        bail!("{label} is not a 64-character lowercase SHA-256 digest");
-    }
-    Ok(())
-}
-
 pub(crate) fn safe_component(value: &str, label: &str) -> Result<()> {
     if value.is_empty()
         || matches!(value, "." | "..")

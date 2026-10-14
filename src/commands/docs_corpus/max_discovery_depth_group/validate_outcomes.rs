@@ -109,7 +109,7 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
         let end = outcome.get("corpus_end").and_then(Value::as_u64);
         match (digest, start, end) {
             (Some(digest), Some(start), Some(end)) => {
-                exact_lower_hex(digest, "page record_sha256")?;
+                crate::weles_provenance::require_sha256(digest, "page record_sha256")?;
                 if start != committed_end || end <= start {
                     bail!("durable page ranges are not contiguous");
                 }
@@ -182,7 +182,7 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
     {
         bail!("retrieval report page digest or length differs from the exact corpus");
     }
-    exact_lower_hex(expected_sha256, "state committed_sha256")?;
+    crate::weles_provenance::require_sha256(expected_sha256, "state committed_sha256")?;
     if pages_bytes != committed_end || pages_sha256 != expected_sha256 {
         bail!("documentation gzip stream differs from the durable length or SHA-256");
     }

@@ -51,7 +51,7 @@ pub(crate) fn validate_manifest_coordinates(
     ] {
         safe_component(value, label)?;
     }
-    exact_lower_hex(record_key, "record_key")?;
+    crate::weles_provenance::require_sha256(record_key, "record_key")?;
     let base =
         crate::crawl_attempt_base_uri(run_id, catalog, record, record_key, attempt, attempt_id);
     let artifact_uri = manifest
@@ -180,7 +180,7 @@ pub(crate) fn validate_journal(corpus_dir: &Path, state: &Value) -> Result<()> {
             .and_then(Value::as_str)
             .context("outcome journal batch has no committed_sha256")?
             .to_string();
-        exact_lower_hex(&committed_sha256, "journal committed_sha256")?;
+        crate::weles_provenance::require_sha256(&committed_sha256, "journal committed_sha256")?;
     }
     if &reconstructed != state_outcomes
         || state.get("committed_bytes").and_then(Value::as_u64) != Some(committed_bytes)

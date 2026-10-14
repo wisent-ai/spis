@@ -1,16 +1,5 @@
 use super::*;
 
-pub(crate) fn exact_lower_hex(value: &str, length: usize, label: &str) -> Result<()> {
-    if value.len() != length
-        || !value
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-    {
-        bail!("{label} is not an exact {length}-character lowercase hexadecimal digest");
-    }
-    Ok(())
-}
-
 pub(crate) fn manifest_attempt(manifest: &super::crawl::RuntimeManifest) -> Result<(u32, String)> {
     let encoded = serde_json::to_value(manifest)?;
     let attempt = encoded
@@ -33,7 +22,7 @@ pub(crate) fn manifest_attempt(manifest: &super::crawl::RuntimeManifest) -> Resu
     ] {
         safe_path_component(value, label)?;
     }
-    exact_lower_hex(&manifest.record_key, 64, "runtime manifest record_key")?;
+    crate::weles_provenance::require_sha256(&manifest.record_key, "runtime manifest record_key")?;
     let base = crate::crawl_attempt_base_uri(
         &manifest.run_id,
         &manifest.catalog,
@@ -60,7 +49,7 @@ pub(crate) fn manifest_structure_sha256(
         .get("docs_structure_sha256")
         .and_then(Value::as_str)
         .context("documentation runtime manifest has no docs_structure_sha256")?;
-    exact_lower_hex(digest, 64, "runtime manifest docs_structure_sha256")?;
+    crate::weles_provenance::require_sha256(digest, "runtime manifest docs_structure_sha256")?;
     Ok(digest.to_string())
 }
 
@@ -68,17 +57,15 @@ pub(crate) fn work_layout(manifest: &super::crawl::RuntimeManifest) -> Result<Wo
     safe_path_component(&manifest.run_id, "runtime manifest run_id")?;
     safe_path_component(&manifest.catalog, "runtime manifest catalog")?;
     safe_path_component(&manifest.record, "runtime manifest record")?;
-    exact_lower_hex(
+    crate::weles_provenance::require_git_revision(
         &manifest.source_revision,
-        40,
         "runtime manifest source_revision",
     )?;
-    exact_lower_hex(
+    crate::weles_provenance::require_sha256(
         &manifest.source_input_sha256,
-        64,
         "runtime manifest source_input_sha256",
     )?;
-    exact_lower_hex(&manifest.record_key, 64, "runtime manifest record_key")?;
+    crate::weles_provenance::require_sha256(&manifest.record_key, "runtime manifest record_key")?;
     let (_, attempt_id) = manifest_attempt(manifest)?;
     safe_path_component(&attempt_id, "runtime manifest attempt_id")?;
     let home = std::env::var_os("HOME")

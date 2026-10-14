@@ -56,7 +56,7 @@ pub(crate) fn validate_corpus(
         .get("report_sha256")
         .and_then(Value::as_str)
         .context("completed durable state has no report_sha256")?;
-    exact_lower_hex(report_sha256, "report_sha256")?;
+    crate::weles_provenance::require_sha256(report_sha256, "report_sha256")?;
     if hash_file(&report_path)?.0 != report_sha256 {
         bail!("retrieval report differs from the digest in durable state");
     }

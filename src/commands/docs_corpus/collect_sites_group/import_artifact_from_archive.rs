@@ -11,7 +11,7 @@ pub(crate) fn import_artifact_from_archive(
     {
         bail!("--artifact-uri must be an immutable Spis crawl artifact URI");
     }
-    exact_lower_hex(expected_archive_sha256, "--archive-sha256")?;
+    crate::weles_provenance::require_sha256(expected_archive_sha256, "--archive-sha256")?;
     let root = imports_root()?;
     std::fs::create_dir_all(&root)?;
     let digest = lib::sha256_hex(uri.as_bytes());
@@ -126,7 +126,7 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
         .and_then(Value::as_str)
         .context("attempt receipt artifact has no SHA-256")?
         .to_string();
-    exact_lower_hex(&archive_sha256, "attempt receipt artifact SHA-256")?;
+    crate::weles_provenance::require_sha256(&archive_sha256, "attempt receipt artifact SHA-256")?;
     let archive_bytes = artifact
         .get("bytes")
         .and_then(Value::as_u64)
@@ -168,13 +168,10 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
         .get("source_revision")
         .and_then(Value::as_str)
         .context("attempt receipt has no source_revision")?;
-    if source_revision.len() != 40
-        || !source_revision
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-    {
-        bail!("attempt receipt source_revision is not a full lowercase commit SHA");
-    }
+    crate::weles_provenance::require_git_revision(
+        source_revision,
+        "attempt receipt source_revision",
+    )?;
     for field in [
         "record_key",
         "source_input_sha256",
@@ -183,7 +180,7 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
         "bindings_sha256",
         "docs_structure_sha256",
     ] {
-        exact_lower_hex(
+        crate::weles_provenance::require_sha256(
             receipt
                 .get(field)
                 .and_then(Value::as_str)

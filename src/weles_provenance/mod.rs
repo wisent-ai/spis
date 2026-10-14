@@ -22,3 +22,21 @@ mod validate_request_and_evidence_manifest_group;
 
 pub use bridge_command_schema_group::*;
 pub use validate_request_and_evidence_manifest_group::*;
+
+/// A field another module reads as a digest or a revision is refused, naming
+/// the field, unless it is one as this module defines it.
+pub(crate) fn require_sha256(value: &str, label: &str) -> anyhow::Result<()> {
+    anyhow::ensure!(
+        is_sha256(value),
+        "{label} is not a lowercase SHA-256 digest"
+    );
+    Ok(())
+}
+
+pub(crate) fn require_git_revision(value: &str, label: &str) -> anyhow::Result<()> {
+    anyhow::ensure!(
+        is_git_revision(value),
+        "{label} is not a lowercase Git revision"
+    );
+    Ok(())
+}

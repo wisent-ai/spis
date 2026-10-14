@@ -172,9 +172,8 @@ pub(crate) fn replay_outcome_journal(layout: &WorkLayout, state: &mut DurableSta
                 );
             }
         }
-        exact_lower_hex(
+        crate::weles_provenance::require_sha256(
             &batch.committed_sha256,
-            64,
             "outcome journal committed_sha256",
         )?;
         state.committed_bytes = batch.committed_bytes;

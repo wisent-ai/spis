@@ -125,7 +125,10 @@ pub(crate) fn validate_state(
                     outcome.corpus_end,
                 ) {
                     (Some(digest), Some(start), Some(end)) => {
-                        exact_lower_hex(digest, 64, "durable page record_sha256")?;
+                        crate::weles_provenance::require_sha256(
+                            digest,
+                            "durable page record_sha256",
+                        )?;
                         if start != committed_end || end <= start {
                             bail!(
                                 "durable documentation outcome {} has a non-contiguous corpus range",
@@ -187,7 +190,7 @@ pub(crate) fn validate_state(
         bail!("durable documentation completion marker and report digest are inconsistent");
     }
     if let Some(digest) = &state.report_sha256 {
-        exact_lower_hex(digest, 64, "durable crawl report_sha256")?;
+        crate::weles_provenance::require_sha256(digest, "durable crawl report_sha256")?;
     }
     Ok(())
 }
