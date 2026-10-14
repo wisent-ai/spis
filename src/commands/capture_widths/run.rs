@@ -112,83 +112,15 @@ pub fn run(rest: &[String]) -> Result<()> {
         return Ok(());
     }
 
-    let stado = which("stado").unwrap_or_else(|| {
-        fail("stado is not on PATH; hosts are reached through stado, never ssh");
-    });
-    let output = std::process::Command::new(&stado)
-        .args([
-            "workload",
-            "run",
-            "weles-capture",
-            "--target",
-            &host,
-            "--plan",
-        ])
-        .arg(plan_path.as_os_str())
-        .arg("--json")
-        .output()
-        .context("run stado workload run weles-capture")?;
-    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-    let stderr = String::from_utf8_lossy(&output.stderr).to_string();
-
-    if !output.status.success()
-        && (stderr.clone() + &stdout)
-            .to_lowercase()
-            .contains("skarbiec")
-    {
-        // This machine holds no grant for the admission token. That is the
-        // designed state: enqueue on the target host instead, where the host's
-        // own Skarbiec identity authorizes the batch. The pinned Stado job is
-        // the sanctioned remote channel; no credentials leave the host.
-        println!("local enqueue lacks the admission grant; submitting pinned Stado job on {host}");
-        let script = format!(
-            "#!/bin/sh\nset -eu\ncp {plan} /tmp/spis-widths-plan.json\n\
-             STADO=$HOME/.stado/bin/stado; [ -x \"$STADO\" ] || STADO=$(command -v stado)\n\
-             \"$STADO\" workload run weles-capture --target {host} --plan /tmp/spis-widths-plan.json --json\n",
-            plan = plan_path.display(),
-        );
-        let job_dir = work_root()?;
-        std::fs::create_dir_all(&job_dir)?;
-        let job_script = job_dir.join(format!("spis-widths-{batch}.sh"));
-        std::fs::write(&job_script, script)?;
-        let submit = std::process::Command::new(&stado)
-            .args([
-                "submit",
-                &format!("sh {}", job_script.display()),
-                "--pinned-host",
-                &host,
-            ])
-            .output()
-            .context("run stado submit")?;
-        let sub_out = String::from_utf8_lossy(&submit.stdout).to_string();
-        let sub_err = String::from_utf8_lossy(&submit.stderr).to_string();
-        if !submit.status.success() {
-            fail(&format!(
-                "remote enqueue submission failed: {}",
-                if sub_err.trim().is_empty() {
-                    sub_out.trim()
-                } else {
-                    sub_err.trim()
-                }
-            ));
-        }
-        match find_batch_id(&sub_out) {
-            Some(id) => println!("remote batch {id} submitted; poll with: stado status {id}"),
-            None => fail(&format!(
-                "could not read Stado batch id from: {}",
-                sub_out.trim()
-            )),
-        }
-        return Ok(());
-    }
-    if !output.status.success() {
-        let detail = if stderr.trim().is_empty() {
-            &stdout
-        } else {
-            &stderr
-        };
-        fail(&format!("weles-capture refused: {}", detail.trim()));
-    }
+    // One enqueue for every Weles capture plan Spis writes: the accessibility
+    // audit's, which runs `stado workload run weles-capture` and checks every
+    // action Stado returns against the plan. A refusal is Stado's own, with
+    // its cause; Spis neither guesses from the words of an error nor submits
+    // the batch a second way.
+    let Some(plan_entries) = plan.as_object() else {
+        bail!("the width plan for batch {batch} is not a JSON object");
+    };
+    crate::commands::audit_reference_accessibility::enqueue(&host, &plan_path, plan_entries)?;
 
     // Record the batch on each touched reference so retrieval can find it.
     for (_, entry) in &selected {
@@ -246,33 +178,4 @@ fn append_unique(
         list.push(Value::String(item));
     }
     Ok(())
-}
-
-/// Locate `Batch: batch-<digits>` in free-form stado output (the Python used a regex).
-pub(crate) fn find_batch_id(text: &str) -> Option<String> {
-    let start = text.find("Batch: ")? + "Batch: ".len();
-    let rest = &text[start..];
-    let end = rest
-        .find(|c: char| !(c.is_ascii_alphanumeric() || c == '-'))
-        .unwrap_or(rest.len());
-    let token = &rest[..end];
-    if token.starts_with("batch-")
-        && token[6..].bytes().all(|b| b.is_ascii_digit())
-        && !token[6..].is_empty()
-    {
-        Some(token.to_string())
-    } else {
-        None
-    }
-}
-
-pub(crate) fn which(name: &str) -> Option<String> {
-    let path = std::env::var_os("PATH")?;
-    for dir in std::env::split_paths(&path) {
-        let candidate = dir.join(name);
-        if candidate.is_file() {
-            return Some(candidate.to_string_lossy().to_string());
-        }
-    }
-    None
 }
