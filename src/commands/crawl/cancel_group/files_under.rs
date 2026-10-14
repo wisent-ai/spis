@@ -38,20 +38,24 @@ pub(crate) fn media_kind(path: &Path) -> Option<&'static str> {
     }
 }
 
-pub(crate) fn declared_motion_kind(path: &Path) -> &'static str {
-    match path
-        .extension()
-        .and_then(|value| value.to_str())
-        .map(str::to_ascii_lowercase)
-        .as_deref()
-    {
-        Some("mp4") => "video-mp4",
-        Some("webm") => "video-webm",
-        Some("gif") => "animated-gif",
-        Some("webp") => "animated-webp",
-        Some("cast") => "terminal-cast",
-        _ => "unknown",
-    }
+/// The motion kind a retained file's extension declares, or none for an
+/// extension that declares no motion kind (never "unknown").
+pub(crate) fn declared_motion_kind(path: &Path) -> Option<&'static str> {
+    Some(
+        match path
+            .extension()
+            .and_then(|value| value.to_str())
+            .map(str::to_ascii_lowercase)
+            .as_deref()
+        {
+            Some("mp4") => "video-mp4",
+            Some("webm") => "video-webm",
+            Some("gif") => "animated-gif",
+            Some("webp") => "animated-webp",
+            Some("cast") => "terminal-cast",
+            _ => return None,
+        },
+    )
 }
 
 pub(crate) fn capture_method(engine: &str) -> &'static str {
