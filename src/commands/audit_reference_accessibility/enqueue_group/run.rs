@@ -42,12 +42,19 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--dry-run" => dry_run = true,
             "--help" | "-h" => {
-                println!("usage: spis audit-reference-accessibility [--catalog NAME]... [--records SEL] [--batch ID] [--target HOST] [--plan PATH] [--dry-run]");
+                println!("usage: spis audit-reference-accessibility --catalog NAME [--catalog NAME]... [--records SEL] [--batch ID] [--target HOST] [--plan PATH] [--dry-run]");
                 return Ok(());
             }
             other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
         i += 1;
+    }
+    // Which catalogs are audited is the caller's to name: no catalog is
+    // audited because a compiled list once held it.
+    if catalogs_arg.is_empty() {
+        return Err(crate::commands::usage(
+            "audit-reference-accessibility needs at least one --catalog",
+        ));
     }
     let target = crate::commands::crawl::weles_capture_host(target, "--target")?;
 
@@ -64,13 +71,8 @@ pub fn run(rest: &[String]) -> Result<()> {
     let batch: String;
     {
         let outcome: Result<(Map<String, Value>, PathBuf, Vec<Reference>, String)> = (|| {
-            let sources: Vec<String> = if catalogs_arg.is_empty() {
-                DEFAULT_CATALOGS.iter().map(|s| s.to_string()).collect()
-            } else {
-                catalogs_arg.clone()
-            };
             let mut catalogs: Vec<String> = Vec::new();
-            for value in &sources {
+            for value in &catalogs_arg {
                 let normalized = normalize_catalog(value)?;
                 if !catalogs.contains(&normalized) {
                     catalogs.push(normalized);
@@ -129,16 +131,26 @@ pub fn run(rest: &[String]) -> Result<()> {
         return Ok(());
     }
 
+    // The plan was validated against `references` after it was read back, so
+    // its captures pair with them one to one; a plan that does not is refused.
     let captures = plan
         .get("captures")
         .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default();
-    let mut rows: Vec<Value> = references
-        .iter()
-        .zip(captures.iter())
-        .map(|(reference, capture)| initial_row(reference, capture.as_object().unwrap()))
-        .collect();
+        .context("plan: captures must be an array")?;
+    if captures.len() != references.len() {
+        bail!(
+            "plan: {} captures for {} references",
+            captures.len(),
+            references.len()
+        );
+    }
+    let mut rows: Vec<Value> = Vec::new();
+    for (reference, capture) in references.iter().zip(captures) {
+        let capture = capture.as_object().with_context(|| {
+            format!("plan: the capture for {} is not an object", reference.id())
+        })?;
+        rows.push(initial_row(reference, capture));
+    }
     let mut verifier_errors: Vec<String> = Vec::new();
 
     // ---- enqueue + read: failures mark every row and exit 2 -------------
