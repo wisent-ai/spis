@@ -83,6 +83,5 @@ pub fn run(rest: &[String]) -> Result<()> {
             "commands": super::SUBCOMMANDS.len(),
         }))?
     );
-    let _ = lib::now_iso_utc();
     Ok(())
 }
