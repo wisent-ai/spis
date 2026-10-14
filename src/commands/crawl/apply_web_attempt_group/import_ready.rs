@@ -137,34 +137,17 @@ pub(crate) fn import(rest: &[String]) -> Result<()> {
     }
     let run = import_ready(&run_id, selected_record.as_deref())?;
     print_operation("import", &run, selected_record.as_deref())?;
-    let pending: Vec<String> = run
-        .get("catalogs")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-        .flat_map(|catalog| {
-            catalog
-                .get("records")
-                .and_then(Value::as_array)
-                .into_iter()
-                .flatten()
-        })
-        .filter(|record| {
-            selected_matches(
-                record
-                    .get("record")
-                    .and_then(Value::as_str)
-                    .unwrap_or_default(),
-                selected_record.as_deref(),
-            ) && record.get("state").and_then(Value::as_str) != Some("imported")
-        })
-        .filter_map(|record| {
-            record
-                .get("record")
-                .and_then(Value::as_str)
-                .map(str::to_string)
-        })
-        .collect();
+    let mut pending: Vec<String> = Vec::new();
+    for catalog in run_catalogs(&run)? {
+        for record in catalog.records {
+            let name = record_name(catalog.name, record)?;
+            if selected_matches(name, selected_record.as_deref())
+                && record.get("state").and_then(Value::as_str) != Some("imported")
+            {
+                pending.push(name.to_string());
+            }
+        }
+    }
     if run
         .pointer("/import_maintenance/failures")
         .and_then(Value::as_array)
