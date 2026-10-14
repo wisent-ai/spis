@@ -22,58 +22,28 @@ pub(crate) struct CatalogData {
     pub(crate) index: Value,
 }
 
+/// The catalog, found and its two lists checked by the catalog module that
+/// reference-record also reads it through.
 pub(crate) fn load_catalog(catalog: &str) -> CatalogData {
-    let name = if catalog.ends_with("-examples") {
-        catalog.to_string()
-    } else {
-        format!("{catalog}-examples")
-    };
-    let directory = PathBuf::from(&name);
-    if !directory.is_dir() {
-        fail(&format!("{name} does not exist"));
-    }
-    let sources = match crate::read_json(directory.join("sources.json").to_str().unwrap()) {
-        Ok(v) => v,
-        Err(e) => fail(&format!("read {name}/sources.json: {e:#}")),
-    };
-    let index = match crate::read_json(directory.join("references.json").to_str().unwrap()) {
-        Ok(v) => v,
-        Err(e) => fail(&format!("read {name}/references.json: {e:#}")),
-    };
-    list_field(&sources, "examples", &format!("{name}/sources.json"));
-    list_field(&index, "references", &format!("{name}/references.json"));
-    CatalogData {
-        directory,
-        sources,
-        index,
-    }
-}
-
-/// The list under `key` of a catalog file. A file without it, or holding
-/// something else there, is refused naming the file and what it holds: a
-/// catalog read as empty would answer "nothing to capture" for a file
-/// that is damaged, not empty.
-pub(crate) fn list_field<'a>(document: &'a Value, key: &str, file: &str) -> &'a [Value] {
-    match document.get(key) {
-        Some(Value::Array(items)) => items,
-        Some(other) => fail(&format!(
-            "{file}: {key} holds {other} where a list is expected"
-        )),
-        None => fail(&format!("{file}: {key} is missing")),
-    }
-}
-
-/// The object at `position` of the list under `key` of a catalog file; any
-/// other value there is refused naming the file, the list and the position.
-pub(crate) fn object_entry(
-    value: &Value,
-    file: &str,
-    key: &str,
-    position: usize,
-) -> Result<Map<String, Value>> {
-    match value.as_object() {
-        Some(object) => Ok(object.clone()),
-        None => bail!("{file}: {key}[{position}] holds {value} where a record object is expected"),
+    let loaded = (|| -> Result<CatalogData> {
+        let directory = crate::commands::reference_record::catalog_dir(catalog)?;
+        let sources_file = format!("{}/sources.json", directory.display());
+        let references_file = format!("{}/references.json", directory.display());
+        let sources: Value =
+            crate::read_json(&sources_file).with_context(|| format!("read {sources_file}"))?;
+        let index: Value = crate::read_json(&references_file)
+            .with_context(|| format!("read {references_file}"))?;
+        catalog_list(&sources, "examples", &sources_file)?;
+        catalog_list(&index, "references", &references_file)?;
+        Ok(CatalogData {
+            directory,
+            sources,
+            index,
+        })
+    })();
+    match loaded {
+        Ok(data) => data,
+        Err(error) => fail(&format!("{error:#}")),
     }
 }
 
@@ -84,11 +54,11 @@ pub(crate) fn pick(
     index: &Value,
     selector: Option<&str>,
 ) -> Result<(Map<String, Value>, Map<String, Value>)> {
-    let examples = list_field(sources, "examples", "sources.json");
-    let references = list_field(index, "references", "references.json");
+    let examples = catalog_list(sources, "examples", "sources.json")?;
+    let references = catalog_list(index, "references", "references.json")?;
     for (position, example) in examples.iter().enumerate() {
         let entry = match references.get(position) {
-            Some(reference) => object_entry(reference, "references.json", "references", position),
+            Some(reference) => catalog_object(reference, "references.json", "references", position),
             None => bail!(
                 "references.json: references has no entry at {position} for examples[{position}] of sources.json"
             ),
@@ -107,7 +77,7 @@ pub(crate) fn pick(
         };
         if matched {
             return Ok((
-                object_entry(example, "sources.json", "examples", position)?,
+                catalog_object(example, "sources.json", "examples", position)?,
                 entry.clone(),
             ));
         }

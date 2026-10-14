@@ -37,16 +37,16 @@ pub fn run(rest: &[String]) -> Result<()> {
     let selected: Vec<(Map<String, Value>, Map<String, Value>)> = match &record {
         Some(selector) => vec![pick(&data.sources, &data.index, Some(selector))?],
         None => {
-            let examples = list_field(&data.sources, "examples", "sources.json");
-            let references = list_field(&data.index, "references", "references.json");
+            let examples = catalog_list(&data.sources, "examples", "sources.json")?;
+            let references = catalog_list(&data.index, "references", "references.json")?;
             examples
                 .iter()
                 .zip(references)
                 .enumerate()
                 .map(|(position, (e, r))| {
                     Ok((
-                        object_entry(e, "sources.json", "examples", position)?,
-                        object_entry(r, "references.json", "references", position)?,
+                        catalog_object(e, "sources.json", "examples", position)?,
+                        catalog_object(r, "references.json", "references", position)?,
                     ))
                 })
                 .collect::<Result<Vec<_>>>()?

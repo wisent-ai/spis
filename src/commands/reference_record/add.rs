@@ -11,14 +11,14 @@ pub fn add(args: &AddArgs) -> Result<()> {
     if !visual_source.is_file() {
         bail!("reference: --visual {} is not a file", args.visual);
     }
-    let count_before = sources["examples"].as_array().map(Vec::len).unwrap_or(0);
-    let duplicate = sources["examples"]
-        .as_array()
-        .unwrap_or(&Vec::new())
-        .iter()
-        .any(|example| {
-            example["name"].as_str().map(|n| n.to_lowercase()) == Some(args.name.to_lowercase())
-        });
+    // A sources.json without its examples list is refused here, before any
+    // file is copied, never numbered as an empty catalog.
+    let sources_file = format!("{}/sources.json", directory.display());
+    let examples = catalog_list(&sources, "examples", &sources_file)?;
+    let count_before = examples.len();
+    let duplicate = examples.iter().any(|example| {
+        example["name"].as_str().map(|n| n.to_lowercase()) == Some(args.name.to_lowercase())
+    });
     if duplicate {
         bail!("reference: a record named {:?} already exists", args.name);
     }
@@ -92,7 +92,7 @@ pub fn add(args: &AddArgs) -> Result<()> {
             "height": height,
             "original_width": width,
             "original_height": height,
-            "bytes": visual_path.metadata().map(|m| m.len()).unwrap_or(0),
+            "bytes": visual_path.metadata().with_context(|| format!("measure {}", visual_path.display()))?.len(),
             "sha256": digest,
         },
         "interface_structure": structure,

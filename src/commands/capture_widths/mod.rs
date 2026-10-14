@@ -15,6 +15,9 @@ use std::path::{Path, PathBuf};
 // The Weles capture plan's schema and artifact namespace are declared once,
 // beside the enqueue both capture commands use.
 use crate::commands::audit_reference_accessibility::{NAMESPACE, PLAN_SCHEMA};
+// A catalog is found and its lists read by the catalog module reference-record
+// also reads it through.
+use crate::commands::reference_record::{catalog_list, catalog_object};
 
 mod plan_schema;
 mod run;

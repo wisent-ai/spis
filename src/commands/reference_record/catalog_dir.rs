@@ -1,6 +1,8 @@
 use super::*;
 
-/// Catalog slug -> directory, appending `-examples` when missing.
+/// Catalog slug -> directory, appending `-examples` when missing. Every
+/// command that reads a catalog (reference-record, capture-widths) finds it
+/// through this.
 pub(crate) fn catalog_dir(slug: &str) -> Result<PathBuf> {
     let named = if slug.ends_with("-examples") {
         slug.to_string()
@@ -9,9 +11,35 @@ pub(crate) fn catalog_dir(slug: &str) -> Result<PathBuf> {
     };
     let directory = PathBuf::from(&named);
     if !directory.is_dir() {
-        bail!("reference: {named} does not exist");
+        bail!("catalog {named} does not exist");
     }
     Ok(directory)
+}
+
+/// The list under `key` of a catalog file. A file without it, or holding
+/// something else there, is refused naming the file and what it holds: a
+/// catalog read as empty would answer "not found" or "nothing to capture"
+/// for a file that is damaged, not empty.
+pub(crate) fn catalog_list<'a>(document: &'a Value, key: &str, file: &str) -> Result<&'a [Value]> {
+    match document.get(key) {
+        Some(Value::Array(items)) => Ok(items),
+        Some(other) => bail!("{file}: {key} holds {other} where a list is expected"),
+        None => bail!("{file}: {key} is missing"),
+    }
+}
+
+/// The object at `position` of the list under `key` of a catalog file; any
+/// other value there is refused naming the file, the list and the position.
+pub(crate) fn catalog_object(
+    value: &Value,
+    file: &str,
+    key: &str,
+    position: usize,
+) -> Result<serde_json::Map<String, Value>> {
+    match value.as_object() {
+        Some(object) => Ok(object.clone()),
+        None => bail!("{file}: {key}[{position}] holds {value} where a record object is expected"),
+    }
 }
 
 pub(crate) fn kebab(name: &str) -> Result<String> {
@@ -76,26 +104,15 @@ pub(crate) fn today_iso() -> String {
 pub(crate) fn save_all(directory: &Path, sources: &mut Value, index: &mut Value) -> Result<()> {
     // A catalog file without its list is refused, never written back with
     // its counters set to nothing.
-    let examples = sources["examples"]
-        .as_array()
-        .map(Vec::len)
-        .with_context(|| {
-            format!(
-                "{}/sources.json holds no examples list",
-                directory.display()
-            )
-        })?;
+    let sources_file = format!("{}/sources.json", directory.display());
+    let examples = catalog_list(sources, "examples", &sources_file)?.len();
     sources["count"] = json!(examples);
     sources["visual_count"] = json!(examples);
     sources["structure_count"] = json!(examples);
     lib::write_pretty_json(&directory.join("sources.json").to_string_lossy(), sources)?;
 
-    let references = index["references"].as_array().cloned().with_context(|| {
-        format!(
-            "{}/references.json holds no references list",
-            directory.display()
-        )
-    })?;
+    let references_file = format!("{}/references.json", directory.display());
+    let references = catalog_list(index, "references", &references_file)?.to_vec();
     index["reference_count"] = json!(references.len());
     index["complete_count"] = json!(references
         .iter()
@@ -137,12 +154,8 @@ pub(crate) fn find_record(directory: &Path, index: &Value, identifier: &str) -> 
             None
         };
     let wanted = identifier.to_lowercase();
-    let references = index["references"].as_array().with_context(|| {
-        format!(
-            "{}/references.json holds no references list",
-            directory.display()
-        )
-    })?;
+    let references_file = format!("{}/references.json", directory.display());
+    let references = catalog_list(index, "references", &references_file)?;
     for (position, entry) in references.iter().enumerate() {
         let name_key = entry["name"]
             .as_str()
