@@ -154,67 +154,79 @@ pub(crate) fn install_artifacts(
     Ok((raw_path, summary_path))
 }
 
-pub(crate) fn axe_observations(summary: &Map<String, Value>) -> Vec<String> {
-    let version = summary
-        .get("axe_version")
-        .and_then(Value::as_str)
-        .unwrap_or("");
-    let viewport = summary.get("viewport").cloned().unwrap_or(Value::Null);
-    let width = viewport
-        .get("width")
-        .map(|v| v.to_string())
-        .unwrap_or_default();
-    let height = viewport
-        .get("height")
-        .map(|v| v.to_string())
-        .unwrap_or_default();
-    let dsf = viewport
-        .get("device_scale_factor")
-        .map(|v| v.to_string())
-        .unwrap_or_default();
-    let captured_at = summary
-        .get("captured_at")
-        .and_then(Value::as_str)
-        .unwrap_or("");
+/// The `[axe-core]` observations of a summary [`validate_artifacts`] accepted.
+/// A field it lacks is refused by name, never written as an empty count, a
+/// zero node count or an unnamed rule.
+pub(crate) fn axe_observations(
+    summary: &Map<String, Value>,
+    reference: &Reference,
+) -> Result<Vec<String>> {
+    let rid = reference.id();
+    let text = |field: &str| -> Result<String> {
+        nonempty_text(
+            require_summary_field(summary, field, reference)?,
+            field,
+            reference,
+        )
+    };
+    let viewport = require_summary_field(summary, "viewport", reference)?;
+    let dimension = |field: &str| -> Result<String> {
+        viewport
+            .get(field)
+            .map(Value::to_string)
+            .ok_or_else(|| anyhow!("{rid}: axe-summary.json.viewport.{field}: field is missing"))
+    };
     let mut observations = vec![format!(
-        "[axe-core] axe-core {version} reported {} violation rules, {} passing rules, and {} incomplete rules against the live product at {width}x{height}@{dsf} on {captured_at}.",
-        summary.get("violation_count").map(|v| v.to_string()).unwrap_or_default(),
-        summary.get("passes_count").map(|v| v.to_string()).unwrap_or_default(),
-        summary.get("incomplete_count").map(|v| v.to_string()).unwrap_or_default(),
+        "[axe-core] axe-core {} reported {} violation rules, {} passing rules, and {} incomplete rules against the live product at {}x{}@{} on {}.",
+        text("axe_version")?,
+        count_field(summary, "violation_count", reference)?,
+        count_field(summary, "passes_count", reference)?,
+        count_field(summary, "incomplete_count", reference)?,
+        dimension("width")?,
+        dimension("height")?,
+        dimension("device_scale_factor")?,
+        text("captured_at")?,
     )];
-    if let Some(violations) = summary.get("violations").and_then(Value::as_array) {
-        for violation in violations {
-            let Some(violation) = violation.as_object() else {
-                continue;
-            };
-            let rule = violation
-                .get("id")
-                .and_then(Value::as_str)
-                .filter(|s| !s.is_empty())
-                .unwrap_or("unnamed-rule");
-            let impact_text = match violation.get("impact") {
-                Some(Value::Null) | None => "impact not reported".to_string(),
-                Some(other) => other.to_string().trim_matches('"').to_string(),
-            };
-            let nodes = violation
-                .get("node_count")
-                .map(|v| v.to_string())
-                .unwrap_or_else(|| "0".to_string());
-            let help_text = violation
-                .get("help")
-                .and_then(Value::as_str)
-                .unwrap_or_default()
-                .trim()
-                .to_string();
-            let suffix = if help_text.is_empty() {
-                String::new()
-            } else {
-                format!(": {help_text}")
-            };
-            observations.push(format!(
-                "[axe-core] Rule {rule} ({impact_text}) affected {nodes} nodes{suffix}."
-            ));
-        }
+    let violations = require_summary_field(summary, "violations", reference)?
+        .as_array()
+        .ok_or_else(|| anyhow!("{rid}: axe-summary.json.violations: expected an array"))?;
+    for (position, violation) in violations.iter().enumerate() {
+        let field = format!("violations[{position}]");
+        let rule = violation
+            .get("id")
+            .and_then(Value::as_str)
+            .filter(|id| !id.is_empty())
+            .ok_or_else(|| {
+                anyhow!("{rid}: axe-summary.json.{field}.id: expected a non-empty string")
+            })?;
+        let impact_text = match violation.get("impact") {
+            Some(Value::String(impact)) => impact.clone(),
+            Some(Value::Null) | None => "impact not reported".to_string(),
+            Some(other) => {
+                bail!("{rid}: axe-summary.json.{field}.impact: expected a string or null, got {other}")
+            }
+        };
+        let nodes = violation
+            .get("node_count")
+            .and_then(Value::as_u64)
+            .ok_or_else(|| {
+                anyhow!(
+                    "{rid}: axe-summary.json.{field}.node_count: expected a non-negative integer"
+                )
+            })?;
+        let help_text = violation
+            .get("help")
+            .and_then(Value::as_str)
+            .ok_or_else(|| anyhow!("{rid}: axe-summary.json.{field}.help: expected a string"))?
+            .trim();
+        let suffix = if help_text.is_empty() {
+            String::new()
+        } else {
+            format!(": {help_text}")
+        };
+        observations.push(format!(
+            "[axe-core] Rule {rule} ({impact_text}) affected {nodes} nodes{suffix}."
+        ));
     }
-    observations
+    Ok(observations)
 }

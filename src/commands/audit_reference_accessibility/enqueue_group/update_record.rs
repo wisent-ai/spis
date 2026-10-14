@@ -70,7 +70,7 @@ pub(crate) fn update_record(
         .filter(|item| !item.as_str().unwrap_or("").starts_with("[axe-core]"))
         .cloned()
         .collect();
-    for observation in axe_observations(summary) {
+    for observation in axe_observations(summary, reference)? {
         observations.push(Value::String(observation));
     }
     accessibility.insert("observations".into(), Value::Array(observations));
