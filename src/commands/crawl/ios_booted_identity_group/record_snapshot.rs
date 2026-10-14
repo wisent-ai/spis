@@ -121,13 +121,10 @@ pub(crate) fn ensure_host_preflight(
     service_identity: Option<&RuntimeServiceIdentity>,
 ) -> Result<Value> {
     let snapshot = load(Some(run_id))?;
-    let existing = snapshot
-        .get("catalogs")
-        .and_then(Value::as_array)
+    let existing = run_catalogs(&snapshot)?
         .into_iter()
-        .flatten()
-        .find(|entry| entry.get("catalog").and_then(Value::as_str) == Some(catalog))
-        .and_then(|entry| entry.get("host_preflight"))
+        .find(|entry| entry.name == catalog)
+        .and_then(|entry| entry.entry.get("host_preflight"))
         .cloned()
         .context("crawl catalog disappeared before host preflight")?;
     if !existing.is_null() && !host_preflight_is_retryable(&existing) {
@@ -136,12 +133,9 @@ pub(crate) fn ensure_host_preflight(
     let observed = host_preflight(catalog, engine, host, service_identity);
     let _guard = RunMutationGuard::acquire(run_id)?;
     let mut run = load(Some(run_id))?;
-    let catalog_index = run
-        .get("catalogs")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-        .position(|entry| entry.get("catalog").and_then(Value::as_str) == Some(catalog))
+    let catalog_index = run_catalogs(&run)?
+        .iter()
+        .position(|entry| entry.name == catalog)
         .context("crawl catalog disappeared while retaining host preflight")?;
     let current = &run["catalogs"][catalog_index]["host_preflight"];
     if current.is_null() || host_preflight_is_retryable(current) {
