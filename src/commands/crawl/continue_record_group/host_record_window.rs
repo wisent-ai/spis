@@ -69,22 +69,23 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
         };
         let catalog = named("catalog")?;
         let engine = named("engine")?;
-        let host = catalog_entry
-            .get("host")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .to_string();
-        if host.is_empty() {
-            continue;
-        }
+        // An entry `start` could place on no host records host null and has
+        // nothing to continue; any other entry names its host. Every entry
+        // carries its records list, read once here.
+        let host = match catalog_entry.get("host") {
+            Some(Value::Null) => continue,
+            _ => named("host")?,
+        };
+        let records = catalog_entry
+            .get("records")
+            .and_then(Value::as_array)
+            .cloned()
+            .with_context(|| format!("run {run_id}: catalog {catalog} records no records list"))?;
         // A recorded identity that does not parse is refused by name: read as
         // "no identity", the host would be preflighted without the release
         // check the record asked for.
-        let service_identity: Option<RuntimeServiceIdentity> = catalog_entry
-            .get("records")
-            .and_then(Value::as_array)
-            .into_iter()
-            .flatten()
+        let service_identity: Option<RuntimeServiceIdentity> = records
+            .iter()
             .find_map(|record| record.pointer("/manifest/service_identity"))
             .filter(|value| value.is_object())
             .map(|value| {
@@ -95,11 +96,6 @@ pub(crate) fn continue_start(run_id: &str) -> Result<Value> {
             .transpose()?;
         let host_report =
             ensure_host_preflight(run_id, &catalog, &engine, &host, service_identity.as_ref())?;
-        let records = catalog_entry
-            .get("records")
-            .and_then(Value::as_array)
-            .cloned()
-            .unwrap_or_default();
         let window = host_record_window(&host_report, &records);
         let mut occupied = records
             .iter()
