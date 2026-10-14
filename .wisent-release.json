@@ -16,7 +16,11 @@
       },
       "stage": {
         "spis": "bin/spis"
-      }
+      },
+      "tests": [
+        {"name": "catalog-type-lifecycle", "argv": ["stado", "product", "cargo", "test", "--", "--test", "catalog-type-lifecycle"]},
+        {"name": "capture-widths-refusals", "argv": ["stado", "product", "cargo", "test", "--", "--test", "capture-widths-refusals"]}
+      ]
     }
   },
   "promotion": {
