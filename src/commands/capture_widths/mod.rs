@@ -12,6 +12,10 @@ use anyhow::{bail, Context, Result};
 use serde_json::{json, Map, Value};
 use std::path::{Path, PathBuf};
 
+// The Weles capture plan's schema and artifact namespace are declared once,
+// beside the enqueue both capture commands use.
+use crate::commands::audit_reference_accessibility::{NAMESPACE, PLAN_SCHEMA};
+
 mod plan_schema;
 mod run;
 

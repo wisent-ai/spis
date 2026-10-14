@@ -1,9 +1,5 @@
 use super::*;
 
-pub(crate) const PLAN_SCHEMA: &str = "wisent.weles-capture-plan.v1";
-
-pub(crate) const NAMESPACE: &str = "stado://weles-captures/";
-
 pub(crate) const WIDTHS: &[(u32, u32)] = &[(390, 844), (768, 1024), (1440, 1000)];
 
 /// Deviation from the Python original, which used ~/.stado/work: this port
