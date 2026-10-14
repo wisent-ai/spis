@@ -136,7 +136,14 @@ pub(crate) fn scan_site(
         scanned += 1;
         let text = record.get("text").and_then(Value::as_str).unwrap_or("");
         let title = record.get("title").and_then(Value::as_str).unwrap_or("");
-        let url = record.get("url").and_then(Value::as_str).unwrap_or("");
+        // Every record names its URL; one that does not is refused rather
+        // than listed as a hit nobody can open.
+        let url = record.get("url").and_then(Value::as_str).with_context(|| {
+            format!(
+                "documentation corpus {} holds a record without its url",
+                site.slug
+            )
+        })?;
         let text_lower = text.to_lowercase();
         if !text_lower.contains(&query_lower)
             && !title.to_lowercase().contains(&query_lower)
