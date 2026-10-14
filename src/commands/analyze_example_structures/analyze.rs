@@ -76,11 +76,13 @@ pub(crate) fn analyze_catalog(slug: &str) -> Result<(usize, Vec<Value>)> {
     let mut catalog: Value = lib::read_json(source_path.to_str().unwrap())?;
     let mut failures: Vec<Value> = Vec::new();
     let mut count = 0usize;
+    // A catalog states its examples; one that states none is refused, never
+    // analyzed as an empty catalog that passed.
     let example_count = catalog
         .get("examples")
         .and_then(Value::as_array)
         .map(Vec::len)
-        .unwrap_or(0);
+        .with_context(|| format!("{} states no examples list", source_path.display()))?;
     for position in 0..example_count {
         let index = position + 1;
         let (name, local_path) = {
@@ -89,8 +91,7 @@ pub(crate) fn analyze_catalog(slug: &str) -> Result<(usize, Vec<Value>)> {
                 example
                     .get("name")
                     .and_then(Value::as_str)
-                    .unwrap_or("")
-                    .to_string(),
+                    .map(str::to_string),
                 example
                     .get("visual")
                     .and_then(|v| v.get("local_path"))
