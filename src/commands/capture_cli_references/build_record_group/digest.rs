@@ -2,24 +2,12 @@ use super::*;
 
 // -------------------------------------------------------------- media output
 
+/// The size and SHA-256 of a media file this capture just wrote.
 pub(crate) fn digest(path: &Path) -> Result<(u64, String)> {
-    use sha2::{Digest, Sha256};
-    let mut file = std::fs::File::open(path).with_context(|| format!("open {}", path.display()))?;
-    let mut hasher = Sha256::new();
-    let mut size = 0u64;
-    let mut buf = vec![0u8; 1 << 20];
-    loop {
-        use std::io::Read;
-        let n = file
-            .read(&mut buf)
-            .with_context(|| format!("read {}", path.display()))?;
-        if n == 0 {
-            break;
-        }
-        size += n as u64;
-        hasher.update(&buf[..n]);
-    }
-    Ok((size, format!("{:x}", hasher.finalize())))
+    let size = std::fs::metadata(path)
+        .with_context(|| format!("read the size of {}", path.display()))?
+        .len();
+    Ok((size, crate::sha256_file(path)?))
 }
 
 pub(crate) fn write_cast(
