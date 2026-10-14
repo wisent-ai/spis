@@ -73,7 +73,7 @@ pub(crate) fn analyze(example: &Value, catalog: &str, image_path: &Path) -> Resu
 
 pub(crate) fn analyze_catalog(slug: &str) -> Result<(usize, Vec<Value>)> {
     let source_path = Path::new(slug).join("sources.json");
-    let mut catalog: Value = lib::read_json(source_path.to_str().unwrap())?;
+    let mut catalog: Value = lib::read_json(&source_path)?;
     let mut failures: Vec<Value> = Vec::new();
     let mut count = 0usize;
     // A catalog states its examples; one that states none is refused, never

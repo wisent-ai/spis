@@ -135,8 +135,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         // A record that is not a JSON object is refused as a parse failure
         // naming the file; emptying it would write back a record holding
         // nothing but this batch.
-        let mut record: Map<String, Value> =
-            crate::read_json::<Map<String, Value>>(record_path.to_str().unwrap())?;
+        let mut record: Map<String, Value> = crate::read_json::<Map<String, Value>>(&record_path)?;
         append_unique(&mut record, "capture_batches", &record_path, batch.clone())?;
         append_unique(
             &mut record,

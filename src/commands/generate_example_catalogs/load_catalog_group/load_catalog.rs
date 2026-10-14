@@ -3,7 +3,7 @@ use super::*;
 pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
     let source_path = Path::new(slug).join("sources.json");
     let source_path_str = source_path.to_string_lossy().to_string();
-    let mut catalog: Value = lib::read_json(source_path.to_str().unwrap())?;
+    let mut catalog: Value = lib::read_json(&source_path)?;
 
     if catalog.get("schema").and_then(Value::as_str) != Some(CATALOG_SCHEMA) {
         bail!("{source_path_str}: expected schema '{CATALOG_SCHEMA}'");

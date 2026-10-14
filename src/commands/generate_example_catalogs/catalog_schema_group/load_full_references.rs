@@ -8,7 +8,7 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
     let catalog_dir = PathBuf::from(slug);
     let index_path = catalog_dir.join("references.json");
     let index_path_str = index_path.to_string_lossy().to_string();
-    let mut index: Value = lib::read_json(index_path.to_str().unwrap())?;
+    let mut index: Value = lib::read_json(&index_path)?;
 
     require_nonempty(&index, &field_names::<ReferenceIndex>(), &index_path_str)?;
     if index.get("schema").and_then(Value::as_str) != Some(INDEX_SCHEMA) {
@@ -66,7 +66,7 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
         let entry_path = entry.get("path").and_then(Value::as_str).unwrap_or("");
         let record_path = resolve_evidence_path(&catalog_dir, entry_path, &index_path_str)?;
         let record_path_str = record_path.to_string_lossy().to_string();
-        let record: Value = lib::read_json(record_path.to_str().unwrap())?;
+        let record: Value = lib::read_json(&record_path)?;
         if record.get("schema").and_then(Value::as_str) != Some(RECORD_SCHEMA) {
             bail!("{record_path_str}: expected schema '{RECORD_SCHEMA}'");
         }

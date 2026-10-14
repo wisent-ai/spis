@@ -38,7 +38,7 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
 
 pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
     for record in reference_records() {
-        let data: Value = lib::read_json(record.to_str().context("non-UTF8 path")?)?;
+        let data: Value = lib::read_json(&record)?;
         let base = record.parent().context("record without parent")?;
         // Every media entry the record carries, whichever list holds it (the
         // recording under motion, the still states, or any list a later
