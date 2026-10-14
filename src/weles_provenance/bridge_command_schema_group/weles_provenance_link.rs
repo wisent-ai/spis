@@ -229,7 +229,7 @@ pub(crate) fn verify_document_reference(
     trust: &CanonicalTrust,
 ) -> Result<VerifiedDocument, String> {
     let reference: WelesProvenanceDocumentRef = serde_json::from_value(reference_value.clone())
-        .map_err(|_| "reference does not match the typed schema".to_string())?;
+        .map_err(|error| format!("reference does not match the typed schema: {error}"))?;
     if reference.schema != PROVENANCE_DOCUMENT_REF_SCHEMA {
         return Err("reference schema is unsupported".to_string());
     }
@@ -241,8 +241,12 @@ pub(crate) fn verify_document_reference(
     if sha256_bytes(&bytes) != reference.sha256 {
         return Err("verification document digest does not match its reference".to_string());
     }
-    let persisted: WelesProvenanceDocument = serde_json::from_slice(&bytes)
-        .map_err(|_| "verification document does not match the typed schema".to_string())?;
+    let persisted: WelesProvenanceDocument = serde_json::from_slice(&bytes).map_err(|error| {
+        format!(
+            "verification document {} does not match the typed schema: {error}",
+            document_path.display()
+        )
+    })?;
     validate_document_shape(&persisted)?;
     validate_document_trust(&persisted, &trust.document)?;
     let fresh = invoke_bridge(&persisted, record_dir, trust)?;
@@ -252,8 +256,11 @@ pub(crate) fn verify_document_reference(
     if sha256_bytes(&artifact_bytes) != fresh.artifact.sha256 {
         return Err("receipt-bound JSON artifact changed while it was being parsed".to_string());
     }
-    let artifact_value: Value = serde_json::from_slice(&artifact_bytes).map_err(|_| {
-        "receipt-bound artifact is not the required signed JSON document".to_string()
+    let artifact_value: Value = serde_json::from_slice(&artifact_bytes).map_err(|error| {
+        format!(
+            "receipt-bound artifact {} is not the required signed JSON document: {error}",
+            artifact_path.display()
+        )
     })?;
     verify_attempt_binding(record, record_dir, &fresh, &artifact_value, &trust.document)?;
     Ok(VerifiedDocument {

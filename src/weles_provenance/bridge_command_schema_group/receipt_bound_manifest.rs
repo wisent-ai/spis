@@ -6,15 +6,18 @@ impl ReceiptBoundManifest {
         if outcome == SUCCESSFUL_OUTCOME {
             serde_json::from_value(value.clone())
                 .map(Self::Successful)
-                .map_err(|_| {
-                    "receipt-bound evidence manifest does not match the typed schema".to_string()
+                .map_err(|error| {
+                    format!(
+                        "receipt-bound evidence manifest does not match the typed schema: {error}"
+                    )
                 })
         } else {
             serde_json::from_value(value.clone())
                 .map(Self::NonSuccess)
-                .map_err(|_| {
-                    "receipt-bound non-success evidence manifest does not match the typed schema"
-                        .to_string()
+                .map_err(|error| {
+                    format!(
+                        "receipt-bound non-success evidence manifest does not match the typed schema: {error}"
+                    )
                 })
         }
     }

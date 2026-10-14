@@ -30,11 +30,15 @@ pub(crate) fn resolve_retained_file(base: &Path, relative: &str) -> Result<PathB
     {
         return Err("retained path escapes the record directory".to_string());
     }
-    let canonical_base =
-        fs::canonicalize(base).map_err(|_| "record directory could not be resolved".to_string())?;
+    let canonical_base = fs::canonicalize(base).map_err(|error| {
+        format!(
+            "record directory {} could not be resolved: {error}",
+            base.display()
+        )
+    })?;
     let joined = canonical_base.join(relative_path);
-    let link_metadata =
-        fs::symlink_metadata(&joined).map_err(|_| "retained file is absent".to_string())?;
+    let link_metadata = fs::symlink_metadata(&joined)
+        .map_err(|error| format!("retained file {} cannot be read: {error}", joined.display()))?;
     if link_metadata.file_type().is_symlink() || !link_metadata.is_file() {
         return Err("retained path is not a regular non-symlink file".to_string());
     }
@@ -162,9 +166,9 @@ pub(crate) fn provenance_id(
     artifact: &RetainedArtifact,
 ) -> Result<String, String> {
     let binding_value = serde_json::to_value(&receipt.spis_binding)
-        .map_err(|_| "receipt spisBinding could not be canonicalized".to_string())?;
+        .map_err(|error| format!("receipt spisBinding could not be canonicalized: {error}"))?;
     let binding_json = String::from_utf8(canonical_json_bytes(&binding_value)?)
-        .map_err(|_| "canonical receipt spisBinding was not UTF-8".to_string())?;
+        .map_err(|error| format!("canonical receipt spisBinding was not UTF-8: {error}"))?;
     let mut hash = Sha256::new();
     for (label, value) in [
         ("receipt.schema", receipt.schema.as_str()),
@@ -235,7 +239,7 @@ pub(crate) fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
             }
             Value::String(value) => {
                 let serialized = serde_json::to_string(value)
-                    .map_err(|_| "JCS string could not be serialized".to_string())?;
+                    .map_err(|error| format!("JCS string could not be serialized: {error}"))?;
                 output.push_str(&serialized);
             }
             Value::Array(entries) => {
@@ -257,8 +261,9 @@ pub(crate) fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
                     if index != 0 {
                         output.push(',');
                     }
-                    let serialized_key = serde_json::to_string(key)
-                        .map_err(|_| "JCS object key could not be serialized".to_string())?;
+                    let serialized_key = serde_json::to_string(key).map_err(|error| {
+                        format!("JCS object key could not be serialized: {error}")
+                    })?;
                     output.push_str(&serialized_key);
                     output.push(':');
                     write_value(entry, output)?;

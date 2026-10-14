@@ -14,14 +14,21 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
     let script_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("weles-bridge")
         .join("spis-weles-bridge.mjs");
-    let bridge_directory = fs::canonicalize(
-        script_path
-            .parent()
-            .ok_or_else(|| absent("checked-in Weles bridge has no resource directory"))?,
-    )
-    .map_err(|_| absent("checked-in Weles bridge resource directory could not be resolved"))?;
-    let script_metadata = fs::symlink_metadata(&script_path)
-        .map_err(|_| absent("checked-in Weles bridge is absent"))?;
+    let resource_directory = script_path
+        .parent()
+        .ok_or_else(|| absent("checked-in Weles bridge has no resource directory"))?;
+    let bridge_directory = fs::canonicalize(resource_directory).map_err(|error| {
+        absent(&format!(
+            "checked-in Weles bridge resource directory {} could not be resolved: {error}",
+            resource_directory.display()
+        ))
+    })?;
+    let script_metadata = fs::symlink_metadata(&script_path).map_err(|error| {
+        absent(&format!(
+            "checked-in Weles bridge {} cannot be read: {error}",
+            script_path.display()
+        ))
+    })?;
     if script_metadata.file_type().is_symlink() || !script_metadata.is_file() {
         return Err(absent(
             "checked-in Weles bridge is not a regular non-symlink file",
@@ -56,8 +63,12 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
         "await import('data:text/javascript;base64,{}')",
         STANDARD.encode(&script_bytes)
     );
-    let input_bytes = serde_json::to_vec(invocation.command)
-        .map_err(|_| BridgeFailure::new("io-failed", "could not serialize the bridge command"))?;
+    let input_bytes = serde_json::to_vec(invocation.command).map_err(|error| {
+        BridgeFailure::new(
+            "io-failed",
+            format!("could not serialize the bridge command: {error}"),
+        )
+    })?;
     let mut command = Command::new("node");
     command
         .arg("--input-type=module")
@@ -98,10 +109,10 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
             }
         });
     }
-    let mut child = command.spawn().map_err(|_| {
+    let mut child = command.spawn().map_err(|error| {
         BridgeFailure::new(
             "spawn-failed",
-            "could not start Node for the checked-in Weles bridge",
+            format!("could not start Node for the checked-in Weles bridge: {error}"),
         )
     })?;
     let stdout = child
@@ -194,8 +205,9 @@ pub(crate) fn invoke_bridge(
         config: None,
     })
     .map_err(|failure| failure.message)?;
-    serde_json::from_slice(&stdout)
-        .map_err(|_| "official Weles bridge returned a malformed verification document".to_string())
+    serde_json::from_slice(&stdout).map_err(|error| {
+        format!("official Weles bridge returned a malformed verification document: {error}")
+    })
 }
 
 /// Kill the bridge's whole process group. `Some` names a bridge process that
@@ -236,8 +248,12 @@ pub(crate) fn validate_fresh_document(
         return Err("fresh verified claims do not exactly match caller expectations".to_string());
     }
     let artifact_path = resolve_retained_file(record_dir, &fresh.artifact.path)?;
-    let metadata = fs::metadata(&artifact_path)
-        .map_err(|_| "retained artifact metadata is unavailable".to_string())?;
+    let metadata = fs::metadata(&artifact_path).map_err(|error| {
+        format!(
+            "retained artifact {} cannot be read: {error}",
+            artifact_path.display()
+        )
+    })?;
     if metadata.len() != fresh.artifact.bytes {
         return Err("retained artifact byte count changed".to_string());
     }

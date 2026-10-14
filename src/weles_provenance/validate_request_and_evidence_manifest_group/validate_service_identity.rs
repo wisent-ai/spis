@@ -114,7 +114,8 @@ pub(crate) fn validate_attempt_binding_derivation(
 /// written as it parses. The planner, the web worker and the receipt
 /// verifier all ask this.
 pub(crate) fn validate_api_endpoint(value: &str, label: &str) -> Result<(), String> {
-    let endpoint = url::Url::parse(value).map_err(|_| format!("{label} is invalid"))?;
+    let endpoint =
+        url::Url::parse(value).map_err(|error| format!("{label} {value:?} is invalid: {error}"))?;
     if crate::WebScheme::of(&endpoint).is_none()
         || !endpoint.username().is_empty()
         || endpoint.password().is_some()
@@ -132,16 +133,28 @@ pub(crate) fn load_canonical_trust() -> Result<CanonicalTrust, String> {
     let checked_in = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("weles-bridge")
         .join("weles-receipt-trust.json");
-    let metadata = fs::symlink_metadata(&checked_in)
-        .map_err(|_| "checked-in public trust document is absent".to_string())?;
+    let metadata = fs::symlink_metadata(&checked_in).map_err(|error| {
+        format!(
+            "checked-in public trust document {} cannot be read: {error}",
+            checked_in.display()
+        )
+    })?;
     if metadata.file_type().is_symlink() || !metadata.is_file() {
         return Err("checked-in public trust document is not a regular file".to_string());
     }
-    let canonical = fs::canonicalize(&checked_in)
-        .map_err(|_| "checked-in public trust document could not be resolved".to_string())?;
+    let canonical = fs::canonicalize(&checked_in).map_err(|error| {
+        format!(
+            "checked-in public trust document {} could not be resolved: {error}",
+            checked_in.display()
+        )
+    })?;
     let bytes = read_whole(&canonical)?;
-    let document: WelesReceiptTrust = serde_json::from_slice(&bytes)
-        .map_err(|_| "public trust document does not match the typed schema".to_string())?;
+    let document: WelesReceiptTrust = serde_json::from_slice(&bytes).map_err(|error| {
+        format!(
+            "public trust document {} does not match the typed schema: {error}",
+            canonical.display()
+        )
+    })?;
     if document.schema != BRIDGE_TRUST_SCHEMA
         || document.organization_id.trim().is_empty()
         || document.allowed_action != SPIS_WELES_ACTION

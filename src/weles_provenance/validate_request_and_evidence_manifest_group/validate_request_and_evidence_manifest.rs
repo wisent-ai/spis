@@ -23,8 +23,9 @@ pub(crate) fn validate_request_and_evidence_manifest(
         return Err("retained official request differs from signed attempt claims".to_string());
     }
     validate_unique_nonempty(&request.input.constraints, "request constraints")?;
-    let request_value = serde_json::to_value(request)
-        .map_err(|_| "retained official request could not be canonicalized".to_string())?;
+    let request_value = serde_json::to_value(request).map_err(|error| {
+        format!("retained official request could not be canonicalized: {error}")
+    })?;
     let request_digest = format!("sha256:{}", canonical_json_sha256(&request_value)?);
     if request_digest != envelope.weles_request_digest
         || request_digest != document.expected_claims.request_digest
@@ -99,7 +100,8 @@ pub(crate) fn validate_request_and_evidence_manifest(
 /// `value` as a web address without credentials, refused with `label`
 /// otherwise.
 pub(crate) fn parse_http_url(value: &str, label: &str) -> Result<url::Url, String> {
-    let parsed = url::Url::parse(value).map_err(|_| format!("{label} is invalid"))?;
+    let parsed =
+        url::Url::parse(value).map_err(|error| format!("{label} {value:?} is invalid: {error}"))?;
     if crate::WebScheme::of(&parsed).is_none()
         || !parsed.username().is_empty()
         || parsed.password().is_some()

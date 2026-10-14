@@ -13,8 +13,9 @@ pub(crate) fn verify_attempt_binding(
         .ok_or_else(|| {
             "current record has no product_url for receipt origin binding".to_string()
         })?;
-    let parsed_product_url = url::Url::parse(product_url)
-        .map_err(|_| "current record product_url is not a valid URL".to_string())?;
+    let parsed_product_url = url::Url::parse(product_url).map_err(|error| {
+        format!("current record product_url {product_url:?} is not a valid URL: {error}")
+    })?;
     if crate::WebScheme::of(&parsed_product_url).is_none() {
         return Err("current record product_url is not HTTP(S)".to_string());
     }
@@ -50,8 +51,8 @@ pub(crate) fn verify_attempt_binding(
             continue;
         };
         let envelope: WelesAttemptEnvelope = serde_json::from_value(envelope_value.clone())
-            .map_err(|_| {
-                "imported Weles attempt envelope does not match the typed schema".to_string()
+            .map_err(|error| {
+                format!("imported Weles attempt envelope does not match the typed schema: {error}")
             })?;
         if envelope.weles_task_id != document.expected_claims.task_id {
             continue;
