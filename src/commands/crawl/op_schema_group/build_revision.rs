@@ -212,14 +212,9 @@ pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {
         .and_then(|name| name.to_str())
         .context("JSON filename is not UTF-8")?;
     let lock_path = parent.join(format!(".{file_name}.lock"));
-    let lock = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .open(&lock_path)?;
-    if unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
+    let Some(lock) = crate::exclusive(&lock_path)? else {
         bail!("another process is updating {}", path.display());
-    }
+    };
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
     let temporary = parent.join(format!(".{file_name}.{}.{}.tmp", std::process::id(), nonce));
     let result = (|| -> Result<()> {
@@ -233,7 +228,6 @@ pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {
         File::open(parent)?.sync_all()?;
         Ok(())
     })();
-    let _ = unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_UN) };
     drop(lock);
     crate::discarding(result, &temporary)
 }

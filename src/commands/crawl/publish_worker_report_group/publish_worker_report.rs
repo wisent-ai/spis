@@ -107,8 +107,10 @@ impl std::fmt::Display for RecordLockBusy {
 
 impl std::error::Error for RecordLockBusy {}
 
+/// Held for as long as one record of a crawl run is mutated; dropping it
+/// closes the lock file, which releases the lock.
 pub(crate) struct RecordMutationGuard {
-    pub(crate) file: File,
+    _held: File,
 }
 
 impl RecordMutationGuard {
@@ -118,31 +120,22 @@ impl RecordMutationGuard {
         safe_component(record, "record")?;
         let directory = run_root()?.join(run_id).join("record-locks").join(catalog);
         std::fs::create_dir_all(&directory)?;
-        let file = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .open(directory.join(format!("{record}.lock")))?;
-        if unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
+        let Some(held) = crate::exclusive(&directory.join(format!("{record}.lock")))? else {
             return Err(RecordLockBusy {
                 run_id: run_id.to_string(),
                 catalog: catalog.to_string(),
                 record: record.to_string(),
             }
             .into());
-        }
-        Ok(Self { file })
+        };
+        Ok(Self { _held: held })
     }
 }
 
-impl Drop for RecordMutationGuard {
-    fn drop(&mut self) {
-        let _ = unsafe { libc::flock(self.file.as_raw_fd(), libc::LOCK_UN) };
-    }
-}
-
+/// Held for as long as a crawl run is mutated; dropping it closes the lock
+/// file, which releases the lock.
 pub(crate) struct RunMutationGuard {
-    pub(crate) file: File,
+    _held: File,
 }
 
 impl RunMutationGuard {
@@ -150,21 +143,10 @@ impl RunMutationGuard {
         safe_component(run_id, "run id")?;
         let directory = run_root()?.join(run_id);
         std::fs::create_dir_all(&directory)?;
-        let file = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .open(directory.join(".mutation.lock"))?;
-        if unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
+        let Some(held) = crate::exclusive(&directory.join(".mutation.lock"))? else {
             bail!("crawl run {run_id} is already being mutated by another process");
-        }
-        Ok(Self { file })
-    }
-}
-
-impl Drop for RunMutationGuard {
-    fn drop(&mut self) {
-        let _ = unsafe { libc::flock(self.file.as_raw_fd(), libc::LOCK_UN) };
+        };
+        Ok(Self { _held: held })
     }
 }
 
@@ -222,14 +204,9 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
     let path = run_path(run_id)?;
     let parent = path.parent().context("crawl run path has no parent")?;
     std::fs::create_dir_all(parent)?;
-    let lock = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .open(parent.join(".run.json.lock"))?;
-    if unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
+    let Some(lock) = crate::exclusive(&parent.join(".run.json.lock"))? else {
         bail!("crawl run {run_id} is already being persisted");
-    }
+    };
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
     let temporary = parent.join(format!(".run.json.{}.{}.tmp", std::process::id(), nonce));
     let result = (|| -> Result<Value> {
@@ -265,7 +242,6 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
         File::open(parent)?.sync_all()?;
         Ok(staged)
     })();
-    let _ = unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_UN) };
     drop(lock);
     *run = crate::discarding(result, &temporary)?;
     Ok(())

@@ -115,14 +115,9 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
         .context("attempt artifact root has no parent")?;
     let (entries, tree_bytes) = audit_attempt_tree(root)?;
     let lock_path = parent.join(format!(".{attempt_name}.archive.lock"));
-    let lock = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .open(&lock_path)?;
-    if unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
+    let Some(lock) = crate::exclusive(&lock_path)? else {
         bail!("another worker is publishing the {attempt_name} attempt archive");
-    }
+    };
     let result = (|| -> Result<Value> {
         let archive = parent.join(format!("{attempt_name}.tar.gz"));
         // Always rebuild. A surviving `<attempt_id>.tar.gz` proves nothing about
@@ -218,6 +213,6 @@ pub(crate) fn publish_attempt_archive(root: &Path, uri: &str) -> Result<Value> {
             "tree_bytes": tree_bytes,
         }))
     })();
-    let _ = unsafe { libc::flock(lock.as_raw_fd(), libc::LOCK_UN) };
+    drop(lock);
     result
 }

@@ -110,8 +110,10 @@ pub(crate) struct WorkLayout {
     pub(crate) report: PathBuf,
 }
 
+/// Held for as long as one documentation crawl works in its durable
+/// directory; dropping it closes the lock file, which releases the lock.
 pub(crate) struct WorkLock {
-    pub(crate) file: File,
+    _held: File,
 }
 
 impl WorkLock {
@@ -127,27 +129,15 @@ impl WorkLock {
             .file_name()
             .and_then(|value| value.to_str())
             .context("durable work directory has no UTF-8 name")?;
-        let file = open_regular_file(
-            &parent.join(format!(".{name}.crawl.lock")),
-            true,
-            true,
-            false,
-            true,
-            "durable work lock",
-        )?;
-        if unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX | libc::LOCK_NB) } != 0 {
+        let path = parent.join(format!(".{name}.crawl.lock"));
+        let file = open_regular_file(&path, true, true, false, true, "durable work lock")?;
+        if !crate::try_exclusive(&file, &path)? {
             bail!(
                 "documentation crawl {} is already active in another worker",
                 layout.root.display()
             );
         }
-        Ok(Self { file })
-    }
-}
-
-impl Drop for WorkLock {
-    fn drop(&mut self) {
-        let _ = unsafe { libc::flock(self.file.as_raw_fd(), libc::LOCK_UN) };
+        Ok(Self { _held: file })
     }
 }
 
