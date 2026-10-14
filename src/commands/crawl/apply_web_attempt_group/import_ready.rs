@@ -165,19 +165,17 @@ pub(crate) fn import(rest: &[String]) -> Result<()> {
     Ok(())
 }
 
-/// Whether any catalog of `run` ended in a failed state. A catalog whose
-/// state is not a declared one (the aggregate left it null with a
-/// diagnostic) is a failure too.
-pub(crate) fn has_failures(run: &Value) -> bool {
-    run.get("catalogs")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-        .filter_map(|entry| entry.get("state"))
-        .any(|state| match State::of(state) {
-            Ok(state) => state.counts_as_failure(),
-            Err(_) => true,
-        })
+/// Whether any catalog of `run` ended in a failed state. A catalog with no
+/// state, or one whose state is not a declared one (the aggregate left it null
+/// with a diagnostic), is a failure too; a run whose catalogs cannot be read
+/// is refused rather than read as one with nothing failed.
+pub(crate) fn has_failures(run: &Value) -> Result<bool> {
+    Ok(run_catalogs(run)?
+        .iter()
+        .any(|catalog| match catalog.entry.get("state").map(State::of) {
+            Some(Ok(state)) => state.counts_as_failure(),
+            _ => true,
+        }))
 }
 
 /// The label `entry`'s state is counted under: its state after `prefix`, or

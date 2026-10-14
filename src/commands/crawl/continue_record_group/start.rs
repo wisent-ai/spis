@@ -100,7 +100,7 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
         publish_runtime_bindings(&bindings)?;
         let run = continue_start(&run_id)?;
         print_operation("start", &run, None)?;
-        if has_failures(&run) {
+        if has_failures(&run)? {
             bail!("one or more records remain unavailable or failed");
         }
         return Ok(());
@@ -217,7 +217,7 @@ pub(crate) fn start(rest: &[String]) -> Result<()> {
     publish_runtime_bindings(&bindings)?;
     run = continue_start(&run_id)?;
     print_operation("start", &run, None)?;
-    if has_failures(&run) {
+    if has_failures(&run)? {
         bail!("one or more records remain unavailable or failed");
     }
     Ok(())

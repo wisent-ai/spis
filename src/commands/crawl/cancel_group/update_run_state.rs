@@ -201,7 +201,7 @@ pub(crate) fn resume(rest: &[String]) -> Result<()> {
     let mut run = import_ready(&run_id, selected_record.as_deref())?;
     print_operation("resume", &run, selected_record.as_deref())?;
     update_run_state(&mut run);
-    if has_failures(&run) {
+    if has_failures(&run)? {
         bail!("one or more crawl records remain unresumable");
     }
     Ok(())
