@@ -78,11 +78,12 @@ pub(crate) fn import_record_attempt(
     install_staged_tree(&attempt_staged, &attempt_destination)?;
     let record_path = record_dir.join("reference.json");
     let mut record: Value = crate::read_json(&record_path)?;
+    // The product URL the record states, or none: an empty one was written
+    // into every imported motion as its source.
     let source_url = record
         .get("product_url")
         .and_then(Value::as_str)
-        .unwrap_or_default()
-        .to_string();
+        .map(str::to_string);
     let relative_report = format!("{attempt_relative}/worker-report.json");
     let mut run = crawl_run_entry(&manifest, entry, &report, &proof, &relative_report);
     run["retained_members"] = json!(members.len());
@@ -131,7 +132,12 @@ pub(crate) fn import_record_attempt(
         }
         _ => {}
     }
-    let (motion, states) = attempt_media(engine, &attempt_destination, &record_dir, &source_url)?;
+    let (motion, states) = attempt_media(
+        engine,
+        &attempt_destination,
+        &record_dir,
+        source_url.as_deref(),
+    )?;
     let accessibility = accessibility_gap(engine, &attempt_destination)?;
     let object = record
         .as_object_mut()

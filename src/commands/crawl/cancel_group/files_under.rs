@@ -75,7 +75,7 @@ pub(crate) fn attempt_media(
     engine: &str,
     attempt_dir: &Path,
     record_dir: &Path,
-    source_url: &str,
+    source_url: Option<&str>,
 ) -> Result<(Vec<Value>, Vec<Value>)> {
     let mut motion = Vec::new();
     let mut states = Vec::new();
