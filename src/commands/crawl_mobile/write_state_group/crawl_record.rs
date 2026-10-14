@@ -57,7 +57,7 @@ pub(crate) fn crawl_record(
                 }));
                 break;
             }
-            let state_id = hash_text(&current.source);
+            let state_id = crate::sha256_hex(current.source.as_bytes());
             let available = actions(&current.source, platform)?;
             if states.insert(state_id.clone()) {
                 let index = states.len();
@@ -171,7 +171,7 @@ pub(crate) fn crawl_record(
                 }));
                 continue;
             }
-            let before_hash = hash_text(&before.source);
+            let before_hash = crate::sha256_hex(before.source.as_bytes());
             appium.click(&session, &action.selector).with_context(|| {
                 format!(
                     "deliver independently safe mobile action {:?}",
@@ -180,7 +180,7 @@ pub(crate) fn crawl_record(
             })?;
             let after = inspect_surface(appium, &session)?;
             surface_observations += 1;
-            let after_hash = hash_text(&after.source);
+            let after_hash = crate::sha256_hex(after.source.as_bytes());
             let changed = before_hash != after_hash;
             transitions.push(json!({
                 "step": transitions.len() + 1,

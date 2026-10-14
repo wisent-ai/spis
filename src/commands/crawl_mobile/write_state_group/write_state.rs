@@ -20,7 +20,7 @@ pub(crate) fn write_state(
         state.join("state.json"),
         serde_json::to_string_pretty(&json!({
             "schema": "wisent.mobile-crawl-state.v1",
-            "source_sha256": hash_text(source),
+            "source_sha256": crate::sha256_hex(source.as_bytes()),
             "path": path.iter().map(|step| json!({
                 "selector": step.selector,
                 "label": step.label,

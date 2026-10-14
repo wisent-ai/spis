@@ -207,9 +207,9 @@ impl Appium {
     /// reads must then agree; a surface still changing is the named failure
     /// and the record is retried. No sleep, floor or deadline (cli.md rule 8).
     pub(crate) fn settle(&self, session: &str) -> Result<String> {
-        let first = hash_text(&self.source(session)?);
+        let first = crate::sha256_hex(self.source(session)?.as_bytes());
         let current = self.source(session)?;
-        if hash_text(&current) != first {
+        if crate::sha256_hex(current.as_bytes()) != first {
             return Err(anyhow::Error::new(RecordFailure {
                 code: "mobile_surface_never_settled",
                 message: "two consecutive accessibility sources read after the driver reported the app idle differ"

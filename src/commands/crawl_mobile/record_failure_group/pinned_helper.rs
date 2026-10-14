@@ -243,9 +243,3 @@ pub(crate) fn actions(source: &str, platform: Platform) -> Result<Vec<Action>> {
         })
         .collect())
 }
-
-pub(crate) fn hash_text(value: &str) -> String {
-    let mut digest = Sha256::new();
-    digest.update(value.as_bytes());
-    hex::encode(digest.finalize())
-}

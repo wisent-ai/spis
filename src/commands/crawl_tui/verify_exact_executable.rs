@@ -75,20 +75,8 @@ pub(crate) fn verify_exact_executable(
         .executable_sha256
         .as_deref()
         .context("TUI execution identity has no executable SHA-256")?;
-    let mut file = std::fs::File::open(&path)
-        .with_context(|| format!("open exact TUI executable {}", path.display()))?;
-    let mut digest = Sha256::new();
-    let mut buffer = [0_u8; 64 * 1024];
-    loop {
-        let count = file
-            .read(&mut buffer)
-            .with_context(|| format!("hash exact TUI executable {}", path.display()))?;
-        if count == 0 {
-            break;
-        }
-        digest.update(&buffer[..count]);
-    }
-    let observed_sha = hex::encode(digest.finalize());
+    let observed_sha = crate::sha256_file(&path)
+        .with_context(|| format!("hash exact TUI executable {}", path.display()))?;
     if !observed_sha.eq_ignore_ascii_case(expected_sha) {
         bail!(
             "TUI executable SHA-256 changed immediately before trajectory launch: expected {expected_sha}, observed {observed_sha}"
@@ -128,12 +116,6 @@ pub(crate) use crate::commands::crawl_cli::{capture_range, tmux};
 /// Exactly one bounded full capture per record (finding 8).
 pub(crate) fn capture(session: &TmuxSession) -> Result<String> {
     capture_range(session, "-2000", "capture TUI pane")
-}
-
-pub(crate) fn hash(value: &str) -> String {
-    let mut digest = Sha256::new();
-    digest.update(value.as_bytes());
-    hex::encode(digest.finalize())
 }
 
 pub(crate) fn shell_quote(value: &str) -> String {

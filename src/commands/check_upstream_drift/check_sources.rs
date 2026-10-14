@@ -36,26 +36,6 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
     Ok(())
 }
 
-pub(crate) fn stream_sha256(path: &std::path::Path) -> Result<String> {
-    use sha2::Digest;
-    use std::io::Read;
-    let mut file = std::fs::File::open(path)?;
-    let mut digest = sha2::Sha256::new();
-    let mut buf = vec![0u8; 1 << 20];
-    loop {
-        let n = file.read(&mut buf)?;
-        if n == 0 {
-            break;
-        }
-        digest.update(&buf[..n]);
-    }
-    Ok(digest
-        .finalize()
-        .iter()
-        .map(|b| format!("{b:02x}"))
-        .collect())
-}
-
 pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
     for record in reference_records() {
         let data: Value = lib::read_json(record.to_str().context("non-UTF8 path")?)?;
@@ -84,7 +64,7 @@ pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
                 let Some(recorded) = entry.get("sha256").and_then(|v| v.as_str()) else {
                     continue;
                 };
-                if stream_sha256(&local)? != recorded {
+                if crate::sha256_file(&local)? != recorded {
                     drift.media_hash_mismatch.push(rel);
                 } else {
                     drift.media_ok += 1;

@@ -150,7 +150,7 @@ pub(crate) fn crawl_one(
     let binary = verify_exact_executable(manifest, &expected_filename, &environment)?;
     let session = launch(slug, &binary, &fixture, &raw, 1, environment)?;
     let screen = capture(&session)?;
-    let digest = hash(&screen);
+    let digest = crate::sha256_hex(screen.as_bytes());
     let state_path = states.join("state-00001.ansi");
     std::fs::write(&state_path, &screen)?;
     let graph = vec![json!({

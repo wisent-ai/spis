@@ -106,9 +106,7 @@ pub(crate) fn run_in_pty(
 }
 
 pub(crate) fn invocation_json(invocation: &Invocation, kind: &str) -> Value {
-    let mut digest = Sha256::new();
-    digest.update(invocation.output.as_bytes());
-    let output_sha256 = hex::encode(digest.finalize());
+    let output_sha256 = crate::sha256_hex(invocation.output.as_bytes());
     json!({
         "kind": kind,
         "delivered_input": {

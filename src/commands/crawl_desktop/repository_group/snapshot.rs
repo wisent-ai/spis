@@ -171,9 +171,7 @@ pub(crate) fn state_hash(snapshot: &Value) -> String {
         })
         .collect();
     rows.sort();
-    let mut digest = Sha256::new();
-    digest.update(rows.join("\n").as_bytes());
-    hex::encode(digest.finalize())
+    crate::sha256_hex(rows.join("\n").as_bytes())
 }
 
 pub(crate) fn action_block_reason(action: &Action) -> Option<&'static str> {
