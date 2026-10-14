@@ -48,10 +48,7 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
         let catalog_name = catalog.name;
         for record in catalog.records {
             let record_name = record_name(catalog_name, record)?;
-            if selected_record.as_deref().is_none_or(|wanted| {
-                record_name == wanted
-                    || record_name.split_once('-').map(|(_, tail)| tail) == Some(wanted)
-            }) {
+            if selected_matches(record_name, selected_record.as_deref()) {
                 targets.push((catalog_name.to_string(), record_name.to_string()));
             }
         }
