@@ -23,6 +23,7 @@ mod kinds;
 mod lifecycle;
 mod op_schema_group;
 mod publish_worker_report_group;
+mod record_failure;
 mod registry_placements_group;
 mod runtime_bindings_for_worker_group;
 mod usage_group;
@@ -35,6 +36,7 @@ pub(crate) use kinds::{AccountMode, DeliveryKind, Engine, ProductKind, WebOutcom
 pub(crate) use lifecycle::{aggregate_catalog_entry, update_run_state, State};
 pub use op_schema_group::*;
 pub use publish_worker_report_group::*;
+pub(crate) use record_failure::{record_failure_code, RecordFailure};
 pub use registry_placements_group::*;
 pub use runtime_bindings_for_worker_group::*;
 pub use usage_group::*;

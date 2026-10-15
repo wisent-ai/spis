@@ -246,18 +246,4 @@ impl Drop for RecordingGuard {
     }
 }
 
-/// Typed record failure so the worker report can name a stable machine code
-/// instead of a free-text diagnostic.
-#[derive(Debug)]
-pub(crate) struct RecordFailure {
-    pub(crate) code: &'static str,
-    pub(crate) message: String,
-}
-
-impl std::fmt::Display for RecordFailure {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(formatter, "{}: {}", self.code, self.message)
-    }
-}
-
-impl std::error::Error for RecordFailure {}
+pub(crate) use crate::commands::crawl::RecordFailure;

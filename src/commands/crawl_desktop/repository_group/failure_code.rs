@@ -1,14 +1,7 @@
 use super::*;
 
 pub(crate) fn failure_code(error: &anyhow::Error) -> &'static str {
-    error
-        .chain()
-        .find_map(|cause| {
-            cause
-                .downcast_ref::<RecordFailure>()
-                .map(|failure| failure.code)
-        })
-        .unwrap_or("desktop_record_failed")
+    crate::commands::crawl::record_failure_code(error, "desktop_record_failed")
 }
 
 pub(crate) fn find_i64(value: &Value, key: &str) -> Option<i64> {

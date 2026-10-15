@@ -188,7 +188,7 @@ pub(crate) fn runtime_product(
         }
         (Engine::Cli, _) => (
             ProductKind::CliBinary,
-            crate::commands::crawl_cli::binary_for(slug),
+            crate::commands::crawl_cli::binary_for(slug)?,
             "Spis exact CLI catalog mapping".into(),
         ),
         (Engine::Tui, _) => {

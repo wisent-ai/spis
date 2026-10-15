@@ -1,30 +1,9 @@
 use super::*;
 
-/// Typed record failure so the worker report can name a stable machine code
-/// instead of a free-text diagnostic.
-#[derive(Debug)]
-pub(crate) struct RecordFailure {
-    pub(crate) code: &'static str,
-    pub(crate) message: String,
-}
-
-impl std::fmt::Display for RecordFailure {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(formatter, "{}: {}", self.code, self.message)
-    }
-}
-
-impl std::error::Error for RecordFailure {}
+pub(crate) use crate::commands::crawl::RecordFailure;
 
 pub(crate) fn failure_code(error: &anyhow::Error) -> &'static str {
-    error
-        .chain()
-        .find_map(|cause| {
-            cause
-                .downcast_ref::<RecordFailure>()
-                .map(|failure| failure.code)
-        })
-        .unwrap_or("mobile_record_failed")
+    crate::commands::crawl::record_failure_code(error, "mobile_record_failed")
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -87,7 +66,14 @@ pub(crate) struct PathStep {
 
 pub(crate) fn canonical_driver_url(value: &str) -> Result<String> {
     let parsed = url::Url::parse(value).context("--driver-url must be a URL")?;
-    let local = matches!(parsed.host_str(), Some("127.0.0.1" | "localhost" | "::1"));
+    // Loopback is read from the address itself; `localhost` is the name
+    // reserved for it.
+    let local = match parsed.host() {
+        Some(url::Host::Ipv4(address)) => address.is_loopback(),
+        Some(url::Host::Ipv6(address)) => address.is_loopback(),
+        Some(url::Host::Domain(name)) => name == "localhost",
+        None => false,
+    };
     // The driver is reached over TLS, or in the clear only on this machine.
     let scheme = crate::WebScheme::of(&parsed);
     let encrypted = scheme.is_some_and(crate::WebScheme::encrypted);

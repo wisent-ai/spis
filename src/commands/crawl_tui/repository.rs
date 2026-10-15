@@ -34,43 +34,10 @@ pub(crate) const REPRESENTATIVE_INPUT_CLASSES: &[(&str, &str)] = &[
 
 pub(crate) use crate::commands::crawl_cli::TmuxSession;
 
-/// Typed record failure so the worker report can name a stable machine code
-/// instead of a free-text diagnostic.
-#[derive(Debug)]
-pub(crate) struct RecordFailure {
-    pub(crate) code: &'static str,
-    pub(crate) message: String,
-}
-
-impl std::fmt::Display for RecordFailure {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(formatter, "{}: {}", self.code, self.message)
-    }
-}
-
-impl std::error::Error for RecordFailure {}
+pub(crate) use crate::commands::crawl::{safe_component, RecordFailure};
 
 pub(crate) fn failure_code(error: &anyhow::Error) -> &'static str {
-    error
-        .chain()
-        .find_map(|cause| {
-            cause
-                .downcast_ref::<RecordFailure>()
-                .map(|failure| failure.code)
-        })
-        .unwrap_or("tui_record_failed")
-}
-
-pub(crate) fn safe_component(value: &str, name: &str) -> Result<()> {
-    if value.is_empty()
-        || matches!(value, "." | "..")
-        || !value
-            .chars()
-            .all(|character| character.is_ascii_alphanumeric() || matches!(character, '-' | '_'))
-    {
-        bail!("{name} must contain only letters, digits, '-' or '_'");
-    }
-    Ok(())
+    crate::commands::crawl::record_failure_code(error, "tui_record_failed")
 }
 
 pub(crate) fn attempt_root(
