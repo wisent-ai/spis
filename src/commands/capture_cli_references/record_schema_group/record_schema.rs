@@ -1,10 +1,8 @@
 use super::*;
 
-pub(crate) const RECORD_SCHEMA: &str = "wisent.full-product-reference.v2";
-
-pub(crate) const INDEX_SCHEMA: &str = "wisent.full-reference-catalog.v2";
-
-pub(crate) const SOURCES_SCHEMA: &str = "wisent.example-catalog.v2";
+pub(crate) use crate::commands::reference_contract::{
+    CATALOG_SCHEMA as SOURCES_SCHEMA, INDEX_SCHEMA, RECORD_SCHEMA,
+};
 
 pub(crate) const PROMPT: &str = "wisent-ref$ ";
 
@@ -118,7 +116,11 @@ pub(crate) fn load_plan(path: &Path) -> Result<&'static Plan> {
     if plan.products.is_empty() {
         bail!("capture plan {} declares no products", path.display());
     }
-    if plan.terminal.columns == 0 || plan.terminal.rows == 0 || plan.terminal.font_px == 0 {
+    let positive = |value: usize| std::num::NonZeroUsize::new(value).is_some();
+    if !positive(plan.terminal.columns)
+        || !positive(plan.terminal.rows)
+        || !positive(plan.terminal.font_px)
+    {
         bail!(
             "capture plan {} states terminal {}x{} at {} px; columns, rows and font_px must each be at least 1",
             path.display(),
@@ -128,9 +130,10 @@ pub(crate) fn load_plan(path: &Path) -> Result<&'static Plan> {
         );
     }
     let hex = |value: &str| {
-        value.len() == 7
-            && value.starts_with('#')
-            && value[1..].bytes().all(|byte| byte.is_ascii_hexdigit())
+        value.strip_prefix('#').is_some_and(|digits| {
+            // Six hex digits after '#': https://www.w3.org/TR/css-color-4/#hex-notation
+            digits.len() == 6 && digits.bytes().all(|byte| byte.is_ascii_hexdigit())
+        })
     };
     if !hex(&plan.terminal.background) || !hex(&plan.terminal.foreground) {
         bail!(
@@ -176,11 +179,14 @@ pub(crate) fn terminal() -> &'static Terminal {
 
 // --------------------------------------------------------------- small utils
 
-/// Python `%g`-style float rendering (shortest form, no trailing `.0`).
+/// Python `%g`-style float rendering (shortest form, no trailing `.0`), with
+/// the exponent bounds Python's float repr uses.
 pub(crate) fn g(x: f64) -> String {
+    // Zero renders bare: https://docs.python.org/3/library/string.html#format-specification-mini-language
     if x == 0.0 {
         return "0".to_string();
     }
+    // Scientific outside 1e-4 <= |x| < 1e16: https://docs.python.org/3/library/string.html#format-specification-mini-language
     if x.abs() >= 1e16 || x.abs() < 1e-4 {
         return format!("{x:e}");
     }

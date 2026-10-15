@@ -2,13 +2,10 @@ use super::*;
 
 pub(crate) const CONFIG_SCHEMA: &str = "spis.corpus-location.v1";
 
-pub(crate) const INDEX_SCHEMA: &str = "wisent.example-catalog.v2";
-
-pub(crate) const SOURCES_SCHEMA: &str = "wisent.example-catalog.v2";
-
-pub(crate) const REFERENCES_SCHEMA: &str = "wisent.full-reference-catalog.v2";
-
-pub(crate) const RECORD_SCHEMA: &str = "wisent.full-product-reference.v2";
+pub(crate) use crate::commands::reference_contract::{
+    CATALOG_SCHEMA as INDEX_SCHEMA, CATALOG_SCHEMA as SOURCES_SCHEMA,
+    INDEX_SCHEMA as REFERENCES_SCHEMA, RECORD_SCHEMA,
+};
 
 #[derive(Debug)]
 pub(crate) struct CorpusSummary {
@@ -20,14 +17,15 @@ pub(crate) struct CorpusSummary {
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
-    match rest.first().map(String::as_str) {
-        Some("adopt") => adopt(&rest[1..]),
-        Some("status") => status(&rest[1..]),
-        Some("--help") | Some("-h") | None => {
+    let action = rest.split_first();
+    match action.map(|(name, args)| (name.as_str(), args)) {
+        Some(("adopt", args)) => adopt(args),
+        Some(("status", args)) => status(args),
+        Some(("--help", _)) | Some(("-h", _)) | None => {
             println!("usage: spis corpus <adopt PATH|status>\n\n  adopt PATH  validate and remember an unpacked canonical Spis corpus\n  status      print the currently adopted corpus and its measured counts\n\nZIP, tar, gzip, bzip2, xz, zstd, 7z and rar archives are not accepted; unpack them first so every provenance and evidence file can be validated.");
             Ok(())
         }
-        Some(other) => Err(crate::commands::usage(format!(
+        Some((other, _)) => Err(crate::commands::usage(format!(
             "unknown corpus action: {other} (expected adopt or status)"
         ))),
     }
@@ -86,19 +84,19 @@ pub fn configured_root() -> Result<Option<PathBuf>> {
 }
 
 pub(crate) fn adopt(rest: &[String]) -> Result<()> {
-    if rest.len() != 1 {
+    let [supplied] = rest else {
         return Err(crate::commands::usage("usage: spis corpus adopt PATH"));
-    }
-    let supplied = PathBuf::from(&rest[0]);
+    };
+    let supplied = PathBuf::from(supplied);
     if supplied.is_file() {
-        let extension = supplied
+        let archive = supplied
             .extension()
             .and_then(|value| value.to_str())
-            .unwrap_or("")
-            .to_ascii_lowercase();
-        if ["zip", "tar", "tgz", "gz", "bz2", "xz", "zst", "7z", "rar"]
-            .contains(&extension.as_str())
-        {
+            .is_some_and(|extension| {
+                ["zip", "tar", "tgz", "gz", "bz2", "xz", "zst", "7z", "rar"]
+                    .contains(&extension.to_ascii_lowercase().as_str())
+            });
+        if archive {
             bail!("archives are not supported corpus inputs: {}; unpack the archive and adopt its corpus directory", supplied.display());
         }
         bail!(
@@ -110,8 +108,23 @@ pub(crate) fn adopt(rest: &[String]) -> Result<()> {
         .canonicalize()
         .with_context(|| format!("open corpus directory {}", supplied.display()))?;
     let summary = validate(&root)?;
-    let previous = configured_root().ok().flatten();
+    // A location that cannot be read is replaced by this adoption, and the
+    // cause it could not be read for is reported rather than dropped.
+    let previous = match configured_root() {
+        Ok(previous) => previous,
+        Err(error) => {
+            eprintln!(
+                "spis: the previous corpus location could not be read and is replaced: {error:#}"
+            );
+            None
+        }
+    };
     let unchanged = previous.as_deref() == Some(summary.root.as_path());
+    let n = summary.reference_count;
+    // Every reference was imported now or already adopted (https://spis.wisent.com/docs/corpus-adoption).
+    let (imported, kept) = if unchanged { (0, n) } else { (n, 0) };
+    // validate() refused any conflicting or rejected catalog, so both are zero (https://spis.wisent.com/docs/corpus-adoption).
+    let (conflicting, rejected) = (0, 0);
     write_config(&summary)?;
     let onboarding_warning = crate::onboarding::record_first_success()
         .err()
@@ -128,10 +141,10 @@ pub(crate) fn adopt(rest: &[String]) -> Result<()> {
             "references": summary.reference_count,
             "files": summary.file_count,
             "index_sha256": summary.index_sha256,
-            "imported": if unchanged { 0 } else { summary.reference_count },
-            "unchanged": if unchanged { summary.reference_count } else { 0 },
-            "conflicting": 0,
-            "rejected": 0,
+            "imported": imported,
+            "unchanged": kept,
+            "conflicting": conflicting,
+            "rejected": rejected,
             "message": if unchanged {
                 "This exact corpus was already adopted; no catalog or reference was duplicated."
             } else {
