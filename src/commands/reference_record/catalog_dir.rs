@@ -63,41 +63,22 @@ pub(crate) fn kebab(name: &str) -> Result<String> {
     Ok(slug)
 }
 
-/// Image dimensions via macOS `sips`, exactly like the original script.
+/// An image's width and height, read from its header in process: every
+/// platform this runs on reads the same answer, and a file that is not an
+/// image this can read is refused with the decoder's reason.
 pub(crate) fn image_dimensions(path: &Path) -> Result<(i64, i64)> {
-    let output = std::process::Command::new("sips")
-        .args(["-g", "pixelWidth", "-g", "pixelHeight"])
-        .arg(path)
-        .output()
-        .context("run sips")?;
-    if !output.status.success() {
-        bail!(
+    let (width, height) = image::image_dimensions(path).with_context(|| {
+        format!(
             "reference: cannot read image dimensions: {}",
             path.display()
-        );
-    }
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let mut width = None;
-    let mut height = None;
-    for line in stdout.lines() {
-        if line.contains("pixelWidth") {
-            width = line.rsplit(':').next().and_then(|v| v.trim().parse().ok());
-        }
-        if line.contains("pixelHeight") {
-            height = line.rsplit(':').next().and_then(|v| v.trim().parse().ok());
-        }
-    }
-    match (width, height) {
-        (Some(w), Some(h)) => Ok((w, h)),
-        _ => bail!(
-            "reference: cannot read image dimensions: {}",
-            path.display()
-        ),
-    }
+        )
+    })?;
+    Ok((i64::from(width), i64::from(height)))
 }
 
+/// The date a new record is stamped with: the crate's UTC date.
 pub(crate) fn today_iso() -> String {
-    lib::now_iso_utc()[..10].to_string()
+    crate::today_utc()
 }
 
 /// Refresh the counters on both catalog files and regenerate the rendered indexes.
@@ -147,16 +128,20 @@ pub(crate) fn record_path(directory: &Path, index: &Value, position: usize) -> R
 
 /// Locate a record by 1-based number or normalized name; returns its position.
 pub(crate) fn find_record(directory: &Path, index: &Value, identifier: &str) -> Result<usize> {
-    let number: Option<usize> =
-        if !identifier.is_empty() && identifier.chars().all(|c| c.is_ascii_digit()) {
-            identifier.parse().ok()
-        } else {
-            None
-        };
+    // Digits name the record that many places into the list; anything else,
+    // and digits that are no place (zero, or too many to count), is a name.
+    let number = match identifier.parse::<std::num::NonZeroUsize>() {
+        Ok(number) if identifier.chars().all(|c| c.is_ascii_digit()) => Some(number),
+        Ok(_) | Err(_) => None,
+    };
     let wanted = identifier.to_lowercase();
     let references_file = format!("{}/references.json", directory.display());
     let references = catalog_list(index, "references", &references_file)?;
-    for (position, entry) in references.iter().enumerate() {
+    for ((position, entry), place) in references
+        .iter()
+        .enumerate()
+        .zip(std::num::NonZeroUsize::MIN.get()..)
+    {
         let name_key = entry["name"]
             .as_str()
             .with_context(|| {
@@ -168,7 +153,7 @@ pub(crate) fn find_record(directory: &Path, index: &Value, identifier: &str) -> 
             .to_lowercase()
             .replace('_', "-")
             .replace(' ', "-");
-        if number == Some(position + 1) || name_key == wanted {
+        if number.is_some_and(|number| number.get() == place) || name_key == wanted {
             return Ok(position);
         }
     }
