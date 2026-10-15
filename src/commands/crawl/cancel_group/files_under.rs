@@ -58,18 +58,6 @@ pub(crate) fn declared_motion_kind(path: &Path) -> Option<&'static str> {
     )
 }
 
-pub(crate) fn capture_method(engine: &str) -> &'static str {
-    match engine {
-        "mobile" => "Local product run through Appium with XCUITest or UiAutomator2; screen recording and accessibility source retained",
-        "desktop" => "Local product run through Cua Driver; snapshot-bound actions, screenshots, action recording and accessibility tree retained",
-        "web" => "Real browser session executed by Weles on a Stado-pinned host; signed receipt, evidence manifest, screenshot and accessibility tree retained",
-        "tui" => "Local product run in an isolated tmux pseudo-terminal; raw terminal bytes and distinct screens retained",
-        "cli" => "Local product run of the real executable in an isolated tmux pseudo-terminal; stdout/stderr, argv and exit status retained",
-        "docs" => "Rate-limited full-text documentation crawl; per-site gzipped JSONL corpus retained",
-        _ => "Unclassified Spis crawl",
-    }
-}
-
 /// Retained media descriptors for one attempt, addressed relative to the record.
 pub(crate) fn attempt_media(
     engine: &str,
@@ -77,14 +65,19 @@ pub(crate) fn attempt_media(
     record_dir: &Path,
     source_url: Option<&str>,
 ) -> Result<(Vec<Value>, Vec<Value>)> {
+    let capture_method = Engine::of(engine)?.capture_method();
     let mut motion = Vec::new();
     let mut states = Vec::new();
     let files = files_under(attempt_dir)?;
     let first_motion = files
         .iter()
         .find(|path| media_kind(path) == Some("motion"))
-        .and_then(|path| path.strip_prefix(record_dir).ok())
-        .map(|relative| relative.to_string_lossy().to_string());
+        .map(|path| {
+            path.strip_prefix(record_dir)
+                .map(|relative| relative.to_string_lossy().to_string())
+                .context("retained media escaped the record directory")
+        })
+        .transpose()?;
     for path in &files {
         let Some(kind) = media_kind(path) else {
             continue;
@@ -102,7 +95,7 @@ pub(crate) fn attempt_media(
                 "bytes": bytes.len(),
                 "source_url": source_url,
                 "media_kind": declared_motion_kind(path),
-                "capture_method": capture_method(engine),
+                "capture_method": capture_method,
             }));
         } else {
             states.push(json!({
@@ -173,7 +166,8 @@ pub(crate) fn crawl_run_entry(
     report: &Value,
     artifact: &Value,
     relative_report: &str,
-) -> Value {
+) -> Result<Value> {
+    let capture_method = Engine::of(&manifest.engine)?.capture_method();
     let mut run = json!({
         "schema": "wisent.crawl-import.v2",
         "run_id": manifest.run_id,
@@ -190,20 +184,20 @@ pub(crate) fn crawl_run_entry(
         "reference_sha256": manifest.reference_sha256,
         "bindings_file_sha256": manifest.bindings_file_sha256,
         "bindings_sha256": manifest.bindings_sha256,
-        "stado_job_id": entry.get("stado_job_id").cloned().unwrap_or(Value::Null),
+        "stado_job_id": entry.get("stado_job_id"),
         "stado_run_id": manifest.stado_run_id,
         "artifact_uri": manifest.artifact_uri,
-        "artifact_sha256": artifact.get("sha256").cloned().unwrap_or(Value::Null),
-        "artifact_bytes": artifact.get("bytes").cloned().unwrap_or(Value::Null),
+        "artifact_sha256": artifact.get("sha256"),
+        "artifact_bytes": artifact.get("bytes"),
         "output_uri": manifest.output_uri,
         "worker_report": relative_report,
-        "capture_method": capture_method(&manifest.engine),
+        "capture_method": capture_method,
         "imported_at": crate::now_iso_utc(),
     });
     if let Some(execution) = report.get("execution_identity") {
         run["execution_identity"] = execution.clone();
     }
-    run
+    Ok(run)
 }
 
 /// Write one immutable retained document, or prove the existing bytes are identical.

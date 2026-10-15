@@ -14,9 +14,13 @@ pub(crate) fn import_record_attempt(
     entry: &Value,
     run_dir: &Path,
 ) -> Result<Value> {
-    let manifest: RuntimeManifest =
-        serde_json::from_value(entry.get("manifest").cloned().unwrap_or(Value::Null))
-            .context("accepted record retains no typed runtime manifest")?;
+    let manifest: RuntimeManifest = serde_json::from_value(
+        entry
+            .get("manifest")
+            .cloned()
+            .context("accepted record retains no runtime manifest")?,
+    )
+    .context("accepted record retains no typed runtime manifest")?;
     if manifest.engine != engine || manifest.catalog != catalog || manifest.run_id != run_id {
         bail!("retained runtime manifest does not belong to this run, catalog and engine");
     }
@@ -85,10 +89,10 @@ pub(crate) fn import_record_attempt(
         .and_then(Value::as_str)
         .map(str::to_string);
     let relative_report = format!("{attempt_relative}/worker-report.json");
-    let mut run = crawl_run_entry(&manifest, entry, &report, &proof, &relative_report);
+    let mut run = crawl_run_entry(&manifest, entry, &report, &proof, &relative_report)?;
     run["retained_members"] = json!(members.len());
-    match engine {
-        "web" => apply_web_attempt(
+    match Engine::of(engine)? {
+        Engine::Web => apply_web_attempt(
             &mut record,
             &mut run,
             &report,
@@ -97,7 +101,7 @@ pub(crate) fn import_record_attempt(
             // The accepted attempt is the one the record's confirmed material comes from.
             true,
         )?,
-        "docs" => {
+        Engine::Docs => {
             // Materialise the same verified artifact into the product corpus
             // store before recording this attempt as imported. Reusing the
             // archive already downloaded above avoids a second object request;
@@ -130,7 +134,7 @@ pub(crate) fn import_record_attempt(
                 .context("docs worker report has no typed corpus summary")?;
             run["readable_corpus"] = readable_corpus;
         }
-        _ => {}
+        Engine::Mobile | Engine::Desktop | Engine::Tui | Engine::Cli => {}
     }
     let (motion, states) = attempt_media(
         engine,
@@ -199,12 +203,12 @@ pub(crate) fn import_record_attempt(
         "artifact_uri": manifest.artifact_uri,
         "artifact_sha256": expected_sha256,
         "artifact_bytes": expected_bytes,
-        "tree_bytes": proof.pointer("/artifact/tree_bytes").cloned().unwrap_or(Value::Null),
+        "tree_bytes": proof.pointer("/artifact/tree_bytes"),
         "retained_members": members.len(),
         "states": states.len(),
         "motion": motion.len(),
         "worker_report": relative_report,
-        "weles_task_id": run.get("weles_task_id").cloned().unwrap_or(Value::Null),
+        "weles_task_id": run.get("weles_task_id"),
         "non_success_attempts": non_success,
         "imported_at": crate::now_iso_utc(),
     }))

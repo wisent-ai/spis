@@ -238,7 +238,7 @@ pub(crate) fn runtime_product(
             || surface
                 .terminal_outcomes
                 .iter()
-                .any(|outcome| WebOutcome::named(outcome).is_none())
+                .any(|outcome| WebOutcome::of(outcome).is_err())
         {
             bail!("{catalog}/{slug}: typed web surface family, origin, path, URL, allowed actions or terminal outcomes are not exact");
         }

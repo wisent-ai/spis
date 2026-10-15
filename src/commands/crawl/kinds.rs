@@ -57,6 +57,47 @@ impl Engine {
     pub(crate) fn terminal(self) -> bool {
         matches!(self, Engine::Cli | Engine::Tui)
     }
+
+    /// The Spis command that crawls this engine's family.
+    pub(crate) fn command(self) -> &'static str {
+        match self {
+            Engine::Mobile => "crawl-mobile",
+            Engine::Desktop => "crawl-desktop",
+            Engine::Web => "crawl-web",
+            Engine::Tui => "crawl-tui",
+            Engine::Cli => "crawl-cli",
+            Engine::Docs => "crawl-docs",
+        }
+    }
+
+    /// The crawler takes the catalog it reads as its first argument; the
+    /// others know their one catalog.
+    pub(crate) fn takes_catalog(self) -> bool {
+        matches!(self, Engine::Mobile | Engine::Desktop | Engine::Web)
+    }
+
+    /// The schema of the worker report this engine's crawler prints.
+    pub(crate) fn worker_report_schema(self) -> &'static str {
+        match self {
+            Engine::Web => "wisent.web-worker-report.v1",
+            Engine::Docs => "wisent.docs-worker-report.v1",
+            Engine::Mobile | Engine::Desktop | Engine::Tui | Engine::Cli => {
+                "wisent.native-worker-report.v1"
+            }
+        }
+    }
+
+    /// How this engine captured the evidence an imported record holds.
+    pub(crate) fn capture_method(self) -> &'static str {
+        match self {
+            Engine::Mobile => "Local product run through Appium with XCUITest or UiAutomator2; screen recording and accessibility source retained",
+            Engine::Desktop => "Local product run through Cua Driver; snapshot-bound actions, screenshots, action recording and accessibility tree retained",
+            Engine::Web => "Real browser session executed by Weles on a Stado-pinned host; signed receipt, evidence manifest, screenshot and accessibility tree retained",
+            Engine::Tui => "Local product run in an isolated tmux pseudo-terminal; raw terminal bytes and distinct screens retained",
+            Engine::Cli => "Local product run of the real executable in an isolated tmux pseudo-terminal; stdout/stderr, argv and exit status retained",
+            Engine::Docs => "Rate-limited full-text documentation crawl; per-site gzipped JSONL corpus retained",
+        }
+    }
 }
 
 /// What a record's runtime product identifier is.
@@ -148,8 +189,10 @@ pub(crate) enum WebOutcome {
 }
 
 impl WebOutcome {
-    /// The outcome `name` names, or nothing when Weles has none called that.
-    pub(crate) fn named(name: &str) -> Option<WebOutcome> {
-        serde_json::from_value(Value::String(name.to_string())).ok()
+    /// The outcome `name` names, refused with the name when Weles has none
+    /// called that.
+    pub(crate) fn of(name: &str) -> Result<WebOutcome> {
+        serde_json::from_value(Value::String(name.to_string()))
+            .with_context(|| format!("{name:?} is not a Weles terminal outcome"))
     }
 }

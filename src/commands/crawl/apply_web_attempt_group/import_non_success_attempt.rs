@@ -130,7 +130,7 @@ pub(crate) fn import_non_success_attempt(
     install_staged_tree(&attempt_staged, &attempt_destination)?;
     let relative_report = format!("{attempt_relative}/worker-report.json");
     let mut staged_record = record.clone();
-    let mut run = crawl_run_entry(manifest, snapshot, &report, &proof, &relative_report);
+    let mut run = crawl_run_entry(manifest, snapshot, &report, &proof, &relative_report)?;
     run["retained_members"] = json!(members.len());
     apply_web_attempt(
         &mut staged_record,

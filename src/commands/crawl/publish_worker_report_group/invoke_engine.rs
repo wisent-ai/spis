@@ -10,6 +10,46 @@ pub(crate) fn invoke_engine(args: &[String], host: &str, host_report: &Value) ->
     command_output(&mut command, "crawler coordinator")
 }
 
+/// The Spis command line that crawls one record on `host`, built from the
+/// engine the manifest declares; a manifest bound to another host is refused.
+pub(crate) fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<Vec<String>> {
+    let execution = manifest
+        .execution_identity
+        .as_ref()
+        .context("cannot build worker command without execution identity")?;
+    if execution.host != host {
+        bail!("worker command host differs from the bound execution identity");
+    }
+    let engine = Engine::of(&manifest.engine)?;
+    if engine == Engine::Web
+        && manifest
+            .service_identity
+            .as_ref()
+            .is_none_or(|service| service.active_host != host)
+    {
+        bail!("web worker command host differs from the bound Weles service placement");
+    }
+    let mut args = vec![engine.command().to_string()];
+    if engine.takes_catalog() {
+        args.push(manifest.catalog.clone());
+    }
+    args.push("--host".into());
+    args.push(host.into());
+    if engine == Engine::Mobile {
+        let driver_url = manifest
+            .driver_url
+            .as_deref()
+            .context("mobile runtime manifest binds no Appium address")?;
+        args.push("--driver-url".into());
+        args.push(driver_url.into());
+    }
+    args.push("--record".into());
+    args.push(manifest.record.clone());
+    args.push("--runtime-manifest-base64".into());
+    args.push(manifest.encoded()?);
+    Ok(args)
+}
+
 /// The selected families with the engine that crawls each, every family the
 /// reference contract declares when none is selected.
 pub(crate) fn selected_specs(selected: &[String]) -> Result<Vec<(String, String)>> {

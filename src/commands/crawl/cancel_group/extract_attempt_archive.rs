@@ -16,8 +16,7 @@ pub(crate) fn extract_attempt_archive(archive: &Path, destination: &Path) -> Res
     std::fs::create_dir_all(destination)?;
     let (room_bytes, room_entries) = volume_room(destination)?;
     let mut tar = tar::Archive::new(GzDecoder::new(File::open(archive)?));
-    let mut entries = 0_u64;
-    let mut total = 0_u64;
+    let mut bytes_left = room_bytes;
     let mut extracted = Vec::new();
     for member in tar.entries()? {
         let mut member = member?;
@@ -43,8 +42,8 @@ pub(crate) fn extract_attempt_archive(archive: &Path, destination: &Path) -> Res
                 relative.display()
             );
         }
-        entries += 1;
-        if entries > room_entries {
+        // This member is one more file than those already extracted.
+        if extracted.len() as u64 >= room_entries {
             bail!(
                 "crawl attempt archive holds more files than the {room_entries} entries free on \
                  the volume of {}",
@@ -52,16 +51,13 @@ pub(crate) fn extract_attempt_archive(archive: &Path, destination: &Path) -> Res
             );
         }
         let size = member.header().size()?;
-        total = total
-            .checked_add(size)
-            .filter(|value| *value <= room_bytes)
-            .with_context(|| {
-                format!(
-                    "crawl attempt archive needs more than the {room_bytes} bytes free on the \
-                     volume of {}",
-                    destination.display()
-                )
-            })?;
+        bytes_left = bytes_left.checked_sub(size).with_context(|| {
+            format!(
+                "crawl attempt archive needs more than the {room_bytes} bytes free on the \
+                 volume of {}",
+                destination.display()
+            )
+        })?;
         if let Some(parent) = target.parent() {
             std::fs::create_dir_all(parent)?;
         }
@@ -97,7 +93,8 @@ pub(crate) fn volume_room(path: &Path) -> Result<(u64, u64)> {
         .context("staging path contains a NUL byte")?;
     let mut stats = std::mem::MaybeUninit::<libc::statvfs>::uninit();
     // SAFETY: `c_path` is NUL-terminated and `stats` is written by statvfs
-    // before it is read; a non-zero return leaves it unread.
+    // before it is read; a non-zero return leaves it unread. Success is the
+    // return POSIX states: https://pubs.opengroup.org/onlinepubs/9799919799/functions/statvfs.html
     if unsafe { libc::statvfs(c_path.as_ptr(), stats.as_mut_ptr()) } != 0 {
         return Err(std::io::Error::last_os_error())
             .with_context(|| format!("read the free space of {}", path.display()));
@@ -111,17 +108,18 @@ pub(crate) fn volume_room(path: &Path) -> Result<(u64, u64)> {
 }
 
 pub(crate) fn fsync_tree(root: &Path) -> Result<()> {
+    // Every directory is recorded after its parent, so syncing them in
+    // reverse makes each entry durable before the directory naming it.
     let mut directories = vec![root.to_path_buf()];
-    let mut index = 0;
-    while index < directories.len() {
-        let directory = directories[index].clone();
-        index += 1;
+    let mut pending = vec![root.to_path_buf()];
+    while let Some(directory) = pending.pop() {
         for entry in std::fs::read_dir(&directory)? {
             let entry = entry?;
             let path = entry.path();
             let metadata = std::fs::symlink_metadata(&path)?;
             if metadata.is_dir() {
-                directories.push(path);
+                directories.push(path.clone());
+                pending.push(path);
             } else if metadata.is_file() {
                 File::open(&path)?.sync_all()?;
             }
@@ -164,14 +162,6 @@ pub(crate) fn install_staged_tree(staged: &Path, destination: &Path) -> Result<(
     Ok(())
 }
 
-pub(crate) fn worker_report_schema(engine: &str) -> &'static str {
-    match engine {
-        "web" => "wisent.web-worker-report.v1",
-        "docs" => "wisent.docs-worker-report.v1",
-        _ => "wisent.native-worker-report.v1",
-    }
-}
-
 /// Read the exact typed worker report out of one attempt's retained output log.
 ///
 /// The importer accepts only the engine's declared report schema on its own
@@ -190,7 +180,7 @@ pub(crate) fn retained_worker_report(engine: &str, output_log: &Path) -> Result<
     }
     // Read line by line and keep the last report, so a long log is never held
     // in memory whole and needs no size ceiling.
-    let schema = worker_report_schema(engine);
+    let schema = Engine::of(engine)?.worker_report_schema();
     let mut report = None;
     for line in std::io::BufReader::new(File::open(output_log)?).split(b'\n') {
         let line = line?;

@@ -119,8 +119,9 @@ pub(crate) fn pinned_host_is(pinned: &str, host: &str) -> bool {
         .is_some_and(|rest| rest.eq_ignore_ascii_case(host))
 }
 
+/// Whether `value` is a lowercase SHA-256 digest as this program writes one.
 pub(crate) fn is_lower_sha256(value: &str) -> bool {
-    value.len() == 64
+    value.len() == crate::sha256_hex(&[]).len()
         && value
             .bytes()
             .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
@@ -144,7 +145,7 @@ pub(crate) fn compact_submission(
     let raw = stado_stdout
         .lines()
         .rev()
-        .filter_map(|line| serde_json::from_str::<Value>(line.trim()).ok())
+        .flat_map(|line| serde_json::from_str::<Value>(line.trim()))
         .find(|value| {
             value.get("schema").and_then(Value::as_str) == Some(STADO_SUBMISSION_RECEIPT_SCHEMA)
         })
@@ -169,16 +170,18 @@ pub(crate) fn compact_submission(
     {
         bail!("Stado submission receipt run/repository/ref does not bind this exact attempt");
     }
-    if receipt.jobs.len() != 1 {
+    let [job] = receipt.jobs.as_slice() else {
         bail!("per-record crawl submission must map to exactly one Stado job");
-    }
-    let job = &receipt.jobs[0];
+    };
     if job.job_id.trim().is_empty() || safe_component(&job.job_id, "stado job id").is_err() {
         bail!("Stado submission receipt has no portable exact job id");
     }
     // The pinned host and the repository ref are per job in the emitted
     // receipt, not per receipt, so they are compared where they live.
-    if job.command_index != 0
+    // The index must address the one command this side submitted.
+    let addresses_sent_command =
+        usize::try_from(job.command_index).is_ok_and(|index| [&job.command].get(index).is_some());
+    if !addresses_sent_command
         || !is_lower_sha256(&job.command_digest)
         || !is_lower_sha256(&job.job_key)
         || job.submission_request_digest != receipt.request_digest
@@ -196,11 +199,15 @@ pub(crate) fn compact_submission(
     }
     // Two derivations Stado performs and this side re-performs, so the receipt
     // is proof and not a claim: the accepted command line hashes to its own
-    // command digest, and the job id is the first 24 hex of the job key.
+    // command digest, and the job id is the first hex of the job key, as many
+    // as Stado declares: https://github.com/wisent-ai/stado/blob/main/stado-rs/src/queue/submit/request/identity.rs
+    const JOB_ID_HEX_LEN: usize = 24;
     if crate::sha256_hex(job.command.as_bytes()) != job.command_digest {
         bail!("Stado receipt job command does not hash to its own command digest");
     }
-    if job.job_key.len() < 24 || job.job_id != format!("job-{}", &job.job_key[..24]) {
+    if job.job_key.len() < JOB_ID_HEX_LEN
+        || job.job_id != format!("job-{}", &job.job_key[..JOB_ID_HEX_LEN])
+    {
         bail!("Stado receipt job id is not derived from its own job key");
     }
     Ok(json!({
@@ -255,64 +262,8 @@ pub(crate) fn parse_submission(stdout: &[u8]) -> Result<Value> {
     let text = String::from_utf8_lossy(stdout);
     text.lines()
         .rev()
-        .find_map(|line| serde_json::from_str::<Value>(line.trim()).ok())
+        .flat_map(|line| serde_json::from_str::<Value>(line.trim()))
+        .next()
         .filter(|value| value.get("schema").and_then(Value::as_str) == Some(SUBMISSION_SCHEMA))
         .context("crawler returned no machine-readable submission")
-}
-
-pub(crate) fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<Vec<String>> {
-    let execution = manifest
-        .execution_identity
-        .as_ref()
-        .context("cannot build worker command without execution identity")?;
-    if execution.host != host {
-        bail!("worker command host differs from the bound execution identity");
-    }
-    if manifest.engine == "web"
-        && manifest
-            .service_identity
-            .as_ref()
-            .is_none_or(|service| service.active_host != host)
-    {
-        bail!("web worker command host differs from the bound Weles service placement");
-    }
-    let catalog = manifest.catalog.as_str();
-    let engine = manifest.engine.as_str();
-    let mut args = match engine {
-        "mobile" => {
-            let driver_url = manifest
-                .driver_url
-                .as_deref()
-                .context("mobile runtime manifest binds no Appium address")?;
-            vec![
-                "crawl-mobile".into(),
-                catalog.into(),
-                "--host".into(),
-                host.into(),
-                "--driver-url".into(),
-                driver_url.into(),
-            ]
-        }
-        "desktop" => vec![
-            "crawl-desktop".into(),
-            catalog.into(),
-            "--host".into(),
-            host.into(),
-        ],
-        "web" => vec![
-            "crawl-web".into(),
-            catalog.into(),
-            "--host".into(),
-            host.into(),
-        ],
-        "tui" => vec!["crawl-tui".into(), "--host".into(), host.into()],
-        "cli" => vec!["crawl-cli".into(), "--host".into(), host.into()],
-        "docs" => vec!["crawl-docs".into(), "--host".into(), host.into()],
-        _ => bail!("unknown crawler engine {engine}"),
-    };
-    args.push("--record".into());
-    args.push(manifest.record.clone());
-    args.push("--runtime-manifest-base64".into());
-    args.push(manifest.encoded()?);
-    Ok(args)
 }
