@@ -1,62 +1,68 @@
 use super::*;
 
+/// The option of a page that does not belong in the corpus.
+const NOT_KEPT: &str = "not-kept";
+/// Each discovered link is asked under this prefix and its position.
+const LINK: &str = "link-";
+
 /// Ask Brama which discovered pages matter for the corpus and what family each
-/// belongs to. There is no keyword fallback: words in a URL decided the family
-/// before, so a pricing page at `/buy` was "other" and every link saying
-/// "start" was a signup page. Every discovered link is listed; Brama's own
-/// refusal, not a count chosen here, says when a page holds too many.
-pub(crate) fn brama_rank(
-    start_url: &str,
-    links: &PageLinks,
-    limit: usize,
-) -> Result<Vec<(String, String)>> {
+/// belongs to: one typed decision, one `choice` per discovered link among the
+/// declared page families and not keeping it. There is no keyword fallback:
+/// words in a URL decided the family before, so a pricing page at `/buy` was
+/// "other" and every link saying "start" was a signup page. Every discovered
+/// link is asked; Brama's own refusal, not a count chosen here, says when a
+/// page holds too many. The kept pages come back most confident first, so the
+/// caller's `--limit` keeps the ones Brama was surest of.
+pub(crate) fn brama_rank(start_url: &str, links: &PageLinks) -> Result<Vec<(String, String)>> {
+    let purpose = "discover asks Brama which pages to keep";
+    let mut options: Vec<(String, String)> = PageFamily::names()?
+        .into_iter()
+        .map(|family| match family.as_str() {
+            Some(name) => Ok((name.to_string(), format!("a page of the {name} family"))),
+            None => bail!("discover: page family {family} is not a name"),
+        })
+        .collect::<Result<_>>()?;
+    options.push((
+        NOT_KEPT.to_string(),
+        "the page does not belong in an interface reference corpus".to_string(),
+    ));
     let listing: Vec<String> = links
         .entries
         .iter()
-        .map(|(url, text)| format!("- {url} | {text}"))
+        .enumerate()
+        .map(|(index, (url, text))| format!("{index}: {url} | {text}"))
         .collect();
-    let families = serde_json::Value::Array(PageFamily::names()?).to_string();
-    let parsed = crate::commands::brama::ask_json(
-        "discover asks Brama which pages to keep",
-        &format!(
-            "You classify pages of one product's website for an interface reference corpus. \
-             Return STRICT JSON: {{\"pages\": [{{\"url\": string, \"family\": \
-             one of {families}]}}}} . Only use URLs from the list. Pick at most {limit}."
-        ),
-        &format!(
-            "Start page: {start_url}\nDiscovered links:\n{}",
-            listing.join("\n")
-        ),
-    )?;
-    // Every page Brama names must be one of the listed links in a declared
-    // family; an answer without its list, an entry without a URL or family,
-    // and an entry outside the listing or the families are refused quoting
-    // the answer, never dropped so the rest reads as Brama's whole choice.
-    let pages = parsed["pages"]
-        .as_array()
-        .with_context(|| format!("Brama's page choice names no pages list: {parsed}"))?;
-    let mut ranked: Vec<(String, String)> = Vec::new();
-    for page in pages {
-        let (Some(url), Some(family)) = (page["url"].as_str(), page["family"].as_str()) else {
-            bail!("Brama's page choice holds an entry without url or family: {page}");
-        };
-        if !links.entries.iter().any(|(known, _)| known == url) {
-            bail!("Brama chose {url}, which is not one of the discovered links");
-        }
-        if reference_contract::named::<PageFamily>(family).is_none() {
-            bail!("Brama placed {url} in family {family:?}, which is not a declared page family");
-        }
-        if !ranked.iter().any(|(seen, _)| seen == url) {
-            ranked.push((url.to_string(), family.to_string()));
+    let state = format!("Start page: {start_url}\nDiscovered links:\n{}", listing.join("\n"));
+    let questions: serde_json::Map<String, serde_json::Value> = links
+        .entries
+        .iter()
+        .enumerate()
+        .map(|(index, (url, _))| {
+            let instructions = format!(
+                "The state lists the discovered links of one product's website. For an interface \
+                 reference corpus, which page family is the link at index {index} ({url}), or \
+                 does it not belong in the corpus?"
+            );
+            (format!("{LINK}{index}"), crate::commands::brama::choice(&instructions, &options))
+        })
+        .collect();
+    let answers = crate::commands::brama::decide(purpose, &state, &questions)?;
+    let mut kept: Vec<(f64, String, String)> = Vec::new();
+    for (index, (url, _)) in links.entries.iter().enumerate() {
+        let (family, confidence) =
+            crate::commands::brama::chosen(purpose, &answers[&format!("{LINK}{index}")], &options)?;
+        if family != NOT_KEPT && !kept.iter().any(|(_, seen, _)| seen == url) {
+            kept.push((confidence, url.clone(), family));
         }
     }
-    if ranked.is_empty() {
+    if kept.is_empty() {
         bail!(
-            "Brama selected no page from the {} discovered links",
+            "Brama kept no page of the {} discovered links",
             links.entries.len()
         );
     }
-    Ok(ranked)
+    kept.sort_by(|(left, _, _), (right, _, _)| right.total_cmp(left));
+    Ok(kept.into_iter().map(|(_, url, family)| (url, family)).collect())
 }
 
 /// `spis discover <start-url> --catalog <slug> --limit <n>`: `--limit` is how
@@ -130,7 +136,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         bail!("discover: no same-origin links found");
     }
 
-    let ranked = brama_rank(&start_url, &links, limit)?;
+    let ranked = brama_rank(&start_url, &links)?;
     let selected: Vec<(String, String)> = ranked.into_iter().take(limit).collect();
     if selected.is_empty() {
         bail!("discover: nothing selected for this corpus");

@@ -7,7 +7,10 @@ pub(crate) fn stable_provenance_url(value: &str) -> String {
     ];
     if STRIPPED_HOSTS.contains(&hostname_of(value).as_str()) {
         if let Some((scheme, rest)) = split_scheme(value) {
-            let authority_path = rest.split(['?', '#']).next().unwrap_or(rest);
+            let authority_path = match rest.find(['?', '#']) {
+                Some(end) => &rest[..end],
+                None => rest,
+            };
             return format!("{scheme}://{authority_path}");
         }
     }
@@ -19,19 +22,23 @@ pub(crate) fn stable_provenance_url(value: &str) -> String {
 
 pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) -> Vec<Candidate> {
     if content_type.starts_with("image/") {
-        return vec![Candidate {
+        // The page is the image itself: one candidate, at the first position.
+        let mut direct = Vec::new();
+        direct.push(Candidate {
             url: page_url.to_string(),
             hint: "direct image".to_string(),
-            order: 0,
+            order: direct.len(),
             origin: "direct",
-        }];
+        });
+        return direct;
     }
     let text = String::from_utf8_lossy(body)
         .replace("\\/", "/")
         .replace("\\u0026", "&")
         .replace("\\u003d", "=");
     let mut raw: Vec<Candidate> = Vec::new();
-    let mut order = 0usize;
+    // A candidate's order is its position in the page's listing.
+    let mut order = raw.len();
     extract_tag_candidates(&text, &mut raw, &mut order);
     extract_css_candidates(&text, &mut raw, &mut order);
     extract_embedded_candidates(&text, &mut raw, &mut order);
@@ -41,9 +48,10 @@ pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) ->
         let Some(resolved) = join_url(page_url, &candidate.url) else {
             continue;
         };
-        let has_netloc = split_scheme(&resolved)
-            .map(|(_, rest)| !rest.split('/').next().unwrap_or("").is_empty())
-            .unwrap_or(false);
+        let has_netloc = matches!(
+            split_scheme(&resolved),
+            Some((_, rest)) if rest.split('/').next().is_some_and(|host| !host.is_empty())
+        );
         if !has_netloc {
             continue;
         }
@@ -68,13 +76,19 @@ pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) ->
 }
 
 /// Fetch one candidate and read its container and dimensions from the
-/// header; `None` when it is not a raster image this can read.
+/// header; `None` when it is not a raster image this can read, or when it
+/// could not be fetched, which is said on stderr with the cause.
 pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
-    let fetched = fetch(
+    let fetched = match fetch(
         &candidate.url,
         "image/avif,image/webp,image/png,image/jpeg,image/*",
-    )
-    .ok()?;
+    ) {
+        Ok(fetched) => fetched,
+        Err(error) => {
+            eprintln!("collect-example-images: candidate {} is not read: {error:#}", candidate.url);
+            return None;
+        }
+    };
     let (format, width, height) = parse_image_header(&fetched.data)?;
     Some(Probe {
         format,
@@ -85,10 +99,11 @@ pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
     })
 }
 
-/// The image on `page_url` that shows the product's interface, as Brama
-/// chooses it from every readable image on the page with its address, the
-/// page's own description of it and its dimensions. Brama answering "none"
-/// is refused with that answer, never replaced by a guess.
+/// The image on `page_url` that shows the product's interface, as Brama's
+/// typed decision chooses it from every readable image on the page with its
+/// address, the page's own description of it and its dimensions: a `choice`
+/// among the listed images and none of them. Brama choosing none is refused
+/// with that answer, never replaced by a guess.
 pub(crate) fn select_image(page_url: &str) -> Result<(Candidate, Probe)> {
     let fetched = fetch(page_url, "text/html,application/xhtml+xml,image/*")?;
     let final_page_url = fetched.final_url.clone();
@@ -115,35 +130,41 @@ pub(crate) fn select_image(page_url: &str) -> Result<(Candidate, Probe)> {
             )
         })
         .collect();
-    let answer = crate::commands::brama::ask_json(
-        "collect-example-images asks Brama which image shows the product",
-        "You pick the one image that shows a software product's own interface \
-         (a screenshot of its screens, windows or dashboards) from the images on its \
-         page. Logos, icons, avatars, badges, illustrations and decorative pictures \
-         are not the interface. Return STRICT JSON: {\"index\": number} with the \
-         listed index, or {\"index\": null} when no image shows the interface.",
-        &format!("Page: {final_page_url}\nImages:\n{}", listing.join("\n")),
-    )?;
-    // A null index is Brama's statement that no image shows the interface; an
-    // answer without an index, or with one that is not a number, is a
-    // malformed answer and is said as such with the answer itself.
-    let index = match answer.get("index") {
-        Some(serde_json::Value::Null) => {
-            bail!("Brama found no image of the product's interface on {final_page_url}")
-        }
-        Some(index) => index.as_u64().with_context(|| {
-            format!("Brama's image choice for {final_page_url} is not an index: {answer}")
-        })?,
-        None => bail!("Brama's image choice for {final_page_url} names no index: {answer}"),
-    };
-    let index = usize::try_from(index)
-        .ok()
-        .filter(|index| *index < probed.len())
-        .with_context(|| {
-            format!("Brama chose image {index}, which {final_page_url} does not list")
-        })?;
-    Ok(probed.swap_remove(index))
+    let purpose = "collect-example-images asks Brama which image shows the product";
+    let mut options: Vec<(String, String)> = probed
+        .iter()
+        .enumerate()
+        .map(|(index, (candidate, _))| (format!("{IMAGE}{index}"), candidate.url.clone()))
+        .collect();
+    options.push((
+        NO_INTERFACE.to_string(),
+        "no listed image shows the product's interface".to_string(),
+    ));
+    let mut questions = serde_json::Map::new();
+    questions.insert(
+        INTERFACE.to_string(),
+        crate::commands::brama::choice(
+            "The state lists the images on a software product's page. Which one image shows the \
+             product's own interface (a screenshot of its screens, windows or dashboards)? Logos, \
+             icons, avatars, badges, illustrations and decorative pictures are not the interface.",
+            &options,
+        ),
+    );
+    let state = format!("Page: {final_page_url}\nImages:\n{}", listing.join("\n"));
+    let answers = crate::commands::brama::decide(purpose, &state, &questions)?;
+    let (chosen, _) = crate::commands::brama::chosen(purpose, &answers[INTERFACE], &options)?;
+    // Choosing none is Brama's statement that no image shows the interface.
+    match options.iter().position(|(option, _)| *option == chosen) {
+        Some(index) if index < probed.len() => Ok(probed.swap_remove(index)),
+        _ => bail!("Brama found no image of the product's interface on {final_page_url}"),
+    }
 }
+
+/// The question's key, the prefix of each listed image's option, and the
+/// option of no image showing the interface.
+const INTERFACE: &str = "interface";
+const IMAGE: &str = "image-";
+const NO_INTERFACE: &str = "none";
 
 // ---------------------------------------------------------------------------
 // Storage
@@ -166,10 +187,6 @@ pub(crate) fn slugify_name(name: &str) -> String {
     // The whole slug: two names sharing their first characters would share a
     // cut one and overwrite each other's stored image.
     slug
-}
-
-pub(crate) fn today_utc() -> String {
-    crate::now_iso_utc()[..10].to_string()
 }
 
 pub(crate) fn store_image(
@@ -197,7 +214,7 @@ pub(crate) fn store_image(
         "source_image_url": stable_provenance_url(&probe.final_url),
         "local_path": relative_path,
         "capture_kind": "official-source-image",
-        "captured_at": today_utc(),
+        "captured_at": crate::today_utc(),
         "format": probe.format,
         "width": probe.width,
         "height": probe.height,
