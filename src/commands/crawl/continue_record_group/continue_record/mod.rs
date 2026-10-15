@@ -34,13 +34,16 @@ pub(crate) fn continue_record(
         );
     }
     if host_preflight_is_retryable(host_report) {
-        let diagnostic = host_report.get("diagnostic").cloned().unwrap_or_else(|| {
-            json!({
+        // A retryable refusal that carries no diagnostic of its own is said
+        // to be one; the whole report is kept under `preflight`.
+        let diagnostic = match host_report.get("diagnostic") {
+            Some(diagnostic) => diagnostic.clone(),
+            None => json!({
                 "code": "host_check_retryable",
                 "retryable": true,
-                "message": "a host capability check answered with a refusal it marks retryable",
-            })
-        });
+                "message": "the host capability check marked its refusal retryable and gave no diagnostic; its report is kept under preflight",
+            }),
+        };
         mutate_record(run_id, catalog, record_name, |entry| {
             entry["preflight"] = host_report.clone();
             entry["state"] = json!(failed_host_preflight_record_state(host_report));
@@ -49,20 +52,29 @@ pub(crate) fn continue_record(
         })?;
         return Ok(());
     }
-    let mut manifest: RuntimeManifest =
-        match serde_json::from_value(snapshot.get("manifest").cloned().unwrap_or(Value::Null)) {
-            Ok(manifest) => manifest,
-            Err(error) => {
-                return mark_record_failure(
-                    run_id,
-                    catalog,
-                    record_name,
-                    "unavailable",
-                    "runtime_manifest_invalid",
-                    error.to_string(),
-                );
-            }
-        };
+    let Some(retained) = snapshot.get("manifest").cloned() else {
+        return mark_record_failure(
+            run_id,
+            catalog,
+            record_name,
+            "unavailable",
+            "runtime_manifest_missing",
+            "the record retains no runtime manifest to submit".into(),
+        );
+    };
+    let mut manifest: RuntimeManifest = match serde_json::from_value(retained) {
+        Ok(manifest) => manifest,
+        Err(error) => {
+            return mark_record_failure(
+                run_id,
+                catalog,
+                record_name,
+                "unavailable",
+                "runtime_manifest_invalid",
+                error.to_string(),
+            );
+        }
+    };
 
     let Some(command) = command::prepared_command(
         &snapshot,
@@ -200,6 +212,22 @@ pub(crate) fn continue_record(
             "crawler submission reported artifact or output URIs that are not the canonical attempt coordinates".into(),
         );
     }
+    // A receipt that names no Stado job would leave the record queued with
+    // nothing to follow, so it is refused before it is kept.
+    let Some(job_id) = receipt
+        .get("stado_job_id")
+        .and_then(Value::as_str)
+        .map(str::to_string)
+    else {
+        return mark_record_failure(
+            run_id,
+            catalog,
+            record_name,
+            "submission_failed",
+            "submission_receipt_without_job",
+            "the submission receipt names no Stado job".into(),
+        );
+    };
     if let Err(error) = persist_submission_receipt(
         run_id,
         catalog,
@@ -217,7 +245,7 @@ pub(crate) fn continue_record(
         );
     }
     mutate_record(run_id, catalog, record_name, |entry| {
-        entry["stado_job_id"] = receipt.get("stado_job_id").cloned().unwrap_or(Value::Null);
+        entry["stado_job_id"] = json!(job_id);
         entry["artifact_uri"] = json!(manifest.artifact_uri);
         entry["output_uri"] = json!(manifest.output_uri);
         entry["submission_receipt"] = receipt;
