@@ -15,7 +15,7 @@ pub(crate) fn brama_rank(
         .iter()
         .map(|(url, text)| format!("- {url} | {text}"))
         .collect();
-    let families = serde_json::Value::Array(PageFamily::names()).to_string();
+    let families = serde_json::Value::Array(PageFamily::names()?).to_string();
     let parsed = crate::commands::brama::ask_json(
         "discover asks Brama which pages to keep",
         &format!(
@@ -43,7 +43,7 @@ pub(crate) fn brama_rank(
         if !links.entries.iter().any(|(known, _)| known == url) {
             bail!("Brama chose {url}, which is not one of the discovered links");
         }
-        if PageFamily::named(family).is_none() {
+        if reference_contract::named::<PageFamily>(family).is_none() {
             bail!("Brama placed {url} in family {family:?}, which is not a declared page family");
         }
         if !ranked.iter().any(|(seen, _)| seen == url) {
@@ -117,8 +117,8 @@ pub fn run(rest: &[String]) -> Result<()> {
             "discover: start_url {start_url:?} is not a URL: {error}"
         ))
     })?;
-    let (html_bytes, _) = fetch(start.as_str())?;
-    let links = page_links(&start, &String::from_utf8_lossy(&html_bytes))?;
+    let page = crate::commands::collect_example_images::fetch(start.as_str(), "text/html")?;
+    let links = page_links(&start, &String::from_utf8_lossy(&page.data))?;
     for (target, cause) in &links.unresolved {
         eprintln!("discover: {start_url} links to {target:?}, which does not resolve: {cause}");
     }
@@ -159,7 +159,8 @@ pub fn run(rest: &[String]) -> Result<()> {
 
     for (url, family) in &selected {
         let thumb_url = format!("{THUMB}{url}");
-        let (image_bytes, _) = fetch(&thumb_url)?;
+        let image_bytes =
+            crate::commands::collect_example_images::fetch(&thumb_url, "image/*")?.data;
         // The thumbnail is staged in Spis's own work area, named by its URL's
         // digest, and taken back once the record holds its copy; nothing is
         // written to /tmp and no name is cut.
