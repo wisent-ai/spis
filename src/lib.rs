@@ -27,3 +27,12 @@ pub fn panic_reason(payload: &(dyn std::any::Any + Send)) -> String {
     }
     "its panic payload is not text".to_string()
 }
+
+/// Today's date in UTC (`YYYY-MM-DD`): the date part of [`now_iso_utc`], what
+/// a record says it was measured or scaffolded on.
+pub fn today_utc() -> String {
+    match now_iso_utc().split_once('T') {
+        Some((date, _)) => date.to_string(),
+        None => unreachable!("now_iso_utc writes a date, 'T' and a time"),
+    }
+}

@@ -4,11 +4,22 @@ mod drift;
 mod motion;
 mod states;
 
+/// The record as measured, apart from the date it carries: what decides
+/// whether a measurement changed anything.
+fn without_date(record: &Value) -> Value {
+    let mut record = record.clone();
+    if let Some(object) = record.as_object_mut() {
+        object.remove("measured_at");
+    }
+    record
+}
+
 pub(crate) fn measure_value(
     data: &mut Value,
     base: &Path,
     locate_states: bool,
 ) -> Result<Vec<String>> {
+    let as_found = without_date(data);
     let requirements = super::reference_contract::completeness_requirements(base);
     let provenance_context = ProvenanceContext::from_record(data, base);
     let mut gaps: Vec<String> = provenance_context
@@ -230,7 +241,15 @@ pub(crate) fn measure_value(
                 "partial"
             }),
         );
-        obj.insert("measured_at".into(), json!(TODAY));
+    }
+    // A measurement that changed the record is dated today; one that found it
+    // exactly as it was keeps the date it was last measured on, so measuring
+    // again does not rewrite every record.
+    let changed = without_date(data) != as_found;
+    if let Some(obj) = data.as_object_mut() {
+        if changed || !obj.contains_key("measured_at") {
+            obj.insert("measured_at".into(), json!(crate::today_utc()));
+        }
     }
 
     Ok(gaps)
