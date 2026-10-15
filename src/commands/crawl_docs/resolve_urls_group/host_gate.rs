@@ -152,47 +152,51 @@ pub(crate) struct WorkerOptions {
 
 impl WorkerOptions {
     pub(crate) fn parse(rest: &[String]) -> Result<Self> {
-        let mut options = Self {
-            site: None,
-            all: false,
-            exclude: Vec::new(),
-            // One fetch worker per core the system reports, unless --workers
-            // names another count.
-            workers: std::thread::available_parallelism().map_or(1, usize::from),
-            refresh: false,
-        };
-        let mut i = 0;
-        while i < rest.len() {
-            match rest[i].as_str() {
+        let mut site = None;
+        let mut all = false;
+        let mut exclude = Vec::new();
+        let mut workers: Option<std::num::NonZeroUsize> = None;
+        let mut refresh = false;
+        let mut arguments = rest.iter();
+        while let Some(argument) = arguments.next() {
+            match argument.as_str() {
                 "--site" => {
-                    i += 1;
-                    options.site = Some(
-                        crate::commands::required(rest.get(i), "--site needs a value")?.clone(),
+                    site = Some(
+                        crate::commands::required(arguments.next(), "--site needs a value")?
+                            .clone(),
                     );
                 }
-                "--all" => options.all = true,
-                "--exclude" => {
-                    i += 1;
-                    options.exclude.push(
-                        crate::commands::required(rest.get(i), "--exclude needs a value")?.clone(),
-                    );
-                }
+                "--all" => all = true,
+                "--exclude" => exclude.push(
+                    crate::commands::required(arguments.next(), "--exclude needs a value")?.clone(),
+                ),
+                // A count of zero does not parse as NonZeroUsize, so it is
+                // refused naming --workers and the value given.
                 "--workers" => {
-                    i += 1;
-                    options.workers = crate::commands::parsed(rest.get(i), "--workers")?;
+                    workers = Some(crate::commands::parsed(arguments.next(), "--workers")?)
                 }
-                "--refresh" => options.refresh = true,
+                "--refresh" => refresh = true,
                 other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
             }
-            i += 1;
         }
-        if options.site.is_none() && !options.all {
+        if site.is_none() && !all {
             bail!("pass --site <NN-slug> or --all");
         }
-        if options.workers == 0 {
-            bail!("--workers must name at least one worker");
-        }
-        Ok(options)
+        // One fetch worker per core the system reports, unless --workers
+        // names another count; a core count the system cannot report is
+        // refused rather than guessed.
+        let workers = match workers {
+            Some(workers) => workers,
+            None => std::thread::available_parallelism()
+                .context("--workers is not set and the machine's parallelism is unreadable")?,
+        };
+        Ok(Self {
+            site,
+            all,
+            exclude,
+            workers: workers.get(),
+            refresh,
+        })
     }
 }
 
