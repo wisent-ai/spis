@@ -1,19 +1,27 @@
 use super::*;
 
+/// Collect each example's official visual into `slug`: the
+/// `visual_source_url` the catalog declares, or the example's own page when
+/// it declares none. An example whose visual cannot be fetched is a failure
+/// carrying the fetch's own error; no other source stands in for it.
 pub(crate) fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<Value>)> {
     let source_path = PathBuf::from(slug).join("sources.json");
     let mut catalog: Value = crate::read_json(&source_path)?;
     let mut failures: Vec<Value> = Vec::new();
-    let mut collected = 0usize;
+    let mut collected: Vec<String> = Vec::new();
 
-    let total = catalog
+    let positions: Vec<usize> = catalog
         .get("examples")
         .and_then(Value::as_array)
         .ok_or_else(|| anyhow!("{slug}/sources.json: examples must be an array"))?
-        .len();
+        .iter()
+        .enumerate()
+        .map(|(position, _)| position)
+        .collect();
+    let total = positions.len();
 
-    for position in 0..total {
-        let index = position + 1;
+    for position in positions {
+        let index = position + std::num::NonZeroUsize::MIN.get();
         let example_obj: &mut Map<String, Value> = catalog
             .get_mut("examples")
             .and_then(Value::as_array_mut)
@@ -36,84 +44,44 @@ pub(crate) fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<V
         };
         let (name, source_url) = (field("name")?, field("source_url")?);
 
-        if example_obj
-            .get("visual")
-            .map(Value::is_object)
-            .unwrap_or(false)
-            && !replace
-        {
-            let visual = example_obj
-                .get_mut("visual")
-                .and_then(Value::as_object_mut)
-                .unwrap();
-            visual.insert(
-                "source_page_url".to_string(),
-                Value::String(source_url.clone()),
-            );
-            if let Some(image_url) = visual.get("source_image_url").and_then(Value::as_str) {
-                let normalized = stable_provenance_url(image_url);
+        if !replace {
+            if let Some(visual) = example_obj.get_mut("visual").and_then(Value::as_object_mut) {
                 visual.insert(
-                    "source_image_url".to_string(),
-                    Value::String(normalized.clone()),
+                    "source_page_url".to_string(),
+                    Value::String(source_url.clone()),
                 );
-                write_catalog(&source_path, &catalog)?;
-            }
-            continue;
-        }
-
-        let primary_url = example_obj
-            .get("visual_source_url")
-            .and_then(Value::as_str)
-            .filter(|s| !s.is_empty())
-            .map(str::to_string)
-            .unwrap_or_else(|| source_url.clone());
-        let mut attempt_urls: Vec<(String, &'static str)> =
-            vec![(primary_url.clone(), "official-source-image")];
-        attempt_urls.push((
-            format!("https://image.thum.io/get/width/1400/crop/1000/noanimate/{source_url}"),
-            "remote-page-screenshot",
-        ));
-
-        let mut stored: Option<Value> = None;
-        let mut last_error: Option<String> = None;
-        for (attempt_index, (capture_url, kind)) in attempt_urls.iter().enumerate() {
-            match store_image(Path::new(slug), index, &name, capture_url) {
-                Ok(mut visual) => {
-                    visual["capture_kind"] = json!(kind);
-                    stored = Some(visual);
-                    break;
+                if let Some(image_url) = visual.get("source_image_url").and_then(Value::as_str) {
+                    let normalized = stable_provenance_url(image_url);
+                    visual.insert("source_image_url".to_string(), Value::String(normalized));
+                    write_catalog(&source_path, &catalog)?;
                 }
-                Err(e) => {
-                    last_error = Some(format!("{e:#}"));
-                    // Only fall through to the screenshot service after the
-                    // primary source failed.
-                    let _ = attempt_index;
-                }
+                continue;
             }
         }
 
-        match stored {
-            Some(mut visual) => {
+        // visual_source_url is the catalog's optional pointer at a better
+        // image than the page itself; without it the page is the source.
+        let visual_url = match example_obj.get("visual_source_url").and_then(Value::as_str) {
+            Some(declared) if !declared.is_empty() => declared.to_string(),
+            _ => source_url.clone(),
+        };
+        match store_image(Path::new(slug), index, &name, &visual_url) {
+            Ok(mut visual) => {
+                visual["capture_kind"] = json!("official-source-image");
                 visual["source_page_url"] = Value::String(source_url.clone());
                 example_obj.insert("visual".to_string(), visual);
-                collected += 1;
-                println!("{slug} {index:02}/50 image {name}");
+                println!("{slug} {index}/{total} image {name}");
+                collected.push(name);
             }
-            None => {
-                let error = last_error.unwrap_or_else(|| "unknown failure".to_string());
+            Err(error) => {
+                let error = format!("{error:#}");
+                println!("{slug} {index}/{total} FAILED {name}: {error}");
                 failures.push(json!({
                     "index": index,
                     "name": name,
-                    "url": primary_url,
+                    "url": visual_url,
                     "error": error,
                 }));
-                println!(
-                    "{slug} {index:02}/50 FAILED {name}: {}",
-                    failures
-                        .last()
-                        .and_then(|f| f["error"].as_str())
-                        .unwrap_or("")
-                );
             }
         }
         write_catalog(&source_path, &catalog)?;
@@ -128,7 +96,7 @@ pub(crate) fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<V
     } else if failure_path.exists() {
         std::fs::remove_file(&failure_path)?;
     }
-    Ok((collected, failures))
+    Ok((collected.len(), failures))
 }
 
 pub fn run(rest: &[String]) -> Result<()> {
@@ -162,15 +130,17 @@ pub fn run(rest: &[String]) -> Result<()> {
         selected
     };
 
-    let mut total_failures = 0usize;
+    let mut unresolved: Vec<Value> = Vec::new();
     for slug in chosen {
         let (collected, failures) = collect_catalog(slug, replace)?;
-        total_failures += failures.len();
         println!("{slug}: collected={collected} failures={}", failures.len());
+        unresolved.extend(failures);
     }
-    if total_failures > 0 {
-        eprintln!("image collection left {total_failures} unresolved entries");
-        std::process::exit(1);
+    if !unresolved.is_empty() {
+        bail!(
+            "image collection left {} unresolved entries; each catalog's image-collection-failures.json holds their errors",
+            unresolved.len()
+        );
     }
     Ok(())
 }
