@@ -16,10 +16,7 @@ use serde_json::{json, Value};
 /// the one `answer` tool it is given. `purpose` finishes every refusal, so
 /// the operator learns which command needed the setting.
 pub(crate) fn ask_json(purpose: &str, system: &str, user: &str) -> Result<Value> {
-    let router = std::env::var("MODEL_ROUTER_URL")
-        .ok()
-        .filter(|value| !value.trim().is_empty())
-        .with_context(|| format!("{purpose}: set MODEL_ROUTER_URL to the Brama address"))?;
+    let router = setting("MODEL_ROUTER_URL", purpose, "the Brama address")?;
     let endpoint = if router.contains("/v1") {
         format!("{}/chat/completions", router.trim_end_matches('/'))
     } else {
@@ -27,10 +24,7 @@ pub(crate) fn ask_json(purpose: &str, system: &str, user: &str) -> Result<Value>
     };
     // The model is the router's alias chosen by the operator, never a provider
     // model written into the product (cli.md rule 14).
-    let model = std::env::var("MODEL_ROUTER_MODEL")
-        .ok()
-        .filter(|value| !value.trim().is_empty())
-        .with_context(|| format!("{purpose}: set MODEL_ROUTER_MODEL to a Brama model alias"))?;
+    let model = setting("MODEL_ROUTER_MODEL", purpose, "a Brama model alias")?;
     // The answer comes back as the arguments of one declared tool call, so
     // it is read from the reply's structure, never searched for in prose.
     let payload = json!({
@@ -74,11 +68,16 @@ pub(crate) fn ask_json(purpose: &str, system: &str, user: &str) -> Result<Value>
         }
     };
     let mut body_bytes = Vec::new();
-    response.into_reader().read_to_end(&mut body_bytes)?;
+    response
+        .into_reader()
+        .read_to_end(&mut body_bytes)
+        .with_context(|| format!("{purpose}: Brama's answer from {endpoint} could not be read"))?;
     let body: Value = serde_json::from_slice(&body_bytes)
         .with_context(|| format!("{purpose}: Brama answered with a body that is not JSON"))?;
-    let calls: Vec<&Value> = body["choices"][0]["message"]["tool_calls"]
+    let calls: Vec<&Value> = body["choices"]
         .as_array()
+        .and_then(|choices| choices.first())
+        .and_then(|choice| choice["message"]["tool_calls"].as_array())
         .into_iter()
         .flatten()
         .filter(|call| call["function"]["name"].as_str() == Some(ANSWER_TOOL))
@@ -97,6 +96,18 @@ pub(crate) fn ask_json(purpose: &str, system: &str, user: &str) -> Result<Value>
         Ok(other) => anyhow::bail!("{purpose}: Brama's answer is not an object: {other}"),
         Err(error) => Err(error)
             .with_context(|| format!("{purpose}: Brama's answer is not JSON: {arguments}")),
+    }
+}
+
+/// The value of the setting `variable`. Unset or blank is refused with what
+/// it should hold; a value that is not text is named, not read as unset.
+fn setting(variable: &str, purpose: &str, holds: &str) -> Result<String> {
+    match std::env::var(variable) {
+        Ok(value) if !value.trim().is_empty() => Ok(value),
+        Ok(_) | Err(std::env::VarError::NotPresent) => {
+            anyhow::bail!("{purpose}: set {variable} to {holds}")
+        }
+        Err(error) => anyhow::bail!("{purpose}: {variable} cannot be read: {error}"),
     }
 }
 
