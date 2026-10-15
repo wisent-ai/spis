@@ -220,9 +220,10 @@ pub(crate) fn safe_unconfigured_binding(engine: &str) -> Value {
 }
 
 pub(crate) fn anonymous_probe_account() -> Value {
+    let mode = crate::commands::reference_contract::spelling(&AccountMode::AnonymousReadOnlyProbe);
     json!({
-        "mode": "anonymous-read-only-probe",
-        "account_id": "anonymous-read-only-probe",
+        "mode": mode,
+        "account_id": mode,
         "credential_refs": [],
     })
 }

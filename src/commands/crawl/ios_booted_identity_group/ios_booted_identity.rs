@@ -24,33 +24,30 @@ pub(crate) fn ios_booted_identity(host: &str) -> Result<(RuntimeExecutionIdentit
     {
         for device in values.as_array().into_iter().flatten() {
             if device.get("state").and_then(Value::as_str) == Some("Booted")
-                && device
-                    .get("isAvailable")
-                    .and_then(Value::as_bool)
-                    .unwrap_or(true)
+                && device.get("isAvailable").and_then(Value::as_bool) == Some(true)
             {
                 devices.push(device);
             }
         }
     }
-    if devices.len() != 1 {
+    let [device] = devices.as_slice() else {
         bail!(
             "expected exactly one booted available iOS device, found {}",
             devices.len()
         );
-    }
+    };
     let identity = RuntimeExecutionIdentity {
         host: host.into(),
         observed_hostname: String::new(),
         platform: "ios".into(),
         device_id: Some(
-            devices[0]
+            device
                 .get("udid")
                 .and_then(Value::as_str)
                 .context("booted iOS device has no UDID")?
                 .into(),
         ),
-        device_name: devices[0]
+        device_name: device
             .get("name")
             .and_then(Value::as_str)
             .map(str::to_string),
@@ -78,17 +75,17 @@ pub(crate) fn android_device_identity(
             (state == "device").then_some(serial)
         })
         .collect();
-    if devices.len() != 1 {
+    let [device] = devices.as_slice() else {
         bail!(
             "expected exactly one authorized Android device, found {}",
             devices.len()
         );
-    }
+    };
     let identity = RuntimeExecutionIdentity {
         host: host.into(),
         observed_hostname: String::new(),
         platform: "android".into(),
-        device_id: Some(devices[0].into()),
+        device_id: Some((*device).into()),
         resolved_product_identifier: String::new(),
         device_name: None,
         executable_path: None,
@@ -97,6 +94,20 @@ pub(crate) fn android_device_identity(
         effective_url: None,
     };
     Ok((identity, vec![check]))
+}
+
+/// The SHA-256 digest `shasum -a 256` printed first on `output`, refused
+/// with `what` when it printed none or not one.
+fn printed_sha256(output: &str, what: &str) -> Result<String> {
+    let digest = output
+        .split_whitespace()
+        .next()
+        .with_context(|| format!("hashing the {what} printed no digest"))?
+        .to_ascii_lowercase();
+    if !is_lower_sha256(&digest) {
+        bail!("{what} SHA-256 is invalid");
+    }
+    Ok(digest)
 }
 
 pub(crate) fn ready_output(check: &Value, context: &str) -> Result<String> {
@@ -109,7 +120,7 @@ pub(crate) fn ready_output(check: &Value, context: &str) -> Result<String> {
     let output = check
         .get("stdout")
         .and_then(Value::as_str)
-        .unwrap_or_default()
+        .with_context(|| format!("{context}: the probe reported no stdout"))?
         .trim()
         .to_string();
     if output.is_empty() {
@@ -161,14 +172,7 @@ pub(crate) fn resolve_mobile_install_identity(
         let version = ready_output(&version_check, "resolve installed iOS version")?;
         let digest_check = host_probe(host, &["shasum", "-a", "256", &executable_path]);
         let digest_output = ready_output(&digest_check, "hash installed iOS executable")?;
-        let digest = digest_output
-            .split_whitespace()
-            .next()
-            .unwrap_or_default()
-            .to_ascii_lowercase();
-        if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-            bail!("installed iOS executable SHA-256 is invalid");
-        }
+        let digest = printed_sha256(&digest_output, "installed iOS executable")?;
         identity.executable_path = Some(executable_path);
         identity.product_version = Some(version);
         identity.executable_sha256 = Some(digest);
@@ -196,14 +200,7 @@ pub(crate) fn resolve_mobile_install_identity(
         &["adb", "-s", device, "shell", "sha256sum", &package_path],
     );
     let digest_output = ready_output(&digest_check, "hash installed Android package")?;
-    let digest = digest_output
-        .split_whitespace()
-        .next()
-        .unwrap_or_default()
-        .to_ascii_lowercase();
-    if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-        bail!("installed Android package SHA-256 is invalid");
-    }
+    let digest = printed_sha256(&digest_output, "installed Android package")?;
     identity.executable_path = Some(package_path);
     identity.product_version = Some(version);
     identity.executable_sha256 = Some(digest);
@@ -215,7 +212,7 @@ pub(crate) fn resolve_terminal_identity(
     host: &str,
 ) -> Result<(RuntimeExecutionIdentity, Vec<Value>)> {
     let declared_identifier = manifest.runtime_product.identifier.clone();
-    let candidates = if manifest.runtime_product.kind == "tui-slug" {
+    let candidates = if ProductKind::of(&manifest.runtime_product.kind)? == ProductKind::TuiSlug {
         crate::commands::crawl_tui::binary_candidates(&manifest.runtime_product.identifier)
     } else {
         vec![manifest.runtime_product.identifier.clone()]
@@ -228,8 +225,8 @@ pub(crate) fn resolve_terminal_identity(
             for path in check
                 .get("stdout")
                 .and_then(Value::as_str)
-                .unwrap_or_default()
-                .lines()
+                .into_iter()
+                .flat_map(str::lines)
                 .map(str::trim)
                 .filter(|path| path.starts_with('/') && !path.chars().any(char::is_whitespace))
             {
@@ -238,31 +235,28 @@ pub(crate) fn resolve_terminal_identity(
         }
         checks.push(check);
     }
-    if resolved.len() != 1 {
+    let mut resolved = resolved.into_iter();
+    let (Some(path), None) = (resolved.next(), resolved.next()) else {
         bail!(
-            "expected one unique executable for {}, found {}",
-            manifest.runtime_product.identifier,
-            resolved.len()
+            "expected one unique executable for {}",
+            manifest.runtime_product.identifier
         );
-    }
-    let path = resolved.into_iter().next().expect("one executable");
+    };
     let digest_check = host_probe(host, &["shasum", "-a", "256", &path]);
     let digest_output = ready_output(&digest_check, "hash exact executable")?;
-    let digest = digest_output.split_whitespace().next().unwrap_or_default();
-    if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-        bail!("exact executable SHA-256 is invalid");
-    }
+    let digest = printed_sha256(&digest_output, "exact executable")?;
     checks.push(digest_check);
     let binary = Path::new(&path)
         .file_name()
         .and_then(|value| value.to_str())
         .context("resolved executable path has no UTF-8 filename")?
         .to_string();
-    manifest.runtime_product.kind = if manifest.engine == "tui" {
-        "tui-binary".into()
+    let resolved_kind = if Engine::of(&manifest.engine)? == Engine::Tui {
+        ProductKind::TuiBinary
     } else {
-        "cli-binary".into()
+        ProductKind::CliBinary
     };
+    manifest.runtime_product.kind = resolved_kind.name();
     manifest.runtime_product.identifier = binary;
     manifest.runtime_product.identity_source =
         format!("typed isolated host path resolution: {path}; sha256={digest}");

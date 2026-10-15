@@ -35,7 +35,9 @@ pub(crate) fn runtime_binding(
     .context("record account declaration is invalid")?;
     match AccountMode::of(&account.mode)? {
         AccountMode::AnonymousReadOnlyProbe => {
-            if account.account_id.as_deref() != Some("anonymous-read-only-probe")
+            let probe =
+                crate::commands::reference_contract::spelling(&AccountMode::AnonymousReadOnlyProbe);
+            if account.account_id.as_deref() != Some(probe.as_str())
                 || !account.credential_refs.is_empty()
             {
                 bail!("{catalog}/{slug}: anonymous read-only probe mode must be explicit and cannot carry credentials or an account claim");
