@@ -1,4 +1,5 @@
 use super::*;
+use std::num::NonZeroUsize;
 
 /// Measure every state entry in place and, when asked, locate each one as a frame of the primary motion.
 pub(super) fn measure_states(
@@ -16,12 +17,14 @@ pub(super) fn measure_states(
     let mut motion_frames_cache: Option<Vec<Signature>> = None;
 
     // ---- states ----
-    let states_len = data
-        .get("states")
-        .and_then(|v| v.as_array())
-        .map(|a| a.len())
-        .unwrap_or(0);
-    for idx in 0..states_len {
+    // A record without a states list holds no states.
+    let positions: Vec<usize> = match data.get("states").and_then(Value::as_array) {
+        Some(states) => states.iter().enumerate().map(|(index, _)| index).collect(),
+        None => Vec::new(),
+    };
+    let states_count = positions.len();
+    // States are named for people from one, in the order the record lists them.
+    for (idx, ordinal) in positions.into_iter().zip(NonZeroUsize::MIN.get()..) {
         let entry = data
             .get_mut("states")
             .and_then(|v| v.as_array_mut())
@@ -43,33 +46,18 @@ pub(super) fn measure_states(
         {
             gaps.push(format!("state sha256 mismatch: {local_path}"));
         }
-        obj.insert(
-            "sha256".into(),
-            probe
-                .sha256
-                .clone()
-                .map(Value::String)
-                .unwrap_or(Value::Null),
-        );
-        obj.insert(
-            "bytes".into(),
-            probe.bytes.map(|b| json!(b)).unwrap_or(Value::Null),
-        );
-        obj.insert(
-            "width".into(),
-            probe.width.map(|w| json!(w)).unwrap_or(Value::Null),
-        );
-        obj.insert(
-            "height".into(),
-            probe.height.map(|h| json!(h)).unwrap_or(Value::Null),
-        );
+        // A measurement the probe did not produce is recorded as null.
+        obj.insert("sha256".into(), json!(probe.sha256));
+        obj.insert("bytes".into(), json!(probe.bytes));
+        obj.insert("width".into(), json!(probe.width));
+        obj.insert("height".into(), json!(probe.height));
 
         obj.remove("state_name");
         obj.remove("source_relationship");
         obj.remove("source_motion_path");
         obj.remove("source_match");
         if !truthy(obj.get("name")) {
-            obj.insert("name".into(), json!(format!("Observed state {}", idx + 1)));
+            obj.insert("name".into(), json!(format!("Observed state {ordinal}")));
         }
         if !semantic_name_verified {
             gaps.push(format!(
@@ -88,11 +76,13 @@ pub(super) fn measure_states(
                     let diff = round4(matched.mean_abs_diff);
                     let tolerance = super::drift::frame_drift(frames);
                     if tolerance.is_some_and(|tolerance| diff <= tolerance) {
-                        let rel = motion
-                            .strip_prefix(base)
-                            .unwrap_or(motion)
-                            .to_string_lossy()
-                            .to_string();
+                        // A motion outside the record's directory is named by
+                        // its full path.
+                        let shown = match motion.strip_prefix(base) {
+                            Ok(relative) => relative,
+                            Err(_outside) => motion.as_path(),
+                        };
+                        let rel = shown.to_string_lossy().to_string();
                         let ts = round3(matched.timestamp_seconds);
                         let mut source_match = matched.record();
                         if let Some(details) = source_match.as_object_mut() {
@@ -129,11 +119,6 @@ pub(super) fn measure_states(
         }
     }
 
-    let states_count = data
-        .get("states")
-        .and_then(|v| v.as_array())
-        .map(|a| a.len())
-        .unwrap_or(0);
     if states_count < requirements.min_states {
         gaps.push(format!(
             "fewer than {} states for {} profile",
