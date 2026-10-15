@@ -84,12 +84,16 @@ pub(crate) fn rearm_record_attempt(
             });
             return Ok(());
         }
-        let mut manifest: RuntimeManifest =
-            serde_json::from_value(entry.get("manifest").cloned().unwrap_or(Value::Null))
-                .context("terminal record retains no typed runtime manifest to re-arm")?;
+        let retained = entry
+            .get("manifest")
+            .cloned()
+            .context("terminal record retains no runtime manifest to re-arm")?;
+        let mut manifest: RuntimeManifest = serde_json::from_value(retained)
+            .context("terminal record's retained manifest is not a typed runtime manifest")?;
         // The next attempt is the first number after this one.
-        manifest.attempt = (manifest.attempt..=u32::MAX)
-            .find(|next| *next > manifest.attempt)
+        manifest.attempt = manifest
+            .attempt
+            .checked_add(std::num::NonZeroU32::MIN.get())
             .context("record has exhausted the attempt counter")?;
         manifest.execution_identity = None;
         let reference = reference_path(&manifest.catalog, &manifest.record)?;
