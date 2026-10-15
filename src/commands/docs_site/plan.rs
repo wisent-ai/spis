@@ -30,10 +30,10 @@ pub(crate) fn plan(version: &str) -> Value {
                 "title": "Spis overview",
                 "description": "What Spis is, and the two surfaces that drive it.",
                 "sections": [
-                    { "title": "What Spis is", "paragraphs": [authored("what-spis-is")] },
+                    { "title": "What Spis is", "paragraphs": [WHAT_SPIS_IS] },
                     {
                         "title": "Two surfaces, one set of operations",
-                        "paragraphs": [authored("parity")],
+                        "paragraphs": [PARITY],
                     },
                 ],
             },
@@ -141,7 +141,7 @@ pub(crate) fn docs_payload(plan: &Value) -> Result<Value> {
     let published_pages = pages
         .iter()
         .filter(|page| page["slug"] == "corpus-adoption");
-    let mut rendered_pages = Vec::with_capacity(1);
+    let mut rendered_pages = Vec::new();
     for page in published_pages {
         let sections = page
             .get("sections")

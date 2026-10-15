@@ -9,29 +9,17 @@ pub(crate) const DOCS_PLAN: &str = "docs-plan.json";
 /// What the product declares about its own surfaces.
 pub(crate) const DOCS_BRIEF: &str = "docs-brief.json";
 
-/// Editorial prose, authored once and carried through unchanged.
-///
-/// Kept apart from everything else in this file because it is the only part
-/// that is not derived. A generator that invented intent would be exactly the
-/// defect this replaces.
-pub(crate) const AUTHORED_SECTIONS: &[(&str, &str)] = &[
-    (
-        "what-spis-is",
-        "Spis is an evidence-grade reference corpus: every record carries its source, hashes, provenance class, and measured state. A record exists only with its evidence, and a missing observation is recorded as an evidence gap rather than promoted into prose.",
-    ),
-    (
-        "parity",
-        "Every operation below is available from both surfaces. The command line and the desktop application are two ways to reach the same commands, not a full product and a viewer: if a command can do something, the application can too.",
-    ),
-];
+// Editorial prose, authored once and carried through unchanged. Kept apart
+// from everything else in this file because it is the only part that is not
+// derived: a generator that invented intent would be exactly the defect this
+// replaces. Each section is its own constant, so a page cannot ask for one
+// that is not written and render it empty.
 
-pub(crate) fn authored(slug: &str) -> &'static str {
-    AUTHORED_SECTIONS
-        .iter()
-        .find(|(name, _)| *name == slug)
-        .map(|(_, text)| *text)
-        .unwrap_or_default()
-}
+/// What Spis is, for the overview page.
+pub(crate) const WHAT_SPIS_IS: &str = "Spis is an evidence-grade reference corpus: every record carries its source, hashes, provenance class, and measured state. A record exists only with its evidence, and a missing observation is recorded as an evidence gap rather than promoted into prose.";
+
+/// That the command line and the desktop application reach the same commands.
+pub(crate) const PARITY: &str = "Every operation below is available from both surfaces. The command line and the desktop application are two ways to reach the same commands, not a full product and a viewer: if a command can do something, the application can too.";
 
 /// One documented command, straight off the shipped dispatch table.
 pub(crate) fn command_bullets() -> Vec<String> {

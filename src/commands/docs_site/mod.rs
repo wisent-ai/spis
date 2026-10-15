@@ -34,7 +34,7 @@
 //! command rather than a sentence nobody re-read.
 //!
 //! Content that is genuinely editorial (what Spis is for, the words it uses)
-//! stays authored, in [`AUTHORED_SECTIONS`], and is carried through verbatim.
+//! stays authored, in [`WHAT_SPIS_IS`] and [`PARITY`], and is carried through verbatim.
 //! The distinction is deliberate: prose about intent is not derivable, and
 //! pretending to derive it would be the same lie one level up.
 
