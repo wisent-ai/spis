@@ -26,7 +26,10 @@ pub(super) fn measure_motion(
         let Some(obj) = entry.as_object_mut() else {
             continue;
         };
-        let local_path = entry_local_path(obj);
+        let Some(local_path) = entry_local_path(obj) else {
+            gaps.push(format!("motion[{idx}] names no local_path"));
+            continue;
+        };
         let local = base.join(&local_path);
         let probe = probe_media(&local)?;
         let declared_kind = obj

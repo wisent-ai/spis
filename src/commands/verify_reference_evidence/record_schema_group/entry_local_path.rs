@@ -1,11 +1,20 @@
 use super::*;
+use std::num::NonZeroUsize;
 
-pub(crate) fn entry_local_path(entry: &Map<String, Value>) -> String {
+/// The file an evidence entry names, or nothing when it names none; the caller
+/// reports such an entry rather than probing the record's directory.
+pub(crate) fn entry_local_path(entry: &Map<String, Value>) -> Option<String> {
     entry
         .get("local_path")
-        .and_then(|v| v.as_str())
-        .unwrap_or("")
-        .to_string()
+        .and_then(Value::as_str)
+        .filter(|path| !path.is_empty())
+        .map(str::to_string)
+}
+
+/// The name a state carries when nothing verified names it: its place in the
+/// record, counted from one.
+pub(crate) fn generic_state_name(ordinal: usize) -> String {
+    format!("Observed state {ordinal}")
 }
 
 /// Measurement date recorded by this migration release.
@@ -33,11 +42,11 @@ pub(crate) fn demote_unsupported_semantics(
         .collect();
     let mut migration_gaps = Vec::new();
 
-    let interactions = data
-        .get("interactions")
-        .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default();
+    // A record without an interactions list has none to verify.
+    let interactions = match data.get("interactions").and_then(Value::as_array) {
+        Some(interactions) => interactions.clone(),
+        None => Vec::new(),
+    };
     let mut verified_interactions = Vec::new();
     for (index, interaction) in interactions.into_iter().enumerate() {
         if observation_supported(&interaction, context) {
@@ -51,30 +60,30 @@ pub(crate) fn demote_unsupported_semantics(
         }
     }
 
-    let mut states = data
-        .get("states")
-        .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default();
-    for (index, state) in states.iter_mut().enumerate() {
+    let mut states = match data.get("states").and_then(Value::as_array) {
+        Some(states) => states.clone(),
+        None => Vec::new(),
+    };
+    for ((index, state), ordinal) in states.iter_mut().enumerate().zip(NonZeroUsize::MIN.get()..) {
         if observation_supported(state, context) {
             continue;
         }
         let name_field = format!("states[{index}].name");
-        let generic_name = format!("Observed state {}", index + 1);
-        let existing_name = state.get("name").cloned().unwrap_or(Value::Null);
+        let generic_name = generic_state_name(ordinal);
+        let existing_name = state.get("name").cloned();
         let name_preserved = notes
             .iter()
             .any(|note| note.get("field").and_then(Value::as_str) == Some(&name_field));
         if !name_preserved
             && existing_name
-                .as_str()
+                .as_ref()
+                .and_then(Value::as_str)
                 .is_some_and(|name| name != generic_name)
         {
             notes.push(unverified_note(
                 name_field,
                 "semantic state name is not proven by pixels or digest and lacks independently verified observation provenance",
-                existing_name,
+                json!(existing_name),
             ));
         }
         let relationship_field = format!("states[{index}].source_relationship");
@@ -104,37 +113,38 @@ pub(crate) fn demote_unsupported_semantics(
         }
     }
 
-    let journey = data.get("journey").cloned().unwrap_or(Value::Null);
-    let journey_supported = journey.is_object()
-        && observation_supported(&journey, context)
-        && journey
-            .get("steps")
-            .and_then(Value::as_array)
-            .is_some_and(|steps| {
-                !steps.is_empty()
-                    && steps
-                        .iter()
-                        .all(|step| observation_supported(step, context))
-            });
-    let verified_journey = if journey_supported {
-        journey
-    } else {
-        if !journey.is_null() {
+    let journey = data.get("journey").cloned();
+    let journey_supported = journey.as_ref().is_some_and(|journey| {
+        journey.is_object()
+            && observation_supported(journey, context)
+            && journey
+                .get("steps")
+                .and_then(Value::as_array)
+                .is_some_and(|steps| {
+                    !steps.is_empty()
+                        && steps
+                            .iter()
+                            .all(|step| observation_supported(step, context))
+                })
+    });
+    let verified_journey = match journey {
+        Some(journey) if journey_supported => journey,
+        Some(Value::Null) | None => Value::Null,
+        Some(journey) => {
             notes.push(unverified_note(
                 "journey".to_string(),
                 "canonical journey and every step require typed provenance linked to verified raw evidence",
                 journey,
             ));
+            Value::Null
         }
-        Value::Null
     };
 
-    let motion_analysis = data.get("motion_analysis").cloned().unwrap_or(Value::Null);
-    let was_analysis_array = motion_analysis.is_array();
-    let analysis_items = match motion_analysis {
-        Value::Array(items) => items,
-        Value::Null => Vec::new(),
-        item => vec![item],
+    let was_analysis_array = data.get("motion_analysis").is_some_and(Value::is_array);
+    let analysis_items = match data.get("motion_analysis").cloned() {
+        Some(Value::Array(items)) => items,
+        Some(Value::Null) | None => Vec::new(),
+        Some(item) => vec![item],
     };
     let mut verified_analysis = Vec::new();
     for (index, analysis) in analysis_items.into_iter().enumerate() {
@@ -153,19 +163,23 @@ pub(crate) fn demote_unsupported_semantics(
     } else if was_analysis_array {
         Value::Array(verified_analysis)
     } else {
-        verified_analysis.into_iter().next().unwrap_or(Value::Null)
+        // A single analysis was read into exactly one entry above.
+        match verified_analysis.into_iter().next() {
+            Some(analysis) => analysis,
+            None => unreachable!("a non-empty list has a first entry"),
+        }
     };
 
-    let mut accessibility = data
-        .get("accessibility")
-        .cloned()
-        .filter(Value::is_object)
-        .unwrap_or_else(|| json!({"measured": false, "observations": [], "unknowns": []}));
-    let observations = accessibility
-        .get("observations")
-        .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default();
+    // A record without an accessibility section starts from the contract's
+    // empty one: not measured, no observations, no unknowns.
+    let mut accessibility = match data.get("accessibility").filter(|value| value.is_object()) {
+        Some(accessibility) => accessibility.clone(),
+        None => json!({"measured": false, "observations": [], "unknowns": []}),
+    };
+    let observations = match accessibility.get("observations").and_then(Value::as_array) {
+        Some(observations) => observations.clone(),
+        None => Vec::new(),
+    };
     let mut verified_accessibility = Vec::new();
     for (index, observation) in observations.into_iter().enumerate() {
         let statement_present = observation

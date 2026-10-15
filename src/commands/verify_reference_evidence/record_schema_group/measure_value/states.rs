@@ -34,7 +34,10 @@ pub(super) fn measure_states(
         let Some(obj) = entry.as_object_mut() else {
             continue;
         };
-        let local_path = entry_local_path(obj);
+        let Some(local_path) = entry_local_path(obj) else {
+            gaps.push(format!("states[{idx}] names no local_path"));
+            continue;
+        };
         let local = base.join(&local_path);
         let probe = probe_media(&local)?;
         if !probe.exists {
@@ -57,7 +60,7 @@ pub(super) fn measure_states(
         obj.remove("source_motion_path");
         obj.remove("source_match");
         if !truthy(obj.get("name")) {
-            obj.insert("name".into(), json!(format!("Observed state {ordinal}")));
+            obj.insert("name".into(), json!(generic_state_name(ordinal)));
         }
         if !semantic_name_verified {
             gaps.push(format!(
