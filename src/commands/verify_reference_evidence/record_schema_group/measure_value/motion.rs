@@ -1,4 +1,5 @@
 use super::*;
+use crate::commands::reference_contract::Provenance;
 
 /// Measure every motion entry in place and return the first non-still, verified motion: the
 /// anchor the states are matched against.
@@ -11,12 +12,12 @@ pub(super) fn measure_motion(
 ) -> Result<Option<PathBuf>> {
     // First non-still measured motion becomes the anchor for state matching.
     let mut primary_motion: Option<PathBuf> = None;
-    let motion_len = data
-        .get("motion")
-        .and_then(|v| v.as_array())
-        .map(|a| a.len())
-        .unwrap_or(0);
-    for idx in 0..motion_len {
+    // A record without motion has nothing to measure and no anchor.
+    let positions: Vec<usize> = match data.get("motion").and_then(Value::as_array) {
+        Some(motion) => motion.iter().enumerate().map(|(index, _)| index).collect(),
+        None => return Ok(None),
+    };
+    for idx in positions {
         let entry = data
             .get_mut("motion")
             .and_then(|v| v.as_array_mut())
@@ -33,20 +34,11 @@ pub(super) fn measure_motion(
             .and_then(|v| v.as_str())
             .map(str::to_string);
         let canonical = canonical_motion_kind(declared_kind.as_deref());
-        obj.insert(
-            "declared_media_kind".into(),
-            declared_kind
-                .clone()
-                .map(Value::String)
-                .unwrap_or(Value::Null),
-        );
+        obj.insert("declared_media_kind".into(), json!(declared_kind));
         if !probe.exists {
             // The file is absent: its kind is what the record declared, or
             // none; "missing" is not a media kind, the gap below says it.
-            obj.insert(
-                "media_kind".into(),
-                canonical.clone().map_or(Value::Null, Value::String),
-            );
+            obj.insert("media_kind".into(), json!(canonical));
             obj.insert("measured".into(), json!(false));
             gaps.push(format!("motion file missing: {local_path}"));
             continue;
@@ -59,37 +51,13 @@ pub(super) fn measure_motion(
         {
             gaps.push(format!("motion sha256 mismatch: {local_path}"));
         }
-        obj.insert(
-            "sha256".into(),
-            probe
-                .sha256
-                .clone()
-                .map(Value::String)
-                .unwrap_or(Value::Null),
-        );
-        obj.insert(
-            "bytes".into(),
-            probe.bytes.map(|b| json!(b)).unwrap_or(Value::Null),
-        );
-        obj.insert(
-            "width".into(),
-            probe.width.map(|w| json!(w)).unwrap_or(Value::Null),
-        );
-        obj.insert(
-            "height".into(),
-            probe.height.map(|h| json!(h)).unwrap_or(Value::Null),
-        );
-        obj.insert(
-            "duration_seconds".into(),
-            probe
-                .duration_seconds
-                .map(|d| json!(d))
-                .unwrap_or(Value::Null),
-        );
-        obj.insert(
-            "frame_count".into(),
-            probe.frame_count.map(|f| json!(f)).unwrap_or(Value::Null),
-        );
+        // A measurement the probe did not produce is recorded as null.
+        obj.insert("sha256".into(), json!(probe.sha256));
+        obj.insert("bytes".into(), json!(probe.bytes));
+        obj.insert("width".into(), json!(probe.width));
+        obj.insert("height".into(), json!(probe.height));
+        obj.insert("duration_seconds".into(), json!(probe.duration_seconds));
+        obj.insert("frame_count".into(), json!(probe.frame_count));
         obj.insert(
             "measurement_method".into(),
             json!(if kind.as_deref() == Some("terminal-cast") {
@@ -115,14 +83,19 @@ pub(super) fn measure_motion(
             )),
             Some(_) => {}
         }
-        let provenance = provenance_class(&Value::Object(obj.clone()), &provenance_context);
-        obj.insert("provenance_class".into(), json!(provenance));
-        if provenance == "unverified-source-media" {
+        let value = Value::Object(obj.clone());
+        obj.insert(
+            "provenance_class".into(),
+            json!(provenance_class(&value, &provenance_context)),
+        );
+        let (provenance, unverified_because) = provenance_context.verified.provenance(&value);
+        let verified = provenance != Provenance::UnverifiedSourceMedia;
+        if let Some(reason) = unverified_because {
             gaps.push(format!(
-                "motion provenance unverified: {local_path} has no typed verified crawl or owner observation"
+                "motion provenance unverified: {local_path} has no typed verified crawl or owner observation: {reason}"
             ));
         }
-        if !is_still && provenance != "unverified-source-media" && primary_motion.is_none() {
+        if !is_still && verified && primary_motion.is_none() {
             primary_motion = Some(local);
         }
     }

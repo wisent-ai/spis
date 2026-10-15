@@ -1,4 +1,5 @@
 use super::*;
+use crate::commands::reference_contract::Provenance;
 
 /// A record or observation link to independently verified evidence.
 ///
@@ -216,10 +217,24 @@ impl VerifiedProvenanceSet {
         self.retained_member(value)
     }
 
-    pub fn provenance_class(&self, value: &Value) -> &'static str {
+    /// The provenance a value carries: Weles-signed browser evidence exactly
+    /// when this verified set supports it, and otherwise unverified source
+    /// media together with the reason `supports_value` gave.
+    pub fn provenance(&self, value: &Value) -> (Provenance, Option<String>) {
         match self.supports_value(value) {
-            Ok(()) => "weles-signed-browser-evidence",
-            Err(_) => "unverified-source-media",
+            Ok(()) => (Provenance::WelesSignedBrowserEvidence, None),
+            Err(reason) => (Provenance::UnverifiedSourceMedia, Some(reason)),
+        }
+    }
+
+    /// The provenance class as a record spells it.
+    pub fn provenance_class(&self, value: &Value) -> &'static str {
+        match self.provenance(value).0 {
+            Provenance::WelesSignedBrowserEvidence => "weles-signed-browser-evidence",
+            Provenance::UnverifiedSourceMedia => "unverified-source-media",
+            other => unreachable!(
+                "provenance() answers Weles evidence or unverified media, not {other:?}"
+            ),
         }
     }
 }
