@@ -38,9 +38,8 @@ pub(crate) fn revision() -> Result<String> {
 /// The program a CLI record runs, read from its `NN-<product>` slug: the
 /// product part names the program unless the catalog spells it otherwise.
 pub(crate) fn binary_for(slug: &str) -> Result<String> {
-    let Some((_, tail)) = slug.split_once('-') else {
-        bail!("CLI record {slug} is not named NN-<product>, so its program cannot be read from it");
-    };
+    let tail = crate::commands::reference_contract::ordinal_slug(slug)
+        .with_context(|| format!("CLI record {slug}: its program cannot be read from its name"))?;
     Ok(match tail {
         "github-cli-gh" => "gh",
         "gitlab-cli-glab" => "glab",

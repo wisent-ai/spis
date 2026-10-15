@@ -10,6 +10,8 @@ use crate::commands::generate_example_catalogs;
 
 mod canonical_timing_class;
 mod catalog_schema;
+mod ordinal_name;
 
 pub use canonical_timing_class::*;
 pub use catalog_schema::*;
+pub use ordinal_name::*;

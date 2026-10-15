@@ -25,11 +25,7 @@ pub(crate) fn write_cast(
     );
     let mut out = String::from(&header);
     for (stamp, text) in events {
-        out.push_str(&format!(
-            "[{}, \"o\", {}]\n",
-            g(round_n(*stamp, 6)),
-            json_str(text)
-        ));
+        out.push_str(&format!("[{}, \"o\", {}]\n", g(*stamp), json_str(text)));
     }
     std::fs::write(path, out).with_context(|| format!("write {}", path.display()))
 }
@@ -58,7 +54,14 @@ pub(crate) fn write_media(run: &Run, ref_dir: &Path) -> Result<Value> {
     );
     write_cast(&cast_path, events, &title, run.wall_start)?;
     let (size, sha) = digest(&cast_path)?;
-    let duration = round_n(events.iter().map(|(t, _)| *t).fold(0.0f64, f64::max), 3);
+    // Events are appended as the session reads them, so the last one is the
+    // cast's length; a capture with no output has no cast to describe.
+    let Some(&(duration, _)) = events.last() else {
+        bail!(
+            "{}: the capture recorded no terminal output, so its cast has no duration",
+            run.product.name
+        );
+    };
 
     let mut states = Vec::new();
     for (kind, filename, label) in STATE_PLAN {
@@ -67,10 +70,16 @@ pub(crate) fn write_media(run: &Run, ref_dir: &Path) -> Result<Value> {
         let path = media_dir.join(format!("{filename}.png"));
         let (width, height) = render_state(&path, events, index)?;
         let (st_size, st_sha) = digest(&path)?;
-        let ts = events.get(index).map(|(t, _)| *t).unwrap_or(duration);
+        let ts = events.get(index).map(|(t, _)| *t).ok_or_else(|| {
+            anyhow!(
+                "{}: the '{label}' step names cast event {index}, but the cast has {} events",
+                run.product.name,
+                events.len()
+            )
+        })?;
         states.push(json!({
             "label": format!("{}: {label}", run.product.name),
-            "state_name": filename.split_once('-').map(|(_, rest)| rest).unwrap_or(filename),
+            "state_name": crate::commands::reference_contract::ordinal_slug(filename)?,
             "local_path": format!("media/{filename}.png"),
             "event_index": index,
             "timestamp_seconds": ts,
@@ -105,9 +114,13 @@ pub(crate) fn write_media(run: &Run, ref_dir: &Path) -> Result<Value> {
 }
 
 pub(crate) fn write_reference(run: &Run, measured: &Value) -> Result<(PathBuf, Value)> {
-    let ref_dir = catalog_dir()
-        .join("references")
-        .join(format!("{:02}-{}", run.index, run.product.slug));
+    let ref_dir =
+        catalog_dir()
+            .join("references")
+            .join(crate::commands::reference_contract::ordinal_name(
+                run.index,
+                &run.product.slug,
+            ));
     std::fs::create_dir_all(&ref_dir)?;
     let media = write_media(run, &ref_dir)?;
     let record = build_record(run, measured, &media)?;
