@@ -158,17 +158,23 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
 
     for (url, family) in &selected {
-        let thumb_url = format!("{THUMB}{url}");
-        let image_bytes =
-            crate::commands::collect_example_images::fetch(&thumb_url, "image/*")?.data;
-        // The thumbnail is staged in Spis's own work area, named by its URL's
+        // The record's visual is the page's own image of the interface, as
+        // collect-example-images chooses it; a page without one is refused
+        // with that cause, never rendered by a third-party screenshot service.
+        let (_, probe) = crate::commands::collect_example_images::select_image(url)
+            .with_context(|| format!("discover: {url} gives no image of its interface"))?;
+        // The image is staged in Spis's own work area, named by its URL's
         // digest, and taken back once the record holds its copy; nothing is
         // written to /tmp and no name is cut.
         let staging = crate::commands::capture_widths::work_root()?.join("discover");
         std::fs::create_dir_all(&staging)
             .with_context(|| format!("create {}", staging.display()))?;
-        let tmp = staging.join(format!("{}.png", crate::sha256_hex(url.as_bytes())));
-        std::fs::write(&tmp, &image_bytes).with_context(|| format!("write {}", tmp.display()))?;
+        let tmp = staging.join(format!(
+            "{}.{}",
+            crate::sha256_hex(url.as_bytes()),
+            probe.format
+        ));
+        std::fs::write(&tmp, &probe.payload).with_context(|| format!("write {}", tmp.display()))?;
         // A page is named by its last path segment; the site's root page,
         // which has none, by its host.
         let parsed =

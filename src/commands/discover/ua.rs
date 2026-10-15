@@ -1,7 +1,5 @@
 use super::*;
 
-pub(crate) const THUMB: &str = "https://image.thum.io/get/width/1400/crop/1000/noanimate/";
-
 /// The families Brama may sort a discovered page into: the answer vocabulary
 /// of `brama_rank`'s judgement, never matched against page text.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
