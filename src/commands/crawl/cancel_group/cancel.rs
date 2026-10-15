@@ -4,35 +4,31 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
     let mut run_id = None;
     let mut selected_record = None;
     let mut reason = None;
-    let mut index = 0;
-    while index < rest.len() {
-        match rest[index].as_str() {
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--run" => {
-                index += 1;
                 run_id = Some(
-                    crate::commands::required(rest.get(index), "--run needs a value")?.clone(),
+                    crate::commands::required(arguments.next(), "--run needs a value")?.clone(),
                 );
             }
             "--record" => {
-                index += 1;
                 selected_record = Some(
-                    crate::commands::required(rest.get(index), "--record needs a value")?.clone(),
+                    crate::commands::required(arguments.next(), "--record needs a value")?.clone(),
                 );
             }
             "--reason" => {
-                index += 1;
                 reason = Some(
-                    crate::commands::required(rest.get(index), "--reason needs a value")?.clone(),
+                    crate::commands::required(arguments.next(), "--reason needs a value")?.clone(),
                 );
             }
             value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
-        index += 1;
     }
     let run_id = run_id.context("--run is required")?;
     let reason = reason
-        .filter(|value| !value.trim().is_empty() && value.len() <= 1024)
-        .context("--reason must be nonempty and at most 1024 bytes")?;
+        .filter(|value| !value.trim().is_empty())
+        .context("--reason must name why the crawl is cancelled")?;
     {
         let _guard = RunMutationGuard::acquire(&run_id)?;
         let mut run = load(Some(&run_id))?;
@@ -56,7 +52,7 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
     if targets.is_empty() {
         bail!("no crawl record matches the cancellation selection");
     }
-    if selected_record.is_some() && targets.len() != 1 {
+    if selected_record.is_some() && !matches!(targets.as_slice(), [_]) {
         bail!("--record must resolve to exactly one retained crawl record");
     }
     for (catalog_name, record_name) in targets {
@@ -91,11 +87,11 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
             .and_then(|value| value.get("stado_run_id"))
             .and_then(Value::as_str)
             .map(str::to_string);
+        // A manifest that names no record_key leaves it null in the intent.
         let record_key = manifest
             .as_ref()
             .and_then(|value| value.get("record_key"))
-            .cloned()
-            .unwrap_or(Value::Null);
+            .cloned();
         let intent = json!({
             "schema": "wisent.crawl-cancel-intent.v1",
             "run_id": run_id,
@@ -141,13 +137,7 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
         let intent_sha256 = publish_cancel_intent(&intent_uri, &intent)?;
         let job_id = job_id.as_deref();
         let status_before = match job_id {
-            Some(job_id) => match machine_status(job_id) {
-                Ok(job) => json!({"state": machine_state(&job), "job": job}),
-                Err(error) => json!({
-                    "state": if error.not_found { "not_found" } else { "lookup_failed" },
-                    "diagnostic": error.diagnostic,
-                }),
-            },
+            Some(job_id) => job_status(job_id),
             None => json!({"state": "not_submitted"}),
         };
         let (action, status_after) = if let Some(job_id) = job_id {
@@ -157,10 +147,10 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
                 .get("job")
                 .is_some_and(|job| !machine_terminal(job))
             {
-                let output = stado_command()
-                    .args(["machine", "cancel", job_id])
-                    .output()
-                    .context("cancel Stado machine job")?;
+                let output = command_output(
+                    stado_command().args(["machine", "cancel", job_id]),
+                    "cancel Stado machine job",
+                )?;
                 if !output.status.success() {
                     (
                         json!({
@@ -170,15 +160,7 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
                         status_before.clone(),
                     )
                 } else {
-                    let after = machine_status(job_id)
-                        .map(|job| json!({"state": machine_state(&job), "job": job}))
-                        .unwrap_or_else(|error| {
-                            json!({
-                                "state": if error.not_found { "not_found" } else { "lookup_failed" },
-                                "diagnostic": error.diagnostic,
-                            })
-                        });
-                    (json!({"state": "cancel_dispatched"}), after)
+                    (json!({"state": "cancel_dispatched"}), job_status(job_id))
                 }
             } else if status_before.get("job").is_some_and(machine_terminal) {
                 (json!({"state": "already_terminal"}), status_before.clone())
@@ -231,11 +213,11 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
             })
             .context("crawl record disappeared before cancellation result persistence")?;
         target["cancel"] = result;
-        let final_state = target
+        let cancelled = target
             .pointer("/cancel/status_after/state")
             .and_then(Value::as_str)
-            .unwrap_or("lookup_failed");
-        if final_state == "cancelled"
+            == Some("cancelled");
+        if cancelled
             || target
                 .pointer("/cancel/stado_action/state")
                 .and_then(Value::as_str)
@@ -253,4 +235,17 @@ pub(crate) fn cancel(rest: &[String]) -> Result<()> {
     }
     let run = load(Some(&run_id))?;
     print_operation("cancel", &run, selected_record.as_deref())
+}
+
+/// What `stado machine status` says of `job_id`: its state and record, or,
+/// when the lookup fails, whether Stado said the job does not exist and the
+/// lookup's own diagnostic.
+fn job_status(job_id: &str) -> Value {
+    match machine_status(job_id) {
+        Ok(job) => json!({"state": machine_state(&job), "job": job}),
+        Err(error) => json!({
+            "state": if error.not_found { "not_found" } else { "lookup_failed" },
+            "diagnostic": error.diagnostic,
+        }),
+    }
 }
