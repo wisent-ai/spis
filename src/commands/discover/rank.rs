@@ -7,7 +7,7 @@ use super::*;
 /// refusal, not a count chosen here, says when a page holds too many.
 pub(crate) fn brama_rank(
     start_url: &str,
-    links: &Links,
+    links: &PageLinks,
     limit: usize,
 ) -> Result<Vec<(String, String)>> {
     let listing: Vec<String> = links
@@ -112,8 +112,16 @@ pub fn run(rest: &[String]) -> Result<()> {
     };
     let directory = std::path::PathBuf::from(&slug);
 
-    let (html_bytes, _) = fetch(&start_url)?;
-    let links = extract_links(&start_url, &html_bytes);
+    let start = url::Url::parse(&start_url).map_err(|error| {
+        crate::commands::usage(format!(
+            "discover: start_url {start_url:?} is not a URL: {error}"
+        ))
+    })?;
+    let (html_bytes, _) = fetch(start.as_str())?;
+    let links = page_links(&start, &String::from_utf8_lossy(&html_bytes))?;
+    for (target, cause) in &links.unresolved {
+        eprintln!("discover: {start_url} links to {target:?}, which does not resolve: {cause}");
+    }
     println!(
         "discovered {} same-origin links on {start_url}",
         links.entries.len()
@@ -184,7 +192,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             category: family.clone(),
             selection_note: format!("auto-discovered from {start_url}; family {family}"),
             visual: tmp.display().to_string(),
-            owner: Some(netloc_of(url).to_string()),
+            owner: Some(parsed.origin().ascii_serialization()),
         });
         crate::discarding(added, &tmp)?;
         crate::discard(&tmp)?;
