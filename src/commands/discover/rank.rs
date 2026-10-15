@@ -65,24 +65,21 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut positionals: Vec<String> = Vec::new();
     let mut catalog: Option<String> = None;
     let mut limit: Option<usize> = None;
-    let mut i = 0;
-    while i < rest.len() {
-        let arg = rest[i].clone();
+    let mut arguments = rest.iter();
+    while let Some(arg) = arguments.next() {
         match arg.as_str() {
             "--catalog" => {
-                i += 1;
-                catalog = Some(rest.get(i).cloned().ok_or_else(|| {
+                catalog = Some(arguments.next().cloned().ok_or_else(|| {
                     crate::commands::usage("discover: argument --catalog: expected one argument")
                 })?);
             }
             "--limit" => {
-                i += 1;
-                let value = rest.get(i).cloned().ok_or_else(|| {
+                let value = arguments.next().ok_or_else(|| {
                     crate::commands::usage("discover: argument --limit: expected one argument")
                 })?;
-                limit = Some(value.parse().map_err(|_| {
+                limit = Some(value.parse().map_err(|error| {
                     crate::commands::usage(format!(
-                        "discover: argument --limit: invalid int value {value:?}"
+                        "discover: argument --limit: invalid int value {value:?}: {error}"
                     ))
                 })?);
             }
@@ -92,10 +89,9 @@ pub fn run(rest: &[String]) -> Result<()> {
                         "discover: unrecognized argument {other}"
                     )));
                 }
-                positionals.push(arg);
+                positionals.push(arg.clone());
             }
         }
-        i += 1;
     }
     let start_url = positionals.first().cloned().ok_or_else(|| {
         crate::commands::usage("discover: the following arguments are required: start_url")
@@ -164,17 +160,15 @@ pub fn run(rest: &[String]) -> Result<()> {
             .with_context(|| format!("create {}", staging.display()))?;
         let tmp = staging.join(format!("{}.png", crate::sha256_hex(url.as_bytes())));
         std::fs::write(&tmp, &image_bytes).with_context(|| format!("write {}", tmp.display()))?;
-        let last_segment: String = url
-            .split_once("://")
-            .map(|(_, r)| r)
-            .unwrap_or(url)
-            .split(['?', '#'])
-            .next()
-            .unwrap_or("")
-            .trim_matches('/')
-            .rsplit('/')
-            .next()
-            .unwrap_or("")
+        // A page is named by its last path segment; the site's root page,
+        // which has none, by its host.
+        let parsed =
+            url::Url::parse(url).with_context(|| format!("discover: {url} is not a URL"))?;
+        let last_segment = parsed
+            .path_segments()
+            .and_then(|segments| segments.filter(|segment| !segment.is_empty()).last())
+            .or_else(|| parsed.host_str())
+            .with_context(|| format!("discover: {url} names neither a path nor a host"))?
             .to_string();
         let capitalized_family = {
             let mut chars = family.chars();
