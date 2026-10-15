@@ -35,8 +35,13 @@ pub(crate) fn ensure_manifest_identity(
         "weles_evidence_manifest_invalid",
         "the signed evidence manifest request/result digests differ from the receipt",
     )?;
-    let signed_binding: weles::WelesAttemptBinding =
-        serde_json::from_value(evidence.get("spisBinding").cloned().unwrap_or(Value::Null))?;
+    let retained_binding = evidence.get("spisBinding").cloned().ok_or_else(|| {
+        WorkerFailure::new(
+            "weles_evidence_manifest_invalid",
+            "the signed evidence manifest carries no Spis binding",
+        )
+    })?;
+    let signed_binding: weles::WelesAttemptBinding = serde_json::from_value(retained_binding)?;
     ensure(
         signed_binding == *binding,
         "weles_evidence_manifest_invalid",
@@ -158,22 +163,26 @@ pub(crate) fn retain_signed_inventory(
     Ok(retained_paths)
 }
 
-/// The outer Stado job this worker runs inside. `verify_attempt_binding` refuses an
-/// envelope whose outer job equals the inner Weles task, so both paths read it here.
+/// The outer Stado job this worker runs inside, as Stado's queue worker
+/// delivers it to every job it starts: `WC_JOB_ID`. `verify_attempt_binding`
+/// refuses an envelope whose outer job equals the inner Weles task, so both
+/// paths read it here.
 pub(crate) fn stado_job_id(weles_task_id: &str) -> Outcome<String> {
-    let job = ["STADO_JOB_ID", "STADO_MACHINE_JOB_ID", "STADO_JOB"]
-        .iter()
-        .find_map(|name| {
-            std::env::var(name)
-                .ok()
-                .filter(|value| !value.trim().is_empty())
-        })
-        .ok_or_else(|| {
-            WorkerFailure::new(
+    let job = match std::env::var("WC_JOB_ID") {
+        Ok(job) if !job.trim().is_empty() => job,
+        Ok(_) | Err(std::env::VarError::NotPresent) => {
+            return Err(WorkerFailure::new(
                 "stado_job_id_unavailable",
-                "the Stado job identifier was not delivered to this worker",
-            )
-        })?;
+                "WC_JOB_ID, the Stado job identifier, was not delivered to this worker",
+            ));
+        }
+        Err(error) => {
+            return Err(WorkerFailure::new(
+                "stado_job_id_unavailable",
+                format!("WC_JOB_ID, the Stado job identifier, cannot be read: {error}"),
+            ));
+        }
+    };
     ensure(
         job != weles_task_id,
         "stado_job_id_unavailable",
