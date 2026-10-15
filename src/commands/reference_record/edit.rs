@@ -57,16 +57,18 @@ pub(crate) fn edit(args: &EditArgs) -> Result<()> {
         record["upstream_owner"] = json!(owner);
         changed.push("owner");
     }
-    let name = example["name"].as_str().unwrap_or_default().to_string();
+    let name = crate::commands::generate_example_catalogs::required_text(
+        example,
+        "name",
+        &format!("reference: sources.json example at position {position}"),
+    )?
+    .to_string();
 
     lib::write_pretty_json(&record_path, &record)?;
     save_all(&directory, &mut sources, &mut index)?;
     println!(
         "edited {}/{}: {name} ({})",
-        directory
-            .file_name()
-            .map(|n| n.to_string_lossy())
-            .unwrap_or_default(),
+        args.catalog,
         args.identifier,
         changed.join(", ")
     );

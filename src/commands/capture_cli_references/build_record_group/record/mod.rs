@@ -45,7 +45,12 @@ pub(crate) fn build_record(run: &Run, measured: &Value, media: &Value) -> Result
 
     let repainted = f.repainted;
     let duration = facts::seconds(&cast["duration_seconds"]);
-    let owner = product.repository.split('/').next().unwrap_or_default();
+    let Some((owner, _)) = product.repository.split_once('/') else {
+        anyhow::bail!(
+            "capture plan product {name}: repository {} is not owner/name",
+            product.repository
+        );
+    };
     let (columns, rows) = (terminal().columns, terminal().rows);
 
     Ok(json!({
