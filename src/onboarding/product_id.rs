@@ -104,11 +104,13 @@ pub fn record_first_success() -> Result<()> {
     save_state(&state)
 }
 
+/// The journey compiled into this binary, checked against what the reader
+/// relies on. It is embedded at build time, so it is always the file this code
+/// was written with.
 pub(crate) fn canonical_definition() -> Result<Value> {
     let definition: Value =
         serde_json::from_str(FALLBACK).context("parse canonical onboarding journey")?;
-    if definition.get("schema_version").and_then(Value::as_u64) != Some(1)
-        || definition.get("product_id").and_then(Value::as_str) != Some(PRODUCT_ID)
+    if definition.get("product_id").and_then(Value::as_str) != Some(PRODUCT_ID)
         || definition.get("journey_id").and_then(Value::as_str) != Some(JOURNEY_ID)
         || definition.get("journey_version").and_then(Value::as_str) != Some(JOURNEY_VERSION)
         || definition.get("first_success_fact").and_then(Value::as_str) != Some(FIRST_SUCCESS_FACT)
@@ -180,35 +182,43 @@ pub(crate) fn screen_by_id<'a>(definition: &'a Value, screen_id: &str) -> Result
         .with_context(|| format!("published onboarding screen is unavailable: {screen_id}"))
 }
 
-/// The screen the highest-priority transition leads to; `None` for a screen
-/// with no transition. A transition without a priority or a target is
-/// refused, never ranked as priority zero.
+/// The screen the leading transition goes to: the lowest priority, as the
+/// journey contract and Echo's own routing order transitions; `None` for a
+/// screen with no transition. A transition without a target or a non-negative
+/// whole-number priority is refused, never ranked as priority zero, and so
+/// are two transitions sharing a priority, which the contract requires to be
+/// unique, and transitions that are not a list.
 pub(crate) fn next_screen_id(screen: &Value) -> Result<Option<String>> {
-    let mut best: Option<(i64, String)> = None;
-    for transition in screen
-        .get("transitions")
-        .and_then(Value::as_array)
-        .into_iter()
-        .flatten()
-    {
+    let transitions = match screen.get("transitions") {
+        None | Some(Value::Null) => return Ok(None),
+        Some(Value::Array(list)) => list,
+        Some(other) => bail!("canonical onboarding screen's transitions are not a list: {other}"),
+    };
+    let mut best: Option<(u64, &str)> = None;
+    let mut priorities = std::collections::HashSet::new();
+    for transition in transitions {
         let priority = transition
             .get("priority")
-            .and_then(Value::as_i64)
+            .and_then(Value::as_u64)
             .with_context(|| {
-                format!("canonical onboarding transition states no priority: {transition}")
+                format!(
+                    "canonical onboarding transition states no non-negative whole-number priority: {transition}"
+                )
             })?;
         let target = transition
             .get("next_screen_id")
             .and_then(Value::as_str)
             .context("canonical onboarding transition has no target")?;
-        if best
-            .as_ref()
-            .is_none_or(|(highest, _)| priority >= *highest)
-        {
-            best = Some((priority, target.to_string()));
+        if !priorities.insert(priority) {
+            bail!(
+                "canonical onboarding transitions share priority {priority}; the journey contract requires them unique"
+            );
+        }
+        if best.is_none_or(|(lowest, _)| priority < lowest) {
+            best = Some((priority, target));
         }
     }
-    Ok(best.map(|(_, target)| target))
+    Ok(best.map(|(_, target)| target.to_string()))
 }
 
 pub(crate) fn evidence_satisfied(screen: &Value, state: &Value) -> Result<bool> {
