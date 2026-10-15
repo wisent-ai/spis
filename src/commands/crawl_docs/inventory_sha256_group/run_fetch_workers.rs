@@ -19,17 +19,13 @@ pub(crate) fn run_fetch_workers(
             .as_ref()
             .context("durable documentation inventory has no robots policy")?,
     )?;
-    let page_downloaded_bytes = state
+    let downloaded_bytes = state
         .outcomes
         .values()
-        .try_fold(0u64, |total, outcome| {
+        .try_fold(state.inventory_downloaded_bytes, |total, outcome| {
             total.checked_add(outcome.downloaded_bytes)
         })
-        .context("durable page download byte counter overflow")?;
-    let downloaded_bytes = state
-        .inventory_downloaded_bytes
-        .checked_add(page_downloaded_bytes)
-        .context("durable total download byte counter overflow")?;
+        .context("durable download byte counter overflow")?;
     let (writer, receiver) = mpsc::channel::<WriterMessage>();
     let cancelled = Arc::new(AtomicBool::new(false));
     let shared = Arc::new(FetchShared {
@@ -51,7 +47,7 @@ pub(crate) fn run_fetch_workers(
     });
     let worker_result = std::thread::scope(|scope| -> Result<()> {
         let mut handles = Vec::with_capacity(workers);
-        for _ in 0..workers {
+        for _ in std::iter::repeat(()).take(workers) {
             let shared = Arc::clone(&shared);
             handles.push(scope.spawn(move || -> Result<()> {
                 let run = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
@@ -89,7 +85,7 @@ pub(crate) fn run_fetch_workers(
                             })?;
                         match acknowledged.recv() {
                             Ok(result) => result.map_err(anyhow::Error::msg)?,
-                            Err(_) => {
+                            Err(mpsc::RecvError) => {
                                 bail!("durable writer disconnected before acknowledging {url}");
                             }
                         }
@@ -98,7 +94,10 @@ pub(crate) fn run_fetch_workers(
                 let error = match run {
                     Ok(Ok(())) => return Ok(()),
                     Ok(Err(error)) => error,
-                    Err(_) => anyhow::anyhow!("documentation fetch worker thread panicked"),
+                    Err(payload) => anyhow::anyhow!(
+                        "documentation fetch worker thread panicked: {}",
+                        crate::panic_reason(&*payload)
+                    ),
                 };
                 let message = format!("{error:#}");
                 shared
@@ -113,9 +112,10 @@ pub(crate) fn run_fetch_workers(
             }));
         }
         for handle in handles {
-            handle.join().map_err(|_| {
+            handle.join().map_err(|payload| {
                 anyhow::anyhow!(
-                    "documentation fetch worker thread panicked outside its failure boundary"
+                    "documentation fetch worker thread panicked outside its failure boundary: {}",
+                    crate::panic_reason(&*payload)
                 )
             })??;
         }
@@ -123,9 +123,12 @@ pub(crate) fn run_fetch_workers(
     });
     drop(shared);
     drop(writer);
-    let writer_result = writer_handle
-        .join()
-        .map_err(|_| anyhow::anyhow!("documentation corpus writer thread panicked"))?;
+    let writer_result = writer_handle.join().map_err(|payload| {
+        anyhow::anyhow!(
+            "documentation corpus writer thread panicked: {}",
+            crate::panic_reason(&*payload)
+        )
+    })?;
     let state = writer_result.context("documentation corpus writer failed")?;
     worker_result?;
     Ok(state)
