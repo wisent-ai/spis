@@ -38,13 +38,14 @@ pub(crate) fn measure_value(
     )?;
 
     // ---- journey ----
-    let journey = data.get("journey").cloned().unwrap_or(Value::Null);
+    // An absent journey, or one without steps, has fewer steps than any floor.
+    let journey = data.get("journey").cloned();
     let steps_len = journey
-        .get("steps")
-        .and_then(|v| v.as_array())
-        .map(|a| a.len())
-        .unwrap_or(0);
-    if steps_len < requirements.min_journey_steps {
+        .as_ref()
+        .and_then(|journey| journey.get("steps"))
+        .and_then(Value::as_array)
+        .map(Vec::len);
+    if steps_len.is_none_or(|len| len < requirements.min_journey_steps) {
         gaps.push(format!(
             "journey exposes fewer than {} observed steps for {} profile",
             requirements.min_journey_steps, requirements.profile
@@ -56,17 +57,17 @@ pub(crate) fn measure_value(
         .into_iter()
         .filter(|key| key != "steps")
     {
-        if !truthy(journey.get(&key)) {
+        if !truthy(journey.as_ref().and_then(|journey| journey.get(&key))) {
             gaps.push(format!("journey missing {key}"));
         }
     }
 
     // ---- interactions ----
-    let interactions = data
-        .get("interactions")
-        .and_then(|v| v.as_array())
-        .cloned()
-        .unwrap_or_default();
+    // A record without an interactions list maps no interactions.
+    let interactions = match data.get("interactions").and_then(Value::as_array) {
+        Some(interactions) => interactions.clone(),
+        None => Vec::new(),
+    };
     if interactions.len() < requirements.min_interactions {
         gaps.push(format!(
             "fewer than {} mapped interactions for {} profile",
@@ -124,13 +125,7 @@ pub(crate) fn measure_value(
                             .or_insert(json!(declared));
                     }
                 }
-                obj.insert(
-                    "timing_class".into(),
-                    canonical_timing
-                        .as_ref()
-                        .map(|c| json!(c))
-                        .unwrap_or(Value::Null),
-                );
+                obj.insert("timing_class".into(), json!(canonical_timing));
                 if declared_timing.is_some() && canonical_timing.is_none() {
                     gaps.push(format!(
                         "motion analysis timing class {:?} is not a timing class the contract declares and was removed",
@@ -176,25 +171,31 @@ pub(crate) fn measure_value(
             *analysis = if was_array {
                 Value::Array(entries)
             } else {
-                entries.into_iter().next().unwrap_or(Value::Null)
+                // A single analysis was read into exactly one entry above.
+                match entries.into_iter().next() {
+                    Some(entry) => entry,
+                    None => unreachable!("a single motion analysis became one entry"),
+                }
             };
         }
     }
 
     // ---- accessibility ----
-    let access = data.get("accessibility").cloned().unwrap_or(Value::Null);
+    // An absent accessibility section, or one without observations, has
+    // fewer observations than any floor and was never measured.
+    let access = data.get("accessibility").cloned();
     let observations = access
-        .get("observations")
-        .and_then(|v| v.as_array())
-        .map(|a| a.len())
-        .unwrap_or(0);
-    if observations < requirements.min_accessibility_observations {
+        .as_ref()
+        .and_then(|access| access.get("observations"))
+        .and_then(Value::as_array)
+        .map(Vec::len);
+    if observations.is_none_or(|count| count < requirements.min_accessibility_observations) {
         gaps.push(format!(
             "fewer than {} accessibility observations for {} profile",
             requirements.min_accessibility_observations, requirements.profile
         ));
     }
-    if !truthy(access.get("measured")) {
+    if !truthy(access.as_ref().and_then(|access| access.get("measured"))) {
         gaps.push("accessibility never measured against the product".to_string());
     }
 
