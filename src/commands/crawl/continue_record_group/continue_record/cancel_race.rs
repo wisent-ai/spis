@@ -15,14 +15,18 @@ pub(super) fn settle_cancel_race(run_id: &str, catalog: &str, record_name: &str)
             Ok(json!({"state": "noop_terminal", "observed_job": job}))
         }
         Ok(job) => {
-            let output = stado_command()
-                .args(["machine", "cancel", job_id])
-                .output()
+            let output = stado_wait::output(stado_command().args(["machine", "cancel", job_id]))
                 .context("cancel Stado job after submission race")?;
             if output.status.success() {
-                let response = serde_json::from_slice(&output.stdout).unwrap_or_else(
-                    |_| json!({"stdout": String::from_utf8_lossy(&output.stdout).trim()}),
-                );
+                // Stado accepted the cancel; an answer that is not JSON is kept as
+                // it was printed, beside why it could not be read.
+                let response = match serde_json::from_slice::<Value>(&output.stdout) {
+                    Ok(response) => response,
+                    Err(error) => json!({
+                        "stdout": String::from_utf8_lossy(&output.stdout).trim(),
+                        "unreadable": error.to_string(),
+                    }),
+                };
                 Ok(json!({"state": "cancel_dispatched", "observed_job": job, "response": response}))
             } else {
                 Err(anyhow!(
