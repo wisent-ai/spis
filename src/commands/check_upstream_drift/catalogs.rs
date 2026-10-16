@@ -33,6 +33,14 @@ fn present(path: &Path) -> Result<bool> {
     }
 }
 
+/// Whether `path` is a folder, through a link, refusing one that cannot be
+/// examined: passed over, its records would be read as none.
+fn folder(path: &Path) -> Result<bool> {
+    let metadata =
+        std::fs::metadata(path).with_context(|| format!("cannot read {}", path.display()))?;
+    Ok(metadata.is_dir())
+}
+
 /// `path` read and parsed as JSON, or the reason it could not be.
 fn parsed(path: &Path) -> Result<()> {
     let text =
@@ -49,7 +57,7 @@ pub(super) fn verify_readable() -> Result<()> {
         let named_catalog = catalog
             .file_name()
             .is_some_and(|name| name.to_string_lossy().ends_with("-examples"));
-        if !named_catalog || !catalog.is_dir() {
+        if !named_catalog || !folder(&catalog)? {
             continue;
         }
         let sources = catalog.join("sources.json");
@@ -61,7 +69,7 @@ pub(super) fn verify_readable() -> Result<()> {
             continue;
         }
         for reference in listed(&references)? {
-            if !reference.is_dir() {
+            if !folder(&reference)? {
                 continue;
             }
             let record = reference.join("reference.json");
