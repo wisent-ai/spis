@@ -73,9 +73,16 @@ impl<'a> Facts<'a> {
         } else {
             format!("Ctrl-C was sent on the unsubmitted `{invalid_cmd}` line and the session continued at the prompt")
         };
-        let phrase = measured["refusal_next_action_phrase"]
-            .as_str()
-            .unwrap_or("");
+        let names_next_action = flag("refusal_names_next_action")?;
+        // The phrase is printed only beside a refusal that names its next
+        // action, and the measurement records one exactly then; a record that
+        // says it names one and holds no phrase is refused, not printed as ''.
+        // Without a next action no sentence reads the phrase.
+        let phrase = if names_next_action {
+            text(&measured["refusal_next_action_phrase"], "refusal_next_action_phrase")?
+        } else {
+            ""
+        };
         Ok(Facts {
             run,
             measured,
@@ -96,7 +103,7 @@ impl<'a> Facts<'a> {
             phrase,
             prompt_restored,
             echoed_interrupt: flag("cancel_echoed_interrupt")?,
-            names_next_action: flag("refusal_names_next_action")?,
+            names_next_action,
             text_identical: flag("no_color_text_identical")?,
             colors_help: flag("colors_help")?,
             repainted: flag("screen_cleared")? || flag("cursor_addressed")?,
