@@ -80,7 +80,7 @@ pub fn record_first_success() -> Result<()> {
     // A state that cannot be read, or that belongs to another journey, is
     // refused with its cause: replacing it would erase the progress it holds,
     // and the caller reports the refusal as a warning.
-    let mut state = if path.exists() {
+    let mut state = if state_exists(&path)? {
         let state = read_state(&path)?;
         validate_state_identity(&state)?;
         state
@@ -242,7 +242,7 @@ pub(crate) fn evidence_satisfied(screen: &Value, state: &Value) -> Result<bool> 
 
 pub(crate) fn load_or_start_state(definition: &Value, reset: bool) -> Result<Value> {
     let path = state_path()?;
-    if !reset && path.exists() {
+    if !reset && state_exists(&path)? {
         let state = read_state(&path)?;
         validate_state_identity(&state)?;
         let current = state
@@ -268,6 +268,11 @@ pub(crate) fn load_or_start_state(definition: &Value, reset: bool) -> Result<Val
     });
     save_state(&state)?;
     Ok(state)
+}
+
+/// Whether the state file is there; one that cannot be examined is refused, never read as absent.
+fn state_exists(path: &PathBuf) -> Result<bool> {
+    path.try_exists().with_context(|| format!("examine onboarding state {}", path.display()))
 }
 
 pub(crate) fn read_state(path: &PathBuf) -> Result<Value> {
