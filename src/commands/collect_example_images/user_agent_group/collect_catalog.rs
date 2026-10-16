@@ -93,8 +93,10 @@ pub(crate) fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<V
             &failure_path,
             serde_json::to_string_pretty(&failures)? + "\n",
         )?;
-    } else if failure_path.exists() {
-        std::fs::remove_file(&failure_path)?;
+    } else {
+        // A previous run's failure report that stays would read as this
+        // clean run's failures, so one that cannot be removed refuses.
+        crate::discard(&failure_path)?;
     }
     Ok((collected.len(), failures))
 }

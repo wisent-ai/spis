@@ -31,9 +31,7 @@ pub(crate) fn import_record_attempt(
         .join(catalog)
         .join(&manifest.record)
         .join(&manifest.attempt_id);
-    if staging.exists() {
-        std::fs::remove_dir_all(&staging)?;
-    }
+    crate::discard(&staging)?;
     std::fs::create_dir_all(&staging)?;
     let output_log = staging.join("worker-output.log");
     download_uri(&manifest.output_uri, &output_log)?;
@@ -68,9 +66,7 @@ pub(crate) fn import_record_attempt(
     let attempt_staged = record_dir
         .join("crawl")
         .join(format!(".{}.staging", manifest.attempt_id));
-    if attempt_staged.exists() {
-        std::fs::remove_dir_all(&attempt_staged)?;
-    }
+    crate::discard(&attempt_staged)?;
     std::fs::create_dir_all(attempt_staged.parent().expect("crawl parent"))?;
     std::fs::rename(&extracted_root, &attempt_staged)?;
     // A plain write, not `atomic_json_write`: that helper leaves a `.lock` sibling,
