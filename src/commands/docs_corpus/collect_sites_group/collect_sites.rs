@@ -20,24 +20,27 @@ pub(crate) fn collect_sites() -> Result<Vec<SiteInfo>> {
         let outcomes = corpus
             .and_then(|attempt| attempt.state.get("outcomes"))
             .and_then(Value::as_object);
-        let seen = outcomes.map_or(0, serde_json::Map::len);
-        let cumulative_ok = outcomes.map_or(0, |values| {
-            values
-                .values()
-                .filter(|outcome| {
-                    outcome
-                        .get("text_bytes")
-                        .and_then(Value::as_u64)
-                        .unwrap_or(0)
-                        > 0
-                })
-                .count()
-        });
+        // Counted over the attempt's outcomes; a site with no selected corpus
+        // has none to count.
+        let seen = outcomes.into_iter().flatten().count();
+        let cumulative_ok = outcomes
+            .into_iter()
+            .flat_map(serde_json::Map::values)
+            .filter(|outcome| {
+                outcome
+                    .get("text_bytes")
+                    .and_then(Value::as_u64)
+                    .and_then(std::num::NonZeroU64::new)
+                    .is_some()
+            })
+            .count();
         let target_count = corpus
             .and_then(|attempt| attempt.report.pointer("/retrieval/target_count"))
             .and_then(Value::as_i64)
             .or_else(|| meta.get("inventory_url_count").and_then(Value::as_i64))
-            .unwrap_or(0);
+            .with_context(|| {
+                format!("documentation site {slug} states no target_count or inventory_url_count")
+            })?;
         // A structure file that names no site, category or source is refused
         // with its slug, never listed with an empty one.
         let stated = |field: &str| {
@@ -68,119 +71,112 @@ pub(crate) fn collect_sites() -> Result<Vec<SiteInfo>> {
 }
 
 pub(crate) fn open_jsonl(
-    corpus_dir: Option<&Path>,
-) -> Result<Option<std::io::BufReader<flate2::read::MultiGzDecoder<File>>>> {
-    let Some(corpus_dir) = corpus_dir else {
-        return Ok(None);
-    };
+    corpus_dir: &Path,
+) -> Result<std::io::BufReader<flate2::read::MultiGzDecoder<File>>> {
     let path = corpus_dir.join("pages.jsonl.gz");
     let file = open_regular_read(&path, "documentation pages")?;
-    Ok(Some(std::io::BufReader::new(
-        flate2::read::MultiGzDecoder::new(file),
+    Ok(std::io::BufReader::new(flate2::read::MultiGzDecoder::new(
+        file,
     )))
 }
 
-pub(crate) fn read_corpus_record(
-    reader: &mut impl BufRead,
-    decompressed_bytes: &mut u64,
-    record_count: &mut usize,
-) -> Result<Option<Value>> {
+/// The next record of a corpus page stream, or `None` at its end. A record is
+/// as long as the page it holds and is read to its newline, without a size
+/// chosen here; a stream that ends inside a record is refused.
+pub(crate) fn read_corpus_record(reader: &mut impl BufRead) -> Result<Option<Value>> {
     let mut line = Vec::new();
-    loop {
-        let available = reader
-            .fill_buf()
-            .context("decompress documentation corpus")?;
-        if available.is_empty() {
-            if line.is_empty() {
-                return Ok(None);
+    reader
+        .read_until(b'\n', &mut line)
+        .context("decompress documentation corpus")?;
+    if line.is_empty() {
+        return Ok(None);
+    }
+    if line.pop() != Some(b'\n') {
+        bail!("documentation corpus ends with an incomplete JSON record");
+    }
+    serde_json::from_slice(&line)
+        .map(Some)
+        .context("parse documentation corpus record")
+}
+
+/// Appends every record of the site's corpus that mentions `query` to `hits`,
+/// stopping once `hits` holds `limit` when the caller asked for a limit, and
+/// answers how many records it read.
+pub(crate) fn scan_site(
+    site: &SiteInfo,
+    corpus_dir: &Path,
+    query: &str,
+    limit: Option<std::num::NonZeroUsize>,
+    hits: &mut Vec<Value>,
+) -> Result<usize> {
+    let mut reader = open_jsonl(corpus_dir)?;
+    let query_lower = query.to_lowercase();
+    let mut failure = None;
+    let scanned = std::iter::from_fn(|| {
+        if limit.is_some_and(|limit| hits.len() >= limit.get()) {
+            return None;
+        }
+        let read = read_corpus_record(&mut reader).and_then(|record| {
+            record
+                .map(|record| matching_hit(site, &query_lower, &record).map(|hit| hits.extend(hit)))
+                .transpose()
+        });
+        match read {
+            Ok(record) => record,
+            Err(error) => {
+                failure = Some(error);
+                None
             }
-            bail!("documentation corpus ends with an incomplete JSON record");
         }
-        let newline = available.iter().position(|byte| *byte == b'\n');
-        let consumed = newline.map_or(available.len(), |position| position + 1);
-        let content = newline.map_or(consumed, |position| position);
-        // A record is as long as the page it holds and the corpus as large as
-        // its crawl's volume allowed; both are read without a size chosen here.
-        *decompressed_bytes = decompressed_bytes
-            .checked_add(consumed as u64)
-            .context("documentation corpus decompressed byte counter overflows")?;
-        line.extend_from_slice(&available[..content]);
-        reader.consume(consumed);
-        if newline.is_some() {
-            *record_count = record_count
-                .checked_add(1)
-                .context("documentation corpus record counter overflows")?;
-            let record = serde_json::from_slice(&line)
-                .context("parse bounded documentation corpus record")?;
-            return Ok(Some(record));
-        }
+    })
+    .count();
+    match failure {
+        Some(error) => Err(error),
+        None => Ok(scanned),
     }
 }
 
-pub(crate) fn scan_site(
-    site: &SiteInfo,
-    query: &str,
-    limit: usize,
-    hits: &mut Vec<Value>,
-) -> Result<usize> {
-    let Some(mut reader) = open_jsonl(site.corpus_dir.as_deref())? else {
-        return Ok(0);
-    };
-    let query_lower = query.to_lowercase();
-    let mut scanned = 0usize;
-    let mut decompressed_bytes = 0u64;
-    let mut record_count = 0usize;
-    while let Some(record) =
-        read_corpus_record(&mut reader, &mut decompressed_bytes, &mut record_count)?
-    {
-        scanned += 1;
-        let text = record.get("text").and_then(Value::as_str).unwrap_or("");
-        let title = record.get("title").and_then(Value::as_str).unwrap_or("");
-        // Every record names its URL; one that does not is refused rather
-        // than listed as a hit nobody can open.
-        let url = record.get("url").and_then(Value::as_str).with_context(|| {
-            format!(
-                "documentation corpus {} holds a record without its url",
-                site.slug
-            )
-        })?;
-        let text_lower = text.to_lowercase();
-        if !text_lower.contains(&query_lower)
-            && !title.to_lowercase().contains(&query_lower)
-            && !url.to_lowercase().contains(&query_lower)
-        {
-            continue;
-        }
-        let snippet = text_lower.find(&query_lower).map(|byte_position| {
-            let start = text_lower[..byte_position]
-                .char_indices()
-                .rev()
-                .nth(60)
-                .map(|(offset, _)| offset)
-                .unwrap_or(0);
-            let requested_end = byte_position
-                .saturating_add(query_lower.len())
-                .saturating_add(120);
-            let end = text_lower
-                .char_indices()
-                .find_map(|(offset, _)| (offset >= requested_end).then_some(offset))
-                .unwrap_or(text_lower.len());
-            text_lower[start..end].replace('\n', " ")
-        });
-        hits.push(json!({
-            "slug": site.slug,
-            "site": site.name,
-            "url": url,
-            "title": (!title.is_empty()).then_some(title),
-            "snippet": snippet,
-            "attempt": site.attempt,
-            "attempt_id": site.attempt_id,
-        }));
-        if hits.len() >= limit {
-            break;
-        }
+/// The hit a record makes when its text, title or URL mentions the query.
+/// Every record names its URL; one that does not is refused rather than
+/// listed as a hit nobody can open. A record without text or a title is
+/// matched on what it has.
+fn matching_hit(site: &SiteInfo, query_lower: &str, record: &Value) -> Result<Option<Value>> {
+    let url = record.get("url").and_then(Value::as_str).with_context(|| {
+        format!(
+            "documentation corpus {} holds a record without its url",
+            site.slug
+        )
+    })?;
+    let text = record.get("text").and_then(Value::as_str);
+    let title = record
+        .get("title")
+        .and_then(Value::as_str)
+        .filter(|title| !title.is_empty());
+    let mentioned = text.is_some_and(|text| text.to_lowercase().contains(query_lower))
+        || title.is_some_and(|title| title.to_lowercase().contains(query_lower))
+        || url.to_lowercase().contains(query_lower);
+    if !mentioned {
+        return Ok(None);
     }
-    Ok(scanned)
+    let snippet = text.and_then(|text| paragraph_around(text, query_lower));
+    Ok(Some(json!({
+        "slug": site.slug,
+        "site": site.name,
+        "url": url,
+        "title": title,
+        "snippet": snippet,
+        "attempt": site.attempt,
+        "attempt_id": site.attempt_id,
+    })))
+}
+
+/// The line of `text` holding the first mention of the query, as the page
+/// wrote it, so a hit shows the passage that matched rather than a width
+/// chosen here. A mention that spans a line break has no single line to show.
+fn paragraph_around(text: &str, query_lower: &str) -> Option<String> {
+    text.lines()
+        .find(|line| line.to_lowercase().contains(query_lower))
+        .map(str::to_string)
 }
 
 pub(crate) fn archive_member_name(path: &Path) -> Result<String> {
@@ -209,7 +205,7 @@ pub(crate) fn extract_corpus_archive(archive_path: &Path, corpus_dir: &Path) -> 
     let mut archive = tar::Archive::new(decoder);
     let expected = CORPUS_FILES.iter().copied().collect::<HashSet<_>>();
     let mut observed = HashSet::<String>::new();
-    let mut total = 0u64;
+    let mut room = room_bytes;
     for entry in archive
         .entries()
         .context("read retrieval archive entries")?
@@ -222,16 +218,13 @@ pub(crate) fn extract_corpus_archive(archive_path: &Path, corpus_dir: &Path) -> 
         if !expected.contains(name.as_str()) || !observed.insert(name.clone()) {
             bail!("retrieval archive contains an unexpected or duplicate member {name}");
         }
-        total = total
-            .checked_add(entry.size())
-            .filter(|bytes| *bytes <= room_bytes)
-            .with_context(|| {
-                format!(
-                    "retrieval archive needs more than the {room_bytes} bytes free on the volume \
-                     of {}",
-                    corpus_dir.display()
-                )
-            })?;
+        room = room.checked_sub(entry.size()).with_context(|| {
+            format!(
+                "retrieval archive needs more than the {room_bytes} bytes free on the volume \
+                 of {}",
+                corpus_dir.display()
+            )
+        })?;
         let destination = corpus_dir.join(&name);
         let mut output = OpenOptions::new()
             .write(true)

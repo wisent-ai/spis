@@ -53,12 +53,14 @@ pub(crate) fn validate_receipt_corpus(receipt: &Value, corpus: &AttemptCorpus) -
     {
         bail!("attempt receipt archive digest or byte length differs from imported artifact");
     }
-    let mut corpus_bytes = 0u64;
-    for name in CORPUS_FILES {
-        corpus_bytes = corpus_bytes
-            .checked_add(hash_file(&corpus.corpus_dir.join(name))?.1)
-            .context("imported corpus byte count overflow")?;
-    }
+    // Each file's length is a u64; their sum is taken wide so it cannot wrap,
+    // then refused if it does not fit the receipt's field.
+    let corpus_bytes = CORPUS_FILES
+        .iter()
+        .map(|name| -> Result<u128> { Ok(u128::from(hash_file(&corpus.corpus_dir.join(name))?.1)) })
+        .sum::<Result<u128>>()?;
+    let corpus_bytes =
+        u64::try_from(corpus_bytes).context("imported corpus byte count overflow")?;
     let expected_pages = corpus
         .report
         .pointer("/retrieval/retrieved_count")
@@ -111,67 +113,49 @@ pub(crate) fn import_worker_report_from_archive(
     import_verified_worker_report(receipt, Some(source_archive))
 }
 
+const USAGE: &str = "usage: spis docs-corpus status | search --query T [--site S] [--limit N] | show --site S --url U | import --attempt-receipt FILE";
+
 pub fn run(rest: &[String]) -> Result<()> {
     let mut sub = "";
     let mut query = String::new();
     let mut site: Option<String> = None;
     let mut url_filter = String::new();
     let mut attempt_receipt: Option<PathBuf> = None;
-    let mut limit = 20usize;
-    let mut index = 0;
-    while index < rest.len() {
-        match rest[index].as_str() {
-            "status" | "search" | "show" | "import" => sub = rest[index].as_str(),
+    // No limit unless one is asked for: a search answers every hit.
+    let mut limit: Option<std::num::NonZeroUsize> = None;
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--query" => {
-                index += 1;
-                query = rest
-                    .get(index)
-                    .ok_or_else(|| crate::commands::usage("--query needs a value"))?
-                    .clone();
+                query =
+                    crate::commands::required(arguments.next(), "--query needs a value")?.clone();
             }
             "--site" => {
-                index += 1;
                 site = Some(
-                    rest.get(index)
-                        .ok_or_else(|| crate::commands::usage("--site needs a value"))?
-                        .clone(),
+                    crate::commands::required(arguments.next(), "--site needs a value")?.clone(),
                 );
             }
             "--url" => {
-                index += 1;
-                url_filter = rest
-                    .get(index)
-                    .ok_or_else(|| crate::commands::usage("--url needs a value"))?
-                    .clone();
+                url_filter =
+                    crate::commands::required(arguments.next(), "--url needs a value")?.clone();
             }
             "--attempt-receipt" => {
-                index += 1;
-                attempt_receipt =
-                    Some(PathBuf::from(rest.get(index).ok_or_else(|| {
-                        crate::commands::usage("--attempt-receipt needs a value")
-                    })?));
+                attempt_receipt = Some(PathBuf::from(crate::commands::required(
+                    arguments.next(),
+                    "--attempt-receipt needs a value",
+                )?));
             }
-            "--limit" => {
-                index += 1;
-                limit = rest
-                    .get(index)
-                    .ok_or_else(|| crate::commands::usage("--limit needs a value"))?
-                    .parse()
-                    .map_err(|error| {
-                        crate::commands::usage(format!("--limit must be a whole number: {error}"))
-                    })?;
-            }
+            // A limit of zero does not parse as NonZeroUsize, so it is
+            // refused naming --limit and the value given.
+            "--limit" => limit = Some(crate::commands::parsed(arguments.next(), "--limit")?),
+            // The one argument that is not a flag names the subcommand; the
+            // match below refuses one it does not serve.
+            positional if sub.is_empty() && !positional.starts_with('-') => sub = positional,
             other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
-        index += 1;
     }
     if sub.is_empty() {
-        return Err(crate::commands::usage("usage: spis docs-corpus status | search --query T [--site S] [--limit N] | show --site S --url U | import --attempt-receipt FILE"));
-    }
-    if limit == 0 || limit > 10_000 {
-        return Err(crate::commands::usage(
-            "--limit must be between 1 and 10000",
-        ));
+        return Err(crate::commands::usage(USAGE));
     }
 
     match sub {
@@ -205,16 +189,21 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             let sites = collect_sites()?;
             let mut hits = Vec::new();
-            let mut scanned = 0usize;
+            let mut scanned_per_site = Vec::new();
             for candidate in &sites {
                 if site.as_deref().is_some_and(|slug| slug != candidate.slug) {
                     continue;
                 }
-                scanned += scan_site(candidate, &query, limit, &mut hits)?;
-                if hits.len() >= limit {
+                // A site with no selected corpus has no pages to read.
+                let Some(corpus_dir) = candidate.corpus_dir.as_deref() else {
+                    continue;
+                };
+                scanned_per_site.push(scan_site(candidate, corpus_dir, &query, limit, &mut hits)?);
+                if limit.is_some_and(|limit| hits.len() >= limit.get()) {
                     break;
                 }
             }
+            let scanned: usize = scanned_per_site.iter().sum();
             println!(
                 "{}",
                 serde_json::to_string_pretty(
@@ -232,13 +221,8 @@ pub fn run(rest: &[String]) -> Result<()> {
             let corpus = selected
                 .get(&slug)
                 .with_context(|| format!("no completed v2 retrieval corpus for {slug}"))?;
-            let mut reader = open_jsonl(Some(&corpus.corpus_dir))?
-                .context("selected retrieval corpus has no page stream")?;
-            let mut decompressed_bytes = 0u64;
-            let mut record_count = 0usize;
-            while let Some(record) =
-                read_corpus_record(&mut reader, &mut decompressed_bytes, &mut record_count)?
-            {
+            let mut reader = open_jsonl(&corpus.corpus_dir)?;
+            while let Some(record) = read_corpus_record(&mut reader)? {
                 if record.get("url").and_then(Value::as_str) == Some(url_filter.as_str()) {
                     println!("{record}");
                     return Ok(());
@@ -254,6 +238,8 @@ pub fn run(rest: &[String]) -> Result<()> {
             println!("{}", serde_json::to_string_pretty(&imported)?);
             Ok(())
         }
-        _ => unreachable!(),
+        other => Err(crate::commands::usage(format!(
+            "unknown docs-corpus subcommand {other}; {USAGE}"
+        ))),
     }
 }
