@@ -17,14 +17,15 @@ pub(crate) fn runtime_binding(
         .ok_or_else(|| {
             anyhow!("{catalog}/{slug}: runtime bindings have no exact catalog and record key")
         })?;
-    if binding.get("configured").and_then(Value::as_bool) != Some(true) {
-        bail!(
-            "{catalog}/{slug}: {}",
-            binding
-                .get("diagnostic")
-                .and_then(Value::as_str)
-                .unwrap_or("runtime binding is explicitly unconfigured")
-        );
+    match binding.get("configured").and_then(Value::as_bool) {
+        Some(true) => {}
+        Some(false) => match binding.get("diagnostic").and_then(Value::as_str) {
+            Some(diagnostic) => bail!("{catalog}/{slug}: {diagnostic}"),
+            None => bail!(
+                "{catalog}/{slug}: runtime binding is explicitly unconfigured and states no diagnostic"
+            ),
+        },
+        None => bail!("{catalog}/{slug}: runtime binding states no configured flag"),
     }
     let account: RuntimeAccount = serde_json::from_value(
         binding
