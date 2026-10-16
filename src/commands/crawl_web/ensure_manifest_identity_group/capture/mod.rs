@@ -32,19 +32,36 @@ pub(crate) fn capture(
                 "the committed record declares no product_url",
             )
         })?;
+    let reference_parsed = url::Url::parse(reference_url).map_err(|error| {
+        WorkerFailure::new(
+            "web_reference_product_url_invalid",
+            format!("the committed record product_url {reference_url:?} is not a URL: {error}"),
+        )
+    })?;
     ensure(
-        url::Url::parse(reference_url).ok().as_ref() == Some(&parsed),
+        reference_parsed == parsed,
         "web_reference_product_url_mismatch",
         "the committed record product_url differs from the runtime manifest product URL",
     )?;
+    // The catalogue requires every reference's name, and the crawl names the
+    // product it crawls by it; a record without one is refused, not crawled
+    // as a nameless product.
     let name = reference
         .get("name")
         .and_then(Value::as_str)
-        .unwrap_or_default();
-    let goal = reference
-        .pointer("/journey/goal")
-        .and_then(Value::as_str)
-        .unwrap_or_default();
+        .filter(|name| !name.trim().is_empty())
+        .ok_or_else(|| {
+            WorkerFailure::new(
+                "web_reference_name_absent",
+                "the committed record declares no name",
+            )
+        })?;
+    // A journey goal is optional; an unstated one is the empty goal, which
+    // `objective` replaces with mapping the product's reachable functionality.
+    let goal = match reference.pointer("/journey/goal").and_then(Value::as_str) {
+        Some(goal) => goal,
+        None => "",
+    };
     let objective = objective(catalog, name, goal)?;
     let constraints = task_constraints(&manifest.constraints)?;
 
