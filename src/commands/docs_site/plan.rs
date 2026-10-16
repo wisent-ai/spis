@@ -21,6 +21,10 @@ pub(crate) fn plan(version: &str) -> Value {
                 "kind": "code",
                 "location": "src/commands/corpus.rs",
             },
+            "brama-decisions": {
+                "kind": "code",
+                "location": "src/commands/brama.rs SETTINGS",
+            },
         },
         "pages": [
             {
@@ -69,6 +73,17 @@ pub(crate) fn plan(version: &str) -> Value {
                             "CLI JSON reports state, root, catalog, reference and file counts, index SHA-256, imported, unchanged, conflicting, rejected, and a result message. Desktop keeps that exact output or refusal selectable.",
                         ],
                     },
+                ],
+            },
+            {
+                "slug": "brama-decisions",
+                "nav": "Brama decisions",
+                "eyebrow": "Configuration",
+                "title": "Brama decisions",
+                "description": "The settings Spis reads to ask Brama, and what an unset one does.",
+                "sections": [
+                    { "title": "Settings", "bullets": brama_setting_bullets() },
+                    { "title": "How Spis asks", "paragraphs": brama_decision_paragraphs() },
                 ],
             },
             {
@@ -132,6 +147,10 @@ pub(crate) fn plan(version: &str) -> Value {
     })
 }
 
+/// The plan's pages `docs-site` publishes to the landing's
+/// `product-docs.json`; the rest are authored on the landing.
+const PUBLISHED: &[&str] = &["corpus-adoption", "brama-decisions"];
+
 /// Render the plan into the canonical site's existing `DocPage` JSON model.
 pub(crate) fn docs_payload(plan: &Value) -> Result<Value> {
     let pages = plan
@@ -140,7 +159,7 @@ pub(crate) fn docs_payload(plan: &Value) -> Result<Value> {
         .context("generated plan carries no pages")?;
     let published_pages = pages
         .iter()
-        .filter(|page| page["slug"] == "corpus-adoption");
+        .filter(|page| PUBLISHED.iter().any(|slug| page["slug"] == *slug));
     let mut rendered_pages = Vec::new();
     for page in published_pages {
         let sections = page

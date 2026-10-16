@@ -29,6 +29,38 @@ pub(crate) fn command_bullets() -> Vec<String> {
         .collect()
 }
 
+/// One line per environment variable a Brama question reads, straight off
+/// [`crate::commands::brama::SETTINGS`]: what it holds and what an unset or
+/// blank one does.
+pub(crate) fn brama_setting_bullets() -> Vec<String> {
+    crate::commands::brama::SETTINGS
+        .iter()
+        .map(|setting| {
+            format!(
+                "`{}` — {}. Unset or blank: {}.",
+                setting.variable, setting.holds, setting.unset
+            )
+        })
+        .collect()
+}
+
+/// How Spis asks Brama and which model aliases it accepts, from the
+/// constants [`crate::commands::brama::decide`] reads.
+pub(crate) fn brama_decision_paragraphs() -> Vec<String> {
+    use crate::commands::brama::{
+        BEST_DECISION_ALIAS, BEST_ROUTE, DECISIONS, DECISION_ALIAS, MODEL,
+    };
+    vec![
+        format!(
+            "Every question Spis asks Brama is one typed decision on `POST /v1/{DECISIONS}`: a `choice` among the options the question declares, so the answer is one of them or the command is refused with what Brama sent. A refusal is kept with Brama's status and body; an unreachable Brama is named with its address."
+        ),
+        format!(
+            "`{}` takes `{DECISION_ALIAS}` or `{BEST_DECISION_ALIAS}`; `{BEST_ROUTE}` asks `{BEST_DECISION_ALIAS}`. Any other alias is refused before a question is sent, naming the aliases the route answers.",
+            MODEL.variable
+        ),
+    ]
+}
+
 /// One line per family: its engine, and what its worker requires of a host.
 ///
 /// Derived from [`super::crawl::crawl_catalogs`] and

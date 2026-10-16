@@ -18,9 +18,38 @@ use anyhow::{Context, Result};
 use serde_json::{json, Map, Value};
 
 /// Brama's selector, which the delegated decision alias stands for.
-const BEST_ROUTE: &str = "best";
-const BEST_DECISION_ALIAS: &str = "best-decision-model";
-const DECISION_ALIAS: &str = "decision-model";
+pub(crate) const BEST_ROUTE: &str = "best";
+pub(crate) const BEST_DECISION_ALIAS: &str = "best-decision-model";
+pub(crate) const DECISION_ALIAS: &str = "decision-model";
+/// The Brama route a typed question is posted to, under `/v1/`.
+pub(crate) const DECISIONS: &str = "decisions";
+
+/// One environment variable a Brama question reads: what it holds, and
+/// what happens when it is unset or blank. `spis docs-site` publishes these
+/// rows, so the page states what this module reads.
+pub(crate) struct Setting {
+    pub(crate) variable: &'static str,
+    pub(crate) holds: &'static str,
+    pub(crate) unset: &'static str,
+}
+
+pub(crate) const ROUTER: Setting = Setting {
+    variable: "MODEL_ROUTER_URL",
+    holds: "the Brama address",
+    unset: "the command that asks Brama is refused, naming the variable and what it holds",
+};
+pub(crate) const MODEL: Setting = Setting {
+    variable: "MODEL_ROUTER_MODEL",
+    holds: "a Brama model alias",
+    unset: "the command that asks Brama is refused, naming the variable and what it holds",
+};
+pub(crate) const TOKEN_ROLE: Setting = Setting {
+    variable: "MODEL_ROUTER_TOKEN_ROLE",
+    holds: "the vault role reference ROLE#FIELD whose value Stado reads and Spis sends as the bearer",
+    unset: "the question is sent with no bearer; a value that is not ROLE#FIELD, or a secret Stado cannot read, is refused",
+};
+/// Every setting a Brama question reads.
+pub(crate) const SETTINGS: &[Setting] = &[ROUTER, MODEL, TOKEN_ROLE];
 
 /// Brama's typed answers to `questions` about `state`, keyed as asked. A
 /// refusal, an answer document without `answers`, or a question left
@@ -30,19 +59,22 @@ pub(crate) fn decide(
     state: &str,
     questions: &Map<String, Value>,
 ) -> Result<Map<String, Value>> {
-    let model = setting("MODEL_ROUTER_MODEL", purpose, "a Brama model alias")?;
+    let model = setting(&MODEL, purpose)?;
     let alias = match model.as_str() {
         BEST_ROUTE | BEST_DECISION_ALIAS => BEST_DECISION_ALIAS,
         DECISION_ALIAS => DECISION_ALIAS,
         other => anyhow::bail!(
-            "{purpose}: MODEL_ROUTER_MODEL `{other}` cannot answer a typed question: Brama's POST /v1/decisions answers only `{DECISION_ALIAS}` and `{BEST_DECISION_ALIAS}` (`{BEST_ROUTE}` asks the latter)"
+            "{purpose}: {} `{other}` cannot answer a typed question: Brama's POST /v1/{DECISIONS} answers only `{DECISION_ALIAS}` and `{BEST_DECISION_ALIAS}` (`{BEST_ROUTE}` asks the latter)",
+            MODEL.variable
         ),
     };
     let payload = json!({ "model": alias, "state": state, "questions": questions }).to_string();
-    let mut body = post(purpose, "decisions", &payload)?;
+    let mut body = post(purpose, DECISIONS, &payload)?;
     let answers = match body.get_mut("answers").map(Value::take) {
         Some(Value::Object(answers)) => answers,
-        Some(other) => anyhow::bail!("{purpose}: Brama's decision answers are not an object: {other}"),
+        Some(other) => {
+            anyhow::bail!("{purpose}: Brama's decision answers are not an object: {other}")
+        }
         None => anyhow::bail!("{purpose}: Brama's decision carries no answers: {body}"),
     };
     if let Some(missing) = questions.keys().find(|key| !answers.contains_key(*key)) {
@@ -86,14 +118,14 @@ pub(crate) fn chosen(
 /// One JSON `payload` to Brama's `/v1/<path>` with the bearer, and the JSON
 /// Brama answered; Brama's own refusal is kept with its status and body.
 fn post(purpose: &str, path: &str, payload: &str) -> Result<Value> {
-    let router = setting("MODEL_ROUTER_URL", purpose, "the Brama address")?;
+    let router = setting(&ROUTER, purpose)?;
     let endpoint = if router.contains("/v1") {
         format!("{}/{path}", router.trim_end_matches('/'))
     } else {
         format!("{}/v1/{path}", router.trim_end_matches('/'))
     };
     // Read before the request so a bad reference is named, never sent anonymously.
-    let token = crate::commands::role_secret("MODEL_ROUTER_TOKEN_ROLE")
+    let token = crate::commands::role_secret(TOKEN_ROLE.variable)
         .with_context(|| format!("{purpose}: the Brama bearer could not be read"))?;
     let mut request = ureq::post(&endpoint).set("Content-Type", "application/json");
     if let Some(token) = &token {
@@ -126,9 +158,12 @@ fn post(purpose: &str, path: &str, payload: &str) -> Result<Value> {
         .with_context(|| format!("{purpose}: Brama answered with a body that is not JSON"))
 }
 
-/// The value of the setting `variable`. Unset or blank is refused with what
-/// it should hold; a value that is not text is named, not read as unset.
-fn setting(variable: &str, purpose: &str, holds: &str) -> Result<String> {
+/// The value of `declared`. Unset or blank is refused with what it should
+/// hold; a value that is not text is named, not read as unset.
+fn setting(declared: &Setting, purpose: &str) -> Result<String> {
+    let Setting {
+        variable, holds, ..
+    } = declared;
     match std::env::var(variable) {
         Ok(value) if !value.trim().is_empty() => Ok(value),
         Ok(_) | Err(std::env::VarError::NotPresent) => {
