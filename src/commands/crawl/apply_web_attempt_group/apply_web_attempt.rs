@@ -143,7 +143,6 @@ pub(crate) fn apply_web_attempt(
             .context("reference record is not an object")?;
         object.insert("weles_evidence_inventory".into(), Value::Array(inventory));
     }
-    let _ = attempt_dir;
     Ok(())
 }
 

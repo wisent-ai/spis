@@ -8,10 +8,10 @@ pub(super) fn checked_product_url(
     // `validate_request_and_evidence_manifest` binds every retained URL to the exact
     // product URL of the current record, so the manifest URL must already be canonical.
     let product_url = manifest.runtime_product.product_url.clone();
-    let parsed = url::Url::parse(&product_url).map_err(|_| {
+    let parsed = url::Url::parse(&product_url).map_err(|error| {
         WorkerFailure::new(
             "web_product_url_invalid",
-            "the runtime product URL is not a URL",
+            format!("the runtime product URL is not a URL: {error}"),
         )
     })?;
     ensure(
