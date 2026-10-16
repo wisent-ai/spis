@@ -40,6 +40,9 @@ sha2 = "0.10"
 anyhow = "1"
 parking_lot = "0.12"
 libc = "0.2"
+# Every wait on another program (Stado reading a credential) says on stderr
+# what it waits for, where and since when, and how it ended.
+stado-wait = { git = "https://github.com/wisent-ai/stado", rev = "692c0438d24117735c61373c0c178f1c1e21b080" }
 regex = "1"
 base64 = "0.22"
 hex = "0.4"

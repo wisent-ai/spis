@@ -23,10 +23,12 @@ pub mod generate_example_catalogs;
 pub mod reference_contract;
 pub mod reference_record;
 pub mod serve;
+mod subcommands;
 pub mod verify_reference_evidence;
 
 use anyhow::{Context, Result};
 use std::io::Write;
+use subcommands::SUBCOMMANDS;
 
 /// The invocation itself is wrong: a missing or extra argument, an unknown
 /// verb. A type rather than a phrase, so `main` tells it from a failure of a
@@ -69,195 +71,6 @@ where
     raw.parse()
         .map_err(|error| usage(format!("{flag}: {raw:?} is not valid: {error}")))
 }
-
-/// The secret a `ROLE#FIELD` reference in `variable` names, `None` when the
-/// variable is unset. Only the vault role the secret's item plays travels in
-/// the environment, never an item name; the value is read with
-/// `stado credentials get --role` (cli.md rule 15). `STADO_BIN` names another
-/// executable.
-pub fn role_secret(variable: &str) -> Result<Option<String>> {
-    // A reference that is not text is named, not read as absent: read as
-    // absent, a declared secret was silently replaced by none.
-    let reference = match std::env::var(variable) {
-        Ok(value) if !value.trim().is_empty() => value,
-        Ok(_) | Err(std::env::VarError::NotPresent) => return Ok(None),
-        Err(error) => return Err(usage(format!("{variable} cannot be read: {error}"))),
-    };
-    let reference = reference.trim();
-    let Some((role, field)) = reference
-        .rsplit_once('#')
-        .filter(|(role, field)| !role.is_empty() && !field.is_empty())
-    else {
-        return Err(usage(format!(
-            "{variable} must be a role reference ROLE#FIELD, not {reference:?}"
-        )));
-    };
-    // STADO_BIN names another Stado program, any path the system accepts;
-    // without it the `stado` the PATH finds is asked.
-    let program = match std::env::var_os("STADO_BIN").filter(|path| !path.is_empty()) {
-        Some(path) => std::path::PathBuf::from(path),
-        None => std::path::PathBuf::from("stado"),
-    };
-    let binary = program.display();
-    let output = std::process::Command::new(&program)
-        .args(["credentials", "get", "--role", role, "--field", field])
-        .output()
-        .map_err(|error| anyhow::anyhow!("{variable}: {binary} could not be run: {error}"))?;
-    if !output.status.success() {
-        anyhow::bail!(
-            "{variable}: {binary} credentials get --role {role} --field {field} failed: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-    }
-    let secret = String::from_utf8(output.stdout)
-        .map_err(|_| anyhow::anyhow!("{variable}: {binary} returned a value that is not UTF-8"))?
-        .trim_end_matches('\n')
-        .to_string();
-    if secret.is_empty() {
-        anyhow::bail!("{variable}: the item playing role {role} holds no value in field {field}");
-    }
-    Ok(Some(secret))
-}
-
-/// One subcommand: its name, what it does, and whether its own module
-/// answers `--help` with its flags. A module that does not is answered here,
-/// so `--help` never reaches code that would do the command's work.
-struct Subcommand {
-    name: &'static str,
-    description: &'static str,
-    own_help: bool,
-}
-
-const fn sub(name: &'static str, description: &'static str, own_help: bool) -> Subcommand {
-    Subcommand {
-        name,
-        description,
-        own_help,
-    }
-}
-
-const SUBCOMMANDS: &[Subcommand] = &[
-    sub(
-        "onboarding",
-        "show or reset the first-use walkthrough",
-        true,
-    ),
-    sub(
-        "corpus",
-        "adopt or inspect an existing canonical reference corpus",
-        true,
-    ),
-    sub(
-        "docs-site",
-        "generate this product's documentation from its own tables",
-        true,
-    ),
-    sub(
-        "crawl",
-        "plan, submit, track, resume and import every crawler",
-        true,
-    ),
-    sub(
-        "crawl-cli",
-        "crawl real CLI products through a PTY on Stado",
-        true,
-    ),
-    sub(
-        "crawl-docs",
-        "full-text crawl of the 50-reference documentation set",
-        false,
-    ),
-    sub(
-        "crawl-mobile",
-        "crawl real iOS or Android apps through Appium",
-        true,
-    ),
-    sub(
-        "crawl-desktop",
-        "crawl real macOS or desktop apps through Cua Driver",
-        true,
-    ),
-    sub(
-        "crawl-web",
-        "crawl real browser products through Weles on Stado",
-        true,
-    ),
-    sub(
-        "crawl-tui",
-        "crawl real terminal applications through a PTY on Stado",
-        true,
-    ),
-    sub(
-        "docs-corpus",
-        "read and import immutable documentation retrieval corpora",
-        false,
-    ),
-    sub(
-        "discover",
-        "discover important pages behind a start URL",
-        false,
-    ),
-    sub(
-        "reference-record",
-        "manage numbered reference records in a catalog",
-        false,
-    ),
-    sub(
-        "verify-reference-evidence",
-        "measure and verify evidence fields of records",
-        false,
-    ),
-    sub(
-        "check-upstream-drift",
-        "detect drift between corpus and upstream sources",
-        false,
-    ),
-    sub(
-        "catalog-type",
-        "manage typed catalogs (add/edit/rename/remove)",
-        true,
-    ),
-    sub(
-        "generate-example-catalogs",
-        "validate catalogs and write the JSON index",
-        true,
-    ),
-    sub(
-        "analyze-example-structures",
-        "structural analysis of example screenshots",
-        false,
-    ),
-    sub(
-        "collect-example-images",
-        "collect cover images for examples",
-        false,
-    ),
-    sub(
-        "capture-widths",
-        "enqueue multi-width Weles capture batches",
-        false,
-    ),
-    sub(
-        "audit-reference-accessibility",
-        "run axe audits over captured references",
-        true,
-    ),
-    sub(
-        "capture-cli-references",
-        "pty-capture the CLI products of a capture plan into records",
-        true,
-    ),
-    sub(
-        "curate-catalog",
-        "write a catalog's capture-pending records from a declared selector file",
-        true,
-    ),
-    sub(
-        "serve",
-        "loopback HTTP/JSON backend for Spis Desktop (--port PORT, 0 picks one)",
-        true,
-    ),
-];
 
 fn asks_help(rest: &[String]) -> bool {
     rest.iter().any(|arg| arg == "--help" || arg == "-h")
@@ -337,15 +150,16 @@ pub(crate) fn operator_path(path: &str) -> std::path::PathBuf {
 }
 
 pub fn run(args: &[String]) -> Result<bool> {
-    match args.first().map(|s| s.as_str()) {
-        None | Some("help") | Some("--help") | Some("-h") => {
+    match args.split_first() {
+        None => {
             write_usage(&mut std::io::stdout());
             Ok(true)
         }
-        Some(name) => {
-            let rest: Vec<String> = args.iter().skip(1).cloned().collect();
-            dispatch(name, &rest)
+        Some((name, _)) if matches!(name.as_str(), "help" | "--help" | "-h") => {
+            write_usage(&mut std::io::stdout());
+            Ok(true)
         }
+        Some((name, rest)) => dispatch(name, rest),
     }
 }
 

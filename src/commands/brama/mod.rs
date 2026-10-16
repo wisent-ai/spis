@@ -9,8 +9,11 @@
 //! operator's router alias `MODEL_ROUTER_MODEL` stands for (`best` asks
 //! `best-decision-model`; `decision-model` and `best-decision-model` are
 //! taken as written), and the bearer the vault role `MODEL_ROUTER_TOKEN_ROLE`
-//! names; each missing one is refused with the variable and the command that
-//! needed it.
+//! names, read through Stado or, on a machine without Stado, from the
+//! owner-only file `SPIS_CREDENTIALS_FILE` names; each missing one is
+//! refused with the variable and the command that needed it.
+
+mod credentials;
 
 use std::io::Read;
 
@@ -45,11 +48,16 @@ pub(crate) const MODEL: Setting = Setting {
 };
 pub(crate) const TOKEN_ROLE: Setting = Setting {
     variable: "MODEL_ROUTER_TOKEN_ROLE",
-    holds: "the vault role reference ROLE#FIELD whose value Stado reads and Spis sends as the bearer",
-    unset: "the question is sent with no bearer; a value that is not ROLE#FIELD, or a secret Stado cannot read, is refused",
+    holds: "the vault role reference ROLE#FIELD whose value Stado, or SPIS_CREDENTIALS_FILE, gives and Spis sends as the bearer",
+    unset: "the question is sent with no bearer; a value that is not ROLE#FIELD, or a secret that cannot be read, is refused",
+};
+pub(crate) const CREDENTIALS_FILE: Setting = Setting {
+    variable: credentials::CREDENTIALS_FILE,
+    holds: "an owner-only JSON file of role -> field -> value that answers MODEL_ROUTER_TOKEN_ROLE in Stado's place",
+    unset: "the reference is read with `stado credentials get --role` (STADO_BIN names another Stado program); a file other users can read, or one without the role or field, is refused",
 };
 /// Every setting a Brama question reads.
-pub(crate) const SETTINGS: &[Setting] = &[ROUTER, MODEL, TOKEN_ROLE];
+pub(crate) const SETTINGS: &[Setting] = &[ROUTER, MODEL, TOKEN_ROLE, CREDENTIALS_FILE];
 
 /// Brama's typed answers to `questions` about `state`, keyed as asked. A
 /// refusal, an answer document without `answers`, or a question left
@@ -125,7 +133,7 @@ fn post(purpose: &str, path: &str, payload: &str) -> Result<Value> {
         format!("{}/v1/{path}", router.trim_end_matches('/'))
     };
     // Read before the request so a bad reference is named, never sent anonymously.
-    let token = crate::commands::role_secret(TOKEN_ROLE.variable)
+    let token = credentials::role_secret(TOKEN_ROLE.variable)
         .with_context(|| format!("{purpose}: the Brama bearer could not be read"))?;
     let mut request = ureq::post(&endpoint).set("Content-Type", "application/json");
     if let Some(token) = &token {
