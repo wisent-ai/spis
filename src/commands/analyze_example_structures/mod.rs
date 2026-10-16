@@ -5,12 +5,9 @@
 //! image, detects dominant separators on a grayscale downscale, classifies a
 //! layout model with semantic hints from the example metadata, and stores an
 //! `interface_structure` record back into sources.json. Failures land in
-//! structure-analysis-failures.json. Rust port of the former
-//! `analyze-example-structures.py`; the separator statistics mirror the numpy
-//! pipeline (zero-padded moving average, linear-interpolated percentiles,
-//! population standard deviation, banker's rounding).
-//!
-//! Requires the `image` crate (reported to the integrator for Cargo.toml).
+//! structure-analysis-failures.json. The separator statistics are a
+//! zero-padded moving average, linear-interpolated percentiles, the population
+//! standard deviation and banker's rounding.
 
 use crate as lib;
 use anyhow::{bail, Context, Result};

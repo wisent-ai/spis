@@ -104,7 +104,7 @@ fn printed_sha256(output: &str, what: &str) -> Result<String> {
         .next()
         .with_context(|| format!("hashing the {what} printed no digest"))?
         .to_ascii_lowercase();
-    if !is_lower_sha256(&digest) {
+    if !crate::weles_provenance::is_sha256(&digest) {
         bail!("{what} SHA-256 is invalid");
     }
     Ok(digest)

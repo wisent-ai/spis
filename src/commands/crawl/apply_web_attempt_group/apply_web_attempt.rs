@@ -57,10 +57,11 @@ pub(crate) fn apply_web_attempt(
     // permanently block the second import of the same record. Operational documents that
     // differ per attempt by construction stay in the attempt root instead, and reach the
     // record through the attempt-private `crawl/{attempt_id}` tree installed above.
-    for subtree in ["weles", "recordings"] {
-        let source = attempt_dir.join(subtree);
+    for subtree in crate::commands::crawl_web::MergedSubtree::ALL {
+        let name = subtree.name();
+        let source = attempt_dir.join(&name);
         if source.is_dir() {
-            merge_immutable_tree(&source, &record_dir.join(subtree))?;
+            merge_immutable_tree(&source, &record_dir.join(&name))?;
         }
     }
     let provenance = report
@@ -73,7 +74,7 @@ pub(crate) fn apply_web_attempt(
     let provenance_id = provenance
         .id
         .strip_prefix("sha256:")
-        .filter(|value| is_lower_sha256(value))
+        .filter(|value| crate::weles_provenance::is_sha256(value))
         .context("official provenance document has no framed sha256: identifier")?
         .to_string();
     let provenance_relative = format!("weles/provenance/{provenance_id}.json");
@@ -159,28 +160,43 @@ pub(crate) fn apply_web_attempt(
 ///
 /// One unreadable or unpublished failed attempt is a diagnostic, never a reason to fail
 /// the accepted attempt's import: the returned values are recorded on the import summary.
+/// An attempt whose manifest is missing or does not parse cannot be matched to this run;
+/// it is recorded as `not_imported` with its position and cause rather than passed over.
+/// An entry whose `attempts` is not a list is a broken record and is refused.
 pub(crate) fn import_non_success_attempts(
-    run_id: &str,
-    catalog: &str,
     accepted: &RuntimeManifest,
     entry: &Value,
     record: &mut Value,
     record_dir: &Path,
     run_dir: &Path,
-) -> Vec<Value> {
+) -> Result<Vec<Value>> {
+    // Entries written before their first attempt carry no list: that is none.
+    let Some(attempts) = entry.get("attempts") else {
+        return Ok(Vec::new());
+    };
+    let attempts = attempts
+        .as_array()
+        .with_context(|| format!("the record entry's attempts is not a list: {attempts}"))?;
     let mut imported = Vec::new();
-    let attempts = entry
-        .get("attempts")
-        .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default();
-    for snapshot in &attempts {
-        let Some(manifest) = snapshot
+    for (position, snapshot) in attempts.iter().enumerate() {
+        let parsed = snapshot
             .get("manifest")
             .cloned()
-            .and_then(|value| serde_json::from_value::<RuntimeManifest>(value).ok())
-        else {
-            continue;
+            .context("the attempt snapshot carries no manifest")
+            .and_then(|value| {
+                serde_json::from_value::<RuntimeManifest>(value)
+                    .context("the attempt manifest does not parse")
+            });
+        let manifest = match parsed {
+            Ok(manifest) => manifest,
+            Err(error) => {
+                imported.push(json!({
+                    "attempt": position,
+                    "state": "not_imported",
+                    "message": format!("{error:#}"),
+                }));
+                continue;
+            }
         };
         if manifest.engine != "web"
             || manifest.run_id != accepted.run_id
@@ -201,6 +217,5 @@ pub(crate) fn import_non_success_attempts(
             })),
         }
     }
-    let _ = (run_id, catalog);
-    imported
+    Ok(imported)
 }

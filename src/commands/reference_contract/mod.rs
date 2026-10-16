@@ -1,4 +1,4 @@
-//! `spis` reference-evidence contract — Rust port of `reference_contract.py`.
+//! `spis` reference-evidence contract.
 //!
 //! One definition of the reference-evidence vocabulary, shared by every tool
 //! here. Change a rule here and both consumers change with it.

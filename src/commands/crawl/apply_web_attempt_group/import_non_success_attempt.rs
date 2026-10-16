@@ -1,39 +1,5 @@
 use super::*;
 
-/// The attempts of `entry` whose manifest is missing or does not parse, each as a
-/// `not_imported` summary with its position and cause. `import_non_success_attempts`
-/// cannot match such an attempt to the run and passes over it; without this the attempt
-/// vanished from the import summary instead of being recorded as the contract says.
-pub(crate) fn unreadable_attempts(entry: &Value) -> Result<Vec<Value>> {
-    // Entries written before their first attempt carry no list: that is none,
-    // while a list that is not an array is a broken record.
-    let Some(attempts) = entry.get("attempts") else {
-        return Ok(Vec::new());
-    };
-    let attempts = attempts
-        .as_array()
-        .with_context(|| format!("the record entry's attempts is not a list: {attempts}"))?;
-    let mut unreadable = Vec::new();
-    for (position, snapshot) in attempts.iter().enumerate() {
-        let parsed = snapshot
-            .get("manifest")
-            .cloned()
-            .context("the attempt snapshot carries no manifest")
-            .and_then(|value| {
-                serde_json::from_value::<RuntimeManifest>(value)
-                    .context("the attempt manifest does not parse")
-            });
-        if let Err(error) = parsed {
-            unreadable.push(json!({
-                "attempt": position,
-                "state": "not_imported",
-                "message": format!("{error:#}"),
-            }));
-        }
-    }
-    Ok(unreadable)
-}
-
 /// One non-success attempt, or `None` when this attempt is not a published web attempt
 /// that carries a signed non-success proof.
 ///

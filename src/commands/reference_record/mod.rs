@@ -1,4 +1,4 @@
-//! `spis reference-record` — Rust port of `reference-record.py`.
+//! `spis reference-record`.
 //!
 //! Add, get, edit or remove a single reference record inside a product-type catalog.
 //!

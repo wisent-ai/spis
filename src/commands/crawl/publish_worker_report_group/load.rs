@@ -119,14 +119,6 @@ pub(crate) fn pinned_host_is(pinned: &str, host: &str) -> bool {
         .is_some_and(|rest| rest.eq_ignore_ascii_case(host))
 }
 
-/// Whether `value` is a lowercase SHA-256 digest as this program writes one.
-pub(crate) fn is_lower_sha256(value: &str) -> bool {
-    value.len() == crate::sha256_hex(&[]).len()
-        && value
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-}
-
 /// Accept only an exact typed Stado v3 submission receipt for one job.
 ///
 /// Every digest must be lowercase SHA-256, the repository/ref/workdir/pinned host
@@ -158,7 +150,7 @@ pub(crate) fn compact_submission(
         ("source_digest", receipt.source_digest.as_str()),
         ("input_digest", receipt.input_digest.as_str()),
     ] {
-        if !is_lower_sha256(digest) {
+        if !crate::weles_provenance::is_sha256(digest) {
             bail!("Stado submission receipt {label} is not a lowercase SHA-256 digest");
         }
     }
@@ -182,8 +174,8 @@ pub(crate) fn compact_submission(
     let addresses_sent_command =
         usize::try_from(job.command_index).is_ok_and(|index| [&job.command].get(index).is_some());
     if !addresses_sent_command
-        || !is_lower_sha256(&job.command_digest)
-        || !is_lower_sha256(&job.job_key)
+        || !crate::weles_provenance::is_sha256(&job.command_digest)
+        || !crate::weles_provenance::is_sha256(&job.job_key)
         || job.submission_request_digest != receipt.request_digest
         || job.repo_ref != receipt.repo_ref
         || !pinned_host_is(&job.pinned_host, host)

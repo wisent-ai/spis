@@ -265,7 +265,7 @@ pub(crate) fn verify_worker_report(
     let sha256 = artifact
         .get("sha256")
         .and_then(Value::as_str)
-        .filter(|value| is_lower_sha256(value))
+        .filter(|value| crate::weles_provenance::is_sha256(value))
         .context("worker report artifact has no lowercase SHA-256 digest")?;
     let bytes = artifact
         .get("bytes")

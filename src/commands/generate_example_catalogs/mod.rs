@@ -6,9 +6,6 @@
 //! than an intention: how many records are complete, how many are partial, and
 //! how the motion evidence was actually obtained (a product we drove, a browser
 //! we drove, or media its owner published).
-//!
-//! Rust port of the validation and JSON indexing behavior from the former
-//! `generate-example-catalogs.py` pipeline.
 
 use crate as lib;
 use crate::weles_provenance::VerifiedProvenanceSet;

@@ -1,5 +1,5 @@
 //! `spis capture-widths` — capture a landing record at all three review
-//! widths through Weles (1:1 port of capture-widths.py).
+//! widths through Weles.
 //!
 //! Builds one `wisent.weles-capture-plan.v1` batch with a composition-axis
 //! capture per width (390 × 844, 768 × 1024, 1440 × 1000) and enqueues it

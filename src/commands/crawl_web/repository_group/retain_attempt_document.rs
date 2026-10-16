@@ -104,13 +104,27 @@ pub(crate) fn retain_attempt_document(
     })
 }
 
-/// The record subtrees the importer merges from Weles; an operational
-/// document is never retained inside one.
-#[derive(serde::Deserialize)]
+/// The record subtrees an import merges from a web attempt: the
+/// content-addressed `weles/` provenance documents and the task-scoped
+/// `recordings/` tree. They are names of the attempt layout the worker
+/// writes, declared once: `apply_web_attempt` merges exactly these, and an
+/// operational document is never retained inside one.
+#[derive(Clone, Copy, Debug, serde::Deserialize, serde::Serialize)]
 #[serde(rename_all = "lowercase")]
-enum MergedSubtree {
+pub(crate) enum MergedSubtree {
     Weles,
     Recordings,
+}
+
+impl MergedSubtree {
+    /// Every merged subtree, in the order an import merges them.
+    pub(crate) const ALL: &'static [MergedSubtree] =
+        &[MergedSubtree::Weles, MergedSubtree::Recordings];
+
+    /// The directory name of this subtree under an attempt and a record.
+    pub(crate) fn name(self) -> String {
+        crate::commands::reference_contract::spelling(&self)
+    }
 }
 
 /// Is `file_name` a document `retain_attempt_document` staged for THIS attempt, whose
