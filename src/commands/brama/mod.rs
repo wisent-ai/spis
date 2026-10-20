@@ -11,9 +11,13 @@
 //! taken as written), and the bearer the vault role `MODEL_ROUTER_TOKEN_ROLE`
 //! names, read through Stado or, on a machine without Stado, from the
 //! owner-only file `SPIS_CREDENTIALS_FILE` names; each missing one is
-//! refused with the variable and the command that needed it.
+//! refused with the variable and the command that needed it. On a machine
+//! without Brama, `SPIS_DECISION_CHAT_MODEL` names a model of the
+//! OpenAI-compatible service at `MODEL_ROUTER_URL`, and each question is asked
+//! there as one schema-bound chat completion (`direct`).
 
 mod credentials;
+mod direct;
 
 use std::io::Read;
 
@@ -56,28 +60,43 @@ pub(crate) const CREDENTIALS_FILE: Setting = Setting {
     holds: "an owner-only JSON file of role -> field -> value that answers MODEL_ROUTER_TOKEN_ROLE in Stado's place",
     unset: "the reference is read with `stado credentials get --role` (STADO_BIN names another Stado program); a file other users can read, or one without the role or field, is refused",
 };
-/// Every setting a Brama question reads.
-pub(crate) const SETTINGS: &[Setting] = &[ROUTER, MODEL, TOKEN_ROLE, CREDENTIALS_FILE];
+/// Every setting a typed question reads.
+pub(crate) const SETTINGS: &[Setting] = &[
+    ROUTER,
+    MODEL,
+    TOKEN_ROLE,
+    CREDENTIALS_FILE,
+    direct::CHAT_MODEL,
+];
 
-/// Brama's typed answers to `questions` about `state`, keyed as asked. A
-/// refusal, an answer document without `answers`, or a question left
-/// unanswered is refused with what Brama sent.
+/// The typed answers to `questions` about `state`, keyed as asked: Brama's
+/// decision, or the declared chat model's. A refusal, an answer document
+/// without `answers`, or a question left unanswered is refused with what the
+/// service sent.
 pub(crate) fn decide(
     purpose: &str,
     state: &str,
     questions: &Map<String, Value>,
 ) -> Result<Map<String, Value>> {
-    let model = setting(&MODEL, purpose)?;
-    let alias = match model.as_str() {
-        BEST_ROUTE | BEST_DECISION_ALIAS => BEST_DECISION_ALIAS,
-        DECISION_ALIAS => DECISION_ALIAS,
-        other => anyhow::bail!(
-            "{purpose}: {} `{other}` cannot answer a typed question: Brama's POST /v1/{DECISIONS} answers only `{DECISION_ALIAS}` and `{BEST_DECISION_ALIAS}` (`{BEST_ROUTE}` asks the latter)",
-            MODEL.variable
-        ),
+    let mut body = match direct::declared()? {
+        Some(chat_model) => direct::ask(purpose, &chat_model, state, questions)?,
+        None => {
+            let model = setting(&MODEL, purpose)?;
+            let alias = match model.as_str() {
+                BEST_ROUTE | BEST_DECISION_ALIAS => BEST_DECISION_ALIAS,
+                DECISION_ALIAS => DECISION_ALIAS,
+                other => anyhow::bail!(
+                    "{purpose}: {} `{other}` cannot answer a typed question: Brama's POST /v1/{DECISIONS} answers only `{DECISION_ALIAS}` and `{BEST_DECISION_ALIAS}` (`{BEST_ROUTE}` asks the latter); without Brama set {} to a model of the OpenAI-compatible service at {}",
+                    MODEL.variable,
+                    direct::CHAT_MODEL.variable,
+                    ROUTER.variable
+                ),
+            };
+            let payload =
+                json!({ "model": alias, "state": state, "questions": questions }).to_string();
+            post(purpose, DECISIONS, &payload)?
+        }
     };
-    let payload = json!({ "model": alias, "state": state, "questions": questions }).to_string();
-    let mut body = post(purpose, DECISIONS, &payload)?;
     let answers = match body.get_mut("answers").map(Value::take) {
         Some(Value::Object(answers)) => answers,
         Some(other) => {
