@@ -58,9 +58,3 @@ pub fn crawl_attempt_base_uri(
         crawl_record_base_uri(run_id, catalog, record, record_key)
     )
 }
-
-pub(crate) fn between<'a>(hay: &'a str, open: &str, close: &str) -> Option<String> {
-    let s = hay.find(open)? + open.len();
-    let e = hay[s..].find(close)? + s;
-    Some(html_unescape(hay[s..e].trim()))
-}

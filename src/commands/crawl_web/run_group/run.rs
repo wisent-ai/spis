@@ -7,36 +7,26 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut runtime_manifest_base64: Option<String> = None;
     let mut artifact_uri: Option<String> = None;
     let mut worker = false;
-    let mut i = 0;
-    while i < rest.len() {
-        match rest[i].as_str() {
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--host" => {
-                i += 1;
-                host =
-                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host = Some(crate::commands::required(arguments.next(), "--host needs a value")?.clone());
             }
             "--record" => {
-                i += 1;
-                record =
-                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record = Some(crate::commands::required(arguments.next(), "--record needs a value")?.clone());
             }
             "--runtime-manifest-base64" => {
-                i += 1;
-                runtime_manifest_base64 = Some(
-                    rest.get(i)
-                        .context("--runtime-manifest-base64 needs a value")?
-                        .clone(),
-                );
+                runtime_manifest_base64 = Some(crate::commands::required(
+                    arguments.next(), "--runtime-manifest-base64 needs a value"
+                )?.clone());
             }
             "--artifact-uri" => {
-                i += 1;
-                artifact_uri = Some(
-                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
-                );
+                artifact_uri = Some(crate::commands::required(arguments.next(), "--artifact-uri needs a value")?.clone());
             }
             "--worker" => worker = true,
             "--help" | "-h" => {
-                println!("usage: spis crawl-web <catalog> --host TARGET --record SLUG --runtime-manifest-base64 DATA\nworker mode: spis crawl-web <catalog> --worker --record SLUG --artifact-uri URI --runtime-manifest-base64 DATA");
+                println!("usage: spis crawler run web <catalog> --host TARGET --record SLUG --runtime-manifest-base64 DATA\nworker mode: spis crawler run web <catalog> --worker --record SLUG --artifact-uri URI --runtime-manifest-base64 DATA");
                 return Ok(());
             }
             value if value.starts_with('-') => {
@@ -49,12 +39,11 @@ pub fn run(rest: &[String]) -> Result<()> {
                 )))
             }
         }
-        i += 1;
     }
     let catalog = catalog.context("catalog is required")?;
     let web_families = web_catalogs();
     if !web_families.contains(&catalog) {
-        bail!("crawl-web accepts {}", web_families.join(", "));
+        bail!("crawler run web accepts {}", web_families.join(", "));
     }
     let record = record.context("--record is required for one exact per-record job")?;
     let manifest = crate::commands::crawl::decode_runtime_manifest(

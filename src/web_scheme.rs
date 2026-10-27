@@ -3,12 +3,8 @@
 //! (https://www.rfc-editor.org/rfc/rfc9110#section-4.2); every Spis reader
 //! asks this type instead of spelling them again.
 
-use serde::Deserialize;
-use serde_json::Value;
-
 /// The scheme of a web address.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
-#[serde(rename_all = "lowercase")]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WebScheme {
     /// Plain HTTP.
     Http,
@@ -17,16 +13,26 @@ pub enum WebScheme {
 }
 
 impl WebScheme {
-    /// The web scheme `url` is addressed by, or nothing when it is not a
-    /// web address.
+    /// Every web scheme.
+    pub const ALL: &'static [WebScheme] = &[WebScheme::Http, WebScheme::Https];
+
+    /// The scheme's name as a parsed URL writes it (lowercase).
+    pub fn name(self) -> &'static str {
+        match self {
+            WebScheme::Http => "http",
+            WebScheme::Https => "https",
+        }
+    }
+
+    /// The web scheme `url` is addressed by; none when it is not a web address.
     pub fn of(url: &url::Url) -> Option<WebScheme> {
         Self::named(url.scheme())
     }
 
     /// The web scheme called exactly `scheme` (lowercase, as a parsed URL
-    /// writes it), or nothing when no web scheme is called that.
+    /// writes it); none when no web scheme is called that.
     pub fn named(scheme: &str) -> Option<WebScheme> {
-        serde_json::from_value(Value::String(scheme.to_string())).ok()
+        Self::ALL.iter().copied().find(|web| web.name() == scheme)
     }
 
     /// The address is reached over TLS.

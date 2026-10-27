@@ -3,8 +3,8 @@ use super::*;
 pub fn run(rest: &[String]) -> Result<()> {
     let mut catalog: Option<String> = None;
     let mut record: Option<String> = None;
-    let mut max_states = 200usize;
-    let mut max_depth = 8usize;
+    let mut max_states = None;
+    let mut max_depth = None;
     let mut host: Option<String> = None;
     let mut worker = false;
     let mut artifact_uri: Option<String> = None;
@@ -12,51 +12,37 @@ pub fn run(rest: &[String]) -> Result<()> {
     // `--output`, else `~/.spis/crawls`, resolved only when it is needed so an
     // unset HOME refuses only a run that has no `--output`.
     let mut output: Option<PathBuf> = None;
-    let mut i = 0;
-    while i < rest.len() {
-        match rest[i].as_str() {
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--record" => {
-                i += 1;
-                record =
-                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record = Some(crate::commands::required(arguments.next(), "--record needs a value")?.clone());
             }
             "--host" => {
-                i += 1;
-                host =
-                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host = Some(crate::commands::required(arguments.next(), "--host needs a value")?.clone());
             }
             "--worker" => worker = true,
             "--artifact-uri" => {
-                i += 1;
-                artifact_uri = Some(
-                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
-                );
+                artifact_uri = Some(crate::commands::required(arguments.next(), "--artifact-uri needs a value")?.clone());
             }
             "--runtime-manifest-base64" => {
-                i += 1;
-                runtime_manifest_base64 = Some(
-                    rest.get(i)
-                        .context("--runtime-manifest-base64 needs a value")?
-                        .clone(),
-                );
+                runtime_manifest_base64 = Some(crate::commands::required(
+                    arguments.next(), "--runtime-manifest-base64 needs a value"
+                )?.clone());
             }
             "--max-states" => {
-                i += 1;
-                max_states = crate::commands::parsed(rest.get(i), "--max-states")?;
+                max_states = Some(crate::commands::parsed(arguments.next(), "--max-states")?);
             }
             "--max-depth" => {
-                i += 1;
-                max_depth = crate::commands::parsed(rest.get(i), "--max-depth")?;
+                max_depth = Some(crate::commands::parsed(arguments.next(), "--max-depth")?);
             }
             "--output" => {
-                i += 1;
                 output = Some(PathBuf::from(crate::commands::required(
-                    rest.get(i),
-                    "--output needs a value",
+                    arguments.next(), "--output needs a value"
                 )?));
             }
             "--help" | "-h" => {
-                println!("usage: spis crawl-desktop <macos-app-examples|desktop-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--max-states N] [--max-depth N]\nworker mode requires the same immutable runtime manifest and exact record.");
+                println!("usage: spis crawler run desktop <macos-app-examples|desktop-app-examples> --host TARGET --record SLUG --runtime-manifest-base64 DATA [--max-states N] [--max-depth N]\nTraversal bounds must be supplied by flags or SPIS_CRAWL_MAX_STATES and SPIS_CRAWL_MAX_DEPTH in the coordinator environment.\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value if value.starts_with('-') => {
@@ -69,12 +55,9 @@ pub fn run(rest: &[String]) -> Result<()> {
                 )))
             }
         }
-        i += 1;
     }
     let catalog = catalog.context("catalog is required")?;
-    if max_states == 0 || max_states > 10_000 || max_depth > 32 {
-        bail!("--max-states must be 1..10000 and --max-depth must be 0..32");
-    }
+    let (max_states, max_depth) = crate::commands::crawler::traversal_limits(max_states, max_depth)?;
     let record = record.context("--record is required for one exact per-record job")?;
     let encoded_manifest = runtime_manifest_base64
         .as_deref()

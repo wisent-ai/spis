@@ -5,6 +5,15 @@
 
 use anyhow::{bail, Result};
 
+/// Catalog items are counted from one: the first item is named `01-<slug>`.
+pub const FIRST_ORDINAL: usize = std::num::NonZeroUsize::MIN.get();
+
+/// The ordinals of a catalog's items in order, from `FIRST_ORDINAL` on; zip
+/// a catalog's items with it to name them.
+pub fn ordinals() -> std::ops::RangeFrom<usize> {
+    FIRST_ORDINAL..
+}
+
 /// The name of the catalog item at one-based `ordinal` whose slug is `slug`.
 pub fn ordinal_name(ordinal: usize, slug: &str) -> String {
     format!("{ordinal:02}-{slug}")

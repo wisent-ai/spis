@@ -16,7 +16,6 @@ use parking_lot::Mutex;
 use serde_json::{json, Value};
 use std::path::PathBuf;
 use std::process::Command;
-use std::sync::atomic::{AtomicUsize, Ordering};
 
 mod catalogs;
 mod check_sources;

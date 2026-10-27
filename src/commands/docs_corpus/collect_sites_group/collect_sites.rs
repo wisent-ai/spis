@@ -99,18 +99,17 @@ pub(crate) fn read_corpus_record(reader: &mut impl BufRead) -> Result<Option<Val
         .context("parse documentation corpus record")
 }
 
-/// Appends every record of the site's corpus that mentions `query` to `hits`,
+/// Appends every record mentioning the already-lowercased query to `hits`,
 /// stopping once `hits` holds `limit` when the caller asked for a limit, and
 /// answers how many records it read.
 pub(crate) fn scan_site(
     site: &SiteInfo,
     corpus_dir: &Path,
-    query: &str,
+    query_lower: &str,
     limit: Option<std::num::NonZeroUsize>,
     hits: &mut Vec<Value>,
 ) -> Result<usize> {
     let mut reader = open_jsonl(corpus_dir)?;
-    let query_lower = query.to_lowercase();
     let mut failure = None;
     let scanned = std::iter::from_fn(|| {
         if limit.is_some_and(|limit| hits.len() >= limit.get()) {
@@ -118,7 +117,7 @@ pub(crate) fn scan_site(
         }
         let read = read_corpus_record(&mut reader).and_then(|record| {
             record
-                .map(|record| matching_hit(site, &query_lower, &record).map(|hit| hits.extend(hit)))
+                .map(|record| matching_hit(site, query_lower, &record).map(|hit| hits.extend(hit)))
                 .transpose()
         });
         match read {

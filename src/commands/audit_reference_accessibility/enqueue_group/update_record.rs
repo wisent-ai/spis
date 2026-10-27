@@ -18,11 +18,10 @@ pub(crate) fn update_record(
     } else {
         "source_url"
     };
-    let current_url = canonical_url(
-        document.get(current_field).unwrap_or(&Value::Null),
-        &rid,
-        current_field,
-    )?;
+    let current_url = match document.get(current_field) {
+        Some(value) => canonical_url(value, &rid, current_field)?,
+        None => bail!("{rid}: {current_field}: missing; a reference names the page it audits"),
+    };
     if current_url != reference.source_url {
         bail!(
             "{rid}: {current_field}: changed from {:?} to {current_url:?} while audit ran",
@@ -30,45 +29,29 @@ pub(crate) fn update_record(
         );
     }
 
-    let accessibility_missing = document
-        .get("accessibility")
-        .map(Value::is_null)
-        .unwrap_or(true);
-    let mut accessibility: Map<String, Value> = if accessibility_missing {
-        Map::new()
-    } else {
-        document
-            .get("accessibility")
-            .and_then(Value::as_object)
-            .cloned()
-            .ok_or_else(|| anyhow!("{rid}: accessibility: expected an object"))?
+    // A reference not audited before has no accessibility section; any other
+    // shape is refused rather than replaced.
+    let mut accessibility: Map<String, Value> = match document.get("accessibility") {
+        None | Some(Value::Null) => Map::new(),
+        Some(Value::Object(section)) => section.clone(),
+        Some(_) => bail!("{rid}: accessibility: expected an object"),
     };
 
-    let observations_value = accessibility
-        .get("observations")
-        .cloned()
-        .unwrap_or(Value::Array(Vec::new()));
-    let observations_list = observations_value.as_array().ok_or_else(|| {
-        anyhow!("{rid}: accessibility.observations: expected an array of strings")
-    })?;
-    if observations_list.iter().any(|item| !item.is_string()) {
-        bail!("{rid}: accessibility.observations: expected an array of strings");
-    }
-    let unknowns_value = accessibility
-        .get("unknowns")
-        .cloned()
-        .unwrap_or(Value::Array(Vec::new()));
-    let unknowns_list = unknowns_value
-        .as_array()
-        .ok_or_else(|| anyhow!("{rid}: accessibility.unknowns: expected an array of strings"))?;
-    if unknowns_list.iter().any(|item| !item.is_string()) {
-        bail!("{rid}: accessibility.unknowns: expected an array of strings");
-    }
+    // A list the section does not hold yet starts empty; one it holds must be
+    // an array of strings.
+    let strings = |key: &str| -> Result<Vec<Value>> {
+        match accessibility.get(key) {
+            None => Ok(Vec::new()),
+            Some(Value::Array(items)) if items.iter().all(Value::is_string) => Ok(items.clone()),
+            Some(_) => bail!("{rid}: accessibility.{key}: expected an array of strings"),
+        }
+    };
+    let observations_list = strings("observations")?;
+    let unknowns_value = Value::Array(strings("unknowns")?);
 
     let mut observations: Vec<Value> = observations_list
-        .iter()
-        .filter(|item| !item.as_str().unwrap_or("").starts_with("[axe-core]"))
-        .cloned()
+        .into_iter()
+        .filter(|item| !matches!(item, Value::String(text) if text.starts_with("[axe-core]")))
         .collect();
     for observation in axe_observations(summary, reference)? {
         observations.push(Value::String(observation));
@@ -229,16 +212,16 @@ pub(crate) fn write_index(
 
 pub(crate) fn run_verifier(catalog: &str) -> Result<()> {
     let exe = std::env::current_exe().context("locate the spis executable")?;
-    let output = Command::new(exe)
-        .args([
-            "verify-reference-evidence",
-            "--catalog",
-            catalog,
-            "--apply",
-            "--no-state-match",
-        ])
-        .output()
-        .context("spawn spis verify-reference-evidence")?;
+    // The verifier runs through stado_wait, which says on stderr what is
+    // waited for and how it ended.
+    let output = stado_wait::output(Command::new(exe).args([
+        "verify-reference-evidence",
+        "--catalog",
+        catalog,
+        "--apply",
+        "--no-state-match",
+    ]))
+    .context("run spis verify-reference-evidence")?;
     if !output.status.success() {
         // The verifier's refusal is reported whole: its status as the
         // process ended (a signal included) and both streams, never the

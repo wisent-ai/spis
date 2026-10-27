@@ -1,5 +1,4 @@
 use super::*;
-use std::num::NonZeroUsize;
 
 /// Measure every state entry in place and, when asked, locate each one as a frame of the primary motion.
 pub(super) fn measure_states(
@@ -23,8 +22,10 @@ pub(super) fn measure_states(
         None => Vec::new(),
     };
     let states_count = positions.len();
-    // States are named for people from one, in the order the record lists them.
-    for (idx, ordinal) in positions.into_iter().zip(NonZeroUsize::MIN.get()..) {
+    // States are named for people in the order the record lists them: a
+    // state's ordinal is how many states come up to and including it.
+    let ordinals: Vec<usize> = positions.iter().enumerate().map(|(index, _)| positions[..=index].len()).collect();
+    for (idx, ordinal) in positions.into_iter().zip(ordinals) {
         let entry = data
             .get_mut("states")
             .and_then(|v| v.as_array_mut())

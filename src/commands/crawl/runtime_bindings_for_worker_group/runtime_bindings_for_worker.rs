@@ -22,7 +22,8 @@ pub(crate) fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+        // Owner read, write and search only (POSIX S_IRWXU).
+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)))?;
     }
     let cache = directory.join(format!("{}.json", manifest.bindings_file_sha256));
     if !cache.is_file() {
@@ -33,11 +34,12 @@ pub(crate) fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<
             std::process::id(),
             nonce
         ));
-        let output = crawl_storage_command()
-            .args(["storage", "get", &manifest.bindings_uri])
-            .arg(&temporary)
-            .output()
-            .context("download immutable runtime bindings")?;
+        let output = stado_wait::output(
+            crawl_storage_command()
+                .args(["storage", "get", &manifest.bindings_uri])
+                .arg(&temporary),
+        )
+        .context("download immutable runtime bindings")?;
         if !output.status.success() {
             return crate::discarding(
                 Err(anyhow::anyhow!(
@@ -63,7 +65,11 @@ pub(crate) fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            std::fs::set_permissions(&temporary, std::fs::Permissions::from_mode(0o600))?;
+            // Owner read and write only (POSIX S_IRUSR | S_IWUSR).
+            std::fs::set_permissions(
+                &temporary,
+                std::fs::Permissions::from_mode(u32::from(libc::S_IRUSR | libc::S_IWUSR)),
+            )?;
         }
         if cache.is_file() {
             crate::discard(&temporary)?;
@@ -96,18 +102,19 @@ pub(crate) fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()>
     if crate::sha256_hex(&bytes) != bindings.sha256 {
         bail!("runtime binding input changed after planning");
     }
-    let output = crawl_storage_command()
-        .args([
-            "storage",
-            "put",
-            "--if-absent",
-            "--content-type",
-            "application/json",
-            bindings.uri.as_str(),
-        ])
-        .arg(source)
-        .output()
-        .context("publish immutable runtime bindings")?;
+    let output = stado_wait::output(
+        crawl_storage_command()
+            .args([
+                "storage",
+                "put",
+                "--if-absent",
+                "--content-type",
+                "application/json",
+                bindings.uri.as_str(),
+            ])
+            .arg(source),
+    )
+    .context("publish immutable runtime bindings")?;
     if !output.status.success() {
         bail!(
             "Stado refused immutable runtime bindings: {}",
@@ -119,7 +126,8 @@ pub(crate) fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()>
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+        // Owner read, write and search only (POSIX S_IRWXU).
+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)))?;
     }
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
     let target = directory.join(format!(
@@ -128,11 +136,12 @@ pub(crate) fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()>
         std::process::id(),
         nonce
     ));
-    let downloaded = crawl_storage_command()
-        .args(["storage", "get", bindings.uri.as_str()])
-        .arg(&target)
-        .output()
-        .context("read back immutable runtime bindings")?;
+    let downloaded = stado_wait::output(
+        crawl_storage_command()
+            .args(["storage", "get", bindings.uri.as_str()])
+            .arg(&target),
+    )
+    .context("read back immutable runtime bindings")?;
     if !downloaded.status.success() {
         return crate::discarding(
             Err(anyhow::anyhow!(

@@ -129,7 +129,9 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
         };
         let output = ready_output(&check, "verify exact runtime product")?;
         if resolved_kind.executable() {
-            let observed = output.split_whitespace().next().unwrap_or_default();
+            let Some(observed) = output.split_whitespace().next() else {
+                bail!("the executable digest check printed no digest for the terminal executable");
+            };
             if identity.executable_sha256.as_deref() != Some(observed) {
                 bail!("terminal executable changed during preflight");
             }
@@ -148,11 +150,13 @@ pub(crate) fn record_preflight(manifest: &mut RuntimeManifest, host_report: &Val
         }
         manifest.execution_identity = Some(identity.clone());
         if manifest.resource_lease.is_some() {
-            manifest.resource_lease = Some(format!(
-                "stado-exclusive://{}/{}",
-                host,
-                identity.device_id.as_deref().unwrap_or(product)
-            ));
+            // A runtime on a device is leased by its device; one without a
+            // device, by the product it runs.
+            let leased = match identity.device_id.as_deref() {
+                Some(device) => device,
+                None => product,
+            };
+            manifest.resource_lease = Some(format!("stado-exclusive://{host}/{leased}"));
         }
         Ok(checks)
     })();

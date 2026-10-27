@@ -22,7 +22,7 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)))?;
     }
     let source = directory.join(format!("{}.log", manifest.attempt_id));
     let bytes = (serde_json::to_string(report)? + "\n").into_bytes();
@@ -30,7 +30,10 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(&source, std::fs::Permissions::from_mode(0o600))?;
+        std::fs::set_permissions(
+            &source,
+            std::fs::Permissions::from_mode(u32::from(libc::S_IRUSR | libc::S_IWUSR)),
+        )?;
     }
     let output = command_output(
         crawl_storage_command()
@@ -205,10 +208,7 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
     let temporary = parent.join(format!(".run.json.{}.{}.tmp", std::process::id(), nonce));
     let result = (|| -> Result<Value> {
-        let expected = run
-            .get("mutation_revision")
-            .and_then(Value::as_u64)
-            .unwrap_or(0);
+        let expected = run.get("mutation_revision").and_then(Value::as_u64);
         if path.is_file() {
             let current: Value = crate::read_json(&path)?;
             // The revision on disk and the one this run was read at are
@@ -224,12 +224,21 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
                     stated(&current)
                 );
             }
-        } else if expected != 0 {
+        } else if let Some(expected) = expected {
             bail!("crawl run {run_id} disappeared before revision {expected} could be persisted");
         }
+        // A run that states no revision is persisted as its first; a stated
+        // revision is advanced by one.
+        let step = std::num::NonZeroU64::MIN.get();
+        let next = match expected {
+            Some(revision) => revision
+                .checked_add(step)
+                .with_context(|| format!("crawl run {run_id} revision {revision} cannot advance"))?,
+            None => step,
+        };
         let mut staged = run.clone();
         sync_attempt_history(&mut staged);
-        staged["mutation_revision"] = json!(expected + 1);
+        staged["mutation_revision"] = json!(next);
         staged["updated_at"] = json!(crate::now_iso_utc());
         let mut output = OpenOptions::new()
             .write(true)

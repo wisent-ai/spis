@@ -140,7 +140,7 @@ pub(crate) fn find_record(directory: &Path, index: &Value, identifier: &str) -> 
     for ((position, entry), place) in references
         .iter()
         .enumerate()
-        .zip(std::num::NonZeroUsize::MIN.get()..)
+        .zip(crate::commands::reference_contract::ordinals())
     {
         let name_key = entry["name"]
             .as_str()

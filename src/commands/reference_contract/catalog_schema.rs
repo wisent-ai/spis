@@ -10,9 +10,14 @@ pub const RECORD_SCHEMA: &str = "wisent.full-product-reference.v2";
 pub const INDEX_SCHEMA: &str = "wisent.full-reference-catalog.v2";
 
 /// The value of type `T` spelled `name`, or nothing when `T` has none called
-/// that. Every vocabulary below is read through its declared type this way.
+/// that. Every vocabulary below is read through its declared type this way;
+/// serde's refusal of a string can only say the spelling is not one of `T`'s,
+/// which is exactly what `None` says.
 pub fn named<T: DeserializeOwned>(name: &str) -> Option<T> {
-    serde_json::from_value(Value::String(name.to_string())).ok()
+    match serde_json::from_value(Value::String(name.to_string())) {
+        Ok(value) => Some(value),
+        Err(_not_one_of_the_variants) => None,
+    }
 }
 
 /// How a declared value of a vocabulary below is spelled in a record.

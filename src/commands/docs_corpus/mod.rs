@@ -1,4 +1,4 @@
-//! `spis docs-corpus` — JSON views and immutable Stado artifact import for
+//! `spis docs corpus` — JSON views and immutable Stado artifact import for
 //! documentation retrieval attempts. stdout carries exactly one JSON document.
 
 use crate as lib;
@@ -13,6 +13,10 @@ use std::path::{Component, Path, PathBuf};
 // The split submodules reach their sibling commands through `super::`, which
 // resolves here by way of their `use super::*`.
 use crate::commands::crawl_docs;
+
+mod cli;
+pub use cli::run;
+pub(crate) use cli::USAGE;
 
 mod collect_sites_group;
 mod max_discovery_depth_group;

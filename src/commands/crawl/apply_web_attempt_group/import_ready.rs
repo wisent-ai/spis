@@ -56,8 +56,11 @@ pub(crate) fn import_ready(run_id: &str, selected_record: Option<&str>) -> Resul
                 Ok(import) => {
                     mutate_record(run_id, &catalog_name, &record_name, |entry| {
                         entry["state"] = json!(State::Imported.name());
-                        entry["weles_task_id"] =
-                            import.get("weles_task_id").cloned().unwrap_or(Value::Null);
+                        // An import that ran no Weles task records none.
+                        entry["weles_task_id"] = match import.get("weles_task_id") {
+                            Some(task) => task.clone(),
+                            None => Value::Null,
+                        };
                         entry["import"] = import;
                         entry["diagnostic"] = Value::Null;
                         Ok(())

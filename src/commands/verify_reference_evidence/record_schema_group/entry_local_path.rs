@@ -1,5 +1,4 @@
 use super::*;
-use std::num::NonZeroUsize;
 
 /// The file an evidence entry names, or nothing when it names none; the caller
 /// reports such an entry rather than probing the record's directory.
@@ -64,7 +63,10 @@ pub(crate) fn demote_unsupported_semantics(
         Some(states) => states.clone(),
         None => Vec::new(),
     };
-    for ((index, state), ordinal) in states.iter_mut().enumerate().zip(NonZeroUsize::MIN.get()..) {
+    // A state's ordinal, as a person counts them, is how many states come up
+    // to and including it in the record's order.
+    let ordinals: Vec<usize> = states.iter().enumerate().map(|(index, _)| states[..=index].len()).collect();
+    for ((index, state), ordinal) in states.iter_mut().enumerate().zip(ordinals) {
         if observation_supported(state, context) {
             continue;
         }

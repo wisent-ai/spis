@@ -5,12 +5,18 @@ pub(crate) fn revision() -> Result<String> {
 }
 
 pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
-    if value.is_empty()
-        || matches!(value, "." | "..")
-        || !value
-            .chars()
-            .all(|character| character.is_ascii_alphanumeric() || matches!(character, '-' | '_'))
-    {
+    if value.is_empty() {
+        bail!("{flag} must contain only letters, digits, '-' or '_'");
+    }
+    if matches!(value, "." | "..") {
+        bail!("{flag} must contain only letters, digits, '-' or '_'");
+    }
+    if !value.chars().all(|character| {
+        match character {
+            '-' | '_' => true,
+            character => character.is_ascii_alphanumeric(),
+        }
+    }) {
         bail!("{flag} must contain only letters, digits, '-' or '_'");
     }
     Ok(())
@@ -51,7 +57,7 @@ pub(crate) fn submit_worker(request: DesktopSubmission<'_>) -> Result<()> {
     // would cost this engine the same.
     let cargo = crate::commands::crawl::resolved_worker_program(request.host)?;
     let command = format!(
-        "{cargo} run --release -- crawl-desktop {} --worker --record {} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawler run desktop {} --worker --record {} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.catalog,
         request.record,
         request.max_states,

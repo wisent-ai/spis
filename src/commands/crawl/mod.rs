@@ -1,7 +1,7 @@
 //! Durable coordinator for every Spis crawler.
 //!
-//! The six surface-specific commands remain the execution engines. This command
-//! is the single operator and desktop contract for planning, submission, status,
+//! `crawler run ENGINE` executes the selected engine. This command is the
+//! single operator and desktop contract for planning, submission, status,
 //! resumption, artifact retrieval and idempotent record import.
 
 use anyhow::{anyhow, bail, Context, Result};

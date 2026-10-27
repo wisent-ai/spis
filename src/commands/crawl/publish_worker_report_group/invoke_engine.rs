@@ -12,7 +12,11 @@ pub(crate) fn invoke_engine(args: &[String], host: &str, host_report: &Value) ->
 
 /// The Spis command line that crawls one record on `host`, built from the
 /// engine the manifest declares; a manifest bound to another host is refused.
-pub(crate) fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<Vec<String>> {
+pub(crate) fn engine_command(
+    manifest: &RuntimeManifest,
+    host: &str,
+    retained_command: Option<&[String]>,
+) -> Result<Vec<String>> {
     let execution = manifest
         .execution_identity
         .as_ref()
@@ -29,9 +33,16 @@ pub(crate) fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<V
     {
         bail!("web worker command host differs from the bound Weles service placement");
     }
-    let mut args = vec![engine.command().to_string()];
+    let mut args = vec!["crawler".into(), "run".into(), engine.name().into()];
     if engine.takes_catalog() {
         args.push(manifest.catalog.clone());
+    }
+    if matches!(engine, Engine::Mobile | Engine::Desktop) {
+        let (max_states, max_depth) = native_limits(retained_command)?;
+        args.extend([
+            "--max-states".into(), max_states.to_string(),
+            "--max-depth".into(), max_depth.to_string(),
+        ]);
     }
     args.push("--host".into());
     args.push(host.into());
@@ -48,6 +59,35 @@ pub(crate) fn engine_command(manifest: &RuntimeManifest, host: &str) -> Result<V
     args.push("--runtime-manifest-base64".into());
     args.push(manifest.encoded()?);
     Ok(args)
+}
+
+/// A prepared attempt keeps its declared bounds in its retained argv. Resuming
+/// it must neither require the original process environment nor adopt new bounds.
+fn native_limits(retained: Option<&[String]>) -> Result<(usize, usize)> {
+    let Some(retained) = retained else {
+        return crate::commands::crawler::traversal_limits(None, None);
+    };
+    let mut states = None;
+    let mut depth = None;
+    let mut arguments = retained.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
+            "--max-states" => {
+                states = Some(crate::commands::parsed(arguments.next(), "retained --max-states")?);
+            }
+            "--max-depth" => {
+                depth = Some(crate::commands::parsed(arguments.next(), "retained --max-depth")?);
+            }
+            _ => {}
+        }
+        // Both bounds precede opaque record and manifest values.
+        if states.is_some() && depth.is_some() {
+            break;
+        }
+    }
+    let states = states.context("retained native worker command has no --max-states")?;
+    let depth = depth.context("retained native worker command has no --max-depth")?;
+    crate::commands::crawler::traversal_limits(Some(states), Some(depth))
 }
 
 /// The selected families with the engine that crawls each, every family the

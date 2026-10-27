@@ -111,12 +111,13 @@ pub(crate) fn submit_worker(request: MobileSubmission<'_>) -> Result<()> {
     // cost a documentation crawl job many minutes of a claimed slot, and
     // would cost this engine the same.
     let cargo = crate::commands::crawl::resolved_worker_program(request.host)?;
-    let driver = request
-        .driver_url
-        .map(|url| format!(" --driver-url {url}"))
-        .unwrap_or_default();
+    // The worker reaches a driver only when the request names one.
+    let driver = match request.driver_url {
+        Some(url) => format!(" --driver-url {url}"),
+        None => String::new(),
+    };
     let worker = format!(
-        "{cargo} run --release -- crawl-mobile {} --worker --record {}{driver} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawler run mobile {} --worker --record {}{driver} --max-states {} --max-depth {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.catalog,
         request.record,
         request.max_states,

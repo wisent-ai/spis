@@ -9,9 +9,9 @@ pub(crate) fn read_exit_status(fixture: &Path, exit_file: &Path) -> Result<i32> 
             exit_file.display()
         )
     })?;
-    if metadata.file_type().is_symlink() || !metadata.file_type().is_file() || metadata.len() > 16 {
+    if metadata.file_type().is_symlink() || !metadata.file_type().is_file() {
         bail!(
-            "CLI out-of-band exit status {} is not a small regular file",
+            "CLI out-of-band exit status {} is not a regular file",
             exit_file.display()
         );
     }
@@ -87,16 +87,13 @@ pub(crate) fn run_in_pty(
     std::fs::write(output.join(&state_path), &screen)?;
     let cleaned_screen = clean_terminal(&screen);
     let exit_status = read_exit_status(fixture, &exit_file)?;
-    let after_start = cleaned_screen
-        .rsplit_once(&start_marker)
-        .map(|(_, tail)| tail)
-        .unwrap_or(&cleaned_screen);
-    let invocation_output = after_start
-        .split_once(&end_marker)
-        .map(|(body, _)| body)
-        .unwrap_or(after_start)
-        .trim()
-        .to_string();
+    let Some((_, after_start)) = cleaned_screen.rsplit_once(&start_marker) else {
+        bail!("the captured CLI screen {state_path} holds no start marker; the invocation's output is not in the terminal history");
+    };
+    let Some((body, _)) = after_start.split_once(&end_marker) else {
+        bail!("the captured CLI screen {state_path} holds no end marker after its start marker");
+    };
+    let invocation_output = body.trim().to_string();
     Ok(Invocation {
         argv: argv.to_vec(),
         output: invocation_output,

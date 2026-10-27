@@ -17,7 +17,7 @@ impl Platform {
         match catalog {
             "ios-app-examples" => Ok(Self::Ios),
             "android-app-examples" => Ok(Self::Android),
-            _ => bail!("crawl-mobile accepts ios-app-examples or android-app-examples"),
+            _ => bail!("crawler run mobile accepts ios-app-examples or android-app-examples"),
         }
     }
 

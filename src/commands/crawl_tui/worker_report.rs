@@ -80,11 +80,14 @@ pub(crate) fn submit(
     // running git. The allowlist resolves it to a real installation and the
     // worker is handed that exact path.
     let git = crate::commands::crawl::resolved_program(host, &["git", "--version"])?;
-    if git.chars().any(char::is_whitespace) || git == "/usr/bin/git" {
+    if git.chars().any(char::is_whitespace) {
+        bail!("host {host} resolved git to {git:?}, which this worker must not be handed");
+    }
+    if git == "/usr/bin/git" {
         bail!("host {host} resolved git to {git:?}, which this worker must not be handed");
     }
     let worker = format!(
-        "{cargo} run --release -- crawl-tui --worker --record {selected} --artifact-uri {artifact} --git-path {git} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawler run tui --worker --record {selected} --artifact-uri {artifact} --git-path {git} --runtime-manifest-base64 '{}'",
         manifest.encoded()?
     );
     let mut stado = crate::commands::crawl::stado_command();
@@ -134,47 +137,33 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut artifact_uri: Option<String> = None;
     let mut git_path: Option<String> = None;
     let mut runtime_manifest_base64: Option<String> = None;
-    let mut i = 0;
-    while i < rest.len() {
-        match rest[i].as_str() {
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--host" => {
-                i += 1;
-                host =
-                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host = Some(crate::commands::required(arguments.next(), "--host needs a value")?.clone());
             }
             "--record" => {
-                i += 1;
-                selected =
-                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                selected = Some(crate::commands::required(arguments.next(), "--record needs a value")?.clone());
             }
             "--artifact-uri" => {
-                i += 1;
-                artifact_uri = Some(
-                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
-                );
+                artifact_uri = Some(crate::commands::required(arguments.next(), "--artifact-uri needs a value")?.clone());
             }
             "--git-path" => {
-                i += 1;
-                git_path = Some(
-                    crate::commands::required(rest.get(i), "--git-path needs a value")?.clone(),
-                );
+                git_path = Some(crate::commands::required(arguments.next(), "--git-path needs a value")?.clone());
             }
             "--runtime-manifest-base64" => {
-                i += 1;
-                runtime_manifest_base64 = Some(
-                    rest.get(i)
-                        .context("--runtime-manifest-base64 needs a value")?
-                        .clone(),
-                );
+                runtime_manifest_base64 = Some(crate::commands::required(
+                    arguments.next(), "--runtime-manifest-base64 needs a value"
+                )?.clone());
             }
             "--worker" => worker = true,
             "--help" | "-h" => {
-                println!("usage: spis crawl-tui --host TARGET --record SLUG --runtime-manifest-base64 DATA\nworker mode requires the same immutable runtime manifest and exact record.");
+                println!("usage: spis crawler run tui --host TARGET --record SLUG --runtime-manifest-base64 DATA\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
-        i += 1;
     }
     let selected = selected.context("--record is required for one exact per-record job")?;
     let manifest = crate::commands::crawl::decode_runtime_manifest(

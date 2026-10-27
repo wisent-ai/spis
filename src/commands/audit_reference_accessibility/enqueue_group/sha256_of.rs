@@ -25,15 +25,15 @@ pub(crate) fn validate_artifacts(
     if summary.get("source_url") != action.get("source_url") {
         bail!(
             "{rid}: axe-summary.json.source_url: expected {}, got {}",
-            action.get("source_url").unwrap_or(&Value::Null),
-            summary.get("source_url").unwrap_or(&Value::Null)
+            json!(action.get("source_url")),
+            json!(summary.get("source_url"))
         );
     }
     if summary.get("viewport") != action.get("viewport") {
         bail!(
             "{rid}: axe-summary.json.viewport: expected {}, got {}",
-            action.get("viewport").unwrap_or(&Value::Null),
-            summary.get("viewport").unwrap_or(&Value::Null)
+            json!(action.get("viewport")),
+            json!(summary.get("viewport"))
         );
     }
     for field in ["captured_at", "renderer", "weles_version", "axe_version"] {
@@ -84,8 +84,7 @@ pub(crate) fn validate_artifacts(
         let id_ok = violation
             .get("id")
             .and_then(Value::as_str)
-            .map(|s| !s.is_empty())
-            .unwrap_or(false);
+            .is_some_and(|id| !id.is_empty());
         if !id_ok {
             bail!("{rid}: axe-summary.json.{field}.id: expected a non-empty string");
         }
@@ -94,7 +93,7 @@ pub(crate) fn validate_artifacts(
                 bail!("{rid}: axe-summary.json.{field}.impact: expected a string or null");
             }
         }
-        if !violation.get("help").map(Value::is_string).unwrap_or(false) {
+        if !violation.get("help").is_some_and(Value::is_string) {
             bail!("{rid}: axe-summary.json.{field}.help: expected a string");
         }
         let nodes_ok = violation

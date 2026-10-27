@@ -71,7 +71,9 @@ fn stado_secret(variable: &str, role: &str, field: &str) -> Result<String> {
         );
     }
     let secret = String::from_utf8(output.stdout)
-        .map_err(|_| anyhow::anyhow!("{variable}: {binary} returned a value that is not UTF-8"))?
+        .map_err(|error| {
+            anyhow::anyhow!("{variable}: {binary} returned a value that is not UTF-8: {}", error.utf8_error())
+        })?
         .trim_end_matches('\n')
         .to_string();
     if secret.is_empty() {

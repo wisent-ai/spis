@@ -9,9 +9,9 @@ pub(crate) fn stado(args: &[&str], parse_json: bool) -> Result<(Option<Value>, S
     let Some(stado_bin) = which("stado") else {
         bail!("stado is not on PATH; hosts are reached through stado, never ssh");
     };
-    let output = Command::new(stado_bin)
-        .args(args)
-        .output()
+    // The wait is announced (what, where) by stado_wait, as every spis
+    // child wait is.
+    let output = stado_wait::output(Command::new(stado_bin).args(args))
         .with_context(|| format!("run stado {}", args.join(" ")))?;
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     let stderr = String::from_utf8_lossy(&output.stderr).to_string();
@@ -100,8 +100,11 @@ pub(crate) fn validate_plan(
         );
     }
     let mut prefixes: HashSet<String> = HashSet::new();
-    for (position, (action, reference)) in captures.iter().zip(expected.iter()).enumerate() {
-        let position = position + 1;
+    for ((action, reference), position) in captures
+        .iter()
+        .zip(expected.iter())
+        .zip(crate::commands::reference_contract::ordinals())
+    {
         let label = format!("{}: action {position}", reference.id());
         let action = action
             .as_object()
@@ -119,7 +122,10 @@ pub(crate) fn validate_plan(
             let expected_value = expected_action
                 .get(*field)
                 .ok_or_else(|| anyhow!("{label}: internal: missing {field}"))?;
-            let got = action.get(*field).unwrap_or(&Value::Null);
+            // The key set was checked to be exactly ACTION_KEYS above.
+            let got = action
+                .get(*field)
+                .ok_or_else(|| anyhow!("{label}: {field}: missing"))?;
             if expected_value != got {
                 bail!("{label}: {field}: expected {expected_value}, got {got}");
             }
@@ -127,7 +133,7 @@ pub(crate) fn validate_plan(
         let prefix = action
             .get("artifact_prefix")
             .and_then(Value::as_str)
-            .unwrap_or_default();
+            .ok_or_else(|| anyhow!("{label}: artifact_prefix: must be text"))?;
         if prefixes.contains(prefix) {
             bail!("{label}: artifact_prefix: duplicate prefix {prefix:?}");
         }
@@ -136,18 +142,24 @@ pub(crate) fn validate_plan(
     Ok(document.clone())
 }
 
+/// Write `payload` whole: a hidden, per-process sibling renamed into place.
 pub(crate) fn atomic_json(path: &Path, payload: &Value) -> Result<()> {
+    let name = path
+        .file_name()
+        .with_context(|| format!("{} names no file to write", path.display()))?;
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)?;
+        std::fs::create_dir_all(parent)
+            .with_context(|| format!("create {} for {}", parent.display(), path.display()))?;
     }
-    let temporary = path.with_file_name(format!(".{}.{}.part", path_name(path), pid()));
-    std::fs::write(&temporary, serde_json::to_string_pretty(payload)? + "\n")?;
-    std::fs::rename(temporary, path)?;
+    let mut sibling = std::ffi::OsString::from(".");
+    sibling.push(name);
+    sibling.push(format!(".{}.part", pid()));
+    let temporary = path.with_file_name(sibling);
+    std::fs::write(&temporary, serde_json::to_string_pretty(payload)? + "\n")
+        .with_context(|| format!("write {}", temporary.display()))?;
+    std::fs::rename(&temporary, path)
+        .with_context(|| format!("move {} into place as {}", temporary.display(), path.display()))?;
     Ok(())
-}
-
-pub(crate) fn path_name(path: &Path) -> &str {
-    path.file_name().and_then(|n| n.to_str()).unwrap_or("file")
 }
 
 pub(crate) fn plan_path_for(plan_arg: Option<&String>, batch: &str) -> Result<PathBuf> {

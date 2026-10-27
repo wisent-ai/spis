@@ -143,35 +143,33 @@ pub(crate) fn apply(
     )
 }
 
-pub(crate) fn state_hash(snapshot: &Value) -> String {
-    let mut rows: Vec<String> = DriverResponse(snapshot)
+/// One screen's identity: every element's role, label, value and selection,
+/// each as the JSON the driver gave (an absent field as `null`), sorted. A
+/// field is never coerced to empty or false, so a screen whose element lacks
+/// a label and one whose label is empty stay two states. A driver answer
+/// without its anchored elements array is no screen and is refused.
+pub(crate) fn state_hash(snapshot: &Value) -> Result<String> {
+    let elements = DriverResponse(snapshot)
         .elements()
-        .into_iter()
-        .flatten()
+        .ok_or_else(|| anyhow!("Cua Driver answered no anchored elements array: {snapshot}"))?;
+    let field = |element: &Value, key: &str| match element.get(key) {
+        Some(value) => value.to_string(),
+        None => Value::Null.to_string(),
+    };
+    let mut rows: Vec<String> = elements
+        .iter()
         .map(|element| {
             format!(
                 "{}|{}|{}|{}",
-                element
-                    .get("role")
-                    .and_then(Value::as_str)
-                    .unwrap_or_default(),
-                element
-                    .get("label")
-                    .and_then(Value::as_str)
-                    .unwrap_or_default(),
-                element
-                    .get("value")
-                    .and_then(Value::as_str)
-                    .unwrap_or_default(),
-                element
-                    .get("selected")
-                    .and_then(Value::as_bool)
-                    .unwrap_or(false),
+                field(element, "role"),
+                field(element, "label"),
+                field(element, "value"),
+                field(element, "selected"),
             )
         })
         .collect();
     rows.sort();
-    crate::sha256_hex(rows.join("\n").as_bytes())
+    Ok(crate::sha256_hex(rows.join("\n").as_bytes()))
 }
 
 pub(crate) fn action_block_reason(action: &Action) -> Option<&'static str> {

@@ -2,17 +2,19 @@
 //! CLI command it names, with the same arguments; there is no second
 //! implementation behind the HTTP surface.
 
+use http::StatusCode;
 use serde_json::{Map, Value};
+use std::num::NonZeroU64;
 
 /// A refusal that becomes a non-2xx `{"error": sentence}` answer.
 pub struct Refusal {
-    pub status: u16,
+    pub status: StatusCode,
     pub sentence: String,
 }
 
 pub fn bad_request(sentence: &str) -> Refusal {
     Refusal {
-        status: 400,
+        status: StatusCode::BAD_REQUEST,
         sentence: sentence.to_string(),
     }
 }
@@ -23,17 +25,39 @@ pub fn answers_document(name: &str) -> bool {
     matches!(name, "docs-status" | "docs-search" | "docs-show")
 }
 
+fn field_refusal(
+    body: &Map<String, Value>, key: &str, expected: &str, operation: &str,
+) -> Refusal {
+    let sentence = match body.get(key) {
+        Some(value) => format!("{operation}: field '{key}' requires {expected}; received {value}"),
+        None => format!("{operation}: missing field '{key}' ({expected})"),
+    };
+    Refusal { status: StatusCode::BAD_REQUEST, sentence }
+}
+
 fn text(body: &Map<String, Value>, key: &str, sentence: &str) -> Result<String, Refusal> {
     body.get(key)
         .and_then(Value::as_str)
-        .map(str::trim)
         .filter(|value| !value.is_empty())
         .map(str::to_string)
-        .ok_or_else(|| bad_request(sentence))
+        .ok_or_else(|| field_refusal(body, key, "a nonempty string", sentence))
 }
 
-fn positive(value: Option<&Value>) -> Option<u64> {
-    value.and_then(Value::as_u64).filter(|number| *number >= 1)
+fn positive(
+    body: &Map<String, Value>, key: &str, sentence: &str,
+) -> Result<NonZeroU64, Refusal> {
+    body.get(key)
+        .and_then(Value::as_u64)
+        .and_then(NonZeroU64::new)
+        .ok_or_else(|| field_refusal(body, key, "a positive whole number", sentence))
+}
+
+fn flag(body: &Map<String, Value>, key: &str, operation: &str) -> Result<bool, Refusal> {
+    match body.get(key) {
+        None => Ok(false),
+        Some(Value::Bool(value)) => Ok(*value),
+        Some(_) => Err(field_refusal(body, key, "a Boolean", operation)),
+    }
 }
 
 /// The exact spis invocation an endpoint stands for.
@@ -65,21 +89,22 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
             let catalog = text(body, "catalog", "a capture plan requires a catalog slug")?;
             Ok(vec!["capture-widths".into(), catalog, "--dry-run".into()])
         }
-        "docs-status" => Ok(owned(&["docs-corpus", "status"])),
+        "docs-status" => Ok(owned(&["docs", "corpus", "status"])),
         "docs-search" => {
             let query = text(body, "query", "searching the docs corpus requires a query")?;
             let mut argv = vec![
-                "docs-corpus".into(),
+                "docs".into(),
+                "corpus".into(),
                 "search".into(),
                 "--query".into(),
                 query,
             ];
-            if let Ok(site) = text(body, "site", "") {
+            if body.contains_key("site") {
+                let site = text(body, "site", "filtering a docs search by site")?;
                 argv.extend(["--site".to_string(), site]);
             }
-            if let Some(limit) = body.get("limit") {
-                let limit = positive(Some(limit))
-                    .ok_or_else(|| bad_request("a docs search limit must be a positive number"))?;
+            if body.contains_key("limit") {
+                let limit = positive(body, "limit", "limiting docs search results")?;
                 argv.extend(["--limit".to_string(), limit.to_string()]);
             }
             Ok(argv)
@@ -88,7 +113,8 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
             let site = text(body, "site", "reading a docs page requires a site slug")?;
             let url = text(body, "url", "reading a docs page requires its URL")?;
             Ok(vec![
-                "docs-corpus".into(),
+                "docs".into(),
+                "corpus".into(),
                 "show".into(),
                 "--site".into(),
                 site,
@@ -117,8 +143,7 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
         ]),
         "reference-edit" => {
             let slug = text(body, "slug", "editing a record requires a catalog slug")?;
-            let number = positive(body.get("number"))
-                .ok_or_else(|| bad_request("editing a record requires its number"))?;
+            let number = positive(body, "number", "editing a reference record")?;
             let mut argv = vec![
                 "reference-record".into(),
                 "edit".into(),
@@ -151,15 +176,15 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
         }
         "reference-remove" => {
             let slug = text(body, "slug", "removing a record requires a catalog slug")?;
-            let number = positive(body.get("number"))
-                .ok_or_else(|| bad_request("removing a record requires its number"))?;
+            let number = positive(body, "number", "removing a reference record")?;
+            let force = flag(body, "force", "removing a reference record")?;
             let mut argv = vec![
                 "reference-record".into(),
                 "remove".into(),
                 slug,
                 number.to_string(),
             ];
-            if body.get("force").and_then(Value::as_bool) == Some(true) {
+            if force {
                 argv.push("--force".into());
             }
             Ok(argv)
@@ -183,36 +208,40 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
                 "edit".into(),
                 text(body, "slug", "editing a product type requires its slug")?,
             ];
+            let mut changes = Vec::new();
             for (key, flag) in [
                 ("title", "--title"),
                 ("description", "--description"),
                 ("status", "--status"),
                 ("rename", "--rename"),
             ] {
-                if let Ok(value) = text(body, key, "") {
-                    argv.extend([flag.into(), value]);
+                if body.contains_key(key) {
+                    let value = text(body, key, "editing a product type")?;
+                    changes.extend([flag.into(), value]);
                 }
             }
-            if argv.len() == 3 {
+            if changes.is_empty() {
                 return Err(bad_request(
                     "editing a product type requires a title, description, status or new slug",
                 ));
             }
+            argv.extend(changes);
             Ok(argv)
         }
         "catalog-remove" => {
+            let force = flag(body, "force", "removing a product type")?;
             let mut argv = vec![
                 "catalog-type".into(),
                 "remove".into(),
                 text(body, "slug", "removing a product type requires its slug")?,
             ];
-            if body.get("force").and_then(Value::as_bool) == Some(true) {
+            if force {
                 argv.push("--force".into());
             }
             Ok(argv)
         }
         _ => Err(Refusal {
-            status: 404,
+            status: StatusCode::NOT_FOUND,
             sentence: format!("unknown endpoint: POST /v1/{name}"),
         }),
     }
@@ -226,7 +255,10 @@ pub fn refusal_sentence(stderr: &str) -> String {
         .filter(|line| !line.is_empty())
         .last()
     {
-        Some(line) => line.strip_prefix("error: ").unwrap_or(line).to_string(),
+        Some(line) => match line.strip_prefix("error: ") {
+            Some(said) => said.to_string(),
+            None => line.to_string(),
+        },
         None => "The operation failed without reporting a reason.".to_string(),
     }
 }

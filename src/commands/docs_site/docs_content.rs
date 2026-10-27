@@ -109,7 +109,7 @@ pub(crate) fn brief(version: &str) -> Value {
         "ok": true,
         "product": "spis",
         "version": version,
-        "generated_by": "spis docs-site",
+        "generated_by": "spis docs site generate",
         "surfaces": {
             "cli": {
                 "declared": true,

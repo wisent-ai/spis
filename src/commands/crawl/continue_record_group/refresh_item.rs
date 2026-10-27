@@ -42,7 +42,9 @@ pub(crate) fn refresh_item(entry: &mut Value) {
                     return;
                 }
             }
-            if State::of(&entry["state"]).ok() != Some(State::Imported) {
+            // A record not yet imported takes Stado's job state; an
+            // unreadable record state is replaced by it, as it is not imported.
+            if !matches!(State::of(&entry["state"]), Ok(State::Imported)) {
                 match job.get("state") {
                     Some(state) => entry["state"] = state.clone(),
                     // A job that reports no state leaves the record's state
@@ -60,7 +62,7 @@ pub(crate) fn refresh_item(entry: &mut Value) {
             }
             entry["job"] = job;
             entry["lookup_error"] = Value::Null;
-            if State::of(&entry["state"]).ok() != Some(State::Partial) {
+            if !matches!(State::of(&entry["state"]), Ok(State::Partial)) {
                 entry["diagnostic"] = Value::Null;
                 entry["error"] = Value::Null;
             }
@@ -177,7 +179,8 @@ pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String>
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+        // Owner read, write and search only (POSIX S_IRWXU).
+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)))?;
     }
     let source = directory.join(format!("{digest}.json"));
     if source.is_file() {
@@ -196,23 +199,28 @@ pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String>
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            std::fs::set_permissions(&temporary, std::fs::Permissions::from_mode(0o600))?;
+            // Owner read and write only (POSIX S_IRUSR | S_IWUSR).
+            std::fs::set_permissions(
+                &temporary,
+                std::fs::Permissions::from_mode(u32::from(libc::S_IRUSR | libc::S_IWUSR)),
+            )?;
         }
         std::fs::rename(&temporary, &source)?;
         File::open(&directory)?.sync_all()?;
     }
-    let stored = crawl_storage_command()
-        .args([
-            "storage",
-            "put",
-            "--if-absent",
-            "--content-type",
-            "application/json",
-            uri,
-        ])
-        .arg(&source)
-        .output()
-        .context("persist immutable crawl cancel intent")?;
+    let stored = stado_wait::output(
+        crawl_storage_command()
+            .args([
+                "storage",
+                "put",
+                "--if-absent",
+                "--content-type",
+                "application/json",
+                uri,
+            ])
+            .arg(&source),
+    )
+    .context("persist immutable crawl cancel intent")?;
     if !stored.status.success() {
         bail!(
             "Stado refused immutable cancel intent: {}",
@@ -220,11 +228,12 @@ pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String>
         );
     }
     let readback = directory.join(format!(".{digest}.{}.readback", std::process::id()));
-    let output = crawl_storage_command()
-        .args(["storage", "get", uri])
-        .arg(&readback)
-        .output()
-        .context("read back immutable crawl cancel intent")?;
+    let output = stado_wait::output(
+        crawl_storage_command()
+            .args(["storage", "get", uri])
+            .arg(&readback),
+    )
+    .context("read back immutable crawl cancel intent")?;
     if !output.status.success() {
         return crate::discarding(
             Err(anyhow::anyhow!(

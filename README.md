@@ -1,6 +1,6 @@
 # Spis
 
-**Spis** is the evidence-grade reference corpus and corpus-maintenance CLI for people building interfaces. It holds measured records across 15 interface families; exact counts are generated into [`catalog-stats.json`](catalog-stats.json), never maintained in this prose. Every record ties claims to retained bytes, source URLs, hashes, provenance, observed states, interactions, journeys, motion, and accessibility evidence.
+**Spis** is the evidence-grade reference corpus and corpus-maintenance CLI for people building interfaces. It holds measured records across the declared interface families; exact counts are generated into [`catalog-stats.json`](catalog-stats.json), never maintained in this prose. Every record ties claims to retained bytes, source URLs, hashes, provenance, observed states, interactions, journeys, motion, and accessibility evidence.
 
 Spis owns the corpus data and the machinery that acquires, measures, validates, searches, and monitors it. Interpretation and prescriptive guidance belong in [`wisent-ai/product-guidelines`](https://github.com/wisent-ai/product-guidelines). Own-product captures and operational monitoring metadata may live in a private companion repository and are not published here.
 
@@ -52,6 +52,35 @@ reports every reference unchanged. Archives are refused and must be unpacked
 before Spis can validate them. The desktop first-run and Manage controls call
 this exact operation through the loopback API.
 
+### Read and import documentation corpora
+
+The `docs` namespace separates archived documentation data from product-site
+generation:
+
+```bash
+spis docs corpus status
+spis docs corpus search --query "$QUERY"
+spis docs corpus search --query "$QUERY" --site "$SITE" --limit "$RESULT_LIMIT"
+spis docs corpus show --site "$SITE" --url "$URL"
+spis docs corpus import --attempt-receipt "$ATTEMPT_RECEIPT"
+spis docs site generate --check
+spis docs site generate --site-content "$LANDING_CONTENT"
+```
+
+The shell variables are caller inputs; the bounded search explicitly supplies
+its scope and result count. Search without `--limit` has no implicit cutoff.
+Each corpus leaf rejects missing values and foreign flags
+before activating the adopted corpus. Import resolves a relative receipt
+against the invocation directory and verifies its actual retained artifact;
+status, search and show read selected completed retrievals without mutation.
+The Desktop document reader uses the same loopback operations, preserves the
+submitted search scope and exposes read or decoding failures rather than
+presenting partial hits or empty failed records as success.
+`docs site generate` is a checkout authoring operation, independent of corpus
+adoption; `--check` refuses stale selected outputs without rewriting them.
+See the [documentation command reference](https://spis.wisent.com/docs/cli/docs).
+
+
 `scripts/build-release.sh` builds and ships that same binary, so the release archive and the `stado-release` install are the Rust command surface. `Cargo.toml` is the single package and release version source.
 
 ## Real product crawlers
@@ -71,32 +100,68 @@ spis crawl import --run RUN_ID [--record SLUG]
 
 `start` is idempotent: re-running the same request digest continues the existing run. `resume` never reruns a Stado job — a terminal `failed`, `cancelled`, `lost` or `submission_failed` attempt becomes attempt N+1 with a fresh execution identity and fully recomputed identity, while `queued` and `running` records are left alone and completed records are imported. `cancel` is status-first, durable and idempotent. `import` verifies the typed worker report, the retained Stado submission receipt, the attempt artifact digest and byte count and every retained evidence hash before a staged, fsynced, atomically installed record transaction; earlier attempts and their partial diagnostics are preserved. Only an exact typed `stado.submission-receipt.v3` for exactly one job is accepted, and the coordinator compares the child's reported artifact and output URIs against the values it derived itself rather than adopting them.
 
-The surface-specific commands below are execution engines. Each takes exactly one `--record` and the immutable `--runtime-manifest-base64` that `spis crawl start` produced; they are not a second operator interface.
+`spis crawler run ENGINE` is the shared execution primitive. The engine is data, not a separate command. Each invocation takes exactly one `--record` and the immutable `--runtime-manifest-base64` that `spis crawl start` produced; this is not a second run coordinator.
 
 | Product surface | Engine command | Real execution boundary |
 |---|---|---|
-| iOS applications | `spis crawl-mobile ios-app-examples` | installed app via Appium and XCUITest |
-| Android applications | `spis crawl-mobile android-app-examples` | installed app via Appium and UiAutomator2 |
-| macOS applications | `spis crawl-desktop macos-app-examples` | installed app via Cua Driver |
-| Cross-platform desktop applications | `spis crawl-desktop desktop-app-examples` | installed app via Cua Driver |
-| Web applications | `spis crawl-web web-app-examples` | real browser session via the official Weles task API |
-| Dashboards and consoles | `spis crawl-web dashboard-console-examples` | real browser session via the official Weles task API |
-| Terminal applications | `spis crawl-tui` | installed app in an isolated real tmux PTY |
-| Command-line applications | `spis crawl-cli` | installed binary in an isolated real tmux PTY |
-| Onboarding and authentication | `spis crawl-web onboarding-auth-examples` | real browser session via the official Weles task API |
-| Documentation sites | `spis crawl-docs` | bounded HTTP corpus crawl on Stado |
-| App-store listings | `spis crawl-web app-store-listing-examples` | real browser session via the official Weles task API |
-| Design systems | `spis crawl-web design-system-examples` | real browser session via the official Weles task API |
-| Reports and evidence | `spis crawl-web report-evidence-examples` | real browser session via the official Weles task API |
-| Pricing pages | `spis crawl-web pricing-page-examples` | real browser session via the official Weles task API |
-| Landing pages | `spis crawl-web landing-page-examples` | real browser session via the official Weles task API |
+| iOS applications | `spis crawler run mobile ios-app-examples` | installed app via Appium and XCUITest |
+| Android applications | `spis crawler run mobile android-app-examples` | installed app via Appium and UiAutomator2 |
+| macOS applications | `spis crawler run desktop macos-app-examples` | installed app via Cua Driver |
+| Cross-platform desktop applications | `spis crawler run desktop desktop-app-examples` | installed app via Cua Driver |
+| Web applications | `spis crawler run web web-app-examples` | real browser session via the official Weles task API |
+| Dashboards and consoles | `spis crawler run web dashboard-console-examples` | real browser session via the official Weles task API |
+| Terminal applications | `spis crawler run tui` | installed app in an isolated real tmux PTY |
+| Command-line applications | `spis crawler run cli` | installed binary in an isolated real tmux PTY |
+| Onboarding and authentication | `spis crawler run web onboarding-auth-examples` | real browser session via the official Weles task API |
+| Documentation sites | `spis crawler run docs` | bounded HTTP corpus crawl on Stado |
+| App-store listings | `spis crawler run web app-store-listing-examples` | real browser session via the official Weles task API |
+| Design systems | `spis crawler run web design-system-examples` | real browser session via the official Weles task API |
+| Reports and evidence | `spis crawler run web report-evidence-examples` | real browser session via the official Weles task API |
+| Pricing pages | `spis crawler run web pricing-page-examples` | real browser session via the official Weles task API |
+| Landing pages | `spis crawler run web landing-page-examples` | real browser session via the official Weles task API |
 
-`crawl-mobile` assumes no Appium address. The placement host declares the
+`crawler run mobile` assumes no Appium address. The placement host declares the
 server it runs in the Stado registry as `mobile_runtime.address`; `spis crawl
 start` binds that address into the record's runtime manifest and the worker
 command carries it as `--driver-url`. A host that declares drivers and no
 address is reported as `runtime_placement_unavailable` naming the field to
 declare. The address must be HTTPS, or HTTP on loopback.
+
+Native `mobile` and `desktop` traversals require `--max-states N` and
+`--max-depth N`, or the corresponding `SPIS_CRAWL_MAX_STATES` and
+`SPIS_CRAWL_MAX_DEPTH` environment declarations in the coordinator.
+Flags take precedence; the resolved values travel explicitly to the worker.
+State count must be positive and depth nonnegative. A missing or malformed
+declaration is refused by name and cause, not replaced with a guessed budget.
+Prepared attempts retain these explicit bounds in their argv. Resuming one
+uses those retained values, not the new process's environment; an incomplete
+or mismatched retained command is refused with its diagnostic.
+
+`spis crawler run ENGINE --help` reads no corpus and submits no work.
+Unknown engines and missing engine arguments are usage errors; malformed
+manifests, mismatched records and worker artifact identities are refused by
+the selected engine. See the [crawler reference](https://spis.wisent.com/docs/cli/crawler/run).
+
+`tests/cli/main.rs`, registered as `cli-contract`, exercises the actual binary's
+grammar refusals, removed command aliases and help precedence over invalid
+flags and unreadable corpus configuration. Its documentation journey also
+generates outputs, checks them without writes, replaces a selected output,
+observes a stale-output refusal, regenerates and checks the restored state.
+The runner requires the product's existing clean-build revision stamp to match
+the observed checkout revision. It clears inherited routing, isolates home,
+configuration and temporary state, and retains argv, resolved environment,
+statuses, separate streams, source/binary digests and before/after filesystem
+observations under `.build/cli-contract/<run>/`.
+The backend journey starts the same real binary with `serve --port 0`, reads
+its announced port and submits actual HTTP requests with malformed query,
+site, result bound, page URL and force fields. Each must be refused as a bad
+request before the isolated unreadable adoption configuration is activated,
+and must leave corpus and configuration state unchanged. `backend/` retains
+the server invocation, readiness and streams, exact request/response bytes,
+filesystem observations and the owned child's termination result.
+The invocation is `cargo test --test cli-contract`; this covers CLI isolation,
+documentation generation and real HTTP field refusals, not retrieved-corpus
+data, application/device/browser crawls, native-client startup or graphical behavior.
 
 `spis crawl bindings generate` writes the exact typed binding for every checked-in record; with `--output` an existing generated document is replaced atomically after validation and read-back, and the reported outcome is `created`, `replaced` or `unchanged`. `headless` is set only for the web engine. Native records without an explicit binding and an independently observed authorization proof stay explicitly unconfigured and surface one typed `unavailable` attempt diagnostic rather than disappearing from the run.
 
@@ -135,11 +200,15 @@ completed measurement.
 `spis check-upstream-drift --write-report` follows the same rule: its observed
 integrity and reachability results go to private `.build/upstream-drift.json`,
 not a tracked corpus-root report. `--skip-network` measures local bytes only;
-`--strict` returns a failure for missing media or a hash mismatch. Before any
-check runs, every `*-examples/sources.json`, `references/` directory and
-`references/*/reference.json` it reads must be readable and parse: one that
-cannot be read, listed or parsed fails the command naming the file and the
-cause, instead of counting as a catalog with nothing upstream to check.
+`--strict` fails the command, naming the drift found, for missing media, a hash
+mismatch, a changed or unreachable README, or a gone or unresolved source.
+Before any check runs, every `*-examples/sources.json`, `references/` directory
+and `references/*/reference.json` it reads must be readable and parse: one that
+cannot be read, listed, examined or parsed fails the command naming the file
+and the cause, instead of counting as a catalog with nothing upstream to check.
+Sources are asked on as many threads as the machine reports it can run at once;
+a recorded source the HTTP client has no scheme for is listed as skipped with
+the client's reason, and every request announces what it waits for.
 
 The live qualification target uses actual catalog data and a Stado-selected
 browser host. The selected record must include a retained state artifact and

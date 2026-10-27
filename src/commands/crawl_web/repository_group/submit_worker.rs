@@ -24,24 +24,15 @@ pub(crate) fn submit_worker(
     if manifest.delivery.kind != "weles-service-env" {
         bail!("web credential delivery must be weles-service-env");
     }
-    if manifest.delivery.secret_env.len() != 2
-        || !manifest.delivery.secret_env.contains_key("WELES_TOKEN")
-        || !manifest
-            .delivery
-            .secret_env
-            .contains_key("WISENT_ORGANIZATION_ID")
+    if !manifest.delivery.secret_env.keys().map(String::as_str)
+        .eq(["WELES_TOKEN", "WISENT_ORGANIZATION_ID"])
     {
         bail!("web delivery must carry exactly the WELES_TOKEN and WISENT_ORGANIZATION_ID secret references");
     }
-    // The absolute path this host executes cargo at, never the bare name.
-    // Every worker in this repository is `cargo run --release`, and the job's
-    // shell is a non-login `/bin/sh` that reads no profile, so a bare name
-    // resolves to nothing however the host installs Rust -- the defect that
-    // cost a documentation crawl job many minutes of a claimed slot, and
-    // would cost this engine the same.
+    // Stado's non-login shell requires the resolved absolute cargo path.
     let cargo = crate::commands::crawl::resolved_worker_program(host)?;
     let command = format!(
-        "{cargo} run --release -- crawl-web {catalog} --worker --record {record} --artifact-uri {} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawler run web {catalog} --worker --record {record} --artifact-uri {} --runtime-manifest-base64 '{}'",
         manifest.artifact_uri,
         manifest.encoded()?,
     );
@@ -103,7 +94,7 @@ impl PrivateBridge {
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700))?;
+            std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(libc::S_IRWXU.into()))?;
         }
         prune_orphaned_configs(&directory)?;
         let config = directory.join(format!(
@@ -166,16 +157,14 @@ pub(crate) fn is_attempt_id(value: &str) -> bool {
     };
     !attempt.is_empty()
         && attempt.bytes().all(|byte| byte.is_ascii_digit())
-        && is_lowercase_hex(fingerprint, 16)
+        && is_lowercase_hex(fingerprint, 16) // https://github.com/wisent-ai/weles/blob/main/src/worker/public-task-service/admission/identity.mjs
 }
 
 /// Is `file_name` one of this worker's own config names, `config-{attempt_id}-{pid}.json`,
 /// whose process is gone?
 ///
-/// Only that exact shape is recognised — the attempt id down to its derivation, the pid
-/// down to a positive `pid_t` — so no lock, no staged file, no sibling tool's file and no
-/// merely similar name is ever considered, and a config whose pid is still alive, a
-/// concurrent worker's delivered bearer, is always left alone.
+/// Only the exact attempt identity and a positive `pid_t` identify this worker's
+/// files. A live process always retains its config; similar names are not ours.
 pub(crate) fn is_orphaned_config(file_name: &str) -> bool {
     let Some(body) = file_name
         .strip_prefix("config-")
@@ -194,7 +183,7 @@ pub(crate) fn is_orphaned_config(file_name: &str) -> bool {
     let Ok(pid) = pid.parse::<i32>() else {
         return false;
     };
-    pid > 0 && !process_is_live(pid)
+    pid.is_positive() && !process_is_live(pid)
 }
 
 /// A worker killed by a signal — which is exactly how a job that outruns its wait budget
@@ -231,7 +220,7 @@ pub(crate) fn prune_orphaned_configs(directory: &Path) -> Result<()> {
 
 #[cfg(unix)]
 pub(crate) fn process_is_live(pid: i32) -> bool {
-    if unsafe { libc::kill(pid, 0) } == 0 {
+    if unsafe { libc::kill(pid, 0) } == 0 { // POSIX null signal and success: https://pubs.opengroup.org/onlinepubs/9799919799/functions/kill.html
         return true;
     }
     // Only a definite `ESRCH` proves the process is gone. `EPERM` means it exists under
@@ -252,7 +241,7 @@ pub(crate) fn write_private(path: &Path, bytes: &[u8]) -> Outcome<()> {
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            std::fs::set_permissions(parent, std::fs::Permissions::from_mode(0o700))?;
+            std::fs::set_permissions(parent, std::fs::Permissions::from_mode(libc::S_IRWXU.into()))?;
         }
     }
     // A previous file that cannot be cleared is refused by its own cause; left
@@ -276,7 +265,7 @@ pub(crate) fn write_private(path: &Path, bytes: &[u8]) -> Outcome<()> {
     #[cfg(unix)]
     {
         use std::os::unix::fs::OpenOptionsExt;
-        options.mode(0o600);
+        options.mode((libc::S_IRUSR | libc::S_IWUSR).into());
     }
     let mut file = options.open(path)?;
     file.write_all(bytes)?;
@@ -286,8 +275,14 @@ pub(crate) fn write_private(path: &Path, bytes: &[u8]) -> Outcome<()> {
 
 /// Content-addressed byte retention: an identical file is proof, never a rewrite.
 pub(crate) fn write_exact(path: &Path, bytes: &[u8]) -> Outcome<()> {
-    if std::fs::read(path).is_ok_and(|existing| existing == bytes) {
-        return Ok(());
+    match std::fs::read(path) {
+        Ok(existing) if existing == bytes => return Ok(()),
+        Ok(_) => {}
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(error) => return Err(WorkerFailure::new(
+            "web_worker_io_failed",
+            format!("read content-addressed file {}: {error}", path.display()),
+        )),
     }
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;

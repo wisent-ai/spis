@@ -6,23 +6,47 @@ pub(crate) const USER_AGENT: &str = crate::USER_AGENT;
 
 pub(crate) const SCHEMA: &str = "wisent.upstream-drift-report.v1";
 
-pub(crate) const GONE_CODES: &[u16] = &[400, 404, 410];
+/// Answers that say a recorded source is gone (RFC 9110 section 15.5:
+/// https://www.rfc-editor.org/rfc/rfc9110#section-15.5).
+pub(crate) const GONE: &[http::StatusCode] =
+    &[http::StatusCode::BAD_REQUEST, http::StatusCode::NOT_FOUND, http::StatusCode::GONE];
 
-pub(crate) const GUARDED_CODES: &[u16] = &[401, 403, 405, 429, 451, 501, 503];
+/// Answers that say a recorded source is there but refuses an anonymous
+/// reader, limits it, or does not serve HEAD (RFC 9110 sections 15.5-15.6).
+pub(crate) const GUARDED: &[http::StatusCode] = &[
+    http::StatusCode::UNAUTHORIZED,
+    http::StatusCode::FORBIDDEN,
+    http::StatusCode::METHOD_NOT_ALLOWED,
+    http::StatusCode::TOO_MANY_REQUESTS,
+    http::StatusCode::UNAVAILABLE_FOR_LEGAL_REASONS,
+    http::StatusCode::NOT_IMPLEMENTED,
+    http::StatusCode::SERVICE_UNAVAILABLE,
+];
 
+/// Whether `code` is one of `statuses`.
+fn among(statuses: &[http::StatusCode], code: u16) -> bool {
+    statuses.iter().any(|status| status.as_u16() == code)
+}
+
+/// What each check found, listed by what it was about, so the report and
+/// its counts come from the same entries.
 #[derive(Default)]
 pub(crate) struct Drift {
     pub(crate) readme_changed: Vec<Value>,
     pub(crate) readme_unreachable: Vec<Value>,
-    pub(crate) readme_unchanged: usize,
+    /// `repository/readme_path` of each README whose blob is unchanged.
+    pub(crate) readme_unchanged: Vec<String>,
     pub(crate) sources_gone: Vec<Value>,
     pub(crate) sources_guarded: Vec<Value>,
     pub(crate) sources_unresolved: Vec<Value>,
-    pub(crate) sources_ok: usize,
-    pub(crate) sources_skipped: usize,
+    /// Each source URL that answered.
+    pub(crate) sources_ok: Vec<String>,
+    /// Each recorded source that is not a web address.
+    pub(crate) sources_skipped: Vec<String>,
     pub(crate) media_missing: Vec<String>,
     pub(crate) media_hash_mismatch: Vec<String>,
-    pub(crate) media_ok: usize,
+    /// Each local media path whose hash still matches.
+    pub(crate) media_ok: Vec<String>,
 }
 
 impl Drift {
@@ -42,32 +66,33 @@ pub(crate) fn agent() -> ureq::Agent {
     ureq::AgentBuilder::new().user_agent(USER_AGENT).build()
 }
 
-/// Run `f` over `items` on a bounded worker pool (mirrors ThreadPoolExecutor).
-pub(crate) fn pool<T: Sync, F: Fn(&T) + Sync>(items: &[T], workers: usize, f: F) {
-    if items.is_empty() {
-        return;
-    }
-    let next = AtomicUsize::new(0);
-    std::thread::scope(|s| {
-        for _ in 0..workers.min(items.len()) {
-            s.spawn(|| loop {
-                let i = next.fetch_add(1, Ordering::SeqCst);
-                if i >= items.len() {
-                    break;
+/// Run `f` over `items` on as many threads as this machine measures it can
+/// run at once, each taking the next item until none is left.
+pub(crate) fn pool<T: Sync, F: Fn(&T) + Sync>(items: &[T], f: F) -> Result<()> {
+    let workers = std::thread::available_parallelism()
+        .context("measuring how many drift checks this machine can run at once")?;
+    let queue = Mutex::new(items.iter());
+    std::thread::scope(|scope| {
+        for () in std::iter::repeat_n((), workers.get().min(items.len())) {
+            scope.spawn(|| loop {
+                let next = queue.lock().next();
+                match next {
+                    Some(item) => f(item),
+                    None => break,
                 }
-                f(&items[i]);
             });
         }
     });
+    Ok(())
 }
 
 /// `gh api <path> --cache 0`, answering the JSON or the reason it has none:
 /// gh could not start, gh refused (its exit status and stderr), or gh
 /// answered something that is not JSON.
 pub(crate) fn gh_json(path: &str) -> std::result::Result<Value, String> {
-    let out = Command::new("gh")
-        .args(["api", path, "--cache", "0"])
-        .output()
+    let mut command = Command::new("gh");
+    command.args(["api", path, "--cache", "0"]);
+    let out = stado_wait::output(&mut command)
         .map_err(|error| format!("gh api {path} could not start: {error}"))?;
     if !out.status.success() {
         return Err(format!(
@@ -103,7 +128,7 @@ pub(crate) fn check_readmes(drift: &Mutex<Drift>) -> Result<()> {
         checked.push((entry, repo, readme_path));
     }
 
-    pool(&checked, 8, |&(entry, repo, readme_path)| {
+    pool(&checked, |&(entry, repo, readme_path)| {
         let recorded = entry.get("readme_blob_sha");
         let unreachable = |cause: String| {
             json!({
@@ -125,50 +150,52 @@ pub(crate) fn check_readmes(drift: &Mutex<Drift>) -> Result<()> {
                         guard.readme_changed.push(json!({
                             "repository": repo,
                             "readme_path": readme_path,
-                            "recorded_sha": recorded.cloned().unwrap_or(Value::Null),
+                            "recorded_sha": recorded,
                             "current_sha": current,
-                            "snapshot": entry.get("filename").cloned().unwrap_or(Value::Null),
+                            "snapshot": entry.get("filename"),
                         }));
                     } else {
-                        guard.readme_unchanged += 1;
+                        guard.readme_unchanged.push(format!("{repo}/{readme_path}"));
                     }
                 }
             },
         }
-    });
-    Ok(())
+    })
 }
 
-/// Return (state, detail) where state is reachable | gone | guarded | unresolved.
+/// Return (state, detail) where state is reachable | gone | guarded |
+/// unresolved | skipped (a source the HTTP client has no scheme for).
 pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value) {
-    match client.head(url).call() {
+    let head = stado_wait::blocking(stado_wait::Kind::Network, "the answer to HEAD", url, || {
+        client.head(url).call()
+    });
+    match head {
         Ok(resp) => ("reachable", json!(resp.status())),
         Err(ureq::Error::Status(code, resp)) => {
-            if GUARDED_CODES.contains(&resp.status()) {
-                // HEAD refused or rate limited; try one byte.
-                match client.get(url).set("Range", "bytes=0-0").call() {
+            if among(GUARDED, resp.status()) {
+                // HEAD refused or rate limited; try the first byte (RFC 9110
+                // section 14.1.2 range syntax).
+                let first_byte = stado_wait::blocking(stado_wait::Kind::Network, "the answer to a ranged GET", url, || {
+                    client.get(url).set("Range", "bytes=0-0").call()
+                });
+                match first_byte {
                     Ok(r) => return ("reachable", json!(r.status())),
-                    Err(ureq::Error::Status(inner, _)) => {
-                        if GONE_CODES.contains(&inner) {
-                            return ("gone", json!(inner));
-                        }
-                        return ("guarded", json!(inner));
-                    }
+                    Err(ureq::Error::Status(inner, _)) if among(GONE, inner) => return ("gone", json!(inner)),
+                    Err(ureq::Error::Status(inner, _)) => return ("guarded", json!(inner)),
+                    // HEAD was refused and the one-byte GET did not arrive at
+                    // all: nothing says the source is still there.
                     Err(error) => {
-                        // HEAD was refused and the one-byte GET did not
-                        // arrive at all: nothing says the source is still
-                        // there, so it is unresolved, with both answers.
-                        return (
-                            "unresolved",
-                            json!(format!("HEAD {} then GET failed: {error}", resp.status())),
-                        );
+                        return ("unresolved", json!(format!("HEAD {} then GET failed: {error}", resp.status())))
                     }
                 }
             }
-            if GONE_CODES.contains(&code) {
+            if among(GONE, code) {
                 return ("gone", json!(code));
             }
             ("guarded", json!(code))
+        }
+        Err(ureq::Error::Transport(transport)) if transport.kind() == ureq::ErrorKind::UnknownScheme => {
+            ("skipped", json!(transport.to_string()))
         }
         Err(error) => ("unresolved", json!(error.to_string())),
     }

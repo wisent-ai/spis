@@ -76,7 +76,7 @@ pub(crate) fn submit(request: Submission<'_>) -> Result<()> {
     // would cost this engine the same.
     let cargo = crate::commands::crawl::resolved_worker_program(request.host)?;
     let worker = format!(
-        "{cargo} run --release -- crawl-cli --worker --record {} --artifact-uri {} --runtime-manifest-base64 '{}'",
+        "{cargo} run --release -- crawler run cli --worker --record {} --artifact-uri {} --runtime-manifest-base64 '{}'",
         request.record,
         artifact,
         request.manifest.encoded()?,
@@ -129,41 +129,30 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut worker = false;
     let mut artifact_uri = None;
     let mut runtime_manifest_base64 = None;
-    let mut i = 0;
-    while i < rest.len() {
-        match rest[i].as_str() {
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--host" => {
-                i += 1;
-                host =
-                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host = Some(crate::commands::required(arguments.next(), "--host needs a value")?.clone());
             }
             "--record" => {
-                i += 1;
-                record =
-                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record = Some(crate::commands::required(arguments.next(), "--record needs a value")?.clone());
             }
             "--artifact-uri" => {
-                i += 1;
-                artifact_uri = Some(
-                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
-                );
+                artifact_uri = Some(crate::commands::required(arguments.next(), "--artifact-uri needs a value")?.clone());
             }
             "--runtime-manifest-base64" => {
-                i += 1;
-                runtime_manifest_base64 = Some(
-                    rest.get(i)
-                        .context("--runtime-manifest-base64 needs a value")?
-                        .clone(),
-                );
+                runtime_manifest_base64 = Some(crate::commands::required(
+                    arguments.next(), "--runtime-manifest-base64 needs a value"
+                )?.clone());
             }
             "--worker" => worker = true,
             "--help" | "-h" => {
-                println!("usage: spis crawl-cli --host TARGET --record SLUG --runtime-manifest-base64 DATA\nworker mode requires the same immutable runtime manifest and exact record.");
+                println!("usage: spis crawler run cli --host TARGET --record SLUG --runtime-manifest-base64 DATA\nworker mode requires the same immutable runtime manifest and exact record.");
                 return Ok(());
             }
             value => return Err(crate::commands::usage(format!("unknown argument: {value}"))),
         }
-        i += 1;
     }
     let record = record.context("--record is required for one exact per-record job")?;
     let encoded_manifest = runtime_manifest_base64

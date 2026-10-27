@@ -20,8 +20,7 @@ pub(crate) fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<V
         .collect();
     let total = positions.len();
 
-    for position in positions {
-        let index = position + std::num::NonZeroUsize::MIN.get();
+    for (position, index) in positions.into_iter().zip(crate::commands::reference_contract::ordinals()) {
         let example_obj: &mut Map<String, Value> = catalog
             .get_mut("examples")
             .and_then(Value::as_array_mut)
@@ -51,7 +50,8 @@ pub(crate) fn collect_catalog(slug: &str, replace: bool) -> Result<(usize, Vec<V
                     Value::String(source_url.clone()),
                 );
                 if let Some(image_url) = visual.get("source_image_url").and_then(Value::as_str) {
-                    let normalized = stable_provenance_url(image_url);
+                    let normalized = stable_provenance_url(image_url)
+                        .with_context(|| format!("{slug}/sources.json: examples[{position}].visual.source_image_url"))?;
                     visual.insert("source_image_url".to_string(), Value::String(normalized));
                     write_catalog(&source_path, &catalog)?;
                 }

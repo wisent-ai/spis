@@ -112,11 +112,13 @@ pub(crate) struct RetrievalCounts {
 /// completion status differ from durable outcomes". Two readings of one rule
 /// is how a site ends up neither retrieved nor reported.
 pub(crate) fn retrieval_status(counts: &RetrievalCounts) -> &'static str {
-    if counts.target_count == 0 || counts.retrieved_count == 0 {
+    if std::num::NonZeroUsize::new(counts.target_count).is_none() {
         "retrieval_empty"
-    } else if counts.text_page_count == 0 {
+    } else if std::num::NonZeroUsize::new(counts.retrieved_count).is_none() {
+        "retrieval_empty"
+    } else if std::num::NonZeroUsize::new(counts.text_page_count).is_none() {
         "retrieval_no_text"
-    } else if counts.diagnostic_count != 0
+    } else if std::num::NonZeroUsize::new(counts.diagnostic_count).is_some()
         || counts.retrieved_count != counts.target_count
         || counts.ok_count != counts.target_count
         || counts.text_page_count != counts.target_count
@@ -146,27 +148,24 @@ pub(crate) fn build_report(
         .iter()
         .map(serde_json::to_value)
         .collect::<std::result::Result<Vec<_>, _>>()?;
-    let mut page_downloaded_bytes = 0u64;
-    let mut retrieved_count = 0usize;
-    let mut ok_count = 0usize;
-    let mut text_page_count = 0usize;
+    // Additive identities for measured byte and page sums, not crawl limits:
+    // https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.sum
+    let (mut page_downloaded_bytes, mut retrieved_count, mut ok_count, mut text_page_count) =
+        (0u64, 0usize, 0usize, 0usize); // https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.sum
     for target in &state.targets {
         let outcome = state
             .outcomes
             .get(&target.key)
             .with_context(|| format!("missing final outcome for {}", target.url))?;
-        if outcome.record_sha256.is_some() {
-            retrieved_count += 1;
-        }
-        if outcome.status.as_u64() == Some(200) {
-            ok_count += 1;
-        }
+        retrieved_count += usize::from(outcome.record_sha256.is_some());
+        ok_count += usize::from(
+            outcome.status.as_u64() == Some(http::StatusCode::OK.as_u16().into()),
+        );
         page_downloaded_bytes = page_downloaded_bytes
             .checked_add(outcome.downloaded_bytes)
             .context("documentation report download byte counter overflow")?;
-        if outcome.text_bytes.unwrap_or(0) > 0 {
-            text_page_count += 1;
-        }
+        text_page_count += usize::from(outcome.text_bytes
+            .and_then(std::num::NonZeroU64::new).is_some());
         if let Some(diagnostic) = &outcome.diagnostic {
             diagnostics.push(serde_json::to_value(diagnostic)?);
         }
@@ -194,7 +193,7 @@ pub(crate) fn build_report(
     let (attempt, attempt_id) = manifest_attempt(manifest)?;
     Ok(json!({
         "schema": "wisent.docs-retrieval-run.v2",
-        "tool": "spis crawl-docs",
+        "tool": "spis crawler run docs",
         "tool_commit": source_revision()?,
         "run_id": manifest.run_id,
         "record": manifest.record,

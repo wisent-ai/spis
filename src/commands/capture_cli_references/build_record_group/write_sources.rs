@@ -28,7 +28,7 @@ pub(crate) fn write_index() -> Result<Value> {
             .map(Vec::len)
             .with_context(|| format!("{} states no evidence_gaps list", path.display()))?;
         references.push(json!({
-            "index": i + 1,
+            "index": records[..=i].len(),
             "name": record["name"].clone(),
             "path": format!("references/{parent}/reference.json"),
             "evidence_status": evidence_status,
@@ -41,7 +41,7 @@ pub(crate) fn write_index() -> Result<Value> {
         .count();
     let payload = json!({
         "schema": INDEX_SCHEMA,
-        "catalog": catalog_dir().file_name().and_then(|n| n.to_str()).unwrap_or_default(),
+        "catalog": plan().catalog,
         "generated_at": today_utc(),
         "reference_count": references.len(),
         "complete_count": complete_count,
@@ -60,7 +60,7 @@ pub(crate) fn write_index() -> Result<Value> {
 pub(crate) fn cmd_list() -> Result<()> {
     println!("Products of the plan on this host ({}):", host_sentence()?);
     println!();
-    let mut found = 0usize;
+    let mut found = Vec::new();
     for (index, product) in products().iter().enumerate() {
         let (path, outcome) = quick_version(product);
         let path = match path {
@@ -68,14 +68,14 @@ pub(crate) fn cmd_list() -> Result<()> {
             None => {
                 println!(
                     "{:2}. {:<26} MISSING (`{}` not on PATH)",
-                    index + 1,
+                    products()[..=index].len(),
                     product.name,
                     product.binary
                 );
                 continue;
             }
         };
-        found += 1;
+        found.push(product);
         let identity = match outcome {
             QuickOutcome::Ran(status, first) if status.success() => first,
             // `status` prints the exit code or the signal that ended it.
@@ -90,7 +90,7 @@ pub(crate) fn cmd_list() -> Result<()> {
         };
         println!(
             "{:2}. {:<26} {:<38} {}",
-            index + 1,
+            products()[..=index].len(),
             product.name,
             product.repository,
             path
@@ -100,7 +100,7 @@ pub(crate) fn cmd_list() -> Result<()> {
     println!();
     println!(
         "{} of {} planned products are installed and runnable here.",
-        found,
+        found.len(),
         products().len()
     );
     println!();
@@ -194,14 +194,24 @@ pub fn run(rest: &[String]) -> Result<()> {
             if !selected.iter().any(|s| std::ptr::eq(*s, product)) {
                 continue;
             }
-            println!("[{:02}/{:02}] {}", i + 1, products().len(), product.name);
-            let run = capture(i + 1, product)?;
+            let ordinal = products()[..=i].len();
+            println!("[{:02}/{:02}] {}", ordinal, products().len(), product.name);
+            let run = capture(ordinal, product)?;
             let measured = measure(&run);
             let (ref_dir, record) = write_reference(&run, &measured)?;
-            let motion = &record["motion"][0];
+            let motion = record["motion"]
+                .as_array()
+                .and_then(|motion| motion.first())
+                .with_context(|| format!("the record of {} states no motion", product.name))?;
             let rel = ref_dir
                 .strip_prefix(root())
-                .unwrap_or(&ref_dir)
+                .with_context(|| {
+                    format!(
+                        "reference {} was written outside the corpus root {}",
+                        ref_dir.display(),
+                        root().display()
+                    )
+                })?
                 .to_string_lossy()
                 .into_owned();
             println!(
@@ -218,7 +228,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     println!();
     println!(
         "catalog {}: {} products, {} records written",
-        sources["catalog"].as_str().unwrap_or_default(),
+        plan().catalog,
         sources["count"],
         index_payload["reference_count"]
     );

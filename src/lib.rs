@@ -1,4 +1,5 @@
 pub mod commands;
+pub mod html;
 pub mod onboarding;
 pub mod weles_provenance;
 

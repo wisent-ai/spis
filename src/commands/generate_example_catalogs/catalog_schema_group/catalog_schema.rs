@@ -67,7 +67,7 @@ pub(crate) fn python_repr(value: Option<&Value>) -> String {
         Some(Value::Bool(false)) => "False".into(),
         Some(Value::Number(n)) => n.to_string(),
         Some(Value::String(s)) => format!("'{s}'"),
-        other => format!("{}", other.map(|v| v.to_string()).unwrap_or_default()),
+        Some(other) => other.to_string(),
     }
 }
 
@@ -79,10 +79,13 @@ pub(crate) fn url_ok(url: &str) -> bool {
     if crate::WebScheme::named(&scheme.to_ascii_lowercase()).is_none() {
         return false;
     }
-    let authority_end = rest.find(['/', '?', '#']).unwrap_or(rest.len());
-    let authority = &rest[..authority_end];
+    let Some(authority) = rest.split(['/', '?', '#']).next() else {
+        return false;
+    };
     // Strip userinfo; netloc itself must be non-empty.
-    let host = authority.rsplit('@').next().unwrap_or("");
+    let Some(host) = authority.rsplit('@').next() else {
+        return false;
+    };
     !authority.is_empty() && !host.is_empty()
 }
 

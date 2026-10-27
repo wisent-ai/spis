@@ -12,6 +12,8 @@ use serde_json::{json, Value};
 use std::collections::BTreeSet;
 use std::path::Path;
 
+use super::reference_contract::{ordinal_name, CATALOG_SCHEMA, INDEX_SCHEMA, RECORD_SCHEMA};
+
 struct Selector {
     catalog: String,
     title: String,
@@ -66,16 +68,12 @@ fn read_selector(path: &Path) -> Result<Selector> {
         .parse()
         .with_context(|| format!("{}: `count:` is not a number", path.display()))?;
     let mut sources = Vec::new();
-    for (offset, line) in body.lines().enumerate() {
+    for line in body.lines() {
         if line.trim().is_empty() {
             continue;
         }
         let Some((name, url)) = line.split_once('\t') else {
-            bail!(
-                "{}: source line {} is not `Name<TAB>URL`: {line:?}",
-                path.display(),
-                offset + 1
-            );
+            bail!("{}: a source line is not `Name<TAB>URL`: {line:?}", path.display());
         };
         sources.push((name.trim().to_string(), url.trim().to_string()));
     }
@@ -115,25 +113,38 @@ fn write_catalog(selector: &Selector, replace: bool) -> Result<()> {
     let catalog = selector.catalog.as_str();
     let root = Path::new(catalog);
     let references = root.join("references");
-    if references.exists() {
+    let present = references
+        .try_exists()
+        .with_context(|| format!("examining {}", references.display()))?;
+    if present {
         if references.read_dir()?.next().is_some() && !replace {
             bail!("{catalog}: references are non-empty; pass --replace");
         }
         std::fs::remove_dir_all(&references)?;
     }
-    let today = crate::now_iso_utc()[..10].to_string();
+    let today = crate::today_utc();
     let mut examples = Vec::new();
     let mut index = Vec::new();
-    for (offset, (name, url)) in selector.sources.iter().enumerate() {
-        let number = offset + 1;
-        let directory_name = format!("{number:02}-{}", slug(name));
+    for (name, url) in &selector.sources {
+        examples.push(json!({
+            "name": name,
+            "source_url": url,
+            "category": selector.category,
+            "selection_note": "Official destination declared by the catalog's selector file; Weles must prove the family surface before completeness.",
+            "visual": {"capture_status": "pending-weles"},
+            "interface_structure": {"analysis_status": "pending-weles"}
+        }));
+        // The one-based ordinal of this source: how many have been listed,
+        // this one included.
+        let number = examples.len();
+        let directory_name = ordinal_name(number, &slug(name));
         let directory = references.join(&directory_name);
         std::fs::create_dir_all(&directory)?;
         let gaps: Vec<&str> = "Weles capture not imported;motion evidence absent;state visuals below the three-state floor;interaction variants absent;journey variants absent;motion analysis absent;accessibility variants absent"
             .split(';')
             .collect();
         let record = json!({
-            "schema": "wisent.full-product-reference.v2",
+            "schema": RECORD_SCHEMA,
             "name": name,
             "product_url": url,
             "evidence_status": "partial",
@@ -152,14 +163,6 @@ fn write_catalog(selector: &Selector, replace: bool) -> Result<()> {
             directory.join("reference.json"),
             serde_json::to_string_pretty(&record)? + "\n",
         )?;
-        examples.push(json!({
-            "name": name,
-            "source_url": url,
-            "category": selector.category,
-            "selection_note": "Official destination declared by the catalog's selector file; Weles must prove the family surface before completeness.",
-            "visual": {"capture_status": "pending-weles"},
-            "interface_structure": {"analysis_status": "pending-weles"}
-        }));
         index.push(json!({
             "index": number,
             "name": name,
@@ -168,12 +171,21 @@ fn write_catalog(selector: &Selector, replace: bool) -> Result<()> {
             "evidence_gap_count": gaps.len()
         }));
     }
+    // Counted from the examples just written, every one still pending Weles.
+    let visual_count = examples
+        .iter()
+        .filter(|example| example["visual"]["capture_status"] != "pending-weles")
+        .count();
+    let structure_count = examples
+        .iter()
+        .filter(|example| example["interface_structure"]["analysis_status"] != "pending-weles")
+        .count();
     crate::write_pretty_json(
         root.join("sources.json")
             .to_str()
             .context("sources path is not UTF-8")?,
         &json!({
-            "schema": "wisent.example-catalog.v2",
+            "schema": CATALOG_SCHEMA,
             "catalog": catalog,
             "slug": catalog,
             "title": selector.title,
@@ -182,8 +194,8 @@ fn write_catalog(selector: &Selector, replace: bool) -> Result<()> {
             "curated_at": today,
             "count": selector.sources.len(),
             "examples": examples,
-            "visual_count": 0,
-            "structure_count": 0
+            "visual_count": visual_count,
+            "structure_count": structure_count
         }),
     )?;
     crate::write_pretty_json(
@@ -191,7 +203,7 @@ fn write_catalog(selector: &Selector, replace: bool) -> Result<()> {
             .to_str()
             .context("index path is not UTF-8")?,
         &json!({
-            "schema": "wisent.full-reference-catalog.v2",
+            "schema": INDEX_SCHEMA,
             "catalog": catalog,
             "reference_count": selector.sources.len(),
             "references": index
@@ -213,19 +225,17 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut selector_path = None;
     let mut apply = false;
     let mut replace = false;
-    let mut index = 0;
-    while index < rest.len() {
-        match rest[index].as_str() {
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--selector" => {
-                index += 1;
                 selector_path =
-                    Some(super::required(rest.get(index), "--selector needs a file")?.clone());
+                    Some(super::required(arguments.next(), "--selector needs a file")?.clone());
             }
             "--apply" => apply = true,
             "--replace" => replace = true,
             other => return Err(super::usage(format!("unknown argument {other}\n{USAGE}"))),
         }
-        index += 1;
     }
     let selector_path = super::required(selector_path, USAGE)?;
     let selector = read_selector(Path::new(&selector_path))?;

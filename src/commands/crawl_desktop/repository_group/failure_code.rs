@@ -171,7 +171,7 @@ pub(crate) fn preflight(driver: &CuaDriver) -> Result<()> {
 
 pub(crate) fn records(catalog: &str, selected: Option<&str>) -> Result<Vec<Record>> {
     if !matches!(catalog, "macos-app-examples" | "desktop-app-examples") {
-        bail!("crawl-desktop accepts macos-app-examples or desktop-app-examples");
+        bail!("crawler run desktop accepts macos-app-examples or desktop-app-examples");
     }
     let records: Vec<Record> =
         crate::commands::reference_record::catalog_records(catalog, selected)?

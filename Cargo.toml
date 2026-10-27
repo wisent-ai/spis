@@ -29,6 +29,11 @@ name = "capture-widths-refusals"
 path = "tests/capture_widths/main.rs"
 harness = false
 
+[[test]]
+name = "cli-contract"
+path = "tests/cli/main.rs"
+harness = false
+
 [dependencies]
 ureq = { version = "2", features = ["gzip", "json"] }
 serde = { version = "1", features = ["derive"] }
@@ -47,13 +52,24 @@ regex = "1"
 base64 = "0.22"
 hex = "0.4"
 url = "2"
+# Every timestamp Spis writes, as UTC calendar time (already in the lock
+# through stado-wait).
+chrono = "0.4"
 # The loopback backend Spis Desktop talks to (`spis serve`).
 tiny_http = "0.12"
+# The status codes `spis serve` answers with, by their standard names
+# (already in the lock through stado-wait's reqwest).
+http = "1.5"
 # Renders a CLI capture's terminal text into its state PNGs.
 fontdue = "0.9"
+# Reads every fetched page's tags, attributes and text by the WHATWG HTML
+# parsing algorithm (`spis::html`), one reader for every command.
+scraper = "0.27.0"
 
 [build-dependencies]
 sha2 = "0.10"
+# The build script's git calls say on stderr what they wait for, like every other wait.
+stado-wait = { git = "https://github.com/wisent-ai/stado", rev = "692c0438d24117735c61373c0c178f1c1e21b080" }
 
 [profile.release]
 strip = true

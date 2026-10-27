@@ -1,15 +1,13 @@
 use super::*;
 
+/// The commit this binary was built from, or the build script's own sentence for why it
+/// has none (git could not answer, or the tree was dirty).
 pub(crate) fn build_revision() -> Result<String> {
-    let revision = env!("SPIS_GIT_REVISION");
-    let dirty = env!("SPIS_GIT_DIRTY");
-    if dirty != "false" {
-        bail!("this Spis binary was built from a dirty source tree; exact-revision crawl submission is refused");
+    let refusal = env!("SPIS_GIT_REVISION_REFUSAL");
+    if !refusal.is_empty() {
+        bail!("exact-revision crawl submission is refused: {refusal}");
     }
-    if revision.len() != 40 || !revision.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-        bail!("this Spis binary has no identifiable build-time Git revision");
-    }
-    Ok(revision.to_string())
+    Ok(env!("SPIS_GIT_REVISION").to_string())
 }
 
 pub(crate) fn bounded_git(arguments: &[&str], operation: &str) -> Result<Output> {
@@ -89,9 +87,18 @@ pub(crate) const STADO_PASSTHROUGH_ENV: [&str; 12] = [
     "WC_LOCAL_STORAGE_PATH",
 ];
 
+/// The Stado program: the binary `SPIS_STADO_BIN` names when the operator points Spis at
+/// one, and otherwise the `stado` program the caller's PATH resolves, which is how every
+/// Wisent tool reaches Stado.
+pub(crate) fn stado_program() -> std::ffi::OsString {
+    if let Some(path) = std::env::var_os("SPIS_STADO_BIN") {
+        return path;
+    }
+    std::ffi::OsString::from("stado")
+}
+
 pub(crate) fn stado_command() -> Command {
-    let mut command =
-        Command::new(std::env::var_os("SPIS_STADO_BIN").unwrap_or_else(|| "stado".into()));
+    let mut command = Command::new(stado_program());
     command.env_clear();
     for name in STADO_PASSTHROUGH_ENV {
         // Only when set: an empty value is a configured value to Stado, and
@@ -161,47 +168,18 @@ pub(crate) fn crawl_storage_command() -> Command {
     command
 }
 
-/// Runs `command` to completion with its whole stdout and stderr captured.
-/// There is no deadline: the child's own exit, or its own error, is the
-/// answer (cli.md rule 8). Nor is there a size ceiling: the children are
-/// Spis's own tools, and a ceiling chosen here only turned a long answer into
-/// a refusal.
+/// Runs `command` to completion with its whole stdout and stderr captured, saying on
+/// stderr what it waits for through `stado_wait`. There is no deadline: the child's own
+/// exit, or its own error, is the answer (cli.md rule 8). Nor is there a size ceiling:
+/// the children are Spis's own tools, and a ceiling chosen here only turned a long answer
+/// into a refusal.
 pub(crate) fn command_output(command: &mut Command, operation: &str) -> Result<Output> {
-    use std::process::Stdio;
     #[cfg(unix)]
     {
         use std::os::unix::process::CommandExt;
         command.process_group(0);
     }
-    let mut child = command
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .with_context(|| format!("start {operation}"))?;
-    let mut stdout = child.stdout.take().context("capture child stdout")?;
-    let mut stderr = child.stderr.take().context("capture child stderr")?;
-    let stdout_reader = std::thread::spawn(move || {
-        let mut bytes = Vec::new();
-        stdout.read_to_end(&mut bytes).map(|_| bytes)
-    });
-    let stderr_reader = std::thread::spawn(move || {
-        let mut bytes = Vec::new();
-        stderr.read_to_end(&mut bytes).map(|_| bytes)
-    });
-    let status = child
-        .wait()
-        .with_context(|| format!("{operation} did not report an exit status"))?;
-    let stdout = stdout_reader
-        .join()
-        .map_err(|_| anyhow!("{operation} stdout reader panicked"))??;
-    let stderr = stderr_reader
-        .join()
-        .map_err(|_| anyhow!("{operation} stderr reader panicked"))??;
-    Ok(Output {
-        status,
-        stdout,
-        stderr,
-    })
+    stado_wait::output(command).with_context(|| format!("run {operation}"))
 }
 
 pub(crate) fn atomic_json_write(path: &Path, value: &Value) -> Result<()> {

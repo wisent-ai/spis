@@ -1,4 +1,4 @@
-//! `spis crawl-docs` — parallel full-text crawler for the documentation set.
+//! `spis crawler run docs` — parallel full-text crawler for the documentation set.
 //!
 //! Every immutable runtime manifest owns one durable corpus beneath
 //! `~/.stado/work`. Fetches may run concurrently, but a single ordered writer

@@ -11,11 +11,18 @@ pub(crate) fn planned_record(
     service_identity: Option<&RuntimeServiceIdentity>,
     driver_url: Option<&str>,
 ) -> Value {
-    let slug = record_dir
-        .file_name()
-        .and_then(|value| value.to_str())
-        .unwrap_or_default()
-        .to_string();
+    let Some(slug) = record_dir.file_name().and_then(|value| value.to_str()) else {
+        let named = record_dir.display().to_string();
+        return unavailable_record(
+            run_id,
+            catalog,
+            &named,
+            "record_directory_unnamed",
+            format!("record directory {named} has no UTF-8 name to use as its slug"),
+            json!({"path": record_dir}),
+        );
+    };
+    let slug = slug.to_string();
     let path = record_dir.join("reference.json");
     let bytes = match std::fs::read(&path) {
         Ok(bytes) => bytes,
@@ -219,10 +226,12 @@ pub(crate) fn planned_record(
     })
 }
 
+/// Git's own object name for the empty tree, a SHA-1 object name as Git
+/// writes every one: https://git-scm.com/docs/hash-function-transition
+const GIT_EMPTY_TREE: &str = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
+
 pub(crate) fn is_git_revision(value: &str) -> bool {
-    // A Git object name is a SHA-1 digest written as 40 hexadecimal digits:
-    // https://git-scm.com/docs/hash-function-transition
-    value.len() == 40
+    value.len() == GIT_EMPTY_TREE.len()
         && value
             .bytes()
             .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))

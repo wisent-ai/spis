@@ -39,12 +39,14 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
         bail!("{index_path_str}: reference_count does not match the reference list");
     }
 
-    let mut provenance: BTreeMap<String, usize> = BTreeMap::new();
+    let mut classes: Vec<String> = Vec::new();
     let mut measured: Vec<EvidenceStatus> = Vec::new();
-    let mut gap_total = 0usize;
+    let mut gap_counts: Vec<usize> = Vec::new();
 
-    for (position, (entry, example)) in records.iter().zip(examples.iter()).enumerate() {
-        let position = position + 1;
+    // A reference's number, as sources.json lists them, is how many records
+    // come up to and including it.
+    for (index, (entry, example)) in records.iter().zip(examples.iter()).enumerate() {
+        let position = records[..=index].len();
         require_nonempty(
             entry,
             &field_names::<ReferenceIndexEntry>(),
@@ -95,7 +97,9 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
             bail!("{index_path_str}: reference {position} disagrees with its record");
         }
 
-        let reference_dir = record_path.parent().unwrap_or(Path::new("."));
+        let Some(reference_dir) = record_path.parent() else {
+            bail!("{record_path_str}: a reference record has no containing directory");
+        };
         let verified_provenance = VerifiedProvenanceSet::verify_record(&record, reference_dir);
         for class in validate_motion(
             &record,
@@ -103,7 +107,7 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
             reference_dir,
             &verified_provenance,
         )? {
-            *provenance.entry(class).or_insert(0) += 1;
+            classes.push(class);
         }
         validate_states(
             &record,
@@ -119,9 +123,13 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
         )?;
 
         measured.push(expected);
-        gap_total += gaps.len();
+        gap_counts.push(gaps.len());
     }
 
+    let provenance: BTreeMap<String, usize> = classes
+        .iter()
+        .map(|class| (class.clone(), classes.iter().filter(|seen| *seen == class).count()))
+        .collect();
     let obj = index.as_object_mut().expect("index is an object");
     obj.insert(
         "measured_provenance".into(),
@@ -131,7 +139,7 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
             .collect::<Map<String, Value>>()
             .into(),
     );
-    obj.insert("measured_gap_total".into(), json!(gap_total));
+    obj.insert("measured_gap_total".into(), json!(gap_counts.iter().sum::<usize>()));
     let count_of = |status: EvidenceStatus| measured.iter().filter(|seen| **seen == status).count();
     obj.insert(
         "complete_count".into(),

@@ -1,27 +1,32 @@
 use super::*;
 
-pub(crate) fn stable_provenance_url(value: &str) -> String {
+/// The image address kept as a record's provenance: the address itself, but
+/// for hosts that sign each download in its query, whose query and fragment
+/// expire and are left out. An address that is no URL is refused naming it.
+pub(crate) fn stable_provenance_url(value: &str) -> Result<String> {
     const STRIPPED_HOSTS: &[&str] = &[
         "private-user-images.githubusercontent.com",
         "github-production-user-asset-6210df.s3.amazonaws.com",
     ];
-    if STRIPPED_HOSTS.contains(&hostname_of(value).as_str()) {
-        if let Some((scheme, rest)) = split_scheme(value) {
-            let authority_path = match rest.find(['?', '#']) {
-                Some(end) => &rest[..end],
-                None => rest,
-            };
-            return format!("{scheme}://{authority_path}");
-        }
+    let mut address = url::Url::parse(value).with_context(|| format!("the image address {value:?} is no URL"))?;
+    if address.host_str().is_some_and(|host| STRIPPED_HOSTS.contains(&host)) {
+        address.set_query(None);
+        address.set_fragment(None);
     }
-    value.to_string()
+    Ok(address.to_string())
 }
 
 // ---------------------------------------------------------------------------
 // Selection
 
-pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) -> Vec<Candidate> {
-    if content_type.starts_with("image/") {
+/// `content_type` is the media type the server declared, `None` when it sent
+/// no Content-Type; only a declared `image/` type makes the page an image.
+/// Every candidate is resolved against `page_url` by the URL standard and
+/// listed once, in the order the page names it; one that names no web
+/// address is not fetchable and is left out, and one that does not resolve
+/// is said on stderr with its cause.
+pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: Option<&str>) -> Result<Vec<Candidate>> {
+    if content_type.is_some_and(|media| media.starts_with("image/")) {
         // The page is the image itself: one candidate, at the first position.
         let mut direct = Vec::new();
         direct.push(Candidate {
@@ -30,54 +35,47 @@ pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: &str) ->
             order: direct.len(),
             origin: "direct",
         });
-        return direct;
+        return Ok(direct);
     }
-    let text = String::from_utf8_lossy(body)
-        .replace("\\/", "/")
-        .replace("\\u0026", "&")
-        .replace("\\u003d", "=");
+    let page = url::Url::parse(page_url).with_context(|| format!("the page address {page_url:?} is no URL"))?;
+    // A page's bytes are read as UTF-8, each invalid sequence shown as U+FFFD,
+    // since HTML's own encoding detection is not this reader's.
+    let html = String::from_utf8_lossy(body);
+    // Addresses written inside scripts' JSON are unescaped before the text
+    // is searched for them.
+    let text = html.replace("\\/", "/").replace("\\u0026", "&").replace("\\u003d", "=");
     let mut raw: Vec<Candidate> = Vec::new();
-    // A candidate's order is its position in the page's listing.
-    let mut order = raw.len();
-    extract_tag_candidates(&text, &mut raw, &mut order);
-    extract_css_candidates(&text, &mut raw, &mut order);
-    extract_embedded_candidates(&text, &mut raw, &mut order);
+    extract_tag_candidates(&html, &mut raw)?;
+    extract_css_candidates(&text, &mut raw)?;
+    extract_embedded_candidates(&text, &mut raw)?;
 
     let mut unique: std::collections::HashMap<String, Candidate> = std::collections::HashMap::new();
     for candidate in raw {
-        let Some(resolved) = join_url(page_url, &candidate.url) else {
-            continue;
+        let resolved = match fetchable(&page, &candidate.url) {
+            Ok(Some(resolved)) => resolved.to_string(),
+            Ok(None) => continue,
+            Err(error) => {
+                eprintln!("collect-example-images: {error:#}; that candidate is not probed");
+                continue;
+            }
         };
-        let has_netloc = matches!(
-            split_scheme(&resolved),
-            Some((_, rest)) if rest.split('/').next().is_some_and(|host| !host.is_empty())
-        );
-        if !has_netloc {
-            continue;
-        }
-        let clean = clean_url(&resolved);
-        if !unique.contains_key(&clean) {
-            unique.insert(
-                clean.clone(),
-                Candidate {
-                    url: clean,
-                    hint: candidate.hint.trim().to_string(),
-                    order: candidate.order,
-                    origin: candidate.origin,
-                },
-            );
-        }
+        unique.entry(resolved.clone()).or_insert(Candidate {
+            url: resolved,
+            hint: candidate.hint.trim().to_string(),
+            order: candidate.order,
+            origin: candidate.origin,
+        });
     }
     // Candidates keep the order the page lists them in; which one shows the
     // product is Brama's answer in `select_image`, not a word score here.
     let mut result: Vec<Candidate> = unique.into_values().collect();
     result.sort_by_key(|candidate| candidate.order);
-    result
+    Ok(result)
 }
 
-/// Fetch one candidate and read its container and dimensions from the
-/// header; `None` when it is not a raster image this can read, or when it
-/// could not be fetched, which is said on stderr with the cause.
+/// Fetch one candidate and read its format and dimensions from the header;
+/// `None` when it could not be fetched or its bytes are no image whose header
+/// the `image` crate reads, each said on stderr with the cause.
 pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
     let fetched = match fetch(
         &candidate.url,
@@ -89,7 +87,13 @@ pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
             return None;
         }
     };
-    let (format, width, height) = parse_image_header(&fetched.data)?;
+    let (format, width, height) = match image_header(&fetched.data) {
+        Ok(header) => header,
+        Err(error) => {
+            eprintln!("collect-example-images: candidate {} is no readable image: {error:#}", candidate.url);
+            return None;
+        }
+    };
     Some(Probe {
         format,
         width,
@@ -108,7 +112,7 @@ pub(crate) fn select_image(page_url: &str) -> Result<(Candidate, Probe)> {
     let fetched = fetch(page_url, "text/html,application/xhtml+xml,image/*")?;
     let final_page_url = fetched.final_url.clone();
     let mut probed: Vec<(Candidate, Probe)> =
-        candidate_urls(&final_page_url, &fetched.data, &fetched.content_type)
+        candidate_urls(&final_page_url, &fetched.data, fetched.content_type.as_deref())?
             .into_iter()
             .filter_map(|candidate| probe_candidate(&candidate).map(|probe| (candidate, probe)))
             .collect();
@@ -196,12 +200,15 @@ pub(crate) fn store_image(
     page_url: &str,
 ) -> Result<Value> {
     let (candidate, probe) = select_image(page_url)?;
-    // Gap vs. Pillow original: no RGBA flattening onto white, no LANCZOS
-    // thumbnail to fit (1400, 1000), no WebP re-encode at quality 82. The
-    // ORIGINAL bytes are stored verbatim; dimensions are the source image's.
+    // The original bytes are stored as served; dimensions are the source
+    // image's own.
     let payload = &probe.payload;
     let slug = slugify_name(name);
-    let relative_path = format!("images/{index:02}-{slug}.{}", probe.format);
+    let relative_path = format!(
+        "images/{}.{}",
+        crate::commands::reference_contract::ordinal_name(index, &slug),
+        probe.format
+    );
     let destination = catalog_dir.join(&relative_path);
     if let Some(parent) = destination.parent() {
         std::fs::create_dir_all(parent)?;
@@ -211,7 +218,7 @@ pub(crate) fn store_image(
     Ok(json!({
         // source_page_url and capture_kind are overwritten by the caller.
         "source_page_url": Value::Null,
-        "source_image_url": stable_provenance_url(&probe.final_url),
+        "source_image_url": stable_provenance_url(&probe.final_url)?,
         "local_path": relative_path,
         "capture_kind": "official-source-image",
         "captured_at": crate::today_utc(),

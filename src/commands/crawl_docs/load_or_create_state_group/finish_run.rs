@@ -64,7 +64,7 @@ pub(crate) fn corpus_summary(layout: &WorkLayout, state: &DurableState) -> Resul
             observed.join(", ")
         );
     }
-    let mut bytes = 0u64;
+    let mut sizes = Vec::with_capacity(expected.len());
     for name in expected {
         let file = open_regular_file(
             &layout.corpus.join(name),
@@ -74,10 +74,10 @@ pub(crate) fn corpus_summary(layout: &WorkLayout, state: &DurableState) -> Resul
             false,
             "corpus artifact",
         )?;
-        bytes = bytes
-            .checked_add(file.metadata()?.len())
-            .context("documentation corpus byte count overflow")?;
+        sizes.push(u128::from(file.metadata()?.len()));
     }
+    let bytes = u64::try_from(sizes.iter().sum::<u128>())
+        .context("documentation corpus byte count overflow")?;
     let pages = state
         .outcomes
         .values()
@@ -114,11 +114,10 @@ pub(crate) fn worker_report(
         "bindings_sha256": manifest.bindings_sha256,
         "docs_structure_sha256": manifest_structure_sha256(manifest)?,
         "execution_identity": serde_json::to_value(&manifest.execution_identity)?,
-        "artifact": artifact.unwrap_or(Value::Null),
-        "corpus": corpus.unwrap_or(Value::Null),
-        "failure": failure
-            .map(|(code, message)| json!({"code": code, "message": message}))
-            .unwrap_or(Value::Null),
+        // A part the run did not produce is null.
+        "artifact": artifact,
+        "corpus": corpus,
+        "failure": failure.map(|(code, message)| json!({"code": code, "message": message})),
     }))
 }
 
@@ -152,7 +151,8 @@ pub(crate) fn crawl_attempt(
             bail!("unknown site: {slug}");
         }
     }
-    if chosen.len() != 1 || chosen[0] != manifest.record {
+    // A worker crawls exactly the one site its manifest records.
+    if !matches!(chosen.as_slice(), [only] if *only == manifest.record) {
         bail!("documentation worker selection differs from immutable runtime manifest record");
     }
 
@@ -249,10 +249,16 @@ pub(crate) fn run_worker(rest: &[String], manifest: &super::crawl::RuntimeManife
                 &layout.root,
                 &manifest.artifact_uri,
             );
+            // The report names the archive only when it was published; the
+            // publish error itself is raised below with the crawl's failure.
+            let published = match &artifact {
+                Ok(archive) => Some(archive.clone()),
+                Err(_unpublished) => None,
+            };
             let report = worker_report(
                 manifest,
                 "failed",
-                artifact.as_ref().ok().cloned(),
+                published,
                 None,
                 Some(("docs_crawl_failed", &message)),
             )?;

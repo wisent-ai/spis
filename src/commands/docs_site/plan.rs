@@ -5,9 +5,9 @@ pub(crate) fn plan(version: &str) -> Value {
     json!({
         "product": "spis",
         "version": version,
-        "generated_by": "spis docs-site",
+        "generated_by": "spis docs site generate",
         "sources": {
-            "subcommands": { "kind": "code", "location": "src/commands/mod.rs SUBCOMMANDS" },
+            "subcommands": { "kind": "code", "location": "src/commands/subcommands.rs SUBCOMMANDS" },
             "families": { "kind": "code", "location": "src/commands/reference_contract/catalog_schema.rs Family" },
             "preconditions": {
                 "kind": "code",
@@ -147,7 +147,7 @@ pub(crate) fn plan(version: &str) -> Value {
     })
 }
 
-/// The plan's pages `docs-site` publishes to the landing's
+/// The plan's pages `docs site generate` publishes to the landing's
 /// `product-docs.json`; the rest are authored on the landing.
 const PUBLISHED: &[&str] = &["corpus-adoption", "brama-decisions"];
 
@@ -227,7 +227,7 @@ pub(crate) fn docs_payload(plan: &Value) -> Result<Value> {
     }
     Ok(json!({
         "schema": "wisent.spis-doc-pages.v1",
-        "generatedBy": "spis docs-site",
+        "generatedBy": "spis docs site generate",
         "pages": rendered_pages,
     }))
 }
@@ -248,11 +248,11 @@ pub(crate) fn write_if_changed(
     // A generated file that does not exist yet is stale; one that cannot be
     // read is refused with its cause rather than reported stale or rewritten.
     let existing = match std::fs::read_to_string(path) {
-        Ok(existing) => existing,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => String::new(),
+        Ok(existing) => Some(existing),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
         Err(error) => return Err(error).with_context(|| format!("read {}", path.display())),
     };
-    if existing == contents {
+    if existing.as_deref() == Some(contents) {
         return Ok(());
     }
     if check {
@@ -260,7 +260,8 @@ pub(crate) fn write_if_changed(
         return Ok(());
     }
     if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)?;
+        std::fs::create_dir_all(parent)
+            .with_context(|| format!("create documentation directory {}", parent.display()))?;
     }
     std::fs::write(path, contents).with_context(|| format!("write {}", path.display()))?;
     Ok(())

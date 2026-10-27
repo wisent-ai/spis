@@ -1,6 +1,7 @@
 use super::*;
 
-pub(crate) const CORPUS_FILES: [&str; 4] = [
+/// The files a documentation corpus holds, each exactly once.
+pub(crate) const CORPUS_FILES: &[&str] = &[
     "docs-retrieval-run.json",
     "outcomes.jsonl",
     "pages.jsonl.gz",
@@ -40,7 +41,7 @@ pub(crate) fn imports_root() -> Result<PathBuf> {
 
 /// Where a discovered corpus came from. `Imported` corpora were installed by
 /// `import_artifact` and therefore have a sibling `artifact.tar.gz` receipt
-/// archive; `Local` corpora were written in place by `crawl-docs --worker` and
+/// archive; `Local` corpora were written in place by `crawler run docs --worker` and
 /// have no archive next to them.
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub(crate) enum CorpusOrigin {
@@ -119,18 +120,26 @@ pub(crate) fn read_json(path: &Path) -> Result<Value> {
     serde_json::from_slice(&bytes).with_context(|| format!("parse {}", path.display()))
 }
 
+/// The newest typed documentation worker report in the worker's output. The
+/// worker writes its log lines beside its reports; a line that opens a JSON
+/// object is a report, and one that does not parse is refused naming the
+/// output, never skipped as if it were a log line.
 pub(crate) fn read_last_worker_report(path: &Path) -> Result<Value> {
     let mut file = open_regular_read(path, "documentation worker output")?;
     let mut bytes = Vec::new();
     file.read_to_end(&mut bytes)?;
-    bytes
-        .split(|byte| *byte == b'\n')
-        .rev()
-        .filter_map(|line| serde_json::from_slice::<Value>(line).ok())
-        .find(|value| {
-            value.get("schema").and_then(Value::as_str) == Some("wisent.docs-worker-report.v1")
-        })
-        .context("documentation worker output has no typed documentation worker report")
+    for line in bytes.split(|byte| *byte == b'\n').rev() {
+        if line.first() != Some(&b'{') {
+            continue;
+        }
+        let value: Value = serde_json::from_slice(line).with_context(|| {
+            format!("documentation worker output {} holds a JSON line that does not parse", path.display())
+        })?;
+        if value.get("schema").and_then(Value::as_str) == Some("wisent.docs-worker-report.v1") {
+            return Ok(value);
+        }
+    }
+    bail!("documentation worker output {} has no typed documentation worker report", path.display())
 }
 
 pub(crate) fn matching_string(left: &Value, right: &Value, field: &str) -> Result<()> {
@@ -151,18 +160,8 @@ pub(crate) fn matching_string(left: &Value, right: &Value, field: &str) -> Resul
 pub(crate) fn hash_file(path: &Path) -> Result<(String, u64)> {
     let mut file = open_regular_read(path, "documentation corpus file")?;
     let mut hasher = Sha256::new();
-    let mut bytes = 0u64;
-    let mut buffer = [0u8; 64 * 1024];
-    loop {
-        let read = file.read(&mut buffer)?;
-        if read == 0 {
-            break;
-        }
-        hasher.update(&buffer[..read]);
-        bytes = bytes
-            .checked_add(read as u64)
-            .context("file byte counter overflow")?;
-    }
+    let bytes = std::io::copy(&mut file, &mut hasher)
+        .with_context(|| format!("hash documentation corpus file {}", path.display()))?;
     Ok((hex::encode(hasher.finalize()), bytes))
 }
 
@@ -178,40 +177,17 @@ pub(crate) fn safe_component(value: &str, label: &str) -> Result<()> {
     Ok(())
 }
 
+/// The one spelling a completion time is written in: UTC to the second.
+const COMPLETION_TIME: &str = "%Y-%m-%dT%H:%M:%SZ";
+
+/// `value` is a completion time written as canonical UTC RFC 3339 to the
+/// second, a calendar instant chrono reads and writes back unchanged (so a
+/// field without its zero padding is refused, not read leniently).
 pub(crate) fn validate_completion_timestamp(value: &str) -> Result<()> {
-    let bytes = value.as_bytes();
-    if bytes.len() != 20
-        || bytes[4] != b'-'
-        || bytes[7] != b'-'
-        || bytes[10] != b'T'
-        || bytes[13] != b':'
-        || bytes[16] != b':'
-        || bytes[19] != b'Z'
-        || bytes.iter().enumerate().any(|(index, byte)| {
-            !matches!(index, 4 | 7 | 10 | 13 | 16 | 19) && !byte.is_ascii_digit()
-        })
-    {
-        bail!("completion timestamp is not canonical UTC RFC3339");
-    }
-    let number = |range: std::ops::Range<usize>| -> Result<u32> {
-        Ok(std::str::from_utf8(&bytes[range])?.parse()?)
-    };
-    let year = number(0..4)?;
-    let month = number(5..7)?;
-    let day = number(8..10)?;
-    let hour = number(11..13)?;
-    let minute = number(14..16)?;
-    let second = number(17..19)?;
-    let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
-    let month_days = match month {
-        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-        4 | 6 | 9 | 11 => 30,
-        2 if leap => 29,
-        2 => 28,
-        _ => 0,
-    };
-    if year == 0 || day == 0 || day > month_days || hour > 23 || minute > 59 || second > 59 {
-        bail!("completion timestamp is not a valid UTC RFC3339 instant");
+    let instant = chrono::NaiveDateTime::parse_from_str(value, COMPLETION_TIME)
+        .with_context(|| format!("completion timestamp {value:?} is not a UTC RFC 3339 instant"))?;
+    if instant.format(COMPLETION_TIME).to_string() != value {
+        bail!("completion timestamp {value:?} is not written canonically; it reads as {}", instant.format(COMPLETION_TIME));
     }
     Ok(())
 }

@@ -105,10 +105,11 @@ pub(crate) fn crawl_record(
             }));
             break;
         }
-        let observation_path = states_dir.join(format!("observation-{:04}.png", action_index + 1));
+        // Each observation is named by the action index it precedes.
+        let observation_path = states_dir.join(format!("observation-{action_index:04}.png"));
         let current = snapshot(driver, &session, pid, window_id, &observation_path)?;
         assert_target_surface(&current, pid, window_id, &bundle_id)?;
-        let hash = state_hash(&current);
+        let hash = state_hash(&current)?;
         let available = actions(&current)?;
         if seen_states.insert(hash.clone()) {
             let index = seen_states.len();

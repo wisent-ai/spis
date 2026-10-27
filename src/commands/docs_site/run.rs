@@ -1,5 +1,18 @@
 use super::*;
 
+pub(crate) const USAGE: &str = "usage: spis docs site generate [--check] [--site-content PATH]";
+
+pub(crate) fn print_help() {
+    println!(
+        "{USAGE}\n\
+         Generates {DOCS_BRIEF}, {DOCS_PLAN} and canonical DocPage JSON from this\n\
+         repository's own tables. The JSON is written to {DOCS_CONTENT}; pass the\n\
+         landing checkout's src/content/product-docs.json with --site-content to\n\
+         update that deployed consumer in the same operation. --check writes nothing\n\
+         and exits 1 when any selected output no longer matches the product."
+    );
+}
+
 pub fn run(rest: &[String]) -> Result<()> {
     let mut check = false;
     let site_content = PathBuf::from(DOCS_CONTENT);
@@ -9,18 +22,13 @@ pub fn run(rest: &[String]) -> Result<()> {
         match argument.as_str() {
             "--check" => check = true,
             "--site-content" => {
-                let path = arguments.next().context("--site-content requires a path")?;
+                let path = arguments.next().ok_or_else(|| {
+                    crate::commands::usage("--site-content requires a path")
+                })?;
                 landing_content = Some(PathBuf::from(path));
             }
             "--help" | "-h" => {
-                println!(
-                    "usage: spis docs-site [--check] [--site-content PATH]\n\
-                     Generates {DOCS_BRIEF}, {DOCS_PLAN} and canonical DocPage JSON from this\n\
-                     repository's own tables. The JSON is written to {DOCS_CONTENT}; pass the\n\
-                     landing checkout's src/content/product-docs.json with --site-content to\n\
-                     update that deployed consumer in the same operation. --check writes nothing\n\
-                     and exits 1 when any selected output no longer matches the product."
-                );
+                print_help();
                 return Ok(());
             }
             other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
@@ -67,7 +75,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             return Ok(());
         }
         bail!(
-            "committed documentation no longer matches the product: {}. Run `spis docs-site` \
+            "committed documentation no longer matches the product: {}. Run `spis docs site generate` \
              and commit the result; do not edit the generated files by hand",
             stale.join(", ")
         );

@@ -1,21 +1,5 @@
 use super::*;
 
-// What fills a production host's remaining disk is not the corpus: it is
-// simultaneous `cargo build` passes, one per record, each writing its own
-// multi-GiB `target/` inside its own immutable checkout. That is one shared
-// target directory per revision, and a finished record's own retained corpus
-// is tens of megabytes - MDN, the largest site in the catalog, imports 36 MB
-// from 12,248 pages. So the host's declared disk gate is the right control for
-// what remains, and it already is: below its low watermark the agent claims
-// nothing.
-//
-// `--exclusive` is not that control. It means "claim the whole GPU: start only
-// while idle and admit no other job", and on a host that also carries release
-// qualification and Probierz work it means the family waits for an idle
-// machine: dozens of records sit queued behind foreign jobs with disk free and
-// cores idle, because every one of them demands the machine to itself.
-pub(crate) const STADO_RESOURCE_ARGS: [&str; 0] = [];
-
 pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     safe_path_component(value, flag).map_err(|_| {
         anyhow::anyhow!("{flag} contains characters that cannot be submitted to a worker")
@@ -94,11 +78,13 @@ pub(crate) fn submit_worker(
         .iter()
         .any(|argument| matches!(argument.as_str(), "--site" | "--all"))
     {
-        worker_options.insert(0, record.to_string());
-        worker_options.insert(0, "--site".into());
+        worker_options.extend(["--site".into(), record.to_string()]);
     }
     let parsed = WorkerOptions::parse(&worker_options)?;
-    if parsed.all || parsed.site.as_deref() != Some(record) {
+    if parsed.all {
+        bail!("documentation worker arguments do not select the immutable manifest record");
+    }
+    if parsed.site.as_deref() != Some(record) {
         bail!("documentation worker arguments do not select the immutable manifest record");
     }
     if parsed.refresh {
@@ -119,7 +105,9 @@ pub(crate) fn submit_worker(
         "run".to_string(),
         "--release".to_string(),
         "--".to_string(),
-        "crawl-docs".to_string(),
+        "crawler".to_string(),
+        "run".to_string(),
+        "docs".to_string(),
         "--worker".to_string(),
         "--artifact-uri".to_string(),
         artifact.clone(),
@@ -127,9 +115,11 @@ pub(crate) fn submit_worker(
         manifest.encoded()?,
     ];
     command_arguments.extend(worker_options);
-    let mut command_words = vec![command_arguments[0].clone()];
+    let (program, arguments) = command_arguments.split_first()
+        .context("documentation worker command has no program")?;
+    let mut command_words = vec![program.clone()];
     command_words.extend(
-        command_arguments[1..]
+        arguments
             .iter()
             .map(|argument| shell_quote(argument))
             .collect::<Result<Vec<_>>>()?,
@@ -154,7 +144,6 @@ pub(crate) fn submit_worker(
         "--output-uri",
         &output_uri,
     ]);
-    stado.args(STADO_RESOURCE_ARGS);
     let output = crate::commands::crawl::command_output(
         &mut stado,
         "submit documentation crawl through Stado",
@@ -182,44 +171,32 @@ pub fn run(rest: &[String]) -> Result<()> {
     let mut record = None;
     let mut runtime_manifest_base64 = None;
     let mut forwarded = Vec::new();
-    let mut i = 0;
-    while i < rest.len() {
-        match rest[i].as_str() {
+    let mut arguments = rest.iter();
+    while let Some(argument) = arguments.next() {
+        match argument.as_str() {
             "--host" => {
-                i += 1;
-                host =
-                    Some(crate::commands::required(rest.get(i), "--host needs a value")?.clone());
+                host = Some(crate::commands::required(arguments.next(), "--host needs a value")?.clone());
             }
             "--record" => {
-                i += 1;
-                record =
-                    Some(crate::commands::required(rest.get(i), "--record needs a value")?.clone());
+                record = Some(crate::commands::required(arguments.next(), "--record needs a value")?.clone());
             }
             "--site" => {
-                i += 1;
-                let value = crate::commands::required(rest.get(i), "--site needs a value")?.clone();
+                let value = crate::commands::required(arguments.next(), "--site needs a value")?.clone();
                 record = Some(value.clone());
                 forwarded.push("--site".into());
                 forwarded.push(value);
             }
             "--runtime-manifest-base64" => {
-                i += 1;
-                runtime_manifest_base64 = Some(
-                    rest.get(i)
-                        .context("--runtime-manifest-base64 needs a value")?
-                        .clone(),
-                );
+                runtime_manifest_base64 = Some(crate::commands::required(
+                    arguments.next(), "--runtime-manifest-base64 needs a value"
+                )?.clone());
             }
             "--worker" => worker = true,
             "--artifact-uri" => {
-                i += 1;
-                artifact_uri = Some(
-                    crate::commands::required(rest.get(i), "--artifact-uri needs a value")?.clone(),
-                );
+                artifact_uri = Some(crate::commands::required(arguments.next(), "--artifact-uri needs a value")?.clone());
             }
             value => forwarded.push(value.to_string()),
         }
-        i += 1;
     }
     let record = record.context("--record is required for one exact per-record job")?;
     let manifest = crate::commands::crawl::decode_runtime_manifest(

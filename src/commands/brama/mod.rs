@@ -32,7 +32,7 @@ pub(crate) const DECISION_ALIAS: &str = "decision-model";
 pub(crate) const DECISIONS: &str = "decisions";
 
 /// One environment variable a Brama question reads: what it holds, and
-/// what happens when it is unset or blank. `spis docs-site` publishes these
+/// what happens when it is unset or blank. `spis docs site generate` publishes these
 /// rows, so the page states what this module reads.
 pub(crate) struct Setting {
     pub(crate) variable: &'static str,

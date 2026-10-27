@@ -101,7 +101,7 @@ pub(crate) fn is_lowercase_hex(value: &str, length: usize) -> bool {
 }
 
 // A SHA-256 digest, a `sha256:` identifier and a Git revision have one shape
-// check each, the provenance module's; crawl-web reads them through it.
+// check each, the provenance module's; the web crawler reads them through it.
 pub(crate) use crate::weles_provenance::{is_git_revision, is_sha256, is_sha256_id};
 
 /// `weles_provenance::is_portable_attempt_component` and the bridge's
@@ -237,12 +237,7 @@ pub(crate) fn objective(catalog: &str, name: &str, goal: &str) -> Result<String>
             "global navigation, product-information routes, CTA transitions, media and carousels, forms with validation and cancellation, and desktop, tablet and mobile responsive states",
             "Crawl the exact landing page named by product_url; do not substitute another vendor page, static screenshot or guessed flow.",
         ),
-        other => bail!("crawl-web has no objective for catalog {other}"),
-    };
-    let goal = if goal.trim().is_empty() {
-        "Map the product's reachable functionality"
-    } else {
-        goal
+        other => bail!("crawler run web has no objective for catalog {other}"),
     };
     Ok(format!(
         "Crawl the real {surface} for {name}. {goal}. Required coverage: {coverage}. Systematically inspect every reachable non-destructive control and retain the accessibility and visual state before and after every interaction. Execute and retain distinct cancellation, failure and recovery variants only when the real product exposes them. Retain animations, transitions, loading states and the first-success result with exact browser-history event IDs and artifact URIs. Exercise keyboard focus order, live regions, a screen-reader-relevant accessibility tree and reduced-motion media preference; name any variant that could not be executed instead of inferring it. Open destructive flows only through their final confirmation screen and never commit the final destructive control. {source_guard} Finish with one machine-readable JSON object named spis_evidence. It must contain observed_url, surface_kind, visible_pricing_comparison, canonical_interactions, canonical_journey, canonical_motion_analysis, canonical_accessibility, and artifacts. Every canonical claim must cite an exact retained event ID or stado:// artifact URI; use null or an explicit gap rather than inventing evidence. For pricing pages, visible_pricing_comparison is true only after at least two visible plans or price alternatives were actually observed. For landing pages, observed_url must be the exact requested landing URL after normalization."

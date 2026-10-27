@@ -108,7 +108,7 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
     if receipt.get("schema").and_then(Value::as_str) != Some("wisent.docs-worker-report.v1")
         || receipt.get("engine").and_then(Value::as_str) != Some("docs")
         || receipt.get("state").and_then(Value::as_str) != Some("artifact_published")
-        || !receipt.get("failure").unwrap_or(&Value::Null).is_null()
+        || receipt.get("failure").is_some_and(|failure| !failure.is_null())
     {
         bail!("attempt receipt is not a successful typed documentation worker report");
     }
@@ -130,8 +130,9 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
     let archive_bytes = artifact
         .get("bytes")
         .and_then(Value::as_u64)
-        .filter(|bytes| *bytes > 0)
-        .context("attempt receipt artifact has no valid byte length")?;
+        .and_then(std::num::NonZeroU64::new)
+        .context("attempt receipt artifact has no valid byte length")?
+        .get();
     if artifact.get("media_type").and_then(Value::as_str) != Some("application/gzip") {
         bail!("attempt receipt artifact media_type is not application/gzip");
     }
@@ -155,8 +156,9 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
     let corpus_bytes = corpus
         .get("bytes")
         .and_then(Value::as_u64)
-        .filter(|bytes| *bytes > 0)
-        .context("attempt receipt corpus has no valid byte count")?;
+        .and_then(std::num::NonZeroU64::new)
+        .context("attempt receipt corpus has no valid byte count")?
+        .get();
     corpus
         .get("pages")
         .and_then(Value::as_u64)
@@ -211,8 +213,9 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
     let attempt = receipt
         .get("attempt")
         .and_then(Value::as_u64)
-        .filter(|attempt| *attempt > 0)
-        .context("attempt receipt has no positive attempt")?;
+        .and_then(std::num::NonZeroU64::new)
+        .context("attempt receipt has no positive attempt")?
+        .get();
     let attempt_id = receipt
         .get("attempt_id")
         .and_then(Value::as_str)

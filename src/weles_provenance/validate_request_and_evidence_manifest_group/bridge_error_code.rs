@@ -1,21 +1,26 @@
 use super::*;
 
+/// The error code the bridge states on stderr as `{"code": "..."}`, a
+/// non-empty run of ASCII letters, digits, `-` and `_`. A bridge that states
+/// none fails as the generic `bridge-error`, and why no code was read is said.
 pub(crate) fn bridge_error_code(stderr: &[u8]) -> String {
-    let Ok(value) = serde_json::from_slice::<Value>(stderr) else {
-        return "bridge-error".to_string();
-    };
-    value
-        .get("code")
-        .and_then(Value::as_str)
-        .filter(|code| {
-            !code.is_empty()
-                && code.len() <= 64
-                && code
-                    .bytes()
-                    .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'))
-        })
-        .unwrap_or("bridge-error")
-        .to_string()
+    match stated_code(stderr) {
+        Ok(code) => code,
+        Err(why) => {
+            eprintln!("spis: the Weles bridge failed without a usable code: {why}");
+            "bridge-error".to_string()
+        }
+    }
+}
+
+fn stated_code(stderr: &[u8]) -> Result<String, String> {
+    let value = serde_json::from_slice::<Value>(stderr).map_err(|error| format!("its stderr is not JSON ({error})"))?;
+    let code = value.get("code").and_then(Value::as_str).ok_or_else(|| format!("its stderr states no code: {value}"))?;
+    let valid = !code.is_empty() && code.bytes().all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'));
+    match valid {
+        true => Ok(code.to_string()),
+        false => Err(format!("its stated code {code:?} is not letters, digits, - and _")),
+    }
 }
 
 pub(crate) fn resolve_retained_file(base: &Path, relative: &str) -> Result<PathBuf, String> {
@@ -74,18 +79,16 @@ pub(crate) fn read_limited(path: &Path, limit: u64) -> Result<Vec<u8>, String> {
         )
     })?;
     let mut bytes = Vec::new();
-    file.take(limit + 1)
+    let mut taken = file.take(limit);
+    taken
         .read_to_end(&mut bytes)
-        .map_err(|error| {
-            format!(
-                "retained file {} could not be read: {error}",
-                path.display()
-            )
-        })?;
-    if bytes.len() as u64 > limit {
-        return Err("retained file is longer than its signed byte count".to_string());
+        .map_err(|error| format!("retained file {} could not be read: {error}", path.display()))?;
+    // One byte past the signed count means the file is longer than signed.
+    match taken.into_inner().bytes().next() {
+        None => Ok(bytes),
+        Some(Ok(_)) => Err("retained file is longer than its signed byte count".to_string()),
+        Some(Err(error)) => Err(format!("retained file {} could not be read past its signed byte count: {error}", path.display())),
     }
-    Ok(bytes)
 }
 
 /// A retained file read whole; its digest is then checked against the reference.
@@ -133,18 +136,23 @@ pub(crate) fn sha256_bytes(bytes: &[u8]) -> String {
     hex::encode(Sha256::digest(bytes))
 }
 
+/// A git object name: a SHA-1 digest of twenty bytes, hex encoded:
+/// https://git-scm.com/docs/hash-function-transition (SHA-1 object names)
+const GIT_SHA1_BYTES: usize = 20;
+
+/// Lowercase hex encoding exactly `bytes` bytes.
+fn lower_hex_of(value: &str, bytes: usize) -> bool {
+    value.bytes().all(|byte| byte.is_ascii_digit() || matches!(byte, b'a'..=b'f'))
+        && hex::decode(value).is_ok_and(|decoded| decoded.len() == bytes)
+}
+
+/// A SHA-256 digest in lowercase hex, its length that of the digest itself.
 pub(crate) fn is_sha256(value: &str) -> bool {
-    value.len() == 64
-        && value
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || matches!(byte, b'a'..=b'f'))
+    lower_hex_of(value, <Sha256 as Digest>::output_size())
 }
 
 pub(crate) fn is_git_revision(value: &str) -> bool {
-    value.len() == 40
-        && value
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || matches!(byte, b'a'..=b'f'))
+    lower_hex_of(value, GIT_SHA1_BYTES)
 }
 
 pub(crate) fn is_sha256_id(value: &str) -> bool {
@@ -202,6 +210,8 @@ pub(crate) fn strip_provenance(value: &Value) -> Value {
 }
 
 pub(crate) fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
+    /// Number.MAX_SAFE_INTEGER, the largest integer JCS (RFC 8785) carries
+    /// exactly: https://tc39.es/ecma262/#sec-number.max_safe_integer
     const MAX_SAFE_INTEGER: u64 = 9_007_199_254_740_991;
 
     fn write_value(value: &Value, output: &mut String) -> Result<(), String> {
@@ -228,7 +238,7 @@ pub(crate) fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
                     let float = number.as_f64().ok_or_else(|| {
                         "JCS input contains an unrepresentable number".to_string()
                     })?;
-                    if !float.is_finite() || float.fract() != 0.0 {
+                    if !float.is_finite() || float.trunc() != float {
                         return Err("JCS input contains a fractional number".to_string());
                     }
                     if float.abs() > MAX_SAFE_INTEGER as f64 {
@@ -244,34 +254,40 @@ pub(crate) fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
             }
             Value::Array(entries) => {
                 output.push('[');
-                for (index, entry) in entries.iter().enumerate() {
-                    if index != 0 {
-                        output.push(',');
-                    }
+                let mut entries = entries.iter();
+                if let Some(first) = entries.next() {
+                    write_value(first, output)?;
+                }
+                for entry in entries {
+                    output.push(',');
                     write_value(entry, output)?;
                 }
                 output.push(']');
             }
             Value::Object(object) => {
                 let mut entries: Vec<_> = object.iter().collect();
-                entries
-                    .sort_by(|(left, _), (right, _)| left.encode_utf16().cmp(right.encode_utf16()));
+                entries.sort_by(|(left, _), (right, _)| left.encode_utf16().cmp(right.encode_utf16()));
                 output.push('{');
-                for (index, (key, entry)) in entries.into_iter().enumerate() {
-                    if index != 0 {
-                        output.push(',');
-                    }
-                    let serialized_key = serde_json::to_string(key).map_err(|error| {
-                        format!("JCS object key could not be serialized: {error}")
-                    })?;
-                    output.push_str(&serialized_key);
-                    output.push(':');
-                    write_value(entry, output)?;
+                let mut entries = entries.into_iter();
+                if let Some((key, entry)) = entries.next() {
+                    write_member(key, entry, output)?;
+                }
+                for (key, entry) in entries {
+                    output.push(',');
+                    write_member(key, entry, output)?;
                 }
                 output.push('}');
             }
         }
         Ok(())
+    }
+
+    fn write_member(key: &str, entry: &Value, output: &mut String) -> Result<(), String> {
+        let serialized_key =
+            serde_json::to_string(key).map_err(|error| format!("JCS object key could not be serialized: {error}"))?;
+        output.push_str(&serialized_key);
+        output.push(':');
+        write_value(entry, output)
     }
 
     let mut output = String::new();

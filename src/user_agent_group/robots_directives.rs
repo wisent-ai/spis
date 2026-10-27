@@ -20,7 +20,7 @@ enum AgentMatch {
 
 /// The rules a robots.txt addresses to [`USER_AGENT`] — the group whose agent
 /// token it starts with, the longest such, else the `*` group — and its
-/// sitemap lines. The one reading of robots.txt: crawl-docs keeps it as its
+/// sitemap lines. The one reading of robots.txt: the docs crawler keeps it as its
 /// snapshot and compiles it into the matcher every documentation fetch obeys.
 pub fn robots_directives(text: &str) -> (Vec<RobotsDirective>, Vec<String>) {
     let mut groups: Vec<(Vec<String>, Vec<RobotsDirective>)> = Vec::new();

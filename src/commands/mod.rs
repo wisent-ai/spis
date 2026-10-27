@@ -15,8 +15,10 @@ pub mod crawl_docs;
 pub mod crawl_mobile;
 pub mod crawl_tui;
 pub mod crawl_web;
+mod crawler;
 pub mod curate_catalog;
 pub mod discover;
+mod docs;
 pub mod docs_corpus;
 pub mod docs_site;
 pub mod generate_example_catalogs;
@@ -28,7 +30,7 @@ pub mod verify_reference_evidence;
 
 use anyhow::{Context, Result};
 use std::io::Write;
-use subcommands::SUBCOMMANDS;
+use subcommands::{Activation, SUBCOMMANDS};
 
 /// The invocation itself is wrong: a missing or extra argument, an unknown
 /// verb. A type rather than a phrase, so `main` tells it from a failure of a
@@ -73,7 +75,7 @@ where
 }
 
 fn asks_help(rest: &[String]) -> bool {
-    rest.iter().any(|arg| arg == "--help" || arg == "-h")
+    rest.iter().any(|arg| matches!(arg.as_str(), "--help" | "-h"))
 }
 
 fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
@@ -87,12 +89,12 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
     // would otherwise do its work.
     if asks_help(rest) && !command.own_help {
         println!(
-            "usage: spis {} [flags]\n\n{}\n\nThis command was not run. Its flags and refusals are in the CLI reference, https://spis.wisent.com/docs/cli-reference.",
+            "usage: spis {} [flags]\n\n{}\n\nThis command was not run. Its flags and refusals are in the CLI reference, https://spis.wisent.com/docs/cli.",
             command.name, command.description
         );
         return Ok(true);
     }
-    if !asks_help(rest) && !matches!(name, "onboarding" | "corpus" | "docs-site" | "serve") {
+    if !asks_help(rest) && matches!(command.activation, Activation::Corpus) {
         remember_invocation_dir()?;
         corpus::activate_configured_root()?;
     }
@@ -100,15 +102,9 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "onboarding" => crate::onboarding::run(rest)?,
         "corpus" => corpus::run(rest)?,
         "crawl" => crawl::run(rest)?,
-        "crawl-docs" => crawl_docs::run(rest)?,
-        "crawl-cli" => crawl_cli::run(rest)?,
-        "crawl-desktop" => crawl_desktop::run(rest)?,
-        "crawl-mobile" => crawl_mobile::run(rest)?,
-        "crawl-web" => crawl_web::run(rest)?,
-        "crawl-tui" => crawl_tui::run(rest)?,
+        "crawler" => crawler::run(rest)?,
         "curate-catalog" => curate_catalog::run(rest)?,
-        "docs-corpus" => docs_corpus::run(rest)?,
-        "docs-site" => docs_site::run(rest)?,
+        "docs" => docs::run(rest)?,
         "discover" => discover::run(rest)?,
         "reference-record" => reference_record::run(rest)?,
         "verify-reference-evidence" => verify_reference_evidence::run(rest)?,
@@ -168,7 +164,7 @@ pub fn run(args: &[String]) -> Result<bool> {
 fn write_usage(out: &mut dyn std::io::Write) {
     let _ = writeln!(out, "spis — evidence-grade reference corpus tooling\n\nUSAGE:\n  spis <subcommand> [flags]\n\nSUBCOMMANDS:");
     for command in SUBCOMMANDS {
-        let _ = writeln!(out, "  {:<32} {}", command.name, command.description);
+        let _ = writeln!(out, "  {} — {}", command.name, command.description);
     }
     let _ = writeln!(out, "\nRun `spis <subcommand> --help` for details.");
 }

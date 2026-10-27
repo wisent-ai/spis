@@ -22,7 +22,7 @@ pub(super) fn prepared_command(
             .filter_map(Value::as_str)
             .map(str::to_string)
             .collect::<Vec<_>>();
-        match engine_command(&manifest, host) {
+        match engine_command(manifest, host, Some(&retained)) {
             Ok(expected) if !retained.is_empty() && expected == retained => Ok(Some(retained)),
             Ok(_) => mark_record_failure(
                 run_id,
@@ -48,10 +48,11 @@ pub(super) fn prepared_command(
         let mut ready = preflight.get("ready").and_then(Value::as_bool) == Some(true);
         if ready {
             let path = reference_path(&manifest.catalog, &manifest.record);
-            let display = path
-                .as_ref()
-                .map(|value| value.display().to_string())
-                .unwrap_or_else(|error| error.to_string());
+            // The diagnostic names the reference path, or why it has none.
+            let display = match path.as_ref() {
+                Ok(value) => value.display().to_string(),
+                Err(error) => format!("no reference path: {error}"),
+            };
             if let Err(error) = path.and_then(|value| {
                 std::fs::read(&value)
                     .map_err(anyhow::Error::from)
@@ -71,16 +72,19 @@ pub(super) fn prepared_command(
             }
         }
         let command = if ready {
-            engine_command(&manifest, host)
+            engine_command(manifest, host, None)
         } else {
             Err(anyhow!("exact record preflight failed"))
         };
         let command = match command {
             Ok(command) => command,
             Err(error) => {
-                let diagnostic = preflight.get("diagnostic").cloned().unwrap_or_else(
-                    || json!({"code": "worker_command_unavailable", "message": error.to_string()}),
-                );
+                // The preflight's own diagnostic says why it was not ready; a ready
+                // preflight whose command could not be built is named by that error.
+                let diagnostic = match preflight.get("diagnostic") {
+                    Some(diagnostic) => diagnostic.clone(),
+                    None => json!({"code": "worker_command_unavailable", "message": error.to_string()}),
+                };
                 mutate_record(run_id, catalog, record_name, |entry| {
                     entry["manifest"] = serde_json::to_value(&manifest)?;
                     entry["preflight"] = preflight;
@@ -107,3 +111,4 @@ pub(super) fn prepared_command(
         Ok(Some(command))
     }
 }
+

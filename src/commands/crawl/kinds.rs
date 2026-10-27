@@ -27,7 +27,7 @@ pub(crate) enum Engine {
 impl Engine {
     /// The engine `name` names, refused with the name when none is called that.
     pub(crate) fn of(name: &str) -> Result<Engine> {
-        serde_json::from_value(Value::String(name.to_string()))
+        Self::deserialize(serde::de::value::StrDeserializer::<serde::de::value::Error>::new(name))
             .with_context(|| format!("{name:?} is not a declared crawl engine"))
     }
 
@@ -58,15 +58,15 @@ impl Engine {
         matches!(self, Engine::Cli | Engine::Tui)
     }
 
-    /// The Spis command that crawls this engine's family.
-    pub(crate) fn command(self) -> &'static str {
+    /// The engine argument accepted by `spis crawler run`.
+    pub(crate) fn name(self) -> &'static str {
         match self {
-            Engine::Mobile => "crawl-mobile",
-            Engine::Desktop => "crawl-desktop",
-            Engine::Web => "crawl-web",
-            Engine::Tui => "crawl-tui",
-            Engine::Cli => "crawl-cli",
-            Engine::Docs => "crawl-docs",
+            Engine::Mobile => "mobile",
+            Engine::Desktop => "desktop",
+            Engine::Web => "web",
+            Engine::Tui => "tui",
+            Engine::Cli => "cli",
+            Engine::Docs => "docs",
         }
     }
 

@@ -2,17 +2,22 @@ use super::*;
 
 pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
     let pairs = collect_urls()?;
-    pool(&pairs, 12, |pair| {
+    pool(&pairs, |pair| {
         let (url, where_, expected) = pair;
-        if !(url.starts_with("http://") || url.starts_with("https://")) {
-            drift.lock().sources_skipped += 1;
-            return;
-        }
         let client = agent();
         let (mut state, detail) = url_state(&client, url);
-        if state == "reachable" {
-            drift.lock().sources_ok += 1;
-            return;
+        match state {
+            "reachable" => {
+                drift.lock().sources_ok.push(url.clone());
+                return;
+            }
+            // A recorded source the HTTP client has no scheme for (a
+            // repository path, a mailto) cannot be asked; it is listed.
+            "skipped" => {
+                drift.lock().sources_skipped.push(format!("{url}: {detail}"));
+                return;
+            }
+            _ => {}
         }
         // A private repository or authenticated application may deliberately
         // answer anonymous HTTP with 400/404. Its recorded classification wins
@@ -24,7 +29,7 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
             "url": url,
             "where": where_,
             "result": detail,
-            "expected": expected.clone().map(Value::String).unwrap_or(Value::Null),
+            "expected": expected,
         });
         let mut guard = drift.lock();
         match state {
@@ -32,8 +37,13 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
             "guarded" => guard.sources_guarded.push(item),
             _ => guard.sources_unresolved.push(item),
         }
-    });
-    Ok(())
+    })
+}
+
+/// Whether `path` exists; one that cannot be examined is refused naming it.
+fn present(path: &std::path::Path) -> Result<bool> {
+    path.try_exists()
+        .with_context(|| format!("examine {}", path.display()))
 }
 
 pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
@@ -57,7 +67,7 @@ pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
                 };
                 let local = base.join(path);
                 let rel = local.to_string_lossy().to_string();
-                if !local.exists() {
+                if !present(&local)? {
                     drift.media_missing.push(rel);
                     continue;
                 }
@@ -67,7 +77,7 @@ pub(crate) fn check_local_media(drift: &mut Drift) -> Result<()> {
                 if crate::sha256_file(&local)? != recorded {
                     drift.media_hash_mismatch.push(rel);
                 } else {
-                    drift.media_ok += 1;
+                    drift.media_ok.push(rel);
                 }
             }
         }
@@ -93,7 +103,7 @@ pub(crate) fn reference_records() -> Result<Vec<PathBuf>> {
             let entry =
                 entry.with_context(|| format!("read an entry of {}", refs_dir.display()))?;
             let candidate = entry.path().join("reference.json");
-            if candidate.is_file() {
+            if present(&candidate)? {
                 out.push(candidate);
             }
         }
@@ -108,21 +118,30 @@ pub(crate) fn sorted_example_dirs() -> Result<Vec<PathBuf>> {
     let mut dirs = Vec::new();
     for entry in std::fs::read_dir(".").context("list the working directory")? {
         let entry = entry.context("read an entry of the working directory")?;
-        let path = PathBuf::from(entry.file_name());
-        if path.is_dir() && entry.file_name().to_string_lossy().ends_with("-examples") {
-            dirs.push(path);
+        if !entry.file_name().to_string_lossy().ends_with("-examples") {
+            continue;
+        }
+        let kind = entry
+            .file_type()
+            .with_context(|| format!("examine {}", entry.path().display()))?;
+        if kind.is_dir() {
+            dirs.push(PathBuf::from(entry.file_name()));
         }
     }
     dirs.sort();
     Ok(dirs)
 }
 
+/// `name` in every catalog that holds it; one that cannot be examined is
+/// refused naming it, not skipped as a catalog without the file.
 pub(crate) fn sorted_glob_examples_files(name: &str) -> Result<Vec<PathBuf>> {
-    let mut files: Vec<PathBuf> = sorted_example_dirs()?
-        .into_iter()
-        .map(|d| d.join(name))
-        .filter(|p| p.is_file())
-        .collect();
+    let mut files = Vec::new();
+    for catalog in sorted_example_dirs()? {
+        let file = catalog.join(name);
+        if present(&file)? {
+            files.push(file);
+        }
+    }
     files.sort();
     Ok(files)
 }
@@ -161,14 +180,14 @@ pub fn run(rest: &[String]) -> Result<()> {
         drift.sources_skipped = net.sources_skipped;
     }
 
-    println!("local media verified: {}", drift.media_ok);
+    println!("local media verified: {}", drift.media_ok.len());
     println!("local media missing: {}", drift.media_missing.len());
     println!(
         "local media hash mismatch: {}",
         drift.media_hash_mismatch.len()
     );
     if !skip_network {
-        println!("README snapshots unchanged: {}", drift.readme_unchanged);
+        println!("README snapshots unchanged: {}", drift.readme_unchanged.len());
         println!(
             "README snapshots changed upstream: {}",
             drift.readme_changed.len()
@@ -177,7 +196,7 @@ pub fn run(rest: &[String]) -> Result<()> {
             "README snapshots unreachable: {}",
             drift.readme_unreachable.len()
         );
-        println!("upstream URLs reachable: {}", drift.sources_ok);
+        println!("upstream URLs reachable: {}", drift.sources_ok.len());
         println!("upstream URLs gone: {}", drift.sources_gone.len());
         println!(
             "upstream URLs guarded (auth, rate limit, bot wall): {}",
@@ -195,27 +214,13 @@ pub fn run(rest: &[String]) -> Result<()> {
         println!("  hash mismatch: {item}");
     }
     for item in &drift.readme_changed {
-        println!(
-            "  README changed: {} ({})",
-            item["repository"].as_str().unwrap_or("?"),
-            item["snapshot"].as_str().unwrap_or("null"),
-        );
+        println!("  README changed: {} ({})", item["repository"], item["snapshot"]);
     }
     for item in &drift.sources_gone {
-        println!(
-            "  upstream gone: {} -> {} {}",
-            item["where"].as_str().unwrap_or("?"),
-            item["result"],
-            item["url"].as_str().unwrap_or("?")
-        );
+        println!("  upstream gone: {} -> {} {}", item["where"], item["result"], item["url"]);
     }
     for item in &drift.sources_unresolved {
-        println!(
-            "  upstream unresolved: {} -> {} {}",
-            item["where"].as_str().unwrap_or("?"),
-            item["result"],
-            item["url"].as_str().unwrap_or("?")
-        );
+        println!("  upstream unresolved: {} -> {} {}", item["where"], item["result"], item["url"]);
     }
 
     if write_report {
@@ -223,17 +228,17 @@ pub fn run(rest: &[String]) -> Result<()> {
             "schema": SCHEMA,
             "checked_at": lib::now_iso_utc(),
             "network_checked": !skip_network,
-            "local_media_verified": drift.media_ok,
+            "local_media_verified": drift.media_ok.len(),
             "local_media_missing": drift.media_missing,
             "local_media_hash_mismatch": drift.media_hash_mismatch,
-            "readme_unchanged": drift.readme_unchanged,
+            "readme_unchanged": drift.readme_unchanged.len(),
             "readme_changed": drift.readme_changed,
             "readme_unreachable": drift.readme_unreachable,
-            "upstream_urls_reachable": drift.sources_ok,
+            "upstream_urls_reachable": drift.sources_ok.len(),
             "upstream_urls_gone": drift.sources_gone,
             "upstream_urls_guarded": drift.sources_guarded,
             "upstream_urls_unresolved": drift.sources_unresolved,
-            "upstream_urls_skipped": drift.sources_skipped,
+            "upstream_urls_skipped": drift.sources_skipped.len(),
         });
         std::fs::create_dir_all(".build")
             .context("create private drift report directory .build")?;
@@ -243,9 +248,7 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
 
     if strict && drift.any_drift() {
-        // The Python original exited 1 silently; main.rs prints "error:" for
-        // Err returns, so exit directly.
-        std::process::exit(1);
+        anyhow::bail!("--strict: upstream drift was found; the lines above name each item");
     }
     Ok(())
 }

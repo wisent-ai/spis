@@ -18,7 +18,8 @@ pub(super) fn take_step(
     blocked: &mut Vec<Value>,
     trajectory: &mut Vec<Step>,
 ) -> Result<bool> {
-    let transition_index = transitions.len() + 1;
+    // A transition is numbered by its position in `transitions`.
+    let transition_index = transitions.len();
     let pre_image = transitions_dir.join(format!("step-{transition_index:04}-before.png"));
     let pre = snapshot(driver, &session, pid, window_id, &pre_image)?;
     assert_target_surface(&pre, pid, window_id, &bundle_id)?;
@@ -59,7 +60,7 @@ pub(super) fn take_step(
         }));
         return Ok(false);
     }
-    let before_hash = state_hash(&pre);
+    let before_hash = state_hash(&pre)?;
     let driver_response = match apply(driver, &session, pid, window_id, &action) {
         Ok(response) => response,
         Err(error) => {
@@ -125,7 +126,7 @@ pub(super) fn take_step(
         }));
         return Ok(true);
     }
-    let after_hash = state_hash(&post);
+    let after_hash = state_hash(&post)?;
     let changed = before_hash != after_hash;
     transitions.push(json!({
         "step": transition_index,
@@ -169,7 +170,9 @@ pub(super) fn take_step(
         return Ok(true);
     }
     if changed {
-        for (_, alternative) in safe.into_iter().skip(1) {
+        // Every safe edge but the one this trajectory took stays an explicit
+        // gap; `safe` and `selected` come from the same observation.
+        for (_, alternative) in safe.into_iter().filter(|(_, edge)| edge.token != selected.token) {
             blocked.push(json!({
                 "state": before_hash,
                 "role": alternative.role,

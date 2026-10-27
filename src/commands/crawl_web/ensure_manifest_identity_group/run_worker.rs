@@ -61,13 +61,13 @@ pub(crate) fn run_worker(
     }
     let artifact =
         crate::commands::crawl::publish_attempt_archive(&attempt_root, &manifest.artifact_uri);
-    let report = worker_report(
-        manifest,
-        "failed",
-        artifact.as_ref().ok().cloned(),
-        &collected,
-        Some(&failure),
-    );
+    // The report carries the archive when it was published; a failed
+    // publication is named in the refusal this worker ends with below.
+    let published = match &artifact {
+        Ok(archive) => Some(archive.clone()),
+        Err(_named_in_the_refusal_below) => None,
+    };
+    let report = worker_report(manifest, "failed", published, &collected, Some(&failure));
     crate::commands::crawl::publish_worker_report(manifest, &report)?;
     println!("{}", serde_json::to_string(&report)?);
     match artifact {
