@@ -1,7 +1,11 @@
 use super::*;
 
+/// The base decimal places count in: one place is one power of ten.
+/// https://en.wikipedia.org/wiki/Decimal
+const DECIMAL_BASE: f64 = 10.0;
+
 pub(crate) fn round_n(x: f64, places: u32) -> f64 {
-    let f = 10f64.powi(places as i32);
+    let f = DECIMAL_BASE.powi(places as i32);
     (x * f).round() / f
 }
 
@@ -49,12 +53,12 @@ pub(crate) fn strip_ansi(text: &str) -> String {
 pub(crate) fn visible_lines(text: &str) -> Vec<String> {
     let mut out = Vec::new();
     for line in strip_ansi(text).split('\n') {
-        // PTYs terminate ordinary lines with CRLF. A trailing CR is dropped;
+        // PTYs terminate ordinary lines with CRLF. Trailing CRs are dropped;
         // internal CR still means an in-place repaint, and a terminal shows the
         // final segment in that case.
-        let line = line.strip_suffix('\r').unwrap_or(line);
-        let line = match line.rfind('\r') {
-            Some(i) => &line[i + 1..],
+        let line = line.trim_end_matches('\r');
+        let line = match line.rsplit_once('\r') {
+            Some((_, last)) => last,
             None => line,
         };
         out.push(line.replace('\t', "    "));
@@ -80,30 +84,13 @@ pub(crate) fn now_unix_secs() -> u64 {
 
 /// ISO-8601 UTC timestamp with the `+00:00` offset the former script produced.
 pub(crate) fn captured_at_now() -> String {
-    format!("{}+00:00", iso_utc_body(now_unix_secs()))
-}
-
-pub(crate) fn iso_utc_body(secs: u64) -> String {
-    let days = (secs / 86_400) as i64;
-    let rem = secs % 86_400;
-    let (h, mi, s) = (rem / 3600, (rem % 3600) / 60, rem % 60);
-    let z = days + 719_468;
-    let era = z.div_euclid(146_097);
-    let doe = z.rem_euclid(146_097);
-    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
-    let mut y = yoe + era * 400;
-    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
-    let mp = (5 * doy + 2) / 153;
-    let d = doy - (153 * mp + 2) / 5 + 1;
-    let m = if mp < 10 { mp + 3 } else { mp - 9 };
-    if m <= 2 {
-        y += 1;
-    }
-    format!("{y:04}-{m:02}-{d:02}T{h:02}:{mi:02}:{s:02}")
+    chrono::Utc::now()
+        .format("%Y-%m-%dT%H:%M:%S+00:00")
+        .to_string()
 }
 
 pub(crate) fn today_utc() -> String {
-    iso_utc_body(now_unix_secs())[..10].to_string()
+    chrono::Utc::now().format("%Y-%m-%d").to_string()
 }
 
 // ---------------------------------------------------------------------- host
@@ -216,12 +203,12 @@ pub(crate) fn host_sentence() -> Result<&'static str> {
 // ---------------------------------------------------------------- resolution
 
 pub(crate) fn resolve(product: &Product) -> Option<String> {
-    let path_var = std::env::var("PATH").ok()?;
-    for dir in path_var.split(':') {
-        if dir.is_empty() {
+    let path_var = std::env::var_os("PATH")?;
+    for dir in std::env::split_paths(&path_var) {
+        if dir.as_os_str().is_empty() {
             continue;
         }
-        let candidate = Path::new(dir).join(&product.binary);
+        let candidate = dir.join(&product.binary);
         if is_executable(&candidate) {
             return Some(candidate.to_string_lossy().into_owned());
         }
@@ -229,11 +216,28 @@ pub(crate) fn resolve(product: &Product) -> Option<String> {
     None
 }
 
+/// A regular file someone may execute: its owner, group or others execute
+/// bit is set. A path that does not exist is not one; a path that cannot be
+/// read is not taken as one either, and standard error says why.
 pub(crate) fn is_executable(path: &Path) -> bool {
     use std::os::unix::fs::PermissionsExt;
     match std::fs::metadata(path) {
-        Ok(md) => md.is_file() && md.permissions().mode() & 0o111 != 0,
-        Err(_) => false,
+        Ok(md) => {
+            let mode = md.permissions().mode();
+            md.is_file()
+                && [libc::S_IXUSR, libc::S_IXGRP, libc::S_IXOTH]
+                    .into_iter()
+                    .map(u32::from)
+                    .any(|bit| mode & bit == bit)
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => false,
+        Err(error) => {
+            eprintln!(
+                "spis: cannot read {}: {error}; it is not taken as the program",
+                path.display()
+            );
+            false
+        }
     }
 }
 
@@ -252,7 +256,10 @@ pub(crate) fn quick_version(product: &Product) -> (Option<String>, QuickOutcome)
         QuickRun::SpawnError(cause) => (Some(path), QuickOutcome::Failed(cause)),
         QuickRun::Done(status, out, err) => {
             let text = strip_ansi(&(out + &err)).trim().to_string();
-            let first = text.split('\n').next().unwrap_or("").to_string();
+            let first = match text.split_once('\n') {
+                Some((first, _)) => first.to_string(),
+                None => text,
+            };
             (Some(path), QuickOutcome::Ran(status, first))
         }
     }
@@ -265,13 +272,17 @@ pub(crate) enum QuickRun {
 
 /// Runs `argv` to its own exit and captures both streams. There is no
 /// deadline: the program's exit or its own error is the answer (cli.md rule 8).
+/// The wait is announced, as every wait of this product is.
 pub(crate) fn run_to_exit(argv: &[&str]) -> QuickRun {
-    match Command::new(argv[0])
-        .args(&argv[1..])
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .output()
-    {
+    let Some((program, args)) = argv.split_first() else {
+        return QuickRun::SpawnError("an empty command names no program to start".into());
+    };
+    match stado_wait::output(
+        Command::new(program)
+            .args(args)
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped()),
+    ) {
         Ok(output) => QuickRun::Done(
             output.status,
             String::from_utf8_lossy(&output.stdout).into_owned(),

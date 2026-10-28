@@ -56,26 +56,15 @@ pub(crate) struct Probe {
 
 pub(crate) fn digest(path: &Path) -> Result<(u64, String)> {
     use sha2::Digest;
-    use std::io::Read;
     let mut file = std::fs::File::open(path)?;
     let mut h = sha2::Sha256::new();
-    let mut size = 0u64;
-    let mut buf = vec![0u8; 1 << 20];
-    loop {
-        let n = file.read(&mut buf)?;
-        if n == 0 {
-            break;
-        }
-        size += n as u64;
-        h.update(&buf[..n]);
-    }
-    Ok((
-        size,
-        h.finalize().iter().map(|b| format!("{b:02x}")).collect(),
-    ))
+    let size = std::io::copy(&mut file, &mut h)?;
+    Ok((size, hex::encode(h.finalize())))
 }
 
-/// asciinema v2: JSON header line, then [time, kind, data] events.
+/// asciinema v2: JSON header line, then [time, kind, data] events, each time
+/// in seconds from the recording's start.
+/// https://docs.asciinema.org/manual/asciicast/v2/
 pub(crate) fn probe_cast(path: &Path) -> Result<Probe> {
     use std::io::BufRead;
     let (size, sha) = digest(path)?;
@@ -85,19 +74,18 @@ pub(crate) fn probe_cast(path: &Path) -> Result<Probe> {
     reader.read_line(&mut first)?;
     let header: Value = match serde_json::from_str(first.trim()) {
         Ok(v) => v,
-        Err(_) => {
+        Err(error) => {
             return Ok(Probe {
                 exists: true,
                 bytes: Some(size),
                 sha256: Some(sha),
                 kind: Some("terminal-cast".into()),
-                error: Some("unreadable cast header".into()),
+                error: Some(format!("unreadable cast header ({error})")),
                 ..Default::default()
             })
         }
     };
-    let mut last_time = 0.0f64;
-    let mut frames = 0usize;
+    let mut times: Vec<Option<f64>> = Vec::new();
     for line in reader.lines() {
         let line = line?;
         let line = line.trim();
@@ -120,15 +108,12 @@ pub(crate) fn probe_cast(path: &Path) -> Result<Probe> {
             }
         };
         if let Some(arr) = event.as_array() {
-            if arr.is_empty() {
-                continue;
-            }
-            frames += 1;
-            if let Some(t) = arr[0].as_f64() {
-                last_time = last_time.max(t);
+            if let Some(time) = arr.first() {
+                times.push(time.as_f64());
             }
         }
     }
+    let last_time = times.iter().flatten().copied().reduce(f64::max);
     Ok(Probe {
         exists: true,
         bytes: Some(size),
@@ -136,27 +121,32 @@ pub(crate) fn probe_cast(path: &Path) -> Result<Probe> {
         kind: Some("terminal-cast".into()),
         width: header.get("width").and_then(|v| v.as_i64()),
         height: header.get("height").and_then(|v| v.as_i64()),
-        duration_seconds: if last_time != 0.0 {
-            Some(round3(last_time))
-        } else {
-            None
-        },
-        frame_count: if frames > 0 {
-            Some(frames as i64)
-        } else {
-            None
-        },
+        // A cast whose events all sit at its start (time zero) measured no
+        // duration: zero is not a normal float, so keeping only a normal
+        // latest time drops exactly that case.
+        duration_seconds: last_time.filter(|time| time.is_normal()).map(round3),
+        frame_count: (!times.is_empty()).then_some(times.len() as i64),
         error: None,
     })
 }
 
+/// Runs `args` to its own exit through the announced wait and returns its
+/// standard output; a program that fails is refused with its whole standard
+/// error, which is the cause it gave.
 pub(crate) fn sh(args: &[&str]) -> Result<String> {
-    let out = Command::new(args[0]).args(&args[1..]).output()?;
+    let Some((program, rest)) = args.split_first() else {
+        anyhow::bail!("an empty command names no program to run");
+    };
+    let out = stado_wait::output(Command::new(program).args(rest))
+        .with_context(|| format!("`{}` could not start", args.join(" ")))?;
     if !out.status.success() {
         let stderr = String::from_utf8_lossy(&out.stderr);
-        let stderr = stderr.trim();
-        let stderr = &stderr[..stderr.len().min(300)];
-        anyhow::bail!("{} failed: {stderr}", args[0]);
+        anyhow::bail!(
+            "`{}` failed with {}: {}",
+            args.join(" "),
+            out.status,
+            stderr.trim()
+        );
     }
     Ok(String::from_utf8_lossy(&out.stdout).to_string())
 }
