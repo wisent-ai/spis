@@ -104,6 +104,10 @@ fn os_status(status: libc::c_int, what: &str) -> std::result::Result<(), String>
     Ok(())
 }
 
+/// The new-value length sysctlbyname takes when it is only read: newp is
+/// NULL and newlen is 0. https://man.freebsd.org/cgi/man.cgi?query=sysctlbyname&sektion=3
+const READ_ONLY_NEWLEN: libc::size_t = 0;
+
 /// One text value the kernel reports through sysctl, such as the macOS
 /// product version; an unreadable or empty value is refused, never written
 /// into a record as a blank host fact.
@@ -120,7 +124,7 @@ pub(crate) fn sysctl_text(name: &str) -> std::result::Result<String, String> {
                 std::ptr::null_mut(),
                 &mut length,
                 std::ptr::null_mut(),
-                buffer.len(),
+                READ_ONLY_NEWLEN,
             ),
             &what,
         )?;
@@ -131,7 +135,7 @@ pub(crate) fn sysctl_text(name: &str) -> std::result::Result<String, String> {
                 buffer.as_mut_ptr().cast(),
                 &mut length,
                 std::ptr::null_mut(),
-                Vec::<u8>::new().len(),
+                READ_ONLY_NEWLEN,
             ),
             &what,
         )?;
