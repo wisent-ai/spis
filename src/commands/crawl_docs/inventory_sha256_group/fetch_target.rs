@@ -18,7 +18,7 @@ pub(crate) fn fetch_target(
             target,
             status: Value::String("robots_disallowed".into()),
             text_bytes: None,
-            downloaded_bytes: 0,
+            downloaded_bytes: Default::default(),
             line: None,
         });
     }
@@ -31,7 +31,7 @@ pub(crate) fn fetch_target(
         Ok(response) => {
             let response_bytes = response.downloaded_bytes;
             let resolved_url = response.final_url.as_str().to_string();
-            if !(200..300).contains(&response.status) {
+            if !http::StatusCode::from_u16(response.status).is_ok_and(|status| status.is_success()) {
                 return Ok(FetchedOutcome {
                     diagnostic: Some(CrawlDiagnostic {
                         code: "http_status".into(),
@@ -117,10 +117,14 @@ pub(crate) fn fetch_target(
             } else {
                 ("ok", None, Some(text))
             };
-            let text_bytes = retained_text
-                .as_ref()
-                .map(|value| value.len() as u64)
-                .unwrap_or(0);
+            // Every page whose record line is written states the length of
+            // the text it kept, so the record digest and text_bytes stay
+            // paired; a page that kept no text measures the empty text.
+            let kept = match &retained_text {
+                Some(value) => value.as_str(),
+                None => "",
+            };
+            let text_bytes = Some(kept.len() as u64);
             let record = json!({
                 "url": &target.url,
                 "resolved_url": response.final_url.as_str(),
@@ -141,7 +145,7 @@ pub(crate) fn fetch_target(
                 target,
                 status: Value::from(response.status),
                 diagnostic,
-                text_bytes: Some(text_bytes),
+                text_bytes,
                 downloaded_bytes: response_bytes,
                 line: Some(line),
             })
@@ -175,19 +179,13 @@ pub(crate) fn load_stream_hasher(path: &Path, committed_bytes: u64) -> Result<Sh
         false,
         "durable documentation pages",
     )?;
-    let mut remaining = committed_bytes;
-    let mut buffer = [0u8; 64 * 1024];
-    while remaining > 0 {
-        let limit = usize::try_from(remaining.min(buffer.len() as u64))?;
-        let read = file.read(&mut buffer[..limit])?;
-        if read == 0 {
-            bail!(
-                "durable documentation corpus ended before its {}-byte checkpoint",
-                committed_bytes
-            );
-        }
-        hasher.update(&buffer[..read]);
-        remaining -= read as u64;
+    // Hash exactly the committed prefix; a corpus shorter than its
+    // checkpoint is refused with both lengths.
+    let hashed = std::io::copy(&mut (&mut file).take(committed_bytes), &mut hasher)?;
+    if hashed != committed_bytes {
+        bail!(
+            "durable documentation corpus ended at byte {hashed}, before its {committed_bytes}-byte checkpoint"
+        );
     }
     Ok(hasher)
 }

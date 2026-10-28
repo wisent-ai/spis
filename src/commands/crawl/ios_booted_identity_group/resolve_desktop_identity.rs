@@ -15,14 +15,14 @@ pub(crate) fn resolve_desktop_identity(
         .map(str::trim)
         .filter(|path| path.ends_with(".app"))
         .collect();
-    if paths.len() != 1 {
+    let [app_path] = paths.as_slice() else {
         bail!(
             "desktop display name {} resolved to {} application bundles",
             manifest.runtime_product.identifier,
             paths.len()
         );
-    }
-    let app_path = paths[0].to_string();
+    };
+    let app_path = app_path.to_string();
     let metadata = host_probe(
         host,
         &[
@@ -64,20 +64,21 @@ pub(crate) fn resolve_desktop_identity(
     let version = ready_output(&version_check, "resolve desktop product version")?;
     let digest_check = host_probe(host, &["shasum", "-a", "256", &executable_path]);
     let digest_output = ready_output(&digest_check, "hash desktop executable")?;
-    let digest = digest_output
-        .split_whitespace()
-        .next()
-        .unwrap_or_default()
-        .to_ascii_lowercase();
-    if digest.len() != 64 || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+    let Some(digest) = digest_output.split_whitespace().next() else {
+        bail!("shasum printed no digest for {executable_path}");
+    };
+    let digest = digest.to_ascii_lowercase();
+    if digest.len() != SHA256_HEX_DIGITS || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
         bail!("desktop executable SHA-256 is invalid");
     }
     let hardware_check = host_probe(host, &["ioreg", "-rd1", "-c", "IOPlatformExpertDevice"]);
     let hardware_output = ready_output(&hardware_check, "resolve exact desktop hardware identity")?;
+    // ioreg prints the UUID as `"IOPlatformUUID" = "<uuid>"`.
     let hardware_id = hardware_output
         .lines()
         .find(|line| line.contains("\"IOPlatformUUID\""))
-        .and_then(|line| line.split('"').nth(3))
+        .and_then(|line| line.split_once('='))
+        .map(|(_, value)| value.trim().trim_matches('"'))
         .filter(|value| {
             !value.is_empty()
                 && value
@@ -114,6 +115,10 @@ pub(crate) fn resolve_desktop_identity(
     ))
 }
 
+/// Hex digits of a SHA-256 digest: 256 bits, four per digit
+/// (FIPS 180-4, https://csrc.nist.gov/pubs/fips/180-4/upd1/final).
+const SHA256_HEX_DIGITS: usize = 64;
+
 pub(crate) fn prepared_runtime_check(
     manifest: &RuntimeManifest,
     identity: &RuntimeExecutionIdentity,
@@ -124,29 +129,39 @@ pub(crate) fn prepared_runtime_check(
         .as_ref()
         .context("no independently observed prepared-runtime proof is bound")?;
     let product = &manifest.runtime_product.identifier;
-    let device = identity.device_id.as_deref().unwrap_or("");
+    // A proof binds one device; an identity that names none has nothing to
+    // bind it to, and two absent ids are not the same device.
+    let device = identity
+        .device_id
+        .as_deref()
+        .context("the runtime identity names no device, so no prepared-runtime proof can be bound to it")?;
+    if proof.device_id.as_deref() != Some(device) {
+        bail!(
+            "the prepared-runtime proof names device {:?}, not this runtime's {device}",
+            proof.device_id
+        );
+    }
     if proof.schema != "wisent.runtime-preparation-proof.v1"
         || proof.product_identifier != *product
-        || proof.device_id.as_deref().unwrap_or("") != device
         || proof.observed_by != "stado-runtime-readiness"
         || !proof.evidence_uri.starts_with("stado://")
         || identity.product_version.as_deref() != Some(proof.product_version.as_str())
         || identity.executable_sha256.as_deref() != Some(proof.executable_sha256.as_str())
-        || proof.evidence_sha256.len() != 64
+        || proof.evidence_sha256.len() != SHA256_HEX_DIGITS
         || !proof
             .evidence_sha256
             .bytes()
             .all(|byte| byte.is_ascii_hexdigit())
         || !proof.installed
         || !proof.first_run_completed
-        || proof.pending_permission_prompts != 0
-        || proof.pending_notification_prompts != 0
+        || proof.pending_permission_prompts != Default::default()
+        || proof.pending_notification_prompts != Default::default()
         || !proof.notification_delivery_disabled
         || !proof.permission_prompt_invocation_disabled
         || !proof.notification_prompt_invocation_disabled
         || !is_rfc3339_utc(&proof.observed_at)
     {
-        bail!("prepared-runtime proof does not bind the exact product/device with an RFC 3339 UTC observation time, first run completed, zero pending prompts, disabled permission/notification prompt invocation, and disabled notification delivery");
+        bail!("prepared-runtime proof does not bind the exact product with an RFC 3339 UTC observation time, first run completed, zero pending prompts, disabled permission/notification prompt invocation, and disabled notification delivery");
     }
     let check = host_probe(
         host,
@@ -174,21 +189,17 @@ pub(crate) fn prepared_runtime_check(
             .get("product_identifier")
             .and_then(Value::as_str)
             != Some(product)
-        || observation
-            .get("device_id")
-            .and_then(Value::as_str)
-            .unwrap_or("")
-            != device
+        || observation.get("device_id").and_then(Value::as_str) != Some(device)
         || observation.get("evidence_sha256").and_then(Value::as_str)
             != Some(proof.evidence_sha256.as_str())
         || observation
             .get("pending_permission_prompts")
             .and_then(Value::as_u64)
-            != Some(0)
+            != Some(Default::default())
         || observation
             .get("pending_notification_prompts")
             .and_then(Value::as_u64)
-            != Some(0)
+            != Some(Default::default())
         || observation
             .get("notification_delivery_disabled")
             .and_then(Value::as_bool)
@@ -218,15 +229,5 @@ pub(crate) fn prepared_runtime_check(
 /// the live `stado-runtime-readiness verify` re-check, but the timestamp is now
 /// required to be a well-formed UTC instant rather than arbitrary text.
 pub(crate) fn is_rfc3339_utc(value: &str) -> bool {
-    let bytes = value.as_bytes();
-    bytes.len() == 20
-        && bytes[19] == b'Z'
-        && bytes[4] == b'-'
-        && bytes[7] == b'-'
-        && bytes[10] == b'T'
-        && bytes[13] == b':'
-        && bytes[16] == b':'
-        && [0, 1, 2, 3, 5, 6, 8, 9, 11, 12, 14, 15, 17, 18]
-            .iter()
-            .all(|index| bytes[*index].is_ascii_digit())
+    chrono::NaiveDateTime::parse_from_str(value, "%Y-%m-%dT%H:%M:%SZ").is_ok()
 }
