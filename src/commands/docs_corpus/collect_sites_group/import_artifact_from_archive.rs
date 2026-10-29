@@ -109,7 +109,9 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
     if receipt.get("schema").and_then(Value::as_str) != Some("wisent.docs-worker-report.v1")
         || receipt.get("engine").and_then(Value::as_str) != Some("docs")
         || receipt.get("state").and_then(Value::as_str) != Some("artifact_published")
-        || receipt.get("failure").is_some_and(|failure| !failure.is_null())
+        || receipt
+            .get("failure")
+            .is_some_and(|failure| !failure.is_null())
     {
         bail!("attempt receipt is not a successful typed documentation worker report");
     }
