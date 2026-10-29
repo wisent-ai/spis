@@ -103,14 +103,13 @@ pub(crate) fn import_artifact_from_archive(
 /// `crawl.rs::import_record_attempt` both continue through
 /// [`import_worker_report`] so a crawl reported as imported is immediately
 /// visible to the product's corpus status, search, and show commands.
-/// Returns the artifact URI and its SHA-256.
-pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, String)> {
+/// Returns the artifact URI, its SHA-256 and its validated byte length, so
+/// the import compares the archive with the length this check read.
+pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, String, u64)> {
     if receipt.get("schema").and_then(Value::as_str) != Some("wisent.docs-worker-report.v1")
         || receipt.get("engine").and_then(Value::as_str) != Some("docs")
         || receipt.get("state").and_then(Value::as_str) != Some("artifact_published")
-        || receipt
-            .get("failure")
-            .is_some_and(|failure| !failure.is_null())
+        || receipt.get("failure").is_some_and(|failure| !failure.is_null())
     {
         bail!("attempt receipt is not a successful typed documentation worker report");
     }
@@ -237,12 +236,11 @@ pub(crate) fn validate_docs_worker_report(receipt: &Value) -> Result<(String, St
     if uri != expected_uri {
         bail!("attempt receipt artifact URI does not match its immutable coordinates");
     }
-    let _ = archive_bytes;
-    Ok((uri, archive_sha256))
+    Ok((uri, archive_sha256, archive_bytes))
 }
 
 pub(crate) fn read_attempt_receipt(path: &Path) -> Result<(Value, String, String)> {
     let receipt = read_last_worker_report(path)?;
-    let (uri, archive_sha256) = validate_docs_worker_report(&receipt)?;
+    let (uri, archive_sha256, _) = validate_docs_worker_report(&receipt)?;
     Ok((receipt, uri, archive_sha256))
 }

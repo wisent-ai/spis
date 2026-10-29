@@ -82,11 +82,7 @@ pub(crate) fn import_verified_worker_report(
     receipt: &Value,
     source_archive: Option<&Path>,
 ) -> Result<Value> {
-    let (uri, expected_sha256) = validate_docs_worker_report(receipt)?;
-    let expected_bytes = receipt
-        .pointer("/artifact/bytes")
-        .and_then(Value::as_u64)
-        .context("validated attempt receipt artifact has no bytes")?;
+    let (uri, expected_sha256, expected_bytes) = validate_docs_worker_report(receipt)?;
     let attempt =
         import_artifact_from_archive(&uri, &expected_sha256, expected_bytes, source_archive)?;
     validate_receipt_corpus(receipt, &attempt)?;
@@ -112,3 +108,4 @@ pub(crate) fn import_worker_report_from_archive(
 ) -> Result<Value> {
     import_verified_worker_report(receipt, Some(source_archive))
 }
+
