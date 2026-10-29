@@ -80,15 +80,22 @@ pub(crate) struct SiteRules {
     pub(crate) prefixes: Vec<String>,
 }
 
+/// The crawl rules of `slug`: its override's sitemaps, llms files and path
+/// prefixes when `map` names it. A site no override names has none of its
+/// own; its prefixes are then read from a scoped sitemap its inventory
+/// source declares.
 pub(crate) fn site_rules(
     slug: &str,
     meta: &SiteMeta,
     map: &HashMap<&'static str, Override>,
 ) -> SiteRules {
-    let ov = map.get(slug);
-    let mut prefixes: Vec<String> = ov
-        .map(|o| o.prefixes.iter().map(|s| s.to_string()).collect())
-        .unwrap_or_default();
+    fn owned(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| value.to_string()).collect()
+    }
+    let (sitemaps, llms, mut prefixes) = match map.get(slug) {
+        Some(ov) => (owned(ov.sitemaps), owned(ov.llms), owned(ov.prefixes)),
+        None => (Vec::new(), Vec::new(), Vec::new()),
+    };
     if prefixes.is_empty() {
         if let Some(inv) = meta.inventory_source.strip_prefix("scoped sitemap (") {
             if let Some(inner) = inv.strip_suffix(')') {
@@ -97,12 +104,8 @@ pub(crate) fn site_rules(
         }
     }
     SiteRules {
-        sitemaps: ov
-            .map(|o| o.sitemaps.iter().map(|s| s.to_string()).collect())
-            .unwrap_or_default(),
-        llms: ov
-            .map(|o| o.llms.iter().map(|s| s.to_string()).collect())
-            .unwrap_or_default(),
+        sitemaps,
+        llms,
         prefixes,
     }
 }
@@ -115,6 +118,9 @@ pub(crate) struct UrlPolicy {
     pub(crate) pinned_addresses: Arc<Vec<SocketAddr>>,
 }
 
+/// Numbers this process's staging files; only distinctness matters, and
+/// `fetch_add` hands each caller a value no other caller receives.
+// https://doc.rust-lang.org/std/sync/atomic/struct.AtomicU64.html#method.fetch_add
 pub(crate) static STAGING_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
 impl UrlPolicy {
