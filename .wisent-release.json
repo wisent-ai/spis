@@ -10,23 +10,73 @@
   "platforms": {
     "darwin-arm64": {
       "runner_platform": "darwin-arm64",
-      "quality": [{"name": "fmt", "argv": ["cargo", "fmt", "--all", "--", "--check"], "kind": "format"}],
+      "quality": [
+        {
+          "name": "fmt",
+          "argv": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "kind": "format"
+        }
+      ],
       "build": {
-        "argv": ["stado", "product", "cargo", "stage", "--bin", "spis"]
+        "argv": [
+          "stado",
+          "product",
+          "cargo",
+          "stage",
+          "--bin",
+          "spis"
+        ]
       },
       "stage": {
         "spis": "bin/spis"
       },
       "tests": [
-        {"name": "catalog-type-lifecycle", "argv": ["stado", "product", "cargo", "test", "--", "--test", "catalog-type-lifecycle"]},
-        {"name": "capture-widths-refusals", "argv": ["stado", "product", "cargo", "test", "--", "--test", "capture-widths-refusals"]}
+        {
+          "name": "catalog-type-lifecycle",
+          "argv": [
+            "stado",
+            "product",
+            "cargo",
+            "test",
+            "--",
+            "--test",
+            "catalog-type-lifecycle"
+          ]
+        },
+        {
+          "name": "capture-widths-refusals",
+          "argv": [
+            "stado",
+            "product",
+            "cargo",
+            "test",
+            "--",
+            "--test",
+            "capture-widths-refusals"
+          ]
+        }
       ]
     }
   },
   "promotion": {
-    "channels": ["stable"],
+    "channels": [
+      "stable"
+    ],
     "reconcile": false
   },
-  "inputs": {},
+  "inputs": {
+    "private-cargo-sources": {
+      "uri": "stado://sources/spis/dependencies/private-cargo-sources/sha256/017a5f9df9213f40804296b2d3aa5f949b629379e50d29a211562ce1dbb26d2c/source.tar.gz",
+      "sha256": "017a5f9df9213f40804296b2d3aa5f949b629379e50d29a211562ce1dbb26d2c",
+      "mount": "private-cargo-sources",
+      "extract": true
+    }
+  },
   "deliveries": []
 }
