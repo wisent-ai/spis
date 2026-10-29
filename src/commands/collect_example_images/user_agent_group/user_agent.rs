@@ -35,9 +35,12 @@ pub(crate) fn fetch(url: &str, accept: &str) -> Result<Fetched> {
     let request = ureq::get(url)
         .set("User-Agent", USER_AGENT)
         .set("Accept", accept);
-    let resp = stado_wait::blocking(stado_wait::Kind::Network, "the answer to GET", url, move || {
-        request.call()
-    })
+    let resp = stado_wait::blocking(
+        stado_wait::Kind::Network,
+        "the answer to GET",
+        url,
+        move || request.call(),
+    )
     .map_err(|e| anyhow!("GET {url}: {e}"))?;
     let content_type = resp.header("Content-Type").map(|declared| {
         match declared.split_once(';') {

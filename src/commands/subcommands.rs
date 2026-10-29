@@ -16,7 +16,10 @@ pub(super) struct Subcommand {
 }
 
 const fn sub(
-    name: &'static str, description: &'static str, own_help: bool, activation: Activation,
+    name: &'static str,
+    description: &'static str,
+    own_help: bool,
+    activation: Activation,
 ) -> Subcommand {
     Subcommand {
         name,

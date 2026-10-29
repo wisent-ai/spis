@@ -39,13 +39,16 @@ pub(super) fn run(arguments: &[String]) -> Result<()> {
             };
             if verb != "generate" {
                 return Err(super::usage(format!(
-                    "unknown docs site operation {verb}; {}", super::docs_site::USAGE
+                    "unknown docs site operation {verb}; {}",
+                    super::docs_site::USAGE
                 )));
             }
             super::docs_site::run(arguments)
         }
         other => Err(super::usage(format!(
-            "unknown docs operation {other}; {}\n{}", super::docs_corpus::USAGE, super::docs_site::USAGE
+            "unknown docs operation {other}; {}\n{}",
+            super::docs_corpus::USAGE,
+            super::docs_site::USAGE
         ))),
     }
 }

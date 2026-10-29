@@ -2,11 +2,19 @@ use super::*;
 
 /// The meta names that state a page's own image (Open Graph's `property`,
 /// Twitter's `name`).
-const IMAGE_META: &[&str] = &["og:image", "og:image:secure_url", "twitter:image", "twitter:image:src"];
+const IMAGE_META: &[&str] = &[
+    "og:image",
+    "og:image:secure_url",
+    "twitter:image",
+    "twitter:image:src",
+];
 /// The elements that name images in their attributes: each element's
 /// selector, the origin of an image it names in one attribute, and the
 /// origin of one it lists in a source set.
-const IMAGE_ELEMENTS: &[(&str, &str, &str)] = &[("img", "img", "img-srcset"), ("source", "source", "source-srcset")];
+const IMAGE_ELEMENTS: &[(&str, &str, &str)] = &[
+    ("img", "img", "img-srcset"),
+    ("source", "source", "source-srcset"),
+];
 /// The attributes an image element names one image in, eager or lazy.
 const SINGLE_SOURCES: &[&str] = &["src", "data-src", "data-lazy-src", "data-original"];
 /// The attributes an image element lists images in, each with a width or
@@ -25,7 +33,12 @@ const IMAGE_EXTENSIONS: &[&str] = &[".png", ".jpg", ".jpeg", ".webp"];
 /// List `url` as the next candidate: its order is its position in the listing.
 fn push(out: &mut Vec<Candidate>, url: &str, hint: String, origin: &'static str) {
     let order = out.len();
-    out.push(Candidate { url: url.to_string(), hint, order, origin });
+    out.push(Candidate {
+        url: url.to_string(),
+        hint,
+        order,
+        origin,
+    });
 }
 
 /// Every image the page's tags name, read by Spis's one HTML reader
@@ -39,21 +52,41 @@ pub(crate) fn extract_tag_candidates(html: &str, out: &mut Vec<Candidate>) -> Re
             (Some(named), _) | (None, Some(named)) => named.to_lowercase(),
             (None, None) => continue,
         };
-        if let (true, Some(content)) = (IMAGE_META.contains(&key.as_str()), element.attribute("content")) {
+        if let (true, Some(content)) = (
+            IMAGE_META.contains(&key.as_str()),
+            element.attribute("content"),
+        ) {
             push(out, content, key, "meta");
         }
     }
     for (selector, single, listed) in IMAGE_ELEMENTS {
         for element in crate::html::elements(html, selector)? {
-            let described = [element.attribute("alt"), element.attribute("title"), element.attribute("class")];
-            let hint = described.into_iter().flatten().collect::<Vec<_>>().join(" ");
+            let described = [
+                element.attribute("alt"),
+                element.attribute("title"),
+                element.attribute("class"),
+            ];
+            let hint = described
+                .into_iter()
+                .flatten()
+                .collect::<Vec<_>>()
+                .join(" ");
             let hint = hint.trim();
-            for url in SINGLE_SOURCES.iter().filter_map(|name| element.attribute(name)) {
+            for url in SINGLE_SOURCES
+                .iter()
+                .filter_map(|name| element.attribute(name))
+            {
                 push(out, url, hint.to_string(), single);
             }
-            for set in SOURCE_SETS.iter().filter_map(|name| element.attribute(name)) {
+            for set in SOURCE_SETS
+                .iter()
+                .filter_map(|name| element.attribute(name))
+            {
                 // Each entry is a URL, then its width or density.
-                for url in set.split(',').filter_map(|entry| entry.split_whitespace().next()) {
+                for url in set
+                    .split(',')
+                    .filter_map(|entry| entry.split_whitespace().next())
+                {
                     push(out, url, hint.to_string(), listed);
                 }
             }
@@ -76,7 +109,12 @@ pub(crate) fn extract_css_candidates(text: &str, out: &mut Vec<Candidate>) -> Re
     let pattern = regex::Regex::new(CSS_URL).context("the CSS url() pattern does not compile")?;
     for found in pattern.captures_iter(text) {
         let (_, [url]) = found.extract();
-        push(out, &crate::html::decoded(url), "css background".to_string(), "css");
+        push(
+            out,
+            &crate::html::decoded(url),
+            "css background".to_string(),
+            "css",
+        );
     }
     Ok(())
 }
@@ -92,8 +130,16 @@ pub(crate) fn extract_embedded_candidates(text: &str, out: &mut Vec<Candidate>) 
             None => run,
         }
         .to_lowercase();
-        if IMAGE_EXTENSIONS.iter().any(|extension| stem.ends_with(extension)) {
-            push(out, &crate::html::decoded(run), "embedded image URL".to_string(), "embedded");
+        if IMAGE_EXTENSIONS
+            .iter()
+            .any(|extension| stem.ends_with(extension))
+        {
+            push(
+                out,
+                &crate::html::decoded(run),
+                "embedded image URL".to_string(),
+                "embedded",
+            );
         }
     }
     Ok(())
@@ -107,6 +153,7 @@ pub(crate) fn fetchable(page: &url::Url, reference: &str) -> Result<Option<url::
     let resolved = page
         .join(reference)
         .with_context(|| format!("the image reference {reference:?} on {page} does not resolve"))?;
-    let web = crate::WebScheme::of(&resolved).is_some() && resolved.host_str().is_some_and(|host| !host.is_empty());
+    let web = crate::WebScheme::of(&resolved).is_some()
+        && resolved.host_str().is_some_and(|host| !host.is_empty());
     Ok(web.then_some(resolved))
 }

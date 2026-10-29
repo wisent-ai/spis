@@ -22,9 +22,9 @@ pub fn run(rest: &[String]) -> Result<()> {
         match argument.as_str() {
             "--check" => check = true,
             "--site-content" => {
-                let path = arguments.next().ok_or_else(|| {
-                    crate::commands::usage("--site-content requires a path")
-                })?;
+                let path = arguments
+                    .next()
+                    .ok_or_else(|| crate::commands::usage("--site-content requires a path"))?;
                 landing_content = Some(PathBuf::from(path));
             }
             "--help" | "-h" => {

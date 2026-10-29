@@ -33,7 +33,9 @@ pub fn parse_sitemap(body: &[u8]) -> (Vec<String>, Vec<(String, Option<String>)>
         .collect();
     let pages = document
         .select(&selector("urlset url"))
-        .filter_map(|entry| child_text(entry, &location).map(|page| (page, child_text(entry, &modified))))
+        .filter_map(|entry| {
+            child_text(entry, &location).map(|page| (page, child_text(entry, &modified)))
+        })
         .collect();
     (children, pages)
 }

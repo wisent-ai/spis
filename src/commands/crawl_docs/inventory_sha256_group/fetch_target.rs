@@ -31,7 +31,8 @@ pub(crate) fn fetch_target(
         Ok(response) => {
             let response_bytes = response.downloaded_bytes;
             let resolved_url = response.final_url.as_str().to_string();
-            if !http::StatusCode::from_u16(response.status).is_ok_and(|status| status.is_success()) {
+            if !http::StatusCode::from_u16(response.status).is_ok_and(|status| status.is_success())
+            {
                 return Ok(FetchedOutcome {
                     diagnostic: Some(CrawlDiagnostic {
                         code: "http_status".into(),

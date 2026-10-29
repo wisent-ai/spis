@@ -25,14 +25,15 @@ pub fn answers_document(name: &str) -> bool {
     matches!(name, "docs-status" | "docs-search" | "docs-show")
 }
 
-fn field_refusal(
-    body: &Map<String, Value>, key: &str, expected: &str, operation: &str,
-) -> Refusal {
+fn field_refusal(body: &Map<String, Value>, key: &str, expected: &str, operation: &str) -> Refusal {
     let sentence = match body.get(key) {
         Some(value) => format!("{operation}: field '{key}' requires {expected}; received {value}"),
         None => format!("{operation}: missing field '{key}' ({expected})"),
     };
-    Refusal { status: StatusCode::BAD_REQUEST, sentence }
+    Refusal {
+        status: StatusCode::BAD_REQUEST,
+        sentence,
+    }
 }
 
 fn text(body: &Map<String, Value>, key: &str, sentence: &str) -> Result<String, Refusal> {
@@ -43,9 +44,7 @@ fn text(body: &Map<String, Value>, key: &str, sentence: &str) -> Result<String, 
         .ok_or_else(|| field_refusal(body, key, "a nonempty string", sentence))
 }
 
-fn positive(
-    body: &Map<String, Value>, key: &str, sentence: &str,
-) -> Result<NonZeroU64, Refusal> {
+fn positive(body: &Map<String, Value>, key: &str, sentence: &str) -> Result<NonZeroU64, Refusal> {
     body.get(key)
         .and_then(Value::as_u64)
         .and_then(NonZeroU64::new)

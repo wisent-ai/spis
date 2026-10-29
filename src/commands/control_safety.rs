@@ -54,10 +54,22 @@ impl Safety {
 
 /// The class a control is asked about: every safety and what it means.
 const CLASSES: &[(Safety, &str)] = &[
-    (Safety::Navigation, "pressing it only goes back, cancels, closes or dismisses without changing anything"),
-    (Safety::Consent, "it grants or refuses an operating system permission or notification"),
-    (Safety::Destructive, "it deletes, removes, buys, pays, sends, publishes, posts, signs out or closes an account"),
-    (Safety::Inert, "it is not something a person presses: text, an image, a group"),
+    (
+        Safety::Navigation,
+        "pressing it only goes back, cancels, closes or dismisses without changing anything",
+    ),
+    (
+        Safety::Consent,
+        "it grants or refuses an operating system permission or notification",
+    ),
+    (
+        Safety::Destructive,
+        "it deletes, removes, buys, pays, sends, publishes, posts, signs out or closes an account",
+    ),
+    (
+        Safety::Inert,
+        "it is not something a person presses: text, an image, a group",
+    ),
     (Safety::Other, "any other control"),
 ];
 /// Each control is asked under this prefix and its position on the screen.
@@ -88,7 +100,10 @@ pub(crate) fn judge(purpose: &str, controls: &[(String, String)]) -> Result<Vec<
                  What does pressing the {role} control at index {index}, labelled {label:?}, do? \
                  Judge what pressing it does, not single words."
             );
-            (format!("{CONTROL}{index}"), super::brama::choice(&instructions, &options))
+            (
+                format!("{CONTROL}{index}"),
+                super::brama::choice(&instructions, &options),
+            )
         })
         .collect();
     let answers = super::brama::decide(purpose, &Value::Array(listed).to_string(), &questions)?;
@@ -96,10 +111,13 @@ pub(crate) fn judge(purpose: &str, controls: &[(String, String)]) -> Result<Vec<
         .iter()
         .enumerate()
         .map(|(index, _)| {
-            let (name, _) = super::brama::chosen(purpose, &answers[&format!("{CONTROL}{index}")], &options)?;
+            let (name, _) =
+                super::brama::chosen(purpose, &answers[&format!("{CONTROL}{index}")], &options)?;
             match CLASSES.iter().find(|(class, _)| class.name() == name) {
                 Some((class, _)) => Ok(*class),
-                None => bail!("{purpose}: Brama chose the class {name:?}, which is not a declared safety"),
+                None => bail!(
+                    "{purpose}: Brama chose the class {name:?}, which is not a declared safety"
+                ),
             }
         })
         .collect()

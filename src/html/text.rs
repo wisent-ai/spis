@@ -68,7 +68,8 @@ impl Reading {
             return;
         }
         if name == "title" {
-            self.title.push_str(&squeeze(&element.text().collect::<String>()));
+            self.title
+                .push_str(&squeeze(&element.text().collect::<String>()));
             return;
         }
         if name == "main" {
@@ -122,17 +123,27 @@ fn squeeze(text: &str) -> String {
 /// The text and title of the HTML page `html`.
 pub fn extract_text(html: &str) -> (String, String) {
     let page = Html::parse_document(html);
-    let main_only = page
-        .root_element()
-        .descendants()
-        .any(|node| node.value().as_element().is_some_and(|element| element.name() == "main"));
-    let mut reading =
-        Reading { out: String::new(), title: String::new(), main_only, in_main: false, in_pre: false };
+    let main_only = page.root_element().descendants().any(|node| {
+        node.value()
+            .as_element()
+            .is_some_and(|element| element.name() == "main")
+    });
+    let mut reading = Reading {
+        out: String::new(),
+        title: String::new(),
+        main_only,
+        in_main: false,
+        in_pre: false,
+    };
     reading.element(page.root_element());
     let mut raw = reading.out;
     while raw.contains("\n\n\n") {
         raw = raw.replace("\n\n\n", "\n\n");
     }
-    let cleaned = raw.lines().map(str::trim_end).collect::<Vec<_>>().join("\n");
+    let cleaned = raw
+        .lines()
+        .map(str::trim_end)
+        .collect::<Vec<_>>()
+        .join("\n");
     (cleaned.trim().to_string(), reading.title.trim().to_string())
 }

@@ -75,7 +75,8 @@ where
 }
 
 fn asks_help(rest: &[String]) -> bool {
-    rest.iter().any(|arg| matches!(arg.as_str(), "--help" | "-h"))
+    rest.iter()
+        .any(|arg| matches!(arg.as_str(), "--help" | "-h"))
 }
 
 fn dispatch(name: &str, rest: &[String]) -> Result<bool> {

@@ -17,8 +17,13 @@ pub(crate) enum Hidden {
 }
 
 impl Hidden {
-    const ALL: &'static [Hidden] =
-        &[Hidden::Script, Hidden::Style, Hidden::Template, Hidden::Noscript, Hidden::Svg];
+    const ALL: &'static [Hidden] = &[
+        Hidden::Script,
+        Hidden::Style,
+        Hidden::Template,
+        Hidden::Noscript,
+        Hidden::Svg,
+    ];
 
     fn tag(self) -> &'static str {
         match self {
@@ -33,7 +38,10 @@ impl Hidden {
     /// The hidden element a lowercase tag name names; none for an element a
     /// browser renders.
     pub(crate) fn named(tag: &str) -> Option<Hidden> {
-        Self::ALL.iter().copied().find(|element| element.tag() == tag)
+        Self::ALL
+            .iter()
+            .copied()
+            .find(|element| element.tag() == tag)
     }
 }
 
@@ -50,8 +58,14 @@ pub(crate) enum Heading {
 }
 
 impl Heading {
-    const ALL: &'static [Heading] =
-        &[Heading::H1, Heading::H2, Heading::H3, Heading::H4, Heading::H5, Heading::H6];
+    const ALL: &'static [Heading] = &[
+        Heading::H1,
+        Heading::H2,
+        Heading::H3,
+        Heading::H4,
+        Heading::H5,
+        Heading::H6,
+    ];
 
     fn tag(self) -> &'static str {
         match self {
@@ -77,7 +91,10 @@ impl Heading {
     }
 
     pub(crate) fn named(tag: &str) -> Option<Heading> {
-        Self::ALL.iter().copied().find(|heading| heading.tag() == tag)
+        Self::ALL
+            .iter()
+            .copied()
+            .find(|heading| heading.tag() == tag)
     }
 }
 

@@ -272,7 +272,8 @@ pub(crate) fn load_or_start_state(definition: &Value, reset: bool) -> Result<Val
 
 /// Whether the state file is there; one that cannot be examined is refused, never read as absent.
 fn state_exists(path: &PathBuf) -> Result<bool> {
-    path.try_exists().with_context(|| format!("examine onboarding state {}", path.display()))
+    path.try_exists()
+        .with_context(|| format!("examine onboarding state {}", path.display()))
 }
 
 pub(crate) fn read_state(path: &PathBuf) -> Result<Value> {

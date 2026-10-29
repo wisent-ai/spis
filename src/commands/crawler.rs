@@ -24,18 +24,20 @@ pub(super) fn run(arguments: &[String]) -> Result<()> {
         }
     }
     let Some((name, arguments)) = arguments.split_first() else {
-        return Err(super::usage(format!("crawler run requires ENGINE; {USAGE}")));
+        return Err(super::usage(format!(
+            "crawler run requires ENGINE; {USAGE}"
+        )));
     };
     if matches!(name.as_str(), "--help" | "-h") {
         println!("{USAGE}");
         return Ok(());
     }
-    let engine = Engine::of(name).map_err(|error| {
-        super::usage(format!("crawler run: {error:#}; {USAGE}"))
-    })?;
-    let arguments = match arguments.iter().find(|argument| {
-        matches!(argument.as_str(), "--help" | "-h")
-    }) {
+    let engine = Engine::of(name)
+        .map_err(|error| super::usage(format!("crawler run: {error:#}; {USAGE}")))?;
+    let arguments = match arguments
+        .iter()
+        .find(|argument| matches!(argument.as_str(), "--help" | "-h"))
+    {
         Some(help) => {
             if engine == Engine::Docs {
                 println!(
@@ -64,7 +66,8 @@ pub(super) fn run(arguments: &[String]) -> Result<()> {
 /// Traversal bounds come from the invocation or its declared environment.
 /// Workers receive the resolved bounds explicitly from their coordinator.
 pub(crate) fn traversal_limits(
-    max_states: Option<usize>, max_depth: Option<usize>,
+    max_states: Option<usize>,
+    max_depth: Option<usize>,
 ) -> Result<(usize, usize)> {
     let states = declared_limit(max_states, "--max-states", "SPIS_CRAWL_MAX_STATES")?;
     let depth = declared_limit(max_depth, "--max-depth", "SPIS_CRAWL_MAX_DEPTH")?;
@@ -83,7 +86,9 @@ fn declared_limit(value: Option<usize>, flag: &str, variable: &str) -> Result<us
                 ))
             })?;
             declared.parse().map_err(|error| {
-                super::usage(format!("{variable}: {declared:?} is not valid for {flag}: {error}"))
+                super::usage(format!(
+                    "{variable}: {declared:?} is not valid for {flag}: {error}"
+                ))
             })
         }
     }

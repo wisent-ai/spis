@@ -59,16 +59,23 @@ fn geometry(motion: &Path) -> Result<((usize, usize), Vec<f64>)> {
     ])?;
     let report: Value = serde_json::from_str(&raw)
         .with_context(|| format!("ffprobe's frame report on {shown} is not JSON"))?;
-    let stream = report.pointer("/streams/0").with_context(|| format!("ffprobe found no video stream in {shown}"))?;
+    let stream = report
+        .pointer("/streams/0")
+        .with_context(|| format!("ffprobe found no video stream in {shown}"))?;
     let side = |name: &str| {
         stream
             .get(name)
             .and_then(Value::as_u64)
             .and_then(|value| usize::try_from(value).ok())
-            .with_context(|| format!("ffprobe states no {name} for the video stream of {shown}: {stream}"))
+            .with_context(|| {
+                format!("ffprobe states no {name} for the video stream of {shown}: {stream}")
+            })
     };
     let size = (side("width")?, side("height")?);
-    let frames = report.get("frames").and_then(Value::as_array).with_context(|| format!("ffprobe listed no frames of {shown}"))?;
+    let frames = report
+        .get("frames")
+        .and_then(Value::as_array)
+        .with_context(|| format!("ffprobe listed no frames of {shown}"))?;
     let times = frames
         .iter()
         .enumerate()
@@ -77,7 +84,9 @@ fn geometry(motion: &Path) -> Result<((usize, usize), Vec<f64>)> {
                 .get("best_effort_timestamp_time")
                 .and_then(Value::as_str)
                 .and_then(|time| time.parse::<f64>().ok())
-                .with_context(|| format!("frame {index} of {shown} has no presentation time: {frame}"))
+                .with_context(|| {
+                    format!("frame {index} of {shown} has no presentation time: {frame}")
+                })
         })
         .collect::<Result<Vec<f64>>>()?;
     Ok((size, times))
@@ -88,8 +97,20 @@ fn state_luminance(state: &Path, (width, height): (usize, usize)) -> Result<Vec<
     let shown = state.to_string_lossy();
     let scale = format!("scale={width}:{height}");
     let pixels = run_bytes(&[
-        "ffmpeg", "-v", "error", "-i", &shown, "-frames:v", "1", "-vf", &scale, "-pix_fmt", "gray", "-f",
-        "rawvideo", "-",
+        "ffmpeg",
+        "-v",
+        "error",
+        "-i",
+        &shown,
+        "-frames:v",
+        "1",
+        "-vf",
+        &scale,
+        "-pix_fmt",
+        "gray",
+        "-f",
+        "rawvideo",
+        "-",
     ])?;
     if pixels.len() != width * height {
         anyhow::bail!(
@@ -110,18 +131,33 @@ pub(super) fn search(motion: &Path, states: &[PathBuf]) -> Result<MotionSearch> 
         .map(|state| state_luminance(state, size).map_err(|error| format!("{error:#}")))
         .collect();
     let mut child = Command::new("ffmpeg")
-        .args(["-v", "error", "-i", &shown, "-map", "0:v:0", "-fps_mode", "passthrough"])
+        .args([
+            "-v",
+            "error",
+            "-i",
+            &shown,
+            "-map",
+            "0:v:0",
+            "-fps_mode",
+            "passthrough",
+        ])
         .args(["-pix_fmt", "gray", "-f", "rawvideo", "-"])
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
         .with_context(|| format!("ffmpeg could not start to decode {shown}"))?;
-    let mut stderr = child.stderr.take().context("ffmpeg's standard error was not piped")?;
+    let mut stderr = child
+        .stderr
+        .take()
+        .context("ffmpeg's standard error was not piped")?;
     let stderr_reader = std::thread::spawn(move || {
         let mut text = String::new();
         stderr.read_to_string(&mut text).map(|_| text)
     });
-    let mut stdout = child.stdout.take().context("ffmpeg's standard output was not piped")?;
+    let mut stdout = child
+        .stdout
+        .take()
+        .context("ffmpeg's standard output was not piped")?;
     let waiting = stado_wait::begin(
         stado_wait::Kind::Process,
         format!("ffmpeg decoding every frame of {shown}"),
@@ -138,7 +174,11 @@ pub(super) fn search(motion: &Path, states: &[PathBuf]) -> Result<MotionSearch> 
         match (&mut stdout).take(frame_len).read_to_end(&mut frame) {
             Ok(read) if read as u64 == frame_len => {}
             Ok(read) if frame.is_empty() => break Ok(read),
-            Ok(read) => break Err(format!("the stream ended inside frame {frames} after {read} of its {frame_len} bytes")),
+            Ok(read) => {
+                break Err(format!(
+                    "the stream ended inside frame {frames} after {read} of its {frame_len} bytes"
+                ))
+            }
             Err(error) => break Err(format!("frame {frames} could not be read: {error}")),
         }
         for (target, found) in targets.iter().zip(best.iter_mut()) {
@@ -153,11 +193,15 @@ pub(super) fn search(motion: &Path, states: &[PathBuf]) -> Result<MotionSearch> 
             drifts.push(mean_abs_diff(earlier, &frame));
         }
         frames += 1;
-        frame = previous.replace(std::mem::take(&mut frame)).unwrap_or_default();
+        frame = previous
+            .replace(std::mem::take(&mut frame))
+            .unwrap_or_default();
     };
     // Closing the pipe ends a decoder this read stopped listening to.
     drop(stdout);
-    let status = waiting.settle(child.wait()).with_context(|| format!("waiting for ffmpeg decoding {shown} failed"))?;
+    let status = waiting
+        .settle(child.wait())
+        .with_context(|| format!("waiting for ffmpeg decoding {shown} failed"))?;
     let complaint = match stderr_reader.join() {
         Ok(Ok(text)) => text.trim().to_string(),
         Ok(Err(error)) => format!("its standard error could not be read: {error}"),
@@ -170,17 +214,28 @@ pub(super) fn search(motion: &Path, states: &[PathBuf]) -> Result<MotionSearch> 
         anyhow::bail!("ffmpeg's frames of {shown} could not be read whole: {cut}");
     }
     if frames != times.len() {
-        anyhow::bail!("ffmpeg decoded {frames} frames of {shown}, but ffprobe lists {} presentation times", times.len());
+        anyhow::bail!(
+            "ffmpeg decoded {frames} frames of {shown}, but ffprobe lists {} presentation times",
+            times.len()
+        );
     }
     let matches = targets
         .into_iter()
         .zip(best)
         .map(|(target, found)| {
             target?;
-            let (index, distance) = found.ok_or_else(|| format!("{shown} holds no frame to compare with"))?;
-            Ok(StateMatch { timestamp_seconds: times[index], mean_abs_diff: distance })
+            let (index, distance) =
+                found.ok_or_else(|| format!("{shown} holds no frame to compare with"))?;
+            Ok(StateMatch {
+                timestamp_seconds: times[index],
+                mean_abs_diff: distance,
+            })
         })
         .collect();
     let drift = (!drifts.is_empty()).then(|| drifts.iter().sum::<f64>() / drifts.len() as f64);
-    Ok(MotionSearch { matches, drift, frames })
+    Ok(MotionSearch {
+        matches,
+        drift,
+        frames,
+    })
 }

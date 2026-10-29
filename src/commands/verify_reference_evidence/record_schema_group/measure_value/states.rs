@@ -30,7 +30,10 @@ pub(super) fn measure_states(
     // States are named for people in the order the record lists them, by
     // their catalog ordinal (`reference_contract::ordinals`).
     let mut present: Vec<Present> = Vec::new();
-    for (idx, ordinal) in positions.into_iter().zip(crate::commands::reference_contract::ordinals()) {
+    for (idx, ordinal) in positions
+        .into_iter()
+        .zip(crate::commands::reference_contract::ordinals())
+    {
         let entry = state_entry(data, idx)?;
         let semantic_name_verified = observation_supported(entry, provenance_context);
         let Some(obj) = entry.as_object_mut() else {
@@ -69,7 +72,12 @@ pub(super) fn measure_states(
                 "state semantic name unverified: {local_path}; pixels and digest prove only an observed frame"
             ));
         }
-        present.push(Present { position: idx, local, local_path, gap_at: gaps.len() });
+        present.push(Present {
+            position: idx,
+            local,
+            local_path,
+            gap_at: gaps.len(),
+        });
     }
 
     let located = locate(data, base, locate_states, primary_motion.as_ref(), &present)?;
@@ -78,7 +86,10 @@ pub(super) fn measure_states(
         if let Some(reason) = unproven {
             gaps.insert(
                 state.gap_at,
-                format!("state source relationship unproven: {}; {reason}", state.local_path),
+                format!(
+                    "state source relationship unproven: {}; {reason}",
+                    state.local_path
+                ),
             );
         }
     }
@@ -109,9 +120,13 @@ fn locate(
     primary_motion: Option<&motion::PrimaryMotion>,
     present: &[Present],
 ) -> Result<Vec<Option<String>>> {
-    let unproven = |reason: String| -> Vec<Option<String>> { present.iter().map(|_| Some(reason.clone())).collect() };
+    let unproven = |reason: String| -> Vec<Option<String>> {
+        present.iter().map(|_| Some(reason.clone())).collect()
+    };
     let Some(motion) = primary_motion.filter(|_| locate_states) else {
-        return Ok(unproven("no threshold match against independently verified motion".to_string()));
+        return Ok(unproven(
+            "no threshold match against independently verified motion".to_string(),
+        ));
     };
     // A motion outside the record's directory is named by its full path.
     let shown = match motion.path.strip_prefix(base) {
@@ -127,18 +142,27 @@ fn locate(
     let images: Vec<PathBuf> = present.iter().map(|state| state.local.clone()).collect();
     let search = match frame_search::search(&motion.path, &images) {
         Ok(search) => search,
-        Err(error) => return Ok(unproven(format!("the primary motion {rel} could not be searched: {error:#}"))),
+        Err(error) => {
+            return Ok(unproven(format!(
+                "the primary motion {rel} could not be searched: {error:#}"
+            )))
+        }
     };
     let mut reasons = Vec::new();
     for (state, matched) in present.iter().zip(search.matches) {
         let matched = match matched {
             Ok(matched) => matched,
             Err(cause) => {
-                reasons.push(Some(format!("it could not be compared with {rel}: {cause}")));
+                reasons.push(Some(format!(
+                    "it could not be compared with {rel}: {cause}"
+                )));
                 continue;
             }
         };
-        let Some(tolerance) = search.drift.filter(|tolerance| matched.mean_abs_diff <= *tolerance) else {
+        let Some(tolerance) = search
+            .drift
+            .filter(|tolerance| matched.mean_abs_diff <= *tolerance)
+        else {
             reasons.push(Some(format!(
                 "its closest frame of {rel}, at {}s, differs by {}/255 per pixel, more than the motion's own adjacent frames ({})",
                 matched.timestamp_seconds,

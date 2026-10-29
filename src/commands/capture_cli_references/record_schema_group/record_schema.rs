@@ -176,4 +176,3 @@ pub(crate) fn products() -> &'static [Product] {
 pub(crate) fn terminal() -> &'static Terminal {
     &plan().terminal
 }
-

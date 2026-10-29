@@ -22,7 +22,10 @@ pub(crate) fn publish_worker_report(manifest: &RuntimeManifest, report: &Value) 
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)))?;
+        std::fs::set_permissions(
+            &directory,
+            std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)),
+        )?;
     }
     let source = directory.join(format!("{}.log", manifest.attempt_id));
     let bytes = (serde_json::to_string(report)? + "\n").into_bytes();
@@ -230,9 +233,9 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
         // A run's `mutation_revision` counts the writes of the run document:
         // the first write is revision 1, each later one the next integer.
         let next = match expected {
-            Some(revision) => revision
-                .checked_add(1)
-                .with_context(|| format!("crawl run {run_id} revision {revision} cannot advance"))?,
+            Some(revision) => revision.checked_add(1).with_context(|| {
+                format!("crawl run {run_id} revision {revision} cannot advance")
+            })?,
             None => 1,
         };
         let mut staged = run.clone();

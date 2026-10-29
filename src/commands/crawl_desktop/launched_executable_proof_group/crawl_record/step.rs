@@ -172,7 +172,10 @@ pub(super) fn take_step(
     if changed {
         // Every safe edge but the one this trajectory took stays an explicit
         // gap; `safe` and `selected` come from the same observation.
-        for (_, alternative) in safe.into_iter().filter(|(_, edge)| edge.token != selected.token) {
+        for (_, alternative) in safe
+            .into_iter()
+            .filter(|(_, edge)| edge.token != selected.token)
+        {
             blocked.push(json!({
                 "state": before_hash,
                 "role": alternative.role,

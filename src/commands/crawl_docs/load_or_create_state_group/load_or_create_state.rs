@@ -158,14 +158,12 @@ pub(crate) fn build_report(
             .get(&target.key)
             .with_context(|| format!("missing final outcome for {}", target.url))?;
         retrieved_count += usize::from(outcome.record_sha256.is_some());
-        ok_count += usize::from(
-            outcome.status.as_u64() == Some(http::StatusCode::OK.as_u16().into()),
-        );
+        ok_count +=
+            usize::from(outcome.status.as_u64() == Some(http::StatusCode::OK.as_u16().into()));
         page_downloaded_bytes = page_downloaded_bytes
             .checked_add(outcome.downloaded_bytes)
             .context("documentation report download byte counter overflow")?;
-        text_page_count += usize::from(outcome.text_bytes
-            .is_some_and(|value| value != 0));
+        text_page_count += usize::from(outcome.text_bytes.is_some_and(|value| value != 0));
         if let Some(diagnostic) = &outcome.diagnostic {
             diagnostics.push(serde_json::to_value(diagnostic)?);
         }

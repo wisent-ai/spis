@@ -54,15 +54,20 @@ pub(crate) fn bound_proof<'a>(
         .context("no independently observed prepared-runtime proof is bound")?;
     // A proof binds one device; an identity that names none has nothing to
     // bind it to, and two absent ids are not the same device.
-    let device = identity
-        .device_id
-        .as_deref()
-        .context("the runtime identity names no device, so no prepared-runtime proof can be bound to it")?;
+    let device = identity.device_id.as_deref().context(
+        "the runtime identity names no device, so no prepared-runtime proof can be bound to it",
+    )?;
     if proof.device_id.as_deref() != Some(device) {
-        bail!("the prepared-runtime proof names device {:?}, not this runtime's {device}", proof.device_id);
+        bail!(
+            "the prepared-runtime proof names device {:?}, not this runtime's {device}",
+            proof.device_id
+        );
     }
     if proof.product_identifier != product {
-        bail!("the prepared-runtime proof names product {:?}, not {product:?}", proof.product_identifier);
+        bail!(
+            "the prepared-runtime proof names product {:?}, not {product:?}",
+            proof.product_identifier
+        );
     }
     let proof_value = serde_json::to_value(proof)?;
     let switched_off = DISABLED
@@ -88,7 +93,12 @@ pub(crate) fn bound_proof<'a>(
     {
         bail!("prepared-runtime proof does not bind the exact product, version and executable with an RFC 3339 UTC observation time, first run completed, zero pending prompts, disabled permission/notification prompt invocation, and disabled notification delivery: {proof_value}");
     }
-    Ok(BoundProof { proof, product, device, identity })
+    Ok(BoundProof {
+        proof,
+        product,
+        device,
+        identity,
+    })
 }
 
 impl BoundProof<'_> {

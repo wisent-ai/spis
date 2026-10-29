@@ -88,11 +88,17 @@ pub(super) fn measure_motion(
         // classes; an undeclared class is kept as the analysis' description
         // and named as a gap, never left where readers expect a class.
         if let Some(analysis) = obj.get_mut("analysis").and_then(Value::as_object_mut) {
-            let declared = analysis.get("timing_class").and_then(Value::as_str).map(str::to_string);
+            let declared = analysis
+                .get("timing_class")
+                .and_then(Value::as_str)
+                .map(str::to_string);
             if let Some(declared) = declared {
-                let canonical = crate::commands::reference_contract::canonical_timing_class(Some(&declared));
+                let canonical =
+                    crate::commands::reference_contract::canonical_timing_class(Some(&declared));
                 if canonical.as_deref() != Some(declared.as_str()) {
-                    analysis.entry("timing_description".to_string()).or_insert(json!(declared));
+                    analysis
+                        .entry("timing_description".to_string())
+                        .or_insert(json!(declared));
                     analysis.insert("timing_class".into(), json!(canonical));
                     if canonical.is_none() {
                         gaps.push(format!(
@@ -113,8 +119,7 @@ pub(super) fn measure_motion(
             None => gaps.push(format!("motion duration was not measured: {local_path}")),
             Some(duration) if duration < requirements.min_motion_seconds => gaps.push(format!(
                 "motion shorter than {} for {} profile: {local_path} ({duration})",
-                requirements.min_motion_seconds,
-                requirements.profile,
+                requirements.min_motion_seconds, requirements.profile,
             )),
             Some(_) => {}
         }
@@ -131,7 +136,10 @@ pub(super) fn measure_motion(
             ));
         }
         if !is_still && verified && primary_motion.is_none() {
-            primary_motion = Some(PrimaryMotion { path: local, declared_kind: canonical });
+            primary_motion = Some(PrimaryMotion {
+                path: local,
+                declared_kind: canonical,
+            });
         }
     }
     Ok(primary_motion)

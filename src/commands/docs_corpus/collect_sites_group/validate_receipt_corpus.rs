@@ -112,4 +112,3 @@ pub(crate) fn import_worker_report_from_archive(
 ) -> Result<Value> {
     import_verified_worker_report(receipt, Some(source_archive))
 }
-

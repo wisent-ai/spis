@@ -73,7 +73,10 @@ fn read_selector(path: &Path) -> Result<Selector> {
             continue;
         }
         let Some((name, url)) = line.split_once('\t') else {
-            bail!("{}: a source line is not `Name<TAB>URL`: {line:?}", path.display());
+            bail!(
+                "{}: a source line is not `Name<TAB>URL`: {line:?}",
+                path.display()
+            );
         };
         sources.push((name.trim().to_string(), url.trim().to_string()));
     }

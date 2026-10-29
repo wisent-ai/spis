@@ -25,8 +25,7 @@ pub(super) fn add(rest: &[String]) -> Result<()> {
         Some(description) if !description.trim().is_empty() => description.clone(),
         _ => bail!("--description is required for add"),
     };
-    std::fs::create_dir(&directory)
-        .with_context(|| format!("creating {}", directory.display()))?;
+    std::fs::create_dir(&directory).with_context(|| format!("creating {}", directory.display()))?;
     std::fs::create_dir(directory.join("references"))
         .with_context(|| format!("creating {}/references", directory.display()))?;
     // A new catalog holds no examples and no references yet; its counts are
@@ -72,7 +71,10 @@ pub(super) fn add(rest: &[String]) -> Result<()> {
             ),
         }
     }
-    println!("added {} ({title}); scaffolded with no records", directory.display());
+    println!(
+        "added {} ({title}); scaffolded with no records",
+        directory.display()
+    );
     Ok(())
 }
 
@@ -136,7 +138,12 @@ pub(super) fn remove(rest: &[String]) -> Result<()> {
     let examples = sources
         .get("examples")
         .and_then(Value::as_array)
-        .with_context(|| format!("{}/sources.json states no examples list", directory.display()))?;
+        .with_context(|| {
+            format!(
+                "{}/sources.json states no examples list",
+                directory.display()
+            )
+        })?;
     let references_dir = directory.join("references");
     let stored = if present(&references_dir)? {
         std::fs::read_dir(&references_dir)

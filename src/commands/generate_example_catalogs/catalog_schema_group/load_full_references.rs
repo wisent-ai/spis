@@ -131,7 +131,12 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
 
     let provenance: BTreeMap<String, usize> = classes
         .iter()
-        .map(|class| (class.clone(), classes.iter().filter(|seen| *seen == class).count()))
+        .map(|class| {
+            (
+                class.clone(),
+                classes.iter().filter(|seen| *seen == class).count(),
+            )
+        })
         .collect();
     let obj = index.as_object_mut().expect("index is an object");
     obj.insert(
@@ -142,7 +147,10 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
             .collect::<Map<String, Value>>()
             .into(),
     );
-    obj.insert("measured_gap_total".into(), json!(gap_counts.iter().sum::<usize>()));
+    obj.insert(
+        "measured_gap_total".into(),
+        json!(gap_counts.iter().sum::<usize>()),
+    );
     let count_of = |status: EvidenceStatus| measured.iter().filter(|seen| **seen == status).count();
     obj.insert(
         "complete_count".into(),

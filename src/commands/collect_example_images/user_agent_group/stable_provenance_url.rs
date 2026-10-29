@@ -8,8 +8,12 @@ pub(crate) fn stable_provenance_url(value: &str) -> Result<String> {
         "private-user-images.githubusercontent.com",
         "github-production-user-asset-6210df.s3.amazonaws.com",
     ];
-    let mut address = url::Url::parse(value).with_context(|| format!("the image address {value:?} is no URL"))?;
-    if address.host_str().is_some_and(|host| STRIPPED_HOSTS.contains(&host)) {
+    let mut address =
+        url::Url::parse(value).with_context(|| format!("the image address {value:?} is no URL"))?;
+    if address
+        .host_str()
+        .is_some_and(|host| STRIPPED_HOSTS.contains(&host))
+    {
         address.set_query(None);
         address.set_fragment(None);
     }
@@ -25,7 +29,11 @@ pub(crate) fn stable_provenance_url(value: &str) -> Result<String> {
 /// listed once, in the order the page names it; one that names no web
 /// address is not fetchable and is left out, and one that does not resolve
 /// is said on stderr with its cause.
-pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: Option<&str>) -> Result<Vec<Candidate>> {
+pub(crate) fn candidate_urls(
+    page_url: &str,
+    body: &[u8],
+    content_type: Option<&str>,
+) -> Result<Vec<Candidate>> {
     if content_type.is_some_and(|media| media.starts_with("image/")) {
         // The page is the image itself: one candidate, at the first position.
         let mut direct = Vec::new();
@@ -37,13 +45,17 @@ pub(crate) fn candidate_urls(page_url: &str, body: &[u8], content_type: Option<&
         });
         return Ok(direct);
     }
-    let page = url::Url::parse(page_url).with_context(|| format!("the page address {page_url:?} is no URL"))?;
+    let page = url::Url::parse(page_url)
+        .with_context(|| format!("the page address {page_url:?} is no URL"))?;
     // A page's bytes are read as UTF-8, each invalid sequence shown as U+FFFD,
     // since HTML's own encoding detection is not this reader's.
     let html = String::from_utf8_lossy(body);
     // Addresses written inside scripts' JSON are unescaped before the text
     // is searched for them.
-    let text = html.replace("\\/", "/").replace("\\u0026", "&").replace("\\u003d", "=");
+    let text = html
+        .replace("\\/", "/")
+        .replace("\\u0026", "&")
+        .replace("\\u003d", "=");
     let mut raw: Vec<Candidate> = Vec::new();
     extract_tag_candidates(&html, &mut raw)?;
     extract_css_candidates(&text, &mut raw)?;
@@ -83,14 +95,20 @@ pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
     ) {
         Ok(fetched) => fetched,
         Err(error) => {
-            eprintln!("collect-example-images: candidate {} is not read: {error:#}", candidate.url);
+            eprintln!(
+                "collect-example-images: candidate {} is not read: {error:#}",
+                candidate.url
+            );
             return None;
         }
     };
     let (format, width, height) = match image_header(&fetched.data) {
         Ok(header) => header,
         Err(error) => {
-            eprintln!("collect-example-images: candidate {} is no readable image: {error:#}", candidate.url);
+            eprintln!(
+                "collect-example-images: candidate {} is no readable image: {error:#}",
+                candidate.url
+            );
             return None;
         }
     };
@@ -111,11 +129,14 @@ pub(crate) fn probe_candidate(candidate: &Candidate) -> Option<Probe> {
 pub(crate) fn select_image(page_url: &str) -> Result<(Candidate, Probe)> {
     let fetched = fetch(page_url, "text/html,application/xhtml+xml,image/*")?;
     let final_page_url = fetched.final_url.clone();
-    let mut probed: Vec<(Candidate, Probe)> =
-        candidate_urls(&final_page_url, &fetched.data, fetched.content_type.as_deref())?
-            .into_iter()
-            .filter_map(|candidate| probe_candidate(&candidate).map(|probe| (candidate, probe)))
-            .collect();
+    let mut probed: Vec<(Candidate, Probe)> = candidate_urls(
+        &final_page_url,
+        &fetched.data,
+        fetched.content_type.as_deref(),
+    )?
+    .into_iter()
+    .filter_map(|candidate| probe_candidate(&candidate).map(|probe| (candidate, probe)))
+    .collect();
     if probed.is_empty() {
         bail!("{final_page_url} holds no readable raster image");
     }

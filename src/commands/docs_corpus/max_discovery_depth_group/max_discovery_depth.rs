@@ -133,13 +133,19 @@ pub(crate) fn read_last_worker_report(path: &Path) -> Result<Value> {
             continue;
         }
         let value: Value = serde_json::from_slice(line).with_context(|| {
-            format!("documentation worker output {} holds a JSON line that does not parse", path.display())
+            format!(
+                "documentation worker output {} holds a JSON line that does not parse",
+                path.display()
+            )
         })?;
         if value.get("schema").and_then(Value::as_str) == Some("wisent.docs-worker-report.v1") {
             return Ok(value);
         }
     }
-    bail!("documentation worker output {} has no typed documentation worker report", path.display())
+    bail!(
+        "documentation worker output {} has no typed documentation worker report",
+        path.display()
+    )
 }
 
 pub(crate) fn matching_string(left: &Value, right: &Value, field: &str) -> Result<()> {
@@ -187,7 +193,10 @@ pub(crate) fn validate_completion_timestamp(value: &str) -> Result<()> {
     let instant = chrono::NaiveDateTime::parse_from_str(value, COMPLETION_TIME)
         .with_context(|| format!("completion timestamp {value:?} is not a UTC RFC 3339 instant"))?;
     if instant.format(COMPLETION_TIME).to_string() != value {
-        bail!("completion timestamp {value:?} is not written canonically; it reads as {}", instant.format(COMPLETION_TIME));
+        bail!(
+            "completion timestamp {value:?} is not written canonically; it reads as {}",
+            instant.format(COMPLETION_TIME)
+        );
     }
     Ok(())
 }

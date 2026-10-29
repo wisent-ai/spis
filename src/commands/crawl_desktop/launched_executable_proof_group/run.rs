@@ -16,19 +16,30 @@ pub fn run(rest: &[String]) -> Result<()> {
     while let Some(argument) = arguments.next() {
         match argument.as_str() {
             "--record" => {
-                record = Some(crate::commands::required(arguments.next(), "--record needs a value")?.clone());
+                record = Some(
+                    crate::commands::required(arguments.next(), "--record needs a value")?.clone(),
+                );
             }
             "--host" => {
-                host = Some(crate::commands::required(arguments.next(), "--host needs a value")?.clone());
+                host = Some(
+                    crate::commands::required(arguments.next(), "--host needs a value")?.clone(),
+                );
             }
             "--worker" => worker = true,
             "--artifact-uri" => {
-                artifact_uri = Some(crate::commands::required(arguments.next(), "--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(
+                    crate::commands::required(arguments.next(), "--artifact-uri needs a value")?
+                        .clone(),
+                );
             }
             "--runtime-manifest-base64" => {
-                runtime_manifest_base64 = Some(crate::commands::required(
-                    arguments.next(), "--runtime-manifest-base64 needs a value"
-                )?.clone());
+                runtime_manifest_base64 = Some(
+                    crate::commands::required(
+                        arguments.next(),
+                        "--runtime-manifest-base64 needs a value",
+                    )?
+                    .clone(),
+                );
             }
             "--max-states" => {
                 max_states = Some(crate::commands::parsed(arguments.next(), "--max-states")?);
@@ -38,7 +49,8 @@ pub fn run(rest: &[String]) -> Result<()> {
             }
             "--output" => {
                 output = Some(PathBuf::from(crate::commands::required(
-                    arguments.next(), "--output needs a value"
+                    arguments.next(),
+                    "--output needs a value",
                 )?));
             }
             "--help" | "-h" => {
@@ -57,7 +69,8 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
     }
     let catalog = catalog.context("catalog is required")?;
-    let (max_states, max_depth) = crate::commands::crawler::traversal_limits(max_states, max_depth)?;
+    let (max_states, max_depth) =
+        crate::commands::crawler::traversal_limits(max_states, max_depth)?;
     let record = record.context("--record is required for one exact per-record job")?;
     let encoded_manifest = runtime_manifest_base64
         .as_deref()

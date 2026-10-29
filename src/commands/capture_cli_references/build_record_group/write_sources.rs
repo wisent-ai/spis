@@ -3,7 +3,10 @@ use super::*;
 pub(crate) fn write_index() -> Result<Value> {
     let records = load_records()?;
     let mut references = Vec::new();
-    for ((path, record), ordinal) in records.iter().zip(crate::commands::reference_contract::ordinals()) {
+    for ((path, record), ordinal) in records
+        .iter()
+        .zip(crate::commands::reference_contract::ordinals())
+    {
         let parent = path
             .parent()
             .and_then(|p| p.file_name())
@@ -61,16 +64,17 @@ pub(crate) fn cmd_list() -> Result<()> {
     println!("Products of the plan on this host ({}):", host_sentence()?);
     println!();
     let mut found = Vec::new();
-    for (product, ordinal) in products().iter().zip(crate::commands::reference_contract::ordinals()) {
+    for (product, ordinal) in products()
+        .iter()
+        .zip(crate::commands::reference_contract::ordinals())
+    {
         let (path, outcome) = quick_version(product);
         let path = match path {
             Some(p) => p,
             None => {
                 println!(
                     "{:2}. {:<26} MISSING (`{}` not on PATH)",
-                    ordinal,
-                    product.name,
-                    product.binary
+                    ordinal, product.name, product.binary
                 );
                 continue;
             }
@@ -90,10 +94,7 @@ pub(crate) fn cmd_list() -> Result<()> {
         };
         println!(
             "{:2}. {:<26} {:<38} {}",
-            ordinal,
-            product.name,
-            product.repository,
-            path
+            ordinal, product.name, product.repository, path
         );
         println!("{:<4}{:<40} -> {}", "", product.version_cmd, identity);
     }
@@ -190,7 +191,10 @@ pub fn run(rest: &[String]) -> Result<()> {
         if !missing.is_empty() {
             bail!("not on PATH: {}", missing.join(", "));
         }
-        for (product, ordinal) in products().iter().zip(crate::commands::reference_contract::ordinals()) {
+        for (product, ordinal) in products()
+            .iter()
+            .zip(crate::commands::reference_contract::ordinals())
+        {
             if !selected.iter().any(|s| std::ptr::eq(*s, product)) {
                 continue;
             }

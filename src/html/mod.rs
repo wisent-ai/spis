@@ -38,8 +38,9 @@ impl Element {
 /// order. A selector that is no CSS selector is refused naming it and the
 /// parser's cause.
 pub fn elements(html: &str, selector: &str) -> Result<Vec<Element>> {
-    let selected = Selector::parse(selector)
-        .map_err(|error| anyhow!("the HTML selector {selector:?} is not a CSS selector: {error}"))?;
+    let selected = Selector::parse(selector).map_err(|error| {
+        anyhow!("the HTML selector {selector:?} is not a CSS selector: {error}")
+    })?;
     let page = Html::parse_document(html);
     let found = page
         .select(&selected)

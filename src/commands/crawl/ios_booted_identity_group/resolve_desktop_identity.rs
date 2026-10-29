@@ -123,7 +123,11 @@ pub(crate) fn prepared_runtime_check(
     identity: &RuntimeExecutionIdentity,
     host: &str,
 ) -> Result<Value> {
-    let bound = crate::commands::crawl::bound_proof(manifest, identity, &manifest.runtime_product.identifier)?;
+    let bound = crate::commands::crawl::bound_proof(
+        manifest,
+        identity,
+        &manifest.runtime_product.identifier,
+    )?;
     let mut probe = vec!["stado-runtime-readiness"];
     probe.extend(bound.verify_args());
     let check = host_probe(host, &probe);

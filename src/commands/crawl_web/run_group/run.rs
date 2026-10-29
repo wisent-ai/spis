@@ -11,18 +11,29 @@ pub fn run(rest: &[String]) -> Result<()> {
     while let Some(argument) = arguments.next() {
         match argument.as_str() {
             "--host" => {
-                host = Some(crate::commands::required(arguments.next(), "--host needs a value")?.clone());
+                host = Some(
+                    crate::commands::required(arguments.next(), "--host needs a value")?.clone(),
+                );
             }
             "--record" => {
-                record = Some(crate::commands::required(arguments.next(), "--record needs a value")?.clone());
+                record = Some(
+                    crate::commands::required(arguments.next(), "--record needs a value")?.clone(),
+                );
             }
             "--runtime-manifest-base64" => {
-                runtime_manifest_base64 = Some(crate::commands::required(
-                    arguments.next(), "--runtime-manifest-base64 needs a value"
-                )?.clone());
+                runtime_manifest_base64 = Some(
+                    crate::commands::required(
+                        arguments.next(),
+                        "--runtime-manifest-base64 needs a value",
+                    )?
+                    .clone(),
+                );
             }
             "--artifact-uri" => {
-                artifact_uri = Some(crate::commands::required(arguments.next(), "--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(
+                    crate::commands::required(arguments.next(), "--artifact-uri needs a value")?
+                        .clone(),
+                );
             }
             "--worker" => worker = true,
             "--help" | "-h" => {

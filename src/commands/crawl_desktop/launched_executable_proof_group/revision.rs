@@ -11,11 +11,9 @@ pub(crate) fn safe_job_value(value: &str, flag: &str) -> Result<()> {
     if matches!(value, "." | "..") {
         bail!("{flag} must contain only letters, digits, '-' or '_'");
     }
-    if !value.chars().all(|character| {
-        match character {
-            '-' | '_' => true,
-            character => character.is_ascii_alphanumeric(),
-        }
+    if !value.chars().all(|character| match character {
+        '-' | '_' => true,
+        character => character.is_ascii_alphanumeric(),
     }) {
         bail!("{flag} must contain only letters, digits, '-' or '_'");
     }

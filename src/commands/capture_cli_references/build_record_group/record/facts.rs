@@ -79,7 +79,10 @@ impl<'a> Facts<'a> {
         // says it names one and holds no phrase is refused, not printed as ''.
         // Without a next action no sentence reads the phrase.
         let phrase = if names_next_action {
-            text(&measured["refusal_next_action_phrase"], "refusal_next_action_phrase")?
+            text(
+                &measured["refusal_next_action_phrase"],
+                "refusal_next_action_phrase",
+            )?
         } else {
             ""
         };

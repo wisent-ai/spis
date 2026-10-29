@@ -83,7 +83,9 @@ pub(super) fn prepared_command(
                 // preflight whose command could not be built is named by that error.
                 let diagnostic = match preflight.get("diagnostic") {
                     Some(diagnostic) => diagnostic.clone(),
-                    None => json!({"code": "worker_command_unavailable", "message": error.to_string()}),
+                    None => {
+                        json!({"code": "worker_command_unavailable", "message": error.to_string()})
+                    }
                 };
                 mutate_record(run_id, catalog, record_name, |entry| {
                     entry["manifest"] = serde_json::to_value(&manifest)?;
@@ -111,4 +113,3 @@ pub(super) fn prepared_command(
         Ok(Some(command))
     }
 }
-

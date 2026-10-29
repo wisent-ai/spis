@@ -32,7 +32,10 @@ pub(crate) fn brama_rank(start_url: &str, links: &PageLinks) -> Result<Vec<(Stri
         .enumerate()
         .map(|(index, (url, text))| format!("{index}: {url} | {text}"))
         .collect();
-    let state = format!("Start page: {start_url}\nDiscovered links:\n{}", listing.join("\n"));
+    let state = format!(
+        "Start page: {start_url}\nDiscovered links:\n{}",
+        listing.join("\n")
+    );
     let questions: serde_json::Map<String, serde_json::Value> = links
         .entries
         .iter()
@@ -43,7 +46,10 @@ pub(crate) fn brama_rank(start_url: &str, links: &PageLinks) -> Result<Vec<(Stri
                  reference corpus, which page family is the link at index {index} ({url}), or \
                  does it not belong in the corpus?"
             );
-            (format!("{LINK}{index}"), crate::commands::brama::choice(&instructions, &options))
+            (
+                format!("{LINK}{index}"),
+                crate::commands::brama::choice(&instructions, &options),
+            )
         })
         .collect();
     let answers = crate::commands::brama::decide(purpose, &state, &questions)?;
@@ -62,7 +68,10 @@ pub(crate) fn brama_rank(start_url: &str, links: &PageLinks) -> Result<Vec<(Stri
         );
     }
     kept.sort_by(|(left, _, _), (right, _, _)| right.total_cmp(left));
-    Ok(kept.into_iter().map(|(_, url, family)| (url, family)).collect())
+    Ok(kept
+        .into_iter()
+        .map(|(_, url, family)| (url, family))
+        .collect())
 }
 
 /// `spis discover <start-url> --catalog <slug> --limit <n>`: `--limit` is how

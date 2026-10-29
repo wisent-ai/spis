@@ -93,7 +93,10 @@ fn refuse(request: tiny_http::Request, refusal: Refusal) {
 }
 
 fn failed(sentence: String) -> Refusal {
-    Refusal { status: StatusCode::INTERNAL_SERVER_ERROR, sentence }
+    Refusal {
+        status: StatusCode::INTERNAL_SERVER_ERROR,
+        sentence,
+    }
 }
 
 fn read_body(request: &mut tiny_http::Request) -> Result<Map<String, Value>, Refusal> {
@@ -108,7 +111,9 @@ fn read_body(request: &mut tiny_http::Request) -> Result<Map<String, Value>, Ref
     match serde_json::from_slice::<Value>(&raw) {
         Ok(Value::Object(body)) => Ok(body),
         Ok(_) => Err(bad_request("request body must be a JSON object")),
-        Err(error) => Err(bad_request(&format!("request body is not valid JSON: {error}"))),
+        Err(error) => Err(bad_request(&format!(
+            "request body is not valid JSON: {error}"
+        ))),
     }
 }
 
@@ -125,7 +130,13 @@ fn answer(mut request: tiny_http::Request, program: &Path, jobs: &Mutex<()>) {
         }
         _ => {
             let sentence = format!("unknown endpoint: {method} {path}");
-            return refuse(request, Refusal { status: StatusCode::NOT_FOUND, sentence });
+            return refuse(
+                request,
+                Refusal {
+                    status: StatusCode::NOT_FOUND,
+                    sentence,
+                },
+            );
         }
     };
     let body = match read_body(&mut request) {
@@ -168,9 +179,12 @@ fn job(argv: &[String]) -> String {
 fn run_document(request: tiny_http::Request, program: &Path, jobs: &Mutex<()>, argv: &[String]) {
     let completed = {
         let _job = job_lock(jobs);
-        stado_wait::blocking(stado_wait::Kind::Process, job(argv), program.display(), || {
-            Command::new(program).args(argv).output()
-        })
+        stado_wait::blocking(
+            stado_wait::Kind::Process,
+            job(argv),
+            program.display(),
+            || Command::new(program).args(argv).output(),
+        )
     };
     match completed {
         Ok(output) if output.status.success() => document(request, StatusCode::OK, output.stdout),
@@ -207,11 +221,17 @@ fn stream(request: tiny_http::Request, program: &Path, jobs: &Mutex<()>, argv: &
     let mut pumps = Vec::new();
     if let Some(pipe) = child.stdout.take() {
         let sender = sender.clone();
-        pumps.push(("stdout", std::thread::spawn(move || pump::pump(Box::new(pipe), "stdout", sender))));
+        pumps.push((
+            "stdout",
+            std::thread::spawn(move || pump::pump(Box::new(pipe), "stdout", sender)),
+        ));
     }
     if let Some(pipe) = child.stderr.take() {
         let sender = sender.clone();
-        pumps.push(("stderr", std::thread::spawn(move || pump::pump(Box::new(pipe), "stderr", sender))));
+        pumps.push((
+            "stderr",
+            std::thread::spawn(move || pump::pump(Box::new(pipe), "stderr", sender)),
+        ));
     }
     drop(sender);
 
@@ -240,11 +260,16 @@ fn stream(request: tiny_http::Request, program: &Path, jobs: &Mutex<()>, argv: &
     for sentence in &cut {
         eprintln!("spis serve: {sentence}");
         if connected {
-            connected = emit(json!({ "type": "log", "stream": "serve", "chunk": format!("{sentence}\n") }));
+            connected =
+                emit(json!({ "type": "log", "stream": "serve", "chunk": format!("{sentence}\n") }));
         }
     }
-    let waited =
-        stado_wait::blocking(stado_wait::Kind::Process, job(argv), program.display(), || child.wait());
+    let waited = stado_wait::blocking(
+        stado_wait::Kind::Process,
+        job(argv),
+        program.display(),
+        || child.wait(),
+    );
     let mut result = match waited {
         // A run ended by a signal has no exit code; the result still says
         // it failed, and its sentence names how it ended instead of letting

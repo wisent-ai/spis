@@ -8,8 +8,11 @@ pub(crate) const SCHEMA: &str = "wisent.upstream-drift-report.v1";
 
 /// Answers that say a recorded source is gone (RFC 9110 section 15.5:
 /// https://www.rfc-editor.org/rfc/rfc9110#section-15.5).
-pub(crate) const GONE: &[http::StatusCode] =
-    &[http::StatusCode::BAD_REQUEST, http::StatusCode::NOT_FOUND, http::StatusCode::GONE];
+pub(crate) const GONE: &[http::StatusCode] = &[
+    http::StatusCode::BAD_REQUEST,
+    http::StatusCode::NOT_FOUND,
+    http::StatusCode::GONE,
+];
 
 /// Answers that say a recorded source is there but refuses an anonymous
 /// reader, limits it, or does not serve HEAD (RFC 9110 sections 15.5-15.6).
@@ -175,17 +178,25 @@ pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value
             if among(GUARDED, resp.status()) {
                 // HEAD refused or rate limited; try the first byte (RFC 9110
                 // section 14.1.2 range syntax).
-                let first_byte = stado_wait::blocking(stado_wait::Kind::Network, "the answer to a ranged GET", url, || {
-                    client.get(url).set("Range", "bytes=0-0").call()
-                });
+                let first_byte = stado_wait::blocking(
+                    stado_wait::Kind::Network,
+                    "the answer to a ranged GET",
+                    url,
+                    || client.get(url).set("Range", "bytes=0-0").call(),
+                );
                 match first_byte {
                     Ok(r) => return ("reachable", json!(r.status())),
-                    Err(ureq::Error::Status(inner, _)) if among(GONE, inner) => return ("gone", json!(inner)),
+                    Err(ureq::Error::Status(inner, _)) if among(GONE, inner) => {
+                        return ("gone", json!(inner))
+                    }
                     Err(ureq::Error::Status(inner, _)) => return ("guarded", json!(inner)),
                     // HEAD was refused and the one-byte GET did not arrive at
                     // all: nothing says the source is still there.
                     Err(error) => {
-                        return ("unresolved", json!(format!("HEAD {} then GET failed: {error}", resp.status())))
+                        return (
+                            "unresolved",
+                            json!(format!("HEAD {} then GET failed: {error}", resp.status())),
+                        )
                     }
                 }
             }
@@ -194,7 +205,9 @@ pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value
             }
             ("guarded", json!(code))
         }
-        Err(ureq::Error::Transport(transport)) if transport.kind() == ureq::ErrorKind::UnknownScheme => {
+        Err(ureq::Error::Transport(transport))
+            if transport.kind() == ureq::ErrorKind::UnknownScheme =>
+        {
             ("skipped", json!(transport.to_string()))
         }
         Err(error) => ("unresolved", json!(error.to_string())),

@@ -22,8 +22,8 @@ mod ios_booted_identity_group;
 mod kinds;
 mod lifecycle;
 mod op_schema_group;
-mod publish_worker_report_group;
 mod prepared_proof;
+mod publish_worker_report_group;
 mod record_failure;
 mod registry_placements_group;
 mod runtime_bindings_for_worker_group;
@@ -34,10 +34,12 @@ pub use cancel_group::*;
 pub use continue_record_group::*;
 pub use ios_booted_identity_group::*;
 pub(crate) use kinds::{AccountMode, DeliveryKind, Engine, ProductKind, WebOutcome};
-pub(crate) use lifecycle::{aggregate_catalog_entry, next_attempt, update_run_state, State, FIRST_ATTEMPT};
+pub(crate) use lifecycle::{
+    aggregate_catalog_entry, next_attempt, update_run_state, State, FIRST_ATTEMPT,
+};
 pub use op_schema_group::*;
-pub use publish_worker_report_group::*;
 pub(crate) use prepared_proof::{bound_proof, none_pending, BoundProof};
+pub use publish_worker_report_group::*;
 pub(crate) use record_failure::{record_failure_code, RecordFailure};
 pub use registry_placements_group::*;
 pub use runtime_bindings_for_worker_group::*;

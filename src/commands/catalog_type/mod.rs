@@ -42,7 +42,11 @@ fn present(path: &Path) -> Result<bool> {
 fn load_sources(directory: &Path) -> Result<Value> {
     let sources = directory.join("sources.json");
     if !present(&sources)? {
-        bail!("{} is missing; {} is not a managed catalog", sources.display(), directory.display());
+        bail!(
+            "{} is missing; {} is not a managed catalog",
+            sources.display(),
+            directory.display()
+        );
     }
     let text = std::fs::read_to_string(&sources)
         .with_context(|| format!("{} cannot be read", sources.display()))?;

@@ -138,9 +138,12 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
     // answer, with no deadline or poll (cli.md rule 8). The wait is said on
     // stderr at both ends, so a run standing on the bridge names it.
     let bridge_pid = format!("pid {}", child.id());
-    let waited = stado_wait::blocking(stado_wait::Kind::Process, "the Weles bridge", bridge_pid, || {
-        child.wait()
-    });
+    let waited = stado_wait::blocking(
+        stado_wait::Kind::Process,
+        "the Weles bridge",
+        bridge_pid,
+        || child.wait(),
+    );
     let status = match waited {
         Ok(status) => status,
         Err(error) => {
@@ -247,7 +250,9 @@ pub(crate) fn terminate_bridge_process_group(child: &mut std::process::Child) ->
     let survivor = match child.wait() {
         Ok(_) => survivor,
         Err(error) => Some(match survivor {
-            Some(earlier) => format!("{earlier}; the Weles bridge process {pid} could not be reaped: {error}"),
+            Some(earlier) => {
+                format!("{earlier}; the Weles bridge process {pid} could not be reaped: {error}")
+            }
             None => format!("the Weles bridge process {pid} could not be reaped: {error}"),
         }),
     };

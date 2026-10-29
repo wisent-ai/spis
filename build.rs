@@ -62,7 +62,10 @@ fn main() -> Result<(), String> {
         }
         Err(cause) => {
             println!("cargo:rustc-env=SPIS_GIT_REVISION=");
-            println!("cargo:rustc-env=SPIS_GIT_REVISION_REFUSAL={}", one_line(&cause));
+            println!(
+                "cargo:rustc-env=SPIS_GIT_REVISION_REFUSAL={}",
+                one_line(&cause)
+            );
         }
     }
 

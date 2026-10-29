@@ -14,7 +14,10 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
             // A recorded source the HTTP client has no scheme for (a
             // repository path, a mailto) cannot be asked; it is listed.
             "skipped" => {
-                drift.lock().sources_skipped.push(format!("{url}: {detail}"));
+                drift
+                    .lock()
+                    .sources_skipped
+                    .push(format!("{url}: {detail}"));
                 return;
             }
             _ => {}
@@ -187,7 +190,10 @@ pub fn run(rest: &[String]) -> Result<()> {
         drift.media_hash_mismatch.len()
     );
     if !skip_network {
-        println!("README snapshots unchanged: {}", drift.readme_unchanged.len());
+        println!(
+            "README snapshots unchanged: {}",
+            drift.readme_unchanged.len()
+        );
         println!(
             "README snapshots changed upstream: {}",
             drift.readme_changed.len()
@@ -214,13 +220,22 @@ pub fn run(rest: &[String]) -> Result<()> {
         println!("  hash mismatch: {item}");
     }
     for item in &drift.readme_changed {
-        println!("  README changed: {} ({})", item["repository"], item["snapshot"]);
+        println!(
+            "  README changed: {} ({})",
+            item["repository"], item["snapshot"]
+        );
     }
     for item in &drift.sources_gone {
-        println!("  upstream gone: {} -> {} {}", item["where"], item["result"], item["url"]);
+        println!(
+            "  upstream gone: {} -> {} {}",
+            item["where"], item["result"], item["url"]
+        );
     }
     for item in &drift.sources_unresolved {
-        println!("  upstream unresolved: {} -> {} {}", item["where"], item["result"], item["url"]);
+        println!(
+            "  upstream unresolved: {} -> {} {}",
+            item["where"], item["result"], item["url"]
+        );
     }
 
     if write_report {

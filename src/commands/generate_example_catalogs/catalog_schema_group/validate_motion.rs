@@ -26,10 +26,19 @@ pub(crate) fn validate_motion(
     for (position, item) in motion.iter().enumerate() {
         let context = format!("{record_path}: motion {}", position + 1);
         require_nonempty(item, &field_names::<MotionEntry>(), &context)?;
-        if let Some(timing) = item.pointer("/analysis/timing_class").filter(|timing| !timing.is_null()) {
-            if timing.as_str().and_then(reference_contract::named::<reference_contract::TimingClass>).is_none() {
-                let classes: Vec<String> =
-                    reference_contract::TimingClass::ALL.iter().map(reference_contract::spelling).collect();
+        if let Some(timing) = item
+            .pointer("/analysis/timing_class")
+            .filter(|timing| !timing.is_null())
+        {
+            if timing
+                .as_str()
+                .and_then(reference_contract::named::<reference_contract::TimingClass>)
+                .is_none()
+            {
+                let classes: Vec<String> = reference_contract::TimingClass::ALL
+                    .iter()
+                    .map(reference_contract::spelling)
+                    .collect();
                 bail!(
                     "{context}: analysis timing class {timing} is not one of {classes:?}; run `spis verify-reference-evidence --apply` to move it into timing_description"
                 );

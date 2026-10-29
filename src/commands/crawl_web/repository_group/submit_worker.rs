@@ -24,7 +24,11 @@ pub(crate) fn submit_worker(
     if manifest.delivery.kind != "weles-service-env" {
         bail!("web credential delivery must be weles-service-env");
     }
-    if !manifest.delivery.secret_env.keys().map(String::as_str)
+    if !manifest
+        .delivery
+        .secret_env
+        .keys()
+        .map(String::as_str)
         .eq(["WELES_TOKEN", "WISENT_ORGANIZATION_ID"])
     {
         bail!("web delivery must carry exactly the WELES_TOKEN and WISENT_ORGANIZATION_ID secret references");
@@ -94,7 +98,10 @@ impl PrivateBridge {
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(libc::S_IRWXU.into()))?;
+            std::fs::set_permissions(
+                &directory,
+                std::fs::Permissions::from_mode(libc::S_IRWXU.into()),
+            )?;
         }
         prune_orphaned_configs(&directory)?;
         let config = directory.join(format!(
@@ -220,7 +227,8 @@ pub(crate) fn prune_orphaned_configs(directory: &Path) -> Result<()> {
 
 #[cfg(unix)]
 pub(crate) fn process_is_live(pid: i32) -> bool {
-    if unsafe { libc::kill(pid, 0) } == 0 { // POSIX null signal and success: https://pubs.opengroup.org/onlinepubs/9799919799/functions/kill.html
+    if unsafe { libc::kill(pid, 0) } == 0 {
+        // POSIX null signal and success: https://pubs.opengroup.org/onlinepubs/9799919799/functions/kill.html
         return true;
     }
     // Only a definite `ESRCH` proves the process is gone. `EPERM` means it exists under
@@ -241,7 +249,10 @@ pub(crate) fn write_private(path: &Path, bytes: &[u8]) -> Outcome<()> {
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            std::fs::set_permissions(parent, std::fs::Permissions::from_mode(libc::S_IRWXU.into()))?;
+            std::fs::set_permissions(
+                parent,
+                std::fs::Permissions::from_mode(libc::S_IRWXU.into()),
+            )?;
         }
     }
     // A previous file that cannot be cleared is refused by its own cause; left
@@ -279,10 +290,12 @@ pub(crate) fn write_exact(path: &Path, bytes: &[u8]) -> Outcome<()> {
         Ok(existing) if existing == bytes => return Ok(()),
         Ok(_) => {}
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-        Err(error) => return Err(WorkerFailure::new(
-            "web_worker_io_failed",
-            format!("read content-addressed file {}: {error}", path.display()),
-        )),
+        Err(error) => {
+            return Err(WorkerFailure::new(
+                "web_worker_io_failed",
+                format!("read content-addressed file {}: {error}", path.display()),
+            ))
+        }
     }
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;

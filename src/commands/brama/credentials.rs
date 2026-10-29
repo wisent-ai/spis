@@ -53,10 +53,14 @@ fn stado_secret(variable: &str, role: &str, field: &str) -> Result<String> {
         None => PathBuf::from("stado"),
     };
     let binary = program.display();
-    let output = stado_wait::output(
-        std::process::Command::new(&program)
-            .args(["credentials", "get", "--role", role, "--field", field]),
-    )
+    let output = stado_wait::output(std::process::Command::new(&program).args([
+        "credentials",
+        "get",
+        "--role",
+        role,
+        "--field",
+        field,
+    ]))
     .with_context(|| {
         format!(
             "{variable}: {binary} could not be run; without Stado set {CREDENTIALS_FILE} to an \
@@ -72,7 +76,10 @@ fn stado_secret(variable: &str, role: &str, field: &str) -> Result<String> {
     }
     let secret = String::from_utf8(output.stdout)
         .map_err(|error| {
-            anyhow::anyhow!("{variable}: {binary} returned a value that is not UTF-8: {}", error.utf8_error())
+            anyhow::anyhow!(
+                "{variable}: {binary} returned a value that is not UTF-8: {}",
+                error.utf8_error()
+            )
         })?
         .trim_end_matches('\n')
         .to_string();

@@ -116,7 +116,8 @@ pub(crate) fn submit_worker(
         manifest.encoded()?,
     ];
     command_arguments.extend(worker_options);
-    let (program, arguments) = command_arguments.split_first()
+    let (program, arguments) = command_arguments
+        .split_first()
         .context("documentation worker command has no program")?;
     let mut command_words = vec![program.clone()];
     command_words.extend(
@@ -176,25 +177,37 @@ pub fn run(rest: &[String]) -> Result<()> {
     while let Some(argument) = arguments.next() {
         match argument.as_str() {
             "--host" => {
-                host = Some(crate::commands::required(arguments.next(), "--host needs a value")?.clone());
+                host = Some(
+                    crate::commands::required(arguments.next(), "--host needs a value")?.clone(),
+                );
             }
             "--record" => {
-                record = Some(crate::commands::required(arguments.next(), "--record needs a value")?.clone());
+                record = Some(
+                    crate::commands::required(arguments.next(), "--record needs a value")?.clone(),
+                );
             }
             "--site" => {
-                let value = crate::commands::required(arguments.next(), "--site needs a value")?.clone();
+                let value =
+                    crate::commands::required(arguments.next(), "--site needs a value")?.clone();
                 record = Some(value.clone());
                 forwarded.push("--site".into());
                 forwarded.push(value);
             }
             "--runtime-manifest-base64" => {
-                runtime_manifest_base64 = Some(crate::commands::required(
-                    arguments.next(), "--runtime-manifest-base64 needs a value"
-                )?.clone());
+                runtime_manifest_base64 = Some(
+                    crate::commands::required(
+                        arguments.next(),
+                        "--runtime-manifest-base64 needs a value",
+                    )?
+                    .clone(),
+                );
             }
             "--worker" => worker = true,
             "--artifact-uri" => {
-                artifact_uri = Some(crate::commands::required(arguments.next(), "--artifact-uri needs a value")?.clone());
+                artifact_uri = Some(
+                    crate::commands::required(arguments.next(), "--artifact-uri needs a value")?
+                        .clone(),
+                );
             }
             value => forwarded.push(value.to_string()),
         }

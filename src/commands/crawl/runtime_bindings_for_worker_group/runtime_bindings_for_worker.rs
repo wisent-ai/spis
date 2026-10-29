@@ -23,7 +23,10 @@ pub(crate) fn runtime_bindings_for_worker(manifest: &RuntimeManifest) -> Result<
     {
         use std::os::unix::fs::PermissionsExt;
         // Owner read, write and search only (POSIX S_IRWXU).
-        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)))?;
+        std::fs::set_permissions(
+            &directory,
+            std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)),
+        )?;
     }
     let cache = directory.join(format!("{}.json", manifest.bindings_file_sha256));
     if !cache.is_file() {
@@ -127,7 +130,10 @@ pub(crate) fn publish_runtime_bindings(bindings: &RuntimeBindings) -> Result<()>
     {
         use std::os::unix::fs::PermissionsExt;
         // Owner read, write and search only (POSIX S_IRWXU).
-        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)))?;
+        std::fs::set_permissions(
+            &directory,
+            std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)),
+        )?;
     }
     let nonce = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
     let target = directory.join(format!(

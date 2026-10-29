@@ -40,8 +40,10 @@ pub(crate) fn engine_command(
     if matches!(engine, Engine::Mobile | Engine::Desktop) {
         let (max_states, max_depth) = native_limits(retained_command)?;
         args.extend([
-            "--max-states".into(), max_states.to_string(),
-            "--max-depth".into(), max_depth.to_string(),
+            "--max-states".into(),
+            max_states.to_string(),
+            "--max-depth".into(),
+            max_depth.to_string(),
         ]);
     }
     args.push("--host".into());
@@ -73,10 +75,16 @@ fn native_limits(retained: Option<&[String]>) -> Result<(usize, usize)> {
     while let Some(argument) = arguments.next() {
         match argument.as_str() {
             "--max-states" => {
-                states = Some(crate::commands::parsed(arguments.next(), "retained --max-states")?);
+                states = Some(crate::commands::parsed(
+                    arguments.next(),
+                    "retained --max-states",
+                )?);
             }
             "--max-depth" => {
-                depth = Some(crate::commands::parsed(arguments.next(), "retained --max-depth")?);
+                depth = Some(crate::commands::parsed(
+                    arguments.next(),
+                    "retained --max-depth",
+                )?);
             }
             _ => {}
         }

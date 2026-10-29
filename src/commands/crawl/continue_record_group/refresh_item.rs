@@ -180,7 +180,10 @@ pub(crate) fn publish_cancel_intent(uri: &str, intent: &Value) -> Result<String>
     {
         use std::os::unix::fs::PermissionsExt;
         // Owner read, write and search only (POSIX S_IRWXU).
-        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)))?;
+        std::fs::set_permissions(
+            &directory,
+            std::fs::Permissions::from_mode(u32::from(libc::S_IRWXU)),
+        )?;
     }
     let source = directory.join(format!("{digest}.json"));
     if source.is_file() {

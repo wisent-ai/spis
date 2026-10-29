@@ -14,13 +14,22 @@ pub(crate) fn bridge_error_code(stderr: &[u8]) -> String {
 }
 
 fn stated_code(stderr: &[u8]) -> Result<String, String> {
-    let value = serde_json::from_slice::<Value>(stderr).map_err(|error| format!("its stderr is not JSON ({error})"))?;
-    let code = value.get("code").and_then(Value::as_str).ok_or_else(|| format!("its stderr states no code: {value}"))?;
-    let valid = !code.is_empty() && code.bytes().all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'));
+    let value = serde_json::from_slice::<Value>(stderr)
+        .map_err(|error| format!("its stderr is not JSON ({error})"))?;
+    let code = value
+        .get("code")
+        .and_then(Value::as_str)
+        .ok_or_else(|| format!("its stderr states no code: {value}"))?;
+    let valid = !code.is_empty()
+        && code
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'));
     if valid {
         Ok(code.to_string())
     } else {
-        Err(format!("its stated code {code:?} is not letters, digits, - and _"))
+        Err(format!(
+            "its stated code {code:?} is not letters, digits, - and _"
+        ))
     }
 }
 
@@ -81,14 +90,20 @@ pub(crate) fn read_limited(path: &Path, limit: u64) -> Result<Vec<u8>, String> {
     })?;
     let mut bytes = Vec::new();
     let mut taken = file.take(limit);
-    taken
-        .read_to_end(&mut bytes)
-        .map_err(|error| format!("retained file {} could not be read: {error}", path.display()))?;
+    taken.read_to_end(&mut bytes).map_err(|error| {
+        format!(
+            "retained file {} could not be read: {error}",
+            path.display()
+        )
+    })?;
     // One byte past the signed count means the file is longer than signed.
     match taken.into_inner().bytes().next() {
         None => Ok(bytes),
         Some(Ok(_)) => Err("retained file is longer than its signed byte count".to_string()),
-        Some(Err(error)) => Err(format!("retained file {} could not be read past its signed byte count: {error}", path.display())),
+        Some(Err(error)) => Err(format!(
+            "retained file {} could not be read past its signed byte count: {error}",
+            path.display()
+        )),
     }
 }
 
@@ -143,7 +158,9 @@ const GIT_SHA1_BYTES: usize = 20;
 
 /// Lowercase hex encoding exactly `bytes` bytes.
 fn lower_hex_of(value: &str, bytes: usize) -> bool {
-    value.bytes().all(|byte| byte.is_ascii_digit() || matches!(byte, b'a'..=b'f'))
+    value
+        .bytes()
+        .all(|byte| byte.is_ascii_digit() || matches!(byte, b'a'..=b'f'))
         && hex::decode(value).is_ok_and(|decoded| decoded.len() == bytes)
 }
 
@@ -267,7 +284,8 @@ pub(crate) fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
             }
             Value::Object(object) => {
                 let mut entries: Vec<_> = object.iter().collect();
-                entries.sort_by(|(left, _), (right, _)| left.encode_utf16().cmp(right.encode_utf16()));
+                entries
+                    .sort_by(|(left, _), (right, _)| left.encode_utf16().cmp(right.encode_utf16()));
                 output.push('{');
                 let mut entries = entries.into_iter();
                 if let Some((key, entry)) = entries.next() {
@@ -284,8 +302,8 @@ pub(crate) fn canonical_json_bytes(value: &Value) -> Result<Vec<u8>, String> {
     }
 
     fn write_member(key: &str, entry: &Value, output: &mut String) -> Result<(), String> {
-        let serialized_key =
-            serde_json::to_string(key).map_err(|error| format!("JCS object key could not be serialized: {error}"))?;
+        let serialized_key = serde_json::to_string(key)
+            .map_err(|error| format!("JCS object key could not be serialized: {error}"))?;
         output.push_str(&serialized_key);
         output.push(':');
         write_value(entry, output)

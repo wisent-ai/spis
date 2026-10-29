@@ -20,7 +20,9 @@ pub(super) fn pump(
             Ok(_) if line.is_empty() => return Ok(()),
             Ok(_) => {}
             Err(error) => {
-                return Err(format!("the job's {stream_name} could not be read further: {error}"))
+                return Err(format!(
+                    "the job's {stream_name} could not be read further: {error}"
+                ))
             }
         }
         // The receiver is gone only once the stream has ended.
@@ -49,7 +51,9 @@ pub(super) fn finish(pumps: Vec<(&'static str, JoinHandle<Result<(), String>>)>)
                     (_, Some(text)) => text.clone(),
                     (None, None) => "a payload that is not text".to_string(),
                 };
-                cut.push(format!("the reader of the job's {stream_name} panicked: {said}"));
+                cut.push(format!(
+                    "the reader of the job's {stream_name} panicked: {said}"
+                ));
             }
         }
     }

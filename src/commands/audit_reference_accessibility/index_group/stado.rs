@@ -157,8 +157,13 @@ pub(crate) fn atomic_json(path: &Path, payload: &Value) -> Result<()> {
     let temporary = path.with_file_name(sibling);
     std::fs::write(&temporary, serde_json::to_string_pretty(payload)? + "\n")
         .with_context(|| format!("write {}", temporary.display()))?;
-    std::fs::rename(&temporary, path)
-        .with_context(|| format!("move {} into place as {}", temporary.display(), path.display()))?;
+    std::fs::rename(&temporary, path).with_context(|| {
+        format!(
+            "move {} into place as {}",
+            temporary.display(),
+            path.display()
+        )
+    })?;
     Ok(())
 }
 
