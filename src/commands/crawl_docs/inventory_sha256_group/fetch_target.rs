@@ -117,14 +117,10 @@ pub(crate) fn fetch_target(
             } else {
                 ("ok", None, Some(text))
             };
-            // Every page whose record line is written states the length of
-            // the text it kept, so the record digest and text_bytes stay
-            // paired; a page that kept no text measures the empty text.
-            let kept = match &retained_text {
-                Some(value) => value.as_str(),
-                None => "",
-            };
-            let text_bytes = Some(kept.len() as u64);
+            // text_bytes is the length of the text the record keeps; a page
+            // that kept none (no_text) states none, as every other outcome
+            // without kept text does, rather than a measured zero.
+            let text_bytes = retained_text.as_ref().map(|kept| kept.len() as u64);
             let record = json!({
                 "url": &target.url,
                 "resolved_url": response.final_url.as_str(),

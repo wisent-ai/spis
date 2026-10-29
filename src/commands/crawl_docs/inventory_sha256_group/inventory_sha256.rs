@@ -154,9 +154,12 @@ pub(crate) fn validate_state(
                         target.key
                     );
                 }
-                if outcome.record_sha256.is_some() != outcome.text_bytes.is_some() {
+                // Kept text lives in a written record, so text bytes without
+                // a record digest are damage; a record without kept text
+                // (a no_text page) states no text bytes.
+                if let (Some(text_bytes), None) = (outcome.text_bytes, &outcome.record_sha256) {
                     bail!(
-                        "durable documentation outcome {} has inconsistent text metadata",
+                        "durable documentation outcome {} states {text_bytes} text bytes but no record digest",
                         target.key
                     );
                 }

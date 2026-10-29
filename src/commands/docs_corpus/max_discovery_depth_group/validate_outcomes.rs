@@ -119,11 +119,13 @@ pub(crate) fn validate_outcomes(corpus_dir: &Path, state: &Value, report: &Value
             (None, None, None) => {}
             _ => bail!("durable page outcome has incomplete corpus range metadata"),
         }
+        // Kept text lives in a written record; a record that kept no text
+        // (a no_text page) states no text bytes.
         let text_bytes = outcome.get("text_bytes").and_then(Value::as_u64);
-        if digest.is_some() != text_bytes.is_some() {
-            bail!("durable page text metadata is inconsistent");
+        if let (Some(text_bytes), None) = (text_bytes, digest) {
+            bail!("durable page outcome states {text_bytes} text bytes but no record digest");
         }
-        if text_bytes.unwrap_or(0) > 0 {
+        if text_bytes.is_some_and(|value| value != 0) {
             text_page_count += 1;
         }
         if outcome.get("status").and_then(Value::as_u64) == Some(200) {

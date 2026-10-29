@@ -10,7 +10,7 @@ enum Operation<'a> {
         limit: Option<std::num::NonZeroUsize>,
     },
     Show { site: &'a str, url: &'a str },
-    Import { receipt: &'a Path },
+    Import { receipt: &'a str },
 }
 
 fn text<'a>(arguments: &mut std::slice::Iter<'a, String>, flag: &str) -> Result<&'a str> {
@@ -65,7 +65,7 @@ fn import(arguments: &[String]) -> Result<Operation<'_>> {
     let mut arguments = arguments.iter();
     while let Some(argument) = arguments.next() {
         match argument.as_str() {
-            "--attempt-receipt" => receipt = Some(Path::new(text(&mut arguments, "--attempt-receipt")?)),
+            "--attempt-receipt" => receipt = Some(text(&mut arguments, "--attempt-receipt")?),
             other => return Err(crate::commands::usage(format!("unknown argument: {other}"))),
         }
     }
@@ -157,7 +157,7 @@ pub fn run(arguments: &[String]) -> Result<()> {
             bail!("url not found in the completed {site} retrieval corpus")
         }
         Operation::Import { receipt } => {
-            let receipt = crate::commands::operator_path(receipt)?;
+            let receipt = crate::commands::operator_path(receipt);
             let (report, _, _) = read_attempt_receipt(&receipt)?;
             let mut imported = import_worker_report(&report)?;
             imported["attempt_receipt"] = json!(receipt);
