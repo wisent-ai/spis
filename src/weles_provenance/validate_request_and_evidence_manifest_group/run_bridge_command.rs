@@ -135,17 +135,32 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
         })
     });
     // The bridge runs to its own exit; the official client's own error is the
-    // answer, with no deadline or poll (cli.md rule 8).
-    let status = match child.wait() {
+    // answer, with no deadline or poll (cli.md rule 8). The wait is said on
+    // stderr at both ends, so a run standing on the bridge names it.
+    let bridge_pid = format!("pid {}", child.id());
+    let waited = stado_wait::blocking(stado_wait::Kind::Process, "the Weles bridge", bridge_pid, || {
+        child.wait()
+    });
+    let status = match waited {
         Ok(status) => status,
         Err(error) => {
             let survivor = terminate_bridge_process_group(&mut child);
-            let _ = stdin_writer.join();
-            let _ = stdout_reader.join();
-            let _ = stderr_reader.join();
+            // The pipes close with the killed bridge; what the threads read
+            // is moot, but a thread that panicked is said in the refusal.
+            let panicked: Vec<&str> = [
+                ("stdin writer", stdin_writer.join().is_err()),
+                ("stdout reader", stdout_reader.join().is_err()),
+                ("stderr reader", stderr_reader.join().is_err()),
+            ]
+            .into_iter()
+            .filter_map(|(thread, failed)| failed.then_some(thread))
+            .collect();
             let mut message = format!("could not collect the Weles bridge result: {error}");
             if let Some(survivor) = survivor {
                 message = format!("{message}; {survivor}");
+            }
+            if !panicked.is_empty() {
+                message = format!("{message}; its {} panicked", panicked.join(", "));
             }
             return Err(BridgeFailure::new("io-failed", message));
         }
@@ -218,15 +233,24 @@ pub(crate) fn terminate_bridge_process_group(child: &mut std::process::Child) ->
     let group_killed = unsafe { libc::killpg(pid as libc::pid_t, libc::SIGKILL) != -1 };
     #[cfg(not(unix))]
     let group_killed = false;
-    let survivor = match group_killed {
-        true => None,
-        false => child
+    let survivor = if group_killed {
+        None
+    } else {
+        child
             .kill()
             .err()
             .filter(|error| error.kind() != std::io::ErrorKind::InvalidInput)
-            .map(|error| format!("the Weles bridge process {pid} could not be killed: {error}")),
+            .map(|error| format!("the Weles bridge process {pid} could not be killed: {error}"))
     };
-    let _ = child.wait();
+    // Reaping the killed bridge: a wait that fails is said with the
+    // survivor, never dropped.
+    let survivor = match child.wait() {
+        Ok(_) => survivor,
+        Err(error) => Some(match survivor {
+            Some(earlier) => format!("{earlier}; the Weles bridge process {pid} could not be reaped: {error}"),
+            None => format!("the Weles bridge process {pid} could not be reaped: {error}"),
+        }),
+    };
     survivor
 }
 
