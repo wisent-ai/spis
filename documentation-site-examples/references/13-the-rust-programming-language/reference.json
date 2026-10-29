@@ -22,10 +22,11 @@
         "start_state": "public documentation landing/article",
         "end_state": "first useful canonical answer",
         "continuity": "single real-browser context video; no synthesized or interpolated frames",
-        "timing_class": "brief",
+        "timing_class": null,
         "interruption_reversal": "the deliberately impossible route is abandoned before the useful query/route",
         "feedback": "landing, open, failed, recovered, and answer frames retain the visible state changes",
-        "reduced_motion_or_nonanimated_equivalent": "reduced-motion behavior was not observed; five local states are retained as nonanimated inspection equivalents"
+        "reduced_motion_or_nonanimated_equivalent": "reduced-motion behavior was not observed; five local states are retained as nonanimated inspection equivalents",
+        "timing_description": "brief"
       },
       "declared_media_kind": "video-webm",
       "measured": true,
@@ -95,7 +96,8 @@
     "stored state-to-motion relationships demoted; only a recomputed threshold match against independently verified motion may count",
     "unsupported journey semantics preserved as unverified source notes; journey and step provenance absent",
     "unsupported accessibility observations preserved as unverified source notes; typed statement provenance absent",
-    "motion provenance unverified: media/motion.webm has no typed verified crawl or owner observation",
+    "motion analysis timing class \"brief\" of media/motion.webm is not a timing class the contract declares and was removed",
+    "motion provenance unverified: media/motion.webm has no typed verified crawl or owner observation: it carries no provenance link",
     "state semantic name unverified: media/state-01-landing.png; pixels and digest prove only an observed frame",
     "state source relationship unproven: media/state-01-landing.png; no threshold match against independently verified motion",
     "state semantic name unverified: media/state-02-search-open.png; pixels and digest prove only an observed frame",
@@ -118,7 +120,7 @@
     "fewer than 3 accessibility observations for document-navigation profile",
     "accessibility never measured against the product"
   ],
-  "measured_at": "2026-09-01",
+  "measured_at": "2026-10-29",
   "motion_analysis": null,
   "unverified_source_notes": [
     {
