@@ -177,36 +177,10 @@ pub(crate) fn validate_url_shape(url: &Url, label: &str) -> Result<()> {
     Ok(())
 }
 
+/// Whether a destination is not a public address, by the one rule Wisent's
+/// egress guards share: `wisent_public_destination::is_public`, read from the
+/// IANA special-purpose registries, an IPv6 address that delivers to an IPv4
+/// address judged as that IPv4 address.
 pub(crate) fn forbidden_ip(address: IpAddr) -> bool {
-    match address {
-        IpAddr::V4(address) => {
-            let [a, b, c, _] = address.octets();
-            a == 0
-                || a == 10
-                || a == 127
-                || (a == 100 && (64..=127).contains(&b))
-                || (a == 169 && b == 254)
-                || (a == 172 && (16..=31).contains(&b))
-                || (a == 192 && b == 0 && c == 0)
-                || (a == 192 && b == 0 && c == 2)
-                || (a == 192 && b == 88 && c == 99)
-                || (a == 192 && b == 168)
-                || (a == 198 && (b == 18 || b == 19))
-                || (a == 198 && b == 51 && c == 100)
-                || (a == 203 && b == 0 && c == 113)
-                || a >= 224
-        }
-        IpAddr::V6(address) => {
-            if let Some(mapped) = address.to_ipv4_mapped() {
-                return forbidden_ip(IpAddr::V4(mapped));
-            }
-            let segments = address.segments();
-            let global_unicast = (segments[0] & 0xe000) == 0x2000;
-            let ietf_special_2001 = segments[0] == 0x2001 && segments[1] <= 0x01ff;
-            let documentation = (segments[0] == 0x2001 && segments[1] == 0x0db8)
-                || (segments[0] == 0x3fff && (segments[1] & 0xf000) == 0);
-            let transition = segments[0] == 0x2002;
-            !global_unicast || ietf_special_2001 || documentation || transition
-        }
-    }
+    !wisent_public_destination::is_public(address)
 }

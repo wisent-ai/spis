@@ -52,6 +52,8 @@ regex = "1"
 base64 = "0.22"
 hex = "0.4"
 url = "2"
+# The one public-destination rule Wisent's egress guards share.
+wisent-public-destination = { git = "https://github.com/wisent-ai/wisent-integrations", rev = "46f2686a8a119601f7671719c31ccf77bd205d8d", package = "wisent-public-destination" }
 # Every timestamp Spis writes, as UTC calendar time (already in the lock
 # through stado-wait).
 chrono = "0.4"
