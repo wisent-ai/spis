@@ -124,16 +124,22 @@ pub(crate) fn probe_cast(path: &Path) -> Result<Probe> {
         // A cast whose events all sit at its start (time zero) measured no
         // duration: zero is not a normal float, so keeping only a normal
         // latest time drops exactly that case.
-        duration_seconds: last_time.filter(|time| time.is_normal()).map(round3),
+        duration_seconds: last_time.filter(|time| time.is_normal()),
         frame_count: (!times.is_empty()).then_some(times.len() as i64),
         error: None,
     })
 }
 
 /// Runs `args` to its own exit through the announced wait and returns its
-/// standard output; a program that fails is refused with its whole standard
-/// error, which is the cause it gave.
+/// standard output as text; see [`run_bytes`].
 pub(crate) fn sh(args: &[&str]) -> Result<String> {
+    Ok(String::from_utf8_lossy(&run_bytes(args)?).into_owned())
+}
+
+/// Runs `args` to its own exit through the announced wait and returns its
+/// standard output; a program that fails is refused with its exit status and
+/// its whole standard error, which is the cause it gave.
+pub(crate) fn run_bytes(args: &[&str]) -> Result<Vec<u8>> {
     let Some((program, rest)) = args.split_first() else {
         anyhow::bail!("an empty command names no program to run");
     };
@@ -148,5 +154,5 @@ pub(crate) fn sh(args: &[&str]) -> Result<String> {
             stderr.trim()
         );
     }
-    Ok(String::from_utf8_lossy(&out.stdout).to_string())
+    Ok(out.stdout)
 }

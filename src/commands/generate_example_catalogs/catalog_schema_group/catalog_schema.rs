@@ -1,25 +1,5 @@
 use super::*;
 
-// ---------------------------------------------------------------------------
-// Small helpers mirroring Python semantics
-// ---------------------------------------------------------------------------
-
-/// Truthiness of a JSON value under Python rules (None/false/0/""/[]/{}) are falsey).
-/// JSON holds no NaN or infinity, so a number is truthy exactly when it is a
-/// nonzero finite number.
-pub(crate) fn py_truthy(value: Option<&Value>) -> bool {
-    match value {
-        None | Some(Value::Null) => false,
-        Some(Value::Bool(b)) => *b,
-        Some(Value::Number(n)) => n
-            .as_f64()
-            .is_some_and(|number| number.is_normal() || number.is_subnormal()),
-        Some(Value::String(s)) => !s.is_empty(),
-        Some(Value::Array(a)) => !a.is_empty(),
-        Some(Value::Object(o)) => !o.is_empty(),
-    }
-}
-
 pub(crate) fn nonempty_observation(value: &Value) -> bool {
     value
         .get("observation")

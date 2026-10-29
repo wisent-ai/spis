@@ -63,9 +63,9 @@ pub(crate) fn demote_unsupported_semantics(
         Some(states) => states.clone(),
         None => Vec::new(),
     };
-    // A state's ordinal, as a person counts them, is how many states come up
-    // to and including it in the record's order.
-    let ordinals: Vec<usize> = states.iter().enumerate().map(|(index, _)| states[..=index].len()).collect();
+    // A state's ordinal, as a person counts them, is its catalog ordinal in
+    // the record's order (`reference_contract::ordinals`).
+    let ordinals = crate::commands::reference_contract::ordinals();
     for ((index, state), ordinal) in states.iter_mut().enumerate().zip(ordinals) {
         if observation_supported(state, context) {
             continue;

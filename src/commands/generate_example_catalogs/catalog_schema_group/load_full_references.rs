@@ -43,10 +43,13 @@ pub(crate) fn load_full_references(slug: &str, examples: &[Value]) -> Result<Val
     let mut measured: Vec<EvidenceStatus> = Vec::new();
     let mut gap_counts: Vec<usize> = Vec::new();
 
-    // A reference's number, as sources.json lists them, is how many records
-    // come up to and including it.
-    for (index, (entry, example)) in records.iter().zip(examples.iter()).enumerate() {
-        let position = records[..=index].len();
+    // A reference's number, as sources.json lists them, is its catalog
+    // ordinal (`reference_contract::ordinals`).
+    for ((entry, example), position) in records
+        .iter()
+        .zip(examples.iter())
+        .zip(crate::commands::reference_contract::ordinals())
+    {
         require_nonempty(
             entry,
             &field_names::<ReferenceIndexEntry>(),

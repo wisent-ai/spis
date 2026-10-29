@@ -72,7 +72,7 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
         ];
         let missing: Vec<&str> = required
             .iter()
-            .filter(|key| !py_truthy(example.get(**key)))
+            .filter(|key| !crate::commands::reference_contract::stated(example.get(**key)))
             .copied()
             .collect();
         if !missing.is_empty() {
@@ -131,7 +131,7 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
         }
         let visual_missing: Vec<&str> = visual_required
             .iter()
-            .filter(|key| !py_truthy(visual.get(**key)))
+            .filter(|key| !crate::commands::reference_contract::stated(visual.get(**key)))
             .copied()
             .collect();
         if !visual_missing.is_empty() {

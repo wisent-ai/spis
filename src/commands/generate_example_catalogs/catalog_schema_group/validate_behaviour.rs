@@ -34,7 +34,7 @@ pub(crate) fn validate_behaviour(
     }
 
     let journey_value = record.get("journey");
-    if py_truthy(journey_value) {
+    if crate::commands::reference_contract::stated(journey_value) {
         let journey = journey_value.expect("truthy");
         require_nonempty(
             journey,
@@ -184,7 +184,7 @@ pub(crate) fn validate_behaviour(
                 requirements.min_accessibility_observations
             );
         }
-        if !py_truthy(accessibility.get("measured")) {
+        if !crate::commands::reference_contract::measured(accessibility.get("measured")) {
             bail!(
                 "{record_path}: complete {} evidence must be measured against the product",
                 requirements.profile

@@ -1,5 +1,20 @@
 use super::*;
-use crate::commands::reference_contract::Provenance;
+use crate::commands::reference_contract::{MotionKind, Provenance};
+
+/// The motion the states are matched against, with the kind its record
+/// declares for it.
+pub(super) struct PrimaryMotion {
+    pub(super) path: PathBuf,
+    declared_kind: Option<String>,
+}
+
+impl PrimaryMotion {
+    /// Whether the record declares the motion a terminal cast: a stream of
+    /// text events, not frames.
+    pub(super) fn terminal_cast(&self) -> bool {
+        self.declared_kind.as_deref() == Some(MotionKind::TerminalCast.as_str())
+    }
+}
 
 /// Measure every motion entry in place and return the first non-still, verified motion: the
 /// anchor the states are matched against.
@@ -9,9 +24,9 @@ pub(super) fn measure_motion(
     requirements: &crate::commands::reference_contract::CompletenessRequirements,
     provenance_context: &ProvenanceContext,
     gaps: &mut Vec<String>,
-) -> Result<Option<PathBuf>> {
+) -> Result<Option<PrimaryMotion>> {
     // First non-still measured motion becomes the anchor for state matching.
-    let mut primary_motion: Option<PathBuf> = None;
+    let mut primary_motion: Option<PrimaryMotion> = None;
     // A record without motion has nothing to measure and no anchor.
     let positions: Vec<usize> = match data.get("motion").and_then(Value::as_array) {
         Some(motion) => motion.iter().enumerate().map(|(index, _)| index).collect(),
@@ -47,9 +62,9 @@ pub(super) fn measure_motion(
             continue;
         }
         // The probed kind, else the declared one; neither is no kind at all.
-        let kind = probe.kind.clone().or(canonical);
+        let kind = probe.kind.clone().or(canonical.clone());
         let is_still = kind.as_deref() == Some(STILL_KIND);
-        if truthy(obj.get("sha256"))
+        if crate::commands::reference_contract::stated(obj.get("sha256"))
             && probe.sha256.as_deref() != obj.get("sha256").and_then(|v| v.as_str())
         {
             gaps.push(format!("motion sha256 mismatch: {local_path}"));
@@ -69,6 +84,24 @@ pub(super) fn measure_motion(
                 "ffprobe -count_frames"
             }),
         );
+        // A motion's own analysis states its timing in the contract's
+        // classes; an undeclared class is kept as the analysis' description
+        // and named as a gap, never left where readers expect a class.
+        if let Some(analysis) = obj.get_mut("analysis").and_then(Value::as_object_mut) {
+            let declared = analysis.get("timing_class").and_then(Value::as_str).map(str::to_string);
+            if let Some(declared) = declared {
+                let canonical = crate::commands::reference_contract::canonical_timing_class(Some(&declared));
+                if canonical.as_deref() != Some(declared.as_str()) {
+                    analysis.entry("timing_description".to_string()).or_insert(json!(declared));
+                    analysis.insert("timing_class".into(), json!(canonical));
+                    if canonical.is_none() {
+                        gaps.push(format!(
+                            "motion analysis timing class {declared:?} of {local_path} is not a timing class the contract declares and was removed"
+                        ));
+                    }
+                }
+            }
+        }
         if let Some(err) = &probe.error {
             gaps.push(format!("motion probe error ({local_path}): {err}"));
         }
@@ -79,10 +112,9 @@ pub(super) fn measure_motion(
             _ if is_still => {}
             None => gaps.push(format!("motion duration was not measured: {local_path}")),
             Some(duration) if duration < requirements.min_motion_seconds => gaps.push(format!(
-                "motion shorter than {} for {} profile: {local_path} ({})",
-                fmt_g(requirements.min_motion_seconds),
+                "motion shorter than {} for {} profile: {local_path} ({duration})",
+                requirements.min_motion_seconds,
                 requirements.profile,
-                fmt_g(duration)
             )),
             Some(_) => {}
         }
@@ -99,7 +131,7 @@ pub(super) fn measure_motion(
             ));
         }
         if !is_still && verified && primary_motion.is_none() {
-            primary_motion = Some(local);
+            primary_motion = Some(PrimaryMotion { path: local, declared_kind: canonical });
         }
     }
     Ok(primary_motion)

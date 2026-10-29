@@ -26,6 +26,15 @@ pub(crate) fn validate_motion(
     for (position, item) in motion.iter().enumerate() {
         let context = format!("{record_path}: motion {}", position + 1);
         require_nonempty(item, &field_names::<MotionEntry>(), &context)?;
+        if let Some(timing) = item.pointer("/analysis/timing_class").filter(|timing| !timing.is_null()) {
+            if timing.as_str().and_then(reference_contract::named::<reference_contract::TimingClass>).is_none() {
+                let classes: Vec<String> =
+                    reference_contract::TimingClass::ALL.iter().map(reference_contract::spelling).collect();
+                bail!(
+                    "{context}: analysis timing class {timing} is not one of {classes:?}; run `spis verify-reference-evidence --apply` to move it into timing_description"
+                );
+            }
+        }
         let media_kind = required_text(item, "media_kind", &context)?;
         if reference_contract::named::<MotionKind>(media_kind).is_none() {
             bail!("{context}: media kind '{media_kind}' is not a canonical motion kind");
@@ -45,8 +54,8 @@ pub(crate) fn validate_motion(
         {
             bail!("{context}: complete evidence requires verified typed motion provenance");
         }
-        if !py_truthy(item.get("measured")) {
-            bail!("{context}: asset was never measured; run verify-reference-evidence.py");
+        if !crate::commands::reference_contract::measured(item.get("measured")) {
+            bail!("{context}: asset has no recorded measurement; measure the retained file before indexing it");
         }
         let source_url = required_text(item, "source_url", &context)?;
         if !url_ok(source_url) {
@@ -120,7 +129,7 @@ pub(crate) fn validate_states(
             if let Err(reason) = verified_provenance.supports_value(item) {
                 bail!("{context}: semantic state name lacks independently verified observation provenance: {reason}");
             }
-            if !py_truthy(item.get("source_motion_path"))
+            if !crate::commands::reference_contract::stated(item.get("source_motion_path"))
                 || !item.get("source_match").is_some_and(Value::is_object)
             {
                 bail!("{context}: state has no recomputed relationship to verified motion");

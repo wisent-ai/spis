@@ -1,8 +1,10 @@
 use super::*;
 
-mod drift;
+mod frame_search;
 mod motion;
 mod states;
+
+use crate::commands::reference_contract::{measured, stated};
 
 /// The record as measured, apart from the date it carries: what decides
 /// whether a measurement changed anything.
@@ -68,7 +70,7 @@ pub(crate) fn measure_value(
         .into_iter()
         .filter(|key| key != "steps")
     {
-        if !truthy(journey.as_ref().and_then(|journey| journey.get(&key))) {
+        if !stated(journey.as_ref().and_then(|journey| journey.get(&key))) {
             gaps.push(format!("journey missing {key}"));
         }
     }
@@ -90,7 +92,7 @@ pub(crate) fn measure_value(
         let missing: Vec<&str> = interaction_fields
             .iter()
             .map(String::as_str)
-            .filter(|f| !truthy(item.get(f)))
+            .filter(|f| !stated(item.get(f)))
             .collect();
         if !missing.is_empty() {
             // Named by its place in the record, which it always has; its
@@ -172,7 +174,7 @@ pub(crate) fn measure_value(
                 let missing: Vec<&str> = required
                     .iter()
                     .map(String::as_str)
-                    .filter(|f| !truthy(obj.get(*f)))
+                    .filter(|f| !stated(obj.get(*f)))
                     .collect();
                 if !missing.is_empty() && !missing_reported {
                     gaps.push(format!("motion analysis missing {}", missing.join(", ")));
@@ -206,7 +208,7 @@ pub(crate) fn measure_value(
             requirements.min_accessibility_observations, requirements.profile
         ));
     }
-    if !truthy(access.as_ref().and_then(|access| access.get("measured"))) {
+    if !measured(access.as_ref().and_then(|access| access.get("measured"))) {
         gaps.push("accessibility never measured against the product".to_string());
     }
 
@@ -214,7 +216,7 @@ pub(crate) fn measure_value(
     let mut classes: BTreeSet<String> = BTreeSet::new();
     if let Some(entries) = data.get("motion").and_then(|v| v.as_array()) {
         for e in entries {
-            if truthy(e.get("measured")) {
+            if measured(e.get("measured")) {
                 if let Some(p) = e.get("provenance_class").and_then(|v| v.as_str()) {
                     classes.insert(p.to_string());
                 }
