@@ -189,14 +189,16 @@ pub fn run_bridge_command(invocation: &BridgeInvocation<'_>) -> Result<Vec<u8>, 
         });
     }
     let io_failed = |message: String| BridgeFailure::new("io-failed", message);
+    // A join error is the pipe thread's panic, which carries no io cause of
+    // its own; the pipe it served is named.
     stdin_result
-        .map_err(|_| io_failed("official Weles bridge stdin writer failed".to_string()))?
+        .map_err(|_| io_failed("official Weles bridge stdin writer thread panicked".to_string()))?
         .map_err(io_failed)?;
     let stdout = stdout_result
-        .map_err(|_| io_failed("official Weles bridge stdout reader failed".to_string()))?
+        .map_err(|_| io_failed("official Weles bridge stdout reader thread panicked".to_string()))?
         .map_err(io_failed)?;
     stderr_result
-        .map_err(|_| io_failed("official Weles bridge stderr reader failed".to_string()))?
+        .map_err(|_| io_failed("official Weles bridge stderr reader thread panicked".to_string()))?
         .map_err(io_failed)?;
     Ok(stdout)
 }
