@@ -82,7 +82,8 @@ fn asks_help(rest: &[String]) -> bool {
 fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
     let Some(command) = SUBCOMMANDS.iter().find(|candidate| candidate.name == name) else {
         eprintln!("unknown subcommand: {name}");
-        write_usage(&mut std::io::stderr());
+        write_usage(&mut std::io::stderr())
+            .context("print the subcommand list beside the refusal")?;
         return Ok(false);
     };
     // Help is answered before the corpus is activated and before the module
@@ -125,10 +126,16 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
 
 static INVOCATION_DIR: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
 
+/// Remember the directory the command was typed in. The first call wins:
+/// a later call may come after the corpus was activated and the process
+/// moved into it, which is not where the operator typed.
 fn remember_invocation_dir() -> Result<()> {
+    if INVOCATION_DIR.get().is_some() {
+        return Ok(());
+    }
     let here =
         std::env::current_dir().context("read the working directory the command was typed in")?;
-    let _ = INVOCATION_DIR.set(here);
+    INVOCATION_DIR.get_or_init(|| here);
     Ok(())
 }
 
@@ -149,23 +156,37 @@ pub(crate) fn operator_path(path: &str) -> std::path::PathBuf {
 pub fn run(args: &[String]) -> Result<bool> {
     match args.split_first() {
         None => {
-            write_usage(&mut std::io::stdout());
+            stdout_file()
+                .and_then(|mut out| write_usage(&mut out))
+                .context("print the subcommand list")?;
             Ok(true)
         }
         Some((name, _)) if matches!(name.as_str(), "help" | "--help" | "-h") => {
-            write_usage(&mut std::io::stdout());
+            stdout_file()
+                .and_then(|mut out| write_usage(&mut out))
+                .context("print the subcommand list")?;
             Ok(true)
         }
         Some((name, rest)) => dispatch(name, rest),
     }
 }
 
+/// Standard output as a file of its own. Rust's `stdout()` answers a write to
+/// a closed descriptor as written, so a list printed there would vanish
+/// behind a success; a duplicate of the descriptor refuses a closed one.
+fn stdout_file() -> std::io::Result<std::fs::File> {
+    use std::os::fd::AsFd;
+    Ok(std::fs::File::from(
+        std::io::stdout().as_fd().try_clone_to_owned()?,
+    ))
+}
+
 /// The subcommand list: to stdout when it was asked for, to stderr beside an
 /// unknown subcommand's refusal.
-fn write_usage(out: &mut dyn std::io::Write) {
-    let _ = writeln!(out, "spis — evidence-grade reference corpus tooling\n\nUSAGE:\n  spis <subcommand> [flags]\n\nSUBCOMMANDS:");
+fn write_usage(out: &mut dyn std::io::Write) -> std::io::Result<()> {
+    writeln!(out, "spis — evidence-grade reference corpus tooling\n\nUSAGE:\n  spis <subcommand> [flags]\n\nSUBCOMMANDS:")?;
     for command in SUBCOMMANDS {
-        let _ = writeln!(out, "  {} — {}", command.name, command.description);
+        writeln!(out, "  {} — {}", command.name, command.description)?;
     }
-    let _ = writeln!(out, "\nRun `spis <subcommand> --help` for details.");
+    writeln!(out, "\nRun `spis <subcommand> --help` for details.")
 }
