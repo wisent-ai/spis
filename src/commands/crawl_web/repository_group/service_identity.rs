@@ -153,7 +153,7 @@ pub(crate) fn attempt_binding(
         )?;
     }
     ensure(
-        std::num::NonZeroU32::new(binding.attempt).is_some(),
+        binding.attempt != 0,
         "web_attempt_component_invalid",
         "the attempt number must be at least one",
     )?;

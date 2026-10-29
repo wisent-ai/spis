@@ -72,7 +72,8 @@ pub(crate) fn submit_worker(
     if source_revision()? != manifest.source_revision {
         bail!("documentation coordinator revision does not match immutable runtime manifest");
     }
-    let _ = manifest_attempt(manifest)?;
+    // Called for its refusal: a manifest without a valid attempt stops here.
+    manifest_attempt(manifest)?;
     let mut worker_options = forwarded.to_vec();
     if !worker_options
         .iter()

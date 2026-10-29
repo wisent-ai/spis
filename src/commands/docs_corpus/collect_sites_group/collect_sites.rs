@@ -30,8 +30,7 @@ pub(crate) fn collect_sites() -> Result<Vec<SiteInfo>> {
                 outcome
                     .get("text_bytes")
                     .and_then(Value::as_u64)
-                    .and_then(std::num::NonZeroU64::new)
-                    .is_some()
+                    .is_some_and(|value| value != 0)
             })
             .count();
         let target_count = corpus

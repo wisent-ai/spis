@@ -138,12 +138,13 @@ pub(super) fn remove(rest: &[String]) -> Result<()> {
         .and_then(Value::as_array)
         .with_context(|| format!("{}/sources.json states no examples list", directory.display()))?;
     let references_dir = directory.join("references");
-    let stored = match present(&references_dir)? {
-        true => std::fs::read_dir(&references_dir)
+    let stored = if present(&references_dir)? {
+        std::fs::read_dir(&references_dir)
             .with_context(|| format!("listing {}", references_dir.display()))?
             .collect::<std::io::Result<Vec<_>>>()
-            .with_context(|| format!("listing {}", references_dir.display()))?,
-        false => Vec::new(),
+            .with_context(|| format!("listing {}", references_dir.display()))?
+    } else {
+        Vec::new()
     };
     if !(examples.is_empty() && stored.is_empty()) && !args.force {
         bail!(

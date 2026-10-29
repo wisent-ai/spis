@@ -227,14 +227,13 @@ pub(crate) fn persist(run: &mut Value) -> Result<()> {
         } else if let Some(expected) = expected {
             bail!("crawl run {run_id} disappeared before revision {expected} could be persisted");
         }
-        // A run that states no revision is persisted as its first; a stated
-        // revision is advanced by one.
-        let step = std::num::NonZeroU64::MIN.get();
+        // A run's `mutation_revision` counts the writes of the run document:
+        // the first write is revision 1, each later one the next integer.
         let next = match expected {
             Some(revision) => revision
-                .checked_add(step)
+                .checked_add(1)
                 .with_context(|| format!("crawl run {run_id} revision {revision} cannot advance"))?,
-            None => step,
+            None => 1,
         };
         let mut staged = run.clone();
         sync_attempt_history(&mut staged);

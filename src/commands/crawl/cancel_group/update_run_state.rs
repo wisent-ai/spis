@@ -90,11 +90,8 @@ pub(crate) fn rearm_record_attempt(
             .context("terminal record retains no runtime manifest to re-arm")?;
         let mut manifest: RuntimeManifest = serde_json::from_value(retained)
             .context("terminal record's retained manifest is not a typed runtime manifest")?;
-        // The next attempt is the first number after this one.
-        manifest.attempt = manifest
-            .attempt
-            .checked_add(std::num::NonZeroU32::MIN.get())
-            .context("record has exhausted the attempt counter")?;
+        manifest.attempt = crate::commands::crawl::next_attempt(manifest.attempt)
+            .with_context(|| format!("record has exhausted the attempt counter at attempt {}", manifest.attempt))?;
         manifest.execution_identity = None;
         let reference = reference_path(&manifest.catalog, &manifest.record)?;
         let bytes = std::fs::read(&reference)

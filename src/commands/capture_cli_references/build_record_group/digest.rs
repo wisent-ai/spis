@@ -25,7 +25,7 @@ pub(crate) fn write_cast(
     );
     let mut out = String::from(&header);
     for (stamp, text) in events {
-        out.push_str(&format!("[{}, \"o\", {}]\n", g(*stamp), json_str(text)));
+        out.push_str(&format!("[{stamp}, \"o\", {}]\n", json_str(text)));
     }
     std::fs::write(path, out).with_context(|| format!("write {}", path.display()))
 }
@@ -93,7 +93,7 @@ pub(crate) fn write_media(run: &Run, ref_dir: &Path) -> Result<Value> {
                  at {} columns, last {} rows, Menlo {}px. It is a render of the cast \
                  at that named point, not a separate capture, and re-rendering the same cast \
                  produces the same bytes.",
-                g(ts),
+                ts,
                 terminal().columns,
                 terminal().rows,
                 terminal().font_px

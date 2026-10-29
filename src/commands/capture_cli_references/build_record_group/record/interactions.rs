@@ -120,7 +120,7 @@ pub(super) fn interactions(f: &Facts) -> Vec<Value> {
                 "recovery": if f.names_next_action {
                     format!(
                         "The refusal names the next action ({}); running `{}` recovers.",
-                        py_repr(phrase),
+                        format!("{phrase:?}"),
                         f.recovery_command
                     )
                 } else {

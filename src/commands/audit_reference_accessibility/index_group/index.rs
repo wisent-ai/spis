@@ -126,13 +126,6 @@ pub(crate) fn looks_like_slug(value: &str) -> bool {
         })
 }
 
-pub(crate) fn is_hex64_lower(value: &str) -> bool {
-    value.len() == 64
-        && value
-            .bytes()
-            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
-}
-
 // ---------------------------------------------------------------------------
 // Strict JSON parsing with duplicate-key detection
 

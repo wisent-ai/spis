@@ -176,8 +176,7 @@ pub(crate) fn planned_record(
         record_key,
         // finalize_manifest_identity derives the correlation and Stado run ids.
         correlation_id: String::new(),
-        // A record's first attempt is the least attempt number.
-        attempt: std::num::NonZeroU32::MIN.get(),
+        attempt: crate::commands::crawl::FIRST_ATTEMPT,
         attempt_id: String::new(),
         stado_run_id: String::new(),
         artifact_uri: format!("{base_uri}/artifacts.tar.gz"),

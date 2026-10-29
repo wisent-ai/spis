@@ -55,9 +55,9 @@ pub(crate) fn validate_artifacts(
     }
     let expected_hash = require_summary_field(&summary, "sha256", reference)?
         .as_str()
-        .filter(|h| is_hex64_lower(h))
+        .filter(|h| crate::weles_provenance::is_sha256(h))
         .ok_or_else(|| {
-            anyhow!("{rid}: axe-summary.json.sha256: expected 64 lowercase hex characters")
+            anyhow!("{rid}: axe-summary.json.sha256: expected a lowercase hex SHA-256 digest")
         })?;
     if raw_hash != expected_hash {
         bail!(

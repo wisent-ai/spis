@@ -17,9 +17,10 @@ fn stated_code(stderr: &[u8]) -> Result<String, String> {
     let value = serde_json::from_slice::<Value>(stderr).map_err(|error| format!("its stderr is not JSON ({error})"))?;
     let code = value.get("code").and_then(Value::as_str).ok_or_else(|| format!("its stderr states no code: {value}"))?;
     let valid = !code.is_empty() && code.bytes().all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'));
-    match valid {
-        true => Ok(code.to_string()),
-        false => Err(format!("its stated code {code:?} is not letters, digits, - and _")),
+    if valid {
+        Ok(code.to_string())
+    } else {
+        Err(format!("its stated code {code:?} is not letters, digits, - and _"))
     }
 }
 

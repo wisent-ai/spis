@@ -220,3 +220,14 @@ pub(crate) fn update_run_state(run: &mut Value) {
     });
     write_or_refuse(run, written);
 }
+
+/// Spis numbers the attempts of one record from one, in the order they are
+/// armed, so an attempt's number counts the attempts made so far; it is
+/// the `attempt` of a runtime manifest and the order `crawl status` lists.
+pub(crate) const FIRST_ATTEMPT: u32 = 1;
+
+/// The number of the attempt armed after `attempt`: the next integer, or
+/// nothing when the counter is exhausted.
+pub(crate) fn next_attempt(attempt: u32) -> Option<u32> {
+    attempt.checked_add(1)
+}

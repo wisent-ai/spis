@@ -112,13 +112,13 @@ pub(crate) struct RetrievalCounts {
 /// completion status differ from durable outcomes". Two readings of one rule
 /// is how a site ends up neither retrieved nor reported.
 pub(crate) fn retrieval_status(counts: &RetrievalCounts) -> &'static str {
-    if std::num::NonZeroUsize::new(counts.target_count).is_none() {
+    if counts.target_count == 0 {
         "retrieval_empty"
-    } else if std::num::NonZeroUsize::new(counts.retrieved_count).is_none() {
+    } else if counts.retrieved_count == 0 {
         "retrieval_empty"
-    } else if std::num::NonZeroUsize::new(counts.text_page_count).is_none() {
+    } else if counts.text_page_count == 0 {
         "retrieval_no_text"
-    } else if std::num::NonZeroUsize::new(counts.diagnostic_count).is_some()
+    } else if counts.diagnostic_count != 0
         || counts.retrieved_count != counts.target_count
         || counts.ok_count != counts.target_count
         || counts.text_page_count != counts.target_count
@@ -165,7 +165,7 @@ pub(crate) fn build_report(
             .checked_add(outcome.downloaded_bytes)
             .context("documentation report download byte counter overflow")?;
         text_page_count += usize::from(outcome.text_bytes
-            .and_then(std::num::NonZeroU64::new).is_some());
+            .is_some_and(|value| value != 0));
         if let Some(diagnostic) = &outcome.diagnostic {
             diagnostics.push(serde_json::to_value(diagnostic)?);
         }

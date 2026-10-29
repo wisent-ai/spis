@@ -3,7 +3,7 @@ use super::*;
 pub(crate) fn write_index() -> Result<Value> {
     let records = load_records()?;
     let mut references = Vec::new();
-    for (i, (path, record)) in records.iter().enumerate() {
+    for ((path, record), ordinal) in records.iter().zip(crate::commands::reference_contract::ordinals()) {
         let parent = path
             .parent()
             .and_then(|p| p.file_name())
@@ -28,7 +28,7 @@ pub(crate) fn write_index() -> Result<Value> {
             .map(Vec::len)
             .with_context(|| format!("{} states no evidence_gaps list", path.display()))?;
         references.push(json!({
-            "index": records[..=i].len(),
+            "index": ordinal,
             "name": record["name"].clone(),
             "path": format!("references/{parent}/reference.json"),
             "evidence_status": evidence_status,
@@ -61,14 +61,14 @@ pub(crate) fn cmd_list() -> Result<()> {
     println!("Products of the plan on this host ({}):", host_sentence()?);
     println!();
     let mut found = Vec::new();
-    for (index, product) in products().iter().enumerate() {
+    for (product, ordinal) in products().iter().zip(crate::commands::reference_contract::ordinals()) {
         let (path, outcome) = quick_version(product);
         let path = match path {
             Some(p) => p,
             None => {
                 println!(
                     "{:2}. {:<26} MISSING (`{}` not on PATH)",
-                    products()[..=index].len(),
+                    ordinal,
                     product.name,
                     product.binary
                 );
@@ -90,7 +90,7 @@ pub(crate) fn cmd_list() -> Result<()> {
         };
         println!(
             "{:2}. {:<26} {:<38} {}",
-            products()[..=index].len(),
+            ordinal,
             product.name,
             product.repository,
             path
@@ -190,11 +190,10 @@ pub fn run(rest: &[String]) -> Result<()> {
         if !missing.is_empty() {
             bail!("not on PATH: {}", missing.join(", "));
         }
-        for (i, product) in products().iter().enumerate() {
+        for (product, ordinal) in products().iter().zip(crate::commands::reference_contract::ordinals()) {
             if !selected.iter().any(|s| std::ptr::eq(*s, product)) {
                 continue;
             }
-            let ordinal = products()[..=i].len();
             println!("[{:02}/{:02}] {}", ordinal, products().len(), product.name);
             let run = capture(ordinal, product)?;
             let measured = measure(&run);

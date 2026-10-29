@@ -170,10 +170,11 @@ pub(crate) fn compact_submission(
     }
     // The pinned host and the repository ref are per job in the emitted
     // receipt, not per receipt, so they are compared where they live.
-    // The index must address the one command this side submitted.
-    let addresses_sent_command =
-        usize::try_from(job.command_index).is_ok_and(|index| [&job.command].get(index).is_some());
-    if !addresses_sent_command
+    // Spis submits exactly one command per record, the first entry of the
+    // submission's command list; Stado counts `command_index` from 0
+    // (stado-rs/src/cli/submit.rs), so the receipt must name that entry.
+    const SUBMITTED_COMMAND_INDEX: u64 = 0;
+    if job.command_index != SUBMITTED_COMMAND_INDEX
         || !crate::weles_provenance::is_sha256(&job.command_digest)
         || !crate::weles_provenance::is_sha256(&job.job_key)
         || job.submission_request_digest != receipt.request_digest

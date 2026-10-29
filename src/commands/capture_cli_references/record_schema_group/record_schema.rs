@@ -116,7 +116,7 @@ pub(crate) fn load_plan(path: &Path) -> Result<&'static Plan> {
     if plan.products.is_empty() {
         bail!("capture plan {} declares no products", path.display());
     }
-    let positive = |value: usize| std::num::NonZeroUsize::new(value).is_some();
+    let positive = |value: usize| value != 0;
     if !positive(plan.terminal.columns)
         || !positive(plan.terminal.rows)
         || !positive(plan.terminal.font_px)
@@ -177,32 +177,3 @@ pub(crate) fn terminal() -> &'static Terminal {
     &plan().terminal
 }
 
-// --------------------------------------------------------------- small utils
-
-/// Python `%g`-style float rendering (shortest form, no trailing `.0`), with
-/// the exponent bounds Python's float repr uses.
-pub(crate) fn g(x: f64) -> String {
-    // Zero renders bare: https://docs.python.org/3/library/string.html#format-specification-mini-language
-    if x == 0.0 {
-        return "0".to_string();
-    }
-    // Scientific outside 1e-4 <= |x| < 1e16: https://docs.python.org/3/library/string.html#format-specification-mini-language
-    if x.abs() >= 1e16 || x.abs() < 1e-4 {
-        return format!("{x:e}");
-    }
-    let s = format!("{x}");
-    if s.contains('.') {
-        s.trim_end_matches('0').trim_end_matches('.').to_string()
-    } else {
-        s
-    }
-}
-
-/// Python-style `repr()` of a string: single quotes unless it contains one.
-pub(crate) fn py_repr(s: &str) -> String {
-    if s.contains('\'') {
-        format!("{s:?}")
-    } else {
-        format!("'{s}'")
-    }
-}

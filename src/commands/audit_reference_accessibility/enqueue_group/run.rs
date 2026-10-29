@@ -58,11 +58,8 @@ pub fn run(rest: &[String]) -> Result<()> {
     }
     let target = crate::commands::crawl::weles_capture_host(target, "--target")?;
 
-    let log = |line: &str| {
-        eprintln!("{line}");
-        use std::io::Write;
-        let _ = std::io::stderr().flush();
-    };
+    // Rust's stderr is unbuffered: each line is written when printed.
+    let log = |line: &str| eprintln!("{line}");
 
     // ---- planning phase: failures exit 2 --------------------------------
     let plan: Map<String, Value>;

@@ -197,7 +197,7 @@ pub(crate) fn timing_description(measured: &Value) -> String {
     format!(
         "The six submitted commands each completed between {} s and {} s; \
          the other pauses are the recorder typing and the deliberate Ctrl-C pause.",
-        g(fastest),
-        g(slowest)
+        fastest,
+        slowest
     )
 }

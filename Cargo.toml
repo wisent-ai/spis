@@ -73,3 +73,10 @@ stado-wait = { git = "https://github.com/wisent-ai/stado", rev = "692c0438d24117
 
 [profile.release]
 strip = true
+# Defect classes refused where they are written (`cargo clippy`): a bool
+# matched instead of branched on, and a must-use answer (a removal, a wait,
+# a write, a thread's end) dropped with `let _ =`.
+[lints.clippy]
+match_bool = "deny"
+let_underscore_must_use = "deny"
+

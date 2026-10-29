@@ -151,7 +151,7 @@ pub(super) fn status(code: Option<i64>) -> String {
 /// one it did not record is "(time not recorded)", never a zero second.
 pub(super) fn seconds(value: &Value) -> String {
     match value.as_f64() {
-        Some(seconds) => g(seconds),
+        Some(seconds) => seconds.to_string(),
         None => "(time not recorded)".to_string(),
     }
 }

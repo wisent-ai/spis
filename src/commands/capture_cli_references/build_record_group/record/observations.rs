@@ -20,7 +20,7 @@ pub(super) fn journey_steps(f: &Facts) -> Vec<Value> {
                 "user_action": format!("Open the recorded pseudo-terminal at `{}` in an empty scratch directory.", PROMPT.trim()),
                 "system_response": "A clean prompt appears; no project, credential, host or queue target is selected.",
                 "state": "ready prompt",
-                "evidence": format!("media/session.cast at 0–{} s", g(steps["version"]["started_at"].as_f64().unwrap_or(0.0))),
+                "evidence": format!("media/session.cast at 0–{} s", super::facts::seconds(&steps["version"]["started_at"])),
             })
         },
         {
@@ -167,7 +167,7 @@ pub(super) fn accessibility<'a>(f: &Facts<'a>) -> Accessibility<'a> {
             if names_next {
                 format!(
                     "names the next action ({}) in the same output.",
-                    py_repr(phrase)
+                    format!("{phrase:?}")
                 )
             } else {
                 "does not name a next action anywhere in its output.".to_string()
