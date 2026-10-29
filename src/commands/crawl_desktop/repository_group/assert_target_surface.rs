@@ -39,46 +39,9 @@ pub(crate) fn readiness_observation(
         .execution_identity
         .as_ref()
         .context("desktop runtime manifest has no resolved execution identity")?;
-    let proof = manifest
-        .prepared_proof
-        .as_ref()
-        .context("desktop runtime manifest has no prepared-runtime proof")?;
-    let device = identity
-        .device_id
-        .as_deref()
-        .context("desktop execution identity has no exact device id")?;
-    let proof_value = serde_json::to_value(proof)?;
-    if proof.product_identifier != product
-        || proof.device_id.as_deref() != Some(device)
-        || proof.pending_permission_prompts != 0
-        || proof.pending_notification_prompts != 0
-        || !manifest.constraints.no_system_permission_prompts
-        || !manifest.constraints.no_notifications
-        || [
-            "notification_delivery_disabled",
-            "permission_prompt_invocation_disabled",
-            "notification_prompt_invocation_disabled",
-        ]
-        .iter()
-        .any(|field| proof_value.get(*field).and_then(Value::as_bool) != Some(true))
-    {
-        bail!(
-            "prepared-runtime proof does not bind the exact desktop app/device with prompt invocation and notification delivery disabled"
-        );
-    }
+    let bound = crate::commands::crawl::bound_proof(manifest, identity, product)?;
     let mut readiness = Command::new(&helper.path);
-    readiness.args([
-        "verify",
-        "--json",
-        "--product",
-        product,
-        "--device",
-        device,
-        "--evidence-uri",
-        &proof.evidence_uri,
-        "--evidence-sha256",
-        &proof.evidence_sha256,
-    ]);
+    readiness.args(bound.verify_args());
     let output = crate::commands::crawl::command_output(
         &mut readiness,
         "run fresh desktop runtime-readiness verification",
@@ -93,32 +56,7 @@ pub(crate) fn readiness_observation(
     }
     let observation: Value = serde_json::from_slice(&output.stdout)
         .context("fresh desktop runtime-readiness output is not JSON")?;
-    if observation.get("ready").and_then(Value::as_bool) != Some(true)
-        || observation
-            .get("product_identifier")
-            .and_then(Value::as_str)
-            != Some(product)
-        || observation.get("device_id").and_then(Value::as_str) != Some(device)
-        || observation
-            .get("pending_permission_prompts")
-            .and_then(Value::as_u64)
-            != Some(0)
-        || observation
-            .get("pending_notification_prompts")
-            .and_then(Value::as_u64)
-            != Some(0)
-        || [
-            "notification_delivery_disabled",
-            "permission_prompt_invocation_disabled",
-            "notification_prompt_invocation_disabled",
-        ]
-        .iter()
-        .any(|field| observation.get(*field).and_then(Value::as_bool) != Some(true))
-        || observation.get("evidence_sha256").and_then(Value::as_str)
-            != Some(proof.evidence_sha256.as_str())
-    {
-        bail!("fresh desktop runtime-readiness observation did not preserve the exact prompt-disabled prepared state: {observation}");
-    }
+    bound.attested(&observation)?;
     Ok(observation)
 }
 

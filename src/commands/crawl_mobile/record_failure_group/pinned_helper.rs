@@ -69,54 +69,9 @@ pub(crate) fn readiness_observation(
         .execution_identity
         .as_ref()
         .context("mobile runtime manifest has no exact execution identity")?;
-    let expected_version = execution
-        .product_version
-        .as_deref()
-        .context("mobile execution identity has no installed product version")?;
-    let expected_sha = execution
-        .executable_sha256
-        .as_deref()
-        .context("mobile execution identity has no installed package/binary SHA-256")?;
-    let device = execution
-        .device_id
-        .as_deref()
-        .context("mobile execution identity has no exact device id")?;
-    let proof = manifest
-        .prepared_proof
-        .as_ref()
-        .context("mobile runtime manifest has no prepared-runtime proof")?;
-    let proof_value = serde_json::to_value(proof)?;
-    if proof.product_identifier != app_id
-        || proof.device_id.as_deref() != Some(device)
-        || proof.pending_permission_prompts != 0
-        || proof.pending_notification_prompts != 0
-        || !manifest.constraints.no_system_permission_prompts
-        || !manifest.constraints.no_notifications
-        || [
-            "notification_delivery_disabled",
-            "permission_prompt_invocation_disabled",
-            "notification_prompt_invocation_disabled",
-        ]
-        .iter()
-        .any(|field| proof_value.get(*field).and_then(Value::as_bool) != Some(true))
-    {
-        bail!(
-            "prepared-runtime proof does not bind the exact mobile app/device with prompt invocation and notification delivery disabled"
-        );
-    }
+    let bound = crate::commands::crawl::bound_proof(manifest, execution, app_id)?;
     let mut readiness = Command::new(&helper.path);
-    readiness.args([
-        "verify",
-        "--json",
-        "--product",
-        app_id,
-        "--device",
-        device,
-        "--evidence-uri",
-        &proof.evidence_uri,
-        "--evidence-sha256",
-        &proof.evidence_sha256,
-    ]);
+    readiness.args(bound.verify_args());
     let output = crate::commands::crawl::command_output(
         &mut readiness,
         "run fresh mobile runtime-readiness verification",
@@ -131,37 +86,7 @@ pub(crate) fn readiness_observation(
     }
     let observation: Value = serde_json::from_slice(&output.stdout)
         .context("fresh mobile runtime-readiness output is not JSON")?;
-    if observation.get("ready").and_then(Value::as_bool) != Some(true)
-        || observation
-            .get("product_identifier")
-            .and_then(Value::as_str)
-            != Some(app_id)
-        || observation.get("device_id").and_then(Value::as_str) != Some(device)
-        || observation
-            .get("pending_permission_prompts")
-            .and_then(Value::as_u64)
-            != Some(0)
-        || observation
-            .get("pending_notification_prompts")
-            .and_then(Value::as_u64)
-            != Some(0)
-        || observation.get("evidence_sha256").and_then(Value::as_str)
-            != Some(proof.evidence_sha256.as_str())
-        || observation.get("product_version").and_then(Value::as_str) != Some(expected_version)
-        || !observation
-            .get("executable_sha256")
-            .and_then(Value::as_str)
-            .is_some_and(|value| value.eq_ignore_ascii_case(expected_sha))
-        || [
-            "notification_delivery_disabled",
-            "permission_prompt_invocation_disabled",
-            "notification_prompt_invocation_disabled",
-        ]
-        .iter()
-        .any(|field| observation.get(*field).and_then(Value::as_bool) != Some(true))
-    {
-        bail!("fresh mobile readiness identity/safety observation differs from the immutable manifest: {observation}");
-    }
+    bound.attested(&observation)?;
     Ok(observation)
 }
 
@@ -170,35 +95,37 @@ pub(crate) fn action_block_reason(action: &Action) -> Option<&'static str> {
     action.safety.withheld()
 }
 
-/// The attribute `field` of `tag` when it names the element.
-fn named_by(tag: &str, field: &'static str) -> Option<(&'static str, String)> {
-    attribute(tag, field)
+/// The attribute `field` of `element` when it names the element.
+fn named_by(element: &crate::html::Element, field: &'static str) -> Option<(&'static str, String)> {
+    element
+        .attribute(field)
         .filter(|value| !value.trim().is_empty())
-        .map(|value| (field, value))
+        .map(|value| (field, value.to_string()))
 }
 
 /// Every named element of `source`, each with what pressing it does as
 /// Brama judged it (`control_safety`). A screen nobody could judge is
-/// refused, never pressed.
+/// refused, never pressed. The page source is read through the one reader
+/// every Spis command uses (`crate::html`), so a quoted '>', a single-quoted
+/// value and every character reference read as the driver wrote them.
 pub(crate) fn actions(source: &str, platform: Platform) -> Result<Vec<Action>> {
-    let tags = Regex::new(r"<[^!?][^>]*>").expect("static tag regex");
     let mut found = Vec::new();
     let mut seen = HashSet::new();
-    for tag in tags.find_iter(source).map(|value| value.as_str()) {
-        let node_name: String = tag
-            .trim_start_matches('<')
-            .chars()
-            .take_while(|character| {
-                character.is_ascii_alphanumeric() || matches!(character, '.' | '_' | '-')
-            })
-            .collect();
-        let kind = attribute(tag, "type").unwrap_or_else(|| node_name.clone());
-        if attribute(tag, "enabled").as_deref() == Some("false") {
+    for element in crate::html::elements(source, "*")? {
+        // iOS states an element's type in `type`, Android its widget class in
+        // `class`; the parser lowers the element name's case, so the name is
+        // read only when neither is stated.
+        let kind = element
+            .attribute("type")
+            .or_else(|| element.attribute("class"))
+            .unwrap_or(&element.name)
+            .to_string();
+        if element.attribute("enabled") == Some("false") {
             continue;
         }
         // Android says which elements take a tap; an input takes text.
         if matches!(platform, Platform::Android)
-            && attribute(tag, "clickable").as_deref() != Some("true")
+            && element.attribute("clickable") != Some("true")
             && !kind.ends_with("EditText")
         {
             continue;
@@ -206,14 +133,14 @@ pub(crate) fn actions(source: &str, platform: Platform) -> Result<Vec<Action>> {
         // The attribute that names an element on each platform, in the
         // order its accessibility tree states them.
         let named = match platform {
-            Platform::Android => named_by(tag, "resource-id")
-                .or_else(|| named_by(tag, "content-desc"))
-                .or_else(|| named_by(tag, "hint"))
-                .or_else(|| named_by(tag, "text")),
-            Platform::Ios => named_by(tag, "name")
-                .or_else(|| named_by(tag, "label"))
-                .or_else(|| named_by(tag, "placeholder"))
-                .or_else(|| named_by(tag, "value")),
+            Platform::Android => named_by(&element, "resource-id")
+                .or_else(|| named_by(&element, "content-desc"))
+                .or_else(|| named_by(&element, "hint"))
+                .or_else(|| named_by(&element, "text")),
+            Platform::Ios => named_by(&element, "name")
+                .or_else(|| named_by(&element, "label"))
+                .or_else(|| named_by(&element, "placeholder"))
+                .or_else(|| named_by(&element, "value")),
         };
         let Some((field, label)) = named else {
             continue;

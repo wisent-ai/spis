@@ -63,14 +63,6 @@ pub(crate) fn ios_bundle_id_for(product_url: &str) -> Result<(String, String)> {
     Ok((bundle.to_string(), url))
 }
 
-pub(crate) fn attribute(tag: &str, name: &str) -> Option<String> {
-    let pattern = Regex::new(&format!(r#"\b{}="([^"]*)""#, regex::escape(name))).ok()?;
-    pattern
-        .captures(tag)
-        .and_then(|capture| capture.get(1))
-        .map(|value| value.as_str().replace("&quot;", "\"").replace("&amp;", "&"))
-}
-
 pub(crate) fn xpath_literal(value: &str) -> Option<String> {
     if value.is_empty() || value.contains('\'') || value.contains('\n') || value.len() > 200 {
         return None;

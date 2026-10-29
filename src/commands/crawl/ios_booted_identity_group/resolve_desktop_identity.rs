@@ -68,7 +68,7 @@ pub(crate) fn resolve_desktop_identity(
         bail!("shasum printed no digest for {executable_path}");
     };
     let digest = digest.to_ascii_lowercase();
-    if digest.len() != SHA256_HEX_DIGITS || !digest.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+    if !crate::weles_provenance::is_sha256(&digest) {
         bail!("desktop executable SHA-256 is invalid");
     }
     let hardware_check = host_probe(host, &["ioreg", "-rd1", "-c", "IOPlatformExpertDevice"]);
@@ -115,119 +115,21 @@ pub(crate) fn resolve_desktop_identity(
     ))
 }
 
-/// Hex digits of a SHA-256 digest: 256 bits, four per digit
-/// (FIPS 180-4, https://csrc.nist.gov/pubs/fips/180-4/upd1/final).
-const SHA256_HEX_DIGITS: usize = 64;
-
+/// Binds the manifest's prepared-runtime proof to `identity` and has the
+/// host's `stado-runtime-readiness` attest it afresh; the host's answer is
+/// returned as the check's evidence.
 pub(crate) fn prepared_runtime_check(
     manifest: &RuntimeManifest,
     identity: &RuntimeExecutionIdentity,
     host: &str,
 ) -> Result<Value> {
-    let proof = manifest
-        .prepared_proof
-        .as_ref()
-        .context("no independently observed prepared-runtime proof is bound")?;
-    let product = &manifest.runtime_product.identifier;
-    // A proof binds one device; an identity that names none has nothing to
-    // bind it to, and two absent ids are not the same device.
-    let device = identity
-        .device_id
-        .as_deref()
-        .context("the runtime identity names no device, so no prepared-runtime proof can be bound to it")?;
-    if proof.device_id.as_deref() != Some(device) {
-        bail!(
-            "the prepared-runtime proof names device {:?}, not this runtime's {device}",
-            proof.device_id
-        );
-    }
-    if proof.schema != "wisent.runtime-preparation-proof.v1"
-        || proof.product_identifier != *product
-        || proof.observed_by != "stado-runtime-readiness"
-        || !proof.evidence_uri.starts_with("stado://")
-        || identity.product_version.as_deref() != Some(proof.product_version.as_str())
-        || identity.executable_sha256.as_deref() != Some(proof.executable_sha256.as_str())
-        || proof.evidence_sha256.len() != SHA256_HEX_DIGITS
-        || !proof
-            .evidence_sha256
-            .bytes()
-            .all(|byte| byte.is_ascii_hexdigit())
-        || !proof.installed
-        || !proof.first_run_completed
-        || proof.pending_permission_prompts != Default::default()
-        || proof.pending_notification_prompts != Default::default()
-        || !proof.notification_delivery_disabled
-        || !proof.permission_prompt_invocation_disabled
-        || !proof.notification_prompt_invocation_disabled
-        || !is_rfc3339_utc(&proof.observed_at)
-    {
-        bail!("prepared-runtime proof does not bind the exact product with an RFC 3339 UTC observation time, first run completed, zero pending prompts, disabled permission/notification prompt invocation, and disabled notification delivery");
-    }
-    let check = host_probe(
-        host,
-        &[
-            "stado-runtime-readiness",
-            "verify",
-            "--json",
-            "--product",
-            product,
-            "--device",
-            device,
-            "--evidence-uri",
-            &proof.evidence_uri,
-            "--evidence-sha256",
-            &proof.evidence_sha256,
-        ],
-    );
+    let bound = crate::commands::crawl::bound_proof(manifest, identity, &manifest.runtime_product.identifier)?;
+    let mut probe = vec!["stado-runtime-readiness"];
+    probe.extend(bound.verify_args());
+    let check = host_probe(host, &probe);
     let observation: Value =
         serde_json::from_str(&ready_output(&check, "verify prepared-runtime proof")?)
             .context("prepared-runtime helper output is not JSON")?;
-    if observation.get("schema").and_then(Value::as_str)
-        != Some("wisent.runtime-readiness-observation.v1")
-        || observation.get("ready").and_then(Value::as_bool) != Some(true)
-        || observation
-            .get("product_identifier")
-            .and_then(Value::as_str)
-            != Some(product)
-        || observation.get("device_id").and_then(Value::as_str) != Some(device)
-        || observation.get("evidence_sha256").and_then(Value::as_str)
-            != Some(proof.evidence_sha256.as_str())
-        || observation
-            .get("pending_permission_prompts")
-            .and_then(Value::as_u64)
-            != Some(Default::default())
-        || observation
-            .get("pending_notification_prompts")
-            .and_then(Value::as_u64)
-            != Some(Default::default())
-        || observation
-            .get("notification_delivery_disabled")
-            .and_then(Value::as_bool)
-            != Some(true)
-        || observation
-            .get("permission_prompt_invocation_disabled")
-            .and_then(Value::as_bool)
-            != Some(true)
-        || observation
-            .get("notification_prompt_invocation_disabled")
-            .and_then(Value::as_bool)
-            != Some(true)
-        || observation.get("product_version").and_then(Value::as_str)
-            != identity.product_version.as_deref()
-        || observation.get("executable_sha256").and_then(Value::as_str)
-            != identity.executable_sha256.as_deref()
-    {
-        bail!("prepared-runtime helper did not attest the exact safe state, version and executable/package digest, including disabled permission and notification prompt invocation");
-    }
+    bound.attested(&observation)?;
     Ok(check)
-}
-
-/// `YYYY-MM-DDTHH:MM:SSZ`, the exact shape `crate::now_iso_utc` emits.
-///
-/// The prepared-runtime proof's `observed_at` used to be a dead field that
-/// implied a staleness check nobody performed. Freshness itself still comes from
-/// the live `stado-runtime-readiness verify` re-check, but the timestamp is now
-/// required to be a well-formed UTC instant rather than arbitrary text.
-pub(crate) fn is_rfc3339_utc(value: &str) -> bool {
-    chrono::NaiveDateTime::parse_from_str(value, "%Y-%m-%dT%H:%M:%SZ").is_ok()
 }
