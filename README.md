@@ -203,6 +203,10 @@ integrity and reachability results go to private `.build/upstream-drift.json`,
 not a tracked corpus-root report. `--skip-network` measures local bytes only;
 `--strict` fails the command, naming the drift found, for missing media, a hash
 mismatch, a changed or unreachable README, or a gone or unresolved source.
+A source counts as gone when it answers 404, 410 or 400, and also when it
+answers 200 with something else: a page its site now redirects to the site's
+home page, or a `.pdf` address now served as an HTML page. The report names
+which, with the address that answered.
 Before any check runs, every `*-examples/sources.json`, `references/` directory
 and `references/*/reference.json` it reads must be readable and parse: one that
 cannot be read, listed, examined or parsed fails the command naming the file

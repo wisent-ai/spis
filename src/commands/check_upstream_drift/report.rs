@@ -173,7 +173,10 @@ pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value
         client.head(url).call()
     });
     match head {
-        Ok(resp) => ("reachable", json!(resp.status())),
+        Ok(resp) => match replaced(url, resp.get_url(), resp.content_type()) {
+            Some(reason) => ("gone", json!(reason)),
+            None => ("reachable", json!(resp.status())),
+        },
         Err(ureq::Error::Status(code, resp)) => {
             if among(GUARDED, resp.status()) {
                 // HEAD refused or rate limited; try the first byte (RFC 9110
@@ -212,6 +215,32 @@ pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value
         }
         Err(error) => ("unresolved", json!(error.to_string())),
     }
+}
+
+/// Why a source that answered 200 no longer serves what was recorded, or
+/// nothing when it does. A site that removes a page often redirects it to its
+/// home page, and a site that serves one page for every path answers a removed
+/// document with that page: both answer 200, and both were counted reachable
+/// while the recorded deck or report was gone.
+pub(crate) fn replaced(requested: &str, answered: &str, content_type: &str) -> Option<String> {
+    let (Ok(requested_url), Ok(answered_url)) =
+        (url::Url::parse(requested), url::Url::parse(answered))
+    else {
+        return None;
+    };
+    let root = |path: &str| path.trim_end_matches('/').is_empty();
+    if !root(requested_url.path()) && root(answered_url.path()) {
+        return Some(format!(
+            "redirected to the site's home page {answered}; the recorded page is no longer there"
+        ));
+    }
+    let pdf = requested_url.path().to_ascii_lowercase().ends_with(".pdf");
+    if pdf && content_type.eq_ignore_ascii_case("text/html") {
+        return Some(format!(
+            "{answered} answers a .pdf address with an HTML page; the recorded document is no longer there"
+        ));
+    }
+    None
 }
 
 /// (url, where, expected_state) for every recorded upstream reference. A

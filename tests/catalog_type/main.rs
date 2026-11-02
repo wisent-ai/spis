@@ -393,6 +393,60 @@ fn curated(run: &mut Run) -> Result<()> {
         code == 0 && !run.corpus.join(CURATED).exists() && !listed.iter().any(|s| s == CURATED),
         json!({"exit": code, "stdout": out, "stderr": error, "listed": listed}),
     )?;
+    replaced_sources(run)
+}
+
+/// `check-upstream-drift` against real public addresses: a page whose site now
+/// redirects it to the home page and a `.pdf` address now served as an HTML
+/// page are gone, a live page is reachable. The corpus holds only this
+/// catalog, so no other source is fetched.
+fn replaced_sources(run: &mut Run) -> Result<()> {
+    const CATALOG: &str = "code-quality-drift-probe-examples";
+    let corpus = run.work.join("drift-corpus");
+    fs::create_dir(&corpus)?;
+    let selector = run.work.join("drift.selector");
+    fs::write(
+        &selector,
+        format!(
+            "catalog: {CATALOG}\ntitle: Drift probe\ndescription: Sources whose sites replaced them.\ncategory: probe\ncount: 3\n\n\
+             Removed article\thttps://openviewpartners.com/blog/the-greatest-sales-deck-ive-ever-seen-its-zuoras-and-its-brilliant-heres-why\n\
+             Removed deck\thttps://karpathy.ai/stateofgpt.pdf\n\
+             Live article\thttps://sequoiacap.com/article/writing-a-business-plan\n"
+        ),
+    )?;
+    let path = selector.to_str().context("selector path is not UTF-8")?.to_string();
+    let binary = run.binary.clone();
+    let (code, _, error) = run.run(
+        &binary,
+        &["curate-catalog", "--selector", &path, "--apply"],
+        &corpus,
+    )?;
+    ensure!(code == 0, "drift probe catalog: {error}");
+    let (code, out, error) = run.run(
+        &binary,
+        &[
+            "check-upstream-drift",
+            "--skip-readme",
+            "--write-report",
+            "--strict",
+        ],
+        &corpus,
+    )?;
+    let report = json_file(&corpus.join(".build/upstream-drift.json"))?;
+    let gone: Vec<String> = report["upstream_urls_gone"]
+        .as_array()
+        .map(|items| items.iter().map(|item| item.to_string()).collect())
+        .unwrap_or_default();
+    let named = |needle: &str| gone.iter().any(|item| item.contains(needle));
+    run.check(
+        "a source redirected home and a .pdf served as HTML are gone; a live page is not",
+        code != 0
+            && gone.len() == 2
+            && named("home page")
+            && named("HTML page")
+            && !named("sequoiacap"),
+        json!({"exit": code, "stdout": out, "stderr": error, "gone": report["upstream_urls_gone"]}),
+    )?;
     Ok(())
 }
 
