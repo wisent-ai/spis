@@ -1,13 +1,13 @@
 {
   "schema": "wisent.example-catalog.v2",
-  "generated_at": "2026-09-01",
-  "catalog_count": 15,
-  "example_count": 750,
+  "generated_at": "2026-11-02",
+  "catalog_count": 16,
+  "example_count": 800,
   "image_count": 650,
   "structure_count": 650,
-  "record_count": 750,
+  "record_count": 800,
   "complete_record_count": 0,
-  "partial_record_count": 750,
+  "partial_record_count": 800,
   "locally_driven_motion_count": 0,
   "catalogs": [
     {
@@ -15,6 +15,44 @@
       "title": "iOS app examples",
       "description": "Native iPhone and iPad product interfaces.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Productivity",
+          "count": 8
+        },
+        {
+          "category": "Communication",
+          "count": 6
+        },
+        {
+          "category": "Finance",
+          "count": 6
+        },
+        {
+          "category": "Health",
+          "count": 6
+        },
+        {
+          "category": "Creativity",
+          "count": 6
+        },
+        {
+          "category": "Utilities",
+          "count": 5
+        },
+        {
+          "category": "Media",
+          "count": 5
+        },
+        {
+          "category": "Navigation",
+          "count": 4
+        },
+        {
+          "category": "Developer tools",
+          "count": 4
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -30,6 +68,48 @@
       "title": "Android app examples",
       "description": "Native Android phone, tablet, foldable, and wearable interfaces.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Productivity",
+          "count": 8
+        },
+        {
+          "category": "Communication",
+          "count": 7
+        },
+        {
+          "category": "Finance",
+          "count": 6
+        },
+        {
+          "category": "Health and fitness",
+          "count": 5
+        },
+        {
+          "category": "Health and wellness",
+          "count": 1
+        },
+        {
+          "category": "Creativity",
+          "count": 6
+        },
+        {
+          "category": "Utilities",
+          "count": 5
+        },
+        {
+          "category": "Media",
+          "count": 6
+        },
+        {
+          "category": "Navigation",
+          "count": 4
+        },
+        {
+          "category": "Developer tools",
+          "count": 2
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -45,6 +125,56 @@
       "title": "macOS app examples",
       "description": "Native macOS applications, menu-bar utilities, and productivity tools.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Menu-bar utility",
+          "count": 4
+        },
+        {
+          "category": "Window management",
+          "count": 1
+        },
+        {
+          "category": "Launcher and productivity",
+          "count": 2
+        },
+        {
+          "category": "Automation and productivity",
+          "count": 1
+        },
+        {
+          "category": "Document app",
+          "count": 6
+        },
+        {
+          "category": "Document and knowledge management",
+          "count": 2
+        },
+        {
+          "category": "Developer tool",
+          "count": 9
+        },
+        {
+          "category": "Creative software",
+          "count": 7
+        },
+        {
+          "category": "Communication",
+          "count": 4
+        },
+        {
+          "category": "Database tool",
+          "count": 5
+        },
+        {
+          "category": "Operations",
+          "count": 5
+        },
+        {
+          "category": "Productivity",
+          "count": 4
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -60,6 +190,192 @@
       "title": "Desktop app examples",
       "description": "Cross-platform desktop software across Electron, Qt, GTK, and native toolkits.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Electron — code editor",
+          "count": 1
+        },
+        {
+          "category": "Electron — team communication",
+          "count": 2
+        },
+        {
+          "category": "Electron — community communication",
+          "count": 1
+        },
+        {
+          "category": "Electron — local knowledge management",
+          "count": 2
+        },
+        {
+          "category": "Electron — secure messaging",
+          "count": 1
+        },
+        {
+          "category": "Electron — notes and local files",
+          "count": 1
+        },
+        {
+          "category": "Electron — credential management",
+          "count": 1
+        },
+        {
+          "category": "Electron — federated communication",
+          "count": 1
+        },
+        {
+          "category": "Electron — threaded communication",
+          "count": 1
+        },
+        {
+          "category": "Electron — API client",
+          "count": 1
+        },
+        {
+          "category": "Electron — API platform",
+          "count": 1
+        },
+        {
+          "category": "Electron — diagram editor",
+          "count": 1
+        },
+        {
+          "category": "Electron — secure notes",
+          "count": 1
+        },
+        {
+          "category": "Electron — database client",
+          "count": 2
+        },
+        {
+          "category": "Electron — container management",
+          "count": 1
+        },
+        {
+          "category": "Tauri — file manager",
+          "count": 1
+        },
+        {
+          "category": "Tauri — API client",
+          "count": 1
+        },
+        {
+          "category": "Tauri — Git client",
+          "count": 1
+        },
+        {
+          "category": "Flutter — collaborative workspace",
+          "count": 1
+        },
+        {
+          "category": "Flutter — remote desktop",
+          "count": 1
+        },
+        {
+          "category": "Flutter — local file transfer",
+          "count": 1
+        },
+        {
+          "category": "Flutter — federated messaging",
+          "count": 1
+        },
+        {
+          "category": "Flutter — handwritten notes",
+          "count": 1
+        },
+        {
+          "category": "Qt — media player",
+          "count": 1
+        },
+        {
+          "category": "Qt — network analysis",
+          "count": 1
+        },
+        {
+          "category": "Qt — transfer manager",
+          "count": 1
+        },
+        {
+          "category": "Qt — digital painting",
+          "count": 1
+        },
+        {
+          "category": "Qt — video editor",
+          "count": 2
+        },
+        {
+          "category": "Qt — desktop publishing",
+          "count": 1
+        },
+        {
+          "category": "Qt — music notation",
+          "count": 1
+        },
+        {
+          "category": "Qt — CAD",
+          "count": 1
+        },
+        {
+          "category": "Qt — geographic information system",
+          "count": 1
+        },
+        {
+          "category": "Qt — ebook library",
+          "count": 1
+        },
+        {
+          "category": "Qt — recording and streaming",
+          "count": 1
+        },
+        {
+          "category": "Qt — credential management",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — 3D creation",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — audio editor",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — image editor",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — vector editor",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — office suite",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — email and calendar",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — web browser",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — research library",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — development environment",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — game development",
+          "count": 1
+        },
+        {
+          "category": "Native multi-platform — file transfer",
+          "count": 1
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -75,6 +391,156 @@
       "title": "Web app examples",
       "description": "Browser-based products with application-grade workflows.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Communication and collaboration",
+          "count": 3
+        },
+        {
+          "category": "Visual collaboration",
+          "count": 1
+        },
+        {
+          "category": "Knowledge and productivity",
+          "count": 1
+        },
+        {
+          "category": "Work management",
+          "count": 3
+        },
+        {
+          "category": "Product development",
+          "count": 1
+        },
+        {
+          "category": "Design and creation",
+          "count": 2
+        },
+        {
+          "category": "Web creation",
+          "count": 2
+        },
+        {
+          "category": "Content creation",
+          "count": 1
+        },
+        {
+          "category": "Audio and video creation",
+          "count": 1
+        },
+        {
+          "category": "Developer tools",
+          "count": 2
+        },
+        {
+          "category": "Developer infrastructure",
+          "count": 2
+        },
+        {
+          "category": "Developer observability",
+          "count": 1
+        },
+        {
+          "category": "API development",
+          "count": 1
+        },
+        {
+          "category": "Cloud development",
+          "count": 1
+        },
+        {
+          "category": "Backend development",
+          "count": 1
+        },
+        {
+          "category": "Web infrastructure and operations",
+          "count": 1
+        },
+        {
+          "category": "Finance and payments",
+          "count": 1
+        },
+        {
+          "category": "Finance and accounting",
+          "count": 2
+        },
+        {
+          "category": "Finance and international payments",
+          "count": 1
+        },
+        {
+          "category": "Finance and spend operations",
+          "count": 1
+        },
+        {
+          "category": "Business banking",
+          "count": 1
+        },
+        {
+          "category": "Customer support operations",
+          "count": 2
+        },
+        {
+          "category": "Customer communication operations",
+          "count": 1
+        },
+        {
+          "category": "Product and engineering operations",
+          "count": 1
+        },
+        {
+          "category": "Data work and operations",
+          "count": 1
+        },
+        {
+          "category": "Commerce operations",
+          "count": 2
+        },
+        {
+          "category": "Commerce and payments",
+          "count": 1
+        },
+        {
+          "category": "Commerce marketing operations",
+          "count": 1
+        },
+        {
+          "category": "Productivity and file management",
+          "count": 2
+        },
+        {
+          "category": "Personal productivity",
+          "count": 1
+        },
+        {
+          "category": "Scheduling productivity",
+          "count": 1
+        },
+        {
+          "category": "Team communication operations",
+          "count": 1
+        },
+        {
+          "category": "Data platform",
+          "count": 1
+        },
+        {
+          "category": "Business intelligence",
+          "count": 2
+        },
+        {
+          "category": "Data visualization",
+          "count": 1
+        },
+        {
+          "category": "Analytics engineering",
+          "count": 1
+        },
+        {
+          "category": "Collaborative data work",
+          "count": 1
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -90,6 +556,88 @@
       "title": "Dashboard and console examples",
       "description": "Operational dashboards, control planes, admin surfaces, and dense data consoles.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Cloud control plane",
+          "count": 4
+        },
+        {
+          "category": "Network and security control plane",
+          "count": 1
+        },
+        {
+          "category": "Deployment control plane",
+          "count": 2
+        },
+        {
+          "category": "Container orchestration console",
+          "count": 2
+        },
+        {
+          "category": "Container management console",
+          "count": 1
+        },
+        {
+          "category": "Observability",
+          "count": 6
+        },
+        {
+          "category": "Observability and analytics",
+          "count": 1
+        },
+        {
+          "category": "Application monitoring",
+          "count": 1
+        },
+        {
+          "category": "Incident management",
+          "count": 2
+        },
+        {
+          "category": "CI/CD",
+          "count": 8
+        },
+        {
+          "category": "GitOps control plane",
+          "count": 1
+        },
+        {
+          "category": "Customer support operations",
+          "count": 4
+        },
+        {
+          "category": "Service operations",
+          "count": 1
+        },
+        {
+          "category": "Internal tools",
+          "count": 5
+        },
+        {
+          "category": "Finance operations",
+          "count": 2
+        },
+        {
+          "category": "Commerce analytics",
+          "count": 1
+        },
+        {
+          "category": "Business intelligence",
+          "count": 4
+        },
+        {
+          "category": "Product analytics",
+          "count": 2
+        },
+        {
+          "category": "Identity administration",
+          "count": 1
+        },
+        {
+          "category": "Workspace administration",
+          "count": 1
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -105,6 +653,48 @@
       "title": "TUI examples",
       "description": "Full-screen terminal interfaces with keyboard-first interaction.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Git and developer workflows",
+          "count": 5
+        },
+        {
+          "category": "Containers",
+          "count": 5
+        },
+        {
+          "category": "Kubernetes",
+          "count": 3
+        },
+        {
+          "category": "System monitoring",
+          "count": 7
+        },
+        {
+          "category": "File management",
+          "count": 9
+        },
+        {
+          "category": "Databases",
+          "count": 4
+        },
+        {
+          "category": "Mail",
+          "count": 5
+        },
+        {
+          "category": "Music",
+          "count": 5
+        },
+        {
+          "category": "Networking",
+          "count": 5
+        },
+        {
+          "category": "Tasks",
+          "count": 2
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -120,6 +710,124 @@
       "title": "CLI examples",
       "description": "Command-line interfaces designed for discoverability, composition, and automation.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Developer tools / version control",
+          "count": 1
+        },
+        {
+          "category": "Developer tools / code hosting",
+          "count": 2
+        },
+        {
+          "category": "Developer tools / build and package management",
+          "count": 2
+        },
+        {
+          "category": "Package management / Python",
+          "count": 2
+        },
+        {
+          "category": "Package management / JavaScript",
+          "count": 2
+        },
+        {
+          "category": "Package management / system",
+          "count": 3
+        },
+        {
+          "category": "Package management / reproducible systems",
+          "count": 1
+        },
+        {
+          "category": "Infrastructure / containers",
+          "count": 2
+        },
+        {
+          "category": "Infrastructure / orchestration",
+          "count": 2
+        },
+        {
+          "category": "Infrastructure / infrastructure as code",
+          "count": 3
+        },
+        {
+          "category": "Infrastructure / configuration management",
+          "count": 1
+        },
+        {
+          "category": "Infrastructure / image building",
+          "count": 1
+        },
+        {
+          "category": "Infrastructure / development environments",
+          "count": 1
+        },
+        {
+          "category": "Infrastructure / cloud platforms",
+          "count": 5
+        },
+        {
+          "category": "Networking / data transfer",
+          "count": 2
+        },
+        {
+          "category": "Networking / HTTP clients",
+          "count": 1
+        },
+        {
+          "category": "Networking / discovery and diagnostics",
+          "count": 1
+        },
+        {
+          "category": "Networking / DNS diagnostics",
+          "count": 1
+        },
+        {
+          "category": "Networking / system utilities",
+          "count": 1
+        },
+        {
+          "category": "Security / cryptography and TLS",
+          "count": 1
+        },
+        {
+          "category": "Security / file encryption",
+          "count": 1
+        },
+        {
+          "category": "Security / secrets management",
+          "count": 2
+        },
+        {
+          "category": "Security / software supply chain",
+          "count": 1
+        },
+        {
+          "category": "Security / vulnerability scanning",
+          "count": 1
+        },
+        {
+          "category": "Data / structured text processing",
+          "count": 2
+        },
+        {
+          "category": "Data / databases",
+          "count": 5
+        },
+        {
+          "category": "System utilities / storage and synchronization",
+          "count": 1
+        },
+        {
+          "category": "System utilities / file synchronization",
+          "count": 1
+        },
+        {
+          "category": "System utilities / service management",
+          "count": 1
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -135,6 +843,172 @@
       "title": "Onboarding and authentication examples",
       "description": "Account creation, identity, workspace setup, provisioning, and first-success journeys.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Collaboration / workspace creation",
+          "count": 3
+        },
+        {
+          "category": "Collaboration / account creation",
+          "count": 1
+        },
+        {
+          "category": "Enterprise collaboration / invitations",
+          "count": 1
+        },
+        {
+          "category": "Collaboration / first-run setup",
+          "count": 1
+        },
+        {
+          "category": "Design collaboration / workspace creation",
+          "count": 1
+        },
+        {
+          "category": "Collaboration / onboarding",
+          "count": 1
+        },
+        {
+          "category": "Work management / onboarding",
+          "count": 1
+        },
+        {
+          "category": "Work management / first-run setup",
+          "count": 1
+        },
+        {
+          "category": "Communication / account creation",
+          "count": 1
+        },
+        {
+          "category": "Enterprise communication / onboarding",
+          "count": 1
+        },
+        {
+          "category": "Consumer communication / onboarding",
+          "count": 1
+        },
+        {
+          "category": "Cloud storage / import",
+          "count": 1
+        },
+        {
+          "category": "Enterprise productivity / first-run setup",
+          "count": 1
+        },
+        {
+          "category": "Enterprise productivity / setup wizard",
+          "count": 1
+        },
+        {
+          "category": "Design / account creation and sign-in",
+          "count": 1
+        },
+        {
+          "category": "Developer collaboration / workspace creation",
+          "count": 1
+        },
+        {
+          "category": "Developer platform / account creation",
+          "count": 2
+        },
+        {
+          "category": "Developer platform / import",
+          "count": 2
+        },
+        {
+          "category": "Developer platform / first-run deployment",
+          "count": 2
+        },
+        {
+          "category": "Developer tools / sign-in",
+          "count": 1
+        },
+        {
+          "category": "Developer monitoring / onboarding",
+          "count": 1
+        },
+        {
+          "category": "Enterprise monitoring / onboarding",
+          "count": 1
+        },
+        {
+          "category": "Developer communications / account setup",
+          "count": 1
+        },
+        {
+          "category": "Identity platform / sign-in",
+          "count": 1
+        },
+        {
+          "category": "Identity platform / device authorization",
+          "count": 1
+        },
+        {
+          "category": "Enterprise identity / device authorization",
+          "count": 1
+        },
+        {
+          "category": "Cloud security / device authorization",
+          "count": 1
+        },
+        {
+          "category": "Enterprise security / first-run setup",
+          "count": 1
+        },
+        {
+          "category": "Network security / device onboarding",
+          "count": 1
+        },
+        {
+          "category": "Consumer security / onboarding",
+          "count": 3
+        },
+        {
+          "category": "Hardware security / device setup",
+          "count": 1
+        },
+        {
+          "category": "Enterprise security / device enrollment",
+          "count": 1
+        },
+        {
+          "category": "Consumer privacy / account creation",
+          "count": 1
+        },
+        {
+          "category": "Consumer communication / account creation",
+          "count": 1
+        },
+        {
+          "category": "Consumer devices / first-run setup",
+          "count": 2
+        },
+        {
+          "category": "Consumer media / account creation",
+          "count": 2
+        },
+        {
+          "category": "Finance platform / progressive profile",
+          "count": 1
+        },
+        {
+          "category": "Finance platform / account linking",
+          "count": 1
+        },
+        {
+          "category": "Consumer finance / account creation",
+          "count": 1
+        },
+        {
+          "category": "Commerce / first-run setup",
+          "count": 1
+        },
+        {
+          "category": "Commerce finance / account setup",
+          "count": 1
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -150,6 +1024,112 @@
       "title": "Documentation site examples",
       "description": "Product, API, framework, and platform documentation systems.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Web platform documentation",
+          "count": 1
+        },
+        {
+          "category": "Frontend framework documentation",
+          "count": 4
+        },
+        {
+          "category": "Web framework documentation",
+          "count": 2
+        },
+        {
+          "category": "Backend framework documentation",
+          "count": 4
+        },
+        {
+          "category": "Application platform documentation",
+          "count": 2
+        },
+        {
+          "category": "Programming language documentation",
+          "count": 5
+        },
+        {
+          "category": "Mobile platform documentation",
+          "count": 1
+        },
+        {
+          "category": "Cloud platform documentation",
+          "count": 3
+        },
+        {
+          "category": "Edge platform documentation",
+          "count": 1
+        },
+        {
+          "category": "Deployment platform documentation",
+          "count": 2
+        },
+        {
+          "category": "Infrastructure documentation",
+          "count": 2
+        },
+        {
+          "category": "Infrastructure as code documentation",
+          "count": 1
+        },
+        {
+          "category": "Developer platform documentation",
+          "count": 1
+        },
+        {
+          "category": "DevOps platform documentation",
+          "count": 1
+        },
+        {
+          "category": "Payments API documentation",
+          "count": 1
+        },
+        {
+          "category": "Communications API documentation",
+          "count": 1
+        },
+        {
+          "category": "Commerce platform documentation",
+          "count": 1
+        },
+        {
+          "category": "Collaboration API documentation",
+          "count": 1
+        },
+        {
+          "category": "AI API documentation",
+          "count": 2
+        },
+        {
+          "category": "Machine learning platform documentation",
+          "count": 1
+        },
+        {
+          "category": "Database documentation",
+          "count": 3
+        },
+        {
+          "category": "Backend platform documentation",
+          "count": 2
+        },
+        {
+          "category": "Search and observability documentation",
+          "count": 1
+        },
+        {
+          "category": "Observability documentation",
+          "count": 2
+        },
+        {
+          "category": "Design system documentation",
+          "count": 4
+        },
+        {
+          "category": "UI development tooling documentation",
+          "count": 1
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -165,6 +1145,116 @@
       "title": "App store listing examples",
       "description": "Apple App Store and Google Play listings with strong product presentation.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Apple App Store — Education",
+          "count": 2
+        },
+        {
+          "category": "Apple App Store — Graphics & Design",
+          "count": 1
+        },
+        {
+          "category": "Apple App Store — Productivity",
+          "count": 3
+        },
+        {
+          "category": "Apple App Store — Health & Fitness",
+          "count": 6
+        },
+        {
+          "category": "Apple App Store — Travel",
+          "count": 2
+        },
+        {
+          "category": "Apple App Store — Music",
+          "count": 1
+        },
+        {
+          "category": "Apple App Store — Entertainment",
+          "count": 1
+        },
+        {
+          "category": "Apple App Store — Lifestyle",
+          "count": 1
+        },
+        {
+          "category": "Apple App Store — Business",
+          "count": 2
+        },
+        {
+          "category": "Apple App Store — Finance",
+          "count": 2
+        },
+        {
+          "category": "Apple App Store — Food & Drink",
+          "count": 1
+        },
+        {
+          "category": "Apple App Store — Photo & Video",
+          "count": 2
+        },
+        {
+          "category": "Apple App Store — Navigation",
+          "count": 1
+        },
+        {
+          "category": "Google Play — Maps & Navigation",
+          "count": 1
+        },
+        {
+          "category": "Google Play — Communication",
+          "count": 3
+        },
+        {
+          "category": "Google Play — Social",
+          "count": 1
+        },
+        {
+          "category": "Google Play — Entertainment",
+          "count": 1
+        },
+        {
+          "category": "Google Play — Shopping",
+          "count": 1
+        },
+        {
+          "category": "Google Play — Business",
+          "count": 1
+        },
+        {
+          "category": "Google Play — Productivity",
+          "count": 3
+        },
+        {
+          "category": "Google Play — Music & Audio",
+          "count": 3
+        },
+        {
+          "category": "Google Play — Travel & Local",
+          "count": 4
+        },
+        {
+          "category": "Google Play — Food & Drink",
+          "count": 1
+        },
+        {
+          "category": "Google Play — Education",
+          "count": 3
+        },
+        {
+          "category": "Google Play — News & Magazines",
+          "count": 1
+        },
+        {
+          "category": "Google Play — Books & Reference",
+          "count": 1
+        },
+        {
+          "category": "Google Play — Dating",
+          "count": 1
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -180,6 +1270,152 @@
       "title": "Design system examples",
       "description": "Public design systems and platform human-interface guidance.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Platform HIG / consumer products",
+          "count": 1
+        },
+        {
+          "category": "Platform HIG",
+          "count": 1
+        },
+        {
+          "category": "Enterprise / platform HIG",
+          "count": 1
+        },
+        {
+          "category": "Enterprise",
+          "count": 2
+        },
+        {
+          "category": "Enterprise / CRM",
+          "count": 1
+        },
+        {
+          "category": "Enterprise / creative tools",
+          "count": 1
+        },
+        {
+          "category": "Enterprise / collaboration",
+          "count": 1
+        },
+        {
+          "category": "Commerce",
+          "count": 1
+        },
+        {
+          "category": "Developer tools",
+          "count": 2
+        },
+        {
+          "category": "Developer tools / enterprise",
+          "count": 1
+        },
+        {
+          "category": "Enterprise / developer tools",
+          "count": 1
+        },
+        {
+          "category": "Cloud / developer tools",
+          "count": 1
+        },
+        {
+          "category": "Enterprise / open source",
+          "count": 1
+        },
+        {
+          "category": "Enterprise / customer support",
+          "count": 1
+        },
+        {
+          "category": "Enterprise / communications",
+          "count": 1
+        },
+        {
+          "category": "Consumer products / mobility",
+          "count": 1
+        },
+        {
+          "category": "Consumer products",
+          "count": 1
+        },
+        {
+          "category": "Accessibility-first / healthcare",
+          "count": 1
+        },
+        {
+          "category": "Developer tools / data products",
+          "count": 1
+        },
+        {
+          "category": "Developer tools / databases",
+          "count": 1
+        },
+        {
+          "category": "Developer tools / cloud infrastructure",
+          "count": 1
+        },
+        {
+          "category": "Developer tools / data-dense applications",
+          "count": 1
+        },
+        {
+          "category": "Consumer products / web publishing",
+          "count": 1
+        },
+        {
+          "category": "Media / consumer products",
+          "count": 1
+        },
+        {
+          "category": "Commerce / travel",
+          "count": 1
+        },
+        {
+          "category": "Developer tools / open source",
+          "count": 1
+        },
+        {
+          "category": "Enterprise / commerce",
+          "count": 1
+        },
+        {
+          "category": "Component library / developer tools",
+          "count": 1
+        },
+        {
+          "category": "Accessibility-first / component library",
+          "count": 1
+        },
+        {
+          "category": "Accessibility-first / headless components",
+          "count": 2
+        },
+        {
+          "category": "Accessibility-first / developer tools",
+          "count": 1
+        },
+        {
+          "category": "Accessibility-first / interaction standards",
+          "count": 1
+        },
+        {
+          "category": "Government",
+          "count": 9
+        },
+        {
+          "category": "Government / healthcare",
+          "count": 3
+        },
+        {
+          "category": "Government / supranational",
+          "count": 1
+        },
+        {
+          "category": "Platform HIG / open source",
+          "count": 2
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -195,6 +1431,88 @@
       "title": "Report and evidence examples",
       "description": "Reports, findings, traces, comparisons, and evidence viewers.",
       "count": 50,
+      "categories": [
+        {
+          "category": "Observability",
+          "count": 10
+        },
+        {
+          "category": "Product analytics",
+          "count": 3
+        },
+        {
+          "category": "Web analytics",
+          "count": 2
+        },
+        {
+          "category": "CI/CD",
+          "count": 3
+        },
+        {
+          "category": "CI/CD analytics",
+          "count": 1
+        },
+        {
+          "category": "Testing",
+          "count": 4
+        },
+        {
+          "category": "Security",
+          "count": 2
+        },
+        {
+          "category": "Security and code quality",
+          "count": 1
+        },
+        {
+          "category": "Security testing",
+          "count": 1
+        },
+        {
+          "category": "Cloud security",
+          "count": 3
+        },
+        {
+          "category": "Vulnerability management",
+          "count": 1
+        },
+        {
+          "category": "Accessibility",
+          "count": 5
+        },
+        {
+          "category": "Performance",
+          "count": 2
+        },
+        {
+          "category": "Performance profiling",
+          "count": 1
+        },
+        {
+          "category": "Performance monitoring",
+          "count": 1
+        },
+        {
+          "category": "Distributed tracing",
+          "count": 2
+        },
+        {
+          "category": "Continuous profiling",
+          "count": 2
+        },
+        {
+          "category": "Profiling",
+          "count": 1
+        },
+        {
+          "category": "Incident management",
+          "count": 2
+        },
+        {
+          "category": "Business intelligence",
+          "count": 3
+        }
+      ],
       "image_count": 50,
       "structure_count": 50,
       "complete_record_count": 0,
@@ -210,6 +1528,12 @@
       "title": "Pricing & plans examples",
       "description": "Measured pricing pages with visible price and plan comparison.",
       "count": 50,
+      "categories": [
+        {
+          "category": "pricing",
+          "count": 50
+        }
+      ],
       "image_count": 0,
       "structure_count": 0,
       "complete_record_count": 0,
@@ -223,6 +1547,12 @@
       "title": "Landing page examples",
       "description": "Measured exact landing destinations at responsive widths.",
       "count": 50,
+      "categories": [
+        {
+          "category": "landing",
+          "count": 50
+        }
+      ],
       "image_count": 0,
       "structure_count": 0,
       "complete_record_count": 0,
@@ -230,6 +1560,77 @@
       "measured_provenance": {},
       "source": "landing-page-examples/sources.json",
       "full_reference_source": "landing-page-examples/references.json"
+    },
+    {
+      "slug": "presentation-examples",
+      "title": "Presentation examples",
+      "description": "Reference slide decks and talks, grouped by kind of presentation: strategy consulting, academic research and teaching, thesis defence, startup pitch, investor relations, trend reports, policy briefings, data storytelling, product keynotes, advocacy, technical talks, culture, sales, and the craft of presenting.",
+      "count": 50,
+      "categories": [
+        {
+          "category": "strategy-consulting",
+          "count": 10
+        },
+        {
+          "category": "academic-research",
+          "count": 5
+        },
+        {
+          "category": "thesis-defence",
+          "count": 2
+        },
+        {
+          "category": "startup-pitch",
+          "count": 8
+        },
+        {
+          "category": "investor-relations",
+          "count": 3
+        },
+        {
+          "category": "trend-report",
+          "count": 4
+        },
+        {
+          "category": "policy-briefing",
+          "count": 4
+        },
+        {
+          "category": "data-storytelling",
+          "count": 2
+        },
+        {
+          "category": "product-keynote",
+          "count": 1
+        },
+        {
+          "category": "advocacy",
+          "count": 1
+        },
+        {
+          "category": "technical-talk",
+          "count": 2
+        },
+        {
+          "category": "culture",
+          "count": 2
+        },
+        {
+          "category": "sales",
+          "count": 2
+        },
+        {
+          "category": "presenting-craft",
+          "count": 4
+        }
+      ],
+      "image_count": 0,
+      "structure_count": 0,
+      "complete_record_count": 0,
+      "partial_record_count": 50,
+      "measured_provenance": {},
+      "source": "presentation-examples/sources.json",
+      "full_reference_source": "presentation-examples/references.json"
     }
   ]
 }

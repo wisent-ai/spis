@@ -49,6 +49,7 @@ pub fn run(rest: &[String]) -> Result<()> {
                 "title": catalog["title"],
                 "description": catalog["description"],
                 "count": catalog["count"],
+                "categories": catalog["categories"],
                 "image_count": catalog["visual_count"],
                 "structure_count": catalog["structure_count"],
                 "complete_record_count": index["complete_count"],

@@ -21,6 +21,109 @@ pub(crate) const WHAT_SPIS_IS: &str = "Spis is an evidence-grade reference corpu
 /// That the command line and the desktop application reach the same commands.
 pub(crate) const PARITY: &str = "Every operation below is available from both surfaces. The command line and the desktop application are two ways to reach the same commands, not a full product and a viewer: if a command can do something, the application can too.";
 
+/// What the catalogs are for, for the catalog page.
+pub(crate) const WHAT_CATALOGS_ARE: &str = "Each catalog is one family of reference examples, kept as attributed records with their evidence and their evidence gaps. A catalog whose records are of several kinds counts each kind: the presentation catalog, for one, separates strategy-consulting decks, academic research talks, thesis defences, startup pitches, investor presentations, policy briefings and the rest, so a deck can be compared with references of its own kind.";
+
+/// The generated catalog index the catalog page is rendered from.
+pub(crate) const CATALOG_INDEX: &str = "example-catalogs.json";
+
+/// The corpus's own catalog index, read from the directory the command runs
+/// in. Its absence is refused with the command that writes it, never
+/// rendered as a corpus with no catalogs.
+pub(crate) fn catalog_index() -> Result<Value> {
+    let text = std::fs::read_to_string(CATALOG_INDEX).with_context(|| {
+        format!(
+            "{CATALOG_INDEX} cannot be read in this directory; run `spis docs site generate` in the corpus, after `spis generate-example-catalogs`"
+        )
+    })?;
+    serde_json::from_str(&text).with_context(|| format!("{CATALOG_INDEX} is not valid JSON"))
+}
+
+/// The catalog page's totals and one table row per catalog, read from the
+/// index `spis generate-example-catalogs` writes: every number on the page is
+/// the index's, so the page cannot drift from the corpus it describes.
+pub(crate) fn catalog_sections(index: &Value) -> Result<Vec<Value>> {
+    let repository = env!("CARGO_PKG_REPOSITORY").trim_end_matches(".git");
+    let number = |value: &Value, field: &str| -> Result<u64> {
+        value[field]
+            .as_u64()
+            .with_context(|| format!("{CATALOG_INDEX} states no numeric {field}"))
+    };
+    let catalogs = index["catalogs"]
+        .as_array()
+        .with_context(|| format!("{CATALOG_INDEX} lists no catalogs"))?;
+    let mut rows = Vec::new();
+    for catalog in catalogs {
+        let text = |field: &str| -> Result<String> {
+            catalog[field]
+                .as_str()
+                .map(str::to_string)
+                .with_context(|| format!("a catalog in {CATALOG_INDEX} states no {field}"))
+        };
+        let slug = text("slug")?;
+        let kinds = catalog["categories"]
+            .as_array()
+            .with_context(|| format!("{slug} in {CATALOG_INDEX} states no categories"))?
+            .iter()
+            .map(|kind| {
+                Ok(format!(
+                    "{} {}",
+                    kind["category"]
+                        .as_str()
+                        .with_context(|| format!("{slug} names a category without a name"))?,
+                    number(kind, "count")?
+                ))
+            })
+            .collect::<Result<Vec<String>>>()?;
+        rows.push(json!([
+            format!(
+                "[{}]({repository}/blob/main/{})",
+                text("title")?,
+                text("source")?
+            ),
+            text("description")?,
+            if kinds.is_empty() {
+                "—".to_string()
+            } else {
+                kinds.join(", ")
+            },
+            format!(
+                "[{} complete / {} partial]({repository}/blob/main/{})",
+                number(catalog, "complete_record_count")?,
+                number(catalog, "partial_record_count")?,
+                text("full_reference_source")?
+            ),
+        ]));
+    }
+    Ok(vec![
+        json!({
+            "title": "Overview",
+            "paragraphs": [
+                WHAT_CATALOGS_ARE,
+                format!(
+                    "**Catalogs:** {} **Records:** {} ({} complete, {} partial) **Screenshots:** {} **Structural analyses:** {}",
+                    number(index, "catalog_count")?,
+                    number(index, "record_count")?,
+                    number(index, "complete_record_count")?,
+                    number(index, "partial_record_count")?,
+                    number(index, "image_count")?,
+                    number(index, "structure_count")?,
+                ),
+            ],
+            "table": {
+                "columns": ["Catalog", "Scope", "Kinds and references", "Records"],
+                "rows": rows,
+            },
+        }),
+        json!({
+            "title": "Reading a record",
+            "paragraphs": [
+                "A record still missing evidence is `partial` and lists what is missing in its own `evidence_gaps`; nothing is called complete without the evidence. Attribution and ownership stay with the linked source.",
+            ],
+        }),
+    ])
+}
+
 /// One documented command, straight off the shipped dispatch table.
 pub(crate) fn command_bullets() -> Vec<String> {
     super::SUBCOMMANDS

@@ -1,0 +1,30 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Bank of England Monetary Policy Report July 2026 slides",
+  "product_url": "https://www.bankofengland.co.uk/-/media/boe/files/monetary-policy-report/2026/july/mpr-july-2026-press-conference-slides.pdf",
+  "evidence_status": "partial",
+  "upstream_owner": "Bank of England Monetary Policy Report July 2026 slides",
+  "captured_at": "2026-11-02",
+  "motion": [],
+  "states": [],
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
+  "accessibility": {
+    "measured": false,
+    "observations": [],
+    "unknowns": [
+      "Weles accessibility variants not executed yet"
+    ]
+  },
+  "motion_provenance": [],
+  "evidence_gaps": [
+    "Weles capture not imported",
+    "motion evidence absent",
+    "state visuals below the three-state floor",
+    "interaction variants absent",
+    "journey variants absent",
+    "motion analysis absent",
+    "accessibility variants absent"
+  ]
+}

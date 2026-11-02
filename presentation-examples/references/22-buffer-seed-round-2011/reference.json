@@ -1,0 +1,30 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "Buffer seed round 2011",
+  "product_url": "https://www.businessinsider.com/13-slides-that-landed-two-first-time-founders-500000-in-3-months-2013-5",
+  "evidence_status": "partial",
+  "upstream_owner": "Buffer seed round 2011",
+  "captured_at": "2026-11-02",
+  "motion": [],
+  "states": [],
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
+  "accessibility": {
+    "measured": false,
+    "observations": [],
+    "unknowns": [
+      "Weles accessibility variants not executed yet"
+    ]
+  },
+  "motion_provenance": [],
+  "evidence_gaps": [
+    "Weles capture not imported",
+    "motion evidence absent",
+    "state visuals below the three-state floor",
+    "interaction variants absent",
+    "journey variants absent",
+    "motion analysis absent",
+    "accessibility variants absent"
+  ]
+}

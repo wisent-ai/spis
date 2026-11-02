@@ -1,0 +1,56 @@
+catalog: presentation-examples
+title: Presentation examples
+description: Reference slide decks and talks, grouped by kind of presentation: strategy consulting, academic research and teaching, thesis defence, startup pitch, investor relations, trend reports, policy briefings, data storytelling, product keynotes, advocacy, technical talks, culture, sales, and the craft of presenting.
+category: presentation
+count: 50
+
+BCG CEO's Guide to Costs and Growth	https://www.bcg.com/assets/2024/executive-perspectives-ceos-guide-to-costs-and-growth.pdf	strategy-consulting
+BCG CEO Insomnia Index 2026	https://web-assets.bcg.com/2b/7c/2484f99045e58979f1d4dfd9571d/ceo-insomnia-index-apr-2026.pdf	strategy-consulting
+BCG Annual Sustainability Report slideshow 2025	https://www.bcg.com/assets/2026/annual-sustainability-report-slideshow-2025.pdf	strategy-consulting
+BCG Competing on the Rate of Learning	https://web-assets.bcg.com/img-src/BCG-Competing-on-the-Rate-of-Learning-Sep-2018_tcm9-203195.pdf	strategy-consulting
+McKinsey Tech Trends executive summary slides	https://www.mckinsey.com/~/media/mckinsey/business%20functions/mckinsey%20digital/our%20insights/the%20top%20trends%20in%20tech%202021/tech-trends-exec-summary.pdf	strategy-consulting
+McKinsey Future of Work Blink slides	https://www.mckinsey.com/uk/~/media/mckinsey/locations/europe%20and%20middle%20east/united%20kingdom/blink%20conference/blink-future-of-work-slides-for-website.pdf	strategy-consulting
+McKinsey Global Institute The Power of One	https://www.mckinsey.com/~/media/mckinsey/mckinsey%20global%20institute/our%20research/the%20power%20of%20one%20how%20standout%20firms%20grow%20national%20productivity/the-power-of-one-how-standout-firms-grow-national-productivity_vfinal.pdf	strategy-consulting
+Bain Global Private Equity Report 2026	https://www.bain.com/globalassets/noindex/2026/bain-report_global-private-equity-report-2026.pdf	strategy-consulting
+Bain Management Tools and Trends slide presentation	https://www.bain.com/insights/management-tools-and-trends-2003-slide-presentation	strategy-consulting
+Bain e-Conomy SEA 2024	https://www.bain.com/insights/e-conomy-sea-2024	strategy-consulting
+Simon Peyton Jones How to Give a Great Research Talk	https://kenzhu2000.github.io/giving-a-talk-slides.pdf	academic-research
+Stanford CS231n Lecture 1 2024	https://cs231n.stanford.edu/2024/slides/2024/lecture_1_part_1.pdf	academic-research
+Stanford CS231n Lecture 6 2025	https://cs231n.stanford.edu/slides/2025/lecture_6.pdf	academic-research
+Stanford CS231n Lecture 1 2017	https://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture1.pdf	academic-research
+Census Bureau Post-Enumeration Survey briefing	https://www2.census.gov/programs-surveys/decennial/coverage-measurement/pes/jason-winter-study-pes-2021-01-07.pdf	academic-research
+Edouard Fouché PhD defence slides with sources	https://github.com/edouardfouche/phd-defense	thesis-defence
+Carnegie Mellon PhD dissertation defence slide design	https://guides.library.cmu.edu/c.php?g=883178	thesis-defence
+Airbnb 2009	https://media.genppt.com/pitch-decks/airbnb/airbnb-pitch-deck-2009.pdf	startup-pitch
+UberCab 2008	https://media.genppt.com/pitch-decks/uber/uber-pitch-deck-2008.pdf	startup-pitch
+LinkedIn Series B 2004	https://www.reidhoffman.org/linkedin-pitch-to-greylock	startup-pitch
+YouTube Series A 2005	https://media.genppt.com/pitch-decks/youtube/youtube-pitch-deck-2005.pdf	startup-pitch
+Buffer seed round 2011	https://www.businessinsider.com/13-slides-that-landed-two-first-time-founders-500000-in-3-months-2013-5	startup-pitch
+Sequoia Writing a Business Plan	https://sequoiacap.com/article/writing-a-business-plan	startup-pitch
+Y Combinator Seed Deck Template	https://www.ycombinator.com/library/2u-how-to-build-your-seed-round-pitch-deck	startup-pitch
+Y Combinator How to Design a Better Pitch Deck	https://www.ycombinator.com/library/4T-how-to-design-a-better-pitch-deck	startup-pitch
+NVIDIA Investor Presentation October 2024	https://s201.q4cdn.com/141608511/files/doc_presentations/2024/Oct/NVIDIA-Investor-Presentation-Oct-2024.pdf	investor-relations
+NVIDIA Quarterly Presentation Q1 FY25	https://s201.q4cdn.com/141608511/files/doc_financials/2025/q1/NVDA-F1Q25-Quarterly-Presentation-FINAL.pdf	investor-relations
+Tesla Master Plan Part 3	https://www.tesla.com/ns_videos/Tesla-Master-Plan-Part-3.pdf	investor-relations
+BOND Trends Artificial Intelligence 2025	https://www.bondcap.com/report/pdf/Trends_Artificial_Intelligence.pdf	trend-report
+Benedict Evans AI Eats the World	https://www.ben-evans.com/s/AI-eats-the-world.pdf	trend-report
+a16z State of Crypto 2025	https://dwt2zme5yrom6.cloudfront.net/uploads/2025/10/State-of-Crypto-2025-a16z-crypto.pdf	trend-report
+a16z State of Markets	https://a16z.com/state-of-markets/	trend-report
+Bank of England Monetary Policy Report July 2026 slides	https://www.bankofengland.co.uk/-/media/boe/files/monetary-policy-report/2026/july/mpr-july-2026-press-conference-slides.pdf	policy-briefing
+Bank of England MPR August 2022 slides	https://www.bankofengland.co.uk/-/media/boe/files/monetary-policy-report/2022/august/opening-remarks-slides-august-2022	policy-briefing
+World Bank Global Economic Prospects June 2026 highlights	https://thedocs.worldbank.org/en/doc/2b672b3b0415d6b66c45b66579db4ef5-0050012026/related/GEP-Jun-2026-Chapter-1-Highlights.pdf	policy-briefing
+Census Bureau ACS 5-Year pre-release webinar	https://www2.census.gov/about/training-workshops/2026/2026-01-22-2020-2024-acs-5-year-prerelease-presentation.pdf	policy-briefing
+Gapminder slides	https://www.gapminder.org/downloads	data-storytelling
+Hans Rosling debunking myths about the third world	https://www.gapminder.org/videos/hans-rosling-ted-2006-debunking-myths-about-the-third-world/	data-storytelling
+Apple Macworld 2007 iPhone introduction	https://archive.org/details/mw2007_iphone1000_100.1	product-keynote
+Al Gore What Comes After An Inconvenient Truth	https://www.ted.com/talks/al_gore_what_comes_after_an_inconvenient_truth	advocacy
+Andrej Karpathy State of GPT	https://karpathy.ai/stateofgpt.pdf	technical-talk
+Bret Victor Inventing on Principle	https://vimeo.com/36579366	technical-talk
+Netflix Culture Memo	https://jobs.netflix.com/culture	culture
+HubSpot Culture Code	https://www.hubspot.com/culture-code	culture
+Zuora Best Sales Deck Ever	https://www.zuora.com/resource/best-sales-deck-ever	sales
+Andy Raskin The Greatest Sales Deck I've Ever Seen	https://openviewpartners.com/blog/the-greatest-sales-deck-ive-ever-seen-its-zuoras-and-its-brilliant-heres-why	sales
+Edward Tufte PowerPoint Does Rocket Science	https://www.edwardtufte.com/notebook/powerpoint-does-rocket-science-and-better-techniques-for-technical-reports	presenting-craft
+Garr Reynolds What Is Good Presentation Design	https://presentationzen.com/blog/what-is-good-presentation-design	presenting-craft
+Patrick Winston How to Speak	https://ocw.mit.edu/courses/res-tll-005-how-to-speak-january-iap-2018/pages/how-to-speak	presenting-craft
+Y Combinator How to Pitch Your Startup	https://www.ycombinator.com/library/6q-how-to-pitch-your-startup	presenting-craft

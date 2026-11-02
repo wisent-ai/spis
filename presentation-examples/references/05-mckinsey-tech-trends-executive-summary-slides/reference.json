@@ -1,0 +1,30 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "McKinsey Tech Trends executive summary slides",
+  "product_url": "https://www.mckinsey.com/~/media/mckinsey/business%20functions/mckinsey%20digital/our%20insights/the%20top%20trends%20in%20tech%202021/tech-trends-exec-summary.pdf",
+  "evidence_status": "partial",
+  "upstream_owner": "McKinsey Tech Trends executive summary slides",
+  "captured_at": "2026-11-02",
+  "motion": [],
+  "states": [],
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
+  "accessibility": {
+    "measured": false,
+    "observations": [],
+    "unknowns": [
+      "Weles accessibility variants not executed yet"
+    ]
+  },
+  "motion_provenance": [],
+  "evidence_gaps": [
+    "Weles capture not imported",
+    "motion evidence absent",
+    "state visuals below the three-state floor",
+    "interaction variants absent",
+    "journey variants absent",
+    "motion analysis absent",
+    "accessibility variants absent"
+  ]
+}

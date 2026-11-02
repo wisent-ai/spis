@@ -117,6 +117,20 @@ pub(super) fn edit(rest: &[String]) -> Result<()> {
     }
     save_sources(&directory, &sources)?;
     if let Some(target) = &new_slug {
+        // The reference index names its catalog too, and the generator refuses
+        // an index whose catalog is not its directory: a rename that rewrote
+        // only sources.json left every renamed catalog unindexable.
+        let index_path = directory.join("references.json");
+        let text = std::fs::read_to_string(&index_path)
+            .with_context(|| format!("{} cannot be read", index_path.display()))?;
+        let mut index: Value = serde_json::from_str(&text)
+            .with_context(|| format!("{} is not valid JSON", index_path.display()))?;
+        index
+            .as_object_mut()
+            .with_context(|| format!("{} is not a JSON object", index_path.display()))?
+            .insert("catalog".into(), json!(target));
+        std::fs::write(&index_path, serde_json::to_string_pretty(&index)? + "\n")
+            .with_context(|| format!("writing {}", index_path.display()))?;
         std::fs::rename(&directory, target)
             .with_context(|| format!("renaming {} to {target}", directory.display()))?;
     }

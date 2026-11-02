@@ -2,7 +2,7 @@
   "ok": true,
   "product": "spis",
   "version": "0.1.0",
-  "generated_by": "spis docs-site",
+  "generated_by": "spis docs site generate",
   "surfaces": {
     "cli": {
       "declared": true,
@@ -10,15 +10,9 @@
       "commands": [
         "onboarding",
         "corpus",
-        "docs-site",
+        "docs",
         "crawl",
-        "crawl-cli",
-        "crawl-docs",
-        "crawl-mobile",
-        "crawl-desktop",
-        "crawl-web",
-        "crawl-tui",
-        "docs-corpus",
+        "crawler",
         "discover",
         "reference-record",
         "verify-reference-evidence",
@@ -30,7 +24,8 @@
         "capture-widths",
         "audit-reference-accessibility",
         "capture-cli-references",
-        "curate-catalog"
+        "curate-catalog",
+        "serve"
       ]
     },
     "desktop": {
@@ -172,6 +167,14 @@
     },
     {
       "family": "landing-page-examples",
+      "engine": "web",
+      "requires": [
+        "cargo --version",
+        "node --version"
+      ]
+    },
+    {
+      "family": "presentation-examples",
       "engine": "web",
       "requires": [
         "cargo --version",

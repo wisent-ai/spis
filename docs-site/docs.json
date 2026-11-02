@@ -1,6 +1,6 @@
 {
   "schema": "wisent.spis-doc-pages.v1",
-  "generatedBy": "spis docs-site",
+  "generatedBy": "spis docs site generate",
   "pages": [
     {
       "slug": "corpus-adoption",
@@ -47,6 +47,182 @@
                 "A missing or noncanonical index, duplicate or unsafe catalog slug, escaping path or symlink, mismatched schema or catalog identity, missing record file, count mismatch, or record without evidence status and evidence gaps refuses the whole adoption. The previous saved corpus remains active.",
                 "CLI JSON reports state, root, catalog, reference and file counts, index SHA-256, imported, unchanged, conflicting, rejected, and a result message. Desktop keeps that exact output or refusal selectable."
               ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "brama-decisions",
+      "nav": "Brama decisions",
+      "title": "Brama decisions",
+      "description": "The settings Spis reads to ask Brama, and what an unset one does.",
+      "category": "Configuration",
+      "sections": [
+        {
+          "heading": "Settings",
+          "blocks": [
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "`MODEL_ROUTER_URL` — the Brama address. Unset or blank: the command that asks Brama is refused, naming the variable and what it holds.",
+                "`MODEL_ROUTER_MODEL` — a Brama model alias. Unset or blank: the command that asks Brama is refused, naming the variable and what it holds.",
+                "`MODEL_ROUTER_TOKEN_ROLE` — the vault role reference ROLE#FIELD whose value Stado, or SPIS_CREDENTIALS_FILE, gives and Spis sends as the bearer. Unset or blank: the question is sent with no bearer; a value that is not ROLE#FIELD, or a secret that cannot be read, is refused.",
+                "`SPIS_CREDENTIALS_FILE` — an owner-only JSON file of role -> field -> value that answers MODEL_ROUTER_TOKEN_ROLE in Stado's place. Unset or blank: the reference is read with `stado credentials get --role` (STADO_BIN names another Stado program); a file other users can read, or one without the role or field, is refused.",
+                "`SPIS_DECISION_CHAT_MODEL` — a model of the OpenAI-compatible service at MODEL_ROUTER_URL, asked through /v1/chat/completions instead of Brama's decision route. Unset or blank: typed questions go to Brama's POST /v1/decisions under MODEL_ROUTER_MODEL."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "How Spis asks",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Every question Spis asks Brama is one typed decision on `POST /v1/decisions`: a `choice` among the options the question declares, so the answer is one of them or the command is refused with what Brama sent. A refusal is kept with Brama's status and body; an unreachable Brama is named with its address."
+            },
+            {
+              "type": "paragraph",
+              "text": "`MODEL_ROUTER_MODEL` takes `decision-model` or `best-decision-model`; `best` asks `best-decision-model`. Any other alias is refused before a question is sent, naming the aliases the route answers."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "catalog-index",
+      "nav": "Example catalogs",
+      "title": "Example catalogs",
+      "description": "Every catalog in the corpus, the kinds of reference its records hold, and how many of them are complete.",
+      "category": "Reference",
+      "sections": [
+        {
+          "heading": "Overview",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Each catalog is one family of reference examples, kept as attributed records with their evidence and their evidence gaps. A catalog whose records are of several kinds counts each kind: the presentation catalog, for one, separates strategy-consulting decks, academic research talks, thesis defences, startup pitches, investor presentations, policy briefings and the rest, so a deck can be compared with references of its own kind."
+            },
+            {
+              "type": "paragraph",
+              "text": "**Catalogs:** 16 **Records:** 800 (0 complete, 800 partial) **Screenshots:** 650 **Structural analyses:** 650"
+            },
+            {
+              "type": "table",
+              "columns": [
+                "Catalog",
+                "Scope",
+                "Kinds and references",
+                "Records"
+              ],
+              "rows": [
+                [
+                  "[iOS app examples](https://github.com/wisent-ai/spis/blob/main/ios-app-examples/sources.json)",
+                  "Native iPhone and iPad product interfaces.",
+                  "Productivity 8, Communication 6, Finance 6, Health 6, Creativity 6, Utilities 5, Media 5, Navigation 4, Developer tools 4",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/ios-app-examples/references.json)"
+                ],
+                [
+                  "[Android app examples](https://github.com/wisent-ai/spis/blob/main/android-app-examples/sources.json)",
+                  "Native Android phone, tablet, foldable, and wearable interfaces.",
+                  "Productivity 8, Communication 7, Finance 6, Health and fitness 5, Health and wellness 1, Creativity 6, Utilities 5, Media 6, Navigation 4, Developer tools 2",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/android-app-examples/references.json)"
+                ],
+                [
+                  "[macOS app examples](https://github.com/wisent-ai/spis/blob/main/macos-app-examples/sources.json)",
+                  "Native macOS applications, menu-bar utilities, and productivity tools.",
+                  "Menu-bar utility 4, Window management 1, Launcher and productivity 2, Automation and productivity 1, Document app 6, Document and knowledge management 2, Developer tool 9, Creative software 7, Communication 4, Database tool 5, Operations 5, Productivity 4",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/macos-app-examples/references.json)"
+                ],
+                [
+                  "[Desktop app examples](https://github.com/wisent-ai/spis/blob/main/desktop-app-examples/sources.json)",
+                  "Cross-platform desktop software across Electron, Qt, GTK, and native toolkits.",
+                  "Electron — code editor 1, Electron — team communication 2, Electron — community communication 1, Electron — local knowledge management 2, Electron — secure messaging 1, Electron — notes and local files 1, Electron — credential management 1, Electron — federated communication 1, Electron — threaded communication 1, Electron — API client 1, Electron — API platform 1, Electron — diagram editor 1, Electron — secure notes 1, Electron — database client 2, Electron — container management 1, Tauri — file manager 1, Tauri — API client 1, Tauri — Git client 1, Flutter — collaborative workspace 1, Flutter — remote desktop 1, Flutter — local file transfer 1, Flutter — federated messaging 1, Flutter — handwritten notes 1, Qt — media player 1, Qt — network analysis 1, Qt — transfer manager 1, Qt — digital painting 1, Qt — video editor 2, Qt — desktop publishing 1, Qt — music notation 1, Qt — CAD 1, Qt — geographic information system 1, Qt — ebook library 1, Qt — recording and streaming 1, Qt — credential management 1, Native multi-platform — 3D creation 1, Native multi-platform — audio editor 1, Native multi-platform — image editor 1, Native multi-platform — vector editor 1, Native multi-platform — office suite 1, Native multi-platform — email and calendar 1, Native multi-platform — web browser 1, Native multi-platform — research library 1, Native multi-platform — development environment 1, Native multi-platform — game development 1, Native multi-platform — file transfer 1",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/desktop-app-examples/references.json)"
+                ],
+                [
+                  "[Web app examples](https://github.com/wisent-ai/spis/blob/main/web-app-examples/sources.json)",
+                  "Browser-based products with application-grade workflows.",
+                  "Communication and collaboration 3, Visual collaboration 1, Knowledge and productivity 1, Work management 3, Product development 1, Design and creation 2, Web creation 2, Content creation 1, Audio and video creation 1, Developer tools 2, Developer infrastructure 2, Developer observability 1, API development 1, Cloud development 1, Backend development 1, Web infrastructure and operations 1, Finance and payments 1, Finance and accounting 2, Finance and international payments 1, Finance and spend operations 1, Business banking 1, Customer support operations 2, Customer communication operations 1, Product and engineering operations 1, Data work and operations 1, Commerce operations 2, Commerce and payments 1, Commerce marketing operations 1, Productivity and file management 2, Personal productivity 1, Scheduling productivity 1, Team communication operations 1, Data platform 1, Business intelligence 2, Data visualization 1, Analytics engineering 1, Collaborative data work 1",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/web-app-examples/references.json)"
+                ],
+                [
+                  "[Dashboard and console examples](https://github.com/wisent-ai/spis/blob/main/dashboard-console-examples/sources.json)",
+                  "Operational dashboards, control planes, admin surfaces, and dense data consoles.",
+                  "Cloud control plane 4, Network and security control plane 1, Deployment control plane 2, Container orchestration console 2, Container management console 1, Observability 6, Observability and analytics 1, Application monitoring 1, Incident management 2, CI/CD 8, GitOps control plane 1, Customer support operations 4, Service operations 1, Internal tools 5, Finance operations 2, Commerce analytics 1, Business intelligence 4, Product analytics 2, Identity administration 1, Workspace administration 1",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/dashboard-console-examples/references.json)"
+                ],
+                [
+                  "[TUI examples](https://github.com/wisent-ai/spis/blob/main/tui-examples/sources.json)",
+                  "Full-screen terminal interfaces with keyboard-first interaction.",
+                  "Git and developer workflows 5, Containers 5, Kubernetes 3, System monitoring 7, File management 9, Databases 4, Mail 5, Music 5, Networking 5, Tasks 2",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/tui-examples/references.json)"
+                ],
+                [
+                  "[CLI examples](https://github.com/wisent-ai/spis/blob/main/cli-examples/sources.json)",
+                  "Command-line interfaces designed for discoverability, composition, and automation.",
+                  "Developer tools / version control 1, Developer tools / code hosting 2, Developer tools / build and package management 2, Package management / Python 2, Package management / JavaScript 2, Package management / system 3, Package management / reproducible systems 1, Infrastructure / containers 2, Infrastructure / orchestration 2, Infrastructure / infrastructure as code 3, Infrastructure / configuration management 1, Infrastructure / image building 1, Infrastructure / development environments 1, Infrastructure / cloud platforms 5, Networking / data transfer 2, Networking / HTTP clients 1, Networking / discovery and diagnostics 1, Networking / DNS diagnostics 1, Networking / system utilities 1, Security / cryptography and TLS 1, Security / file encryption 1, Security / secrets management 2, Security / software supply chain 1, Security / vulnerability scanning 1, Data / structured text processing 2, Data / databases 5, System utilities / storage and synchronization 1, System utilities / file synchronization 1, System utilities / service management 1",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/cli-examples/references.json)"
+                ],
+                [
+                  "[Onboarding and authentication examples](https://github.com/wisent-ai/spis/blob/main/onboarding-auth-examples/sources.json)",
+                  "Account creation, identity, workspace setup, provisioning, and first-success journeys.",
+                  "Collaboration / workspace creation 3, Collaboration / account creation 1, Enterprise collaboration / invitations 1, Collaboration / first-run setup 1, Design collaboration / workspace creation 1, Collaboration / onboarding 1, Work management / onboarding 1, Work management / first-run setup 1, Communication / account creation 1, Enterprise communication / onboarding 1, Consumer communication / onboarding 1, Cloud storage / import 1, Enterprise productivity / first-run setup 1, Enterprise productivity / setup wizard 1, Design / account creation and sign-in 1, Developer collaboration / workspace creation 1, Developer platform / account creation 2, Developer platform / import 2, Developer platform / first-run deployment 2, Developer tools / sign-in 1, Developer monitoring / onboarding 1, Enterprise monitoring / onboarding 1, Developer communications / account setup 1, Identity platform / sign-in 1, Identity platform / device authorization 1, Enterprise identity / device authorization 1, Cloud security / device authorization 1, Enterprise security / first-run setup 1, Network security / device onboarding 1, Consumer security / onboarding 3, Hardware security / device setup 1, Enterprise security / device enrollment 1, Consumer privacy / account creation 1, Consumer communication / account creation 1, Consumer devices / first-run setup 2, Consumer media / account creation 2, Finance platform / progressive profile 1, Finance platform / account linking 1, Consumer finance / account creation 1, Commerce / first-run setup 1, Commerce finance / account setup 1",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/onboarding-auth-examples/references.json)"
+                ],
+                [
+                  "[Documentation site examples](https://github.com/wisent-ai/spis/blob/main/documentation-site-examples/sources.json)",
+                  "Product, API, framework, and platform documentation systems.",
+                  "Web platform documentation 1, Frontend framework documentation 4, Web framework documentation 2, Backend framework documentation 4, Application platform documentation 2, Programming language documentation 5, Mobile platform documentation 1, Cloud platform documentation 3, Edge platform documentation 1, Deployment platform documentation 2, Infrastructure documentation 2, Infrastructure as code documentation 1, Developer platform documentation 1, DevOps platform documentation 1, Payments API documentation 1, Communications API documentation 1, Commerce platform documentation 1, Collaboration API documentation 1, AI API documentation 2, Machine learning platform documentation 1, Database documentation 3, Backend platform documentation 2, Search and observability documentation 1, Observability documentation 2, Design system documentation 4, UI development tooling documentation 1",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/documentation-site-examples/references.json)"
+                ],
+                [
+                  "[App store listing examples](https://github.com/wisent-ai/spis/blob/main/app-store-listing-examples/sources.json)",
+                  "Apple App Store and Google Play listings with strong product presentation.",
+                  "Apple App Store — Education 2, Apple App Store — Graphics & Design 1, Apple App Store — Productivity 3, Apple App Store — Health & Fitness 6, Apple App Store — Travel 2, Apple App Store — Music 1, Apple App Store — Entertainment 1, Apple App Store — Lifestyle 1, Apple App Store — Business 2, Apple App Store — Finance 2, Apple App Store — Food & Drink 1, Apple App Store — Photo & Video 2, Apple App Store — Navigation 1, Google Play — Maps & Navigation 1, Google Play — Communication 3, Google Play — Social 1, Google Play — Entertainment 1, Google Play — Shopping 1, Google Play — Business 1, Google Play — Productivity 3, Google Play — Music & Audio 3, Google Play — Travel & Local 4, Google Play — Food & Drink 1, Google Play — Education 3, Google Play — News & Magazines 1, Google Play — Books & Reference 1, Google Play — Dating 1",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/app-store-listing-examples/references.json)"
+                ],
+                [
+                  "[Design system examples](https://github.com/wisent-ai/spis/blob/main/design-system-examples/sources.json)",
+                  "Public design systems and platform human-interface guidance.",
+                  "Platform HIG / consumer products 1, Platform HIG 1, Enterprise / platform HIG 1, Enterprise 2, Enterprise / CRM 1, Enterprise / creative tools 1, Enterprise / collaboration 1, Commerce 1, Developer tools 2, Developer tools / enterprise 1, Enterprise / developer tools 1, Cloud / developer tools 1, Enterprise / open source 1, Enterprise / customer support 1, Enterprise / communications 1, Consumer products / mobility 1, Consumer products 1, Accessibility-first / healthcare 1, Developer tools / data products 1, Developer tools / databases 1, Developer tools / cloud infrastructure 1, Developer tools / data-dense applications 1, Consumer products / web publishing 1, Media / consumer products 1, Commerce / travel 1, Developer tools / open source 1, Enterprise / commerce 1, Component library / developer tools 1, Accessibility-first / component library 1, Accessibility-first / headless components 2, Accessibility-first / developer tools 1, Accessibility-first / interaction standards 1, Government 9, Government / healthcare 3, Government / supranational 1, Platform HIG / open source 2",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/design-system-examples/references.json)"
+                ],
+                [
+                  "[Report and evidence examples](https://github.com/wisent-ai/spis/blob/main/report-evidence-examples/sources.json)",
+                  "Reports, findings, traces, comparisons, and evidence viewers.",
+                  "Observability 10, Product analytics 3, Web analytics 2, CI/CD 3, CI/CD analytics 1, Testing 4, Security 2, Security and code quality 1, Security testing 1, Cloud security 3, Vulnerability management 1, Accessibility 5, Performance 2, Performance profiling 1, Performance monitoring 1, Distributed tracing 2, Continuous profiling 2, Profiling 1, Incident management 2, Business intelligence 3",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/report-evidence-examples/references.json)"
+                ],
+                [
+                  "[Pricing & plans examples](https://github.com/wisent-ai/spis/blob/main/pricing-page-examples/sources.json)",
+                  "Measured pricing pages with visible price and plan comparison.",
+                  "pricing 50",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/pricing-page-examples/references.json)"
+                ],
+                [
+                  "[Landing page examples](https://github.com/wisent-ai/spis/blob/main/landing-page-examples/sources.json)",
+                  "Measured exact landing destinations at responsive widths.",
+                  "landing 50",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/landing-page-examples/references.json)"
+                ],
+                [
+                  "[Presentation examples](https://github.com/wisent-ai/spis/blob/main/presentation-examples/sources.json)",
+                  "Reference slide decks and talks, grouped by kind of presentation: strategy consulting, academic research and teaching, thesis defence, startup pitch, investor relations, trend reports, policy briefings, data storytelling, product keynotes, advocacy, technical talks, culture, sales, and the craft of presenting.",
+                  "strategy-consulting 10, academic-research 5, thesis-defence 2, startup-pitch 8, investor-relations 3, trend-report 4, policy-briefing 4, data-storytelling 2, product-keynote 1, advocacy 1, technical-talk 2, culture 2, sales 2, presenting-craft 4",
+                  "[0 complete / 50 partial](https://github.com/wisent-ai/spis/blob/main/presentation-examples/references.json)"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Reading a record",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "A record still missing evidence is `partial` and lists what is missing in its own `evidence_gaps`; nothing is called complete without the evidence. Attribution and ownership stay with the linked source."
             }
           ]
         }

@@ -35,7 +35,7 @@ pub fn run(rest: &[String]) -> Result<()> {
         }
     }
     let version = env!("CARGO_PKG_VERSION");
-    let plan = plan(version);
+    let plan = plan(version, catalog_sections(&catalog_index()?)?);
     let brief = brief(version);
     let content = docs_content(&plan)?;
     let root = PathBuf::from(".");

@@ -1,7 +1,8 @@
 use super::*;
 
-/// The plan every page is rendered from.
-pub(crate) fn plan(version: &str) -> Value {
+/// The plan every page is rendered from. `catalogs` are the catalog page's
+/// sections, rendered from the corpus's `example-catalogs.json`.
+pub(crate) fn plan(version: &str, catalogs: Vec<Value>) -> Value {
     json!({
         "product": "spis",
         "version": version,
@@ -24,6 +25,10 @@ pub(crate) fn plan(version: &str) -> Value {
             "brama-decisions": {
                 "kind": "code",
                 "location": "src/commands/brama.rs SETTINGS",
+            },
+            "catalog-index": {
+                "kind": "corpus",
+                "location": "example-catalogs.json, written by spis generate-example-catalogs",
             },
         },
         "pages": [
@@ -87,6 +92,14 @@ pub(crate) fn plan(version: &str) -> Value {
                 ],
             },
             {
+                "slug": "catalog-index",
+                "nav": "Example catalogs",
+                "eyebrow": "Reference",
+                "title": "Example catalogs",
+                "description": "Every catalog in the corpus, the kinds of reference its records hold, and how many of them are complete.",
+                "sections": catalogs,
+            },
+            {
                 "slug": "cli-reference",
                 "nav": "CLI reference",
                 "eyebrow": "Reference",
@@ -118,7 +131,7 @@ pub(crate) fn plan(version: &str) -> Value {
                             "spis crawl import --run RUN_ID",
                         ],
                         "paragraphs": [
-                            "The desktop application starts a run for one family or for all fifteen, tracks the run and its per-record jobs, and resumes or imports the same run.",
+                            "The desktop application starts a run for one family or for every family listed below, tracks the run and its per-record jobs, and resumes or imports the same run.",
                         ],
                     },
                     {
@@ -149,7 +162,7 @@ pub(crate) fn plan(version: &str) -> Value {
 
 /// The plan's pages `docs site generate` publishes to the landing's
 /// `product-docs.json`; the rest are authored on the landing.
-const PUBLISHED: &[&str] = &["corpus-adoption", "brama-decisions"];
+const PUBLISHED: &[&str] = &["corpus-adoption", "brama-decisions", "catalog-index"];
 
 /// Render the plan into the canonical site's existing `DocPage` JSON model.
 pub(crate) fn docs_payload(plan: &Value) -> Result<Value> {
@@ -196,6 +209,13 @@ pub(crate) fn docs_payload(plan: &Value) -> Result<Value> {
                         "type": "list",
                         "ordered": false,
                         "items": items,
+                    }));
+                }
+                if let Some(table) = section.get("table") {
+                    blocks.push(json!({
+                        "type": "table",
+                        "columns": table["columns"],
+                        "rows": table["rows"],
                     }));
                 }
                 let heading = section

@@ -231,6 +231,8 @@ fn lifecycle(run: &mut Run) -> Result<()> {
         "code-quality-refused",
         "--title",
         "Refused",
+        "--description",
+        "Catalog whose regeneration is refused.",
     ])?;
     let left = run.corpus.join("code-quality-refused-examples").exists();
     std::os::unix::fs::symlink(root.join(&missing), run.corpus.join(&missing))?;
@@ -256,11 +258,14 @@ fn lifecycle(run: &mut Run) -> Result<()> {
         json!({"exit": code, "stdout": out, "stderr": error}),
     )?;
     let renamed = json_file(&run.corpus.join(RENAMED).join("sources.json"))?;
+    let renamed_index = json_file(&run.corpus.join(RENAMED).join("references.json"))?;
     let gone = !run.corpus.join(PROBE).exists();
     run.check(
         "edit renames the directory and stores the title",
-        gone && renamed["title"] == "Renamed probe" && renamed["catalog"] == RENAMED,
-        json!({"old_gone": gone, "sources": renamed}),
+        gone && renamed["title"] == "Renamed probe"
+            && renamed["catalog"] == RENAMED
+            && renamed_index["catalog"] == RENAMED,
+        json!({"old_gone": gone, "sources": renamed, "references": renamed_index}),
     )?;
     let listed = slugs(&run.index()?);
     run.check(
@@ -289,6 +294,104 @@ fn lifecycle(run: &mut Run) -> Result<()> {
         "removing a missing catalog is refused",
         code != 0 && error.contains("does not exist"),
         json!({"exit": code, "stderr": error}),
+    )?;
+    curated(run)
+}
+
+/// `curate-catalog` with a per-source category column: the categories reach
+/// the records and the index counts them; a malformed selector is refused
+/// and writes nothing.
+fn curated(run: &mut Run) -> Result<()> {
+    const CURATED: &str = "code-quality-curated-probe-examples";
+    let selector = run.work.join("curated.selector");
+    fs::write(
+        &selector,
+        format!(
+            "catalog: {CURATED}\ntitle: Curated probe\ndescription: Catalog curated by the lifecycle test.\ncategory: general\ncount: 3\n\n\
+             First deck\thttps://example.com/first.pdf\tconsulting\n\
+             Second deck\thttps://example.com/second.pdf\tconsulting\n\
+             Third deck\thttps://example.com/third.pdf\n"
+        ),
+    )?;
+    let path = selector
+        .to_str()
+        .context("selector path is not UTF-8")?
+        .to_string();
+    let (code, out, error) = run.spis(&["curate-catalog", "--selector", &path])?;
+    run.check(
+        "validation counts every category",
+        code == 0 && out.contains("consulting 2, general 1") && !run.corpus.join(CURATED).exists(),
+        json!({"exit": code, "stdout": out, "stderr": error}),
+    )?;
+    let (code, out, error) = run.spis(&["curate-catalog", "--selector", &path, "--apply"])?;
+    run.check(
+        "apply writes the curated records",
+        code == 0,
+        json!({"exit": code, "stdout": out, "stderr": error}),
+    )?;
+    let (code, _, error) = run.spis(&["generate-example-catalogs"])?;
+    run.check(
+        "index regenerates with the curated catalog",
+        code == 0,
+        json!({"exit": code, "stderr": error}),
+    )?;
+    let sources = json_file(&run.corpus.join(CURATED).join("sources.json"))?;
+    let recorded: Vec<&str> = sources["examples"]
+        .as_array()
+        .map(|examples| {
+            examples
+                .iter()
+                .filter_map(|e| e["category"].as_str())
+                .collect()
+        })
+        .unwrap_or_default();
+    run.check(
+        "each record keeps its own category, or the header's",
+        recorded == ["consulting", "consulting", "general"],
+        json!(recorded),
+    )?;
+    let index = run.index()?;
+    let entry = index["catalogs"]
+        .as_array()
+        .and_then(|list| list.iter().find(|entry| entry["slug"] == CURATED))
+        .cloned()
+        .unwrap_or(Value::Null);
+    run.check(
+        "index counts the records of every category",
+        entry["categories"]
+            == json!([
+                {"category": "consulting", "count": 2},
+                {"category": "general", "count": 1},
+            ]),
+        entry.clone(),
+    )?;
+
+    let broken = run.work.join("broken.selector");
+    fs::write(
+        &broken,
+        format!(
+            "catalog: code-quality-broken-examples\ntitle: Broken\ndescription: Refused selector.\ncategory: general\ncount: 1\n\n\
+             Only deck\thttps://example.com/only.pdf\t\n"
+        ),
+    )?;
+    let broken_path = broken
+        .to_str()
+        .context("selector path is not UTF-8")?
+        .to_string();
+    let (code, _, error) = run.spis(&["curate-catalog", "--selector", &broken_path, "--apply"])?;
+    let left = run.corpus.join("code-quality-broken-examples").exists();
+    run.check(
+        "an empty category column is refused and writes nothing",
+        code != 0 && error.contains("empty category column") && !left,
+        json!({"exit": code, "stderr": error, "directory_left": left}),
+    )?;
+
+    let (code, out, error) = run.spis(&["catalog-type", "remove", CURATED, "--force"])?;
+    let listed = slugs(&run.index()?);
+    run.check(
+        "the curated catalog is removed with its records",
+        code == 0 && !run.corpus.join(CURATED).exists() && !listed.iter().any(|s| s == CURATED),
+        json!({"exit": code, "stdout": out, "stderr": error, "listed": listed}),
     )?;
     Ok(())
 }

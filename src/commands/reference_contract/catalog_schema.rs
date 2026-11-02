@@ -48,6 +48,7 @@ pub enum Family {
     ReportEvidenceExamples,
     PricingPageExamples,
     LandingPageExamples,
+    PresentationExamples,
 }
 
 impl Family {
@@ -68,6 +69,7 @@ impl Family {
         Family::ReportEvidenceExamples,
         Family::PricingPageExamples,
         Family::LandingPageExamples,
+        Family::PresentationExamples,
     ];
 
     /// The catalog directory name of this family.
@@ -82,7 +84,8 @@ impl Family {
             Family::DocumentationSiteExamples
             | Family::AppStoreListingExamples
             | Family::PricingPageExamples
-            | Family::LandingPageExamples => "document-navigation",
+            | Family::LandingPageExamples
+            | Family::PresentationExamples => "document-navigation",
             _ => "interactive-product",
         }
     }
@@ -103,7 +106,8 @@ impl Family {
             | Family::DesignSystemExamples
             | Family::ReportEvidenceExamples
             | Family::PricingPageExamples
-            | Family::LandingPageExamples => Engine::Web,
+            | Family::LandingPageExamples
+            | Family::PresentationExamples => Engine::Web,
         }
     }
 }

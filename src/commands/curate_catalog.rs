@@ -3,9 +3,13 @@
 //!
 //! The selector is data the operator edits, not a list compiled in: a header
 //! of `key: value` lines (`catalog`, `title`, `description`, `category`,
-//! `count`), a blank line, then one `Name<TAB>URL` source per line. The
-//! command creates attributed candidates only; visual, structure and semantic
-//! evidence stay pending until Weles artifacts are imported and measured.
+//! `count`), a blank line, then one `Name<TAB>URL[<TAB>category]` source per
+//! line. A source without its own category takes the header's; a catalog
+//! whose sources are of different kinds (a consulting deck, a pitch deck, a
+//! thesis defence) names each kind on its line, and the generated index counts
+//! the records of every kind. The command creates attributed candidates only;
+//! visual, structure and semantic evidence stay pending until Weles artifacts
+//! are imported and measured.
 
 use anyhow::{bail, Context, Result};
 use serde_json::{json, Value};
@@ -14,13 +18,19 @@ use std::path::Path;
 
 use super::reference_contract::{ordinal_name, CATALOG_SCHEMA, INDEX_SCHEMA, RECORD_SCHEMA};
 
+struct Source {
+    name: String,
+    url: String,
+    category: String,
+}
+
 struct Selector {
     catalog: String,
     title: String,
     description: String,
     category: String,
     count: usize,
-    sources: Vec<(String, String)>,
+    sources: Vec<Source>,
 }
 
 fn slug(value: &str) -> String {
@@ -39,7 +49,8 @@ fn slug(value: &str) -> String {
 }
 
 /// Read a selector file; every header key is required and every source line
-/// is `Name<TAB>URL`, so a malformed line is refused by its number.
+/// is `Name<TAB>URL` or `Name<TAB>URL<TAB>category`, so a malformed line is
+/// refused with the line itself.
 fn read_selector(path: &Path) -> Result<Selector> {
     let text = std::fs::read_to_string(path)
         .with_context(|| format!("reading selector {}", path.display()))?;
@@ -72,13 +83,26 @@ fn read_selector(path: &Path) -> Result<Selector> {
         if line.trim().is_empty() {
             continue;
         }
-        let Some((name, url)) = line.split_once('\t') else {
+        let fields: Vec<&str> = line.split('\t').map(str::trim).collect();
+        let (name, url, own) = match fields.as_slice() {
+            [name, url] => (*name, *url, None),
+            [name, url, kind] => (*name, *url, Some(*kind)),
+            _ => bail!(
+                "{}: a source line is not `Name<TAB>URL` or `Name<TAB>URL<TAB>category`: {line:?}",
+                path.display()
+            ),
+        };
+        if own == Some("") {
             bail!(
-                "{}: a source line is not `Name<TAB>URL`: {line:?}",
+                "{}: a source line has an empty category column; name the kind or drop the column: {line:?}",
                 path.display()
             );
-        };
-        sources.push((name.trim().to_string(), url.trim().to_string()));
+        }
+        sources.push(Source {
+            name: name.to_string(),
+            url: url.to_string(),
+            category: own.unwrap_or(&category).to_string(),
+        });
     }
     Ok(Selector {
         catalog,
@@ -101,7 +125,7 @@ fn validate(selector: &Selector) -> Result<()> {
     }
     let mut names = BTreeSet::new();
     let mut urls = BTreeSet::new();
-    for (name, url) in &selector.sources {
+    for Source { name, url, .. } in &selector.sources {
         if !names.insert(name.to_ascii_lowercase()) || !urls.insert(url.as_str()) {
             bail!("{category}: duplicate {name} / {url}");
         }
@@ -128,11 +152,16 @@ fn write_catalog(selector: &Selector, replace: bool) -> Result<()> {
     let today = crate::today_utc();
     let mut examples = Vec::new();
     let mut index = Vec::new();
-    for (name, url) in &selector.sources {
+    for Source {
+        name,
+        url,
+        category,
+    } in &selector.sources
+    {
         examples.push(json!({
             "name": name,
             "source_url": url,
-            "category": selector.category,
+            "category": category,
             "selection_note": "Official destination declared by the catalog's selector file; Weles must prove the family surface before completeness.",
             "visual": {"capture_status": "pending-weles"},
             "interface_structure": {"analysis_status": "pending-weles"}
@@ -217,8 +246,30 @@ fn write_catalog(selector: &Selector, replace: bool) -> Result<()> {
 
 const USAGE: &str = "usage: spis curate-catalog --selector FILE [--apply] [--replace]\n\n\
 The selector is a text file: `catalog:`, `title:`, `description:`, `category:` and `count:` \
-header lines, a blank line, then one `Name<TAB>URL` source per line. Without --apply the \
-selector is only validated; --replace overwrites a catalog whose references are not empty.";
+header lines, a blank line, then one `Name<TAB>URL` or `Name<TAB>URL<TAB>category` source per \
+line; a source without its own category takes the header's. Without --apply the selector is \
+only validated and its records are counted per category; --replace overwrites a catalog whose \
+references are not empty.";
+
+/// `category count` for every category the selector's sources declare, in
+/// the order each first appears.
+fn kinds(selector: &Selector) -> String {
+    let mut counted: Vec<(&str, usize)> = Vec::new();
+    for source in &selector.sources {
+        match counted
+            .iter_mut()
+            .find(|(kind, _)| *kind == source.category)
+        {
+            Some((_, count)) => *count += 1,
+            None => counted.push((&source.category, 1)),
+        }
+    }
+    counted
+        .iter()
+        .map(|(kind, count)| format!("{kind} {count}"))
+        .collect::<Vec<_>>()
+        .join(", ")
+}
 
 pub fn run(rest: &[String]) -> Result<()> {
     if rest.iter().any(|value| value == "--help" || value == "-h") {
@@ -245,10 +296,10 @@ pub fn run(rest: &[String]) -> Result<()> {
     validate(&selector)?;
     if !apply {
         println!(
-            "{}: {} attributable candidates in {}\npass --apply to write capture-pending records",
+            "{}: {} attributable candidates ({})\npass --apply to write capture-pending records",
             selector.catalog,
             selector.sources.len(),
-            selector.category
+            kinds(&selector)
         );
         return Ok(());
     }

@@ -237,6 +237,11 @@ pub(crate) fn objective(catalog: &str, name: &str, goal: &str) -> Result<String>
             "global navigation, product-information routes, CTA transitions, media and carousels, forms with validation and cancellation, and desktop, tablet and mobile responsive states",
             "Crawl the exact landing page named by product_url; do not substitute another vendor page, static screenshot or guessed flow.",
         ),
+        "presentation-examples" => (
+            "slide deck or the page that publishes it",
+            "every slide page in order, the viewer's page navigation, zoom and full-screen controls, speaker notes or transcript when published, embedded charts and their source notes, and the download of the deck itself",
+            "Crawl the deck named by product_url, or the deck its page publishes; do not substitute a third-party summary, a thumbnail or a guessed slide.",
+        ),
         other => bail!("crawler run web has no objective for catalog {other}"),
     };
     Ok(format!(

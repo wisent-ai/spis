@@ -1,0 +1,30 @@
+{
+  "schema": "wisent.full-product-reference.v2",
+  "name": "NVIDIA Quarterly Presentation Q1 FY25",
+  "product_url": "https://s201.q4cdn.com/141608511/files/doc_financials/2025/q1/NVDA-F1Q25-Quarterly-Presentation-FINAL.pdf",
+  "evidence_status": "partial",
+  "upstream_owner": "NVIDIA Quarterly Presentation Q1 FY25",
+  "captured_at": "2026-11-02",
+  "motion": [],
+  "states": [],
+  "interactions": [],
+  "journey": null,
+  "motion_analysis": null,
+  "accessibility": {
+    "measured": false,
+    "observations": [],
+    "unknowns": [
+      "Weles accessibility variants not executed yet"
+    ]
+  },
+  "motion_provenance": [],
+  "evidence_gaps": [
+    "Weles capture not imported",
+    "motion evidence absent",
+    "state visuals below the three-state floor",
+    "interaction variants absent",
+    "journey variants absent",
+    "motion analysis absent",
+    "accessibility variants absent"
+  ]
+}

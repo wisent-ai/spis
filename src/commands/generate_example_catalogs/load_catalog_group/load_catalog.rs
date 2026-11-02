@@ -194,14 +194,35 @@ pub(crate) fn load_catalog(slug: &str) -> Result<Value> {
         }
     }
 
-    catalog
-        .as_object_mut()
-        .expect("catalog is an object")
-        .insert(
-            "full_reference_catalog".into(),
-            load_full_references(slug, &examples)?,
-        );
+    let categories = categories(&examples);
+    let object = catalog.as_object_mut().expect("catalog is an object");
+    object.insert("categories".into(), categories);
+    object.insert(
+        "full_reference_catalog".into(),
+        load_full_references(slug, &examples)?,
+    );
     Ok(catalog)
+}
+
+/// How many of a catalog's examples belong to each category, in the order a
+/// category first appears. Read from the examples' own `category`, which the
+/// loop above requires of every one, so a catalog cannot list a kind it holds
+/// no record of.
+fn categories(examples: &[Value]) -> Value {
+    let mut counted: Vec<(String, u64)> = Vec::new();
+    for example in examples {
+        let category = example["category"].as_str().unwrap_or_default();
+        match counted.iter_mut().find(|(name, _)| name == category) {
+            Some((_, count)) => *count += 1,
+            None => counted.push((category.to_string(), 1)),
+        }
+    }
+    Value::Array(
+        counted
+            .into_iter()
+            .map(|(name, count)| json!({"category": name, "count": count}))
+            .collect(),
+    )
 }
 
 // ---------------------------------------------------------------------------
