@@ -46,8 +46,13 @@ anyhow = "1"
 parking_lot = "0.12"
 libc = "0.2"
 # Every wait on another program (Stado reading a credential) says on stderr
-# what it waits for, where and since when, and how it ended.
-stado-wait = { git = "https://github.com/wisent-ai/stado", rev = "692c0438d24117735c61373c0c178f1c1e21b080" }
+# what it waits for, where and since when, and how it ended. Declared by
+# repository without a revision, as the onboarding runtime declares it, so
+# Cargo.lock holds one stado-wait.
+stado-wait = { git = "https://github.com/wisent-ai/stado", package = "stado-wait" }
+# The GitHub star request every Wisent product makes (`spis star`); only the
+# offline request, so no HTTP client of its own comes with it.
+wisent-onboarding-client = { git = "https://github.com/wisent-ai/echo-web", rev = "c602dcbef20c9bab4176a0ba1f276fd604e71496", package = "wisent-onboarding-client", default-features = false }
 regex = "1"
 base64 = "0.22"
 hex = "0.4"
@@ -71,7 +76,7 @@ scraper = "0.27.0"
 [build-dependencies]
 sha2 = "0.10"
 # The build script's git calls say on stderr what they wait for, like every other wait.
-stado-wait = { git = "https://github.com/wisent-ai/stado", rev = "692c0438d24117735c61373c0c178f1c1e21b080" }
+stado-wait = { git = "https://github.com/wisent-ai/stado", package = "stado-wait" }
 
 [profile.release]
 strip = true

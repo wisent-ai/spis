@@ -22,7 +22,10 @@ pub fn bad_request(sentence: &str) -> Refusal {
 /// Endpoints that answer with the subcommand's JSON document instead of a
 /// stream of its output.
 pub fn answers_document(name: &str) -> bool {
-    matches!(name, "docs-status" | "docs-search" | "docs-show")
+    matches!(
+        name,
+        "docs-status" | "docs-search" | "docs-show" | "star-status" | "star-dismiss" | "star-reset"
+    )
 }
 
 fn field_refusal(body: &Map<String, Value>, key: &str, expected: &str, operation: &str) -> Refusal {
@@ -84,6 +87,11 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
         "catalogs-check" => Ok(owned(&["generate-example-catalogs", "--check"])),
         "drift" => Ok(owned(&["check-upstream-drift"])),
         "verify" => Ok(owned(&["verify-reference-evidence"])),
+        // The GitHub star request's verbs, each answering `spis star <verb>
+        // --json`'s document: the app's Don't ask again is star-dismiss.
+        "star-status" => Ok(owned(&["star", "status", "--json"])),
+        "star-dismiss" => Ok(owned(&["star", "dismiss", "--json"])),
+        "star-reset" => Ok(owned(&["star", "reset", "--json"])),
         "capture-dry-run" => {
             let catalog = text(body, "catalog", "a capture plan requires a catalog slug")?;
             Ok(vec!["capture-widths".into(), catalog, "--dry-run".into()])

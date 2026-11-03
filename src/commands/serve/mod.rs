@@ -9,8 +9,12 @@
 //! other `POST /v1/<name>` streams NDJSON: zero or more
 //! `{"type":"log","stream":"stdout"|"stderr","chunk":…}` lines, then exactly
 //! one `{"type":"result","status":N,"json":{…}}` carrying the subcommand's exit
-//! status and, on failure, `{"error": <its refusal sentence>}`. A refusal before
-//! the stream starts is a non-2xx `{"error": sentence}`.
+//! status and, on failure, `{"error": <its refusal sentence>}`; a completed
+//! `reference-add` that makes the GitHub star request carries one
+//! `{"type":"star_request","title":…,"body":…,"repository":…,"actions":N}`
+//! line before its result. `docs-search` and `docs-show` answers that make it
+//! carry the same object as `star_request` beside their document. A refusal
+//! before the stream starts is a non-2xx `{"error": sentence}`.
 //!
 //! Nothing the serving meets is dropped: a body that is not JSON is refused
 //! with the parser's line and column, a pipe that cannot be read is said on
@@ -187,7 +191,22 @@ fn run_document(request: tiny_http::Request, program: &Path, jobs: &Mutex<()>, a
         )
     };
     match completed {
-        Ok(output) if output.status.success() => document(request, StatusCode::OK, output.stdout),
+        Ok(output) if output.status.success() => {
+            // A corpus query a person asked for in Spis Desktop counts toward
+            // the GitHub star request; the one that makes it carries the
+            // request beside the document, under `star_request`.
+            let body = match super::star::desktop_event(argv) {
+                Some(event) => match serde_json::from_slice::<Value>(&output.stdout) {
+                    Ok(Value::Object(mut answer)) => {
+                        answer.insert("star_request".into(), event);
+                        bytes(&Value::Object(answer))
+                    }
+                    _ => output.stdout,
+                },
+                None => output.stdout,
+            };
+            document(request, StatusCode::OK, body)
+        }
         Ok(output) => {
             let sentence = endpoints::refusal_sentence(&String::from_utf8_lossy(&output.stderr));
             refuse(request, failed(sentence));
@@ -275,7 +294,17 @@ fn stream(request: tiny_http::Request, program: &Path, jobs: &Mutex<()>, argv: &
         // it failed, and its sentence names how it ended instead of letting
         // a code read as spis's own exit.
         Ok(status) => match (status.success(), status.code()) {
-            (true, Some(code)) => json!({ "type": "result", "status": code, "json": {} }),
+            (true, Some(code)) => {
+                // A completed job a person asked for in Spis Desktop counts
+                // toward the GitHub star request; the request, when this job
+                // makes it, is one event before the result for the app to show.
+                if let Some(event) = super::star::desktop_event(argv) {
+                    if connected {
+                        connected = emit(event);
+                    }
+                }
+                json!({ "type": "result", "status": code, "json": {} })
+            }
             (false, Some(code)) => json!({
                 "type": "result",
                 "status": code,

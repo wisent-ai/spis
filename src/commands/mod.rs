@@ -25,6 +25,7 @@ pub mod generate_example_catalogs;
 pub mod reference_contract;
 pub mod reference_record;
 pub mod serve;
+mod star;
 mod subcommands;
 pub mod verify_reference_evidence;
 
@@ -119,7 +120,11 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "audit-reference-accessibility" => audit_reference_accessibility::run(rest)?,
         "serve" => serve::run(rest)?,
         "capture-cli-references" => capture_cli_references::run(rest)?,
+        "star" => star::run(rest)?,
         _ => unreachable!("every SUBCOMMANDS entry is dispatched"),
+    }
+    if star::counts(name, rest) {
+        star::observe();
     }
     Ok(true)
 }

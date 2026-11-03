@@ -138,4 +138,10 @@ pub(super) const SUBCOMMANDS: &[Subcommand] = &[
         true,
         Activation::Invocation,
     ),
+    sub(
+        "star",
+        "read, dismiss or reset the GitHub star request made after five reference-record additions or corpus searches (status | dismiss | reset)",
+        true,
+        Activation::Invocation,
+    ),
 ];
