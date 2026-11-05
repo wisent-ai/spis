@@ -255,6 +255,8 @@ pub fn argv(name: &str, body: &Map<String, Value>) -> Result<Vec<String>, Refusa
 }
 
 /// The tool's own refusal: its last stderr line, without the `error: ` prefix.
+/// A run that printed nothing on stderr is named as such, so the reader knows
+/// the refusal carries no words of the tool's own.
 pub fn refusal_sentence(stderr: &str) -> String {
     match stderr
         .lines()
@@ -266,6 +268,6 @@ pub fn refusal_sentence(stderr: &str) -> String {
             Some(said) => said.to_string(),
             None => line.to_string(),
         },
-        None => "The operation failed without reporting a reason.".to_string(),
+        None => "the spis subcommand exited with a failure and printed nothing on stderr, so it named no cause; run the same request with the spis CLI to read what it says".to_string(),
     }
 }
