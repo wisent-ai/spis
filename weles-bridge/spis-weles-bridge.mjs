@@ -710,7 +710,7 @@ function buildReceiptCheckpoint(receiptValue, expectedTaskValue, config, verifyR
     claims = verifyReceipt(receipt, config.receiptKeys);
   } catch (error) {
     const code = typeof error?.code === 'string' ? error.code : 'receipt-verification-failed';
-    fail(code, 'the official Weles client rejected the receipt');
+    fail(code, `the official Weles client rejected the receipt: ${error?.message ?? String(error)}`);
   }
   plainObject(claims, 'verified claims');
   for (const field of CORE_CLAIMS) nonemptyString(claims[field], `verified claims.${field}`);
@@ -882,7 +882,7 @@ async function buildProvenance(receiptValue, expectedValue, artifactValue, confi
     claims = verifyReceipt(receipt, config.receiptKeys);
   } catch (error) {
     const code = typeof error?.code === 'string' ? error.code : 'receipt-verification-failed';
-    fail(code, 'the official Weles client rejected the receipt');
+    fail(code, `the official Weles client rejected the receipt: ${error?.message ?? String(error)}`);
   }
   plainObject(claims, 'verified claims');
   for (const field of CORE_CLAIMS) {
@@ -1473,7 +1473,7 @@ async function execute(commandValue, config, official, preparedSubmission) {
       });
     } catch (error) {
       const code = typeof error?.code === 'string' ? error.code : 'weles-request-failed';
-      fail(code, 'the official Weles client cancel operation failed');
+      fail(code, `the official Weles client could not cancel task ${taskId}: ${error?.message ?? String(error)}`);
     }
     return {
       ...taskStatusDocument(
@@ -1504,7 +1504,7 @@ async function execute(commandValue, config, official, preparedSubmission) {
       );
     } catch (error) {
       const code = typeof error?.code === 'string' ? error.code : 'weles-request-failed';
-      fail(code, 'the official Weles client submit operation failed');
+      fail(code, `the official Weles client could not submit the ${prepared.action} task: ${error?.message ?? String(error)}`);
     }
     plainObject(response, 'Weles submit response');
     const taskId = nonemptyString(response.taskId, 'Weles submit response.taskId');
