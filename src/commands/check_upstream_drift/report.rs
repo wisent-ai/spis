@@ -166,16 +166,41 @@ pub(crate) fn check_readmes(drift: &Mutex<Drift>) -> Result<()> {
     })
 }
 
-/// Return (state, detail) where state is reachable | gone | guarded |
-/// unresolved | skipped (a source the HTTP client has no scheme for).
-pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value) {
+/// What asking a recorded source's URL found: it answers, it is gone (a
+/// status `GONE` names, or a 200 that no longer serves what was recorded),
+/// it is guarded (it refuses anonymous reads), the answer could not be had,
+/// or the HTTP client has no scheme for it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum UrlState {
+    Reachable,
+    Gone,
+    Guarded,
+    Unresolved,
+    Skipped,
+}
+
+impl UrlState {
+    /// The state as a record's `source_url_state` names it.
+    pub(crate) fn word(self) -> &'static str {
+        match self {
+            Self::Reachable => "reachable",
+            Self::Gone => "gone",
+            Self::Guarded => "guarded",
+            Self::Unresolved => "unresolved",
+            Self::Skipped => "skipped",
+        }
+    }
+}
+
+/// Return the state of `url` and the detail that shows it.
+pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (UrlState, Value) {
     let head = stado_wait::blocking(stado_wait::Kind::Network, "the answer to HEAD", url, || {
         client.head(url).call()
     });
     match head {
         Ok(resp) => match replaced(url, resp.get_url(), resp.content_type()) {
-            Some(reason) => ("gone", json!(reason)),
-            None => ("reachable", json!(resp.status())),
+            Some(reason) => (UrlState::Gone, json!(reason)),
+            None => (UrlState::Reachable, json!(resp.status())),
         },
         Err(ureq::Error::Status(code, resp)) => {
             if among(GUARDED, resp.status()) {
@@ -188,32 +213,32 @@ pub(crate) fn url_state(client: &ureq::Agent, url: &str) -> (&'static str, Value
                     || client.get(url).set("Range", "bytes=0-0").call(),
                 );
                 match first_byte {
-                    Ok(r) => return ("reachable", json!(r.status())),
+                    Ok(r) => return (UrlState::Reachable, json!(r.status())),
                     Err(ureq::Error::Status(inner, _)) if among(GONE, inner) => {
-                        return ("gone", json!(inner))
+                        return (UrlState::Gone, json!(inner))
                     }
-                    Err(ureq::Error::Status(inner, _)) => return ("guarded", json!(inner)),
+                    Err(ureq::Error::Status(inner, _)) => return (UrlState::Guarded, json!(inner)),
                     // HEAD was refused and the one-byte GET did not arrive at
                     // all: nothing says the source is still there.
                     Err(error) => {
                         return (
-                            "unresolved",
+                            UrlState::Unresolved,
                             json!(format!("HEAD {} then GET failed: {error}", resp.status())),
                         )
                     }
                 }
             }
             if among(GONE, code) {
-                return ("gone", json!(code));
+                return (UrlState::Gone, json!(code));
             }
-            ("guarded", json!(code))
+            (UrlState::Guarded, json!(code))
         }
         Err(ureq::Error::Transport(transport))
             if transport.kind() == ureq::ErrorKind::UnknownScheme =>
         {
-            ("skipped", json!(transport.to_string()))
+            (UrlState::Skipped, json!(transport.to_string()))
         }
-        Err(error) => ("unresolved", json!(error.to_string())),
+        Err(error) => (UrlState::Unresolved, json!(error.to_string())),
     }
 }
 

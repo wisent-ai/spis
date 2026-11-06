@@ -7,13 +7,13 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
         let client = agent();
         let (mut state, detail) = url_state(&client, url);
         match state {
-            "reachable" => {
+            UrlState::Reachable => {
                 drift.lock().sources_ok.push(url.clone());
                 return;
             }
             // A recorded source the HTTP client has no scheme for (a
             // repository path, a mailto) cannot be asked; it is listed.
-            "skipped" => {
+            UrlState::Skipped => {
                 drift
                     .lock()
                     .sources_skipped
@@ -25,8 +25,8 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
         // A private repository or authenticated application may deliberately
         // answer anonymous HTTP with 400/404. Its recorded classification wins
         // over the transport code.
-        if expected.as_deref() == Some("guarded") && state == "gone" {
-            state = "guarded";
+        if expected.as_deref() == Some(UrlState::Guarded.word()) && state == UrlState::Gone {
+            state = UrlState::Guarded;
         }
         let item = json!({
             "url": url,
@@ -36,8 +36,8 @@ pub(crate) fn check_sources(drift: &Mutex<Drift>) -> Result<()> {
         });
         let mut guard = drift.lock();
         match state {
-            "gone" => guard.sources_gone.push(item),
-            "guarded" => guard.sources_guarded.push(item),
+            UrlState::Gone => guard.sources_gone.push(item),
+            UrlState::Guarded => guard.sources_guarded.push(item),
             _ => guard.sources_unresolved.push(item),
         }
     })
