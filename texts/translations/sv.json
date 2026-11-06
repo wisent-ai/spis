@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Kör `spis corpus adopt PATH` med en katalog som innehåller den kanoniska `example-catalogs.json`, katalogens `sources.json` och `references.json` och bevisfilerna de hänvisar till. Framgång registreras först när platsen har sparats.",
+  "spis.onboarding.adopt_corpus.title": "Ta över ditt befintliga korpus",
+  "spis.onboarding.command_surface.body": "Efter övertagandet använder CLI-kommandon och Spis Desktop samma sparade korpusrot. Att ta över samma sökväg igen visar varje referens som oförändrad. ZIP-, tar-, gzip-, 7z-, rar-, xz- och zstd-arkiv avvisas uttryckligen; packa upp arkivet först så att Spis kan validera dess filer.",
+  "spis.onboarding.command_surface.title": "En korpussökväg för varje kommando",
+  "spis.onboarding.evidence_corpus.body": "Spis kan ta över ett uppackat kanoniskt korpus där det ligger. Innan platsen sparas validerar det katalogindexet, varje käll- och referensindex, varje post som hänvisas till och bevisens ursprungsfält. Det kopierar aldrig originalfilerna någon annanstans och skriver aldrig om dem.",
+  "spis.onboarding.evidence_corpus.title": "Börja från ett bevismaterial du redan har",
+  "walkthrough.already_completed": "Genomgången är redan klar. Kör `{command}` för att visa den igen.",
+  "walkthrough.completed": "Genomgången är klar.",
+  "walkthrough.press_enter": "Tryck på Enter för att fortsätta.",
+  "walkthrough.reset": "Genomgångens förlopp och beviset för första framgången har återställts.",
+  "walkthrough.run_again": "När kommandot har lyckats kör du `{command}` igen."
+}

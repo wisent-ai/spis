@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "සම්මත `example-catalogs.json`, නාමාවලියේ `sources.json` සහ `references.json` සහ යොමු කළ සාක්ෂි ගොනු අඩංගු නාමාවලියක් සමඟ `spis corpus adopt PATH` ධාවනය කරන්න. ස්ථානය සුරැකීමෙන් පසුව පමණක් සාර්ථකත්වය වාර්තා වේ.",
+  "spis.onboarding.adopt_corpus.title": "ඔබගේ පවතින සංග්‍රහය ගන්න",
+  "spis.onboarding.command_surface.body": "ගත් පසු CLI විධාන සහ Spis Desktop එකම සුරකින ලද සංග්‍රහ මූලය භාවිත කරයි. එකම මාර්ගය නැවත ගැනීමෙන් සෑම යොමුවක්ම වෙනස් නොවූ ලෙස පෙන්වයි. ZIP, tar, gzip, 7z, rar, xz සහ zstd සංරක්ෂණ පැහැදිලිවම ප්‍රතික්ෂේප කෙරේ; Spis හට ගොනු තහවුරු කළ හැකි වන පරිදි පළමුව සංරක්ෂණය විවෘත කරන්න.",
+  "spis.onboarding.command_surface.title": "සෑම විධානයකටම එක් සංග්‍රහ මාර්ගයක්",
+  "spis.onboarding.evidence_corpus.body": "Spis හට විවෘත කළ සම්මත සංග්‍රහයක් එය ඇති තැනම ගත හැකිය. ස්ථානය සුරැකීමට පෙර එය නාමාවලි දර්ශකය, සෑම මූලාශ්‍ර හා යොමු දර්ශකයක්ම, යොමු කළ සෑම වාර්තාවක්ම සහ සාක්ෂිවල මූලාරම්භ ක්ෂේත්‍ර තහවුරු කරයි. එය කිසිවිටෙක මුල් ගොනු වෙනත් තැනකට පිටපත් කරන්නේ හෝ නැවත ලියන්නේ නැත.",
+  "spis.onboarding.evidence_corpus.title": "ඔබ සතුව දැනටමත් ඇති සාක්ෂි සංග්‍රහයකින් අරඹන්න",
+  "walkthrough.already_completed": "හඳුන්වාදීම දැනටමත් සම්පූර්ණයි. එය නැවත පෙන්වීමට `{command}` ධාවනය කරන්න.",
+  "walkthrough.completed": "හඳුන්වාදීම සම්පූර්ණයි.",
+  "walkthrough.press_enter": "ඉදිරියට යාමට Enter ඔබන්න.",
+  "walkthrough.reset": "හඳුන්වාදීමේ ප්‍රගතිය සහ පළමු සාර්ථකත්වයේ සාක්ෂිය යළි සකසන ලදී.",
+  "walkthrough.run_again": "විධානය සාර්ථක වූ පසු `{command}` නැවත ධාවනය කරන්න."
+}

@@ -29,25 +29,60 @@ pub(crate) fn save_state(state: &Value) -> Result<()> {
     Ok(())
 }
 
+/// The walkthrough's words in every fleet language (`texts/`, written by
+/// wisent-texts' `texts bundle`): each screen's `title_key` and `body_key`,
+/// whose English is the screen's presentation, and the walkthrough's own
+/// lines.
+pub(crate) fn texts() -> Result<&'static wisent_texts::Texts> {
+    static TEXTS: std::sync::LazyLock<std::result::Result<wisent_texts::Texts, String>> =
+        std::sync::LazyLock::new(|| {
+            wisent_texts::Texts::bundle(include_str!("../../texts/bundle.json"))
+                .map_err(|error| error.to_string())
+        });
+    TEXTS
+        .as_ref()
+        .map_err(|cause| anyhow::anyhow!("texts/bundle.json is the walkthrough's words: {cause}"))
+}
+
+/// One of the walkthrough's own lines in the reader's language.
+pub(crate) fn say(key: &str, values: &[(&str, &str)]) -> Result<String> {
+    Ok(texts()?.say(&wisent_texts::language(), key, values))
+}
+
+/// A screen in the reader's language: its title and body by their keys, the
+/// presentation's English when a language lacks them. A screen without its
+/// keys or presentation is refused by name.
 pub(crate) fn render(screen: &Value) -> Result<()> {
+    let field = |name: &str| -> Result<&str> {
+        screen
+            .get(name)
+            .and_then(Value::as_str)
+            .with_context(|| format!("canonical onboarding screen has no {name}"))
+    };
     let presentation = screen
         .get("presentation")
         .and_then(Value::as_object)
         .context("canonical onboarding screen has no presentation")?;
-    let title = presentation
-        .get("title")
-        .and_then(Value::as_str)
-        .context("canonical onboarding screen has no presentation title")?;
-    let body = presentation
-        .get("body")
-        .and_then(Value::as_str)
-        .context("canonical onboarding screen has no presentation body")?;
+    let english = |name: &str| -> Result<&str> {
+        presentation
+            .get(name)
+            .and_then(Value::as_str)
+            .with_context(|| format!("canonical onboarding screen has no presentation {name}"))
+    };
+    let language = wisent_texts::language();
+    let words = texts()?;
+    let read = |key: &str, fallback: &str| {
+        let text = words.say(&language, key, &[]);
+        if text == key { fallback.to_owned() } else { text }
+    };
+    let title = read(field("title_key")?, english("title")?);
+    let body = read(field("body_key")?, english("body")?);
     println!("\n== {title} ==\n{body}");
     Ok(())
 }
 
 pub(crate) fn wait_for_enter() -> Result<()> {
-    print!("\nPress Enter to continue.");
+    print!("\n{}", say("walkthrough.press_enter", &[])?);
     io::stdout().flush()?;
     let mut answer = String::new();
     io::stdin().read_line(&mut answer)?;

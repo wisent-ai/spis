@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "मानक `example-catalogs.json`, कैटलॉग के `sources.json` और `references.json` तथा संदर्भित प्रमाण-फ़ाइलों वाली निर्देशिका के साथ `spis corpus adopt PATH` चलाएँ। स्थान सहेजे जाने के बाद ही सफलता दर्ज होती है।",
+  "spis.onboarding.adopt_corpus.title": "अपना मौजूदा संग्रह अपनाएँ",
+  "spis.onboarding.command_surface.body": "अपनाने के बाद CLI आदेश और Spis Desktop एक ही सहेजे गए संग्रह-मूल का उपयोग करते हैं। उसी पथ को फिर से अपनाने पर हर संदर्भ अपरिवर्तित दिखता है। ZIP, tar, gzip, 7z, rar, xz और zstd आर्काइव स्पष्ट रूप से अस्वीकार किए जाते हैं; पहले आर्काइव खोलें ताकि Spis उसकी फ़ाइलें जाँच सके।",
+  "spis.onboarding.command_surface.title": "हर आदेश के लिए एक संग्रह-पथ",
+  "spis.onboarding.evidence_corpus.body": "Spis किसी अनपैक किए गए मानक संग्रह को उसी स्थान पर अपना सकता है। स्थान सहेजने से पहले यह कैटलॉग अनुक्रमणिका, हर स्रोत और संदर्भ अनुक्रमणिका, हर संदर्भित रिकॉर्ड और प्रमाण के उद्गम-क्षेत्रों की जाँच करता है। यह मूल फ़ाइलों को कभी कहीं और कॉपी या फिर से नहीं लिखता।",
+  "spis.onboarding.evidence_corpus.title": "पहले से मौजूद प्रमाण-संग्रह से शुरू करें",
+  "walkthrough.already_completed": "परिचय पहले ही पूरा हो चुका है। इसे फिर से दिखाने के लिए `{command}` चलाएँ।",
+  "walkthrough.completed": "परिचय पूरा हुआ।",
+  "walkthrough.press_enter": "जारी रखने के लिए Enter दबाएँ।",
+  "walkthrough.reset": "परिचय की प्रगति और पहली सफलता का प्रमाण रीसेट कर दिए गए।",
+  "walkthrough.run_again": "आदेश सफल होने के बाद `{command}` फिर से चलाएँ।"
+}

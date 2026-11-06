@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "প্রামাণিক `example-catalogs.json`, ক্যাটালগের `sources.json` ও `references.json` এবং উল্লিখিত প্রমাণ-ফাইলসহ একটি ডিরেক্টরি দিয়ে `spis corpus adopt PATH` চালান। অবস্থান সংরক্ষিত হওয়ার পরেই কেবল সাফল্য নথিভুক্ত হয়।",
+  "spis.onboarding.adopt_corpus.title": "আপনার বিদ্যমান সংগ্রহ গ্রহণ করুন",
+  "spis.onboarding.command_surface.body": "গ্রহণের পরে CLI কমান্ড ও Spis Desktop একই সংরক্ষিত সংগ্রহ-মূল ব্যবহার করে। একই পথ আবার গ্রহণ করলে প্রতিটি রেফারেন্স অপরিবর্তিত দেখায়। ZIP, tar, gzip, 7z, rar, xz ও zstd আর্কাইভ স্পষ্টভাবে প্রত্যাখ্যাত হয়; Spis যাতে ফাইলগুলো যাচাই করতে পারে সেজন্য আগে আর্কাইভ খুলুন।",
+  "spis.onboarding.command_surface.title": "প্রতিটি কমান্ডের জন্য একটি সংগ্রহ-পথ",
+  "spis.onboarding.evidence_corpus.body": "Spis একটি খোলা প্রামাণিক সংগ্রহকে তার জায়গাতেই গ্রহণ করতে পারে। অবস্থান সংরক্ষণের আগে এটি ক্যাটালগ সূচি, প্রতিটি উৎস ও রেফারেন্স সূচি, প্রতিটি উল্লিখিত রেকর্ড এবং প্রমাণের উৎস-ক্ষেত্রগুলো যাচাই করে। এটি কখনো মূল ফাইলগুলো অন্যত্র কপি বা পুনর্লিখন করে না।",
+  "spis.onboarding.evidence_corpus.title": "আপনার কাছে আগে থেকে থাকা প্রমাণ-সংগ্রহ থেকে শুরু করুন",
+  "walkthrough.already_completed": "পরিচিতি আগেই সম্পন্ন হয়েছে। আবার দেখাতে `{command}` চালান।",
+  "walkthrough.completed": "পরিচিতি সম্পন্ন হয়েছে।",
+  "walkthrough.press_enter": "চালিয়ে যেতে Enter চাপুন।",
+  "walkthrough.reset": "পরিচিতির অগ্রগতি ও প্রথম সাফল্যের প্রমাণ রিসেট করা হয়েছে।",
+  "walkthrough.run_again": "কমান্ড সফল হওয়ার পরে আবার `{command}` চালান।"
+}

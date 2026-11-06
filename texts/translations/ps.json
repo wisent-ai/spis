@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "`spis corpus adopt PATH` د هغه پوښۍ سره وچلوئ چې معیاري `example-catalogs.json`، د کتلاګ `sources.json` او `references.json` او د حوالې شوي شواهدو فایلونه ولري. بریا یوازې وروسته له دې ثبتېږي چې ځای خوندي شي.",
+  "spis.onboarding.adopt_corpus.title": "خپله موجوده مجموعه ومنئ",
+  "spis.onboarding.command_surface.body": "له منلو وروسته د CLI امرونه او Spis Desktop د مجموعې ورته خوندي شوې ریښه کاروي. د ورته لارې بیا منل هره حواله بې بدلونه ښيي. د ZIP، tar، gzip، 7z، rar، xz او zstd آرشیفونه په ښکاره رد کېږي؛ لومړی آرشیف خلاص کړئ ترڅو Spis یې فایلونه وګوري.",
+  "spis.onboarding.command_surface.title": "د هر امر لپاره د مجموعې یوه لاره",
+  "spis.onboarding.evidence_corpus.body": "Spis کولی شي د خلاصې شوې معیاري مجموعې په خپل ځای کې ومني. د ځای له خوندي کولو مخکې د کتلاګ فهرست، د سرچینو او حوالو هر فهرست، هر حواله شوی ریکارډ او د شواهدو د اصل ساحې ګوري. هېڅکله اصلي فایلونه بل ځای ته نه کاپي کوي او نه یې بیا لیکي.",
+  "spis.onboarding.evidence_corpus.title": "د هغه شواهدو له مجموعې پیل وکړئ چې دمخه یې لرئ",
+  "walkthrough.already_completed": "لارښود دمخه بشپړ شوی. د بیا ښودلو لپاره `{command}` وچلوئ.",
+  "walkthrough.completed": "لارښود بشپړ شو.",
+  "walkthrough.press_enter": "د دوام لپاره Enter کېکاږئ.",
+  "walkthrough.reset": "د لارښود پرمختګ او د لومړۍ بریا ثبوت بیا تنظیم شول.",
+  "walkthrough.run_again": "وروسته له دې چې امر بریالی شي، `{command}` بیا وچلوئ."
+}

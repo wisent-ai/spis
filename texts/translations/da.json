@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Kør `spis corpus adopt PATH` med en mappe, der indeholder den kanoniske `example-catalogs.json`, katalogets `sources.json` og `references.json` samt de refererede bevisfiler. Succes registreres først, når placeringen er gemt.",
+  "spis.onboarding.adopt_corpus.title": "Overtag dit eksisterende korpus",
+  "spis.onboarding.command_surface.body": "Efter overtagelsen bruger CLI-kommandoer og Spis Desktop den samme gemte korpusrod. At overtage den samme sti igen viser alle referencer som uændrede. ZIP-, tar-, gzip-, 7z-, rar-, xz- og zstd-arkiver afvises udtrykkeligt; pak først arkivet ud, så Spis kan validere dets filer.",
+  "spis.onboarding.command_surface.title": "Én korpussti til alle kommandoer",
+  "spis.onboarding.evidence_corpus.body": "Spis kan overtage et udpakket kanonisk korpus, hvor det ligger. Før placeringen gemmes, validerer det katalogindekset, hvert kilde- og referenceindeks, hver refereret post og bevisernes oprindelsesfelter. Det kopierer aldrig de originale filer væk og omskriver dem aldrig.",
+  "spis.onboarding.evidence_corpus.title": "Start fra et bevismateriale, du allerede har",
+  "walkthrough.already_completed": "Gennemgangen er allerede fuldført. Kør `{command}` for at vise den igen.",
+  "walkthrough.completed": "Gennemgangen er fuldført.",
+  "walkthrough.press_enter": "Tryk på Enter for at fortsætte.",
+  "walkthrough.reset": "Gennemgangens fremskridt og beviset for første succes er nulstillet.",
+  "walkthrough.run_again": "Når kommandoen er lykkedes, skal du køre `{command}` igen."
+}

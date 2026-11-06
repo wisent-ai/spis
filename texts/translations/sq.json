@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Ekzekutoni `spis corpus adopt PATH` me një direktori që përmban `example-catalogs.json` kanonik, `sources.json` dhe `references.json` të katalogut dhe skedarët e provave që përmendin. Suksesi regjistrohet vetëm pasi vendndodhja të jetë ruajtur.",
+  "spis.onboarding.adopt_corpus.title": "Adoptoni korpusin tuaj ekzistues",
+  "spis.onboarding.command_surface.body": "Pas adoptimit, komandat e CLI dhe Spis Desktop përdorin të njëjtën rrënjë të ruajtur korpusi. Adoptimi sërish i të njëjtit shteg e tregon çdo referencë të pandryshuar. Arkivat ZIP, tar, gzip, 7z, rar, xz dhe zstd refuzohen qartazi; shpaketoni fillimisht arkivin që Spis të verifikojë skedarët e tij.",
+  "spis.onboarding.command_surface.title": "Një shteg korpusi për çdo komandë",
+  "spis.onboarding.evidence_corpus.body": "Spis mund të adoptojë në vend një korpus kanonik të shpaketuar. Para se të ruajë vendndodhjen, verifikon indeksin e katalogut, çdo indeks burimesh dhe referencash, çdo regjistrim të përmendur dhe fushat e prejardhjes së provave. Asnjëherë nuk i kopjon gjetiu skedarët origjinalë dhe nuk i rishkruan.",
+  "spis.onboarding.evidence_corpus.title": "Nisni nga një korpus provash që e keni tashmë",
+  "walkthrough.already_completed": "Prezantimi ka përfunduar tashmë. Ekzekutoni `{command}` për ta shfaqur sërish.",
+  "walkthrough.completed": "Prezantimi përfundoi.",
+  "walkthrough.press_enter": "Shtypni Enter për të vazhduar.",
+  "walkthrough.reset": "Përparimi i prezantimit dhe prova e suksesit të parë u rivendosën.",
+  "walkthrough.run_again": "Pasi komanda të ketë sukses, ekzekutoni sërish `{command}`."
+}

@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "መደበኛ `example-catalogs.json`፣ የካታሎግ `sources.json` እና `references.json`፣ እንዲሁም የተጠቀሱትን የማስረጃ ፋይሎች በያዘ ማውጫ `spis corpus adopt PATH` ያሂዱ። ስኬቱ የሚመዘገበው ቦታው ከተቀመጠ በኋላ ብቻ ነው።",
+  "spis.onboarding.adopt_corpus.title": "ያለዎትን ስብስብ ይቀበሉ",
+  "spis.onboarding.command_surface.body": "ከተቀበሉ በኋላ የCLI ትእዛዞች እና Spis Desktop አንድ ዓይነት የተቀመጠ የስብስብ ሥር ያገኛሉ። ተመሳሳዩን መንገድ እንደገና መቀበል እያንዳንዱን ማጣቀሻ ያልተቀየረ ብሎ ያሳያል። የZIP፣ tar፣ gzip፣ 7z፣ rar፣ xz እና zstd ማህደሮች በግልጽ ውድቅ ይደረጋሉ፤ Spis ፋይሎቹን እንዲያረጋግጥ መጀመሪያ ያውጡት።",
+  "spis.onboarding.command_surface.title": "ለእያንዳንዱ ትእዛዝ አንድ የስብስብ መንገድ",
+  "spis.onboarding.evidence_corpus.body": "Spis የተፈታ መደበኛ ስብስብን ባለበት ቦታ ሊቀበል ይችላል። ቦታውን ከማስቀመጡ በፊት የካታሎግ መረጃ ጠቋሚውን፣ እያንዳንዱን የምንጭ እና የማጣቀሻ መረጃ ጠቋሚ፣ እያንዳንዱን የተጠቀሰ መዝገብ እና የማስረጃ መነሻ መስኮችን ያረጋግጣል። የመጀመሪያዎቹን ፋይሎች በፍጹም አይገለብጥም ወይም እንደገና አይጽፍም።",
+  "spis.onboarding.evidence_corpus.title": "ካለዎት የማስረጃ ስብስብ ይጀምሩ",
+  "walkthrough.already_completed": "የመግቢያ መመሪያው አስቀድሞ ተጠናቅቋል። እንደገና ለማሳየት `{command}` ያሂዱ።",
+  "walkthrough.completed": "የመግቢያ መመሪያው ተጠናቅቋል።",
+  "walkthrough.press_enter": "ለመቀጠል Enter ይጫኑ።",
+  "walkthrough.reset": "የመግቢያ መመሪያው ሂደት እና የመጀመሪያ ስኬት ማስረጃ ዳግም ተጀምረዋል።",
+  "walkthrough.run_again": "ትእዛዙ ከተሳካ በኋላ `{command}` እንደገና ያሂዱ።"
+}

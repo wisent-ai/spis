@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Kanonik `example-catalogs.json`, kataloğun `sources.json` ve `references.json` dosyalarını ve başvurulan kanıt dosyalarını içeren bir dizinle `spis corpus adopt PATH` komutunu çalıştırın. Başarı yalnızca konum kaydedildikten sonra kaydedilir.",
+  "spis.onboarding.adopt_corpus.title": "Mevcut derleminizi benimseyin",
+  "spis.onboarding.command_surface.body": "Benimsendikten sonra CLI komutları ve Spis Desktop aynı kayıtlı derlem kökünü kullanır. Aynı yolu yeniden benimsemek her başvuruyu değişmemiş olarak gösterir. ZIP, tar, gzip, 7z, rar, xz ve zstd arşivleri açıkça reddedilir; Spis dosyalarını doğrulayabilsin diye önce arşivi açın.",
+  "spis.onboarding.command_surface.title": "Her komut için tek bir derlem yolu",
+  "spis.onboarding.evidence_corpus.body": "Spis, açılmış kanonik bir derlemi bulunduğu yerde benimseyebilir. Konumu kaydetmeden önce katalog dizinini, her kaynak ve başvuru dizinini, başvurulan her kaydı ve kanıtların köken alanlarını doğrular. Özgün dosyaları asla başka yere kopyalamaz veya yeniden yazmaz.",
+  "spis.onboarding.evidence_corpus.title": "Elinizdeki bir kanıt derleminden başlayın",
+  "walkthrough.already_completed": "Tanıtım zaten tamamlandı. Yeniden göstermek için `{command}` çalıştırın.",
+  "walkthrough.completed": "Tanıtım tamamlandı.",
+  "walkthrough.press_enter": "Devam etmek için Enter tuşuna basın.",
+  "walkthrough.reset": "Tanıtımın ilerlemesi ve ilk başarının kanıtı sıfırlandı.",
+  "walkthrough.run_again": "Komut başarılı olduktan sonra `{command}` komutunu yeniden çalıştırın."
+}

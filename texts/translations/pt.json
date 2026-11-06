@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Execute `spis corpus adopt PATH` com um diretório que contenha o `example-catalogs.json` canónico, os `sources.json` e `references.json` do catálogo e os ficheiros de evidência referenciados. O sucesso só é registado depois de a localização ser guardada.",
+  "spis.onboarding.adopt_corpus.title": "Adote o seu corpus existente",
+  "spis.onboarding.command_surface.body": "Após a adoção, os comandos da CLI e o Spis Desktop usam a mesma raiz de corpus guardada. Adotar de novo o mesmo caminho mostra todas as referências inalteradas. Os arquivos ZIP, tar, gzip, 7z, rar, xz e zstd são recusados explicitamente; descompacte primeiro o arquivo para que o Spis possa validar os seus ficheiros.",
+  "spis.onboarding.command_surface.title": "Um único caminho de corpus para cada comando",
+  "spis.onboarding.evidence_corpus.body": "O Spis pode adotar no próprio lugar um corpus canónico descompactado. Antes de guardar a localização, valida o índice do catálogo, cada índice de fontes e referências, cada registo referenciado e os campos de proveniência das evidências. Nunca copia para outro lado nem reescreve os ficheiros originais.",
+  "spis.onboarding.evidence_corpus.title": "Comece por um corpus de evidências que já tem",
+  "walkthrough.already_completed": "A apresentação já foi concluída. Execute `{command}` para a mostrar de novo.",
+  "walkthrough.completed": "Apresentação concluída.",
+  "walkthrough.press_enter": "Prima Enter para continuar.",
+  "walkthrough.reset": "O progresso da apresentação e a prova do primeiro sucesso foram repostos.",
+  "walkthrough.run_again": "Depois de o comando ser bem-sucedido, execute `{command}` novamente."
+}

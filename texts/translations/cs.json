@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Spusťte `spis corpus adopt PATH` s adresářem, který obsahuje kanonický `example-catalogs.json`, `sources.json` a `references.json` katalogu a odkazované soubory s důkazy. Úspěch se zaznamená až po uložení umístění.",
+  "spis.onboarding.adopt_corpus.title": "Převezměte svůj stávající korpus",
+  "spis.onboarding.command_surface.body": "Po převzetí používají příkazy CLI i Spis Desktop stejný uložený kořen korpusu. Opětovné převzetí stejné cesty ukáže všechny odkazy beze změny. Archivy ZIP, tar, gzip, 7z, rar, xz a zstd jsou výslovně odmítnuty; nejprve archiv rozbalte, aby Spis mohl ověřit jeho soubory.",
+  "spis.onboarding.command_surface.title": "Jedna cesta ke korpusu pro každý příkaz",
+  "spis.onboarding.evidence_corpus.body": "Spis může převzít rozbalený kanonický korpus na místě. Před uložením umístění ověří index katalogu, každý index zdrojů a odkazů, každý odkazovaný záznam a pole původu důkazů. Původní soubory nikdy nikam nekopíruje ani je nepřepisuje.",
+  "spis.onboarding.evidence_corpus.title": "Začněte z korpusu důkazů, který už máte",
+  "walkthrough.already_completed": "Průvodce je již dokončen. Spusťte `{command}`, chcete-li jej zobrazit znovu.",
+  "walkthrough.completed": "Průvodce je dokončen.",
+  "walkthrough.press_enter": "Pokračujte stisknutím klávesy Enter.",
+  "walkthrough.reset": "Postup průvodcem a doklad o prvním úspěchu byly vynulovány.",
+  "walkthrough.run_again": "Až příkaz uspěje, spusťte znovu `{command}`."
+}

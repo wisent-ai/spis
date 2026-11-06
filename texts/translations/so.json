@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Socodsii `spis corpus adopt PATH` adigoo isticmaalaya galka ka kooban `example-catalogs.json` caadiga ah, `sources.json` iyo `references.json` ee kaatalooga, iyo faylasha caddaynta ee lagu tixraacay. Guusha waxa la diiwaangeliyaa oo keliya marka goobta la keydiyo.",
+  "spis.onboarding.adopt_corpus.title": "Qaado kaydkaaga jira",
+  "spis.onboarding.command_surface.body": "Kadib marka la qaato, amarrada CLI iyo Spis Desktop waxay isticmaalaan isla xididka kaydka ee la keydiyay. In isla waddada mar kale la qaato waxay muujinaysaa tixraac kasta oo aan isbeddelin. Kaydadka ZIP, tar, gzip, 7z, rar, xz iyo zstd si cad ayaa loo diidaa; marka hore fur kaydka si Spis u hubiyo faylashiisa.",
+  "spis.onboarding.command_surface.title": "Hal waddo kayd ah oo amar kasta",
+  "spis.onboarding.evidence_corpus.body": "Spis wuxuu qaadan karaa kayd caadi ah oo la furay isagoo meeshiisa jooga. Ka hor inta uusan keydin goobta, wuxuu hubiyaa tusmada kaatalooga, tusmo kasta oo il iyo tixraac ah, diiwaan kasta oo la tixraacay, iyo meelaha asalka caddaynta. Weligii ma koobiyeeyo faylasha asalka ah meel kale mana dib u qoro.",
+  "spis.onboarding.evidence_corpus.title": "Ka bilow kayd caddeyn ah oo aad hore u haysatay",
+  "walkthrough.already_completed": "Hagitaanku hore ayuu u dhammaaday. Socodsii `{command}` si aad mar kale u aragto.",
+  "walkthrough.completed": "Hagitaanku wuu dhammaaday.",
+  "walkthrough.press_enter": "Riix Enter si aad u sii wadato.",
+  "walkthrough.reset": "Horumarka hagitaanka iyo caddaynta guusha koowaad dib ayaa loo dejiyay.",
+  "walkthrough.run_again": "Kadib marka amarku guuleysto, mar kale socodsii `{command}`."
+}

@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "`spis corpus adopt PATH` را با پوشه‌ای اجرا کنید که `example-catalogs.json` استاندارد، `sources.json` و `references.json` کاتالوگ و فایل‌های شواهد ارجاع‌شده را دارد. موفقیت تنها پس از ذخیرهٔ مکان ثبت می‌شود.",
+  "spis.onboarding.adopt_corpus.title": "مجموعهٔ موجود خود را بپذیرید",
+  "spis.onboarding.command_surface.body": "پس از پذیرش، فرمان‌های CLI و Spis Desktop به همان ریشهٔ ذخیره‌شدهٔ مجموعه می‌رسند. پذیرش دوبارهٔ همان مسیر، همهٔ ارجاع‌ها را بدون تغییر نشان می‌دهد. بایگانی‌های ZIP، tar، gzip، 7z، rar، xz و zstd صریحاً رد می‌شوند؛ ابتدا بایگانی را باز کنید تا Spis بتواند فایل‌هایش را بررسی کند.",
+  "spis.onboarding.command_surface.title": "یک مسیر مجموعه برای همهٔ فرمان‌ها",
+  "spis.onboarding.evidence_corpus.body": "Spis می‌تواند مجموعهٔ استاندارد ازحالت‌فشرده‌خارج‌شده را در همان جای خود بپذیرد. پیش از ذخیرهٔ مکان، فهرست کاتالوگ، هر فهرست منبع و ارجاع، هر رکورد ارجاع‌شده و فیلدهای منشأ شواهد را بررسی می‌کند. هرگز فایل‌های اصلی را به جای دیگری کپی نمی‌کند یا بازنویسی نمی‌کند.",
+  "spis.onboarding.evidence_corpus.title": "از مجموعه شواهدی که از پیش دارید شروع کنید",
+  "walkthrough.already_completed": "راهنمای آشنایی قبلاً کامل شده است. برای نمایش دوباره، `{command}` را اجرا کنید.",
+  "walkthrough.completed": "راهنمای آشنایی کامل شد.",
+  "walkthrough.press_enter": "برای ادامه Enter را فشار دهید.",
+  "walkthrough.reset": "پیشرفت راهنمای آشنایی و شواهد نخستین موفقیت بازنشانی شد.",
+  "walkthrough.run_again": "پس از موفقیت فرمان، دوباره `{command}` را اجرا کنید."
+}

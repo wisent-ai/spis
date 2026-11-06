@@ -1,0 +1,16 @@
+{
+  "product": "spis",
+  "texts": {
+    "spis.onboarding.evidence_corpus.title": {"en": "Start from an evidence corpus you already have", "for": "walkthrough screen 1 title (its English is the screen's presentation in src/onboarding_first_use.json)"},
+    "spis.onboarding.evidence_corpus.body": {"en": "Spis can adopt an unpacked canonical corpus in place. It validates the catalog index, every source and reference index, every referenced record, and the evidence provenance fields before saving the location. It never copies away or rewrites the original files.", "for": "walkthrough screen 1 body"},
+    "spis.onboarding.command_surface.title": {"en": "One corpus path for every command", "for": "walkthrough screen 2 title"},
+    "spis.onboarding.command_surface.body": {"en": "After adoption, CLI commands and Spis Desktop resolve the same persisted corpus root. Re-adopting the exact path reports every reference unchanged. ZIP, tar, gzip, 7z, rar, xz and zstd archives are refused explicitly; unpack one first so Spis can validate its files.", "for": "walkthrough screen 2 body; keep the archive format names"},
+    "spis.onboarding.adopt_corpus.title": {"en": "Adopt your existing corpus", "for": "walkthrough screen 3 title"},
+    "spis.onboarding.adopt_corpus.body": {"en": "Run `spis corpus adopt PATH` with a directory containing canonical `example-catalogs.json`, catalog `sources.json` and `references.json`, and the referenced evidence files. Success is recorded only after the location is persisted.", "for": "walkthrough screen 3 body; keep the command and file names in backticks unchanged"},
+    "walkthrough.press_enter": {"en": "Press Enter to continue.", "for": "prompt after each walkthrough screen; Enter is the keyboard key"},
+    "walkthrough.reset": {"en": "Walkthrough progress and first-success evidence reset.", "for": "printed after the walkthrough was reset"},
+    "walkthrough.already_completed": {"en": "Walkthrough already completed. Run `{command}` to show it again.", "places": ["command"], "for": "printed when the walkthrough was finished before; {command} is the command that resets it"},
+    "walkthrough.completed": {"en": "Walkthrough completed.", "for": "printed when the walkthrough's last step succeeded"},
+    "walkthrough.run_again": {"en": "After the command succeeds, run `{command}` again.", "places": ["command"], "for": "printed on the last screen until its command succeeded; {command} reopens the walkthrough"}
+  }
+}

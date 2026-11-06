@@ -33,11 +33,11 @@ pub fn run(rest: &[String]) -> Result<()> {
     let definition = canonical_definition()?;
     let mut state = load_or_start_state(&definition, reset)?;
     if reset {
-        println!("Walkthrough progress and first-success evidence reset.");
+        println!("{}", say("walkthrough.reset", &[])?);
     }
 
     if state.get("status").and_then(Value::as_str) == Some("completed") {
-        println!("Walkthrough already completed. Run `spis onboarding --reset` to show it again.");
+        println!("{}", say("walkthrough.already_completed", &[("command", "spis onboarding --reset")])?);
         return Ok(());
     }
 
@@ -54,9 +54,9 @@ pub fn run(rest: &[String]) -> Result<()> {
             if evidence_satisfied(screen, &state)? {
                 state["status"] = Value::String("completed".to_string());
                 save_state(&state)?;
-                println!("\nWalkthrough completed.");
+                println!("\n{}", say("walkthrough.completed", &[])?);
             } else {
-                println!("\nAfter the command succeeds, run `spis onboarding` again.");
+                println!("\n{}", say("walkthrough.run_again", &[("command", "spis onboarding")])?);
             }
             return Ok(());
         }

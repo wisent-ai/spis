@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Chạy `spis corpus adopt PATH` với một thư mục chứa `example-catalogs.json` chuẩn, `sources.json` và `references.json` của danh mục cùng các tệp bằng chứng được tham chiếu. Thành công chỉ được ghi lại sau khi vị trí đã được lưu.",
+  "spis.onboarding.adopt_corpus.title": "Tiếp nhận kho hiện có của bạn",
+  "spis.onboarding.command_surface.body": "Sau khi tiếp nhận, các lệnh CLI và Spis Desktop dùng cùng một gốc kho đã lưu. Tiếp nhận lại đúng đường dẫn đó sẽ báo mọi tham chiếu không đổi. Các tệp nén ZIP, tar, gzip, 7z, rar, xz và zstd bị từ chối rõ ràng; hãy giải nén trước để Spis có thể kiểm tra các tệp.",
+  "spis.onboarding.command_surface.title": "Một đường dẫn kho cho mọi lệnh",
+  "spis.onboarding.evidence_corpus.body": "Spis có thể tiếp nhận tại chỗ một kho chuẩn đã giải nén. Trước khi lưu vị trí, nó kiểm tra chỉ mục danh mục, mọi chỉ mục nguồn và tham chiếu, mọi bản ghi được tham chiếu và các trường nguồn gốc của bằng chứng. Nó không bao giờ sao chép các tệp gốc đi nơi khác hay ghi đè lên chúng.",
+  "spis.onboarding.evidence_corpus.title": "Bắt đầu từ kho bằng chứng bạn đã có",
+  "walkthrough.already_completed": "Phần hướng dẫn đã hoàn tất. Chạy `{command}` để hiển thị lại.",
+  "walkthrough.completed": "Đã hoàn tất phần hướng dẫn.",
+  "walkthrough.press_enter": "Nhấn Enter để tiếp tục.",
+  "walkthrough.reset": "Đã đặt lại tiến trình hướng dẫn và bằng chứng thành công đầu tiên.",
+  "walkthrough.run_again": "Sau khi lệnh thành công, hãy chạy lại `{command}`."
+}

@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "`spis corpus adopt PATH` əmrini kanonik `example-catalogs.json`, kataloqun `sources.json` və `references.json` fayllarını və istinad edilən sübut fayllarını saxlayan qovluqla icra edin. Uğur yalnız yer saxlanıldıqdan sonra qeydə alınır.",
+  "spis.onboarding.adopt_corpus.title": "Mövcud korpusunuzu qəbul edin",
+  "spis.onboarding.command_surface.body": "Qəbuldan sonra CLI əmrləri və Spis Desktop eyni saxlanmış korpus kökünə müraciət edir. Eyni yolu yenidən qəbul etmək hər istinadı dəyişməmiş kimi göstərir. ZIP, tar, gzip, 7z, rar, xz və zstd arxivləri açıq şəkildə rədd edilir; Spis fayllarını yoxlaya bilsin deyə əvvəlcə arxivi açın.",
+  "spis.onboarding.command_surface.title": "Hər əmr üçün bir korpus yolu",
+  "spis.onboarding.evidence_corpus.body": "Spis açılmış kanonik korpusu olduğu yerdə qəbul edə bilər. Yeri saxlamazdan əvvəl kataloq indeksini, hər mənbə və istinad indeksini, hər istinad edilən qeydi və sübut mənşəyi sahələrini yoxlayır. Orijinal faylları heç vaxt başqa yerə köçürmür və yenidən yazmır.",
+  "spis.onboarding.evidence_corpus.title": "Artıq sahib olduğunuz sübut korpusundan başlayın",
+  "walkthrough.already_completed": "Bələdçi artıq tamamlanıb. Yenidən göstərmək üçün `{command}` icra edin.",
+  "walkthrough.completed": "Bələdçi tamamlandı.",
+  "walkthrough.press_enter": "Davam etmək üçün Enter düyməsini basın.",
+  "walkthrough.reset": "Bələdçinin gedişi və ilk uğurun sübutu sıfırlandı.",
+  "walkthrough.run_again": "Əmr uğurla icra olunduqdan sonra `{command}` əmrini yenidən icra edin."
+}

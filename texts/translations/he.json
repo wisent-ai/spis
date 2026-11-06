@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "הריצו `spis corpus adopt PATH` עם תיקייה שמכילה את `example-catalogs.json` הקנוני, את `sources.json` ו-`references.json` של הקטלוג ואת קובצי הראיות שאליהם הם מפנים. ההצלחה נרשמת רק לאחר שהמיקום נשמר.",
+  "spis.onboarding.adopt_corpus.title": "אמצו את האוסף הקיים שלכם",
+  "spis.onboarding.command_surface.body": "לאחר האימוץ, פקודות ה-CLI ו-Spis Desktop פונות לאותו שורש אוסף שמור. אימוץ חוזר של אותו נתיב מציג כל הפניה ללא שינוי. ארכיוני ZIP,‏ tar,‏ gzip,‏ 7z,‏ rar,‏ xz ו-zstd נדחים במפורש; חלצו את הארכיון קודם כדי ש-Spis יוכל לבדוק את קבציו.",
+  "spis.onboarding.command_surface.title": "נתיב אוסף אחד לכל פקודה",
+  "spis.onboarding.evidence_corpus.body": "Spis יכול לאמץ במקומו אוסף קנוני שחולץ מארכיון. לפני שמירת המיקום הוא בודק את אינדקס הקטלוג, כל אינדקס מקורות והפניות, כל רשומה שמפנים אליה ואת שדות המקור של הראיות. הוא לעולם אינו מעתיק את הקבצים המקוריים למקום אחר ואינו כותב אותם מחדש.",
+  "spis.onboarding.evidence_corpus.title": "התחילו מאוסף ראיות שכבר יש לכם",
+  "walkthrough.already_completed": "ההדרכה כבר הושלמה. הריצו `{command}` כדי להציג אותה שוב.",
+  "walkthrough.completed": "ההדרכה הושלמה.",
+  "walkthrough.press_enter": "הקישו Enter כדי להמשיך.",
+  "walkthrough.reset": "ההתקדמות בהדרכה וראיית ההצלחה הראשונה אופסו.",
+  "walkthrough.run_again": "אחרי שהפקודה מצליחה, הריצו שוב את `{command}`."
+}

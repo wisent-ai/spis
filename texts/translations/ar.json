@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "شغّل `spis corpus adopt PATH` مع مجلد يحتوي على `example-catalogs.json` القياسي، و`sources.json` و`references.json` للكتالوج، وملفات الأدلة المشار إليها. لا يُسجَّل النجاح إلا بعد حفظ الموقع.",
+  "spis.onboarding.adopt_corpus.title": "اعتمد مجموعتك الحالية",
+  "spis.onboarding.command_surface.body": "بعد الاعتماد، تصل أوامر CLI وSpis Desktop إلى جذر المجموعة المحفوظ نفسه. وإعادة اعتماد المسار نفسه تُظهر كل مرجع دون تغيير. تُرفض صراحةً أرشيفات ZIP وtar وgzip و7z وrar وxz وzstd؛ فكّ ضغط الأرشيف أولًا ليتمكن Spis من التحقق من ملفاته.",
+  "spis.onboarding.command_surface.title": "مسار مجموعة واحد لكل الأوامر",
+  "spis.onboarding.evidence_corpus.body": "يستطيع Spis اعتماد مجموعة قياسية غير مضغوطة في مكانها. فهو يتحقق من فهرس الكتالوج، ومن كل فهرس للمصادر والمراجع، ومن كل سجل مشار إليه، ومن حقول مصدر الأدلة قبل حفظ الموقع. ولا ينسخ الملفات الأصلية إلى مكان آخر ولا يعيد كتابتها أبدًا.",
+  "spis.onboarding.evidence_corpus.title": "ابدأ من مجموعة أدلة لديك بالفعل",
+  "walkthrough.already_completed": "اكتملت الجولة التعريفية مسبقًا. شغّل `{command}` لعرضها مرة أخرى.",
+  "walkthrough.completed": "اكتملت الجولة التعريفية.",
+  "walkthrough.press_enter": "اضغط Enter للمتابعة.",
+  "walkthrough.reset": "أُعيد ضبط تقدّم الجولة التعريفية ودليل النجاح الأول.",
+  "walkthrough.run_again": "بعد نجاح الأمر، شغّل `{command}` مرة أخرى."
+}

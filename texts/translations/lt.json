@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Paleiskite `spis corpus adopt PATH` su katalogu, kuriame yra kanoninis `example-catalogs.json`, katalogo `sources.json` ir `references.json` bei nurodyti įrodymų failai. Sėkmė įrašoma tik išsaugojus vietą.",
+  "spis.onboarding.adopt_corpus.title": "Perimkite esamą korpusą",
+  "spis.onboarding.command_surface.body": "Perėmus korpusą, CLI komandos ir Spis Desktop naudoja tą pačią išsaugotą korpuso šaknį. Pakartotinai perėmus tą patį kelią, kiekviena nuoroda rodoma nepakitusi. ZIP, tar, gzip, 7z, rar, xz ir zstd archyvai aiškiai atmetami; pirmiausia išpakuokite archyvą, kad Spis galėtų patikrinti jo failus.",
+  "spis.onboarding.command_surface.title": "Vienas korpuso kelias kiekvienai komandai",
+  "spis.onboarding.evidence_corpus.body": "Spis gali perimti išpakuotą kanoninį korpusą jo vietoje. Prieš išsaugodamas vietą, jis patikrina katalogo rodyklę, kiekvieną šaltinių ir nuorodų rodyklę, kiekvieną nurodytą įrašą ir įrodymų kilmės laukus. Jis niekada nekopijuoja originalių failų kitur ir jų neperrašo.",
+  "spis.onboarding.evidence_corpus.title": "Pradėkite nuo jau turimo įrodymų korpuso",
+  "walkthrough.already_completed": "Įvadas jau baigtas. Paleiskite `{command}`, kad jį vėl parodytumėte.",
+  "walkthrough.completed": "Įvadas baigtas.",
+  "walkthrough.press_enter": "Norėdami tęsti, paspauskite Enter.",
+  "walkthrough.reset": "Įvado eiga ir pirmosios sėkmės įrodymas atstatyti.",
+  "walkthrough.run_again": "Kai komanda pavyks, vėl paleiskite `{command}`."
+}

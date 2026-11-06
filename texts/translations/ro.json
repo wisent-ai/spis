@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Rulați `spis corpus adopt PATH` cu un director care conține `example-catalogs.json` canonic, fișierele `sources.json` și `references.json` ale catalogului și fișierele de dovezi la care trimit. Succesul este înregistrat doar după ce locația este salvată.",
+  "spis.onboarding.adopt_corpus.title": "Adoptați corpusul existent",
+  "spis.onboarding.command_surface.body": "După adoptare, comenzile CLI și Spis Desktop folosesc aceeași rădăcină salvată a corpusului. Adoptarea din nou a aceleiași căi arată fiecare referință neschimbată. Arhivele ZIP, tar, gzip, 7z, rar, xz și zstd sunt refuzate explicit; dezarhivați mai întâi arhiva, ca Spis să-i poată valida fișierele.",
+  "spis.onboarding.command_surface.title": "O singură cale a corpusului pentru fiecare comandă",
+  "spis.onboarding.evidence_corpus.body": "Spis poate adopta pe loc un corpus canonic dezarhivat. Înainte de a salva locația, validează indexul catalogului, fiecare index de surse și referințe, fiecare înregistrare la care se face trimitere și câmpurile de proveniență ale dovezilor. Nu copiază niciodată fișierele originale în altă parte și nu le rescrie.",
+  "spis.onboarding.evidence_corpus.title": "Porniți de la un corpus de dovezi pe care îl aveți deja",
+  "walkthrough.already_completed": "Prezentarea este deja încheiată. Rulați `{command}` pentru a o afișa din nou.",
+  "walkthrough.completed": "Prezentarea s-a încheiat.",
+  "walkthrough.press_enter": "Apăsați Enter pentru a continua.",
+  "walkthrough.reset": "Progresul prezentării și dovada primului succes au fost resetate.",
+  "walkthrough.run_again": "După ce comanda reușește, rulați din nou `{command}`."
+}

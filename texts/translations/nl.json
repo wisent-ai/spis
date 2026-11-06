@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Voer `spis corpus adopt PATH` uit met een map die de canonieke `example-catalogs.json`, de `sources.json` en `references.json` van de catalogus en de bewijsbestanden waarnaar ze verwijzen bevat. Succes wordt pas vastgelegd nadat de locatie is opgeslagen.",
+  "spis.onboarding.adopt_corpus.title": "Neem uw bestaande corpus over",
+  "spis.onboarding.command_surface.body": "Na de overname gebruiken CLI-opdrachten en Spis Desktop dezelfde opgeslagen corpuswortel. Wordt hetzelfde pad opnieuw overgenomen, dan blijft elke verwijzing ongewijzigd. ZIP-, tar-, gzip-, 7z-, rar-, xz- en zstd-archieven worden uitdrukkelijk geweigerd; pak een archief eerst uit, zodat Spis de bestanden kan controleren.",
+  "spis.onboarding.command_surface.title": "Eén corpuspad voor elke opdracht",
+  "spis.onboarding.evidence_corpus.body": "Spis kan een uitgepakt canoniek corpus ter plekke overnemen. Voordat het de locatie opslaat, controleert het de catalogusindex, elke bron- en verwijzingsindex, elk record waarnaar wordt verwezen en de herkomstvelden van het bewijs. Het kopieert de oorspronkelijke bestanden nooit naar elders en herschrijft ze nooit.",
+  "spis.onboarding.evidence_corpus.title": "Begin met een bewijscorpus dat u al hebt",
+  "walkthrough.already_completed": "De rondleiding is al voltooid. Voer `{command}` uit om haar opnieuw te tonen.",
+  "walkthrough.completed": "Rondleiding voltooid.",
+  "walkthrough.press_enter": "Druk op Enter om verder te gaan.",
+  "walkthrough.reset": "Voortgang van de rondleiding en bewijs van het eerste succes zijn gewist.",
+  "walkthrough.run_again": "Voer `{command}` opnieuw uit zodra de opdracht is geslaagd."
+}

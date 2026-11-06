@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Jalankan `spis corpus adopt PATH` dengan direktori yang berisi `example-catalogs.json` kanonis, `sources.json` dan `references.json` katalog, serta file bukti yang dirujuk. Keberhasilan hanya dicatat setelah lokasinya disimpan.",
+  "spis.onboarding.adopt_corpus.title": "Adopsi korpus yang sudah ada",
+  "spis.onboarding.command_surface.body": "Setelah diadopsi, perintah CLI dan Spis Desktop memakai root korpus tersimpan yang sama. Mengadopsi ulang jalur yang sama menampilkan setiap referensi tidak berubah. Arsip ZIP, tar, gzip, 7z, rar, xz, dan zstd ditolak secara tegas; ekstrak arsip terlebih dahulu agar Spis dapat memvalidasi file-filenya.",
+  "spis.onboarding.command_surface.title": "Satu jalur korpus untuk setiap perintah",
+  "spis.onboarding.evidence_corpus.body": "Spis dapat mengadopsi korpus kanonis yang sudah diekstrak di tempatnya. Sebelum menyimpan lokasinya, Spis memvalidasi indeks katalog, setiap indeks sumber dan referensi, setiap rekaman yang dirujuk, serta kolom asal-usul bukti. Spis tidak pernah menyalin file asli ke tempat lain atau menulisnya ulang.",
+  "spis.onboarding.evidence_corpus.title": "Mulai dari korpus bukti yang sudah Anda miliki",
+  "walkthrough.already_completed": "Panduan sudah selesai. Jalankan `{command}` untuk menampilkannya lagi.",
+  "walkthrough.completed": "Panduan selesai.",
+  "walkthrough.press_enter": "Tekan Enter untuk melanjutkan.",
+  "walkthrough.reset": "Kemajuan panduan dan bukti keberhasilan pertama telah diatur ulang.",
+  "walkthrough.run_again": "Setelah perintah berhasil, jalankan `{command}` lagi."
+}

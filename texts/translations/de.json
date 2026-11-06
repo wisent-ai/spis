@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Führen Sie `spis corpus adopt PATH` mit einem Verzeichnis aus, das die kanonische `example-catalogs.json`, die `sources.json` und `references.json` des Katalogs und die referenzierten Belegdateien enthält. Der Erfolg wird erst festgehalten, wenn der Speicherort gespeichert ist.",
+  "spis.onboarding.adopt_corpus.title": "Übernehmen Sie Ihr vorhandenes Korpus",
+  "spis.onboarding.command_surface.body": "Nach der Übernahme verwenden CLI-Befehle und Spis Desktop dieselbe gespeicherte Korpuswurzel. Wird derselbe Pfad erneut übernommen, bleibt jede Referenz unverändert. ZIP-, tar-, gzip-, 7z-, rar-, xz- und zstd-Archive werden ausdrücklich abgelehnt; entpacken Sie ein Archiv zuerst, damit Spis seine Dateien prüfen kann.",
+  "spis.onboarding.command_surface.title": "Ein Korpuspfad für jeden Befehl",
+  "spis.onboarding.evidence_corpus.body": "Spis kann ein entpacktes kanonisches Korpus an Ort und Stelle übernehmen. Bevor es den Speicherort speichert, prüft es den Katalogindex, jeden Quellen- und Referenzindex, jeden referenzierten Datensatz und die Herkunftsfelder der Belege. Die Originaldateien werden nie wegkopiert oder umgeschrieben.",
+  "spis.onboarding.evidence_corpus.title": "Beginnen Sie mit einem Belegkorpus, das Sie bereits haben",
+  "walkthrough.already_completed": "Die Einführung ist bereits abgeschlossen. Führen Sie `{command}` aus, um sie erneut anzuzeigen.",
+  "walkthrough.completed": "Einführung abgeschlossen.",
+  "walkthrough.press_enter": "Drücken Sie Enter, um fortzufahren.",
+  "walkthrough.reset": "Fortschritt der Einführung und Nachweis des ersten Erfolgs zurückgesetzt.",
+  "walkthrough.run_again": "Wenn der Befehl erfolgreich war, führen Sie `{command}` erneut aus."
+}

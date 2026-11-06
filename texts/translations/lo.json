@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "ດຳເນີນ `spis corpus adopt PATH` ກັບໂຟນເດີທີ່ມີ `example-catalogs.json` ມາດຕະຖານ, `sources.json` ແລະ `references.json` ຂອງແຄັດຕາລັອກ ແລະ ໄຟລ໌ຫຼັກຖານທີ່ອ້າງອີງ. ຄວາມສຳເລັດຈະຖືກບັນທຶກຫຼັງຈາກບັນທຶກທີ່ຕັ້ງແລ້ວເທົ່ານັ້ນ.",
+  "spis.onboarding.adopt_corpus.title": "ຮັບເອົາຊຸດທີ່ທ່ານມີຢູ່",
+  "spis.onboarding.command_surface.body": "ຫຼັງຈາກຮັບເອົາ, ຄຳສັ່ງ CLI ແລະ Spis Desktop ໃຊ້ຮາກຂອງຊຸດທີ່ບັນທຶກໄວ້ອັນດຽວກັນ. ການຮັບເອົາເສັ້ນທາງເດີມອີກຄັ້ງຈະສະແດງທຸກການອ້າງອີງວ່າບໍ່ປ່ຽນແປງ. ໄຟລ໌ບີບອັດ ZIP, tar, gzip, 7z, rar, xz ແລະ zstd ຖືກປະຕິເສດຢ່າງຊັດເຈນ; ແຕກໄຟລ໌ກ່ອນເພື່ອໃຫ້ Spis ກວດສອບໄຟລ໌ໄດ້.",
+  "spis.onboarding.command_surface.title": "ເສັ້ນທາງຊຸດດຽວສຳລັບທຸກຄຳສັ່ງ",
+  "spis.onboarding.evidence_corpus.body": "Spis ສາມາດຮັບເອົາຊຸດມາດຕະຖານທີ່ແຕກໄຟລ໌ແລ້ວຢູ່ບ່ອນເດີມໄດ້. ກ່ອນບັນທຶກທີ່ຕັ້ງ, ມັນກວດສອບດັດຊະນີແຄັດຕາລັອກ, ທຸກດັດຊະນີແຫຼ່ງ ແລະ ການອ້າງອີງ, ທຸກບັນທຶກທີ່ອ້າງອີງ ແລະ ຊ່ອງທີ່ມາຂອງຫຼັກຖານ. ມັນບໍ່ເຄີຍສຳເນົາໄຟລ໌ຕົ້ນສະບັບໄປບ່ອນອື່ນ ຫຼື ຂຽນທັບມັນ.",
+  "spis.onboarding.evidence_corpus.title": "ເລີ່ມຈາກຊຸດຫຼັກຖານທີ່ທ່ານມີຢູ່ແລ້ວ",
+  "walkthrough.already_completed": "ການແນະນຳສຳເລັດແລ້ວ. ດຳເນີນ `{command}` ເພື່ອສະແດງອີກຄັ້ງ.",
+  "walkthrough.completed": "ການແນະນຳສຳເລັດແລ້ວ.",
+  "walkthrough.press_enter": "ກົດ Enter ເພື່ອດຳເນີນຕໍ່.",
+  "walkthrough.reset": "ຕັ້ງຄວາມຄືບໜ້າຂອງການແນະນຳ ແລະ ຫຼັກຖານຄວາມສຳເລັດທຳອິດຄືນໃໝ່ແລ້ວ.",
+  "walkthrough.run_again": "ຫຼັງຈາກຄຳສັ່ງສຳເລັດ, ດຳເນີນ `{command}` ອີກຄັ້ງ."
+}

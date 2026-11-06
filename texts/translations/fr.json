@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Exécutez `spis corpus adopt PATH` avec un répertoire contenant le `example-catalogs.json` canonique, les `sources.json` et `references.json` du catalogue et les fichiers de preuves référencés. Le succès n'est enregistré qu'une fois l'emplacement sauvegardé.",
+  "spis.onboarding.adopt_corpus.title": "Adoptez votre corpus existant",
+  "spis.onboarding.command_surface.body": "Après l'adoption, les commandes de la CLI et Spis Desktop utilisent la même racine de corpus enregistrée. Adopter à nouveau le même chemin indique chaque référence comme inchangée. Les archives ZIP, tar, gzip, 7z, rar, xz et zstd sont explicitement refusées ; décompressez d'abord l'archive pour que Spis puisse valider ses fichiers.",
+  "spis.onboarding.command_surface.title": "Un seul chemin de corpus pour chaque commande",
+  "spis.onboarding.evidence_corpus.body": "Spis peut adopter sur place un corpus canonique décompressé. Avant d'enregistrer l'emplacement, il valide l'index du catalogue, chaque index de sources et de références, chaque enregistrement référencé et les champs de provenance des preuves. Il ne copie jamais les fichiers d'origine ailleurs et ne les réécrit jamais.",
+  "spis.onboarding.evidence_corpus.title": "Partez d'un corpus de preuves que vous avez déjà",
+  "walkthrough.already_completed": "La présentation est déjà terminée. Exécutez `{command}` pour l'afficher à nouveau.",
+  "walkthrough.completed": "Présentation terminée.",
+  "walkthrough.press_enter": "Appuyez sur Entrée pour continuer.",
+  "walkthrough.reset": "Progression de la présentation et preuve du premier succès réinitialisées.",
+  "walkthrough.run_again": "Une fois la commande réussie, exécutez à nouveau `{command}`."
+}

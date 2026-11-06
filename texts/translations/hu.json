@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Futtassa a `spis corpus adopt PATH` parancsot egy olyan könyvtárral, amely tartalmazza a kanonikus `example-catalogs.json`-t, a katalógus `sources.json` és `references.json` fájlját és a hivatkozott bizonyítékfájlokat. A siker csak a hely mentése után kerül rögzítésre.",
+  "spis.onboarding.adopt_corpus.title": "Vegye át a meglévő korpuszát",
+  "spis.onboarding.command_surface.body": "Az átvétel után a CLI-parancsok és a Spis Desktop ugyanazt a mentett korpuszgyökeret használják. Ugyanannak az útvonalnak az újbóli átvétele minden hivatkozást változatlannak mutat. A ZIP, tar, gzip, 7z, rar, xz és zstd archívumokat kifejezetten elutasítja; előbb csomagolja ki az archívumot, hogy a Spis ellenőrizhesse a fájljait.",
+  "spis.onboarding.command_surface.title": "Egy korpuszútvonal minden parancshoz",
+  "spis.onboarding.evidence_corpus.body": "A Spis a helyén veheti át a kicsomagolt kanonikus korpuszt. A hely mentése előtt ellenőrzi a katalógus indexét, minden forrás- és hivatkozásindexet, minden hivatkozott rekordot és a bizonyítékok eredetmezőit. Az eredeti fájlokat soha nem másolja el és nem írja át.",
+  "spis.onboarding.evidence_corpus.title": "Induljon egy már meglévő bizonyítékkorpuszból",
+  "walkthrough.already_completed": "A bemutató már befejeződött. Futtassa a `{command}` parancsot az újbóli megjelenítéshez.",
+  "walkthrough.completed": "A bemutató befejeződött.",
+  "walkthrough.press_enter": "A folytatáshoz nyomja meg az Enter billentyűt.",
+  "walkthrough.reset": "A bemutató előrehaladása és az első siker bizonyítéka visszaállítva.",
+  "walkthrough.run_again": "Ha a parancs sikerült, futtassa újra a `{command}` parancsot."
+}

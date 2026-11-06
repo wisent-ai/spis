@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Pokrenite `spis corpus adopt PATH` s direktorijem koji sadrži kanonski `example-catalogs.json`, `sources.json` i `references.json` kataloga te referencirane datoteke dokaza. Uspjeh se bilježi tek nakon što je lokacija spremljena.",
+  "spis.onboarding.adopt_corpus.title": "Preuzmite svoj postojeći korpus",
+  "spis.onboarding.command_surface.body": "Nakon preuzimanja, CLI naredbe i Spis Desktop koriste isti spremljeni korijen korpusa. Ponovno preuzimanje iste putanje prikazuje svaku referencu nepromijenjenom. ZIP, tar, gzip, 7z, rar, xz i zstd arhive izričito se odbijaju; najprije raspakirajte arhivu kako bi Spis mogao provjeriti njezine datoteke.",
+  "spis.onboarding.command_surface.title": "Jedna putanja korpusa za svaku naredbu",
+  "spis.onboarding.evidence_corpus.body": "Spis može preuzeti raspakirani kanonski korpus na njegovu mjestu. Prije spremanja lokacije provjerava indeks kataloga, svaki indeks izvora i referenci, svaki referencirani zapis i polja podrijetla dokaza. Nikada ne kopira izvorne datoteke na drugo mjesto niti ih prepisuje.",
+  "spis.onboarding.evidence_corpus.title": "Počnite od korpusa dokaza koji već imate",
+  "walkthrough.already_completed": "Uvod je već završen. Pokrenite `{command}` da ga ponovno prikažete.",
+  "walkthrough.completed": "Uvod je završen.",
+  "walkthrough.press_enter": "Pritisnite Enter za nastavak.",
+  "walkthrough.reset": "Napredak uvoda i dokaz prvog uspjeha su poništeni.",
+  "walkthrough.run_again": "Nakon što naredba uspije, ponovno pokrenite `{command}`."
+}

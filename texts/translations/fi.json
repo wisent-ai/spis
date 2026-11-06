@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Suorita `spis corpus adopt PATH` hakemistolla, joka sisältää kanonisen `example-catalogs.json`-tiedoston, luettelon `sources.json`- ja `references.json`-tiedostot sekä niiden viittaamat todistetiedostot. Onnistuminen kirjataan vasta, kun sijainti on tallennettu.",
+  "spis.onboarding.adopt_corpus.title": "Ota olemassa oleva korpuksesi käyttöön",
+  "spis.onboarding.command_surface.body": "Käyttöönoton jälkeen CLI-komennot ja Spis Desktop käyttävät samaa tallennettua korpuksen juurta. Saman polun ottaminen uudelleen käyttöön näyttää jokaisen viittauksen muuttumattomana. ZIP-, tar-, gzip-, 7z-, rar-, xz- ja zstd-arkistot hylätään nimenomaisesti; pura arkisto ensin, jotta Spis voi tarkistaa sen tiedostot.",
+  "spis.onboarding.command_surface.title": "Yksi korpuspolku jokaiselle komennolle",
+  "spis.onboarding.evidence_corpus.body": "Spis voi ottaa puretun kanonisen korpuksen käyttöön sen nykyisessä sijainnissa. Ennen sijainnin tallentamista se tarkistaa luettelon hakemiston, jokaisen lähde- ja viitehakemiston, jokaisen viitatun tietueen sekä todisteiden alkuperäkentät. Se ei koskaan kopioi alkuperäisiä tiedostoja muualle eikä kirjoita niitä uudelleen.",
+  "spis.onboarding.evidence_corpus.title": "Aloita todistekorpuksesta, joka sinulla jo on",
+  "walkthrough.already_completed": "Esittely on jo suoritettu. Näytä se uudelleen suorittamalla `{command}`.",
+  "walkthrough.completed": "Esittely on valmis.",
+  "walkthrough.press_enter": "Jatka painamalla Enter.",
+  "walkthrough.reset": "Esittelyn eteneminen ja ensimmäisen onnistumisen todiste nollattiin.",
+  "walkthrough.run_again": "Kun komento onnistuu, suorita `{command}` uudelleen."
+}

@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Uruchom `spis corpus adopt PATH` z katalogiem zawierającym kanoniczny `example-catalogs.json`, pliki `sources.json` i `references.json` katalogu oraz pliki dowodów, do których się odwołują. Sukces zostaje zapisany dopiero po utrwaleniu lokalizacji.",
+  "spis.onboarding.adopt_corpus.title": "Przyjmij swój istniejący korpus",
+  "spis.onboarding.command_surface.body": "Po przyjęciu polecenia CLI i Spis Desktop korzystają z tego samego zapisanego korzenia korpusu. Ponowne przyjęcie tej samej ścieżki pokazuje każdą referencję bez zmian. Archiwa ZIP, tar, gzip, 7z, rar, xz i zstd są jawnie odrzucane; najpierw rozpakuj archiwum, aby Spis mógł sprawdzić jego pliki.",
+  "spis.onboarding.command_surface.title": "Jedna ścieżka korpusu dla każdego polecenia",
+  "spis.onboarding.evidence_corpus.body": "Spis może przyjąć rozpakowany korpus kanoniczny w miejscu, w którym leży. Przed zapisaniem lokalizacji sprawdza indeks katalogu, każdy indeks źródeł i referencji, każdy wskazany rekord oraz pola pochodzenia dowodów. Nigdy nie kopiuje oryginalnych plików w inne miejsce ani ich nie przepisuje.",
+  "spis.onboarding.evidence_corpus.title": "Zacznij od korpusu dowodów, który już masz",
+  "walkthrough.already_completed": "Przewodnik został już ukończony. Uruchom `{command}`, aby pokazać go ponownie.",
+  "walkthrough.completed": "Przewodnik ukończony.",
+  "walkthrough.press_enter": "Naciśnij Enter, aby kontynuować.",
+  "walkthrough.reset": "Postęp przewodnika i dowód pierwszego sukcesu zostały wyzerowane.",
+  "walkthrough.run_again": "Gdy polecenie się powiedzie, uruchom ponownie `{command}`."
+}

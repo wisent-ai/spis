@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "`spis corpus adopt PATH` buýrugyny kanoniki `example-catalogs.json`, katalogyň `sources.json` we `references.json` faýllaryny hem-de salgylanýan subutnama faýllaryny saklaýan bukja bilen işlediň. Üstünlik diňe ýerleşýän ýer ýatda saklanandan soň bellige alynýar.",
+  "spis.onboarding.adopt_corpus.title": "Bar bolan korpusyňyzy kabul ediň",
+  "spis.onboarding.command_surface.body": "Kabul edilenden soň CLI buýruklary we Spis Desktop şol bir ýatda saklanan korpus köküni ulanýar. Şol ýoly gaýtadan kabul etmek her salgylanmany üýtgemedik görkezýär. ZIP, tar, gzip, 7z, rar, xz we zstd arhiwleri aýdyň ret edilýär; Spis faýllaryny barlap biler ýaly ilki arhiwi açyň.",
+  "spis.onboarding.command_surface.title": "Her buýruk üçin bir korpus ýoly",
+  "spis.onboarding.evidence_corpus.body": "Spis açylan kanoniki korpusy ýerinde kabul edip biler. Ýerleşýän ýeri ýatda saklamazdan öň katalog indeksini, her çeşme we salgylanma indeksini, salgylanýan her ýazgyny we subutnamalaryň gelip çykyş meýdançalaryny barlaýar. Asyl faýllary hiç haçan başga ýere göçürmeýär we täzeden ýazmaýar.",
+  "spis.onboarding.evidence_corpus.title": "Eýýäm bar bolan subutnama korpusyňyzdan başlaň",
+  "walkthrough.already_completed": "Tanyşdyryş eýýäm tamamlandy. Ony gaýtadan görkezmek üçin `{command}` işlediň.",
+  "walkthrough.completed": "Tanyşdyryş tamamlandy.",
+  "walkthrough.press_enter": "Dowam etmek üçin Enter basyň.",
+  "walkthrough.reset": "Tanyşdyryşyň barşy we ilkinji üstünligiň subutnamasy täzeden düzüldi.",
+  "walkthrough.run_again": "Buýruk şowly ýerine ýetirilenden soň `{command}` gaýtadan işlediň."
+}

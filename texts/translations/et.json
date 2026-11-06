@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Käivitage `spis corpus adopt PATH` kataloogiga, mis sisaldab kanoonilist `example-catalogs.json`-i, kataloogi `sources.json`-i ja `references.json`-i ning viidatud tõendifaile. Õnnestumine salvestatakse alles pärast asukoha talletamist.",
+  "spis.onboarding.adopt_corpus.title": "Võtke kasutusele oma olemasolev korpus",
+  "spis.onboarding.command_surface.body": "Pärast kasutuselevõttu kasutavad CLI käsud ja Spis Desktop sama salvestatud korpuse juurt. Sama tee uuesti kasutuselevõtt näitab kõiki viiteid muutumatuna. ZIP-, tar-, gzip-, 7z-, rar-, xz- ja zstd-arhiivid lükatakse selgesõnaliselt tagasi; pakkige arhiiv esmalt lahti, et Spis saaks selle faile kontrollida.",
+  "spis.onboarding.command_surface.title": "Üks korpuse tee igale käsule",
+  "spis.onboarding.evidence_corpus.body": "Spis saab lahtipakitud kanoonilise korpuse kasutusele võtta selle praeguses asukohas. Enne asukoha salvestamist kontrollib see kataloogi indeksit, iga allika- ja viiteindeksit, iga viidatud kirjet ning tõendite päritoluvälju. See ei kopeeri originaalfaile kunagi mujale ega kirjuta neid üle.",
+  "spis.onboarding.evidence_corpus.title": "Alustage tõendite korpusest, mis teil juba on",
+  "walkthrough.already_completed": "Tutvustus on juba lõpetatud. Selle uuesti kuvamiseks käivitage `{command}`.",
+  "walkthrough.completed": "Tutvustus on lõpetatud.",
+  "walkthrough.press_enter": "Jätkamiseks vajutage Enter.",
+  "walkthrough.reset": "Tutvustuse edenemine ja esimese õnnestumise tõend lähtestati.",
+  "walkthrough.run_again": "Kui käsk õnnestub, käivitage uuesti `{command}`."
+}

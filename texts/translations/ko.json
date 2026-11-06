@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "정식 `example-catalogs.json`, 카탈로그의 `sources.json`과 `references.json`, 참조된 증거 파일이 들어 있는 디렉터리로 `spis corpus adopt PATH`을 실행하세요. 성공은 위치가 저장된 뒤에만 기록됩니다.",
+  "spis.onboarding.adopt_corpus.title": "기존 코퍼스를 가져오세요",
+  "spis.onboarding.command_surface.body": "가져온 뒤에는 CLI 명령과 Spis Desktop이 같은 저장된 코퍼스 루트를 사용합니다. 같은 경로를 다시 가져오면 모든 참조가 변경 없음으로 보고됩니다. ZIP, tar, gzip, 7z, rar, xz, zstd 아카이브는 명시적으로 거부됩니다. Spis가 파일을 검증할 수 있도록 먼저 압축을 푸세요.",
+  "spis.onboarding.command_surface.title": "모든 명령에 하나의 코퍼스 경로",
+  "spis.onboarding.evidence_corpus.body": "Spis는 압축을 푼 정식 코퍼스를 제자리에서 가져올 수 있습니다. 위치를 저장하기 전에 카탈로그 인덱스, 모든 소스 및 참조 인덱스, 참조된 모든 레코드, 증거 출처 필드를 검증합니다. 원본 파일을 다른 곳으로 복사하거나 다시 쓰지 않습니다.",
+  "spis.onboarding.evidence_corpus.title": "이미 가진 증거 코퍼스에서 시작하세요",
+  "walkthrough.already_completed": "안내를 이미 마쳤습니다. 다시 보려면 `{command}`을(를) 실행하세요.",
+  "walkthrough.completed": "안내를 마쳤습니다.",
+  "walkthrough.press_enter": "계속하려면 Enter 키를 누르세요.",
+  "walkthrough.reset": "안내 진행 상황과 첫 성공 증거를 초기화했습니다.",
+  "walkthrough.run_again": "명령이 성공하면 `{command}`을(를) 다시 실행하세요."
+}

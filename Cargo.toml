@@ -34,6 +34,11 @@ name = "cli-contract"
 path = "tests/cli/main.rs"
 harness = false
 
+[[test]]
+name = "onboarding-languages"
+path = "tests/onboarding/main.rs"
+harness = false
+
 [dependencies]
 ureq = { version = "2", features = ["gzip", "json"] }
 serde = { version = "1", features = ["derive"] }
@@ -59,6 +64,9 @@ hex = "0.4"
 url = "2"
 # The one public-destination rule Wisent's egress guards share.
 wisent-public-destination = { git = "https://github.com/wisent-ai/wisent-integrations", rev = "46f2686a8a119601f7671719c31ccf77bd205d8d", package = "wisent-public-destination" }
+# The words a person reads (the first-use walkthrough), in every fleet
+# language: texts/ of this repository, the shared catalogue's runtime.
+wisent-texts = { git = "https://github.com/wisent-ai/wisent-texts", rev = "cc3a922ddea8a6d538a40abd7e3988644f607f20" }
 # Every timestamp Spis writes, as UTC calendar time (already in the lock
 # through stado-wait).
 chrono = "0.4"

@@ -34,6 +34,16 @@ cargo build --release
 ./target/release/spis generate-example-catalogs --check
 ```
 
+`spis onboarding` reads in the person's language, from `LC_ALL`,
+`LC_MESSAGES`, `LANG` or, on macOS, the system's preferred language: its
+screens and its own lines come from `texts/` (the shared wisent-texts
+catalogue, every Wisent fleet language), and a language the fleet lacks reads
+the journey's English (`src/onboarding_first_use.json`). Commands, flags and
+file names stay as typed. `node ../wisent-texts/bin/texts.mjs check` refuses a
+key a language lacks or a stale bundle; `cargo test --test
+onboarding-languages` runs the walkthrough in Polish, Japanese and a language
+outside the fleet.
+
 ### Adopt an existing corpus
 
 First use can begin with an unpacked canonical corpus already on disk:

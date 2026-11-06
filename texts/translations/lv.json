@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "Palaidiet `spis corpus adopt PATH` ar direktoriju, kurā ir kanoniskais `example-catalogs.json`, kataloga `sources.json` un `references.json` un norādītās pierādījumu datnes. Panākums tiek reģistrēts tikai pēc tam, kad atrašanās vieta ir saglabāta.",
+  "spis.onboarding.adopt_corpus.title": "Pārņemiet savu esošo korpusu",
+  "spis.onboarding.command_surface.body": "Pēc pārņemšanas CLI komandas un Spis Desktop izmanto to pašu saglabāto korpusa sakni. Atkārtoti pārņemot to pašu ceļu, katra atsauce tiek uzrādīta kā nemainīta. ZIP, tar, gzip, 7z, rar, xz un zstd arhīvi tiek skaidri noraidīti; vispirms izpakojiet arhīvu, lai Spis varētu pārbaudīt tā datnes.",
+  "spis.onboarding.command_surface.title": "Viens korpusa ceļš katrai komandai",
+  "spis.onboarding.evidence_corpus.body": "Spis var pārņemt izpakotu kanonisku korpusu tā atrašanās vietā. Pirms vietas saglabāšanas tas pārbauda kataloga indeksu, katru avotu un atsauču indeksu, katru norādīto ierakstu un pierādījumu izcelsmes laukus. Tas nekad nekopē oriģinālās datnes citur un tās nepārraksta.",
+  "spis.onboarding.evidence_corpus.title": "Sāciet ar pierādījumu korpusu, kas jums jau ir",
+  "walkthrough.already_completed": "Ievads jau ir pabeigts. Palaidiet `{command}`, lai to parādītu vēlreiz.",
+  "walkthrough.completed": "Ievads pabeigts.",
+  "walkthrough.press_enter": "Lai turpinātu, nospiediet Enter.",
+  "walkthrough.reset": "Ievada gaita un pirmā panākuma pierādījums ir atiestatīti.",
+  "walkthrough.run_again": "Kad komanda izdodas, vēlreiz palaidiet `{command}`."
+}

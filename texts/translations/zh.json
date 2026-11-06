@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "对包含规范 `example-catalogs.json`、目录的 `sources.json` 和 `references.json` 以及所引用证据文件的目录运行 `spis corpus adopt PATH`。只有在位置保存后才会记录成功。",
+  "spis.onboarding.adopt_corpus.title": "采用你现有的语料库",
+  "spis.onboarding.command_surface.body": "采用后，CLI 命令和 Spis Desktop 使用同一个已保存的语料库根目录。再次采用同一路径会报告每个引用均未改变。ZIP、tar、gzip、7z、rar、xz 和 zstd 压缩包会被明确拒绝；请先解压，以便 Spis 验证其中的文件。",
+  "spis.onboarding.command_surface.title": "所有命令共用一个语料库路径",
+  "spis.onboarding.evidence_corpus.body": "Spis 可以就地采用已解压的规范语料库。在保存位置之前，它会验证目录索引、每个来源和引用索引、每条被引用的记录以及证据的来源字段。它从不把原始文件复制到别处，也从不改写它们。",
+  "spis.onboarding.evidence_corpus.title": "从你已有的证据语料库开始",
+  "walkthrough.already_completed": "引导已完成。运行 `{command}` 可再次显示。",
+  "walkthrough.completed": "引导已完成。",
+  "walkthrough.press_enter": "按 Enter 键继续。",
+  "walkthrough.reset": "已重置引导进度和首次成功的证据。",
+  "walkthrough.run_again": "命令成功后，请再次运行 `{command}`。"
+}

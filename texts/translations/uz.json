@@ -1,0 +1,13 @@
+{
+  "spis.onboarding.adopt_corpus.body": "`spis corpus adopt PATH` ni kanonik `example-catalogs.json`, katalogning `sources.json` va `references.json` fayllari hamda havola qilingan dalil fayllarini o‘z ichiga olgan katalog bilan ishga tushiring. Muvaffaqiyat faqat joylashuv saqlangandan keyin qayd etiladi.",
+  "spis.onboarding.adopt_corpus.title": "Mavjud korpusingizni qabul qiling",
+  "spis.onboarding.command_surface.body": "Qabul qilingandan keyin CLI buyruqlari va Spis Desktop bir xil saqlangan korpus ildizidan foydalanadi. Xuddi shu yo‘lni qayta qabul qilish har bir havolani o‘zgarmagan deb ko‘rsatadi. ZIP, tar, gzip, 7z, rar, xz va zstd arxivlari aniq rad etiladi; Spis fayllarini tekshira olishi uchun avval arxivni oching.",
+  "spis.onboarding.command_surface.title": "Har bir buyruq uchun bitta korpus yo‘li",
+  "spis.onboarding.evidence_corpus.body": "Spis ochilgan kanonik korpusni o‘z joyida qabul qila oladi. Joylashuvni saqlashdan oldin u katalog indeksini, har bir manba va havola indeksini, havola qilingan har bir yozuvni hamda dalillarning kelib chiqish maydonlarini tekshiradi. U asl fayllarni hech qachon boshqa joyga nusxalamaydi va qayta yozmaydi.",
+  "spis.onboarding.evidence_corpus.title": "Sizda allaqachon bor dalillar korpusidan boshlang",
+  "walkthrough.already_completed": "Tanishtiruv allaqachon yakunlangan. Uni qayta ko‘rsatish uchun `{command}` ni ishga tushiring.",
+  "walkthrough.completed": "Tanishtiruv yakunlandi.",
+  "walkthrough.press_enter": "Davom etish uchun Enter tugmasini bosing.",
+  "walkthrough.reset": "Tanishtiruv jarayoni va birinchi muvaffaqiyat dalili qayta tiklandi.",
+  "walkthrough.run_again": "Buyruq muvaffaqiyatli bajarilgach, `{command}` ni qayta ishga tushiring."
+}
