@@ -144,4 +144,10 @@ pub(super) const SUBCOMMANDS: &[Subcommand] = &[
         true,
         Activation::Invocation,
     ),
+    sub(
+        "refusals",
+        "the declared ways a Spis command refuses, each cause with its fix, exit status and test (list | show <id> | check [--root DIR])",
+        false,
+        Activation::Invocation,
+    ),
 ];

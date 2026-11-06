@@ -24,6 +24,7 @@ pub mod docs_site;
 pub mod generate_example_catalogs;
 pub mod reference_contract;
 pub mod reference_record;
+pub mod refusals;
 pub mod serve;
 mod star;
 mod subcommands;
@@ -121,6 +122,7 @@ fn dispatch(name: &str, rest: &[String]) -> Result<bool> {
         "serve" => serve::run(rest)?,
         "capture-cli-references" => capture_cli_references::run(rest)?,
         "star" => star::run(rest)?,
+        "refusals" => refusals::run(rest)?,
         _ => unreachable!("every SUBCOMMANDS entry is dispatched"),
     }
     if star::counts(name, rest) {

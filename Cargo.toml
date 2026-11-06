@@ -39,6 +39,11 @@ name = "onboarding-languages"
 path = "tests/onboarding/main.rs"
 harness = false
 
+[[test]]
+name = "refusals"
+path = "tests/refusals/main.rs"
+harness = false
+
 [dependencies]
 ureq = { version = "2", features = ["gzip", "json"] }
 serde = { version = "1", features = ["derive"] }
@@ -59,6 +64,8 @@ stado-wait = { git = "https://github.com/wisent-ai/stado", package = "stado-wait
 # offline request, so no HTTP client of its own comes with it.
 wisent-onboarding-client = { git = "https://github.com/wisent-ai/echo-web", rev = "c602dcbef20c9bab4176a0ba1f276fd604e71496", package = "wisent-onboarding-client", default-features = false }
 regex = "1"
+# The fleet's failure vocabulary: `spis refusals` declares every cause in it.
+wisent-errors = { git = "https://github.com/wisent-ai/wisent-errors", rev = "48b951d024b37972e53e60f98c2582e2f65fb92a" }
 base64 = "0.22"
 hex = "0.4"
 url = "2"
